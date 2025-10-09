@@ -66,13 +66,19 @@ class FinancialController extends Controller
      */
     public function storeInvoice(Request $request, Project $project)
     {
+        // Validate that project has a client
+        if (!$project->client_id || !$project->client) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Proyek ini belum memiliki klien. Silakan tambahkan klien terlebih dahulu.',
+            ], 422);
+        }
+
         $validated = $request->validate([
             'invoice_date' => 'required|date',
             'due_date' => 'required|date|after_or_equal:invoice_date',
             'tax_rate' => 'required|numeric|min:0|max:100',
             'notes' => 'nullable|string',
-            'client_name' => 'nullable|string|max:255',
-            'client_address' => 'nullable|string',
             'client_tax_id' => 'nullable|string|max:255',
             'items' => 'required|array|min:1',
             'items.*.description' => 'required|string',
@@ -82,15 +88,19 @@ class FinancialController extends Controller
 
         DB::beginTransaction();
         try {
-            // Create invoice
+            // Get client data from project relationship
+            $client = $project->client;
+
+            // Create invoice with auto-filled client data
             $invoice = $project->invoices()->create([
                 'invoice_number' => Invoice::generateInvoiceNumber(),
                 'invoice_date' => $validated['invoice_date'],
                 'due_date' => $validated['due_date'],
                 'tax_rate' => $validated['tax_rate'],
                 'notes' => $validated['notes'] ?? null,
-                'client_name' => $validated['client_name'] ?? $project->client_name,
-                'client_address' => $validated['client_address'] ?? $project->client_address,
+                // Auto-fill client data from project->client
+                'client_name' => $client->name,
+                'client_address' => $client->address ?? $client->company ?? '',
                 'client_tax_id' => $validated['client_tax_id'] ?? null,
                 'status' => 'draft',
             ]);
