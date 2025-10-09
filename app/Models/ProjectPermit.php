@@ -51,16 +51,23 @@ class ProjectPermit extends Model
         'permit_number',
         'valid_until',
         'notes',
+        'override_dependencies',
+        'override_reason',
+        'override_by_user_id',
+        'override_at',
     ];
 
     protected $casts = [
         'sequence_order' => 'integer',
         'is_goal_permit' => 'boolean',
         'has_existing_document' => 'boolean',
+        'override_dependencies' => 'boolean',
+        'override_by_user_id' => 'integer',
         'started_at' => 'datetime',
         'submitted_at' => 'datetime',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
+        'override_at' => 'datetime',
         'target_date' => 'date',
         'valid_until' => 'date',
         'estimated_cost' => 'decimal:2',

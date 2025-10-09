@@ -101,6 +101,49 @@ class ProjectPermitStatusTest extends TestCase
         $this->assertFalse($childPermit->fresh()->canStart());
     }
 
+    public function test_override_records_metadata_and_persists_values(): void
+    {
+        [$project, $permitType, $user] = $this->prepareProjectContext();
+
+        $parentPermit = ProjectPermit::create([
+            'project_id' => $project->id,
+            'permit_type_id' => $permitType->id,
+            'sequence_order' => 1,
+            'is_goal_permit' => false,
+            'status' => ProjectPermit::STATUS_NOT_STARTED,
+        ]);
+
+        $childPermit = ProjectPermit::create([
+            'project_id' => $project->id,
+            'permit_type_id' => $permitType->id,
+            'sequence_order' => 2,
+            'is_goal_permit' => false,
+            'status' => ProjectPermit::STATUS_NOT_STARTED,
+        ]);
+
+        ProjectPermitDependency::create([
+            'project_permit_id' => $childPermit->id,
+            'depends_on_permit_id' => $parentPermit->id,
+            'dependency_type' => ProjectPermitDependency::TYPE_MANDATORY,
+            'can_proceed_without' => false,
+        ]);
+
+        $response = $this->actingAs($user)->patch(route('testing.permits.update-status', $childPermit), [
+            'status' => ProjectPermit::STATUS_IN_PROGRESS,
+            'override_reason' => 'Melanjutkan meski belum lengkap',
+        ]);
+
+        $response->assertRedirect();
+
+        $updatedPermit = $childPermit->fresh();
+
+        $this->assertSame(ProjectPermit::STATUS_IN_PROGRESS, $updatedPermit->status);
+        $this->assertTrue($updatedPermit->override_dependencies);
+        $this->assertSame('Melanjutkan meski belum lengkap', $updatedPermit->override_reason);
+        $this->assertSame($user->id, $updatedPermit->override_by_user_id);
+        $this->assertNotNull($updatedPermit->override_at);
+    }
+
     private function prepareProjectContext(): array
     {
         $user = User::factory()->create();
