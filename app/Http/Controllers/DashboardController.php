@@ -863,7 +863,7 @@ class DashboardController extends Controller
             ->map(function ($payment) {
                 return [
                     'type' => 'payment',
-                    'icon' => '💰',
+                    'icon' => 'money-bill-wave',
                     'title' => 'Payment Received',
                     'description' => 'Rp ' . number_format($payment->amount) . ' - ' . ($payment->project ? $payment->project->name : 'N/A'),
                     'time' => $payment->payment_date,

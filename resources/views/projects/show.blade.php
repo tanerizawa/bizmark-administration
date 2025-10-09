@@ -762,47 +762,47 @@
                     <select name="category" required class="input-dark w-full px-4 py-2.5 rounded-lg">
                         <option value="">Pilih kategori...</option>
                         <optgroup label="SDM & Personel">
-                            <option value="personnel">💼 Gaji & Honor</option>
-                            <option value="commission">🤝 Komisi</option>
-                            <option value="allowance">💰 Tunjangan & Bonus</option>
+                            <option value="personnel">Gaji & Honor</option>
+                            <option value="commission">Komisi</option>
+                            <option value="allowance">Tunjangan & Bonus</option>
                         </optgroup>
                         <optgroup label="Rekanan & Subkontraktor">
-                            <option value="subcontractor">🏗️ Subkontraktor</option>
-                            <option value="consultant">👨‍💼 Konsultan Eksternal</option>
-                            <option value="supplier">🤝 Rekanan/Partner</option>
+                            <option value="subcontractor">Subkontraktor</option>
+                            <option value="consultant">Konsultan Eksternal</option>
+                            <option value="supplier">Rekanan/Partner</option>
                         </optgroup>
                         <optgroup label="Layanan Teknis">
-                            <option value="laboratory">🔬 Laboratorium</option>
-                            <option value="survey">📐 Survey & Pengukuran</option>
-                            <option value="testing">🧪 Testing & Inspeksi</option>
-                            <option value="certification">📋 Sertifikasi</option>
+                            <option value="laboratory">Laboratorium</option>
+                            <option value="survey">Survey & Pengukuran</option>
+                            <option value="testing">Testing & Inspeksi</option>
+                            <option value="certification">Sertifikasi</option>
                         </optgroup>
                         <optgroup label="Peralatan & Perlengkapan">
-                            <option value="equipment_rental">🚜 Sewa Alat</option>
-                            <option value="equipment_purchase">🛠️ Pembelian Alat</option>
-                            <option value="materials">📦 Perlengkapan & Supplies</option>
-                            <option value="maintenance">🔧 Maintenance & Perbaikan</option>
+                            <option value="equipment_rental">Sewa Alat</option>
+                            <option value="equipment_purchase">Pembelian Alat</option>
+                            <option value="materials">Perlengkapan & Supplies</option>
+                            <option value="maintenance">Maintenance & Perbaikan</option>
                         </optgroup>
                         <optgroup label="Operasional">
-                            <option value="travel">✈️ Perjalanan Dinas</option>
-                            <option value="accommodation">🏨 Akomodasi</option>
-                            <option value="transportation">🚗 Transportasi</option>
-                            <option value="communication">📞 Komunikasi & Internet</option>
-                            <option value="office_supplies">📝 ATK & Supplies</option>
-                            <option value="printing">🖨️ Printing & Dokumen</option>
+                            <option value="travel">Perjalanan Dinas</option>
+                            <option value="accommodation">Akomodasi</option>
+                            <option value="transportation">Transportasi</option>
+                            <option value="communication">Komunikasi & Internet</option>
+                            <option value="office_supplies">ATK & Supplies</option>
+                            <option value="printing">Printing & Dokumen</option>
                         </optgroup>
                         <optgroup label="Legal & Administrasi">
-                            <option value="permit">📜 Perizinan</option>
-                            <option value="insurance">🛡️ Asuransi</option>
-                            <option value="tax">💵 Pajak & Retribusi</option>
-                            <option value="legal">⚖️ Legal & Notaris</option>
-                            <option value="administration">📋 Administrasi</option>
+                            <option value="permit">Perizinan</option>
+                            <option value="insurance">Asuransi</option>
+                            <option value="tax">Pajak & Retribusi</option>
+                            <option value="legal">Legal & Notaris</option>
+                            <option value="administration">Administrasi</option>
                         </optgroup>
                         <optgroup label="Marketing & Lainnya">
-                            <option value="marketing">📢 Marketing & Promosi</option>
-                            <option value="entertainment">🍽️ Entertainment & Jamuan</option>
-                            <option value="donation">🎁 Donasi & CSR</option>
-                            <option value="other">📌 Lainnya</option>
+                            <option value="marketing">Marketing & Promosi</option>
+                            <option value="entertainment">Entertainment & Jamuan</option>
+                            <option value="donation">Donasi & CSR</option>
+                            <option value="other">Lainnya</option>
                         </optgroup>
                     </select>
                 </div>

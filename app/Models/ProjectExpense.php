@@ -10,159 +10,159 @@ class ProjectExpense extends Model
         // SDM & Personel
         'personnel' => [
             'label' => 'Gaji & Honor',
-            'icon' => '💼',
+            'icon' => 'briefcase',
             'group' => 'SDM & Personel',
         ],
         'commission' => [
             'label' => 'Komisi',
-            'icon' => '🤝',
+            'icon' => 'handshake',
             'group' => 'SDM & Personel',
         ],
         'allowance' => [
             'label' => 'Tunjangan & Bonus',
-            'icon' => '💰',
+            'icon' => 'money-bill-wave',
             'group' => 'SDM & Personel',
         ],
 
         // Rekanan & Subkontraktor
         'subcontractor' => [
             'label' => 'Subkontraktor',
-            'icon' => '🏗️',
+            'icon' => 'hard-hat',
             'group' => 'Rekanan & Subkontraktor',
         ],
         'consultant' => [
             'label' => 'Konsultan Eksternal',
-            'icon' => '👨‍💼',
+            'icon' => 'user-tie',
             'group' => 'Rekanan & Subkontraktor',
         ],
         'supplier' => [
             'label' => 'Rekanan/Partner',
-            'icon' => '🤝',
+            'icon' => 'handshake',
             'group' => 'Rekanan & Subkontraktor',
         ],
 
         // Layanan Teknis
         'laboratory' => [
             'label' => 'Laboratorium',
-            'icon' => '🔬',
+            'icon' => 'microscope',
             'group' => 'Layanan Teknis',
         ],
         'survey' => [
             'label' => 'Survey & Pengukuran',
-            'icon' => '📐',
+            'icon' => 'ruler-combined',
             'group' => 'Layanan Teknis',
         ],
         'testing' => [
             'label' => 'Testing & Inspeksi',
-            'icon' => '🧪',
+            'icon' => 'vial',
             'group' => 'Layanan Teknis',
         ],
         'certification' => [
             'label' => 'Sertifikasi',
-            'icon' => '📋',
+            'icon' => 'certificate',
             'group' => 'Layanan Teknis',
         ],
 
         // Peralatan & Perlengkapan
         'equipment_rental' => [
             'label' => 'Sewa Alat',
-            'icon' => '🚜',
+            'icon' => 'truck-moving',
             'group' => 'Peralatan & Perlengkapan',
         ],
         'equipment_purchase' => [
             'label' => 'Pembelian Alat',
-            'icon' => '🛠️',
+            'icon' => 'tools',
             'group' => 'Peralatan & Perlengkapan',
         ],
         'materials' => [
             'label' => 'Perlengkapan & Supplies',
-            'icon' => '📦',
+            'icon' => 'box',
             'group' => 'Peralatan & Perlengkapan',
         ],
         'maintenance' => [
             'label' => 'Maintenance & Perbaikan',
-            'icon' => '🔧',
+            'icon' => 'wrench',
             'group' => 'Peralatan & Perlengkapan',
         ],
 
         // Operasional
         'travel' => [
             'label' => 'Perjalanan Dinas',
-            'icon' => '✈️',
+            'icon' => 'plane',
             'group' => 'Operasional',
         ],
         'accommodation' => [
             'label' => 'Akomodasi',
-            'icon' => '🏨',
+            'icon' => 'hotel',
             'group' => 'Operasional',
         ],
         'transportation' => [
             'label' => 'Transportasi',
-            'icon' => '🚗',
+            'icon' => 'car',
             'group' => 'Operasional',
         ],
         'communication' => [
             'label' => 'Komunikasi & Internet',
-            'icon' => '📞',
+            'icon' => 'phone',
             'group' => 'Operasional',
         ],
         'office_supplies' => [
             'label' => 'ATK & Supplies',
-            'icon' => '📝',
+            'icon' => 'file-alt',
             'group' => 'Operasional',
         ],
         'printing' => [
             'label' => 'Printing & Dokumen',
-            'icon' => '🖨️',
+            'icon' => 'print',
             'group' => 'Operasional',
         ],
 
         // Legal & Administrasi
         'permit' => [
             'label' => 'Perizinan',
-            'icon' => '📜',
+            'icon' => 'file-contract',
             'group' => 'Legal & Administrasi',
         ],
         'insurance' => [
             'label' => 'Asuransi',
-            'icon' => '🛡️',
+            'icon' => 'shield-alt',
             'group' => 'Legal & Administrasi',
         ],
         'tax' => [
             'label' => 'Pajak & Retribusi',
-            'icon' => '💵',
+            'icon' => 'dollar-sign',
             'group' => 'Legal & Administrasi',
         ],
         'legal' => [
             'label' => 'Legal & Notaris',
-            'icon' => '⚖️',
+            'icon' => 'balance-scale',
             'group' => 'Legal & Administrasi',
         ],
         'administration' => [
             'label' => 'Administrasi',
-            'icon' => '📋',
+            'icon' => 'clipboard-list',
             'group' => 'Legal & Administrasi',
         ],
 
         // Marketing & Lainnya
         'marketing' => [
             'label' => 'Marketing & Promosi',
-            'icon' => '📢',
+            'icon' => 'bullhorn',
             'group' => 'Marketing & Lainnya',
         ],
         'entertainment' => [
             'label' => 'Entertainment & Jamuan',
-            'icon' => '🍽️',
+            'icon' => 'utensils',
             'group' => 'Marketing & Lainnya',
         ],
         'donation' => [
             'label' => 'Donasi & CSR',
-            'icon' => '🎁',
+            'icon' => 'gift',
             'group' => 'Marketing & Lainnya',
         ],
         'other' => [
             'label' => 'Lainnya',
-            'icon' => '📌',
+            'icon' => 'ellipsis-h',
             'group' => 'Marketing & Lainnya',
         ],
     ];
@@ -306,6 +306,26 @@ class ProjectExpense extends Model
 
     public function getCategoryIconAttribute()
     {
-        return self::CATEGORY_DEFINITIONS[$this->category]['icon'] ?? '📌';
+        return self::CATEGORY_DEFINITIONS[$this->category]['icon'] ?? 'ellipsis-h';
+    }
+
+    /**
+     * Render category icon as Font Awesome HTML
+     */
+    public function getCategoryIconHtmlAttribute()
+    {
+        $icon = $this->category_icon;
+        return '<i class="fas fa-' . $icon . '" style="color: rgba(235, 235, 245, 0.4);"></i>';
+    }
+
+    /**
+     * Static method to render icon HTML for a category
+     */
+    public static function renderCategoryIcon(string $category, string $additionalClass = ''): string
+    {
+        $icon = self::CATEGORY_DEFINITIONS[$category]['icon'] ?? 'ellipsis-h';
+        $class = 'fas fa-' . $icon . ($additionalClass ? ' ' . $additionalClass : '');
+        return '<i class="' . $class . '"></i>';
     }
 }
+
