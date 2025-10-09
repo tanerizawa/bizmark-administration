@@ -1054,15 +1054,15 @@
                             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
                             onchange="checkOverrideNeeded()">
                         <option value="">-- Pilih Status --</option>
-                        <option value="not_started">Belum Dimulai</option>
-                        <option value="in_progress">Dalam Proses</option>
-                        <option value="submitted">Sudah Diajukan</option>
-                        <option value="under_review">Dalam Review</option>
-                        <option value="revision_required">Perlu Revisi</option>
-                        <option value="approved">Disetujui</option>
-                        <option value="rejected">Ditolak</option>
-                        <option value="on_hold">Ditunda</option>
-                        <option value="cancelled">Dibatalkan</option>
+                        <option value="NOT_STARTED">Belum Dimulai</option>
+                        <option value="IN_PROGRESS">Dalam Proses</option>
+                        <option value="SUBMITTED">Sudah Diajukan</option>
+                        <option value="UNDER_REVIEW">Dalam Review</option>
+                        <option value="REVISION_REQUIRED">Perlu Revisi</option>
+                        <option value="APPROVED">Disetujui</option>
+                        <option value="REJECTED">Ditolak</option>
+                        <option value="ON_HOLD">Ditunda</option>
+                        <option value="CANCELLED">Dibatalkan</option>
                     </select>
                 </div>
 
@@ -1481,13 +1481,13 @@ function closeUpdateStatusModal() {
 }
 
 function checkOverrideNeeded() {
-    const newStatus = document.getElementById('new-status').value;
+    const newStatus = document.getElementById('new-status').value.toUpperCase();
     const overrideSection = document.getElementById('override-section');
     const overrideReason = document.getElementById('override-reason');
     const canProceedInput = document.getElementById('can-proceed-without');
     
     // Status yang butuh dependency check
-    const statusesNeedingCheck = ['in_progress', 'submitted', 'under_review', 'approved'];
+    const statusesNeedingCheck = ['IN_PROGRESS', 'SUBMITTED', 'UNDER_REVIEW', 'APPROVED'];
     
     if (!currentPermitData) return;
     
@@ -1509,18 +1509,21 @@ function checkOverrideNeeded() {
 }
 
 function getStatusLabel(status) {
+    const statusKey = String(status || '').toUpperCase();
     const labels = {
-        'not_started': 'Belum Dimulai',
-        'in_progress': 'Dalam Proses',
-        'submitted': 'Sudah Diajukan',
-        'under_review': 'Dalam Review',
-        'revision_required': 'Perlu Revisi',
-        'approved': 'Disetujui',
-        'rejected': 'Ditolak',
-        'on_hold': 'Ditunda',
-        'cancelled': 'Dibatalkan'
+        'NOT_STARTED': 'Belum Dimulai',
+        'IN_PROGRESS': 'Dalam Proses',
+        'SUBMITTED': 'Sudah Diajukan',
+        'UNDER_REVIEW': 'Dalam Review',
+        'REVISION_REQUIRED': 'Perlu Revisi',
+        'APPROVED': 'Disetujui',
+        'REJECTED': 'Ditolak',
+        'ON_HOLD': 'Ditunda',
+        'CANCELLED': 'Dibatalkan',
+        'EXISTING': 'Sudah Ada',
+        'WAITING_DOC': 'Menunggu Dokumen'
     };
-    return labels[status] || status;
+    return labels[statusKey] || status;
 }
 
 function deletePermit(permitId) {
@@ -2124,9 +2127,11 @@ function checkCircularDependency(currentPermitId, targetPermitId) {
 }
 
 function getStatusLabel(status) {
+    const statusKey = String(status || '').toUpperCase();
     const labels = {
         'NOT_STARTED': 'Belum Dimulai',
         'IN_PROGRESS': 'Dalam Proses',
+        'WAITING_DOC': 'Menunggu Dokumen',
         'SUBMITTED': 'Sudah Diajukan',
         'UNDER_REVIEW': 'Dalam Review',
         'APPROVED': 'Disetujui',
@@ -2134,7 +2139,7 @@ function getStatusLabel(status) {
         'REJECTED': 'Ditolak',
         'CANCELLED': 'Dibatalkan'
     };
-    return labels[status] || status;
+    return labels[statusKey] || status;
 }
 
 </script>
