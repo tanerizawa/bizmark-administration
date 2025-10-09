@@ -32,7 +32,7 @@
                 <div class="flex justify-between items-center py-1">
                     <span class="text-xs" style="color: rgba(235, 235, 245, 0.7);">
                         <i class="fas fa-arrow-up text-xs mr-1.5" style="color: rgba(235, 235, 245, 0.4);"></i>
-                        Pembayaran kepada pemasok
+                        Pembayaran operasional & rekanan
                     </span>
                     <span class="text-xs font-semibold" style="color: rgba(255, 59, 48, 1);">
                         (Rp {{ number_format($cashFlowStatement['operating_payments']) }})

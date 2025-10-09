@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('project_id')->nullable()->constrained()->onDelete('cascade')->comment('NULL = general expense');
             $table->date('expense_date')->comment('Tanggal pengeluaran');
             $table->enum('category', ['vendor', 'laboratory', 'survey', 'travel', 'operational', 'tax', 'other']);
-            $table->string('vendor_name', 255)->nullable()->comment('Nama vendor/penerima');
+            $table->string('vendor_name', 255)->nullable()->comment('Nama rekanan/penerima pembayaran');
             $table->decimal('amount', 15, 2)->comment('Nominal pengeluaran');
             $table->enum('payment_method', ['transfer', 'cash', 'check', 'other'])->default('transfer');
             $table->foreignId('bank_account_id')->nullable()->constrained('cash_accounts')->onDelete('set null')->comment('Rekening sumber');

@@ -24,21 +24,21 @@ class ProjectExpense extends Model
             'group' => 'SDM & Personel',
         ],
 
-        // Vendor & Subkontraktor
+        // Rekanan & Subkontraktor
         'subcontractor' => [
             'label' => 'Subkontraktor',
             'icon' => '🏗️',
-            'group' => 'Vendor & Subkontraktor',
+            'group' => 'Rekanan & Subkontraktor',
         ],
         'consultant' => [
             'label' => 'Konsultan Eksternal',
             'icon' => '👨‍💼',
-            'group' => 'Vendor & Subkontraktor',
+            'group' => 'Rekanan & Subkontraktor',
         ],
         'supplier' => [
-            'label' => 'Supplier/Vendor',
-            'icon' => '📦',
-            'group' => 'Vendor & Subkontraktor',
+            'label' => 'Rekanan/Partner',
+            'icon' => '🤝',
+            'group' => 'Rekanan & Subkontraktor',
         ],
 
         // Layanan Teknis
@@ -63,26 +63,26 @@ class ProjectExpense extends Model
             'group' => 'Layanan Teknis',
         ],
 
-        // Peralatan & Material
+        // Peralatan & Perlengkapan
         'equipment_rental' => [
             'label' => 'Sewa Alat',
             'icon' => '🚜',
-            'group' => 'Peralatan & Material',
+            'group' => 'Peralatan & Perlengkapan',
         ],
         'equipment_purchase' => [
             'label' => 'Pembelian Alat',
             'icon' => '🛠️',
-            'group' => 'Peralatan & Material',
+            'group' => 'Peralatan & Perlengkapan',
         ],
         'materials' => [
-            'label' => 'Bahan & Material',
+            'label' => 'Perlengkapan & Supplies',
             'icon' => '📦',
-            'group' => 'Peralatan & Material',
+            'group' => 'Peralatan & Perlengkapan',
         ],
         'maintenance' => [
             'label' => 'Maintenance & Perbaikan',
             'icon' => '🔧',
-            'group' => 'Peralatan & Material',
+            'group' => 'Peralatan & Perlengkapan',
         ],
 
         // Operasional
