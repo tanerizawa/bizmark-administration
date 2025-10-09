@@ -163,7 +163,12 @@ class ProjectController extends Controller
         $receivableOutstanding = $project->expenses()
             ->where('is_receivable', true)
             ->whereIn('receivable_status', ['pending', 'partial'])
-            ->sum('amount');
+            ->get()
+            ->sum(function ($expense) {
+                $remaining = ($expense->amount ?? 0) - ($expense->receivable_paid_amount ?? 0);
+
+                return max($remaining, 0);
+            });
         
         $profitMargin = $totalReceived - $totalExpenses;
 
