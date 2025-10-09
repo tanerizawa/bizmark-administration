@@ -534,13 +534,13 @@
                         @if($project->tasks->count() > 0)
                         <div class="mt-1 flex justify-between text-xs">
                             <span style="color: rgba(52, 199, 89, 0.9);">
-                                <i class="fas fa-check-circle mr-1"></i>{{ $project->tasks->where('status', 'completed')->count() }} selesai
+                                <i class="fas fa-check-circle mr-1"></i>{{ $project->tasks->where('status', 'done')->count() }} selesai
                             </span>
                             <span style="color: rgba(255, 204, 0, 0.9);">
                                 <i class="fas fa-clock mr-1"></i>{{ $project->tasks->where('status', 'in_progress')->count() }} berjalan
                             </span>
                             <span style="color: rgba(255, 149, 0, 0.9);">
-                                <i class="fas fa-pause-circle mr-1"></i>{{ $project->tasks->whereIn('status', ['pending', 'on_hold'])->count() }} pending
+                                <i class="fas fa-pause-circle mr-1"></i>{{ $project->tasks->whereIn('status', ['todo', 'blocked'])->count() }} pending
                             </span>
                         </div>
                         @endif
