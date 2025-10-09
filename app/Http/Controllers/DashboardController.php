@@ -347,6 +347,7 @@ class DashboardController extends Controller
         }
 
         return [
+            'total_balance' => $currentBalance, // Added for view compatibility
             'available_cash' => $currentBalance,
             'current_balance' => $currentBalance,
             'monthly_burn_rate' => $monthlyBurnRate,
@@ -394,10 +395,23 @@ class DashboardController extends Controller
         // Total cash balance from all accounts
         $totalCashBalance = CashAccount::sum('current_balance');
 
-        // This month payments (in)
-        $paymentsThisMonth = ProjectPayment::whereYear('payment_date', $thisMonth->year)
+        // This month income from multiple sources:
+        // 1. Invoice payments (from payment_schedules with paid status)
+        $invoicePaymentsThisMonth = \DB::table('payment_schedules')
+            ->join('invoices', 'payment_schedules.invoice_id', '=', 'invoices.id')
+            ->where('payment_schedules.status', 'paid')
+            ->whereNotNull('payment_schedules.paid_date')
+            ->whereYear('payment_schedules.paid_date', $thisMonth->year)
+            ->whereMonth('payment_schedules.paid_date', $thisMonth->month)
+            ->sum('payment_schedules.amount');
+
+        // 2. Direct project payments (legacy - not linked to invoice)
+        $directPaymentsThisMonth = ProjectPayment::whereNull('invoice_id')
+            ->whereYear('payment_date', $thisMonth->year)
             ->whereMonth('payment_date', $thisMonth->month)
             ->sum('amount');
+
+        $paymentsThisMonth = $invoicePaymentsThisMonth + $directPaymentsThisMonth;
 
         // This month expenses (out)
         $expensesThisMonth = ProjectExpense::whereYear('expense_date', $thisMonth->year)
@@ -405,16 +419,37 @@ class DashboardController extends Controller
             ->sum('amount');
 
         // Year to date totals
-        $paymentsYTD = ProjectPayment::whereYear('payment_date', $thisMonth->year)
+        $invoicePaymentsYTD = \DB::table('payment_schedules')
+            ->join('invoices', 'payment_schedules.invoice_id', '=', 'invoices.id')
+            ->where('payment_schedules.status', 'paid')
+            ->whereNotNull('payment_schedules.paid_date')
+            ->whereYear('payment_schedules.paid_date', $thisMonth->year)
+            ->sum('payment_schedules.amount');
+
+        $directPaymentsYTD = ProjectPayment::whereNull('invoice_id')
+            ->whereYear('payment_date', $thisMonth->year)
             ->sum('amount');
+
+        $paymentsYTD = $invoicePaymentsYTD + $directPaymentsYTD;
         
         $expensesYTD = ProjectExpense::whereYear('expense_date', $thisMonth->year)
             ->sum('amount');
 
         // Last month payments
-        $paymentsLastMonth = ProjectPayment::whereYear('payment_date', $lastMonth->year)
+        $invoicePaymentsLastMonth = \DB::table('payment_schedules')
+            ->join('invoices', 'payment_schedules.invoice_id', '=', 'invoices.id')
+            ->where('payment_schedules.status', 'paid')
+            ->whereNotNull('payment_schedules.paid_date')
+            ->whereYear('payment_schedules.paid_date', $lastMonth->year)
+            ->whereMonth('payment_schedules.paid_date', $lastMonth->month)
+            ->sum('payment_schedules.amount');
+
+        $directPaymentsLastMonth = ProjectPayment::whereNull('invoice_id')
+            ->whereYear('payment_date', $lastMonth->year)
             ->whereMonth('payment_date', $lastMonth->month)
             ->sum('amount');
+
+        $paymentsLastMonth = $invoicePaymentsLastMonth + $directPaymentsLastMonth;
 
         // Last month expenses
         $expensesLastMonth = ProjectExpense::whereYear('expense_date', $lastMonth->year)
@@ -435,8 +470,14 @@ class DashboardController extends Controller
             ? round((($expensesThisMonth - $expensesLastMonth) / $expensesLastMonth) * 100, 1)
             : 0;
 
+        // Calculate totals for invoicing
+        $totalInvoiced = Invoice::sum('total_amount');
+        $totalReceived = Invoice::sum('paid_amount');
+
         return [
             'total_cash_balance' => $totalCashBalance,
+            'this_month_income' => $paymentsThisMonth, // Added for compatibility
+            'this_month_expenses' => $expensesThisMonth, // Added for compatibility
             'payments_this_month' => $paymentsThisMonth,
             'expenses_this_month' => $expensesThisMonth,
             'net_this_month' => $netThisMonth,
@@ -448,7 +489,9 @@ class DashboardController extends Controller
             'net_last_month' => $netLastMonth,
             'payments_growth' => $paymentsGrowth,
             'expenses_growth' => $expensesGrowth,
-            'is_profitable' => $netThisMonth > 0
+            'is_profitable' => $netThisMonth > 0,
+            'total_invoiced' => $totalInvoiced, // Added for invoice stats
+            'total_received' => $totalReceived, // Added for invoice stats
         ];
     }
 
@@ -550,15 +593,23 @@ class DashboardController extends Controller
     private function getBudgetStatus()
     {
         // Get top 5 projects by budget variance (over budget or close to budget)
-        $projects = Project::with(['status'])
-            ->whereNotNull('budget')
-            ->where('budget', '>', 0)
+        $projects = Project::with(['status', 'expenses'])
+            ->whereNotNull('contract_value')
+            ->where('contract_value', '>', 0)
             ->get()
             ->map(function($project) {
-                $project->variance = $project->actual_cost - $project->budget;
-                $project->variance_percentage = round(($project->actual_cost / $project->budget) * 100, 1);
+                // Use contract_value as budget (new system)
+                $budget = $project->contract_value > 0 ? $project->contract_value : ($project->budget ?? 0);
+                
+                // Calculate actual expenses from project_expenses table
+                $actualExpenses = $project->expenses()->sum('amount');
+                
+                $project->variance = $actualExpenses - $budget;
+                $project->variance_percentage = $budget > 0 ? round(($actualExpenses / $budget) * 100, 1) : 0;
                 $project->is_over_budget = $project->variance > 0;
                 $project->is_near_budget = $project->variance_percentage >= 80 && $project->variance_percentage <= 100;
+                $project->actual_expenses = $actualExpenses;
+                $project->budget_display = $budget;
                 
                 // Status color
                 if ($project->variance_percentage > 100) {
@@ -574,9 +625,13 @@ class DashboardController extends Controller
             ->sortByDesc('variance_percentage')
             ->take(5);
 
-        // Summary stats
-        $totalBudget = Project::sum('budget');
-        $totalSpent = Project::sum('actual_cost');
+        // Summary stats - use contract_value (new) or fallback to budget (legacy)
+        $totalBudget = Project::selectRaw('SUM(COALESCE(NULLIF(contract_value, 0), budget)) as total')
+            ->value('total') ?? 0;
+        
+        // Total spent from all project expenses
+        $totalSpent = ProjectExpense::sum('amount');
+        
         $overallUtilization = $totalBudget > 0 ? round(($totalSpent / $totalBudget) * 100, 1) : 0;
 
         return [
