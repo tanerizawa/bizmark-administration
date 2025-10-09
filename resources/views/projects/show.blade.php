@@ -766,10 +766,10 @@
                             <option value="commission">🤝 Komisi</option>
                             <option value="allowance">💰 Tunjangan & Bonus</option>
                         </optgroup>
-                        <optgroup label="Vendor & Subkontraktor">
+                        <optgroup label="Rekanan & Subkontraktor">
                             <option value="subcontractor">🏗️ Subkontraktor</option>
                             <option value="consultant">👨‍💼 Konsultan Eksternal</option>
-                            <option value="supplier">📦 Supplier/Vendor</option>
+                            <option value="supplier">🤝 Rekanan/Partner</option>
                         </optgroup>
                         <optgroup label="Layanan Teknis">
                             <option value="laboratory">🔬 Laboratorium</option>
@@ -777,10 +777,10 @@
                             <option value="testing">🧪 Testing & Inspeksi</option>
                             <option value="certification">📋 Sertifikasi</option>
                         </optgroup>
-                        <optgroup label="Peralatan & Material">
+                        <optgroup label="Peralatan & Perlengkapan">
                             <option value="equipment_rental">🚜 Sewa Alat</option>
                             <option value="equipment_purchase">🛠️ Pembelian Alat</option>
-                            <option value="materials">📦 Bahan & Material</option>
+                            <option value="materials">📦 Perlengkapan & Supplies</option>
                             <option value="maintenance">🔧 Maintenance & Perbaikan</option>
                         </optgroup>
                         <optgroup label="Operasional">
@@ -808,9 +808,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Nama Vendor</label>
+                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Nama Rekanan/Penerima</label>
                     <input type="text" name="vendor_name" maxlength="255"
-                           class="input-dark w-full px-4 py-2.5 rounded-lg" placeholder="Nama vendor/penerima">
+                           class="input-dark w-full px-4 py-2.5 rounded-lg" placeholder="Nama rekanan atau penerima pembayaran">
                 </div>
 
                 <div>

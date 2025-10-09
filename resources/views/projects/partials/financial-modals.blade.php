@@ -354,10 +354,10 @@
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Vendor Name</label>
+                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Nama Rekanan/Penerima</label>
                 <input type="text" name="vendor_name" maxlength="255"
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
-                       placeholder="Vendor/supplier name">
+                       placeholder="Nama rekanan atau penerima pembayaran">
             </div>
 
             <div class="mb-4">
