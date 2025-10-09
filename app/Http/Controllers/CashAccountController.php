@@ -595,9 +595,15 @@ class CashAccountController extends Controller
         }
         
         // Get expenses
+        // Strategy: Include expenses from this account OR unassigned expenses (bank_account_id = NULL)
+        // Unassigned expenses will appear in ALL accounts (by design, to ensure they're visible)
+        // This is intentional to prevent "lost" transactions
         if ($transactionType === 'all' || $transactionType === 'expense') {
             $expenses = ProjectExpense::with('project')
-                ->where('bank_account_id', $cashAccount->id)
+                ->where(function($query) use ($cashAccount) {
+                    $query->where('bank_account_id', $cashAccount->id)
+                          ->orWhereNull('bank_account_id');
+                })
                 ->whereBetween('expense_date', [$startDate, $endDate])
                 ->get()
                 ->map(function($expense) {
