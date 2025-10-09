@@ -7,6 +7,7 @@ use App\Models\ProjectExpense;
 use App\Models\CashAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ProjectExpenseController extends Controller
 {
@@ -14,7 +15,7 @@ class ProjectExpenseController extends Controller
     {
         $validated = $request->validate([
             'expense_date' => 'required|date',
-            'category' => 'required|in:vendor,laboratory,survey,travel,operational,tax,other',
+            'category' => ['required', Rule::in(ProjectExpense::categoryKeys())],
             'vendor_name' => 'nullable|string|max:255',
             'amount' => 'required|numeric|min:0',
             'payment_method' => 'required|in:transfer,cash,check,other',
