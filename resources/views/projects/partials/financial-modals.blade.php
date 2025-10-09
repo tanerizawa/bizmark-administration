@@ -296,16 +296,19 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Category<span class="text-red-500">*</span></label>
+                @php($categoryGroups = \App\Models\ProjectExpense::categoriesByGroup())
                 <select name="category" required
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Select category...</option>
-                    <option value="vendor">Vendor/Subkon</option>
-                    <option value="laboratory">Laboratory</option>
-                    <option value="survey">Survey</option>
-                    <option value="travel">Travel</option>
-                    <option value="operational">Operational</option>
-                    <option value="tax">Tax</option>
-                    <option value="other">Other</option>
+                    @foreach($categoryGroups as $groupLabel => $categories)
+                        <optgroup label="{{ $groupLabel }}">
+                            @foreach($categories as $value => $category)
+                                <option value="{{ $value }}" {{ old('category') === $value ? 'selected' : '' }}>
+                                    {{ $category['label'] }}
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @endforeach
                 </select>
             </div>
 
