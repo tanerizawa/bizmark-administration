@@ -61,7 +61,7 @@ class CashAccountController extends Controller
         // Get comprehensive financial data with date range
         $financialSummary = $this->getFinancialSummary($startDate, $endDate);
         $cashFlowStatement = $this->getCashFlowStatement($startDate, $endDate);
-        $recentTransactions = $this->getRecentTransactions(15, $startDate, $endDate);
+        $recentTransactions = $this->getRecentTransactions(50, $startDate, $endDate); // Increased from 15 to 50
         
         return view('cash-accounts.index', compact(
             'accounts',
