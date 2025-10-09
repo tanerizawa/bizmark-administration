@@ -57,15 +57,28 @@ class ProjectController extends Controller
 
         // Calculate statistics for this filtered view
         $totalProjects = Project::count();
+        
+        // In Progress: All active work statuses (not lead, not completed, not cancelled)
         $inProgressProjects = Project::whereHas('status', function($q) {
-            $q->whereIn('code', ['KONTRAK', 'PENGUMPULAN_DOK', 'PROSES_DLH', 'PROSES_BPN', 'PROSES_OSS', 'PROSES_NOTARIS', 'MENUNGGU_PERSETUJUAN']);
+            $q->whereIn('code', [
+                'CONTRACT',           // Kontrak
+                'PREPARATION',        // Persiapan
+                'IN_PROGRESS',        // Dalam Pengerjaan
+                'REVIEW',             // Review
+                'WAITING_APPROVAL',   // Menunggu Persetujuan
+                'REVISION'            // Revisi
+            ]);
         })->count();
+        
+        // Completed: Projects marked as completed or closed successfully
         $completedProjects = Project::whereHas('status', function($q) {
-            $q->where('code', 'SK_TERBIT');
+            $q->whereIn('code', ['COMPLETED', 'CLOSED']);
         })->count();
+        
+        // Overdue: Projects past deadline and not completed/cancelled/on hold
         $overdueProjects = Project::where('deadline', '<', now())
             ->whereHas('status', function($q) {
-                $q->whereNotIn('code', ['SK_TERBIT', 'DIBATALKAN']);
+                $q->whereNotIn('code', ['COMPLETED', 'CLOSED', 'CANCELLED', 'ON_HOLD']);
             })->count();
 
         return view('projects.index', compact(
