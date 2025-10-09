@@ -523,14 +523,20 @@ class CashAccountController extends Controller
 
     /**
      * Get comprehensive account mutations (all transactions)
+     * 
+     * NOTE: Invoice payments (payment_schedules) tidak bisa di-filter per cash account
+     * karena tabel payment_schedules tidak memiliki kolom cash_account_id.
+     * Semua invoice payments akan ditampilkan untuk semua akun.
+     * 
+     * TODO: Tambahkan kolom cash_account_id ke payment_schedules untuk filtering yang lebih akurat
      */
     private function getAccountMutations(CashAccount $cashAccount, $startDate, $endDate, $transactionType = 'all')
     {
         $mutations = collect();
         
-        // Note: Since payment_schedules doesn't have cash_account_id FK,
-        // we cannot filter invoice payments by specific account
-        // All invoice payments affect the primary cash account as per FinancialController logic
+        // WARNING: payment_schedules tidak memiliki cash_account_id FK
+        // Semua invoice payments ditampilkan tanpa filter akun
+        // Ini bisa menyebabkan transaksi dari akun lain muncul di sini
         
         // Get invoice payments from payment_schedules (status = paid)
         if ($transactionType === 'all' || $transactionType === 'income') {
@@ -570,6 +576,7 @@ class CashAccountController extends Controller
         if ($transactionType === 'all' || $transactionType === 'income') {
             $manualPayments = ProjectPayment::with('project')
                 ->whereNull('invoice_id')
+                ->where('bank_account_id', $cashAccount->id)
                 ->whereBetween('payment_date', [$startDate, $endDate])
                 ->get()
                 ->map(function($payment) {
@@ -590,6 +597,7 @@ class CashAccountController extends Controller
         // Get expenses
         if ($transactionType === 'all' || $transactionType === 'expense') {
             $expenses = ProjectExpense::with('project')
+                ->where('bank_account_id', $cashAccount->id)
                 ->whereBetween('expense_date', [$startDate, $endDate])
                 ->get()
                 ->map(function($expense) {
