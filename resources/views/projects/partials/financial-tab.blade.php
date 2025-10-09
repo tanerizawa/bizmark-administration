@@ -241,17 +241,17 @@
         <button onclick="filterExpenses('all')" 
                 class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
                 style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(235, 235, 245, 0.9);">
-            📋 Semua ({{ $countAll }})
+            <i class="fas fa-list mr-1.5" style="color: rgba(235, 235, 245, 0.4);"></i>Semua ({{ $countAll }})
         </button>
         <button onclick="filterExpenses('kasbon')" 
                 class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
                 style="background: rgba(255, 204, 0, 0.15); border: 1px solid rgba(255, 204, 0, 0.3); color: rgba(255, 204, 0, 1);">
-            💰 Kasbon/Piutang Internal ({{ $countKasbon }})
+            <i class="fas fa-money-bill-wave mr-1.5" style="color: rgba(255, 204, 0, 0.6);"></i>Kasbon/Piutang Internal ({{ $countKasbon }})
         </button>
         <button onclick="filterExpenses('regular')" 
                 class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
                 style="background: rgba(10, 132, 255, 0.15); border: 1px solid rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);">
-            📝 Pengeluaran Operasional ({{ $countRegular }})
+            <i class="fas fa-file-invoice mr-1.5" style="color: rgba(10, 132, 255, 0.6);"></i>Pengeluaran Operasional ({{ $countRegular }})
         </button>
     </div>
 
@@ -299,18 +299,18 @@
                     </td>
                     <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
                         <span class="inline-flex items-center">
-                            {{ $expense->category_icon }} 
-                            <span class="ml-1">{{ $expense->category_name }}</span>
+                            <i class="fas fa-{{ $expense->category_icon }} mr-1.5" style="color: rgba(235, 235, 245, 0.4);"></i>
+                            <span>{{ $expense->category_name }}</span>
                         </span>
                     </td>
                     <td class="py-1.5 px-2 text-center">
                         @if($expense->is_receivable && $expense->receivable_status != 'paid')
-                        <span class="inline-flex px-2 py-0.5 text-xs rounded-full" style="background: rgba(255, 204, 0, 0.2); color: rgba(255, 204, 0, 1);">
-                            💰 Kasbon
+                        <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full" style="background: rgba(255, 204, 0, 0.2); color: rgba(255, 204, 0, 1);">
+                            <i class="fas fa-money-bill-wave mr-1" style="color: rgba(255, 204, 0, 0.6);"></i> Kasbon
                         </span>
                         @else
-                        <span class="inline-flex px-2 py-0.5 text-xs rounded-full" style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
-                            📋 Operasional
+                        <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full" style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
+                            <i class="fas fa-file-invoice mr-1" style="color: rgba(10, 132, 255, 0.6);"></i> Operasional
                         </span>
                         @endif
                     </td>
