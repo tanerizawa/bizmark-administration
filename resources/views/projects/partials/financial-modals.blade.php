@@ -11,43 +11,83 @@
         </div>
 
         <form id="invoiceForm" onsubmit="submitInvoice(event)">
+            <!-- Client Information (Read-only) -->
+            @if($project->client)
+            <div class="rounded-lg p-4 mb-6" style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3);">
+                <div class="flex items-start">
+                    <div class="mr-3">
+                        <i class="fas fa-building text-xl" style="color: rgba(52, 199, 89, 0.9);"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-semibold mb-1" style="color: rgba(52, 199, 89, 1);">
+                            Invoice untuk Klien:
+                        </h4>
+                        <p class="text-base font-bold mb-1" style="color: #FFFFFF;">
+                            {{ $project->client->name }}
+                        </p>
+                        @if($project->client->company)
+                        <p class="text-sm mb-1" style="color: rgba(235, 235, 245, 0.8);">
+                            <i class="fas fa-briefcase mr-1"></i>{{ $project->client->company }}
+                        </p>
+                        @endif
+                        @if($project->client->address)
+                        <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                            <i class="fas fa-map-marker-alt mr-1"></i>{{ $project->client->address }}
+                        </p>
+                        @endif
+                        @if($project->client->phone)
+                        <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">
+                            <i class="fas fa-phone mr-1"></i>{{ $project->client->phone }}
+                        </p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @else
+            <div class="rounded-lg p-4 mb-6" style="background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.3);">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-3 text-xl" style="color: rgba(255, 59, 48, 0.9);"></i>
+                    <div>
+                        <p class="text-sm font-semibold" style="color: rgba(255, 59, 48, 1);">
+                            Proyek ini belum memiliki klien
+                        </p>
+                        <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">
+                            Silakan tambahkan klien ke proyek terlebih dahulu sebelum membuat invoice.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Invoice Header -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Invoice Date<span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tanggal Invoice<span class="text-red-500">*</span></label>
                     <input type="date" name="invoice_date" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            value="{{ date('Y-m-d') }}">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Due Date<span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Jatuh Tempo<span class="text-red-500">*</span></label>
                     <input type="date" name="due_date" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            value="{{ date('Y-m-d', strtotime('+30 days')) }}">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Client Name</label>
-                    <input type="text" name="client_name"
-                           class="input-dark w-full px-4 py-2.5 rounded-lg"
-                           value="{{ $project->client_name }}"
-                           placeholder="Client name">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tax Rate (%)<span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Pajak (%)<span class="text-red-500">*</span></label>
                     <input type="number" name="tax_rate" step="0.01" min="0" max="100" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            value="11" placeholder="11.00">
                 </div>
-            </div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Client Address</label>
-                <textarea name="client_address" rows="2"
-                          class="input-dark w-full px-4 py-2.5 rounded-lg"
-                          placeholder="Client address">{{ $project->client_address }}</textarea>
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">NPWP Klien (Opsional)</label>
+                    <input type="text" name="client_tax_id"
+                           class="input-dark w-full px-4 py-2.5 rounded-lg"
+                           placeholder="00.000.000.0-000.000">
+                </div>
             </div>
 
             <!-- Invoice Items -->
@@ -96,12 +136,13 @@
                 <button type="button" onclick="closeInvoiceModal()"
                         class="px-6 py-2.5 rounded-lg font-medium transition-colors"
                         style="background: rgba(58, 58, 60, 0.8); color: rgba(235, 235, 245, 0.8);">
-                    Cancel
+                    Batal
                 </button>
-                <button type="submit"
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors"
+                <button type="submit" id="submitInvoiceBtn"
+                        @if(!$project->client_id) disabled @endif
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors {{ !$project->client_id ? 'opacity-50 cursor-not-allowed' : '' }}"
                         style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
-                    <i class="fas fa-save mr-2"></i>Create Invoice
+                    <i class="fas fa-save mr-2"></i>Buat Invoice
                 </button>
             </div>
         </form>
