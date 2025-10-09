@@ -834,18 +834,18 @@ function markSchedulePaid(scheduleId) {
 
 // Expense Modal Functions
 function openExpenseModal() {
-    const modal = document.getElementById('expenseModal');
+    const modal = document.getElementById('financialExpenseModal');
     modal.classList.remove('hidden');
     modal.style.display = 'flex';
 }
 
 function closeExpenseModal() {
-    const modal = document.getElementById('expenseModal');
+    const modal = document.getElementById('financialExpenseModal');
     modal.classList.add('hidden');
     modal.style.display = 'none';
     
     // Reset form
-    const form = document.querySelector('#expenseModal form') || document.getElementById('financialExpenseForm');
+    const form = document.querySelector('#financialExpenseModal form') || document.getElementById('financialExpenseForm');
     if (form) {
         form.reset();
         
@@ -859,9 +859,9 @@ function closeExpenseModal() {
         }
         
         // Reset modal title
-        const modalTitle = document.querySelector('#expenseModal h3');
+        const modalTitle = document.querySelector('#financialExpenseModal h2');
         if (modalTitle) {
-            modalTitle.innerHTML = '<i class="fas fa-shopping-cart mr-2 text-apple-blue-dark"></i>Tambah Pengeluaran';
+            modalTitle.innerHTML = '<i class="fas fa-receipt mr-2" style="color: rgba(255, 59, 48, 1);"></i>Add Expense';
         }
         
         // Reset button text
@@ -1436,7 +1436,7 @@ function editExpense(expenseId) {
             methodInput.value = 'PATCH';
             
             // Change modal title
-            const modalTitle = document.querySelector('#expenseModal h3');
+            const modalTitle = document.querySelector('#financialExpenseModal h2');
             if (modalTitle) {
                 modalTitle.innerHTML = '<i class="fas fa-edit mr-2 text-apple-blue-dark"></i>Edit Pengeluaran';
             }
