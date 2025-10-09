@@ -365,9 +365,10 @@
                 <select name="payment_method" required
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Select method...</option>
-                    <option value="transfer">Bank Transfer</option>
+                    <option value="bank_transfer">Bank Transfer</option>
                     <option value="cash">Cash</option>
                     <option value="check">Check</option>
+                    <option value="giro">Giro</option>
                     <option value="other">Other</option>
                 </select>
             </div>
