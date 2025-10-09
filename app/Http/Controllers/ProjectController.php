@@ -303,16 +303,24 @@ class ProjectController extends Controller
             $date = now()->subMonths($i);
             $months[] = $date->format('M Y');
 
-            // Calculate income - fixed to avoid double counting
-            // Since payments are now linked to invoices via invoice_id,
-            // we calculate income from ALL payments in this month
-            // (both invoice-linked and manual payments)
-            $monthIncome = $project->payments()
+            // Calculate income from multiple sources:
+            // 1. Invoice payments (from payment_schedules with paid status)
+            $invoiceIncome = $project->paymentSchedules()
+                ->where('status', 'paid')
+                ->whereNotNull('paid_date')
+                ->whereMonth('paid_date', $date->month)
+                ->whereYear('paid_date', $date->year)
+                ->sum('amount');
+            
+            // 2. Direct project payments (legacy system - manual payments not linked to invoice)
+            $directIncome = $project->payments()
+                ->whereNull('invoice_id') // Only count payments NOT linked to invoice
                 ->whereMonth('payment_date', $date->month)
                 ->whereYear('payment_date', $date->year)
                 ->sum('amount');
             
-            $income[] = (float) $monthIncome;
+            $totalIncome = (float) ($invoiceIncome + $directIncome);
+            $income[] = $totalIncome;
 
             // Calculate expenses
             $monthExpense = $project->expenses()
