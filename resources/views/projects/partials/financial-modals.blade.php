@@ -1305,15 +1305,18 @@ function editExpense(expenseId) {
             const dateField = form.querySelector('input[name="expense_date"]');
             const amountField = form.querySelector('input[name="amount"]');
             const categoryField = form.querySelector('select[name="category"]');
-            
-            dateField.value = expense.expense_date;
-            amountField.value = expense.amount;
-            categoryField.value = expense.category;
-            form.querySelector('input[name="vendor_name"]').value = expense.vendor_name || '';
-            form.querySelector('select[name="payment_method"]').value = expense.payment_method;
-            form.querySelector('select[name="bank_account_id"]').value = expense.bank_account_id || '';
-            
+            const vendorField = form.querySelector('input[name="vendor_name"]');
+            const paymentMethodField = form.querySelector('select[name="payment_method"]');
+            const bankAccountField = form.querySelector('select[name="bank_account_id"]');
             const descField = form.querySelector('textarea[name="description"]') || form.querySelector('input[name="description"]');
+            
+            // Populate with null checks
+            if (dateField) dateField.value = expense.expense_date || '';
+            if (amountField) amountField.value = expense.amount || '';
+            if (categoryField) categoryField.value = expense.category || '';
+            if (vendorField) vendorField.value = expense.vendor_name || '';
+            if (paymentMethodField) paymentMethodField.value = expense.payment_method || '';
+            if (bankAccountField) bankAccountField.value = expense.bank_account_id || '';
             if (descField) descField.value = expense.description || '';
             
             // ============================================
