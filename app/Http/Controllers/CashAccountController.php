@@ -7,6 +7,7 @@ use App\Models\ProjectPayment;
 use App\Models\ProjectExpense;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class CashAccountController extends Controller
@@ -83,8 +84,19 @@ class CashAccountController extends Controller
     {
         $periods = [];
         
-        // Get payment dates
-        $paymentDates = ProjectPayment::selectRaw('YEAR(payment_date) as year, MONTH(payment_date) as month')
+        // Get invoice payment dates from payment_schedules
+        $invoicePaymentDates = DB::table('payment_schedules')
+            ->selectRaw('YEAR(paid_date) as year, MONTH(paid_date) as month')
+            ->where('status', 'paid')
+            ->whereNotNull('paid_date')
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+        
+        // Get legacy manual payment dates
+        $manualPaymentDates = ProjectPayment::selectRaw('YEAR(payment_date) as year, MONTH(payment_date) as month')
+            ->whereNull('invoice_id')
             ->groupBy('year', 'month')
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
@@ -98,7 +110,7 @@ class CashAccountController extends Controller
             ->get();
         
         // Merge and deduplicate
-        $allDates = $paymentDates->concat($expenseDates);
+        $allDates = $invoicePaymentDates->concat($manualPaymentDates)->concat($expenseDates);
         foreach ($allDates as $date) {
             $key = $date->year . '-' . str_pad($date->month, 2, '0', STR_PAD_LEFT);
             if (!isset($periods[$key])) {
@@ -169,14 +181,23 @@ class CashAccountController extends Controller
         
         $totalReceivables = $invoiceReceivables + $kasbonReceivables;
         
-        // This Period Cash Inflow
-        $cashInflowThisMonth = ProjectPayment::whereBetween('payment_date', [$startDate, $endDate])
-            ->whereNotNull('bank_account_id')
+        // This Period Cash Inflow from multiple sources:
+        // 1. Invoice payments (from payment_schedules with paid status)
+        $invoiceInflowThisMonth = \DB::table('payment_schedules')
+            ->where('status', 'paid')
+            ->whereNotNull('paid_date')
+            ->whereBetween('paid_date', [$startDate, $endDate])
             ->sum('amount');
+        
+        // 2. Direct project payments (legacy - not linked to invoice)
+        $directInflowThisMonth = ProjectPayment::whereNull('invoice_id')
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+        
+        $cashInflowThisMonth = $invoiceInflowThisMonth + $directInflowThisMonth;
         
         // This Period Cash Outflow
         $cashOutflowThisMonth = ProjectExpense::whereBetween('expense_date', [$startDate, $endDate])
-            ->whereNotNull('bank_account_id')
             ->where('is_receivable', false)
             ->sum('amount');
         
@@ -184,12 +205,19 @@ class CashAccountController extends Controller
         $netCashFlow = $cashInflowThisMonth - $cashOutflowThisMonth;
         
         // Last Period for comparison
-        $cashInflowLastMonth = ProjectPayment::whereBetween('payment_date', [$lastMonthStart, $lastMonthEnd])
-            ->whereNotNull('bank_account_id')
+        $invoiceInflowLastMonth = \DB::table('payment_schedules')
+            ->where('status', 'paid')
+            ->whereNotNull('paid_date')
+            ->whereBetween('paid_date', [$lastMonthStart, $lastMonthEnd])
             ->sum('amount');
         
+        $directInflowLastMonth = ProjectPayment::whereNull('invoice_id')
+            ->whereBetween('payment_date', [$lastMonthStart, $lastMonthEnd])
+            ->sum('amount');
+        
+        $cashInflowLastMonth = $invoiceInflowLastMonth + $directInflowLastMonth;
+        
         $cashOutflowLastMonth = ProjectExpense::whereBetween('expense_date', [$lastMonthStart, $lastMonthEnd])
-            ->whereNotNull('bank_account_id')
             ->where('is_receivable', false)
             ->sum('amount');
         
@@ -251,12 +279,20 @@ class CashAccountController extends Controller
         }
         
         // AKTIVITAS OPERASI
-        $operatingReceipts = ProjectPayment::whereBetween('payment_date', [$startDate, $endDate])
-            ->whereNotNull('bank_account_id')
+        // Cash Inflow: Invoice payments + Legacy manual payments
+        $invoiceReceipts = DB::table('payment_schedules')
+            ->where('status', 'paid')
+            ->whereNotNull('paid_date')
+            ->whereBetween('paid_date', [$startDate, $endDate])
             ->sum('amount');
         
+        $directReceipts = ProjectPayment::whereNull('invoice_id')
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+        
+        $operatingReceipts = $invoiceReceipts + $directReceipts;
+        
         $operatingPayments = ProjectExpense::whereBetween('expense_date', [$startDate, $endDate])
-            ->whereNotNull('bank_account_id')
             ->where('is_receivable', false)
             ->sum('amount');
         
@@ -304,32 +340,66 @@ class CashAccountController extends Controller
      */
     private function getRecentTransactions($limit = 15, $startDate = null, $endDate = null)
     {
-        // Get recent payments
-        $paymentsQuery = ProjectPayment::with(['project', 'bankAccount'])
-            ->whereNotNull('bank_account_id')
+        // Get recent invoice payments
+        $invoicePaymentsQuery = DB::table('payment_schedules')
+            ->join('projects', 'payment_schedules.project_id', '=', 'projects.id')
+            ->leftJoin('invoices', 'payment_schedules.invoice_id', '=', 'invoices.id')
+            ->select(
+                'payment_schedules.paid_date as date',
+                'payment_schedules.amount',
+                'payment_schedules.payment_method',
+                'projects.id as project_id',
+                'projects.name as project_name',
+                'invoices.invoice_number',
+                DB::raw("'inflow' as type")
+            )
+            ->where('payment_schedules.status', 'paid')
+            ->whereNotNull('payment_schedules.paid_date')
+            ->orderBy('payment_schedules.paid_date', 'desc');
+        
+        if ($startDate && $endDate) {
+            $invoicePaymentsQuery->whereBetween('payment_schedules.paid_date', [$startDate, $endDate]);
+        }
+        
+        $invoicePayments = $invoicePaymentsQuery->take($limit)
+            ->get()
+            ->map(function($payment) {
+                return [
+                    'type' => 'inflow',
+                    'date' => $payment->date,
+                    'description' => 'Pembayaran Invoice ' . ($payment->invoice_number ?? '') . ' - ' . $payment->project_name,
+                    'amount' => $payment->amount,
+                    'account_name' => $payment->payment_method ?? 'Unknown',
+                    'project_id' => $payment->project_id,
+                    'project_name' => $payment->project_name,
+                ];
+            });
+        
+        // Get legacy manual payments (not linked to invoice)
+        $directPaymentsQuery = ProjectPayment::with(['project'])
+            ->whereNull('invoice_id')
             ->orderBy('payment_date', 'desc');
         
         if ($startDate && $endDate) {
-            $paymentsQuery->whereBetween('payment_date', [$startDate, $endDate]);
+            $directPaymentsQuery->whereBetween('payment_date', [$startDate, $endDate]);
         }
         
-        $payments = $paymentsQuery->take($limit)
+        $directPayments = $directPaymentsQuery->take($limit)
             ->get()
             ->map(function($payment) {
                 return [
                     'type' => 'inflow',
                     'date' => $payment->payment_date,
-                    'description' => 'Pembayaran ' . ($payment->project->name ?? 'Unknown Project'),
+                    'description' => 'Pembayaran Manual - ' . ($payment->project->name ?? 'Unknown Project'),
                     'amount' => $payment->amount,
-                    'account_name' => $payment->bankAccount->account_name ?? 'Unknown',
+                    'account_name' => 'Manual Payment',
                     'project_id' => $payment->project_id,
                     'project_name' => $payment->project->name ?? null,
                 ];
             });
         
         // Get recent expenses
-        $expensesQuery = ProjectExpense::with(['project', 'bankAccount'])
-            ->whereNotNull('bank_account_id')
+        $expensesQuery = ProjectExpense::with(['project'])
             ->orderBy('expense_date', 'desc');
         
         if ($startDate && $endDate) {
@@ -344,15 +414,17 @@ class CashAccountController extends Controller
                     'date' => $expense->expense_date,
                     'description' => $expense->description ?? ($expense->vendor_name ? 'Pembayaran ke ' . $expense->vendor_name : ($expense->project->name ?? 'Unknown')),
                     'amount' => $expense->amount,
-                    'account_name' => $expense->bankAccount->account_name ?? 'Unknown',
+                    'account_name' => $expense->category ?? 'Unknown',
                     'project_id' => $expense->project_id,
                     'project_name' => $expense->project->name ?? null,
                     'notes' => $expense->category ?? null,
                 ];
             });
         
-        // Merge and sort by date
-        $transactions = $payments->concat($expenses)
+        // Merge all transactions and sort by date
+        $transactions = $invoicePayments
+            ->concat($directPayments)
+            ->concat($expenses)
             ->sortByDesc('date')
             ->take($limit)
             ->values();
