@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProjectPermitDependency extends Model
 {
+    public const TYPE_MANDATORY = 'MANDATORY';
+    public const TYPE_OPTIONAL = 'OPTIONAL';
+
     protected $fillable = [
         'project_permit_id',
         'depends_on_permit_id',
@@ -61,7 +64,7 @@ class ProjectPermitDependency extends Model
      */
     public function isMandatory(): bool
     {
-        return $this->dependency_type === 'MANDATORY';
+        return $this->dependency_type === self::TYPE_MANDATORY;
     }
 
     /**
@@ -69,7 +72,7 @@ class ProjectPermitDependency extends Model
      */
     public function isOptional(): bool
     {
-        return $this->dependency_type === 'OPTIONAL';
+        return $this->dependency_type === self::TYPE_OPTIONAL;
     }
 
     /**
@@ -85,6 +88,10 @@ class ProjectPermitDependency extends Model
      */
     public function isPrerequisiteCompleted(): bool
     {
-        return in_array($this->dependsOnPermit->status, ['APPROVED', 'EXISTING']);
+        return in_array(
+            $this->dependsOnPermit->status,
+            [ProjectPermit::STATUS_APPROVED, ProjectPermit::STATUS_EXISTING],
+            true
+        );
     }
 }

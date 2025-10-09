@@ -7,6 +7,7 @@ use App\Models\ProjectPermit;
 use App\Models\PermitType;
 use App\Models\PermitTemplate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProjectPermitController extends Controller
 {
@@ -28,7 +29,7 @@ class ProjectPermitController extends Controller
             'permit_type_id' => $validated['permit_type_id'],
             'sequence_order' => $maxSequence + 1,
             'is_goal_permit' => $validated['is_goal_permit'] ?? false,
-            'status' => 'not_started',
+            'status' => ProjectPermit::STATUS_NOT_STARTED,
             'notes' => $validated['notes'] ?? null,
         ]);
 
@@ -43,15 +44,17 @@ class ProjectPermitController extends Controller
     public function updateStatus(Request $request, ProjectPermit $permit)
     {
         $validated = $request->validate([
-            'status' => 'required|in:not_started,in_progress,waiting_doc,submitted,under_review,approved,rejected,existing,cancelled',
+            'status' => 'required|in:' . implode(',', ProjectPermit::STATUSES),
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'notes' => 'nullable|string',
             'override_reason' => 'nullable|string',
         ]);
 
+        $validated['status'] = Str::upper($validated['status']);
+
         // Check if trying to start without meeting dependencies
-        if ($validated['status'] === 'in_progress' && !$permit->canStart()) {
+        if ($validated['status'] === ProjectPermit::STATUS_IN_PROGRESS && !$permit->canStart()) {
             // Allow override if reason provided
             if (empty($validated['override_reason'])) {
                 return redirect()
@@ -142,7 +145,7 @@ class ProjectPermitController extends Controller
                 'permit_type_id' => $item->permit_type_id,
                 'sequence_order' => $startSequence + $item->sequence_order,
                 'is_goal_permit' => $item->is_goal_permit,
-                'status' => 'not_started',
+                'status' => ProjectPermit::STATUS_NOT_STARTED,
             ]);
 
             $itemsMap[$item->id] = $projectPermit->id;

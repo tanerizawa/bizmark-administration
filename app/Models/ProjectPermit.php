@@ -8,6 +8,28 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectPermit extends Model
 {
+    public const STATUS_NOT_STARTED = 'NOT_STARTED';
+    public const STATUS_IN_PROGRESS = 'IN_PROGRESS';
+    public const STATUS_WAITING_DOC = 'WAITING_DOC';
+    public const STATUS_SUBMITTED = 'SUBMITTED';
+    public const STATUS_UNDER_REVIEW = 'UNDER_REVIEW';
+    public const STATUS_APPROVED = 'APPROVED';
+    public const STATUS_REJECTED = 'REJECTED';
+    public const STATUS_EXISTING = 'EXISTING';
+    public const STATUS_CANCELLED = 'CANCELLED';
+
+    public const STATUSES = [
+        self::STATUS_NOT_STARTED,
+        self::STATUS_IN_PROGRESS,
+        self::STATUS_WAITING_DOC,
+        self::STATUS_SUBMITTED,
+        self::STATUS_UNDER_REVIEW,
+        self::STATUS_APPROVED,
+        self::STATUS_REJECTED,
+        self::STATUS_EXISTING,
+        self::STATUS_CANCELLED,
+    ];
+
     protected $fillable = [
         'project_id',
         'permit_type_id',
@@ -130,19 +152,19 @@ class ProjectPermit extends Model
      */
     public function canStart(): bool
     {
-        if ($this->status !== 'NOT_STARTED') {
+        if ($this->status !== self::STATUS_NOT_STARTED) {
             return false;
         }
 
         $mandatoryDeps = $this->dependencies()
-            ->where('dependency_type', 'MANDATORY')
+            ->where('dependency_type', ProjectPermitDependency::TYPE_MANDATORY)
             ->where('can_proceed_without', false)
             ->with('dependsOnPermit')
             ->get();
 
         foreach ($mandatoryDeps as $dep) {
             $requiredPermit = $dep->dependsOnPermit;
-            if (!in_array($requiredPermit->status, ['APPROVED', 'EXISTING'])) {
+            if (!in_array($requiredPermit->status, [self::STATUS_APPROVED, self::STATUS_EXISTING], true)) {
                 return false;
             }
         }
@@ -158,17 +180,17 @@ class ProjectPermit extends Model
         $blockers = [];
         
         $mandatoryDeps = $this->dependencies()
-            ->where('dependency_type', 'MANDATORY')
+            ->where('dependency_type', ProjectPermitDependency::TYPE_MANDATORY)
             ->where('can_proceed_without', false)
             ->with('dependsOnPermit.permitType')
             ->get();
 
         foreach ($mandatoryDeps as $dep) {
             $requiredPermit = $dep->dependsOnPermit;
-            if ($requiredPermit && !in_array($requiredPermit->status, ['APPROVED', 'EXISTING'])) {
+            if ($requiredPermit && !in_array($requiredPermit->status, [self::STATUS_APPROVED, self::STATUS_EXISTING], true)) {
                 // Return permit name as string (consistent with Task model)
-                $permitName = $requiredPermit->permitType 
-                    ? $requiredPermit->permitType->name 
+                $permitName = $requiredPermit->permitType
+                    ? $requiredPermit->permitType->name
                     : ($requiredPermit->custom_permit_name ?? 'Permit #' . $requiredPermit->id);
                 $blockers[] = $permitName;
             }
@@ -182,7 +204,7 @@ class ProjectPermit extends Model
      */
     public function isCompleted(): bool
     {
-        return in_array($this->status, ['APPROVED', 'EXISTING']);
+        return in_array($this->status, [self::STATUS_APPROVED, self::STATUS_EXISTING], true);
     }
 
     /**
@@ -190,7 +212,16 @@ class ProjectPermit extends Model
      */
     public function isInProgress(): bool
     {
-        return in_array($this->status, ['IN_PROGRESS', 'WAITING_DOC', 'SUBMITTED', 'UNDER_REVIEW']);
+        return in_array(
+            $this->status,
+            [
+                self::STATUS_IN_PROGRESS,
+                self::STATUS_WAITING_DOC,
+                self::STATUS_SUBMITTED,
+                self::STATUS_UNDER_REVIEW,
+            ],
+            true
+        );
     }
 
     /**
@@ -199,10 +230,10 @@ class ProjectPermit extends Model
     public function getStatusColorAttribute(): string
     {
         return match($this->status) {
-            'APPROVED', 'EXISTING' => 'green',
-            'IN_PROGRESS', 'SUBMITTED', 'UNDER_REVIEW' => 'blue',
-            'WAITING_DOC' => 'orange',
-            'REJECTED', 'CANCELLED' => 'red',
+            self::STATUS_APPROVED, self::STATUS_EXISTING => 'green',
+            self::STATUS_IN_PROGRESS, self::STATUS_SUBMITTED, self::STATUS_UNDER_REVIEW => 'blue',
+            self::STATUS_WAITING_DOC => 'orange',
+            self::STATUS_REJECTED, self::STATUS_CANCELLED => 'red',
             default => 'gray',
         };
     }
@@ -213,15 +244,15 @@ class ProjectPermit extends Model
     public function getStatusLabelAttribute(): string
     {
         return match($this->status) {
-            'NOT_STARTED' => 'Belum Dimulai',
-            'IN_PROGRESS' => 'Sedang Diproses',
-            'WAITING_DOC' => 'Menunggu Dokumen',
-            'SUBMITTED' => 'Sudah Diajukan',
-            'UNDER_REVIEW' => 'Sedang Direview',
-            'APPROVED' => 'Disetujui',
-            'REJECTED' => 'Ditolak',
-            'EXISTING' => 'Sudah Ada',
-            'CANCELLED' => 'Dibatalkan',
+            self::STATUS_NOT_STARTED => 'Belum Dimulai',
+            self::STATUS_IN_PROGRESS => 'Sedang Diproses',
+            self::STATUS_WAITING_DOC => 'Menunggu Dokumen',
+            self::STATUS_SUBMITTED => 'Sudah Diajukan',
+            self::STATUS_UNDER_REVIEW => 'Sedang Direview',
+            self::STATUS_APPROVED => 'Disetujui',
+            self::STATUS_REJECTED => 'Ditolak',
+            self::STATUS_EXISTING => 'Sudah Ada',
+            self::STATUS_CANCELLED => 'Dibatalkan',
             default => $this->status,
         };
     }
@@ -256,7 +287,7 @@ class ProjectPermit extends Model
      */
     public function scopeCompleted($query)
     {
-        return $query->whereIn('status', ['APPROVED', 'EXISTING']);
+        return $query->whereIn('status', [self::STATUS_APPROVED, self::STATUS_EXISTING]);
     }
 
     /**
@@ -264,7 +295,15 @@ class ProjectPermit extends Model
      */
     public function scopeInProgress($query)
     {
-        return $query->whereIn('status', ['IN_PROGRESS', 'WAITING_DOC', 'SUBMITTED', 'UNDER_REVIEW']);
+        return $query->whereIn(
+            'status',
+            [
+                self::STATUS_IN_PROGRESS,
+                self::STATUS_WAITING_DOC,
+                self::STATUS_SUBMITTED,
+                self::STATUS_UNDER_REVIEW,
+            ]
+        );
     }
 
     /**
