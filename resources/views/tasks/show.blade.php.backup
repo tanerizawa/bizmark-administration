@@ -1,0 +1,296 @@
+@extends('layouts.app')
+
+@section('title', $task->title)
+
+@section('content')
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <a href="{{ route('tasks.index') }}" 
+                   class="text-gray-600 hover:text-gray-900">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">{{ $task->title }}</h1>
+                    <p class="text-gray-600 mt-1">
+                        Proyek: <a href="{{ route('projects.show', $task->project) }}" class="text-blue-600 hover:text-blue-800">{{ $task->project->name }}</a>
+                    </p>
+                </div>
+            </div>
+            <div class="flex space-x-3">
+                <a href="{{ route('tasks.edit', $task) }}" 
+                   class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                    <i class="fas fa-edit mr-2"></i>Edit
+                </a>
+                <form action="{{ route('tasks.destroy', $task) }}" 
+                      method="POST" 
+                      class="inline"
+                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus tugas ini?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-trash mr-2"></i>Hapus
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Task Details -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900">Detail Tugas</h2>
+                    <div class="flex items-center space-x-3">
+                        <!-- Status Badge -->
+                        @php
+                            $statusColors = [
+                                'todo' => 'bg-gray-100 text-gray-800',
+                                'in_progress' => 'bg-blue-100 text-blue-800',
+                                'done' => 'bg-green-100 text-green-800',
+                                'blocked' => 'bg-red-100 text-red-800'
+                            ];
+                            $statusLabels = [
+                                'todo' => 'To Do',
+                                'in_progress' => 'In Progress',
+                                'done' => 'Done',
+                                'blocked' => 'Blocked'
+                            ];
+                        @endphp
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $statusColors[$task->status] }}">
+                            {{ $statusLabels[$task->status] }}
+                        </span>
+
+                        <!-- Priority Badge -->
+                        @php
+                            $priorityColors = [
+                                'low' => 'bg-gray-100 text-gray-800',
+                                'normal' => 'bg-blue-100 text-blue-800',
+                                'high' => 'bg-yellow-100 text-yellow-800',
+                                'urgent' => 'bg-red-100 text-red-800'
+                            ];
+                            $priorityLabels = [
+                                'low' => 'Low Priority',
+                                'normal' => 'Normal Priority',
+                                'high' => 'High Priority',
+                                'urgent' => 'Urgent'
+                            ];
+                        @endphp
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $priorityColors[$task->priority] }}">
+                            {{ $priorityLabels[$task->priority] }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                @if($task->description)
+                <div class="mb-6">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2">Deskripsi</h3>
+                    <div class="prose max-w-none">
+                        {!! nl2br(e($task->description)) !!}
+                    </div>
+                </div>
+                @endif
+
+                <!-- SOP Notes -->
+                @if($task->sop_notes)
+                <div class="mb-6">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2">SOP / Checklist</h3>
+                    <div class="bg-gray-50 rounded-md p-4">
+                        <div class="prose max-w-none">
+                            {!! nl2br(e($task->sop_notes)) !!}
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Completion Notes -->
+                @if($task->completion_notes)
+                <div class="mb-6">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2">Catatan Penyelesaian</h3>
+                    <div class="bg-green-50 rounded-md p-4">
+                        <div class="prose max-w-none">
+                            {!! nl2br(e($task->completion_notes)) !!}
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Quick Status Update -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-sm font-medium text-gray-700 mb-3">Update Status</h3>
+                    <div class="flex space-x-2">
+                        @foreach(['todo', 'in_progress', 'done', 'blocked'] as $status)
+                            <button onclick="updateStatus('{{ $status }}')" 
+                                    class="px-3 py-1 rounded-md text-sm font-medium transition-colors
+                                           {{ $task->status === $status ? $statusColors[$status] : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                                {{ $statusLabels[$status] }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Tasks -->
+            @if($relatedTasks->count() > 0)
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Tugas Terkait</h2>
+                <div class="space-y-3">
+                    @foreach($relatedTasks as $relatedTask)
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <h3 class="font-medium text-gray-900">
+                                <a href="{{ route('tasks.show', $relatedTask) }}" class="hover:text-blue-600">
+                                    {{ $relatedTask->title }}
+                                </a>
+                            </h3>
+                            <p class="text-sm text-gray-600">{{ $relatedTask->assignedUser->name ?? 'Belum ditugaskan' }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $statusColors[$relatedTask->status] }}">
+                            {{ $statusLabels[$relatedTask->status] }}
+                        </span>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Task Info -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Tugas</h3>
+                <dl class="space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Ditugaskan Kepada</dt>
+                        <dd class="text-sm text-gray-900">
+                            {{ $task->assignedUser->name ?? 'Belum ditugaskan' }}
+                        </dd>
+                    </div>
+                    
+                    @if($task->due_date)
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Tanggal Jatuh Tempo</dt>
+                        <dd class="text-sm {{ $task->due_date->isPast() && $task->status !== 'done' ? 'text-red-600 font-medium' : 'text-gray-900' }}">
+                            {{ $task->due_date->format('d M Y') }}
+                            @if($task->due_date->isPast() && $task->status !== 'done')
+                                <span class="text-xs text-red-500 block">Terlambat {{ $task->due_date->diffForHumans() }}</span>
+                            @endif
+                        </dd>
+                    </div>
+                    @endif
+
+                    @if($task->institution)
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Institusi</dt>
+                        <dd class="text-sm text-gray-900">{{ $task->institution->name }}</dd>
+                    </div>
+                    @endif
+
+                    @if($task->estimated_hours)
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Estimasi Waktu</dt>
+                        <dd class="text-sm text-gray-900">{{ $task->estimated_hours }} jam</dd>
+                    </div>
+                    @endif
+
+                    @if($task->actual_hours)
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Waktu Aktual</dt>
+                        <dd class="text-sm text-gray-900">{{ $task->actual_hours }} jam</dd>
+                    </div>
+                    @endif
+
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Dibuat</dt>
+                        <dd class="text-sm text-gray-900">{{ $task->created_at->format('d M Y H:i') }}</dd>
+                    </div>
+
+                    @if($task->started_at)
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Dimulai</dt>
+                        <dd class="text-sm text-gray-900">
+                            {{ is_string($task->started_at) ? \Carbon\Carbon::parse($task->started_at)->format('d M Y H:i') : $task->started_at->format('d M Y H:i') }}
+                        </dd>
+                    </div>
+                    @endif
+
+                    @if($task->completed_at)
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Selesai</dt>
+                        <dd class="text-sm text-gray-900">
+                            {{ is_string($task->completed_at) ? \Carbon\Carbon::parse($task->completed_at)->format('d M Y H:i') : $task->completed_at->format('d M Y H:i') }}
+                        </dd>
+                    </div>
+                    @endif
+                </dl>
+            </div>
+
+            <!-- Dependent Tasks -->
+            @if($dependentTasks->count() > 0)
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tugas yang Bergantung</h3>
+                <div class="space-y-2">
+                    @foreach($dependentTasks as $dependentTask)
+                    <div class="p-2 bg-gray-50 rounded">
+                        <a href="{{ route('tasks.show', $dependentTask) }}" class="text-sm text-blue-600 hover:text-blue-800">
+                            {{ $dependentTask->title }}
+                        </a>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$dependentTask->status] }} ml-2">
+                            {{ $statusLabels[$dependentTask->status] }}
+                        </span>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Actions -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Aksi</h3>
+                <div class="space-y-3">
+                    <a href="{{ route('tasks.edit', $task) }}" 
+                       class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors text-center block">
+                        <i class="fas fa-edit mr-2"></i>Edit Tugas
+                    </a>
+                    <a href="{{ route('projects.show', $task->project) }}" 
+                       class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors text-center block">
+                        <i class="fas fa-project-diagram mr-2"></i>Lihat Proyek
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateStatus(status) {
+    fetch(`{{ route('tasks.update-status', $task) }}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Gagal memperbarui status');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan');
+    });
+}
+</script>
+@endsection

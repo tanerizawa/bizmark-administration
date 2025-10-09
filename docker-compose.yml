@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bizmark_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./storage/app/public:/var/www/public/storage
+    networks:
+      - bizmark_network
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=bizmark_db
+      - DB_USERNAME=bizmark_user
+      - DB_PASSWORD=bizmark_password
+
+  web:
+    image: nginx:alpine
+    container_name: bizmark_web
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:8081:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - bizmark_network
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: bizmark_db
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:3306:3306"
+    environment:
+      MYSQL_DATABASE: bizmark_db
+      MYSQL_USER: bizmark_user
+      MYSQL_PASSWORD: bizmark_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - bizmark_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: bizmark_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: bizmark_user
+      PMA_PASSWORD: bizmark_password
+    networks:
+      - bizmark_network
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
+
+networks:
+  bizmark_network:
+    driver: bridge

@@ -1,0 +1,462 @@
+@extends('layouts.app')
+
+@section('title', 'Institusi')
+@section('page-title', 'Manajemen Institusi')
+
+@section('content')
+    <!-- Header Actions -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+        <div>
+            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Kelola data institusi mitra dan klien</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button class="px-4 py-2 rounded-apple text-sm font-medium transition-apple" style="background-color: #2C2C2E; color: rgba(235, 235, 245, 0.6); border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);" onmouseover="this.style.backgroundColor='#3A3A3C'; this.style.color='#FFFFFF'" onmouseout="this.style.backgroundColor='#2C2C2E'; this.style.color='rgba(235, 235, 245, 0.6)'">
+                <i class="fas fa-filter mr-2"></i>
+                Filter
+            </button>
+            <a href="{{ route('institutions.create') }}" 
+               class="btn-primary px-4 py-2 text-white rounded-apple text-sm font-medium">
+                <i class="fas fa-plus mr-2"></i>
+                Tambah Institusi
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <!-- Total -->
+        <div class="card-elevated rounded-apple-lg p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Total Institusi</div>
+                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $institutions->total() }}</div>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(0, 122, 255, 0.15);">
+                    <i class="fas fa-building text-xl" style="color: rgba(0, 122, 255, 1);"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pemerintah -->
+        <div class="card-elevated rounded-apple-lg p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Pemerintah</div>
+                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">
+                        {{ $institutions->where('type', 'Pemerintah')->count() }}
+                    </div>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(255, 59, 48, 0.15);">
+                    <i class="fas fa-landmark text-xl" style="color: rgba(255, 59, 48, 1);"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUMN -->
+        <div class="card-elevated rounded-apple-lg p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">BUMN</div>
+                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">
+                        {{ $institutions->where('type', 'BUMN')->count() }}
+                    </div>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(255, 149, 0, 0.15);">
+                    <i class="fas fa-city text-xl" style="color: rgba(255, 149, 0, 1);"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Swasta -->
+        <div class="card-elevated rounded-apple-lg p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Swasta</div>
+                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">
+                        {{ $institutions->where('type', 'Swasta')->count() }}
+                    </div>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(52, 199, 89, 0.15);">
+                    <i class="fas fa-briefcase text-xl" style="color: rgba(52, 199, 89, 1);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Card -->
+    <div class="card-elevated rounded-apple-lg mb-4 overflow-hidden">
+        <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
+            <h3 class="text-base font-semibold" style="color: #FFFFFF;">Pencarian & Filter</h3>
+        </div>
+        <div class="p-4">
+            <form method="GET" action="{{ route('institutions.index') }}" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Pencarian</label>
+                        <div class="relative">
+                            <input type="text" 
+                                   name="search" 
+                                   value="{{ request('search') }}" 
+                                   placeholder="Nama institusi..." 
+                                   class="input-dark w-full pl-9 pr-3 py-2 rounded-apple text-sm">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-sm" style="color: rgba(235, 235, 245, 0.3);"></i>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Tipe</label>
+                        <select name="type" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
+                            <option value="">Semua Tipe</option>
+                            <option value="Pemerintah" {{ request('type') == 'Pemerintah' ? 'selected' : '' }}>Pemerintah</option>
+                            <option value="Swasta" {{ request('type') == 'Swasta' ? 'selected' : '' }}>Swasta</option>
+                            <option value="BUMN" {{ request('type') == 'BUMN' ? 'selected' : '' }}>BUMN</option>
+                            <option value="Lainnya" {{ request('type') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Status</label>
+                        <select name="is_active" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
+                            <option value="">Semua Status</option>
+                            <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Aktif</option>
+                            <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between pt-3" style="border-top: 1px solid rgba(84, 84, 88, 0.65);">
+                    <div class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                        Menampilkan {{ $institutions->count() }} dari {{ $institutions->total() }} institusi
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button type="button" 
+                                onclick="document.querySelector('form').reset(); window.location.href='{{ route('institutions.index') }}'"
+                                class="px-4 py-2 rounded-apple text-sm font-medium transition-apple" 
+                                style="background-color: #2C2C2E; color: rgba(235, 235, 245, 0.6); border: 1px solid rgba(84, 84, 88, 0.65);">
+                            Reset
+                        </button>
+                        <button type="submit" 
+                                class="btn-primary px-4 py-2 text-white rounded-apple text-sm font-medium">
+                            <i class="fas fa-search mr-2"></i>
+                            Cari
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Institutions Table -->
+    <div class="card-elevated rounded-apple-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700">
+                <thead style="background-color: var(--dark-bg-secondary);">
+                    <tr>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Institusi</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tipe</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Kontak</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Jenis Izin</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Status</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
+                    @forelse($institutions as $institution)
+                        <tr class="hover-lift transition-apple" style="cursor: pointer;" onclick="window.location='{{ route('institutions.show', $institution) }}'">
+                            <!-- Institusi Info -->
+                            <td class="px-4 py-3">
+                                <div class="flex items-center">
+                                    @php
+                                        $typeConfig = [
+                                            'Pemerintah' => ['icon' => 'fa-landmark', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.2)'],
+                                            'BUMN' => ['icon' => 'fa-city', 'color' => 'rgba(255, 149, 0, 1)', 'bg' => 'rgba(255, 149, 0, 0.2)'],
+                                            'Swasta' => ['icon' => 'fa-briefcase', 'color' => 'rgba(52, 199, 89, 1)', 'bg' => 'rgba(52, 199, 89, 0.2)'],
+                                            'Lainnya' => ['icon' => 'fa-building', 'color' => 'rgba(142, 142, 147, 1)', 'bg' => 'rgba(142, 142, 147, 0.2)'],
+                                        ];
+                                        $config = $typeConfig[$institution->type] ?? $typeConfig['Lainnya'];
+                                    @endphp
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3" style="background-color: {{ $config['bg'] }};">
+                                        <i class="fas {{ $config['icon'] }} text-base" style="color: {{ $config['color'] }};"></i>
+                                    </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold group-hover:text-apple-blue-dark transition-apple" style="color: #FFFFFF;">
+                                    {{ $institution->name }}
+                                </h3>
+                                <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">{{ $institution->type }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $institution->is_active ? 'bg-apple-green-dark/20 text-apple-green-dark' : 'bg-dark-fill-tertiary text-dark-text-secondary' }}">
+                                {{ $institution->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    @if($institution->description)
+                    <p class="text-sm line-clamp-2" style="color: rgba(235, 235, 245, 0.8);">{{ Str::limit($institution->description, 100) }}</p>
+                    @endif
+                </div>
+                
+                <!-- Institution Details -->
+                <div class="p-6 space-y-4">
+                    <!-- Contact Info -->
+                    <div class="space-y-2">
+                        @if($institution->email)
+                        <div class="flex items-center text-sm" style="color: rgba(235, 235, 245, 0.8);">
+                            <i class="fas fa-envelope w-4 mr-3" style="color: rgba(235, 235, 245, 0.6);"></i>
+                            <span class="truncate">{{ $institution->email }}</span>
+                        </div>
+                        @endif
+                        
+                        @if($institution->phone)
+                        <div class="flex items-center text-sm" style="color: rgba(235, 235, 245, 0.8);">
+                            <i class="fas fa-phone w-4 mr-3" style="color: rgba(235, 235, 245, 0.6);"></i>
+                            <span>{{ $institution->phone }}</span>
+                        </div>
+                        @endif
+                        
+                        @if($institution->address)
+                        <div class="flex items-start text-sm" style="color: rgba(235, 235, 245, 0.8);">
+                            <i class="fas fa-map-marker-alt w-4 mr-3 mt-0.5" style="color: rgba(235, 235, 245, 0.6);"></i>
+                            <span class="line-clamp-2">{{ $institution->address }}</span>
+                        </div>
+                        @endif
+                    </div>
+                    
+                    <!-- Statistics -->
+                    <div class="pt-4" style="border-top: 1px solid rgba(84, 84, 88, 0.65);">
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div>
+                                <p class="text-2xl font-semibold text-apple-blue-dark">{{ $institution->projects_count ?? 0 }}</p>
+                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Proyek</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-semibold text-apple-green-dark">
+                                    @if($institution->total_budget)
+                                        Rp {{ number_format($institution->total_budget / 1000000, 1) }}M
+                                    @else
+                                        Rp 0
+                                    @endif
+                                </p>
+                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Total Budget</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="px-6 py-4" style="background-color: #2C2C2E; border-top: 1px solid rgba(84, 84, 88, 0.65);">
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                            Dibuat {{ $institution->created_at->format('d M Y') }}
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ route('institutions.show', $institution) }}" 
+                               class="p-2 rounded-apple transition-apple" 
+                               style="color: #0A84FF; background-color: rgba(10, 132, 255, 0.1); border: 1px solid rgba(10, 132, 255, 0.3);" 
+                               onmouseover="this.style.backgroundColor='#0A84FF'; this.style.color='#FFFFFF'" 
+                               onmouseout="this.style.backgroundColor='rgba(10, 132, 255, 0.1)'; this.style.color='#0A84FF'">
+                                <i class="fas fa-eye text-sm"></i>
+                            </a>
+                            <a href="{{ route('institutions.edit', $institution) }}" 
+                               class="p-2 rounded-apple transition-apple" 
+                               style="color: #FF9F0A; background-color: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.3);" 
+                               onmouseover="this.style.backgroundColor='#FF9F0A'; this.style.color='#FFFFFF'" 
+                               onmouseout="this.style.backgroundColor='rgba(255, 159, 10, 0.1)'; this.style.color='#FF9F0A'">
+                                <i class="fas fa-edit text-sm"></i>
+                            </a>
+                            <button onclick="deleteInstitution({{ $institution->id }})" 
+                                    class="p-2 rounded-apple transition-apple" 
+                                    style="color: #FF453A; background-color: rgba(255, 69, 58, 0.1); border: 1px solid rgba(255, 69, 58, 0.3);" 
+                                    onmouseover="this.style.backgroundColor='#FF453A'; this.style.color='#FFFFFF'" 
+                                    onmouseout="this.style.backgroundColor='rgba(255, 69, 58, 0.1)'; this.style.color='#FF453A'">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        
+        <!-- List View -->
+        <div id="listView" class="space-y-3 mb-6" style="display: none;">
+            @foreach($institutions as $institution)
+            <div class="card-elevated hover-lift rounded-apple-lg overflow-hidden">
+                <div class="p-4 flex items-center justify-between">
+                    <!-- Left: Institution Info -->
+                    <div class="flex items-center flex-1 min-w-0">
+                        <div class="w-10 h-10 rounded-apple {{ $institution->is_active ? 'bg-gradient-to-br from-apple-blue-dark to-blue-600' : 'bg-gradient-to-br from-gray-400 to-gray-500' }} text-white flex items-center justify-center font-semibold text-base mr-4 flex-shrink-0">
+                            {{ strtoupper(substr($institution->name, 0, 1)) }}
+                        </div>
+                        <div class="flex-1 min-w-0 mr-4">
+                            <h3 class="text-base font-semibold truncate" style="color: #FFFFFF;">
+                                {{ $institution->name }}
+                            </h3>
+                            <div class="flex items-center gap-3 text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
+                                <span>{{ $institution->type }}</span>
+                                @if($institution->email)
+                                <span class="flex items-center">
+                                    <i class="fas fa-envelope mr-1 text-xs"></i>
+                                    {{ $institution->email }}
+                                </span>
+                                @endif
+                                @if($institution->phone)
+                                <span class="flex items-center">
+                                    <i class="fas fa-phone mr-1 text-xs"></i>
+                                    {{ $institution->phone }}
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Center: Stats -->
+                    <div class="flex items-center gap-6 mr-6 flex-shrink-0">
+                        <div class="text-center">
+                            <p class="text-lg font-semibold text-apple-blue-dark">{{ $institution->projects_count ?? 0 }}</p>
+                            <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Proyek</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-semibold text-apple-green-dark">
+                                @if($institution->total_budget)
+                                    Rp {{ number_format($institution->total_budget / 1000000, 1) }}M
+                                @else
+                                    Rp 0
+                                @endif
+                            </p>
+                            <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Budget</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Status & Actions -->
+                    <div class="flex items-center gap-3 flex-shrink-0">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $institution->is_active ? 'bg-apple-green-dark/20 text-apple-green-dark' : 'bg-dark-fill-tertiary text-dark-text-secondary' }}">
+                            {{ $institution->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                        </span>
+                        
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ route('institutions.show', $institution) }}" 
+                               class="p-2 rounded-apple transition-apple" 
+                               style="color: #0A84FF; background-color: rgba(10, 132, 255, 0.1); border: 1px solid rgba(10, 132, 255, 0.3);" 
+                               onmouseover="this.style.backgroundColor='#0A84FF'; this.style.color='#FFFFFF'" 
+                               onmouseout="this.style.backgroundColor='rgba(10, 132, 255, 0.1)'; this.style.color='#0A84FF'">
+                                <i class="fas fa-eye text-sm"></i>
+                            </a>
+                            <a href="{{ route('institutions.edit', $institution) }}" 
+                               class="p-2 rounded-apple transition-apple" 
+                               style="color: #FF9F0A; background-color: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.3);" 
+                               onmouseover="this.style.backgroundColor='#FF9F0A'; this.style.color='#FFFFFF'" 
+                               onmouseout="this.style.backgroundColor='rgba(255, 159, 10, 0.1)'; this.style.color='#FF9F0A'">
+                                <i class="fas fa-edit text-sm"></i>
+                            </a>
+                            <button onclick="deleteInstitution({{ $institution->id }})" 
+                                    class="p-2 rounded-apple transition-apple" 
+                                    style="color: #FF453A; background-color: rgba(255, 69, 58, 0.1); border: 1px solid rgba(255, 69, 58, 0.3);" 
+                                    onmouseover="this.style.backgroundColor='#FF453A'; this.style.color='#FFFFFF'" 
+                                    onmouseout="this.style.backgroundColor='rgba(255, 69, 58, 0.1)'; this.style.color='#FF453A'">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        
+        <!-- Pagination -->
+        <div class="rounded-apple-lg px-6 py-4" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);">
+            {{ $institutions->withQueryString()->links('pagination::tailwind') }}
+        </div>
+    @else
+        <!-- Empty State -->
+        <div class="rounded-apple-lg p-12 text-center" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);">
+            <div class="max-w-md mx-auto">
+                <i class="fas fa-building text-6xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
+                <h3 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Institusi</h3>
+                <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">Mulai dengan menambahkan institusi pertama Anda</p>
+                <a href="{{ route('institutions.create') }}" 
+                   class="btn-primary inline-flex items-center px-6 py-3 rounded-apple font-medium">
+                    <i class="fas fa-plus mr-2"></i>
+                    Tambah Institusi Pertama
+                </a>
+            </div>
+        </div>
+    @endif
+
+@endsection
+
+@push('styles')
+<style>
+.view-toggle {
+    color: rgba(235, 235, 245, 0.6);
+    background-color: transparent;
+}
+
+.view-toggle:hover {
+    color: rgba(235, 235, 245, 0.8);
+}
+
+.view-toggle.active {
+    color: #0A84FF;
+    background-color: rgba(10, 132, 255, 0.15);
+}
+</style>
+@endpush
+
+@push('scripts')
+<script>
+// Toggle View Function
+function toggleView(view) {
+    const gridView = document.getElementById('gridView');
+    const listView = document.getElementById('listView');
+    const gridBtn = document.getElementById('gridViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+    
+    if (!gridView || !listView) {
+        return; // Graceful exit if elements don't exist
+    }
+    
+    if (view === 'grid') {
+        gridView.style.display = 'grid';
+        listView.style.display = 'none';
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+    } else {
+        gridView.style.display = 'none';
+        listView.style.display = 'block';
+        listBtn.classList.add('active');
+        gridBtn.classList.remove('active');
+    }
+    
+    // Save preference to localStorage
+    localStorage.setItem('institutionsView', view);
+}
+
+// Restore saved view on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const gridView = document.getElementById('gridView');
+    if (gridView) { // Only if institutions exist
+        const savedView = localStorage.getItem('institutionsView') || 'grid';
+        toggleView(savedView);
+    }
+});
+
+function deleteInstitution(id) {
+    if (confirm('Apakah Anda yakin ingin menghapus institusi ini?')) {
+        // Get CSRF token from meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/institutions/${id}`;
+        form.innerHTML = `
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="${csrfToken}">
+        `;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+@endpush
