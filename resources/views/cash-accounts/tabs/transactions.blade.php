@@ -3,10 +3,10 @@
     <div class="mb-3">
         <h3 class="text-base font-semibold" style="color: #FFFFFF;">
             <i class="fas fa-history mr-2" style="color: rgba(235, 235, 245, 0.4);"></i>
-            Riwayat Transaksi Terbaru
+            Riwayat Transaksi
         </h3>
         <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.5);">
-            15 transaksi terakhir dari semua akun
+            Transaksi dari semua akun dalam periode yang dipilih
         </p>
     </div>
 
@@ -202,10 +202,7 @@
         <!-- View All Link -->
         <div class="mt-3 text-center">
             <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
-                Menampilkan 15 transaksi terbaru. 
-                <a href="#" class="font-medium hover:underline" style="color: rgba(0, 122, 255, 0.9);">
-                    Lihat Semua Transaksi
-                </a>
+                Menampilkan {{ count($recentTransactions) }} transaksi terbaru dalam periode yang dipilih.
             </p>
         </div>
     @else
