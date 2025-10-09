@@ -1310,6 +1310,18 @@ function editExpense(expenseId) {
             const bankAccountField = form.querySelector('select[name="bank_account_id"]');
             const descField = form.querySelector('textarea[name="description"]') || form.querySelector('input[name="description"]');
             
+            // Debug logging
+            console.log('Expense data:', expense);
+            console.log('Form fields found:', {
+                dateField: !!dateField,
+                amountField: !!amountField,
+                categoryField: !!categoryField,
+                vendorField: !!vendorField,
+                paymentMethodField: !!paymentMethodField,
+                bankAccountField: !!bankAccountField,
+                descField: !!descField
+            });
+            
             // Populate with null checks
             if (dateField) dateField.value = expense.expense_date || '';
             if (amountField) amountField.value = expense.amount || '';
@@ -1318,6 +1330,8 @@ function editExpense(expenseId) {
             if (paymentMethodField) paymentMethodField.value = expense.payment_method || '';
             if (bankAccountField) bankAccountField.value = expense.bank_account_id || '';
             if (descField) descField.value = expense.description || '';
+            
+            console.log('Form populated with values');
             
             // ============================================
             // RESTRICT CRITICAL FIELDS if expense is old or has receivable implications
