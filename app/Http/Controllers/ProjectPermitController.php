@@ -54,6 +54,8 @@ class ProjectPermitController extends Controller
         $validated['status'] = Str::upper($validated['status']);
 
         // Check if trying to start without meeting dependencies
+        $overrideData = [];
+
         if ($validated['status'] === ProjectPermit::STATUS_IN_PROGRESS && !$permit->canStart()) {
             // Allow override if reason provided
             if (empty($validated['override_reason'])) {
@@ -63,15 +65,14 @@ class ProjectPermitController extends Controller
             }
 
             // Log override
-            $permit->update([
+            $overrideData = [
                 'override_dependencies' => true,
-                'override_reason' => $validated['override_reason'],
-                'override_by' => auth()->id() ?? 1, // TODO: Add auth
+                'override_by_user_id' => auth()->id(),
                 'override_at' => now(),
-            ]);
+            ];
         }
 
-        $permit->update($validated);
+        $permit->update(array_merge($validated, $overrideData));
 
         return redirect()
             ->back()
