@@ -361,7 +361,7 @@ class CashAccountController extends Controller
             $invoicePaymentsQuery->whereBetween('payment_schedules.paid_date', [$startDate, $endDate]);
         }
         
-        $invoicePayments = $invoicePaymentsQuery->take($limit)
+        $invoicePayments = $invoicePaymentsQuery
             ->get()
             ->map(function($payment) {
                 return [
@@ -384,7 +384,7 @@ class CashAccountController extends Controller
             $directPaymentsQuery->whereBetween('payment_date', [$startDate, $endDate]);
         }
         
-        $directPayments = $directPaymentsQuery->take($limit)
+        $directPayments = $directPaymentsQuery
             ->get()
             ->map(function($payment) {
                 return [
@@ -406,7 +406,7 @@ class CashAccountController extends Controller
             $expensesQuery->whereBetween('expense_date', [$startDate, $endDate]);
         }
         
-        $expenses = $expensesQuery->take($limit)
+        $expenses = $expensesQuery
             ->get()
             ->map(function($expense) {
                 return [
