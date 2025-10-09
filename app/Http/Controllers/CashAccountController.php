@@ -457,10 +457,196 @@ class CashAccountController extends Controller
             ->with('success', 'Akun kas berhasil ditambahkan');
     }
 
-    public function show(CashAccount $cashAccount)
+    public function show(CashAccount $cashAccount, Request $request)
     {
-        $cashAccount->load(['payments', 'expenses']);
-        return view('cash-accounts.show', compact('cashAccount'));
+        // Get filter parameters
+        $filterType = $request->input('filter_type', 'month');
+        $selectedMonth = $request->input('month', Carbon::now()->month);
+        $selectedYear = $request->input('year', Carbon::now()->year);
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
+        $transactionType = $request->input('transaction_type', 'all'); // all, income, expense
+        
+        // Create date range based on filter type
+        switch ($filterType) {
+            case 'quarter':
+                $quarter = $request->input('quarter', ceil(Carbon::now()->month / 3));
+                $startMonth = ($quarter - 1) * 3 + 1;
+                $startDate = Carbon::create($selectedYear, $startMonth, 1)->startOfMonth();
+                $endDate = Carbon::create($selectedYear, $startMonth + 2, 1)->endOfMonth();
+                break;
+            
+            case 'year':
+                $startDate = Carbon::create($selectedYear, 1, 1)->startOfYear();
+                $endDate = Carbon::create($selectedYear, 12, 31)->endOfYear();
+                break;
+            
+            case 'custom':
+                if ($startDateInput && $endDateInput) {
+                    $startDate = Carbon::parse($startDateInput)->startOfDay();
+                    $endDate = Carbon::parse($endDateInput)->endOfDay();
+                } else {
+                    $startDate = Carbon::now()->startOfMonth();
+                    $endDate = Carbon::now()->endOfMonth();
+                }
+                break;
+            
+            case 'month':
+            default:
+                $startDate = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth();
+                $endDate = Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth();
+                break;
+        }
+        
+        // Get account mutations (transaction history)
+        $mutations = $this->getAccountMutations($cashAccount, $startDate, $endDate, $transactionType);
+        
+        // Calculate summary statistics
+        $totalIncome = $mutations->where('type', 'income')->sum('amount');
+        $totalExpense = $mutations->where('type', 'expense')->sum('amount');
+        $netChange = $totalIncome - $totalExpense;
+        
+        return view('cash-accounts.show', compact(
+            'cashAccount',
+            'mutations',
+            'totalIncome',
+            'totalExpense',
+            'netChange',
+            'startDate',
+            'endDate',
+            'filterType',
+            'selectedMonth',
+            'selectedYear',
+            'transactionType'
+        ));
+    }
+
+    /**
+     * Get comprehensive account mutations (all transactions)
+     */
+    private function getAccountMutations(CashAccount $cashAccount, $startDate, $endDate, $transactionType = 'all')
+    {
+        $mutations = collect();
+        
+        // Note: Since payment_schedules doesn't have cash_account_id FK,
+        // we cannot filter invoice payments by specific account
+        // All invoice payments affect the primary cash account as per FinancialController logic
+        
+        // Get invoice payments from payment_schedules (status = paid)
+        if ($transactionType === 'all' || $transactionType === 'income') {
+            $invoicePayments = DB::table('payment_schedules')
+                ->join('invoices', 'payment_schedules.invoice_id', '=', 'invoices.id')
+                ->join('projects', 'invoices.project_id', '=', 'projects.id')
+                ->where('payment_schedules.status', 'paid')
+                ->whereNotNull('payment_schedules.paid_date')
+                ->whereBetween('payment_schedules.paid_date', [$startDate, $endDate])
+                ->select(
+                    'payment_schedules.paid_date as date',
+                    'payment_schedules.amount',
+                    'payment_schedules.payment_method',
+                    'payment_schedules.reference_number',
+                    'invoices.invoice_number',
+                    'projects.name as project_name',
+                    DB::raw("'income' as type"),
+                    DB::raw("'invoice_payment' as transaction_type")
+                )
+                ->get()
+                ->map(function($item) {
+                    return [
+                        'date' => Carbon::parse($item->date),
+                        'description' => 'Pembayaran Invoice ' . $item->invoice_number . ' - ' . $item->project_name,
+                        'reference' => $item->reference_number,
+                        'type' => 'income',
+                        'transaction_type' => 'invoice_payment',
+                        'amount' => $item->amount,
+                        'payment_method' => $item->payment_method,
+                    ];
+                });
+            
+            $mutations = $mutations->concat($invoicePayments);
+        }
+        
+        // Get manual payments (ProjectPayment without invoice_id)
+        if ($transactionType === 'all' || $transactionType === 'income') {
+            $manualPayments = ProjectPayment::with('project')
+                ->whereNull('invoice_id')
+                ->whereBetween('payment_date', [$startDate, $endDate])
+                ->get()
+                ->map(function($payment) {
+                    return [
+                        'date' => $payment->payment_date,
+                        'description' => 'Pembayaran Manual - ' . ($payment->project->name ?? 'Unknown Project'),
+                        'reference' => $payment->reference_number ?? '-',
+                        'type' => 'income',
+                        'transaction_type' => 'manual_payment',
+                        'amount' => $payment->amount,
+                        'payment_method' => $payment->payment_method,
+                    ];
+                });
+            
+            $mutations = $mutations->concat($manualPayments);
+        }
+        
+        // Get expenses
+        if ($transactionType === 'all' || $transactionType === 'expense') {
+            $expenses = ProjectExpense::with('project')
+                ->whereBetween('expense_date', [$startDate, $endDate])
+                ->get()
+                ->map(function($expense) {
+                    $description = $expense->description ?? $expense->category_name;
+                    if ($expense->vendor_name) {
+                        $description .= ' - ' . $expense->vendor_name;
+                    }
+                    if ($expense->project) {
+                        $description .= ' (' . $expense->project->name . ')';
+                    }
+                    
+                    return [
+                        'date' => $expense->expense_date,
+                        'description' => $description,
+                        'reference' => $expense->receipt_file ?? '-',
+                        'type' => 'expense',
+                        'transaction_type' => $expense->is_receivable ? 'kasbon' : 'expense',
+                        'amount' => $expense->amount,
+                        'payment_method' => $expense->payment_method,
+                        'category' => $expense->category_name,
+                    ];
+                });
+            
+            $mutations = $mutations->concat($expenses);
+        }
+        
+        // Sort by date descending
+        $sorted = $mutations->sortByDesc('date')->values();
+        
+        // Calculate running balance
+        $runningBalance = $cashAccount->current_balance;
+        $sortedAsc = $mutations->sortBy('date')->values();
+        
+        // Start from opening balance before first transaction
+        foreach ($sortedAsc as $index => $mutation) {
+            // Calculate balance at this point (work backwards from current)
+            $futureTransactions = $sortedAsc->slice($index + 1);
+            $futureIncome = $futureTransactions->where('type', 'income')->sum('amount');
+            $futureExpense = $futureTransactions->where('type', 'expense')->sum('amount');
+            
+            $mutation['balance'] = $cashAccount->current_balance - $futureIncome + $futureExpense;
+        }
+        
+        // Resort to descending for display
+        return $sorted->map(function($mutation) use ($sortedAsc) {
+            $match = $sortedAsc->first(function($item) use ($mutation) {
+                return $item['date'] == $mutation['date'] 
+                    && $item['description'] == $mutation['description']
+                    && $item['amount'] == $mutation['amount'];
+            });
+            
+            if ($match && isset($match['balance'])) {
+                $mutation['balance'] = $match['balance'];
+            }
+            
+            return $mutation;
+        });
     }
 
     public function edit(CashAccount $cashAccount)
