@@ -344,12 +344,14 @@ class CashAccountController extends Controller
         $invoicePaymentsQuery = DB::table('payment_schedules')
             ->join('projects', 'payment_schedules.project_id', '=', 'projects.id')
             ->leftJoin('invoices', 'payment_schedules.invoice_id', '=', 'invoices.id')
+            ->leftJoin('clients', 'projects.client_id', '=', 'clients.id')
             ->select(
                 'payment_schedules.paid_date as date',
                 'payment_schedules.amount',
                 'payment_schedules.payment_method',
                 'projects.id as project_id',
                 'projects.name as project_name',
+                'clients.name as client_name',
                 'invoices.invoice_number',
                 DB::raw("'inflow' as type")
             )
@@ -364,19 +366,28 @@ class CashAccountController extends Controller
         $invoicePayments = $invoicePaymentsQuery
             ->get()
             ->map(function($payment) {
+                // Format description with client name if available
+                $description = 'Pembayaran Invoice ' . ($payment->invoice_number ?? '');
+                if ($payment->client_name) {
+                    $description .= ' - ' . $payment->client_name . ' (' . $payment->project_name . ')';
+                } else {
+                    $description .= ' - ' . $payment->project_name;
+                }
+                
                 return [
                     'type' => 'inflow',
                     'date' => $payment->date,
-                    'description' => 'Pembayaran Invoice ' . ($payment->invoice_number ?? '') . ' - ' . $payment->project_name,
+                    'description' => $description,
                     'amount' => $payment->amount,
                     'account_name' => $payment->payment_method ?? 'Unknown',
                     'project_id' => $payment->project_id,
                     'project_name' => $payment->project_name,
+                    'client_name' => $payment->client_name,
                 ];
             });
         
         // Get legacy manual payments (not linked to invoice)
-        $directPaymentsQuery = ProjectPayment::with(['project'])
+        $directPaymentsQuery = ProjectPayment::with(['project.client'])
             ->whereNull('invoice_id')
             ->orderBy('payment_date', 'desc');
         
@@ -387,14 +398,27 @@ class CashAccountController extends Controller
         $directPayments = $directPaymentsQuery
             ->get()
             ->map(function($payment) {
+                $description = 'Pembayaran Manual';
+                if ($payment->project) {
+                    $clientName = $payment->project->client ? $payment->project->client->name : null;
+                    if ($clientName) {
+                        $description .= ' - ' . $clientName . ' (' . $payment->project->name . ')';
+                    } else {
+                        $description .= ' - ' . $payment->project->name;
+                    }
+                } else {
+                    $description .= ' - Unknown Project';
+                }
+                
                 return [
                     'type' => 'inflow',
                     'date' => $payment->payment_date,
-                    'description' => 'Pembayaran Manual - ' . ($payment->project->name ?? 'Unknown Project'),
+                    'description' => $description,
                     'amount' => $payment->amount,
                     'account_name' => 'Manual Payment',
                     'project_id' => $payment->project_id,
                     'project_name' => $payment->project->name ?? null,
+                    'client_name' => $payment->project && $payment->project->client ? $payment->project->client->name : null,
                 ];
             });
         
