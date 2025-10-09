@@ -1,0 +1,674 @@
+@extends('layouts.app')
+
+@section('title', 'Dashboard')
+@section('page-title', 'Dashboard')
+
+@section('content')
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">        <!-- Project Status Chart -->
+        <div class="xl:col-span-1">
+            <div class="card-elevated rounded-apple-lg" style="overflow: visible;">
+                <div class="px-3 py-3 border-b border-dark-separator">
+                    <h3 class="text-lg font-semibold text-dark-text-primary mb-1">Status Proyek</h3>
+                    <p class="text-sm text-dark-text-secondary">Distribusi status saat ini</p>
+                </div>
+                <div class="p-4">
+                    <div class="relative" style="height: 200px;">
+                        <canvas id="projectStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Progress Chart -->
+        <div class="xl:col-span-2">
+            <div class="card-elevated rounded-apple-lg" style="overflow: visible;">
+                <div class="px-3 py-3 border-b border-dark-separator"> Projects -->
+        <div class="card-elevated rounded        <!-- Recent Projects -->
+        <div class="card-elevated rounded-apple-lg overflow-hidden">
+            <div class="px-3 py-3 border-b border-dark-separator">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-dark-text-primary mb-1">Proyek Terbaru</h3>
+                        <p class="text-sm text-dark-text-secondary">5 proyek yang baru dibuat</p>
+                    </div>
+                    <a href="{{ route('projects.index') }}" class="text-apple-blue text-sm font-medium hover:text-blue-600 transition-apple">
+                        Lihat Semua
+                    </a>
+                </div>
+            </div>
+            <div class="divide-y divide-dark-separator">
+                @if($recent_projects->count() > 0)
+                    @foreach($recent_projects as $project)
+                    <div class="p-3 hover:bg-dark-elevated-2 transition-apple">er-lift">
+                           </div>
+                    @endforeach
+                @else
+                    <div class="p-8 text-center">
+                        <i class="fas fa-project-diagram text-3xl text-dark-text-tertiary mb-3"></i>
+                        <p class="text-dark-text-secondary text-sm">Belum ada proyek</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Upcoming Deadlines -->
+        <div class="card-elevated rounded-apple-lg overflow-hidden">
+            <div class="px-3 py-3 border-b border-dark-separator">s="flex items-center">
+                <div class="p-2.5 rounded-apple bg-gradient-to-br from-apple-blue to-blue-600 text-white">
+                    <i class="fas fa-project-diagram text-sm"></i>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-xs font-medium text-dark-text-secondary">Total Proyek</p>
+                    <p class="text-xl font-semibold text-dark-text-primary">{{ $stats['total_projects'] ?? 0 }}</p>
+                    <div class="flex items-center mt-0.5">
+                        <div class="flex items-center text-apple-green text-xs">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span>{{ $stats['completion_rate'] ?? 0 }}%</span>
+                        </div>
+                        <span class="text-xs text-dark-text-secondary ml-1">completion</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Projects -->
+        <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+            <div class="flex items-center">
+                <div class="p-2.5 rounded-apple bg-gradient-to-br from-apple-green to-green-600 text-white">
+                    <i class="fas fa-play-circle text-sm"></i>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-xs font-medium text-dark-text-secondary">Proyek Aktif</p>
+                    <p class="text-xl font-semibold text-dark-text-primary">{{ $stats['active_projects'] ?? 0 }}</p>
+                    <p class="text-xs text-dark-text-secondary mt-0.5">sedang berjalan</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Tasks -->
+        <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+            <div class="flex items-center">
+                <div class="p-2.5 rounded-apple bg-gradient-to-br from-apple-orange to-orange-600 text-white">
+                    <i class="fas fa-tasks text-sm"></i>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-xs font-medium text-dark-text-secondary">Total Tugas</p>
+                    <p class="text-xl font-semibold text-dark-text-primary">{{ $stats['total_tasks'] ?? 0 }}</p>
+                    <p class="text-xs text-dark-text-secondary mt-0.5">{{ $stats['completed_tasks'] ?? 0 }} selesai</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Documents -->
+        <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+            <div class="flex items-center">
+                <div class="p-2.5 rounded-apple bg-gradient-to-br from-apple-purple to-purple-600 text-white">
+                    <i class="fas fa-file-alt text-sm"></i>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-xs font-medium text-dark-text-secondary">Total Dokumen</p>
+                    <p class="text-xl font-semibold text-dark-text-primary">{{ $stats['total_documents'] ?? 0 }}</p>
+                    <p class="text-xs text-dark-text-secondary mt-0.5">terdokumentasi</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overdue Projects -->
+        <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+            <div class="flex items-center">
+                <div class="p-2.5 rounded-apple bg-gradient-to-br from-apple-red to-red-600 text-white">
+                    <i class="fas fa-exclamation-triangle text-sm"></i>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-xs font-medium text-dark-text-secondary">Terlambat</p>
+                    <p class="text-xl font-semibold text-dark-text-primary">{{ $stats['overdue_projects'] ?? 0 }}</p>
+                    <p class="text-xs text-dark-text-secondary mt-0.5">perlu perhatian</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Overview (Phase 1) -->
+    <div class="mb-4">
+        <div class="flex items-center justify-between mb-3">
+            <div>
+                <h2 class="text-xl font-bold text-dark-text-primary">Ringkasan Keuangan</h2>
+                <p class="text-sm text-dark-text-secondary">Real-time financial tracking</p>
+            </div>
+            <a href="{{ route('cash-accounts.index') }}" 
+               class="text-sm text-apple-blue-dark hover:text-apple-blue font-medium">
+                Lihat Detail <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+            <!-- Total Cash Balance -->
+            <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-medium text-dark-text-secondary">Saldo Kas Total</span>
+                    <i class="fas fa-wallet text-apple-blue-dark"></i>
+                </div>
+                <p class="text-xl font-bold text-dark-text-primary">
+                    Rp {{ number_format($stats['total_cash_balance'] ?? 0, 0, ',', '.') }}
+                </p>
+                <div class="mt-2 text-xs text-dark-text-secondary">
+                    <span>Bank: Rp {{ number_format($stats['bank_balance'] ?? 0, 0, ',', '.') }}</span><br>
+                    <span>Cash: Rp {{ number_format($stats['cash_balance'] ?? 0, 0, ',', '.') }}</span>
+                </div>
+            </div>
+
+            <!-- Payment This Month -->
+            <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-medium text-dark-text-secondary">Pembayaran Bulan Ini</span>
+                    <i class="fas fa-arrow-down" style="color: rgba(52, 199, 89, 1);"></i>
+                </div>
+                <p class="text-xl font-bold" style="color: rgba(52, 199, 89, 1);">
+                    Rp {{ number_format($stats['payments_this_month'] ?? 0, 0, ',', '.') }}
+                </p>
+                <p class="mt-2 text-xs text-dark-text-secondary">
+                    Pemasukan {{ now()->format('F Y') }}
+                </p>
+            </div>
+
+            <!-- Expenses This Month -->
+            <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-medium text-dark-text-secondary">Pengeluaran Bulan Ini</span>
+                    <i class="fas fa-arrow-up" style="color: rgba(255, 59, 48, 1);"></i>
+                </div>
+                <p class="text-xl font-bold" style="color: rgba(255, 59, 48, 1);">
+                    Rp {{ number_format($stats['expenses_this_month'] ?? 0, 0, ',', '.') }}
+                </p>
+                <p class="mt-2 text-xs text-dark-text-secondary">
+                    Pengeluaran {{ now()->format('F Y') }}
+                </p>
+            </div>
+
+            <!-- Total Payment Received -->
+            <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-medium text-dark-text-secondary">Total Pembayaran Diterima</span>
+                    <i class="fas fa-hand-holding-usd" style="color: rgba(52, 199, 89, 1);"></i>
+                </div>
+                <p class="text-xl font-bold text-dark-text-primary">
+                    Rp {{ number_format($stats['total_payment_received'] ?? 0, 0, ',', '.') }}
+                </p>
+                <p class="mt-2 text-xs text-dark-text-secondary">
+                    Dari Rp {{ number_format($stats['total_contract_value'] ?? 0, 0, ',', '.') }}
+                </p>
+            </div>
+
+            <!-- Outstanding Receivables -->
+            <div class="card-elevated rounded-apple-lg p-3 hover-lift">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-medium text-dark-text-secondary">Piutang Outstanding</span>
+                    <i class="fas fa-clock" style="color: rgba(255, 149, 0, 1);"></i>
+                </div>
+                <p class="text-xl font-bold" style="color: rgba(255, 149, 0, 1);">
+                    Rp {{ number_format($stats['outstanding_receivables'] ?? 0, 0, ',', '.') }}
+                </p>
+                @php
+                    $receivablePercentage = ($stats['total_contract_value'] ?? 0) > 0 
+                        ? round((($stats['outstanding_receivables'] ?? 0) / $stats['total_contract_value']) * 100, 1) 
+                        : 0;
+                @endphp
+                <p class="mt-2 text-xs text-dark-text-secondary">
+                    {{ $receivablePercentage }}% dari kontrak
+                </p>
+            </div>
+        </div>
+
+        <!-- Monthly Financial Summary -->
+        <div class="mt-3 card-elevated rounded-apple-lg p-3">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-dark-text-secondary mb-2">Profit Bulan Ini</p>
+                    @php
+                        $monthlyProfit = ($stats['payments_this_month'] ?? 0) - ($stats['expenses_this_month'] ?? 0);
+                        $isProfitable = $monthlyProfit >= 0;
+                    @endphp
+                    <p class="text-2xl font-bold" style="color: {{ $isProfitable ? 'rgba(52, 199, 89, 1)' : 'rgba(255, 59, 48, 1)' }};">
+                        {{ $isProfitable ? '+' : '-' }}Rp {{ number_format(abs($monthlyProfit), 0, ',', '.') }}
+                    </p>
+                </div>
+                <div class="flex-1 text-right">
+                    <p class="text-sm font-medium text-dark-text-secondary mb-2">Total Proyek Nilai Kontrak</p>
+                    <p class="text-2xl font-bold text-dark-text-primary">
+                        Rp {{ number_format($stats['total_contract_value'] ?? 0, 0, ',', '.') }}
+                    </p>
+                </div>
+                <div class="flex-1 text-right">
+                    <p class="text-sm font-medium text-dark-text-secondary mb-2">Total Pengeluaran</p>
+                    <p class="text-2xl font-bold" style="color: rgba(255, 59, 48, 1);">
+                        Rp {{ number_format($stats['total_expenses'] ?? 0, 0, ',', '.') }}
+                    </p>
+                </div>
+                <div class="flex-1 text-right">
+                    <p class="text-sm font-medium text-dark-text-secondary mb-2">Overall Profit Margin</p>
+                    @php
+                        $overallMargin = ($stats['total_payment_received'] ?? 0) > 0
+                            ? round(((($stats['total_payment_received'] ?? 0) - ($stats['total_expenses'] ?? 0)) / $stats['total_payment_received']) * 100, 1)
+                            : 0;
+                    @endphp
+                    <p class="text-2xl font-bold text-apple-blue-dark">
+                        {{ $overallMargin }}%
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-3 mb-4">
+        <!-- Project Status Chart -->
+        <div class="xl:col-span-1">
+            <div class="card-elevated rounded-apple-lg" style="overflow: visible;">
+                <div class="px-4 py-4 border-b border-dark-separator">
+                    <h3 class="text-lg font-semibold text-dark-text-primary mb-1">Status Proyek</h3>
+                    <p class="text-sm text-dark-text-secondary">Distribusi status saat ini</p>
+                </div>
+                <div class="p-6 pb-8">
+                    <div class="relative" style="height: 220px;">
+                        <canvas id="projectStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Progress Chart -->
+        <div class="xl:col-span-2">
+            <div class="card-elevated rounded-apple-lg" style="overflow: visible;">
+                <div class="px-3 py-3 border-b border-dark-separator">
+                    <h3 class="text-lg font-semibold text-dark-text-primary mb-1">Progress Bulanan</h3>
+                    <p class="text-sm text-dark-text-secondary">Trend proyek dalam 6 bulan terakhir</p>
+                </div>
+                <div class="p-4">
+                    <div class="relative" style="height: 200px;">
+                        <canvas id="monthlyProgressChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Institutions -->
+    <div class="card-elevated rounded-apple-lg mb-4 overflow-hidden">
+        <div class="px-3 py-3 border-b border-dark-separator">
+            <h3 class="text-lg font-semibold text-dark-text-primary mb-1">Institusi Teratas</h3>
+            <p class="text-sm text-dark-text-secondary">Berdasarkan jumlah proyek aktif dan total nilai</p>
+        </div>
+        <div class="p-3">
+            @if($top_institutions->count() > 0)
+                <div class="space-y-2">
+                    @foreach($top_institutions as $index => $institution)
+                    <div class="flex items-center justify-between p-2.5 rounded-apple bg-dark-elevated-2 border border-dark-separator hover:bg-dark-elevated-3 hover:shadow-elevation-2 transition-apple">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-apple {{ $index === 0 ? 'bg-gradient-to-br from-amber-400 to-yellow-500' : ($index === 1 ? 'bg-gradient-to-br from-gray-400 to-gray-500' : ($index === 2 ? 'bg-gradient-to-br from-amber-600 to-yellow-700' : 'bg-gradient-to-br from-apple-blue to-blue-600')) }} text-white flex items-center justify-center font-semibold text-sm">
+                                {{ $index + 1 }}
+                            </div>
+                            <div class="ml-3">
+                                <h4 class="text-sm font-semibold text-dark-text-primary">{{ $institution->name }}</h4>
+                                <p class="text-xs text-dark-text-secondary">{{ $institution->type }}</p>
+                                <p class="text-xs text-dark-text-secondary">{{ Str::limit($institution->address, 40) }}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-apple-blue bg-opacity-10 text-apple-blue">
+                                    {{ $institution->projects_count }} Proyek
+                                </span>
+                            </div>
+                            <p class="text-xs text-dark-text-secondary">Total: Rp {{ number_format($institution->total_budget ?? 0, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-8">
+                    <i class="fas fa-building text-3xl text-dark-text-tertiary mb-3"></i>
+                    <p class="text-dark-text-secondary">Belum ada data institusi</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <!-- Recent Projects -->
+        <div class="card-elevated rounded-apple-lg overflow-hidden">
+            <div class="px-4 py-4 border-b border-dark-separator">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-dark-text-primary mb-1">Proyek Terbaru</h3>
+                        <p class="text-sm text-dark-text-secondary">5 proyek yang baru dibuat</p>
+                    </div>
+                    <a href="{{ route('projects.index') }}" class="text-apple-blue text-sm font-medium hover:text-blue-600 transition-apple">
+                        Lihat Semua
+                    </a>
+                </div>
+            </div>
+            <div class="divide-y divide-dark-separator">
+                @if($recent_projects->count() > 0)
+                    @foreach($recent_projects as $project)
+                    <div class="p-3 hover:bg-dark-elevated-2 transition-apple">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="text-sm font-semibold text-dark-text-primary mb-1">{{ $project->name }}</h4>
+                                <p class="text-sm text-dark-text-secondary mb-2">{{ $project->client_name }}</p>
+                                <div class="flex items-center text-xs text-dark-text-secondary">
+                                    <i class="fas fa-building mr-1"></i>
+                                    <span>{{ $project->institution->name ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                            <div class="ml-4 text-right">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                      style="background-color: {{ $project->status->color ?? '#6B7280' }}20; color: {{ $project->status->color ?? '#6B7280' }}">
+                                    {{ $project->status->name ?? 'N/A' }}
+                                </span>
+                                <p class="text-xs text-dark-text-secondary mt-1">{{ $project->created_at->format('d M Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="p-4 text-center">
+                        <i class="fas fa-project-diagram text-3xl text-dark-text-tertiary mb-3"></i>
+                        <p class="text-dark-text-secondary text-sm">Belum ada proyek</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Upcoming Deadlines -->
+        <div class="card-elevated rounded-apple-lg overflow-hidden">
+            <div class="px-3 py-3 border-b border-dark-separator">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-dark-text-primary mb-1">Deadline Mendekati</h3>
+                        <p class="text-sm text-dark-text-secondary">Proyek dan tugas dengan deadline dekat</p>
+                    </div>
+                    <span class="badge-error">
+                        <i class="fas fa-clock mr-1"></i>
+                        Urgent
+                    </span>
+                </div>
+            </div>
+            <div class="divide-y divide-dark-separator max-h-96 overflow-y-auto scrollbar-thin">
+                @php
+                    $proj = collect(data_get($upcoming_deadlines ?? [], 'projects', []));
+                    $tasks = collect(data_get($upcoming_deadlines ?? [], 'tasks', []));
+                @endphp
+                
+                @if($proj->isNotEmpty() || $tasks->isNotEmpty())
+                    {{-- Projects with upcoming deadlines --}}
+                    @foreach($proj as $project)
+                    <div class="p-3 hover:bg-dark-elevated-2 transition-apple">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-1">
+                                    <div class="w-2 h-2 bg-apple-orange rounded-full mr-2"></div>
+                                    <h4 class="text-sm font-semibold text-dark-text-primary">{{ $project->name }}</h4>
+                                </div>
+                                <p class="text-sm text-dark-text-secondary mb-1">{{ $project->client_name }}</p>
+                                <div class="flex items-center text-xs text-dark-text-secondary">
+                                    <i class="fas fa-project-diagram mr-1"></i>
+                                    <span class="text-apple-blue">Proyek</span>
+                                </div>
+                            </div>
+                            <div class="ml-4 text-right">
+                                @if($project->deadline)
+                                <p class="text-xs text-apple-orange font-medium">{{ $project->deadline->format('d M Y') }}</p>
+                                <p class="text-xs text-dark-text-secondary">{{ $project->deadline->diffForHumans() }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                    
+                    {{-- Tasks with upcoming deadlines --}}
+                    @foreach($tasks as $task)
+                    <div class="p-3 hover:bg-dark-elevated-2 transition-apple">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-1">
+                                    <div class="w-2 h-2 bg-apple-green rounded-full mr-2"></div>
+                                    <h4 class="text-sm font-semibold text-dark-text-primary">{{ $task->title }}</h4>
+                                </div>
+                                <p class="text-sm text-dark-text-secondary mb-1">{{ data_get($task, 'project.name', 'N/A') }}</p>
+                                <div class="flex items-center text-xs text-dark-text-secondary">
+                                    <i class="fas fa-tasks mr-1"></i>
+                                    <span class="text-apple-green">Tugas</span>
+                                </div>
+                            </div>
+                            <div class="ml-4 text-right">
+                                @php
+                                    $due = data_get($task, 'due_date');
+                                    if ($due && !($due instanceof \Carbon\Carbon)) {
+                                        try { 
+                                            $due = \Carbon\Carbon::parse($due); 
+                                        } catch (\Throwable $e) { 
+                                            $due = null; 
+                                        }
+                                    }
+                                @endphp
+                                
+                                @if($due)
+                                <p class="text-xs text-apple-orange font-medium">{{ $due->format('d M Y') }}</p>
+                                <p class="text-xs text-dark-text-secondary">{{ $due->diffForHumans() }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="p-8 text-center">
+                        <i class="fas fa-calendar-check text-3xl text-dark-text-tertiary mb-3"></i>
+                        <p class="text-dark-text-secondary text-sm">Tidak ada deadline yang mendekati</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+@endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Apple HIG Dark Mode color palette
+    const appleColors = {
+        blue: '#0A84FF',      // Dark mode variant
+        green: '#30D158',     // Dark mode variant
+        red: '#FF453A',       // Dark mode variant
+        orange: '#FF9F0A',    // Dark mode variant
+        yellow: '#FFD60A',    // Dark mode variant
+        purple: '#BF5AF2',    // Dark mode variant
+        pink: '#FF375F',      // Dark mode variant
+        teal: '#64D2FF',      // Dark mode variant
+        indigo: '#5E5CE6',    // Dark mode variant
+        gray: '#8E8E93'
+    };
+
+    // Chart.js global defaults for Apple HIG Dark Mode
+    Chart.defaults.font.family = 'Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+    Chart.defaults.color = 'rgba(235, 235, 245, 0.6)';  // text-secondary
+    Chart.defaults.borderColor = 'rgba(84, 84, 88, 0.65)';  // dark-separator
+
+    // Project Status Chart
+    const statusChartElement = document.getElementById('projectStatusChart');
+    if (statusChartElement) {
+        const statusCtx = statusChartElement.getContext('2d');
+        const statusData = @json($projects_by_status ?? []);
+        
+        if (Array.isArray(statusData) && statusData.length > 0) {
+            // Define colors once to avoid redundancy
+            const chartColors = [appleColors.blue, appleColors.green, appleColors.orange, appleColors.red, appleColors.purple];
+            
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: statusData.map(item => (item && item.name) ? item.name : ''),
+                    datasets: [{
+                        data: statusData.map(item => (item && (item.projects_count ?? item.count ?? 0))),
+                        backgroundColor: statusData.map((_, index) => (chartColors[index % chartColors.length] + '40')),
+                        borderColor: statusData.map((_, index) => chartColors[index % chartColors.length]),
+                        borderWidth: 3,
+                        hoverBorderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(44, 44, 46, 0.95)',  // dark-elevated-1
+                            titleColor: '#FFFFFF',  // text-primary
+                            bodyColor: 'rgba(235, 235, 245, 0.6)',  // text-secondary
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
+                            cornerRadius: 12,
+                            padding: 12,
+                            borderColor: 'rgba(84, 84, 88, 0.65)',
+                            borderWidth: 1
+                        }
+                    },
+                    elements: {
+                        arc: {
+                            borderRadius: 4
+                        }
+                    }
+                }
+            });
+        } else {
+            // Handle case when no data is available for project status
+            const chartContainer = statusChartElement.parentElement;
+            chartContainer.innerHTML = '<div class="flex items-center justify-center h-full text-dark-text-secondary"><i class="fas fa-chart-pie mr-2"></i>Tidak ada data tersedia</div>';
+        }
+    } else {
+        console.warn('Project Status Chart element not found');
+    }
+
+    // Monthly Progress Chart
+    const progressChartElement = document.getElementById('monthlyProgressChart');
+    if (progressChartElement) {
+        const progressCtx = progressChartElement.getContext('2d');
+        const monthlyData = @json($monthly_progress ?? []);
+        
+        // Ensure monthlyData is an array
+        if (Array.isArray(monthlyData) && monthlyData.length > 0) {
+            new Chart(progressCtx, {
+                type: 'line',
+                data: {
+                    labels: monthlyData.map(item => (item && item.month) ? item.month : ''),
+                    datasets: [{
+                        label: 'Proyek Selesai',
+                        data: monthlyData.map(item => (item && item.completed) ? item.completed : 0),
+                        borderColor: appleColors.green,
+                        backgroundColor: appleColors.green + '20',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: appleColors.green,
+                        pointBorderColor: '#1C1C1E',  // dark-elevated-0
+                        pointBorderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }, {
+                        label: 'Proyek Baru',
+                        data: monthlyData.map(item => (item && item.created) ? item.created : 0),
+                        borderColor: appleColors.blue,
+                        backgroundColor: appleColors.blue + '20',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: appleColors.blue,
+                        pointBorderColor: '#1C1C1E',  // dark-elevated-0
+                        pointBorderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
+                            cornerRadius: 8,
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(84, 84, 88, 0.35)',  // dark-separator lighter
+                                borderColor: 'rgba(84, 84, 88, 0.65)'
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: 'rgba(235, 235, 245, 0.6)'  // text-secondary
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: 'rgba(235, 235, 245, 0.6)'  // text-secondary
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverBorderWidth: 4
+                        }
+                    }
+                }
+            });
+        } else {
+            // Handle case when no data is available
+            const chartContainer = progressChartElement.parentElement;
+            chartContainer.innerHTML = '<div class="flex items-center justify-center h-full text-dark-text-secondary"><i class="fas fa-chart-line mr-2"></i>Tidak ada data tersedia</div>';
+        }
+    } else {
+        console.warn('Monthly Progress Chart element not found');
+    }
+});
+</script>
+@endpush

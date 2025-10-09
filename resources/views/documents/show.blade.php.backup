@@ -1,0 +1,285 @@
+@extends('layouts.app')
+
+@section('title', 'Detail Dokumen - ' . $document->title)
+
+@section('content')
+<div class="container mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <nav class="text-sm breadcrumbs mb-4">
+                    <ol class="list-none p-0 inline-flex">
+                        <li class="flex items-center">
+                            <a href="{{ route('dashboard') }}" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                            <svg class="w-3 h-3 mx-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </li>
+                        <li class="flex items-center">
+                            <a href="{{ route('documents.index') }}" class="text-blue-600 hover:text-blue-800">Dokumen</a>
+                            <svg class="w-3 h-3 mx-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </li>
+                        <li class="text-gray-500">{{ Str::limit($document->title, 50) }}</li>
+                    </ol>
+                </nav>
+                <h1 class="text-3xl font-bold text-gray-900">{{ $document->title }}</h1>
+            </div>
+            <div class="flex space-x-3">
+                <a href="{{ route('documents.download', $document) }}" 
+                   class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center">
+                    <i class="fas fa-download mr-2"></i>
+                    Download
+                </a>
+                @auth
+                    @if(auth()->user()->id === $document->uploaded_by || auth()->user()->hasRole('admin'))
+                        <a href="{{ route('documents.edit', $document) }}" 
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center">
+                            <i class="fas fa-edit mr-2"></i>
+                            Edit
+                        </a>
+                    @endif
+                @endauth
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+            <!-- Document Info Card -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Informasi Dokumen</h2>
+                    
+                    <!-- Status Badge -->
+                    <div class="mb-4">
+                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                            @if($document->status === 'draft') bg-gray-100 text-gray-800
+                            @elseif($document->status === 'review') bg-yellow-100 text-yellow-800
+                            @elseif($document->status === 'approved') bg-green-100 text-green-800
+                            @elseif($document->status === 'submitted') bg-blue-100 text-blue-800
+                            @else bg-purple-100 text-purple-800
+                            @endif">
+                            <i class="fas fa-circle mr-1 text-xs"></i>
+                            {{ ucfirst($document->status) }}
+                        </span>
+                    </div>
+
+                    <!-- Description -->
+                    @if($document->description)
+                        <div class="mb-6">
+                            <h3 class="text-sm font-medium text-gray-700 mb-2">Deskripsi</h3>
+                            <p class="text-gray-600 leading-relaxed">{{ $document->description }}</p>
+                        </div>
+                    @endif
+
+                    <!-- File Preview -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-medium text-gray-700 mb-3">Preview File</h3>
+                        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                    @if(str_contains($document->mime_type, 'pdf'))
+                                        <i class="fas fa-file-pdf text-red-600 text-xl"></i>
+                                    @elseif(str_contains($document->mime_type, 'image'))
+                                        <i class="fas fa-file-image text-green-600 text-xl"></i>
+                                    @elseif(str_contains($document->mime_type, 'word'))
+                                        <i class="fas fa-file-word text-blue-600 text-xl"></i>
+                                    @elseif(str_contains($document->mime_type, 'excel') || str_contains($document->mime_type, 'spreadsheet'))
+                                        <i class="fas fa-file-excel text-green-600 text-xl"></i>
+                                    @else
+                                        <i class="fas fa-file text-gray-600 text-xl"></i>
+                                    @endif
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-sm font-medium text-gray-900">{{ $document->file_name }}</h4>
+                                    <p class="text-sm text-gray-500">
+                                        {{ number_format($document->file_size / 1024, 1) }} KB • {{ $document->mime_type }}
+                                    </p>
+                                </div>
+                                <a href="{{ route('documents.download', $document) }}" 
+                                   class="text-blue-600 hover:text-blue-800 ml-4">
+                                    <i class="fas fa-download text-lg"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Version Info -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-1">Versi</h3>
+                            <p class="text-gray-900">{{ $document->version }}</p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-1">Kategori</h3>
+                            <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                                {{ ucfirst($document->category) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    @if($document->notes)
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-2">Catatan</h3>
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                <p class="text-sm text-yellow-800">{{ $document->notes }}</p>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Riwayat Aktivitas</h2>
+                    <div class="space-y-4">
+                        <!-- Upload Activity -->
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                <i class="fas fa-upload text-blue-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-900">
+                                    <span class="font-medium">{{ $document->uploader->name }}</span> 
+                                    mengunggah dokumen
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    {{ $document->created_at->format('d M Y H:i') }}
+                                </p>
+                            </div>
+                        </div>
+
+                        @if($document->updated_at != $document->created_at)
+                            <!-- Update Activity -->
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                    <i class="fas fa-edit text-green-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900">
+                                        Dokumen diperbarui
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{ $document->updated_at->format('d M Y H:i') }}
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($document->last_accessed_at)
+                            <!-- Last Access Activity -->
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                    <i class="fas fa-eye text-gray-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900">
+                                        Terakhir diakses
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{ \Carbon\Carbon::parse($document->last_accessed_at)->format('d M Y H:i') }}
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <!-- Project Info -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Proyek</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-700 mb-1">Nama Proyek</h4>
+                            <a href="{{ route('projects.show', $document->project) }}" 
+                               class="text-blue-600 hover:text-blue-800">
+                                {{ $document->project->name }}
+                            </a>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-700 mb-1">Klien</h4>
+                            <p class="text-gray-900">{{ $document->project->client_name }}</p>
+                        </div>
+                        @if($document->project->institution)
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-1">Institusi</h4>
+                                <p class="text-gray-900">{{ $document->project->institution->name }}</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Info -->
+            @if($document->task)
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Tugas Terkait</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-1">Nama Tugas</h4>
+                                <a href="{{ route('tasks.show', $document->task) }}" 
+                                   class="text-blue-600 hover:text-blue-800">
+                                    {{ $document->task->title }}
+                                </a>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-1">Status Tugas</h4>
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                                    {{ ucfirst($document->task->status) }}
+                                </span>
+                            </div>
+                            @if($document->task->deadline)
+                                <div>
+                                    <h4 class="text-sm font-medium text-gray-700 mb-1">Deadline</h4>
+                                    <p class="text-gray-900">{{ $document->task->deadline->format('d M Y') }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Document Stats -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Statistik Dokumen</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Total Download</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $document->download_count }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Diunggah oleh</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $document->uploader->name }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Tanggal Upload</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $document->created_at->format('d M Y') }}</span>
+                        </div>
+                        @if($document->is_confidential)
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-600">Keamanan</span>
+                                <span class="text-sm font-medium text-red-600">
+                                    <i class="fas fa-lock mr-1"></i>Rahasia
+                                </span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

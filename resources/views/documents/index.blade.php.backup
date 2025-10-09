@@ -1,0 +1,438 @@
+@extends('layouts.app')
+
+@section('title', 'Dokumen')
+@section('page-title', 'Manajemen Dokumen')
+
+@push('styles')
+<style>
+.view-toggle {
+    color: rgba(235, 235, 245, 0.6);
+    background-color: transparent;
+    transition: all 0.2s ease;
+}
+
+.view-toggle.active {
+    color: #0A84FF;
+    background-color: rgba(10, 132, 255, 0.15);
+}
+
+.view-toggle:hover:not(.active) {
+    color: rgba(235, 235, 245, 0.@push('scripts')
+<script>
+function deleteDocument(id) {
+    if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) {
+        // Get CSRF token from meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/documents/${id}`;
+        form.innerHTML = `
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="${csrfToken}">
+        `;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}round-color: rgba(118, 118, 128, 0.24);
+}
+</style>
+@endpush
+
+@section('content')
+    <!-- Header Actions -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+        <div>
+            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Kelola semua dokumen perizinan dan berkas proyek</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <!-- View Toggle -->
+            <div class="flex items-center rounded-apple overflow-hidden" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65);">
+                <button onclick="toggleView('grid')" id="gridViewBtn" class="px-3 py-2 text-sm font-medium transition-apple view-toggle active">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button onclick="toggleView('list')" id="listViewBtn" class="px-3 py-2 text-sm font-medium transition-apple view-toggle">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+            <button class="px-4 py-2 rounded-apple text-sm font-medium" style="color: rgba(235, 235, 245, 0.6); background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);" onmouseover="this.style.backgroundColor='#3A3A3C'" onmouseout="this.style.backgroundColor='#2C2C2E'">
+                <i class="fas fa-filter mr-2"></i>
+                Filter
+            </button>
+            <button class="px-4 py-2 rounded-apple text-sm font-medium" style="color: rgba(235, 235, 245, 0.6); background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);" onmouseover="this.style.backgroundColor='#3A3A3C'" onmouseout="this.style.backgroundColor='#2C2C2E'">
+                <i class="fas fa-download mr-2"></i>
+                Export
+            </button>
+            <a href="{{ route('documents.create') }}" 
+               class="btn-primary px-4 py-2 rounded-apple text-sm font-medium">
+                <i class="fas fa-upload mr-2"></i>
+                Upload Dokumen
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter Card -->
+    <div class="card-elevated rounded-apple-lg mb-4 overflow-hidden">
+        <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
+            <h3 class="text-base font-semibold" style="color: #FFFFFF;">Pencarian & Filter</h3>
+        </div>
+        <div class="p-4">
+            <form method="GET" action="{{ route('documents.index') }}" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Pencarian</label>
+                        <div class="relative">
+                            <input type="text" 
+                                   name="search" 
+                                   value="{{ request('search') }}" 
+                                   placeholder="Judul, deskripsi, atau nama file..." 
+                                   class="input-dark w-full pl-9 pr-3 py-2 rounded-apple text-sm">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-sm" style="color: rgba(235, 235, 245, 0.6);"></i>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Kategori</label>
+                        <select name="category" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
+                            <option value="">Semua Kategori</option>
+                            <option value="perizinan" {{ request('category') == 'perizinan' ? 'selected' : '' }}>Perizinan</option>
+                            <option value="kontrak" {{ request('category') == 'kontrak' ? 'selected' : '' }}>Kontrak</option>
+                            <option value="laporan" {{ request('category') == 'laporan' ? 'selected' : '' }}>Laporan</option>
+                            <option value="proposal" {{ request('category') == 'proposal' ? 'selected' : '' }}>Proposal</option>
+                            <option value="legal" {{ request('category') == 'legal' ? 'selected' : '' }}>Legal</option>
+                            <option value="other" {{ request('category') == 'other' ? 'selected' : '' }}>Lainnya</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Proyek</label>
+                        <select name="project_id" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
+                            <option value="">Semua Proyek</option>
+                            @foreach($projects as $project)
+                                <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>
+                                    {{ $project->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Tipe File</label>
+                        <select name="file_type" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
+                            <option value="">Semua Tipe</option>
+                            <option value="pdf" {{ request('file_type') == 'pdf' ? 'selected' : '' }}>PDF</option>
+                            <option value="doc" {{ request('file_type') == 'doc' ? 'selected' : '' }}>Word</option>
+                            <option value="xls" {{ request('file_type') == 'xls' ? 'selected' : '' }}>Excel</option>
+                            <option value="img" {{ request('file_type') == 'img' ? 'selected' : '' }}>Gambar</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <div class="text-xs text-apple-gray">
+                        Menampilkan {{ $documents->count() }} dari {{ $documents->total() }} dokumen
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button type="button" 
+                                onclick="document.querySelector('form').reset(); window.location.href='{{ route('documents.index') }}'"
+                                class="px-4 py-2 text-apple-gray bg-gray-100 rounded-apple text-sm font-medium hover:bg-gray-200 transition-apple">
+                            Reset
+                        </button>
+                        <button type="submit" 
+                                class="px-4 py-2 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-blue-600 transition-apple">
+                            <i class="fas fa-search mr-2"></i>
+                            Cari
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Documents Grid View -->
+    @if($documents->count() > 0)
+        <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            @foreach($documents as $document)
+            <div class="card-elevated hover-lift rounded-apple-lg overflow-hidden group">
+                <!-- Document Preview -->
+                <div class="relative">
+                    <div class="h-32 bg-gradient-to-br 
+                        {{ $document->category == 'perizinan' ? 'from-apple-blue to-blue-600' : 
+                           ($document->category == 'kontrak' ? 'from-apple-green to-green-600' : 
+                           ($document->category == 'laporan' ? 'from-apple-orange to-orange-600' : 
+                           ($document->category == 'legal' ? 'from-apple-red to-red-600' : 'from-apple-purple to-purple-600'))) }} 
+                        flex items-center justify-center">
+                        <i class="fas {{ 
+                            Str::endsWith($document->file_path, '.pdf') ? 'fa-file-pdf' : 
+                            (Str::contains($document->file_path, ['.doc', '.docx']) ? 'fa-file-word' : 
+                            (Str::contains($document->file_path, ['.xls', '.xlsx']) ? 'fa-file-excel' : 
+                            (Str::contains($document->file_path, ['.jpg', '.jpeg', '.png', '.gif']) ? 'fa-file-image' : 'fa-file-alt')))
+                        }} text-4xl text-white"></i>
+                    </div>
+                    
+                    <!-- File Size Badge -->
+                    <div class="absolute top-3 right-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-black bg-opacity-20 text-white">
+                            {{ $document->file_size ?? 'N/A' }}
+                        </span>
+                    </div>
+                    
+                    <!-- Category Badge -->
+                    <div class="absolute bottom-3 left-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white bg-opacity-90 text-gray-700">
+                            {{ ucfirst($document->category) }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Document Info -->
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-apple-blue-dark transition-apple line-clamp-2" style="color: #FFFFFF;">
+                        {{ $document->title }}
+                    </h3>
+                    
+                    @if($document->description)
+                    <p class="text-sm mb-3 line-clamp-2" style="color: rgba(235, 235, 245, 0.8);">{{ Str::limit($document->description, 80) }}</p>
+                    @endif
+                    
+                    <!-- Project & Uploader -->
+                    <div class="space-y-2 mb-4">
+                        @if($document->project)
+                        <div class="flex items-center text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                            <i class="fas fa-project-diagram w-4 mr-2"></i>
+                            <span class="truncate">{{ $document->project->name }}</span>
+                        </div>
+                        @endif
+                        
+                        <div class="flex items-center text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                            <i class="fas fa-user w-4 mr-2"></i>
+                            <span>{{ $document->uploader->name ?? 'Unknown' }}</span>
+                        </div>
+                        
+                        <div class="flex items-center text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                            <i class="fas fa-calendar w-4 mr-2"></i>
+                            <span>{{ $document->created_at->format('d M Y') }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Original Filename -->
+                    <div class="text-xs rounded-apple px-3 py-2 mb-4" style="color: rgba(235, 235, 245, 0.6); background-color: #2C2C2E;">
+                        <i class="fas fa-file mr-1"></i>
+                        {{ basename($document->file_path) }}
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="px-6 py-4" style="background-color: #2C2C2E; border-top: 1px solid rgba(84, 84, 88, 0.65);">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ route('documents.download', $document) }}" 
+                               class="p-2 rounded-apple transition-apple" 
+                               style="color: #0A84FF; background-color: rgba(10, 132, 255, 0.1); border: 1px solid rgba(10, 132, 255, 0.3);" 
+                               onmouseover="this.style.backgroundColor='#0A84FF'; this.style.color='#FFFFFF'" 
+                               onmouseout="this.style.backgroundColor='rgba(10, 132, 255, 0.1)'; this.style.color='#0A84FF'" 
+                               title="Download">
+                                <i class="fas fa-download text-sm"></i>
+                            </a>
+                            <a href="{{ route('documents.show', $document) }}" 
+                               class="p-2 rounded-apple transition-apple" 
+                               style="color: rgba(235, 235, 245, 0.7); background-color: rgba(118, 118, 128, 0.24);" 
+                               onmouseover="this.style.backgroundColor='#3A3A3C'" 
+                               onmouseout="this.style.backgroundColor='rgba(118, 118, 128, 0.24)'" 
+                               title="Detail">
+                                <i class="fas fa-eye text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ route('documents.edit', $document) }}" 
+                               class="p-2 rounded-apple transition-apple" 
+                               style="color: #FF9F0A; background-color: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.3);" 
+                               onmouseover="this.style.backgroundColor='#FF9F0A'; this.style.color='#FFFFFF'" 
+                               onmouseout="this.style.backgroundColor='rgba(255, 159, 10, 0.1)'; this.style.color='#FF9F0A'" 
+                               title="Edit">
+                                <i class="fas fa-edit text-sm"></i>
+                            </a>
+                            <button onclick="deleteDocument({{ $document->id }})" 
+                                    class="p-2 rounded-apple transition-apple" 
+                                    style="color: #FF453A; background-color: rgba(255, 69, 58, 0.1); border: 1px solid rgba(255, 69, 58, 0.3);" 
+                                    onmouseover="this.style.backgroundColor='#FF453A'; this.style.color='#FFFFFF'" 
+                                    onmouseout="this.style.backgroundColor='rgba(255, 69, 58, 0.1)'; this.style.color='#FF453A'" 
+                                    title="Hapus">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <!-- Documents List View -->
+        <div id="listView" class="hidden space-y-3 mb-8">
+            @foreach($documents as $document)
+            <div class="card-elevated rounded-apple-lg overflow-hidden group hover-lift">
+                <div class="p-4 flex items-center gap-4">
+                    <!-- File Icon -->
+                    <div class="flex-shrink-0 w-12 h-12 rounded-apple flex items-center justify-center bg-gradient-to-br 
+                        {{ $document->category == 'perizinan' ? 'from-apple-blue to-blue-600' : 
+                           ($document->category == 'kontrak' ? 'from-apple-green to-green-600' : 
+                           ($document->category == 'laporan' ? 'from-apple-orange to-orange-600' : 
+                           ($document->category == 'legal' ? 'from-apple-red to-red-600' : 'from-apple-purple to-purple-600'))) }}">
+                        <i class="fas {{ 
+                            Str::endsWith($document->file_path, '.pdf') ? 'fa-file-pdf' : 
+                            (Str::contains($document->file_path, ['.doc', '.docx']) ? 'fa-file-word' : 
+                            (Str::contains($document->file_path, ['.xls', '.xlsx']) ? 'fa-file-excel' : 
+                            (Str::contains($document->file_path, ['.jpg', '.jpeg', '.png', '.gif']) ? 'fa-file-image' : 'fa-file-alt')))
+                        }} text-white text-xl"></i>
+                    </div>
+                    
+                    <!-- Document Info (flexible) -->
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-base font-semibold truncate mb-1 group-hover:text-apple-blue-dark transition-apple" style="color: #FFFFFF;">
+                            {{ $document->title }}
+                        </h3>
+                        <div class="flex items-center gap-4 text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                            <span class="inline-flex items-center">
+                                <i class="fas fa-tag w-4 mr-1"></i>
+                                {{ ucfirst($document->category) }}
+                            </span>
+                            @if($document->project)
+                            <span class="inline-flex items-center truncate">
+                                <i class="fas fa-project-diagram w-4 mr-1"></i>
+                                {{ $document->project->name }}
+                            </span>
+                            @endif
+                            <span class="inline-flex items-center">
+                                <i class="fas fa-user w-4 mr-1"></i>
+                                {{ $document->uploader->name ?? 'Unknown' }}
+                            </span>
+                            <span class="inline-flex items-center">
+                                <i class="fas fa-calendar w-4 mr-1"></i>
+                                {{ $document->created_at->format('d M Y') }}
+                            </span>
+                            <span class="inline-flex items-center">
+                                {{ $document->file_size ?? 'N/A' }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex-shrink-0 flex items-center space-x-2">
+                        <a href="{{ route('documents.download', $document) }}" 
+                           class="p-2 rounded-apple transition-apple" 
+                           style="color: #0A84FF; background-color: rgba(10, 132, 255, 0.1); border: 1px solid rgba(10, 132, 255, 0.3);" 
+                           onmouseover="this.style.backgroundColor='#0A84FF'; this.style.color='#FFFFFF'" 
+                           onmouseout="this.style.backgroundColor='rgba(10, 132, 255, 0.1)'; this.style.color='#0A84FF'" 
+                           title="Download">
+                            <i class="fas fa-download text-sm"></i>
+                        </a>
+                        <a href="{{ route('documents.show', $document) }}" 
+                           class="p-2 rounded-apple transition-apple" 
+                           style="color: rgba(235, 235, 245, 0.7); background-color: rgba(118, 118, 128, 0.24);" 
+                           onmouseover="this.style.backgroundColor='#3A3A3C'" 
+                           onmouseout="this.style.backgroundColor='rgba(118, 118, 128, 0.24)'" 
+                           title="Detail">
+                            <i class="fas fa-eye text-sm"></i>
+                        </a>
+                        <a href="{{ route('documents.edit', $document) }}" 
+                           class="p-2 rounded-apple transition-apple" 
+                           style="color: #FF9F0A; background-color: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.3);" 
+                           onmouseover="this.style.backgroundColor='#FF9F0A'; this.style.color='#FFFFFF'" 
+                           onmouseout="this.style.backgroundColor='rgba(255, 159, 10, 0.1)'; this.style.color='#FF9F0A'" 
+                           title="Edit">
+                            <i class="fas fa-edit text-sm"></i>
+                        </a>
+                        <button onclick="deleteDocument({{ $document->id }})" 
+                                class="p-2 rounded-apple transition-apple" 
+                                style="color: #FF453A; background-color: rgba(255, 69, 58, 0.1); border: 1px solid rgba(255, 69, 58, 0.3);" 
+                                onmouseover="this.style.backgroundColor='#FF453A'; this.style.color='#FFFFFF'" 
+                                onmouseout="this.style.backgroundColor='rgba(255, 69, 58, 0.1)'; this.style.color='#FF453A'" 
+                                title="Hapus">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        
+        <!-- Pagination -->
+        <div class="rounded-apple-lg px-6 py-4" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);">
+            {{ $documents->withQueryString()->links('pagination::tailwind') }}
+        </div>
+    @else
+        <!-- Empty State -->
+        <div class="rounded-apple-lg p-12 text-center" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);">
+            <div class="max-w-md mx-auto">
+                <i class="fas fa-file-alt text-6xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
+                <h3 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Dokumen</h3>
+                <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">Mulai dengan mengupload dokumen pertama Anda</p>
+                <a href="{{ route('documents.create') }}" 
+                   class="btn-primary inline-flex items-center px-6 py-3 rounded-apple font-medium">
+                    <i class="fas fa-upload mr-2"></i>
+                    Upload Dokumen Pertama
+                </a>
+            </div>
+        </div>
+    @endif
+
+@endsection
+
+@push('scripts')
+<script>
+// Toggle between grid and list view
+function toggleView(view) {
+    const gridView = document.getElementById('gridView');
+    const listView = document.getElementById('listView');
+    const gridBtn = document.getElementById('gridViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+    
+    // Check if elements exist (they won't exist on empty state)
+    if (!gridView || !listView) {
+        console.log('View toggle not available (no documents)');
+        return;
+    }
+    
+    if (view === 'grid') {
+        gridView.classList.remove('hidden');
+        listView.classList.add('hidden');
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        localStorage.setItem('documentsView', 'grid');
+    } else {
+        gridView.classList.add('hidden');
+        listView.classList.remove('hidden');
+        gridBtn.classList.remove('active');
+        listBtn.classList.add('active');
+        localStorage.setItem('documentsView', 'list');
+    }
+}
+
+// Restore saved view preference on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Only try to restore view if documents exist
+    const gridView = document.getElementById('gridView');
+    if (gridView) {
+        const savedView = localStorage.getItem('documentsView') || 'grid';
+        toggleView(savedView);
+    }
+});
+
+function deleteDocument(id) {
+    if (confirm('Apakah Anda yakin ingin menghapus dokumen ini? File akan dihapus secara permanen.')) {
+        // Get CSRF token from meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/documents/${id}`;
+        form.innerHTML = `
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="${csrfToken}">
+        `;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+@endpush

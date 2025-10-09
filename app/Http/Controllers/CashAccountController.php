@@ -1,0 +1,442 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\CashAccount;
+use App\Models\ProjectPayment;
+use App\Models\ProjectExpense;
+use App\Models\Invoice;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+
+class CashAccountController extends Controller
+{
+    public function index(Request $request)
+    {
+        // Get filter parameters
+        $filterType = $request->input('filter_type', 'month'); // month, quarter, year, custom
+        $selectedMonth = $request->input('month', Carbon::now()->month);
+        $selectedYear = $request->input('year', Carbon::now()->year);
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
+        
+        // Create date range based on filter type
+        switch ($filterType) {
+            case 'quarter':
+                $quarter = $request->input('quarter', ceil(Carbon::now()->month / 3));
+                $startMonth = ($quarter - 1) * 3 + 1;
+                $startDate = Carbon::create($selectedYear, $startMonth, 1)->startOfMonth();
+                $endDate = Carbon::create($selectedYear, $startMonth + 2, 1)->endOfMonth();
+                break;
+            
+            case 'year':
+                $startDate = Carbon::create($selectedYear, 1, 1)->startOfYear();
+                $endDate = Carbon::create($selectedYear, 12, 31)->endOfYear();
+                break;
+            
+            case 'custom':
+                if ($startDateInput && $endDateInput) {
+                    $startDate = Carbon::parse($startDateInput)->startOfDay();
+                    $endDate = Carbon::parse($endDateInput)->endOfDay();
+                } else {
+                    // Fallback to current month
+                    $startDate = Carbon::now()->startOfMonth();
+                    $endDate = Carbon::now()->endOfMonth();
+                }
+                break;
+            
+            case 'month':
+            default:
+                $startDate = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth();
+                $endDate = Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth();
+                break;
+        }
+        
+        // Get available periods from transactions
+        $availablePeriods = $this->getAvailablePeriods();
+        
+        $accounts = CashAccount::orderBy('account_type')->orderBy('account_name')->get();
+        
+        // Get comprehensive financial data with date range
+        $financialSummary = $this->getFinancialSummary($startDate, $endDate);
+        $cashFlowStatement = $this->getCashFlowStatement($startDate, $endDate);
+        $recentTransactions = $this->getRecentTransactions(15, $startDate, $endDate);
+        
+        return view('cash-accounts.index', compact(
+            'accounts',
+            'financialSummary',
+            'cashFlowStatement',
+            'recentTransactions',
+            'availablePeriods',
+            'selectedMonth',
+            'selectedYear',
+            'filterType',
+            'startDate',
+            'endDate'
+        ));
+    }
+    
+    /**
+     * Get available periods from transactions
+     */
+    private function getAvailablePeriods()
+    {
+        $periods = [];
+        
+        // Get payment dates
+        $paymentDates = ProjectPayment::selectRaw('YEAR(payment_date) as year, MONTH(payment_date) as month')
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+        
+        // Get expense dates
+        $expenseDates = ProjectExpense::selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month')
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+        
+        // Merge and deduplicate
+        $allDates = $paymentDates->concat($expenseDates);
+        foreach ($allDates as $date) {
+            $key = $date->year . '-' . str_pad($date->month, 2, '0', STR_PAD_LEFT);
+            if (!isset($periods[$key])) {
+                $periods[$key] = [
+                    'year' => $date->year,
+                    'month' => $date->month,
+                    'label' => Carbon::create($date->year, $date->month, 1)->isoFormat('MMMM Y')
+                ];
+            }
+        }
+        
+        // Sort by date desc
+        krsort($periods);
+        
+        return array_values($periods);
+    }
+
+    /**
+     * Get Financial Summary for Dashboard Cards
+     */
+    private function getFinancialSummary($startDate = null, $endDate = null)
+    {
+        // Use provided dates or default to current month
+        if (!$startDate || !$endDate) {
+            $startDate = Carbon::now()->startOfMonth();
+            $endDate = Carbon::now()->endOfMonth();
+        }
+        
+        $thisMonth = $startDate->copy();
+        $lastMonth = $startDate->copy()->subMonth();
+        $lastMonthStart = $lastMonth->copy()->startOfMonth();
+        $lastMonthEnd = $lastMonth->copy()->endOfMonth();
+        
+        // Total Liquid Assets (Bank + Cash)
+        $liquidAssets = CashAccount::whereIn('account_type', ['bank', 'cash'])
+            ->where('is_active', true)
+            ->sum('current_balance');
+        
+        // Outstanding Receivables (Unpaid Invoices + Kasbon)
+        // Use remaining_amount for accurate calculation
+        $invoiceReceivables = Invoice::where('status', '!=', 'paid')
+            ->where('status', '!=', 'cancelled')
+            ->where(function($query) {
+                $query->where('remaining_amount', '>', 0)
+                      ->orWhereNull('remaining_amount'); // If NULL, means not paid yet
+            })
+            ->sum('remaining_amount');
+        
+        // If remaining_amount is NULL, use total_amount
+        $invoiceReceivablesNull = Invoice::where('status', '!=', 'paid')
+            ->where('status', '!=', 'cancelled')
+            ->whereNull('remaining_amount')
+            ->sum('total_amount');
+        
+        $invoiceReceivables += $invoiceReceivablesNull;
+        
+        $kasbonReceivables = ProjectExpense::where('is_receivable', true)
+            ->where(function($query) {
+                $query->where('receivable_status', '!=', 'paid')
+                      ->orWhereNull('receivable_status'); // NULL means unpaid
+            })
+            ->sum('amount');
+        
+        // Subtract already paid amount from kasbon
+        $kasbonPaid = ProjectExpense::where('is_receivable', true)
+            ->sum('receivable_paid_amount');
+        $kasbonReceivables -= $kasbonPaid;
+        
+        $totalReceivables = $invoiceReceivables + $kasbonReceivables;
+        
+        // This Period Cash Inflow
+        $cashInflowThisMonth = ProjectPayment::whereBetween('payment_date', [$startDate, $endDate])
+            ->whereNotNull('bank_account_id')
+            ->sum('amount');
+        
+        // This Period Cash Outflow
+        $cashOutflowThisMonth = ProjectExpense::whereBetween('expense_date', [$startDate, $endDate])
+            ->whereNotNull('bank_account_id')
+            ->where('is_receivable', false)
+            ->sum('amount');
+        
+        // Net Cash Flow This Period
+        $netCashFlow = $cashInflowThisMonth - $cashOutflowThisMonth;
+        
+        // Last Period for comparison
+        $cashInflowLastMonth = ProjectPayment::whereBetween('payment_date', [$lastMonthStart, $lastMonthEnd])
+            ->whereNotNull('bank_account_id')
+            ->sum('amount');
+        
+        $cashOutflowLastMonth = ProjectExpense::whereBetween('expense_date', [$lastMonthStart, $lastMonthEnd])
+            ->whereNotNull('bank_account_id')
+            ->where('is_receivable', false)
+            ->sum('amount');
+        
+        $netCashFlowLastMonth = $cashInflowLastMonth - $cashOutflowLastMonth;
+        
+        // Calculate trend
+        $cashFlowTrend = $netCashFlowLastMonth > 0 
+            ? round((($netCashFlow - $netCashFlowLastMonth) / $netCashFlowLastMonth) * 100, 1)
+            : ($netCashFlow > 0 ? 100 : 0);
+        
+        return [
+            'liquid_assets' => $liquidAssets,
+            'total_receivables' => $totalReceivables,
+            'invoice_receivables' => $invoiceReceivables,
+            'kasbon_receivables' => $kasbonReceivables,
+            'cash_inflow_this_month' => $cashInflowThisMonth,
+            'cash_outflow_this_month' => $cashOutflowThisMonth,
+            'net_cash_flow' => $netCashFlow,
+            'cash_flow_trend' => $cashFlowTrend,
+            'is_positive_trend' => $cashFlowTrend >= 0,
+        ];
+    }
+
+    /**
+     * Get Cash Flow Statement (PSAK 2 Compliant)
+     */
+    private function getCashFlowStatement($startDate = null, $endDate = null)
+    {
+        // Use provided dates or find last month with data
+        if (!$startDate || !$endDate) {
+            $startDate = Carbon::now()->startOfMonth();
+            $endDate = Carbon::now()->endOfMonth();
+            
+            // Check if current month has any transactions
+            $hasCurrentMonthData = ProjectPayment::whereBetween('payment_date', [$startDate, $endDate])->exists() 
+                || ProjectExpense::whereBetween('expense_date', [$startDate, $endDate])->exists();
+            
+            if (!$hasCurrentMonthData) {
+                // Get the most recent transaction date and use that month
+                $latestPayment = ProjectPayment::orderBy('payment_date', 'desc')->first();
+                $latestExpense = ProjectExpense::orderBy('expense_date', 'desc')->first();
+                
+                $latestDate = null;
+                if ($latestPayment && $latestExpense) {
+                    $latestDate = Carbon::parse($latestPayment->payment_date)->gt(Carbon::parse($latestExpense->expense_date)) 
+                        ? Carbon::parse($latestPayment->payment_date) 
+                        : Carbon::parse($latestExpense->expense_date);
+                } elseif ($latestPayment) {
+                    $latestDate = Carbon::parse($latestPayment->payment_date);
+                } elseif ($latestExpense) {
+                    $latestDate = Carbon::parse($latestExpense->expense_date);
+                }
+                
+                if ($latestDate) {
+                    $startDate = $latestDate->copy()->startOfMonth();
+                    $endDate = $latestDate->copy()->endOfMonth();
+                }
+            }
+        }
+        
+        // AKTIVITAS OPERASI
+        $operatingReceipts = ProjectPayment::whereBetween('payment_date', [$startDate, $endDate])
+            ->whereNotNull('bank_account_id')
+            ->sum('amount');
+        
+        $operatingPayments = ProjectExpense::whereBetween('expense_date', [$startDate, $endDate])
+            ->whereNotNull('bank_account_id')
+            ->where('is_receivable', false)
+            ->sum('amount');
+        
+        $netOperatingCashFlow = $operatingReceipts - $operatingPayments;
+        
+        // AKTIVITAS PENDANAAN
+        $kasbonGiven = ProjectExpense::whereBetween('expense_date', [$startDate, $endDate])
+            ->where('is_receivable', true)
+            ->sum('amount');
+        
+        $kasbonReceived = ProjectExpense::whereBetween('expense_date', [$startDate, $endDate])
+            ->where('is_receivable', true)
+            ->where('receivable_status', 'paid')
+            ->sum('receivable_paid_amount');
+        
+        $netFinancingCashFlow = $kasbonReceived - $kasbonGiven;
+        
+        // NET CHANGE IN CASH
+        $netChangeInCash = $netOperatingCashFlow + $netFinancingCashFlow;
+        
+        // Cash at beginning (use initial_balance as baseline)
+        $cashBeginning = CashAccount::whereIn('account_type', ['bank', 'cash'])
+            ->where('is_active', true)
+            ->sum('initial_balance');
+        
+        $cashEnding = $cashBeginning + $netChangeInCash;
+        
+        return [
+            'period_start' => $startDate->format('d M Y'),
+            'period_end' => $endDate->format('d M Y'),
+            'operating_receipts' => $operatingReceipts,
+            'operating_payments' => $operatingPayments,
+            'net_operating' => $netOperatingCashFlow,
+            'kasbon_given' => $kasbonGiven,
+            'kasbon_received' => $kasbonReceived,
+            'net_financing' => $netFinancingCashFlow,
+            'net_change' => $netChangeInCash,
+            'cash_beginning' => $cashBeginning,
+            'cash_ending' => $cashEnding,
+        ];
+    }
+
+    /**
+     * Get Recent Transactions Timeline
+     */
+    private function getRecentTransactions($limit = 15, $startDate = null, $endDate = null)
+    {
+        // Get recent payments
+        $paymentsQuery = ProjectPayment::with(['project', 'bankAccount'])
+            ->whereNotNull('bank_account_id')
+            ->orderBy('payment_date', 'desc');
+        
+        if ($startDate && $endDate) {
+            $paymentsQuery->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+        
+        $payments = $paymentsQuery->take($limit)
+            ->get()
+            ->map(function($payment) {
+                return [
+                    'type' => 'inflow',
+                    'date' => $payment->payment_date,
+                    'description' => 'Pembayaran ' . ($payment->project->name ?? 'Unknown Project'),
+                    'amount' => $payment->amount,
+                    'account_name' => $payment->bankAccount->account_name ?? 'Unknown',
+                    'project_id' => $payment->project_id,
+                    'project_name' => $payment->project->name ?? null,
+                ];
+            });
+        
+        // Get recent expenses
+        $expensesQuery = ProjectExpense::with(['project', 'bankAccount'])
+            ->whereNotNull('bank_account_id')
+            ->orderBy('expense_date', 'desc');
+        
+        if ($startDate && $endDate) {
+            $expensesQuery->whereBetween('expense_date', [$startDate, $endDate]);
+        }
+        
+        $expenses = $expensesQuery->take($limit)
+            ->get()
+            ->map(function($expense) {
+                return [
+                    'type' => $expense->is_receivable ? 'kasbon' : 'outflow',
+                    'date' => $expense->expense_date,
+                    'description' => $expense->description ?? ($expense->vendor_name ? 'Pembayaran ke ' . $expense->vendor_name : ($expense->project->name ?? 'Unknown')),
+                    'amount' => $expense->amount,
+                    'account_name' => $expense->bankAccount->account_name ?? 'Unknown',
+                    'project_id' => $expense->project_id,
+                    'project_name' => $expense->project->name ?? null,
+                    'notes' => $expense->category ?? null,
+                ];
+            });
+        
+        // Merge and sort by date
+        $transactions = $payments->concat($expenses)
+            ->sortByDesc('date')
+            ->take($limit)
+            ->values();
+        
+        return $transactions;
+    }
+
+    public function create()
+    {
+        return view('cash-accounts.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'account_name' => 'required|string|max:255',
+            'account_type' => 'required|in:bank,cash,receivable,payable',
+            'account_number' => 'nullable|string|max:100',
+            'bank_name' => 'nullable|string|max:255',
+            'initial_balance' => 'required|numeric',
+            'notes' => 'nullable|string',
+        ]);
+
+        $validated['current_balance'] = $validated['initial_balance'];
+        $validated['is_active'] = true;
+
+        CashAccount::create($validated);
+
+        return redirect()->route('cash-accounts.index')
+            ->with('success', 'Akun kas berhasil ditambahkan');
+    }
+
+    public function show(CashAccount $cashAccount)
+    {
+        $cashAccount->load(['payments', 'expenses']);
+        return view('cash-accounts.show', compact('cashAccount'));
+    }
+
+    public function edit(CashAccount $cashAccount)
+    {
+        return view('cash-accounts.edit', compact('cashAccount'));
+    }
+
+    public function update(Request $request, CashAccount $cashAccount)
+    {
+        $validated = $request->validate([
+            'account_name' => 'required|string|max:255',
+            'account_type' => 'required|in:bank,cash,receivable,payable',
+            'account_number' => 'nullable|string|max:100',
+            'bank_name' => 'nullable|string|max:255',
+            'is_active' => 'boolean',
+            'notes' => 'nullable|string',
+        ]);
+
+        $cashAccount->update($validated);
+
+        return redirect()->route('cash-accounts.index')
+            ->with('success', 'Akun kas berhasil diperbarui');
+    }
+
+    public function destroy(CashAccount $cashAccount)
+    {
+        // Prevent deletion if has transactions
+        if ($cashAccount->payments()->count() > 0 || $cashAccount->expenses()->count() > 0) {
+            return redirect()->route('cash-accounts.index')
+                ->with('error', 'Akun kas tidak dapat dihapus karena masih memiliki transaksi');
+        }
+
+        $cashAccount->delete();
+
+        return redirect()->route('cash-accounts.index')
+            ->with('success', 'Akun kas berhasil dihapus');
+    }
+    
+    /**
+     * Get active cash accounts for API (used in payment forms)
+     */
+    public function getActiveCashAccounts()
+    {
+        $accounts = CashAccount::active()
+            ->orderBy('account_type')
+            ->orderBy('account_name')
+            ->get(['id', 'account_name', 'account_type', 'bank_name', 'current_balance', 'is_active']);
+        
+        return response()->json($accounts);
+    }
+}

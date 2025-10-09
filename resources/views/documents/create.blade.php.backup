@@ -1,0 +1,301 @@
+@extends('layouts.app')
+
+@section('title', 'Upload Dokumen Baru')
+
+@section('content')
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center space-x-4 mb-4">
+            <a href="{{ route('documents.index') }}" 
+               class="text-gray-600 hover:text-gray-900">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            <h1 class="text-3xl font-bold text-gray-900">Upload Dokumen Baru</h1>
+        </div>
+        <p class="text-gray-600">Unggah dokumen perizinan atau berkas proyek</p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg shadow-md">
+        <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+            @csrf
+
+            <!-- File Upload Section -->
+            <div class="border-b border-gray-200 pb-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">File Dokumen</h3>
+                
+                <div>
+                    <label for="document_file" class="block text-sm font-medium text-gray-700 mb-2">
+                        Upload File <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-colors">
+                        <div class="space-y-1 text-center">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400"></i>
+                            <div class="flex text-sm text-gray-600">
+                                <label for="document_file" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                    <span>Upload file</span>
+                                    <input id="document_file" 
+                                           name="document_file" 
+                                           type="file" 
+                                           class="sr-only" 
+                                           required
+                                           accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar">
+                                </label>
+                                <p class="pl-1">atau drag and drop</p>
+                            </div>
+                            <p class="text-xs text-gray-500">
+                                PDF, DOC, XLS, gambar, ZIP hingga 10MB
+                            </p>
+                        </div>
+                    </div>
+                    @error('document_file')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                    
+                    <!-- File Preview -->
+                    <div id="file-preview" class="mt-4 hidden">
+                        <div class="flex items-center p-3 bg-gray-50 rounded-md">
+                            <i class="fas fa-file text-gray-400 mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900" id="file-name"></p>
+                                <p class="text-xs text-gray-500" id="file-size"></p>
+                            </div>
+                            <button type="button" onclick="removeFile()" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Information -->
+            <div class="border-b border-gray-200 pb-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Dokumen</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Project -->
+                    <div class="md:col-span-2">
+                        <label for="project_id" class="block text-sm font-medium text-gray-700 mb-2">
+                            Proyek <span class="text-red-500">*</span>
+                        </label>
+                        <select name="project_id" 
+                                id="project_id" 
+                                required
+                                onchange="loadTasks(this.value)"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('project_id') border-red-300 @enderror">
+                            <option value="">Pilih Proyek</option>
+                            @foreach($projects as $project)
+                                <option value="{{ $project->id }}" 
+                                        {{ old('project_id', $selectedProject?->id) == $project->id ? 'selected' : '' }}>
+                                    {{ $project->name }} - {{ $project->client_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('project_id')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Task (Optional) -->
+                    <div class="md:col-span-2">
+                        <label for="task_id" class="block text-sm font-medium text-gray-700 mb-2">Task Terkait (Opsional)</label>
+                        <select name="task_id" 
+                                id="task_id"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('task_id') border-red-300 @enderror">
+                            <option value="">Pilih Task</option>
+                            @if($selectedProject && $tasks->count() > 0)
+                                @foreach($tasks as $task)
+                                    <option value="{{ $task->id }}" {{ old('task_id', $selectedTask?->id) == $task->id ? 'selected' : '' }}>
+                                        {{ $task->title }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                        @error('task_id')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Title -->
+                    <div class="md:col-span-2">
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                            Judul Dokumen <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" 
+                               name="title" 
+                               id="title"
+                               value="{{ old('title') }}"
+                               required
+                               placeholder="Masukkan judul dokumen..."
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('title') border-red-300 @enderror">
+                        @error('title')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                            Kategori <span class="text-red-500">*</span>
+                        </label>
+                        <select name="category" 
+                                id="category" 
+                                required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('category') border-red-300 @enderror">
+                            <option value="">Pilih Kategori</option>
+                            <option value="proposal" {{ old('category') == 'proposal' ? 'selected' : '' }}>Proposal</option>
+                            <option value="kontrak" {{ old('category') == 'kontrak' ? 'selected' : '' }}>Kontrak</option>
+                            <option value="kajian" {{ old('category') == 'kajian' ? 'selected' : '' }}>Kajian</option>
+                            <option value="surat" {{ old('category') == 'surat' ? 'selected' : '' }}>Surat</option>
+                            <option value="sk" {{ old('category') == 'sk' ? 'selected' : '' }}>SK/Izin</option>
+                            <option value="laporan" {{ old('category') == 'laporan' ? 'selected' : '' }}>Laporan</option>
+                            <option value="gambar" {{ old('category') == 'gambar' ? 'selected' : '' }}>Gambar/Desain</option>
+                            <option value="lainnya" {{ old('category') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
+                        </select>
+                        @error('category')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                            Status <span class="text-red-500">*</span>
+                        </label>
+                        <select name="status" 
+                                id="status" 
+                                required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('status') border-red-300 @enderror">
+                            <option value="draft" {{ old('status', 'draft') == 'draft' ? 'selected' : '' }}>Draft</option>
+                            <option value="review" {{ old('status') == 'review' ? 'selected' : '' }}>Review</option>
+                            <option value="approved" {{ old('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                            <option value="submitted" {{ old('status') == 'submitted' ? 'selected' : '' }}>Submitted</option>
+                            <option value="final" {{ old('status') == 'final' ? 'selected' : '' }}>Final</option>
+                        </select>
+                        @error('status')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Document Date -->
+                    <div>
+                        <label for="document_date" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Dokumen</label>
+                        <input type="date" 
+                               name="document_date" 
+                               id="document_date"
+                               value="{{ old('document_date') }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('document_date') border-red-300 @enderror">
+                        @error('document_date')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Confidential -->
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" 
+                                   name="is_confidential" 
+                                   value="1"
+                                   {{ old('is_confidential') ? 'checked' : '' }}
+                                   class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Dokumen Rahasia</span>
+                        </label>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="md:col-span-2">
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                        <textarea name="description" 
+                                  id="description"
+                                  rows="4"
+                                  placeholder="Deskripsi dokumen..."
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('description') border-red-300 @enderror">{{ old('description') }}</textarea>
+                        @error('description')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="md:col-span-2">
+                        <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                        <textarea name="notes" 
+                                  id="notes"
+                                  rows="3"
+                                  placeholder="Catatan tambahan..."
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('notes') border-red-300 @enderror">{{ old('notes') }}</textarea>
+                        @error('notes')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{{ route('documents.index') }}" 
+                   class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                    Batal
+                </a>
+                <button type="submit" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors">
+                    <i class="fas fa-upload mr-2"></i>
+                    Upload Dokumen
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// File preview functionality
+document.getElementById('document_file').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        document.getElementById('file-name').textContent = file.name;
+        document.getElementById('file-size').textContent = formatFileSize(file.size);
+        document.getElementById('file-preview').classList.remove('hidden');
+        
+        // Auto-fill title if empty
+        const titleInput = document.getElementById('title');
+        if (!titleInput.value) {
+            const fileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+            titleInput.value = fileName;
+        }
+    }
+});
+
+function removeFile() {
+    document.getElementById('document_file').value = '';
+    document.getElementById('file-preview').classList.add('hidden');
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Load tasks by project
+function loadTasks(projectId) {
+    const taskSelect = document.getElementById('task_id');
+    taskSelect.innerHTML = '<option value="">Pilih Task</option>';
+    
+    if (projectId) {
+        fetch(`{{ route('api.tasks-by-project') }}?project_id=${projectId}`)
+            .then(response => response.json())
+            .then(tasks => {
+                tasks.forEach(task => {
+                    const option = document.createElement('option');
+                    option.value = task.id;
+                    option.textContent = task.title;
+                    taskSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error loading tasks:', error));
+    }
+}
+</script>
+@endsection

@@ -1,0 +1,393 @@
+@extends('layouts.app')
+
+@section('title', 'Template Izin')
+
+@section('content')
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-bold" style="color: #FFFFFF;">Template Izin</h1>
+            <p class="mt-1" style="color: rgba(235, 235, 245, 0.6);">Template siap pakai untuk mempercepat setup proyek</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <!-- View Toggle -->
+            <div class="flex items-center rounded-apple overflow-hidden" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65);">
+                <button onclick="toggleView('grid')" id="gridViewBtn" class="px-3 py-2 text-sm font-medium transition-apple view-toggle active">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button onclick="toggleView('list')" id="listViewBtn" class="px-3 py-2 text-sm font-medium transition-apple view-toggle">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+            <a href="{{ route('permit-templates.create') }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-colors" 
+               style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+                <i class="fas fa-plus mr-2"></i>Buat Template Baru
+            </a>
+        </div>
+    </div>
+
+    @if(session('success'))
+    <div class="mb-6 p-4 rounded-lg" style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3);">
+        <p style="color: rgba(52, 199, 89, 1);">
+            <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+        </p>
+    </div>
+    @endif
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="card-elevated rounded-apple-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Total Template</p>
+                    <p class="text-3xl font-bold mt-2" style="color: #FFFFFF;">{{ $templates->count() }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: rgba(10, 132, 255, 0.2);">
+                    <i class="fas fa-layer-group text-xl" style="color: rgba(10, 132, 255, 1);"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-elevated rounded-apple-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Total Izin</p>
+                    <p class="text-3xl font-bold mt-2" style="color: #FFFFFF;">
+                        {{ $templates->sum('items_count') }}
+                    </p>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: rgba(52, 199, 89, 0.2);">
+                    <i class="fas fa-certificate text-xl" style="color: rgba(52, 199, 89, 1);"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-elevated rounded-apple-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Dependencies</p>
+                    <p class="text-3xl font-bold mt-2" style="color: #FFFFFF;">
+                        {{ $templates->sum('dependencies_count') }}
+                    </p>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: rgba(255, 149, 0, 0.2);">
+                    <i class="fas fa-project-diagram text-xl" style="color: rgba(255, 149, 0, 1);"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-elevated rounded-apple-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Rata-rata Durasi</p>
+                    <p class="text-3xl font-bold mt-2" style="color: #FFFFFF;">
+                        {{ $templates->avg('total_estimated_days') ? round($templates->avg('total_estimated_days')) : 0 }}
+                        <span class="text-base font-normal" style="color: rgba(235, 235, 245, 0.6);">hari</span>
+                    </p>
+                </div>
+                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: rgba(191, 90, 242, 0.2);">
+                    <i class="fas fa-clock text-xl" style="color: rgba(191, 90, 242, 1);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates Grid & List -->
+    @if($templates->count() > 0)
+        <!-- Grid View -->
+        <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($templates as $template)
+                <div class="card-elevated rounded-apple-lg overflow-hidden hover:scale-[1.02] transition-transform duration-200">
+                    <!-- Header -->
+                    <div class="p-6 border-b" style="border-color: rgba(58, 58, 60, 0.8);">
+                        <!-- Category Badge -->
+                        @php
+                            $categoryConfig = [
+                                'industrial' => ['icon' => 'fa-industry', 'color' => 'rgba(255, 149, 0, 1)', 'bg' => 'rgba(255, 149, 0, 0.15)', 'label' => 'Industrial'],
+                                'strategic' => ['icon' => 'fa-flag', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.15)', 'label' => 'Strategic'],
+                                'business' => ['icon' => 'fa-briefcase', 'color' => 'rgba(52, 199, 89, 1)', 'bg' => 'rgba(52, 199, 89, 0.15)', 'label' => 'Business'],
+                                'commercial' => ['icon' => 'fa-building', 'color' => 'rgba(10, 132, 255, 1)', 'bg' => 'rgba(10, 132, 255, 0.15)', 'label' => 'Commercial'],
+                                'general' => ['icon' => 'fa-layer-group', 'color' => 'rgba(142, 142, 147, 1)', 'bg' => 'rgba(142, 142, 147, 0.15)', 'label' => 'General'],
+                            ];
+                            $category = $categoryConfig[$template->category] ?? $categoryConfig['general'];
+                        @endphp
+                        
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold"
+                                  style="background: {{ $category['bg'] }}; color: {{ $category['color'] }};">
+                                <i class="fas {{ $category['icon'] }} mr-1.5"></i>
+                                {{ $category['label'] }}
+                            </span>
+                            
+                            @if($template->usage_count > 0)
+                                <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">
+                                    <i class="fas fa-fire mr-1" style="color: rgba(255, 149, 0, 1);"></i>
+                                    {{ $template->usage_count }}x dipakai
+                                </span>
+                            @endif
+                        </div>
+
+                        <h3 class="text-xl font-bold mb-2" style="color: #FFFFFF;">
+                            {{ $template->name }}
+                        </h3>
+                        @if($template->use_case)
+                            <p class="text-sm leading-relaxed" style="color: rgba(235, 235, 245, 0.6);">
+                                {{ Str::limit($template->use_case, 120) }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="p-6 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                                <i class="fas fa-certificate mr-2"></i>Jumlah Izin
+                            </span>
+                            <span class="font-semibold" style="color: #FFFFFF;">
+                                {{ $template->items_count }} izin
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                                <i class="fas fa-project-diagram mr-2"></i>Dependencies
+                            </span>
+                            <span class="font-semibold" style="color: rgba(255, 149, 0, 1);">
+                                {{ $template->dependencies_count }} rantai
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                                <i class="fas fa-clock mr-2"></i>Estimasi Waktu
+                            </span>
+                            <span class="font-semibold" style="color: rgba(191, 90, 242, 1);">
+                                {{ $template->total_estimated_days ?? 0 }} hari
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                                <i class="fas fa-money-bill-wave mr-2"></i>Estimasi Biaya
+                            </span>
+                            <span class="font-semibold" style="color: rgba(52, 199, 89, 1);">
+                                {{ $template->total_estimated_cost ? 'Rp ' . number_format($template->total_estimated_cost / 1000000, 0) . 'M' : '-' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Goal Permit -->
+                    @php
+                        $goalPermit = $template->items->where('is_goal_permit', true)->first();
+                    @endphp
+                    @if($goalPermit)
+                        <div class="px-6 pb-4">
+                            <div class="p-3 rounded-lg" style="background: rgba(10, 132, 255, 0.1); border: 1px solid rgba(10, 132, 255, 0.3);">
+                                <p class="text-xs font-semibold mb-1" style="color: rgba(10, 132, 255, 1);">
+                                    <i class="fas fa-flag mr-1"></i>IZIN TUJUAN
+                                </p>
+                                <p class="text-sm font-medium" style="color: #FFFFFF;">
+                                    {{ $goalPermit->permitType->name }}
+                                </p>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Actions -->
+                    <div class="p-4 flex gap-2" style="background: rgba(58, 58, 60, 0.3);">
+                        <a href="{{ route('permit-templates.show', $template) }}" 
+                           class="flex-1 px-4 py-2 rounded-lg text-center text-sm font-medium transition-colors" 
+                           style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
+                            <i class="fas fa-eye mr-2"></i>Lihat Detail
+                        </a>
+                        <form action="{{ route('permit-templates.destroy', $template) }}" 
+                              method="POST" 
+                              class="inline"
+                              onsubmit="return confirm('Yakin ingin menghapus template ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" 
+                                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors" 
+                                    style="background: rgba(255, 59, 48, 0.2); color: rgba(255, 59, 48, 1);">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        
+        <!-- List View -->
+        <div id="listView" class="space-y-3" style="display: none;">
+            @foreach($templates as $template)
+                @php
+                    $goalPermit = $template->items->where('is_goal_permit', true)->first();
+                    
+                    // Category config (reuse from grid)
+                    $categoryConfig = [
+                        'industrial' => ['icon' => 'fa-industry', 'color' => 'rgba(255, 149, 0, 1)', 'bg' => 'rgba(255, 149, 0, 0.15)', 'label' => 'Industrial'],
+                        'strategic' => ['icon' => 'fa-flag', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.15)', 'label' => 'Strategic'],
+                        'business' => ['icon' => 'fa-briefcase', 'color' => 'rgba(52, 199, 89, 1)', 'bg' => 'rgba(52, 199, 89, 0.15)', 'label' => 'Business'],
+                        'commercial' => ['icon' => 'fa-building', 'color' => 'rgba(10, 132, 255, 1)', 'bg' => 'rgba(10, 132, 255, 0.15)', 'label' => 'Commercial'],
+                        'general' => ['icon' => 'fa-layer-group', 'color' => 'rgba(142, 142, 147, 1)', 'bg' => 'rgba(142, 142, 147, 0.15)', 'label' => 'General'],
+                    ];
+                    $category = $categoryConfig[$template->category] ?? $categoryConfig['general'];
+                @endphp
+                <div class="card-elevated rounded-apple-lg overflow-hidden hover:scale-[1.01] transition-transform duration-200">
+                    <div class="p-5 flex items-center justify-between">
+                        <!-- Left: Template Info -->
+                        <div class="flex items-center flex-1 min-w-0">
+                            <div class="w-12 h-12 rounded-apple flex items-center justify-center mr-4 flex-shrink-0" style="background: {{ $category['bg'] }};">
+                                <i class="fas {{ $category['icon'] }} text-xl" style="color: {{ $category['color'] }};"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 mr-6">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="text-lg font-bold" style="color: #FFFFFF;">
+                                        {{ $template->name }}
+                                    </h3>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold"
+                                          style="background: {{ $category['bg'] }}; color: {{ $category['color'] }};">
+                                        {{ $category['label'] }}
+                                    </span>
+                                </div>
+                                <p class="text-sm truncate mb-1.5" style="color: rgba(235, 235, 245, 0.6);">
+                                    {{ $template->use_case ?? $template->description ?? 'Tidak ada deskripsi' }}
+                                </p>
+                                <div class="flex items-center gap-3">
+                                    @if($goalPermit)
+                                    <div class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(10, 132, 255, 0.15); color: rgba(10, 132, 255, 1);">
+                                        <i class="fas fa-flag mr-1"></i>{{ $goalPermit->permitType->name }}
+                                    </div>
+                                    @endif
+                                    @if($template->usage_count > 0)
+                                    <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.5);">
+                                        <i class="fas fa-fire mr-1" style="color: rgba(255, 149, 0, 1);"></i>
+                                        {{ $template->usage_count }}x
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Center: Stats -->
+                        <div class="flex items-center gap-8 mr-6 flex-shrink-0">
+                            <div class="text-center">
+                                <p class="text-xl font-bold" style="color: #FFFFFF;">{{ $template->items_count }}</p>
+                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Izin</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-xl font-bold" style="color: rgba(255, 149, 0, 1);">{{ $template->dependencies_count }}</p>
+                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Deps</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-xl font-bold" style="color: rgba(191, 90, 242, 1);">{{ $template->total_estimated_days ?? 0 }}</p>
+                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Hari</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-lg font-bold" style="color: rgba(52, 199, 89, 1);">
+                                    {{ $template->total_estimated_cost ? 'Rp ' . number_format($template->total_estimated_cost / 1000000, 0) . 'M' : '-' }}
+                                </p>
+                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Biaya</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Right: Actions -->
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <a href="{{ route('permit-templates.show', $template) }}" 
+                               class="px-4 py-2 rounded-lg text-sm font-medium transition-colors" 
+                               style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
+                                <i class="fas fa-eye mr-2"></i>Lihat Detail
+                            </a>
+                            <form action="{{ route('permit-templates.destroy', $template) }}" 
+                                  method="POST" 
+                                  class="inline"
+                                  onsubmit="return confirm('Yakin ingin menghapus template ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" 
+                                        class="px-3 py-2 rounded-lg text-sm font-medium transition-colors" 
+                                        style="background: rgba(255, 59, 48, 0.2); color: rgba(255, 59, 48, 1);">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="card-elevated rounded-apple-lg p-12 text-center">
+            <i class="fas fa-layer-group text-6xl mb-4" style="color: rgba(235, 235, 245, 0.3);"></i>
+            <h3 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Template</h3>
+            <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">
+                Buat template pertama Anda untuk mempercepat setup proyek
+            </p>
+            <a href="{{ route('permit-templates.create') }}" 
+               class="inline-block px-6 py-3 rounded-lg font-medium transition-colors" 
+               style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+                <i class="fas fa-plus mr-2"></i>Buat Template Pertama
+            </a>
+        </div>
+    @endif
+</div>
+@endsection
+
+@push('styles')
+<style>
+.view-toggle {
+    color: rgba(235, 235, 245, 0.6);
+    background-color: transparent;
+}
+
+.view-toggle:hover {
+    color: rgba(235, 235, 245, 0.8);
+}
+
+.view-toggle.active {
+    color: #0A84FF;
+    background-color: rgba(10, 132, 255, 0.15);
+}
+</style>
+@endpush
+
+@push('scripts')
+<script>
+// Toggle View Function
+function toggleView(view) {
+    const gridView = document.getElementById('gridView');
+    const listView = document.getElementById('listView');
+    const gridBtn = document.getElementById('gridViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+    
+    if (!gridView || !listView) {
+        return; // Graceful exit if elements don't exist
+    }
+    
+    if (view === 'grid') {
+        gridView.style.display = 'grid';
+        listView.style.display = 'none';
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+    } else {
+        gridView.style.display = 'none';
+        listView.style.display = 'block';
+        listBtn.classList.add('active');
+        gridBtn.classList.remove('active');
+    }
+    
+    // Save preference to localStorage
+    localStorage.setItem('permitTemplatesView', view);
+}
+
+// Restore saved view on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const gridView = document.getElementById('gridView');
+    if (gridView) { // Only if templates exist
+        const savedView = localStorage.getItem('permitTemplatesView') || 'grid';
+        toggleView(savedView);
+    }
+});
+</script>
+@endpush

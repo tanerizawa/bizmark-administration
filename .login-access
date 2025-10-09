@@ -1,0 +1,33 @@
+╔══════════════════════════════════════════════════════════╗
+║     🔒 BIZMARK.ID - HIDDEN LOGIN ACCESS (RAHASIA)       ║
+╚══════════════════════════════════════════════════════════╝
+
+📍 LOGIN URL (JANGAN SHARE KE PUBLIK!)
+   Development: http://localhost:8081/hadez
+   Production:  https://bizmark.id/hadez
+
+🔑 CREDENTIALS
+   Username: hadez
+   Password: T@n12089
+
+⚠️  IMPORTANT NOTES:
+   • URL /hadez HARUS DIRAHASIAKAN
+   • Jangan share di public forums/websites
+   • URL /login akan redirect ke homepage (deception)
+   • Bookmark URL /hadez untuk akses cepat
+
+📊 SECURITY STATUS
+   ✅ Login buttons hidden from public
+   ✅ Login path changed from /login to /hadez
+   ✅ Default /login redirects to homepage
+   ✅ All tests passed
+
+📚 DOCUMENTATION
+   • SECURITY_HIDDEN_LOGIN.md - Full documentation
+   • SECURITY_SUCCESS_REPORT.md - Implementation report
+
+🔄 IF YOU FORGET
+   cat /root/bizmark.id/.login-access
+
+⚠️  KEEP THIS FILE SECURE!
+╚══════════════════════════════════════════════════════════╝
