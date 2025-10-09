@@ -548,9 +548,15 @@
                     
                     <!-- Permits -->
                     <div class="flex justify-between items-center">
+                        @php
+                            $completedPermits = $project->permits->whereIn('status', [
+                                \App\Models\ProjectPermit::STATUS_APPROVED,
+                                \App\Models\ProjectPermit::STATUS_EXISTING,
+                            ])->count();
+                        @endphp
                         <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Izin & Prasyarat</span>
                         <span class="font-semibold" style="color: rgba(235, 235, 245, 0.9);">
-                            {{ $project->permits->where('status', 'obtained')->count() }}/{{ $project->permits->count() }}
+                            {{ $completedPermits }}/{{ $project->permits->count() }}
                         </span>
                     </div>
                     
