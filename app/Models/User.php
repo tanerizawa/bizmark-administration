@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
+        'is_active',
+        'avatar',
+        'last_login_at',
     ];
 
     /**
@@ -43,7 +47,41 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'last_login_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the role of the user
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Check if user has a specific role
+     */
+    public function hasRole($roleName)
+    {
+        return $this->role && $this->role->name === $roleName;
+    }
+
+    /**
+     * Check if user has any of the given roles
+     */
+    public function hasAnyRole(array $roleNames)
+    {
+        return $this->role && in_array($this->role->name, $roleNames);
+    }
+
+    /**
+     * Check if user has a specific permission
+     */
+    public function can($permissionName)
+    {
+        return $this->role && $this->role->hasPermission($permissionName);
     }
 
     /**
