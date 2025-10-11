@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bizmark.ID - Manual Testing Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-card { transition: all 0.3s; }
+        .test-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .status-pending { border-left: 4px solid #fbbf24; }
+        .status-pass { border-left: 4px solid #10b981; }
+        .status-fail { border-left: 4px solid #ef4444; }
+        .code-block { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-800 mb-2">🧪 Bizmark.ID Manual Testing Guide</h1>
+                    <p class="text-gray-600">Comprehensive browser-based testing checklist for Phase 3 & 4 features</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold text-blue-600" id="progress">0%</div>
+                    <div class="text-sm text-gray-500">Tests Completed</div>
+                </div>
+            </div>
+            <div class="bg-gray-200 rounded-full h-3 overflow-hidden">
+                <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid md:grid-cols-4 gap-4 mb-8">
+            <button onclick="openConsole()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all hover:shadow-lg">
+                🔧 Open Console
+            </button>
+            <button onclick="clearStorage()" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all hover:shadow-lg">
+                🗑️ Clear Storage
+            </button>
+            <button onclick="testGA()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all hover:shadow-lg">
+                📊 Test GA
+            </button>
+            <button onclick="exportResults()" class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all hover:shadow-lg">
+                💾 Export Results
+            </button>
+        </div>
+
+        <!-- Test Categories -->
+        <div class="space-y-6">
+            
+            <!-- 1. Cookie Consent Banner Test -->
+            <div class="test-card bg-white rounded-xl shadow-lg p-6 status-pending" id="test-1">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">🍪 1. Cookie Consent Banner Test</h3>
+                        <p class="text-gray-600">Test cookie acceptance, rejection, and persistence</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="markTest(1, 'pass')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">✓ Pass</button>
+                        <button onclick="markTest(1, 'fail')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">✗ Fail</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>First Visit:</strong> Banner appears at bottom with slide-up animation
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Privacy Link:</strong> "Pelajari lebih lanjut" opens /privacy-policy
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Accept Flow:</strong> Click "Terima" → Banner hides → GA loads → No reappear on reload
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Reject Flow:</strong> Click "Tolak" → Banner hides → GA doesn't load → No reappear on reload
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <strong>Console Test:</strong>
+                    <div class="code-block mt-2">
+<pre>// Check consent status
+localStorage.getItem('cookieConsent')
+// Should return: 'accepted' or 'rejected'
+
+// Reset for testing
+localStorage.removeItem('cookieConsent');
+location.reload();</pre>
+                    </div>
+                </div>
+
+                <textarea class="w-full mt-4 p-3 border rounded-lg" placeholder="Notes / Issues found..." rows="2"></textarea>
+            </div>
+
+            <!-- 2. Google Analytics Test -->
+            <div class="test-card bg-white rounded-xl shadow-lg p-6 status-pending" id="test-2">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">📊 2. Google Analytics Integration Test</h3>
+                        <p class="text-gray-600">Test GA4 loading and event tracking</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="markTest(2, 'pass')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">✓ Pass</button>
+                        <button onclick="markTest(2, 'fail')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">✗ Fail</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>GA Loading:</strong> GA loads only after accepting cookies
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>WhatsApp Event:</strong> Click WhatsApp link → Check console for event
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Language Event:</strong> Switch language → Check console for event
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>CTA Event:</strong> Click any primary/secondary button → Check console
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Search Event:</strong> Submit search form → Check console
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <strong>Console Test:</strong>
+                    <div class="code-block mt-2">
+<pre>// Check if GA loaded
+console.log(typeof gtag)
+// Should be: 'function'
+
+// Check dataLayer
+console.log(window.dataLayer)
+// Should be: Array with events
+
+// Manual test event
+trackEvent('Test', 'manual_test', 'Testing')
+// Check console log</pre>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-500">
+                    <strong>⚠️ Important:</strong> GA4 Measurement ID is currently <code class="bg-yellow-200 px-2 py-1 rounded">G-XXXXXXXXXX</code> (placeholder). Replace before production!
+                </div>
+
+                <textarea class="w-full mt-4 p-3 border rounded-lg" placeholder="Notes / Issues found..." rows="2"></textarea>
+            </div>
+
+            <!-- 3. Privacy Policy Page Test -->
+            <div class="test-card bg-white rounded-xl shadow-lg p-6 status-pending" id="test-3">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">🔒 3. Privacy Policy Page Test</h3>
+                        <p class="text-gray-600">Test content, design, and functionality</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="markTest(3, 'pass')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">✓ Pass</button>
+                        <button onclick="markTest(3, 'fail')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">✗ Fail</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Page Access:</strong> /privacy-policy loads without errors (< 2 seconds)
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Indonesian Content:</strong> All 10 sections visible in Indonesian
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>English Content:</strong> Switch language → All sections in English
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Design:</strong> Glassmorphism effects, AOS animations, responsive layout
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Navigation:</strong> "Back to Home" button works, no console errors
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <strong>10 Sections to Verify:</strong>
+                    <ol class="list-decimal ml-6 mt-2 space-y-1">
+                        <li>Information Collection (4 types)</li>
+                        <li>Cookie Usage (3 cards)</li>
+                        <li>Data Usage (6 purposes)</li>
+                        <li>Information Sharing</li>
+                        <li>Data Security (5 measures)</li>
+                        <li>User Rights (6 rights grid)</li>
+                        <li>Google Analytics</li>
+                        <li>Data Retention</li>
+                        <li>Policy Changes</li>
+                        <li>Contact Information (gradient card)</li>
+                    </ol>
+                </div>
+
+                <textarea class="w-full mt-4 p-3 border rounded-lg" placeholder="Notes / Issues found..." rows="2"></textarea>
+            </div>
+
+            <!-- 4. Language Switcher Test -->
+            <div class="test-card bg-white rounded-xl shadow-lg p-6 status-pending" id="test-4">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">🌐 4. Language Switcher Test</h3>
+                        <p class="text-gray-600">Test bilingual functionality and persistence</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="markTest(4, 'pass')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">✓ Pass</button>
+                        <button onclick="markTest(4, 'fail')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">✗ Fail</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Desktop Dropdown:</strong> Globe icon → Dropdown opens → Click ID/EN → Page reloads
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Mobile Toggle:</strong> Hamburger menu → Language buttons at bottom → Toggle works
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Content Translation:</strong> All text changes to selected language
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Persistence:</strong> Navigate pages → Language stays → Reload → Still same language
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>HTML Lang:</strong> Check source → &lt;html lang="id"&gt; or &lt;html lang="en"&gt;
+                        </div>
+                    </div>
+                </div>
+
+                <textarea class="w-full mt-4 p-3 border rounded-lg" placeholder="Notes / Issues found..." rows="2"></textarea>
+            </div>
+
+            <!-- 5. SEO & Meta Tags Test -->
+            <div class="test-card bg-white rounded-xl shadow-lg p-6 status-pending" id="test-5">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">🔍 5. SEO & Meta Tags Test</h3>
+                        <p class="text-gray-600">Test meta tags, structured data, and sitemap</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="markTest(5, 'pass')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">✓ Pass</button>
+                        <button onclick="markTest(5, 'fail')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">✗ Fail</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Sitemap:</strong> Visit /sitemap.xml → Valid XML → All pages listed
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Robots.txt:</strong> Visit /robots.txt → Plain text → Sitemap referenced
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Meta Tags:</strong> View source → Title, description, keywords present
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>OG Tags:</strong> View source → og:title, og:description, og:image, og:locale
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Hreflang:</strong> View source → hreflang="id", hreflang="en", hreflang="x-default"
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Structured Data:</strong> View source → 3 JSON-LD schemas (Organization, Service, WebSite)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-purple-50 rounded-lg">
+                    <strong>Validation Tools:</strong>
+                    <ul class="list-disc ml-6 mt-2 space-y-1">
+                        <li><a href="https://search.google.com/test/rich-results" target="_blank" class="text-blue-600 hover:underline">Google Rich Results Test</a></li>
+                        <li><a href="https://validator.schema.org" target="_blank" class="text-blue-600 hover:underline">Schema Validator</a></li>
+                        <li><a href="https://www.xml-sitemaps.com/validate-xml-sitemap.html" target="_blank" class="text-blue-600 hover:underline">Sitemap Validator</a></li>
+                    </ul>
+                </div>
+
+                <textarea class="w-full mt-4 p-3 border rounded-lg" placeholder="Notes / Issues found..." rows="2"></textarea>
+            </div>
+
+            <!-- 6. Custom 404 Page Test -->
+            <div class="test-card bg-white rounded-xl shadow-lg p-6 status-pending" id="test-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">❌ 6. Custom 404 Page Test</h3>
+                        <p class="text-gray-600">Test error page design and functionality</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="markTest(6, 'pass')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">✓ Pass</button>
+                        <button onclick="markTest(6, 'fail')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">✗ Fail</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Page Display:</strong> Visit /test-404 → Custom 404 page (not default Laravel)
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Design:</strong> Floating icons, giant "404", gradient text, glassmorphism
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Search:</strong> Type in search box → Submit → Redirects to /blog?search=query
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>CTA Buttons:</strong> "Kembali ke Beranda" (→ /), "Baca Artikel" (→ /blog), WhatsApp
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Popular Pages:</strong> 4 cards (Services, Process, About, Blog) with hover effects
+                        </div>
+                    </div>
+                </div>
+
+                <textarea class="w-full mt-4 p-3 border rounded-lg" placeholder="Notes / Issues found..." rows="2"></textarea>
+            </div>
+
+            <!-- 7. Performance Test -->
+            <div class="test-card bg-white rounded-xl shadow-lg p-6 status-pending" id="test-7">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">⚡ 7. Performance Test</h3>
+                        <p class="text-gray-600">Test page load speed and optimization</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="markTest(7, 'pass')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">✓ Pass</button>
+                        <button onclick="markTest(7, 'fail')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">✗ Fail</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Loading Screen:</strong> Black screen with blue spinner → Auto-hides ~500ms
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Page Load:</strong> Homepage loads in < 3 seconds
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Lighthouse:</strong> Run Lighthouse → Performance > 90, SEO > 90
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>No Errors:</strong> Network tab → No 404s, no failed requests
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <strong>Console Test:</strong>
+                    <div class="code-block mt-2">
+<pre>// Check load time
+window.addEventListener('load', function() {
+    console.log('Page loaded in:', performance.now(), 'ms');
+});
+
+// Run Lighthouse
+// Chrome DevTools → Lighthouse tab → Generate report</pre>
+                    </div>
+                </div>
+
+                <textarea class="w-full mt-4 p-3 border rounded-lg" placeholder="Notes / Issues found..." rows="2"></textarea>
+            </div>
+
+            <!-- 8. Mobile Responsive Test -->
+            <div class="test-card bg-white rounded-xl shadow-lg p-6 status-pending" id="test-8">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">📱 8. Mobile Responsive Test</h3>
+                        <p class="text-gray-600">Test mobile layout and touch interactions</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="markTest(8, 'pass')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">✓ Pass</button>
+                        <button onclick="markTest(8, 'fail')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">✗ Fail</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Hamburger Menu:</strong> Opens smoothly, all items accessible
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Language Toggle:</strong> ID/EN buttons in mobile menu work
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>WhatsApp Widget:</strong> Icon-only mode, doesn't overlap content
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Content:</strong> No horizontal scroll, text readable, buttons touch-friendly
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-600" onchange="updateProgress()">
+                        <div>
+                            <strong>Devices:</strong> Test on iPhone (Safari) and Android (Chrome)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <strong>DevTools Testing:</strong>
+                    <p class="mt-2">F12 → Device Toolbar → Test: iPhone SE (375px), iPad (768px), Desktop (1920px)</p>
+                </div>
+
+                <textarea class="w-full mt-4 p-3 border rounded-lg" placeholder="Notes / Issues found..." rows="2"></textarea>
+            </div>
+
+        </div>
+
+        <!-- Results Summary -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl p-8 mt-8 text-white">
+            <h2 class="text-3xl font-bold mb-4">📊 Testing Results Summary</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-6">
+                    <div class="text-4xl font-bold mb-2" id="passCount">0</div>
+                    <div class="text-sm opacity-90">Tests Passed</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-6">
+                    <div class="text-4xl font-bold mb-2" id="failCount">0</div>
+                    <div class="text-sm opacity-90">Tests Failed</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-6">
+                    <div class="text-4xl font-bold mb-2" id="totalTests">8</div>
+                    <div class="text-sm opacity-90">Total Tests</div>
+                </div>
+            </div>
+            <button onclick="exportResults()" class="mt-6 w-full bg-white text-blue-600 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition-all">
+                💾 Export Full Test Report
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let testResults = {
+            pass: 0,
+            fail: 0
+        };
+
+        function markTest(testNum, status) {
+            const testCard = document.getElementById(`test-${testNum}`);
+            testCard.classList.remove('status-pending', 'status-pass', 'status-fail');
+            
+            if (status === 'pass') {
+                testCard.classList.add('status-pass');
+                testResults.pass++;
+            } else {
+                testCard.classList.add('status-fail');
+                testResults.fail++;
+            }
+            
+            updateResults();
+        }
+
+        function updateProgress() {
+            const totalCheckboxes = document.querySelectorAll('input[type="checkbox"]').length;
+            const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            const percentage = Math.round((checkedCheckboxes / totalCheckboxes) * 100);
+            
+            document.getElementById('progress').textContent = percentage + '%';
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        function updateResults() {
+            document.getElementById('passCount').textContent = testResults.pass;
+            document.getElementById('failCount').textContent = testResults.fail;
+        }
+
+        function openConsole() {
+            alert('Press F12 or Right Click → Inspect to open Developer Console');
+        }
+
+        function clearStorage() {
+            if (confirm('Clear localStorage and reload page?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function testGA() {
+            console.log('=== GA4 Testing ===');
+            console.log('Cookie Consent:', localStorage.getItem('cookieConsent'));
+            console.log('gtag function:', typeof gtag);
+            console.log('dataLayer:', window.dataLayer);
+            
+            if (typeof trackEvent !== 'undefined') {
+                console.log('Testing manual event...');
+                trackEvent('Test', 'manual_test', 'Browser Testing');
+            }
+            
+            alert('Check console for GA4 test results (F12)');
+        }
+
+        function exportResults() {
+            let report = '=== BIZMARK.ID MANUAL TESTING REPORT ===\n\n';
+            report += `Date: ${new Date().toLocaleString()}\n`;
+            report += `Browser: ${navigator.userAgent}\n`;
+            report += `Screen: ${window.innerWidth}x${window.innerHeight}\n\n`;
+            report += `Tests Passed: ${testResults.pass}\n`;
+            report += `Tests Failed: ${testResults.fail}\n`;
+            report += `Total Tests: 8\n\n`;
+            
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            const totalCheckboxes = document.querySelectorAll('input[type="checkbox"]').length;
+            report += `Subtasks Completed: ${checkboxes}/${totalCheckboxes}\n\n`;
+            
+            report += '=== NOTES ===\n';
+            document.querySelectorAll('textarea').forEach((textarea, i) => {
+                if (textarea.value) {
+                    report += `\nTest ${i+1}:\n${textarea.value}\n`;
+                }
+            });
+            
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bizmark-testing-report-${Date.now()}.txt`;
+            a.click();
+            
+            alert('Test report exported! Check your downloads.');
+        }
+
+        // Initialize
+        console.log('🧪 Bizmark.ID Testing Guide Loaded');
+        console.log('Use the buttons above to perform tests');
+    </script>
+</body>
+</html>

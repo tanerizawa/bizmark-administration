@@ -1,2 +1,43 @@
+# Robots.txt for Bizmark.ID
+# https://bizmark.id/robots.txt
+
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /hadez
+Disallow: /dashboard
+Disallow: /projects
+Disallow: /tasks
+Disallow: /documents
+Disallow: /institutions
+Disallow: /clients
+Disallow: /settings
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://bizmark.id/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Disallow: /hadez
+Disallow: /dashboard
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /hadez
+Disallow: /dashboard
+Disallow: /api/
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

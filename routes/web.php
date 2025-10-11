@@ -9,17 +9,39 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\ProjectPaymentController;
 use App\Http\Controllers\ProjectExpenseController;
 use App\Http\Controllers\CashAccountController;
+use App\Http\Controllers\BankReconciliationController;
 use App\Http\Controllers\PermitTypeController;
 use App\Http\Controllers\PermitTemplateController;
 use App\Http\Controllers\ProjectPermitController;
 use App\Http\Controllers\PermitController;
 use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\PublicArticleController;
+use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\SitemapController;
 
-// Landing Page (Public)
-Route::get('/', function () {
-    return view('landing');
-})->name('landing');
+// SEO Routes
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+
+// Language Switcher
+Route::get('/locale/{locale}', [LocaleController::class, 'setLocale'])->name('locale.set');
+
+// Privacy Policy
+Route::get('/privacy-policy', function() {
+    return view('privacy-policy');
+})->name('privacy.policy');
+
+// Landing Page (Public) - With Latest Articles
+Route::get('/', [PublicArticleController::class, 'landing'])->name('landing');
+
+// Public Blog Routes
+Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index');
+Route::get('/blog/category/{category}', [PublicArticleController::class, 'category'])->name('blog.category');
+Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag');
+Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('blog.article');
 
 // Custom Authentication Routes (Hidden Login Path for Security)
 // Login routes with custom path '/hadez' instead of '/login'
@@ -36,6 +58,7 @@ Route::get('/login', function () {
 Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/clear-cache', [DashboardController::class, 'clearCache'])->name('dashboard.clear-cache');
     Route::get('/home', function () {
         return redirect()->route('dashboard');
     })->name('home');
@@ -76,6 +99,21 @@ Route::middleware(['auth'])->group(function () {
     
     // API endpoint for active cash accounts
     Route::get('api/cash-accounts/active', [CashAccountController::class, 'getActiveCashAccounts'])->name('api.cash-accounts.active');
+
+    // Bank Reconciliation Routes (Phase 1B)
+    Route::resource('reconciliations', BankReconciliationController::class);
+    Route::get('reconciliations/{reconciliation}/match', [BankReconciliationController::class, 'match'])->name('reconciliations.match');
+    Route::post('reconciliations/{reconciliation}/auto-match', [BankReconciliationController::class, 'autoMatch'])->name('reconciliations.auto-match');
+    Route::post('reconciliations/{reconciliation}/manual-match', [BankReconciliationController::class, 'manualMatch'])->name('reconciliations.manual-match');
+    Route::post('reconciliations/{reconciliation}/unmatch', [BankReconciliationController::class, 'unmatch'])->name('reconciliations.unmatch');
+    Route::post('reconciliations/{reconciliation}/complete', [BankReconciliationController::class, 'complete'])->name('reconciliations.complete');
+
+    // Article Management Routes
+    Route::resource('articles', ArticleController::class);
+    Route::post('articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
+    Route::post('articles/{article}/unpublish', [ArticleController::class, 'unpublish'])->name('articles.unpublish');
+    Route::post('articles/{article}/archive', [ArticleController::class, 'archive'])->name('articles.archive');
+    Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])->name('articles.upload-image');
 
     // Master Data - Permit Management Routes (Phase 2A)
     Route::resource('permit-types', PermitTypeController::class);
@@ -138,4 +176,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('projects/{project}/permits/documents/{document}/download', [PermitController::class, 'downloadDocument'])->name('permits.documents.download');
     Route::delete('projects/{project}/permits/documents/{document}', [PermitController::class, 'deleteDocument'])->name('permits.documents.delete');
     Route::post('permits/documents/{document}/delete', [PermitController::class, 'deleteDocumentPost'])->name('permits.documents.delete-post');
+
+    // Settings Management Routes (Phase 2A - Sprint 9)
+    Route::get('settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    
+    // User Management
+    Route::post('settings/users', [App\Http\Controllers\SettingsController::class, 'storeUser'])->name('settings.users.store');
+    Route::put('settings/users/{user}', [App\Http\Controllers\SettingsController::class, 'updateUser'])->name('settings.users.update');
+    Route::delete('settings/users/{user}', [App\Http\Controllers\SettingsController::class, 'deleteUser'])->name('settings.users.delete');
+    Route::patch('settings/users/{user}/toggle-status', [App\Http\Controllers\SettingsController::class, 'toggleUserStatus'])->name('settings.users.toggle-status');
+    
+    // Role Management
+    Route::post('settings/roles', [App\Http\Controllers\SettingsController::class, 'storeRole'])->name('settings.roles.store');
+    Route::put('settings/roles/{role}', [App\Http\Controllers\SettingsController::class, 'updateRole'])->name('settings.roles.update');
+    Route::delete('settings/roles/{role}', [App\Http\Controllers\SettingsController::class, 'deleteRole'])->name('settings.roles.delete');
 });

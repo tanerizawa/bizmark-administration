@@ -51,6 +51,11 @@ class CashAccount extends Model
         return $this->hasMany(ProjectExpense::class, 'bank_account_id');
     }
 
+    public function reconciliations()
+    {
+        return $this->hasMany(BankReconciliation::class, 'cash_account_id');
+    }
+
     // Helper Methods
     public function getFormattedBalanceAttribute()
     {

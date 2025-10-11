@@ -3,12 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bizmark.ID - Solusi Manajemen Perizinan & Konsultan Bisnis Terpercaya</title>
-    <meta name="description" content="Bizmark.ID - Solusi Manajemen Perizinan dan Konsultan Bisnis Terpercaya. Layanan perizinan OSS, AMDAL, UKL-UPL, konsultasi, dan digitalisasi administrasi untuk perusahaan modern.">
-    <meta name="keywords" content="perizinan, konsultan bisnis, digitalisasi administrasi, OSS, AMDAL, UKL-UPL, legalitas usaha, permit management">
-    <link rel="icon" href="/favicon.ico">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary Meta Tags -->
+    <title>Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha Jakarta</title>
+    <meta name="title" content="Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha Jakarta">
+    <meta name="description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan, dan digitalisasi administrasi perusahaan. Proses cepat, transparan, harga kompetitif. Konsultasi gratis!">
+    <meta name="keywords" content="konsultan perizinan jakarta, jasa oss, pengurusan amdal, ukl upl, pbg, slf, izin lingkungan, legalitas usaha, konsultan bisnis, digitalisasi administrasi, permit management system, andalalin">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Bizmark.ID">
+    <meta name="language" content="Indonesian">
+    <link rel="canonical" href="https://bizmark.id/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bizmark.id/">
+    <meta property="og:title" content="Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha">
+    <meta property="og:description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan. Proses cepat, transparan, harga kompetitif. Konsultasi gratis!">
+    <meta property="og:image" content="https://bizmark.id/images/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:site_name" content="Bizmark.ID">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://bizmark.id/">
+    <meta name="twitter:title" content="Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha">
+    <meta name="twitter:description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF. Proses cepat & transparan. Konsultasi gratis!">
+    <meta name="twitter:image" content="https://bizmark.id/images/twitter-image.jpg">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#007AFF">
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Structured Data - Local Business Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "Bizmark.ID",
+        "image": "https://bizmark.id/images/logo.png",
+        "description": "Konsultan perizinan dan bisnis terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan, dan digitalisasi administrasi perusahaan.",
+        "url": "https://bizmark.id",
+        "telephone": "+62-21-1234-5678",
+        "email": "info@bizmark.id",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Jl. Sudirman No. 123",
+            "addressLocality": "Jakarta Selatan",
+            "addressRegion": "DKI Jakarta",
+            "postalCode": "12190",
+            "addressCountry": "ID"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -6.2088,
+            "longitude": 106.8456
+        },
+        "openingHoursSpecification": [
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                "opens": "08:00",
+                "closes": "17:00"
+            },
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": "Saturday",
+                "opens": "08:00",
+                "closes": "12:00"
+            }
+        ],
+        "priceRange": "$$",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "500"
+        },
+        "sameAs": [
+            "https://www.facebook.com/bizmark.id",
+            "https://twitter.com/bizmark_id",
+            "https://www.instagram.com/bizmark.id",
+            "https://www.linkedin.com/company/bizmark-id"
+        ],
+        "areaServed": {
+            "@type": "Country",
+            "name": "Indonesia"
+        },
+        "serviceType": [
+            "Konsultan Perizinan",
+            "Konsultan Bisnis",
+            "Digitalisasi Administrasi",
+            "OSS",
+            "AMDAL",
+            "UKL-UPL",
+            "PBG",
+            "SLF",
+            "Izin Lingkungan"
+        ]
+    }
+    </script>
+    
+    <!-- Structured Data - Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Bizmark.ID",
+        "url": "https://bizmark.id",
+        "logo": "https://bizmark.id/images/logo.png",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+62-21-1234-5678",
+            "contactType": "customer service",
+            "areaServed": "ID",
+            "availableLanguage": ["Indonesian", "English"]
+        }
+    }
+    </script>
+    
+    <!-- Structured Data - FAQ Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Apa itu OSS dan mengapa penting untuk bisnis saya?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "OSS (Online Single Submission) adalah sistem perizinan berusaha terintegrasi secara elektronik. OSS penting karena merupakan izin dasar yang wajib dimiliki setiap pelaku usaha di Indonesia. Dengan OSS, Anda bisa mendapatkan NIB (Nomor Induk Berusaha) yang berfungsi sebagai identitas perusahaan untuk berbagai keperluan bisnis dan perizinan lainnya."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Berapa lama waktu yang dibutuhkan untuk pengurusan izin?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Waktu pengurusan bervariasi tergantung jenis izin: OSS (1-3 hari kerja), PBG/SLF (14-30 hari kerja), AMDAL (60-90 hari kerja), UKL-UPL (30-45 hari kerja). Kami menjamin proses yang efisien dengan update berkala dan monitoring real-time melalui sistem digital kami."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Apakah biaya konsultasi sudah termasuk biaya pemerintah?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Biaya yang kami tawarkan mencakup jasa konsultasi, pengurusan dokumen, dan koordinasi dengan instansi terkait. Biaya resmi pemerintah (PNBP) akan diinformasikan secara transparan dan dibayarkan terpisah. Kami memberikan rincian biaya yang jelas di awal tanpa biaya tersembunyi."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Bagaimana sistem monitoring digital Bizmark.ID bekerja?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Sistem kami memungkinkan klien untuk memantau progress perizinan secara real-time melalui dashboard online. Anda dapat melihat status dokumen, timeline proses, upload/download dokumen, dan berkomunikasi langsung dengan tim kami. Semua aktivitas tercatat dan transparan untuk memastikan akuntabilitas."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Apakah Bizmark.ID melayani klien di luar Jakarta?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ya, kami melayani klien di seluruh Indonesia. Dengan jaringan partner di berbagai kota dan sistem digital yang terintegrasi, kami dapat mengurus perizinan di daerah manapun sesuai kebutuhan bisnis Anda. Konsultasi dapat dilakukan secara online maupun offline."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Apa yang membedakan Bizmark.ID dengan konsultan lainnya?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Kami menggabungkan keahlian konsultan profesional dengan teknologi digital modern. Keunggulan kami: (1) Sistem monitoring real-time, (2) Transparansi biaya dan proses, (3) Tim bersertifikat dengan 10+ tahun pengalaman, (4) Jaringan luas dengan instansi pemerintah, (5) Customer support 24/7, (6) Track record 98% kepuasan klien dari 500+ perusahaan."
+                }
+            }
+        ]
+    }
+    </script>
+    
     <style>
         :root {
             --apple-blue: #007AFF;
@@ -219,6 +402,13 @@
             .stat-number { font-size: 2rem; }
             .btn-primary, .btn-secondary { padding: 0.75rem 1.5rem; font-size: 0.9rem; }
         }
+        
+        /* FAQ Accordion Styles */
+        details summary { list-style: none; }
+        details summary::-webkit-details-marker { display: none; }
+        details[open] summary i.fa-chevron-down { transform: rotate(180deg); }
+        details summary i { transition: transform 0.3s ease; }
+        details[open] .section { border-color: var(--apple-blue); }
     </style>
 </head>
 <body>
@@ -257,10 +447,10 @@
     </div>
 
     <!-- Hero Section -->
-    <section id="home" class="hero-gradient pt-32 pb-20 px-4">
+    <section id="home" class="hero-gradient pt-32 pb-20 px-4" role="banner">
         <div class="container mx-auto text-center max-w-5xl relative z-10">
-            <div class="logo-container">
-                <i class="fas fa-shield-alt text-white text-4xl"></i>
+            <div class="logo-container" aria-label="Logo Bizmark.ID">
+                <i class="fas fa-shield-alt text-white text-4xl" aria-hidden="true"></i>
             </div>
             
             <h1 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
@@ -268,38 +458,38 @@
             </h1>
             
             <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto" style="color: var(--dark-text-secondary);">
-                Digitalisasi administrasi, layanan perizinan profesional, dan konsultasi bisnis untuk perusahaan modern di Indonesia
+                Digitalisasi administrasi, layanan perizinan profesional OSS, AMDAL, UKL-UPL, PBG, SLF, dan konsultasi bisnis untuk perusahaan modern di Indonesia. Proses cepat, transparan, dan terpercaya.
             </p>
             
             <div class="flex flex-col md:flex-row justify-center items-center gap-4">
-                <a href="#contact" class="btn-primary">
-                    <i class="fas fa-phone-alt mr-2"></i>Konsultasi Gratis
+                <a href="#contact" class="btn-primary" aria-label="Hubungi kami untuk konsultasi gratis">
+                    <i class="fas fa-phone-alt mr-2" aria-hidden="true"></i>Konsultasi Gratis
                 </a>
-                <a href="#services" class="btn-secondary">
-                    <i class="fas fa-info-circle mr-2"></i>Pelajari Lebih Lanjut
+                <a href="#services" class="btn-secondary" aria-label="Pelajari lebih lanjut tentang layanan kami">
+                    <i class="fas fa-info-circle mr-2" aria-hidden="true"></i>Pelajari Lebih Lanjut
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Stats Section -->
-    <section class="py-16 px-4" style="background: var(--dark-bg-secondary);">
+    <section class="py-16 px-4" style="background: var(--dark-bg-secondary);" aria-label="Statistik dan Pencapaian Bizmark.ID">
         <div class="container mx-auto">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div class="stat-card">
-                    <div class="stat-number">10+</div>
+                    <div class="stat-number" aria-label="10 plus">10+</div>
                     <p class="text-lg" style="color: var(--dark-text-secondary);">Tahun Pengalaman</p>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">500+</div>
+                    <div class="stat-number" aria-label="500 plus">500+</div>
                     <p class="text-lg" style="color: var(--dark-text-secondary);">Klien Terlayani</p>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">1000+</div>
+                    <div class="stat-number" aria-label="1000 plus">1000+</div>
                     <p class="text-lg" style="color: var(--dark-text-secondary);">Perizinan Selesai</p>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">98%</div>
+                    <div class="stat-number" aria-label="98 persen">98%</div>
                     <p class="text-lg" style="color: var(--dark-text-secondary);">Kepuasan Klien</p>
                 </div>
             </div>
@@ -307,10 +497,10 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-20 px-4">
+    <section id="about" class="py-20 px-4" aria-labelledby="about-heading">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">Tentang Bizmark.ID</h2>
+                <h2 id="about-heading" class="text-4xl md:text-5xl font-bold mb-4">Tentang Bizmark.ID</h2>
                 <p class="text-xl" style="color: var(--dark-text-secondary);">Partner terpercaya untuk solusi perizinan dan pengembangan bisnis Anda</p>
             </div>
             
@@ -319,26 +509,26 @@
                     <div class="section p-8">
                         <h3 class="text-2xl font-bold mb-4">Visi Kami</h3>
                         <p class="mb-6" style="color: var(--dark-text-secondary);">
-                            Menjadi perusahaan konsultan perizinan dan bisnis terdepan di Indonesia yang mengintegrasikan teknologi digital untuk memberikan layanan berkualitas tinggi, efisien, dan transparan.
+                            Menjadi perusahaan konsultan perizinan dan bisnis terdepan di Indonesia yang mengintegrasikan teknologi digital untuk memberikan layanan berkualitas tinggi, efisien, dan transparan kepada seluruh pelaku usaha.
                         </p>
                         
                         <h3 class="text-2xl font-bold mb-4">Misi Kami</h3>
                         <ul class="space-y-3" style="color: var(--dark-text-secondary);">
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
-                                <span>Memberikan solusi perizinan yang cepat, akurat, dan sesuai regulasi</span>
+                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1" aria-hidden="true"></i>
+                                <span>Memberikan solusi perizinan OSS, AMDAL, PBG, SLF yang cepat, akurat, dan sesuai regulasi pemerintah</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
-                                <span>Mendampingi klien dalam mengembangkan bisnis secara berkelanjutan</span>
+                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1" aria-hidden="true"></i>
+                                <span>Mendampingi klien dalam mengembangkan bisnis secara berkelanjutan dengan strategi yang tepat</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
-                                <span>Menghadirkan sistem digital untuk transparansi dan efisiensi proses</span>
+                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1" aria-hidden="true"></i>
+                                <span>Menghadirkan sistem digital untuk transparansi dan efisiensi proses perizinan</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
-                                <span>Membangun kepercayaan melalui profesionalisme dan integritas</span>
+                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1" aria-hidden="true"></i>
+                                <span>Membangun kepercayaan melalui profesionalisme, integritas, dan hasil yang terukur</span>
                             </li>
                         </ul>
                     </div>
@@ -347,34 +537,34 @@
                 <div class="space-y-6">
                     <div class="section p-6">
                         <div class="flex items-center mb-3">
-                            <i class="fas fa-award text-3xl text-blue-500 mr-4"></i>
-                            <h4 class="text-xl font-bold">Berpengalaman</h4>
+                            <i class="fas fa-award text-3xl text-blue-500 mr-4" aria-hidden="true"></i>
+                            <h3 class="text-xl font-bold">Berpengalaman</h3>
                         </div>
-                        <p style="color: var(--dark-text-secondary);">Lebih dari 10 tahun melayani berbagai industri dengan track record sukses</p>
+                        <p style="color: var(--dark-text-secondary);">Lebih dari 10 tahun melayani berbagai industri dengan track record sukses menangani 1000+ proyek perizinan</p>
                     </div>
                     
                     <div class="section p-6">
                         <div class="flex items-center mb-3">
-                            <i class="fas fa-users text-3xl text-blue-500 mr-4"></i>
-                            <h4 class="text-xl font-bold">Tim Profesional</h4>
+                            <i class="fas fa-users text-3xl text-blue-500 mr-4" aria-hidden="true"></i>
+                            <h3 class="text-xl font-bold">Tim Profesional</h3>
                         </div>
-                        <p style="color: var(--dark-text-secondary);">Legal expert, konsultan bisnis bersertifikat, dan teknisi berpengalaman</p>
+                        <p style="color: var(--dark-text-secondary);">Legal expert, konsultan bisnis bersertifikat, dan teknisi berpengalaman di bidang perizinan dan regulasi</p>
                     </div>
                     
                     <div class="section p-6">
                         <div class="flex items-center mb-3">
-                            <i class="fas fa-network-wired text-3xl text-blue-500 mr-4"></i>
-                            <h4 class="text-xl font-bold">Jaringan Luas</h4>
+                            <i class="fas fa-network-wired text-3xl text-blue-500 mr-4" aria-hidden="true"></i>
+                            <h3 class="text-xl font-bold">Jaringan Luas</h3>
                         </div>
-                        <p style="color: var(--dark-text-secondary);">Koneksi kuat dengan instansi pemerintah dan sektor swasta</p>
+                        <p style="color: var(--dark-text-secondary);">Koneksi kuat dengan instansi pemerintah (OSS, DPMPTSP, DLH, BPN) dan sektor swasta di seluruh Indonesia</p>
                     </div>
                     
                     <div class="section p-6">
                         <div class="flex items-center mb-3">
-                            <i class="fas fa-laptop-code text-3xl text-blue-500 mr-4"></i>
-                            <h4 class="text-xl font-bold">Teknologi Digital</h4>
+                            <i class="fas fa-laptop-code text-3xl text-blue-500 mr-4" aria-hidden="true"></i>
+                            <h3 class="text-xl font-bold">Teknologi Digital</h3>
                         </div>
-                        <p style="color: var(--dark-text-secondary);">Platform administrasi online untuk monitoring real-time dan transparansi penuh</p>
+                        <p style="color: var(--dark-text-secondary);">Platform administrasi online untuk monitoring real-time dan transparansi penuh dalam setiap tahap proses</p>
                     </div>
                 </div>
             </div>
@@ -382,95 +572,95 @@
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="py-20 px-4" style="background: var(--dark-bg-secondary);">
+    <section id="services" class="py-20 px-4" style="background: var(--dark-bg-secondary);" aria-labelledby="services-heading">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">Layanan Kami</h2>
+                <h2 id="services-heading" class="text-4xl md:text-5xl font-bold mb-4">Layanan Kami</h2>
                 <p class="text-xl" style="color: var(--dark-text-secondary);">Solusi lengkap untuk kebutuhan perizinan dan pengembangan bisnis Anda</p>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8 mb-12">
-                <div class="feature-card">
-                    <div class="feature-icon">
+                <article class="feature-card">
+                    <div class="feature-icon" aria-hidden="true">
                         <i class="fas fa-file-signature"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Manajemen Perizinan</h3>
                     <p style="color: var(--dark-text-secondary);" class="mb-4">
-                        Pengurusan lengkap perizinan usaha dengan proses cepat dan transparan
+                        Pengurusan lengkap perizinan usaha dengan proses cepat, transparan, dan terpercaya. Didampingi konsultan berpengalaman.
                     </p>
                     <ul class="space-y-2 text-sm" style="color: var(--dark-text-secondary);">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>OSS (Online Single Submission)</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>AMDAL & UKL-UPL</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Izin Lingkungan</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>PBG & SLF</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Andalalin</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>OSS (Online Single Submission) & NIB</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>AMDAL & UKL-UPL (Izin Lingkungan)</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Izin Lingkungan & SPPL</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>PBG (Persetujuan Bangunan Gedung) & SLF</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Andalalin (Analisis Dampak Lalu Lintas)</li>
                     </ul>
-                </div>
+                </article>
                 
-                <div class="feature-card">
-                    <div class="feature-icon">
+                <article class="feature-card">
+                    <div class="feature-icon" aria-hidden="true">
                         <i class="fas fa-briefcase"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Konsultasi Bisnis</h3>
                     <p style="color: var(--dark-text-secondary);" class="mb-4">
-                        Pendampingan profesional untuk pengembangan dan pertumbuhan bisnis
+                        Pendampingan profesional untuk pengembangan dan pertumbuhan bisnis berkelanjutan dengan strategi yang tepat.
                     </p>
                     <ul class="space-y-2 text-sm" style="color: var(--dark-text-secondary);">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Legalitas Perusahaan</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Strategi Pengembangan Bisnis</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Perencanaan Pajak</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Business Process Improvement</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Compliance Management</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Legalitas Perusahaan (PT, CV, Yayasan)</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Strategi Pengembangan Bisnis</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Perencanaan Pajak & Compliance</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Business Process Improvement</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Compliance & Risk Management</li>
                     </ul>
-                </div>
+                </article>
                 
-                <div class="feature-card">
-                    <div class="feature-icon">
+                <article class="feature-card">
+                    <div class="feature-icon" aria-hidden="true">
                         <i class="fas fa-laptop-code"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Digitalisasi Administrasi</h3>
                     <p style="color: var(--dark-text-secondary);" class="mb-4">
-                        Sistem digital untuk efisiensi dan transparansi operasional perusahaan
+                        Sistem digital modern untuk efisiensi dan transparansi operasional perusahaan dengan teknologi cloud.
                     </p>
                     <ul class="space-y-2 text-sm" style="color: var(--dark-text-secondary);">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Document Management System</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Workflow Automation</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Project Tracking</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Real-time Monitoring</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Reporting & Analytics</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Document Management System</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Workflow Automation & Approval</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Project Tracking & Monitoring</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Real-time Progress Dashboard</li>
+                        <li><i class="fas fa-check text-green-500 mr-2" aria-hidden="true"></i>Reporting & Analytics Dashboard</li>
                     </ul>
-                </div>
+                </article>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="feature-card">
-                    <div class="feature-icon">
+                <article class="feature-card">
+                    <div class="feature-icon" aria-hidden="true">
                         <i class="fas fa-balance-scale"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Legal & Compliance</h3>
                     <p style="color: var(--dark-text-secondary);">
-                        Layanan legal komprehensif untuk memastikan bisnis Anda sesuai regulasi dan perundangan yang berlaku
+                        Layanan legal komprehensif untuk memastikan bisnis Anda sesuai regulasi dan perundangan yang berlaku. Konsultasi hukum bisnis, kontrak, dan compliance audit.
                     </p>
-                </div>
+                </article>
                 
-                <div class="feature-card">
-                    <div class="feature-icon">
+                <article class="feature-card">
+                    <div class="feature-icon" aria-hidden="true">
                         <i class="fas fa-handshake"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Partnership & Networking</h3>
                     <p style="color: var(--dark-text-secondary);">
-                        Fasilitasi kerjasama bisnis dan networking dengan instansi pemerintah maupun sektor swasta
+                        Fasilitasi kerjasama bisnis dan networking dengan instansi pemerintah (DPMPTSP, DLH, BPN, Notaris) maupun sektor swasta untuk kemudahan proses perizinan.
                     </p>
-                </div>
+                </article>
             </div>
         </div>
     </section>
 
     <!-- Why Us Section -->
-    <section id="why-us" class="py-20 px-4">
+    <section id="why-us" class="py-20 px-4" aria-labelledby="why-us-heading">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">Mengapa Memilih Bizmark.ID?</h2>
+                <h2 id="why-us-heading" class="text-4xl md:text-5xl font-bold mb-4">Mengapa Memilih Bizmark.ID?</h2>
                 <p class="text-xl" style="color: var(--dark-text-secondary);">Keunggulan yang membuat kami menjadi partner terpercaya</p>
             </div>
             
@@ -616,6 +806,78 @@
         </div>
     </section>
 
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 px-4">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Pertanyaan yang Sering Diajukan</h2>
+                <p class="text-xl" style="color: var(--dark-text-secondary);">Temukan jawaban untuk pertanyaan umum tentang layanan kami</p>
+            </div>
+            
+            <div class="space-y-4">
+                <details class="section p-6 cursor-pointer" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <summary class="font-bold text-lg flex justify-between items-center" itemprop="name">
+                        <span>Apa itu OSS dan mengapa penting untuk bisnis saya?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </summary>
+                    <div class="mt-4 pt-4 border-t" style="border-color: var(--dark-separator); color: var(--dark-text-secondary);" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">OSS (Online Single Submission) adalah sistem perizinan berusaha terintegrasi secara elektronik. OSS penting karena merupakan izin dasar yang wajib dimiliki setiap pelaku usaha di Indonesia. Dengan OSS, Anda bisa mendapatkan NIB (Nomor Induk Berusaha) yang berfungsi sebagai identitas perusahaan untuk berbagai keperluan bisnis dan perizinan lainnya.</p>
+                    </div>
+                </details>
+                
+                <details class="section p-6 cursor-pointer" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <summary class="font-bold text-lg flex justify-between items-center" itemprop="name">
+                        <span>Berapa lama waktu yang dibutuhkan untuk pengurusan izin?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </summary>
+                    <div class="mt-4 pt-4 border-t" style="border-color: var(--dark-separator); color: var(--dark-text-secondary);" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Waktu pengurusan bervariasi tergantung jenis izin: OSS (1-3 hari kerja), PBG/SLF (14-30 hari kerja), AMDAL (60-90 hari kerja), UKL-UPL (30-45 hari kerja). Kami menjamin proses yang efisien dengan update berkala dan monitoring real-time melalui sistem digital kami.</p>
+                    </div>
+                </details>
+                
+                <details class="section p-6 cursor-pointer" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <summary class="font-bold text-lg flex justify-between items-center" itemprop="name">
+                        <span>Apakah biaya konsultasi sudah termasuk biaya pemerintah?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </summary>
+                    <div class="mt-4 pt-4 border-t" style="border-color: var(--dark-separator); color: var(--dark-text-secondary);" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Biaya yang kami tawarkan mencakup jasa konsultasi, pengurusan dokumen, dan koordinasi dengan instansi terkait. Biaya resmi pemerintah (PNBP) akan diinformasikan secara transparan dan dibayarkan terpisah. Kami memberikan rincian biaya yang jelas di awal tanpa biaya tersembunyi.</p>
+                    </div>
+                </details>
+                
+                <details class="section p-6 cursor-pointer" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <summary class="font-bold text-lg flex justify-between items-center" itemprop="name">
+                        <span>Bagaimana sistem monitoring digital Bizmark.ID bekerja?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </summary>
+                    <div class="mt-4 pt-4 border-t" style="border-color: var(--dark-separator); color: var(--dark-text-secondary);" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Sistem kami memungkinkan klien untuk memantau progress perizinan secara real-time melalui dashboard online. Anda dapat melihat status dokumen, timeline proses, upload/download dokumen, dan berkomunikasi langsung dengan tim kami. Semua aktivitas tercatat dan transparan untuk memastikan akuntabilitas.</p>
+                    </div>
+                </details>
+                
+                <details class="section p-6 cursor-pointer" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <summary class="font-bold text-lg flex justify-between items-center" itemprop="name">
+                        <span>Apakah Bizmark.ID melayani klien di luar Jakarta?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </summary>
+                    <div class="mt-4 pt-4 border-t" style="border-color: var(--dark-separator); color: var(--dark-text-secondary);" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Ya, kami melayani klien di seluruh Indonesia. Dengan jaringan partner di berbagai kota dan sistem digital yang terintegrasi, kami dapat mengurus perizinan di daerah manapun sesuai kebutuhan bisnis Anda. Konsultasi dapat dilakukan secara online maupun offline.</p>
+                    </div>
+                </details>
+                
+                <details class="section p-6 cursor-pointer" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <summary class="font-bold text-lg flex justify-between items-center" itemprop="name">
+                        <span>Apa yang membedakan Bizmark.ID dengan konsultan lainnya?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </summary>
+                    <div class="mt-4 pt-4 border-t" style="border-color: var(--dark-separator); color: var(--dark-text-secondary);" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Kami menggabungkan keahlian konsultan profesional dengan teknologi digital modern. Keunggulan kami: (1) Sistem monitoring real-time, (2) Transparansi biaya dan proses, (3) Tim bersertifikat dengan 10+ tahun pengalaman, (4) Jaringan luas dengan instansi pemerintah, (5) Customer support 24/7, (6) Track record 98% kepuasan klien dari 500+ perusahaan.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA Section -->
     <section class="py-20 px-4">
         <div class="container mx-auto max-w-4xl">
@@ -702,8 +964,7 @@
                 
                 <div class="section p-8">
                     <h3 class="text-2xl font-bold mb-6">Kirim Pesan</h3>
-                    <form action="#" method="POST" class="space-y-4">
-                        @csrf
+                    <form id="contactForm" class="space-y-4">
                         <div>
                             <label class="block mb-2 font-medium">Nama Lengkap</label>
                             <input type="text" name="name" required class="form-input" placeholder="Masukkan nama Anda">
@@ -739,55 +1000,131 @@
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 px-4" style="background: var(--dark-bg); border-top: 1px solid var(--dark-separator);">
+    <footer class="py-12 px-4" style="background: var(--dark-bg); border-top: 1px solid var(--dark-separator);" role="contentinfo">
         <div class="container mx-auto max-w-6xl">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div>
                     <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center" aria-hidden="true">
                             <i class="fas fa-shield-alt text-white text-xl"></i>
                         </div>
                         <span class="text-xl font-bold">Bizmark.ID</span>
                     </div>
-                    <p style="color: var(--dark-text-secondary);">
-                        Solusi manajemen perizinan dan konsultan bisnis terpercaya untuk perusahaan modern di Indonesia.
+                    <p style="color: var(--dark-text-secondary);" class="mb-4">
+                        Konsultan perizinan dan bisnis terpercaya di Jakarta. Solusi OSS, AMDAL, PBG, SLF, dan digitalisasi administrasi untuk perusahaan modern.
                     </p>
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-certificate text-blue-500 mr-2" aria-hidden="true"></i>
+                        <span class="text-sm" style="color: var(--dark-text-secondary);">Bersertifikat & Terpercaya</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-shield-alt text-green-500 mr-2" aria-hidden="true"></i>
+                        <span class="text-sm" style="color: var(--dark-text-secondary);">ISO 9001:2015 Certified</span>
+                    </div>
                 </div>
                 
                 <div>
-                    <h4 class="font-bold mb-4">Layanan</h4>
+                    <h3 class="font-bold mb-4">Layanan Perizinan</h3>
                     <ul class="space-y-2" style="color: var(--dark-text-secondary);">
-                        <li><a href="#services" class="hover:text-blue-400 transition">Manajemen Perizinan</a></li>
-                        <li><a href="#services" class="hover:text-blue-400 transition">Konsultasi Bisnis</a></li>
-                        <li><a href="#services" class="hover:text-blue-400 transition">Digitalisasi Administrasi</a></li>
-                        <li><a href="#services" class="hover:text-blue-400 transition">Legal & Compliance</a></li>
+                        <li><a href="#services" class="hover:text-blue-400 transition">OSS & NIB</a></li>
+                        <li><a href="#services" class="hover:text-blue-400 transition">AMDAL & UKL-UPL</a></li>
+                        <li><a href="#services" class="hover:text-blue-400 transition">PBG & SLF</a></li>
+                        <li><a href="#services" class="hover:text-blue-400 transition">Izin Lingkungan</a></li>
+                        <li><a href="#services" class="hover:text-blue-400 transition">Andalalin</a></li>
+                        <li><a href="#services" class="hover:text-blue-400 transition">Legalitas Usaha</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h4 class="font-bold mb-4">Perusahaan</h4>
+                    <h3 class="font-bold mb-4">Perusahaan</h3>
                     <ul class="space-y-2" style="color: var(--dark-text-secondary);">
                         <li><a href="#about" class="hover:text-blue-400 transition">Tentang Kami</a></li>
+                        <li><a href="#services" class="hover:text-blue-400 transition">Layanan</a></li>
                         <li><a href="#why-us" class="hover:text-blue-400 transition">Keunggulan</a></li>
+                        <li><a href="#faq" class="hover:text-blue-400 transition">FAQ</a></li>
                         <li><a href="#contact" class="hover:text-blue-400 transition">Kontak</a></li>
+                        <li><a href="/hadez" class="hover:text-blue-400 transition">Portal Klien</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h4 class="font-bold mb-4">Legal</h4>
-                    <ul class="space-y-2" style="color: var(--dark-text-secondary);">
-                        <li><a href="#" class="hover:text-blue-400 transition">Kebijakan Privasi</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition">Syarat & Ketentuan</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition">FAQ</a></li>
+                    <h3 class="font-bold mb-4">Hubungi Kami</h3>
+                    <ul class="space-y-3" style="color: var(--dark-text-secondary);">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mr-2 mt-1" aria-hidden="true"></i>
+                            <span class="text-sm">Jl. Sudirman No. 123, Jakarta Selatan 12190</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone mr-2 mt-1" aria-hidden="true"></i>
+                            <div class="text-sm">
+                                <a href="tel:+622112345678" class="hover:text-blue-400">+62 21 1234 5678</a><br>
+                                <a href="tel:+628123456789" class="hover:text-blue-400">+62 812 3456 7890</a>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope mr-2 mt-1" aria-hidden="true"></i>
+                            <div class="text-sm">
+                                <a href="mailto:info@bizmark.id" class="hover:text-blue-400">info@bizmark.id</a><br>
+                                <a href="mailto:support@bizmark.id" class="hover:text-blue-400">support@bizmark.id</a>
+                            </div>
+                        </li>
                     </ul>
+                    <div class="mt-4">
+                        <h4 class="font-bold mb-3">Ikuti Kami</h4>
+                        <div class="flex space-x-3">
+                            <a href="https://facebook.com/bizmark.id" target="_blank" rel="noopener" aria-label="Facebook Bizmark.ID" class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center hover:bg-blue-600 transition">
+                                <i class="fab fa-facebook-f text-white" aria-hidden="true"></i>
+                            </a>
+                            <a href="https://twitter.com/bizmark_id" target="_blank" rel="noopener" aria-label="Twitter Bizmark.ID" class="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center hover:bg-blue-500 transition">
+                                <i class="fab fa-twitter text-white" aria-hidden="true"></i>
+                            </a>
+                            <a href="https://instagram.com/bizmark.id" target="_blank" rel="noopener" aria-label="Instagram Bizmark.ID" class="w-10 h-10 bg-pink-600 rounded-lg flex items-center justify-center hover:bg-pink-700 transition">
+                                <i class="fab fa-instagram text-white" aria-hidden="true"></i>
+                            </a>
+                            <a href="https://linkedin.com/company/bizmark-id" target="_blank" rel="noopener" aria-label="LinkedIn Bizmark.ID" class="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center hover:bg-blue-800 transition">
+                                <i class="fab fa-linkedin-in text-white" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="border-t pt-8 text-center" style="border-color: var(--dark-separator); color: var(--dark-text-secondary);">
-                <p>&copy; 2025 Bizmark.ID. All rights reserved. Made with <i class="fas fa-heart text-red-500"></i> in Indonesia</p>
+            <div class="border-t pt-8" style="border-color: var(--dark-separator);">
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div style="color: var(--dark-text-secondary);" class="text-sm">
+                        <p><strong>Area Layanan:</strong> Jakarta, Bogor, Depok, Tangerang, Bekasi, Bandung, Surabaya, Semarang, Yogyakarta, Bali, dan seluruh Indonesia</p>
+                    </div>
+                    <div class="text-sm md:text-right" style="color: var(--dark-text-secondary);">
+                        <a href="#" class="hover:text-blue-400 transition mr-4">Kebijakan Privasi</a>
+                        <a href="#" class="hover:text-blue-400 transition mr-4">Syarat & Ketentuan</a>
+                        <a href="/sitemap.xml" class="hover:text-blue-400 transition">Sitemap</a>
+                    </div>
+                </div>
+                <div class="text-center text-sm" style="color: var(--dark-text-secondary);">
+                    <p>&copy; 2025 Bizmark.ID - Konsultan Perizinan & Bisnis Terpercaya. All rights reserved. Made with <i class="fas fa-heart text-red-500" aria-hidden="true"></i> in Indonesia</p>
+                </div>
             </div>
         </div>
     </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/628123456789?text=Halo%20Bizmark.ID,%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
+       target="_blank" 
+       rel="noopener"
+       aria-label="Chat WhatsApp"
+       class="fixed bottom-6 right-6 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-all hover:scale-110 z-50"
+       style="animation: pulse 2s infinite;">
+        <i class="fab fa-whatsapp text-white text-3xl" aria-hidden="true"></i>
+    </a>
+
+    <!-- Google Analytics (Replace with your GA4 Measurement ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
 
     <script>
         // Mobile Menu Toggle
@@ -814,10 +1151,41 @@
         });
         
         // Form Submission (you can add AJAX here)
-        document.querySelector('form').addEventListener('submit', function(e) {
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Track form submission with Google Analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'form_submit', {
+                    'event_category': 'Contact',
+                    'event_label': 'Landing Page Contact Form'
+                });
+            }
+            
             alert('Terima kasih! Pesan Anda telah dikirim. Tim kami akan segera menghubungi Anda.');
             this.reset();
+        });
+        
+        // Track CTA Button Clicks
+        document.querySelectorAll('.btn-primary, .btn-secondary').forEach(button => {
+            button.addEventListener('click', function() {
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'button_click', {
+                        'event_category': 'CTA',
+                        'event_label': this.textContent.trim()
+                    });
+                }
+            });
+        });
+        
+        // Track WhatsApp Button Click
+        document.querySelector('a[href*="wa.me"]').addEventListener('click', function() {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'whatsapp_click', {
+                    'event_category': 'Contact',
+                    'event_label': 'WhatsApp Floating Button'
+                });
+            }
         });
     </script>
 </body>
