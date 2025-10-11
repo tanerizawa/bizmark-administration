@@ -78,10 +78,28 @@ class User extends Authenticatable
 
     /**
      * Check if user has a specific permission
+     * Rename to hasPermission to avoid conflict with Laravel's can() method
      */
-    public function can($permissionName)
+    public function hasPermission($permissionName)
     {
         return $this->role && $this->role->hasPermission($permissionName);
+    }
+
+    /**
+     * Override Laravel's can() method to check custom permissions
+     * @param mixed $abilities
+     * @param array|mixed $arguments
+     * @return bool
+     */
+    public function can($abilities, $arguments = []): bool
+    {
+        // If it's a string, check our custom permission system
+        if (is_string($abilities)) {
+            return $this->hasPermission($abilities);
+        }
+        
+        // Otherwise, fall back to parent implementation
+        return parent::can($abilities, $arguments);
     }
 
     /**

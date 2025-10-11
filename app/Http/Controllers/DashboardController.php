@@ -14,23 +14,47 @@ use App\Models\ProjectExpense;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
+    /**
+     * Dashboard index with caching for performance
+     * Cache duration: 5 minutes
+     */
     public function index()
     {
-        return view('dashboard', [
-            'criticalAlerts' => $this->getCriticalAlerts(),
-            'cashFlowStatus' => $this->getCashFlowStatus(),
-            'pendingApprovals' => $this->getPendingActions(),
-            'cashFlowSummary' => $this->getFinancialSummary(),
-            'receivablesAging' => $this->getReceivablesAging(),
-            'budgetStatus' => $this->getBudgetStatus(),
-            'thisWeek' => $this->getWeeklyTimeline(),
-            'projectStatusDistribution' => $this->getProjectStatusDistribution(),
-            'recentActivities' => $this->getRecentActivities()
-        ]);
+        // Cache key unique per user
+        $cacheKey = 'dashboard_data_' . auth()->id();
+        $cacheDuration = 5; // minutes
+
+        $data = Cache::remember($cacheKey, $cacheDuration * 60, function() {
+            return [
+                'criticalAlerts' => $this->getCriticalAlerts(),
+                'cashFlowStatus' => $this->getCashFlowStatus(),
+                'pendingApprovals' => $this->getPendingActions(),
+                'cashFlowSummary' => $this->getFinancialSummary(),
+                'receivablesAging' => $this->getReceivablesAging(),
+                'budgetStatus' => $this->getBudgetStatus(),
+                'thisWeek' => $this->getWeeklyTimeline(),
+                'projectStatusDistribution' => $this->getProjectStatusDistribution(),
+                'recentActivities' => $this->getRecentActivities()
+            ];
+        });
+
+        return view('dashboard', $data);
+    }
+
+    /**
+     * Clear dashboard cache manually (useful after data updates)
+     */
+    public function clearCache()
+    {
+        $cacheKey = 'dashboard_data_' . auth()->id();
+        Cache::forget($cacheKey);
+        
+        return redirect()->route('dashboard')->with('success', 'Dashboard cache cleared!');
     }
 
     private function getDashboardStats()
@@ -315,47 +339,93 @@ class DashboardController extends Controller
 
     private function getCashFlowStatus()
     {
-        // Current cash balance
-        $currentBalance = CashAccount::where('is_active', true)->sum('current_balance');
+        try {
+            // Current cash balance
+            $currentBalance = CashAccount::where('is_active', true)->sum('current_balance');
 
-        // Calculate monthly burn rate (average expenses last 3 months)
-        $threeMonthsAgo = Carbon::now()->subMonths(3);
-        $totalExpenses = ProjectExpense::where('expense_date', '>=', $threeMonthsAgo)->sum('amount');
-        $monthlyBurnRate = $totalExpenses / 3;
+            // Calculate monthly burn rate (IMPROVED: only average months with expenses)
+            $threeMonthsAgo = Carbon::now()->subMonths(3);
+            
+            // Get expenses grouped by month
+            $monthlyExpenses = ProjectExpense::where('expense_date', '>=', $threeMonthsAgo)
+                ->selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month, SUM(amount) as total')
+                ->groupBy('year', 'month')
+                ->get();
 
-        // Calculate runway (months)
-        $runway = $monthlyBurnRate > 0 ? $currentBalance / $monthlyBurnRate : 999;
+            // Calculate average only for months with expenses (more accurate)
+            $monthsWithExpenses = $monthlyExpenses->count();
+            $totalExpenses = $monthlyExpenses->sum('total');
+            
+            // If no expenses in last 3 months, use all-time average as fallback
+            if ($monthsWithExpenses === 0) {
+                $allTimeExpenses = ProjectExpense::selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month, SUM(amount) as total')
+                    ->groupBy('year', 'month')
+                    ->get();
+                $monthsWithExpenses = $allTimeExpenses->count();
+                $totalExpenses = $allTimeExpenses->sum('total');
+            }
+            
+            $monthlyBurnRate = $monthsWithExpenses > 0 ? $totalExpenses / $monthsWithExpenses : 0;
 
-        // Overdue invoices total
-        $overdueInvoices = Invoice::where('status', 'overdue')
-            ->orWhere(function($query) {
-                $query->where('due_date', '<', Carbon::today())
-                      ->where('status', '!=', 'paid')
-                      ->where('remaining_amount', '>', 0);
-            })
-            ->sum('remaining_amount');
+            // Calculate runway (months)
+            $runway = $monthlyBurnRate > 0 ? $currentBalance / $monthlyBurnRate : 999;
 
-        // Status color based on runway
-        $status = 'healthy';
-        $statusColor = '#34C759'; // Green
-        if ($runway < 2) {
-            $status = 'critical';
-            $statusColor = '#FF3B30'; // Red
-        } elseif ($runway < 6) {
-            $status = 'warning';
-            $statusColor = '#FF9500'; // Orange
+            // Overdue invoices total
+            $overdueInvoices = Invoice::where('status', 'overdue')
+                ->orWhere(function($query) {
+                    $query->where('due_date', '<', Carbon::today())
+                          ->where('status', '!=', 'paid')
+                          ->where('remaining_amount', '>', 0);
+                })
+                ->sum('remaining_amount');
+
+            // Status color based on runway
+            $status = 'healthy';
+            $statusColor = '#34C759'; // Green
+            if ($runway < 2) {
+                $status = 'critical';
+                $statusColor = '#FF3B30'; // Red
+            } elseif ($runway < 6) {
+                $status = 'warning';
+                $statusColor = '#FF9500'; // Orange
+            }
+
+            // Validation: Log warning if cash balance is negative
+            if ($currentBalance < 0) {
+                \Log::warning('Dashboard: Negative cash balance detected', [
+                    'balance' => $currentBalance,
+                    'date' => Carbon::now()->toDateTimeString()
+                ]);
+            }
+
+            return [
+                'total_balance' => $currentBalance, // Added for view compatibility
+                'available_cash' => $currentBalance,
+                'current_balance' => $currentBalance,
+                'monthly_burn_rate' => $monthlyBurnRate,
+                'runway_months' => round($runway, 1),
+                'overdue_invoices' => $overdueInvoices,
+                'status' => $status,
+                'status_color' => $statusColor
+            ];
+            
+        } catch (\Exception $e) {
+            \Log::error('Dashboard getCashFlowStatus error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Return safe defaults on error
+            return [
+                'total_balance' => 0,
+                'available_cash' => 0,
+                'current_balance' => 0,
+                'monthly_burn_rate' => 0,
+                'runway_months' => 0,
+                'overdue_invoices' => 0,
+                'status' => 'unknown',
+                'status_color' => '#8E8E93' // Gray
+            ];
         }
-
-        return [
-            'total_balance' => $currentBalance, // Added for view compatibility
-            'available_cash' => $currentBalance,
-            'current_balance' => $currentBalance,
-            'monthly_burn_rate' => $monthlyBurnRate,
-            'runway_months' => round($runway, 1),
-            'overdue_invoices' => $overdueInvoices,
-            'status' => $status,
-            'status_color' => $statusColor
-        ];
     }
 
     private function getPendingActions()
@@ -388,12 +458,13 @@ class DashboardController extends Controller
 
     private function getFinancialSummary()
     {
-        $thisMonth = Carbon::now();
-        $lastMonth = Carbon::now()->subMonth();
-        $startOfYear = Carbon::now()->startOfYear();
+        try {
+            $thisMonth = Carbon::now();
+            $lastMonth = Carbon::now()->subMonth();
+            $startOfYear = Carbon::now()->startOfYear();
 
-        // Total cash balance from all accounts
-        $totalCashBalance = CashAccount::sum('current_balance');
+            // Total cash balance from all accounts
+            $totalCashBalance = CashAccount::sum('current_balance');
 
         // This month income from multiple sources:
         // 1. Invoice payments (from payment_schedules with paid status)
@@ -493,6 +564,33 @@ class DashboardController extends Controller
             'total_invoiced' => $totalInvoiced, // Added for invoice stats
             'total_received' => $totalReceived, // Added for invoice stats
         ];
+        
+        } catch (\Exception $e) {
+            \Log::error('Dashboard getFinancialSummary error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Return safe defaults on error
+            return [
+                'total_cash_balance' => 0,
+                'this_month_income' => 0,
+                'this_month_expenses' => 0,
+                'payments_this_month' => 0,
+                'expenses_this_month' => 0,
+                'net_this_month' => 0,
+                'payments_ytd' => 0,
+                'expenses_ytd' => 0,
+                'net_ytd' => 0,
+                'payments_last_month' => 0,
+                'expenses_last_month' => 0,
+                'net_last_month' => 0,
+                'payments_growth' => 0,
+                'expenses_growth' => 0,
+                'is_profitable' => false,
+                'total_invoiced' => 0,
+                'total_received' => 0,
+            ];
+        }
     }
 
     private function getReceivablesAging()
