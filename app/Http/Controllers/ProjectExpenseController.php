@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\PaymentMethod;
 use App\Models\ProjectExpense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class ProjectExpenseController extends Controller
             'category' => ['required', Rule::in(ProjectExpense::categoryKeys())],
             'vendor_name' => 'nullable|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|in:transfer,cash,check,other',
+            'payment_method' => ['required', Rule::in(PaymentMethod::activeCodes())],
             'bank_account_id' => 'nullable|exists:cash_accounts,id',
             'description' => 'nullable|string',
             'is_billable' => 'nullable|boolean',
@@ -57,4 +58,3 @@ class ProjectExpenseController extends Controller
             ->with('success', 'Pengeluaran berhasil dihapus');
     }
 }
-

@@ -1,0 +1,339 @@
+<!-- Blog/Articles Section -->
+<section id="blog" class="section bg-white">
+    <div class="container-wide">
+        <!-- Section Header -->
+        <div class="text-center mb-12" data-aos="fade-up">
+            <span class="text-xs font-bold text-primary uppercase tracking-wider mb-3 block">
+                {{ app()->getLocale() == 'id' ? 'Artikel & Insight' : 'Articles & Insights' }}
+            </span>
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-text-primary">
+                {{ app()->getLocale() == 'id' ? 'Panduan & Tips Perizinan' : 'Permit Guides & Tips' }}
+            </h2>
+            <p class="text-base text-text-secondary max-w-2xl mx-auto">
+                {{ app()->getLocale() == 'id' 
+                    ? 'Pelajari lebih lanjut tentang proses perizinan industri dan regulasi terbaru' 
+                    : 'Learn more about industrial permit processes and latest regulations' }}
+            </p>
+        </div>
+
+        @if(isset($latestArticles) && $latestArticles->count() > 0)
+            @php
+                $featured = $latestArticles->first();
+                $regularArticles = $latestArticles->slice(1);
+            @endphp
+
+            <!-- Featured Article -->
+            @if($featured)
+            <div class="mb-10" data-aos="fade-up" data-aos-delay="100">
+                <article class="card overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                    <div class="grid md:grid-cols-2 gap-0">
+                        <!-- Image -->
+                        <div class="relative overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10 aspect-[16/10] md:aspect-auto">
+                            @if($featured->featured_image)
+                                <img src="{{ Storage::url($featured->featured_image) }}" 
+                                     alt="{{ $featured->title }}" 
+                                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @else
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i class="fas fa-newspaper text-7xl text-primary/20"></i>
+                                </div>
+                            @endif
+                            <div class="absolute top-3 left-3">
+                                <span class="px-3 py-1.5 bg-primary text-white text-xs font-bold rounded-lg">
+                                    {{ app()->getLocale() == 'id' ? 'Featured' : 'Featured' }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="p-6 md:p-8 flex flex-col justify-center">
+                            <div class="flex items-center gap-3 text-xs text-text-tertiary mb-3">
+                                <span class="flex items-center">
+                                    <i class="far fa-calendar mr-1.5"></i>
+                                    {{ $featured->published_at->format('d M Y') }}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="far fa-clock mr-1.5"></i>
+                                    {{ $featured->reading_time ?? 5 }} {{ app()->getLocale() == 'id' ? 'menit' : 'min' }}
+                                </span>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold mb-3 text-text-primary group-hover:text-primary transition">
+                                {{ Str::limit($featured->title, 100) }}
+                            </h3>
+                            
+                            <p class="text-base text-text-secondary mb-5 leading-relaxed">
+                                {{ Str::limit($featured->excerpt, 150) }}
+                            </p>
+                            
+                            <div class="flex items-center justify-between">
+                                <a href="{{ route('blog.article', $featured->slug) }}" 
+                                   class="link-primary font-semibold text-sm inline-flex items-center group">
+                                    {{ app()->getLocale() == 'id' ? 'Baca Selengkapnya' : 'Read More' }}
+                                    <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition"></i>
+                                </a>
+                                @if($featured->category)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold">
+                                    <i class="fas fa-tag text-xs"></i>
+                                    {{ ucfirst($featured->category) }}
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            @endif
+
+            <!-- Articles Grid -->
+            @if($regularArticles->count() > 0)
+            <div class="grid md:grid-cols-{{ $regularArticles->count() == 1 ? '1' : ($regularArticles->count() == 2 ? '2' : '3') }} gap-6 mb-10">
+                @foreach($regularArticles as $index => $article)
+                <article class="card group hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="{{ 200 + ($index * 100) }}">
+                    <div class="relative overflow-hidden bg-gradient-to-br from-secondary/10 to-accent/10 aspect-[16/10] rounded-t-2xl mb-4">
+                        @if($article->featured_image)
+                            <img src="{{ Storage::url($article->featured_image) }}" 
+                                 alt="{{ $article->title }}" 
+                                 class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        @else
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="fas fa-{{ ['leaf', 'building', 'certificate'][$index % 3] }} text-5xl text-secondary/30"></i>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-2 text-xs text-text-tertiary mb-2.5">
+                            <span class="flex items-center">
+                                <i class="far fa-calendar mr-1"></i>
+                                {{ $article->published_at->format('d M Y') }}
+                            </span>
+                            @if($article->category)
+                            <span>•</span>
+                            <span class="px-2 py-0.5 bg-secondary/10 text-secondary rounded text-xs font-bold">
+                                {{ strtoupper($article->category) }}
+                            </span>
+                            @endif
+                        </div>
+                        <h4 class="text-lg font-bold mb-2.5 text-text-primary group-hover:text-primary transition leading-snug">
+                            {{ Str::limit($article->title, 80) }}
+                        </h4>
+                        <p class="text-text-secondary mb-3.5 text-sm leading-relaxed">
+                            {{ Str::limit($article->excerpt, 120) }}
+                        </p>
+                        <a href="{{ route('blog.article', $article->slug) }}" 
+                           class="link-primary text-sm font-semibold inline-flex items-center group">
+                            {{ app()->getLocale() == 'id' ? 'Baca Artikel' : 'Read Article' }}
+                            <i class="fas fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition"></i>
+                        </a>
+                    </div>
+                </article>
+                @endforeach
+            </div>
+            @endif
+
+            <!-- View All Button -->
+            <div class="text-center" data-aos="fade-up" data-aos-delay="500">
+                <a href="{{ route('blog.index') }}" class="btn-secondary inline-flex items-center">
+                    {{ app()->getLocale() == 'id' ? 'Lihat Semua Artikel' : 'View All Articles' }}
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        @else
+            <!-- Empty State -->
+            <div class="text-center py-16" data-aos="zoom-in">
+                <div class="card max-w-md mx-auto">
+                    <i class="fas fa-newspaper text-5xl text-primary/20 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-text-primary">
+                        {{ app()->getLocale() == 'id' ? 'Artikel Segera Hadir' : 'Articles Coming Soon' }}
+                    </h3>
+                    <p class="text-text-secondary text-sm">
+                        {{ app()->getLocale() == 'id' ? 'Kami sedang menyiapkan konten berkualitas untuk Anda' : 'We are preparing quality content for you' }}
+                    </p>
+                </div>
+            </div>
+        @endif
+    </div>
+</section>
+            <!-- Article 1 -->
+            <article class="card group hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+                <div class="relative overflow-hidden bg-gradient-to-br from-secondary/10 to-accent/10 aspect-[16/10] rounded-t-2xl mb-4">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-leaf text-5xl text-secondary/30"></i>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 text-xs text-text-tertiary mb-2.5">
+                        <span class="flex items-center">
+                            <i class="far fa-calendar mr-1"></i>
+                            {{ app()->getLocale() == 'id' ? '10 Okt 2025' : 'Oct 10, 2025' }}
+                        </span>
+                        <span>•</span>
+                        <span class="px-2 py-0.5 bg-secondary/10 text-secondary rounded text-xs font-bold">AMDAL</span>
+                    </div>
+                    <h4 class="text-lg font-bold mb-2.5 text-text-primary group-hover:text-primary transition leading-snug">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'AMDAL vs UKL-UPL: Mana yang Tepat untuk Bisnis Anda?' 
+                            : 'AMDAL vs UKL-UPL: Which One is Right for Your Business?' }}
+                    </h4>
+                    <p class="text-text-secondary mb-3.5 text-sm leading-relaxed">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Pahami perbedaan mendasar antara AMDAL dan UKL-UPL serta kriteria industri yang memerlukan masing-masing dokumen.' 
+                            : 'Understand the fundamental differences between AMDAL and UKL-UPL and which industries require each document.' }}
+                    </p>
+                    <a href="#" class="link-primary text-sm font-semibold inline-flex items-center group">
+                        {{ app()->getLocale() == 'id' ? 'Baca Artikel' : 'Read Article' }}
+                        <i class="fas fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Article 2 -->
+            <article class="card group hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+                <div class="relative overflow-hidden bg-gradient-to-br from-purple-500/10 to-pink-500/10 aspect-[16/10] rounded-t-2xl mb-4">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-building text-5xl text-purple-500/30"></i>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 text-xs text-text-tertiary mb-2.5">
+                        <span class="flex items-center">
+                            <i class="far fa-calendar mr-1"></i>
+                            {{ app()->getLocale() == 'id' ? '08 Okt 2025' : 'Oct 08, 2025' }}
+                        </span>
+                        <span>•</span>
+                        <span class="px-2 py-0.5 bg-purple-500/10 text-purple-500 rounded text-xs font-bold">OSS</span>
+                    </div>
+                    <h4 class="text-lg font-bold mb-2.5 text-text-primary group-hover:text-primary transition leading-snug">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Cara Cepat Mengurus OSS RBA untuk Perizinan Usaha' 
+                            : 'Quick Guide to OSS RBA for Business Permits' }}
+                    </h4>
+                    <p class="text-text-secondary mb-3.5 text-sm leading-relaxed">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Langkah praktis mengurus Online Single Submission berbasis Risiko untuk memulai bisnis dengan cepat dan legal.' 
+                            : 'Practical steps for Online Single Submission Risk-Based Approach to start your business quickly and legally.' }}
+                    </p>
+                    <a href="#" class="link-primary text-sm font-semibold inline-flex items-center group">
+                        {{ app()->getLocale() == 'id' ? 'Baca Artikel' : 'Read Article' }}
+                        <i class="fas fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Article 3 -->
+            <article class="card group hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="400">
+                <div class="relative overflow-hidden bg-gradient-to-br from-accent/10 to-orange-500/10 aspect-[16/10] rounded-t-2xl mb-4">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-certificate text-5xl text-accent/30"></i>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 text-xs text-text-tertiary mb-2.5">
+                        <span class="flex items-center">
+                            <i class="far fa-calendar mr-1"></i>
+                            {{ app()->getLocale() == 'id' ? '05 Okt 2025' : 'Oct 05, 2025' }}
+                        </span>
+                        <span>•</span>
+                        <span class="px-2 py-0.5 bg-accent/10 text-accent rounded text-xs font-bold">PBG</span>
+                    </div>
+                    <h4 class="text-lg font-bold mb-2.5 text-text-primary group-hover:text-primary transition leading-snug">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Update Regulasi PBG 2025: Yang Perlu Anda Ketahui' 
+                            : '2025 PBG Regulation Updates: What You Need to Know' }}
+                    </h4>
+                    <p class="text-text-secondary mb-3.5 text-sm leading-relaxed">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Ringkasan perubahan terbaru dalam regulasi Persetujuan Bangunan Gedung dan dampaknya untuk industri.' 
+                            : 'Summary of the latest changes in Building Approval regulations and their impact on industries.' }}
+                    </p>
+                    <a href="#" class="link-primary text-sm font-semibold inline-flex items-center group">
+                        {{ app()->getLocale() == 'id' ? 'Baca Artikel' : 'Read Article' }}
+                        <i class="fas fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition"></i>
+                    </a>
+                </div>
+            </article>
+                            : 'Understand the fundamental differences between AMDAL and UKL-UPL and which industries require each document.' }}
+                    </p>
+                    <a href="#" class="link-primary text-sm font-semibold inline-flex items-center group">
+                        {{ app()->getLocale() == 'id' ? 'Baca Artikel' : 'Read Article' }}
+                        <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Article 2 -->
+            <article class="card group hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+                <div class="relative overflow-hidden bg-gradient-to-br from-purple-500/10 to-pink-500/10 aspect-[16/10] rounded-t-xl">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-building text-6xl text-purple-500/30"></i>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center gap-3 text-xs text-text-tertiary mb-3">
+                        <span class="flex items-center">
+                            <i class="far fa-calendar mr-1"></i>
+                            {{ app()->getLocale() == 'id' ? '08 Okt 2025' : 'Oct 08, 2025' }}
+                        </span>
+                        <span>•</span>
+                        <span class="px-2 py-1 bg-purple-500/10 text-purple-500 rounded text-xs font-medium">OSS</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-text-primary group-hover:text-primary transition">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Cara Cepat Mengurus OSS RBA untuk Perizinan Usaha' 
+                            : 'Quick Guide to OSS RBA for Business Permits' }}
+                    </h4>
+                    <p class="text-text-secondary mb-4 text-sm leading-relaxed">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Langkah praktis mengurus Online Single Submission berbasis Risiko untuk memulai bisnis dengan cepat dan legal.' 
+                            : 'Practical steps for Online Single Submission Risk-Based Approach to start your business quickly and legally.' }}
+                    </p>
+                    <a href="#" class="link-primary text-sm font-semibold inline-flex items-center group">
+                        {{ app()->getLocale() == 'id' ? 'Baca Artikel' : 'Read Article' }}
+                        <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Article 3 -->
+            <article class="card group hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="400">
+                <div class="relative overflow-hidden bg-gradient-to-br from-accent/10 to-orange-500/10 aspect-[16/10] rounded-t-xl">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-certificate text-6xl text-accent/30"></i>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center gap-3 text-xs text-text-tertiary mb-3">
+                        <span class="flex items-center">
+                            <i class="far fa-calendar mr-1"></i>
+                            {{ app()->getLocale() == 'id' ? '05 Okt 2025' : 'Oct 05, 2025' }}
+                        </span>
+                        <span>•</span>
+                        <span class="px-2 py-1 bg-accent/10 text-accent rounded text-xs font-medium">PBG</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-text-primary group-hover:text-primary transition">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Update Regulasi PBG 2025: Yang Perlu Anda Ketahui' 
+                            : '2025 PBG Regulation Updates: What You Need to Know' }}
+                    </h4>
+                    <p class="text-text-secondary mb-4 text-sm leading-relaxed">
+                        {{ app()->getLocale() == 'id' 
+                            ? 'Ringkasan perubahan terbaru dalam regulasi Persetujuan Bangunan Gedung dan dampaknya untuk industri.' 
+                            : 'Summary of the latest changes in Building Approval regulations and their impact on industries.' }}
+                    </p>
+                    <a href="#" class="link-primary text-sm font-semibold inline-flex items-center group">
+                        {{ app()->getLocale() == 'id' ? 'Baca Artikel' : 'Read Article' }}
+                        <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition"></i>
+                    </a>
+                </div>
+            </article>
+        </div>
+
+        <!-- View All Button -->
+        <div class="text-center" data-aos="fade-up" data-aos-delay="500">
+            <a href="#" class="btn-secondary inline-flex items-center">
+                {{ app()->getLocale() == 'id' ? 'Lihat Semua Artikel' : 'View All Articles' }}
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>

@@ -197,7 +197,7 @@
     <footer class="py-8 px-4 border-t border-gray-800">
         <div class="container mx-auto max-w-7xl">
             <div class="text-center text-gray-500">
-                <p>&copy; 2025 Bizmark.ID - PT Timur Cakrawala Konsultan. All rights reserved.</p>
+                <p>&copy; 2025 Bizmark.ID - PT Cangah Pajaratan Mandiri. All rights reserved.</p>
             </div>
         </div>
     </footer>

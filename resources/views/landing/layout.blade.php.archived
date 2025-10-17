@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
+<head>
+    @include('landing.partials.head')
+    @include('landing.partials.styles')
+</head>
+<body class="dark">
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader"></div>
+    </div>
+    
+    @include('landing.partials.navbar')
+    @include('landing.partials.mobile-menu')
+    @include('landing.partials.search-modal')
+    
+    <!-- Main Content -->
+    @yield('content')
+    
+    <!-- Floating Action Buttons -->
+    <div class="fab-group">
+        <a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
+           target="_blank" 
+           class="fab fab-whatsapp"
+           title="Chat WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="tel:+6281382605030" 
+           class="fab fab-phone"
+           title="Telepon Kami">
+            <i class="fas fa-phone-alt"></i>
+        </a>
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+                class="fab fab-back-to-top"
+                id="backToTop"
+                title="Kembali ke Atas">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+    
+    @include('landing.partials.scripts')
+</body>
+</html>

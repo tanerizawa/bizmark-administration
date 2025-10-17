@@ -3,169 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class ProjectExpense extends Model
 {
-    public const CATEGORY_DEFINITIONS = [
-        // SDM & Personel
-        'personnel' => [
-            'label' => 'Gaji & Honor',
-            'icon' => 'briefcase',
-            'group' => 'SDM & Personel',
-        ],
-        'commission' => [
-            'label' => 'Komisi',
-            'icon' => 'handshake',
-            'group' => 'SDM & Personel',
-        ],
-        'allowance' => [
-            'label' => 'Tunjangan & Bonus',
-            'icon' => 'money-bill-wave',
-            'group' => 'SDM & Personel',
-        ],
-
-        // Rekanan & Subkontraktor
-        'subcontractor' => [
-            'label' => 'Subkontraktor',
-            'icon' => 'hard-hat',
-            'group' => 'Rekanan & Subkontraktor',
-        ],
-        'consultant' => [
-            'label' => 'Konsultan Eksternal',
-            'icon' => 'user-tie',
-            'group' => 'Rekanan & Subkontraktor',
-        ],
-        'supplier' => [
-            'label' => 'Rekanan/Partner',
-            'icon' => 'handshake',
-            'group' => 'Rekanan & Subkontraktor',
-        ],
-
-        // Layanan Teknis
-        'laboratory' => [
-            'label' => 'Laboratorium',
-            'icon' => 'microscope',
-            'group' => 'Layanan Teknis',
-        ],
-        'survey' => [
-            'label' => 'Survey & Pengukuran',
-            'icon' => 'ruler-combined',
-            'group' => 'Layanan Teknis',
-        ],
-        'testing' => [
-            'label' => 'Testing & Inspeksi',
-            'icon' => 'vial',
-            'group' => 'Layanan Teknis',
-        ],
-        'certification' => [
-            'label' => 'Sertifikasi',
-            'icon' => 'certificate',
-            'group' => 'Layanan Teknis',
-        ],
-
-        // Peralatan & Perlengkapan
-        'equipment_rental' => [
-            'label' => 'Sewa Alat',
-            'icon' => 'truck-moving',
-            'group' => 'Peralatan & Perlengkapan',
-        ],
-        'equipment_purchase' => [
-            'label' => 'Pembelian Alat',
-            'icon' => 'tools',
-            'group' => 'Peralatan & Perlengkapan',
-        ],
-        'materials' => [
-            'label' => 'Perlengkapan & Supplies',
-            'icon' => 'box',
-            'group' => 'Peralatan & Perlengkapan',
-        ],
-        'maintenance' => [
-            'label' => 'Maintenance & Perbaikan',
-            'icon' => 'wrench',
-            'group' => 'Peralatan & Perlengkapan',
-        ],
-
-        // Operasional
-        'travel' => [
-            'label' => 'Perjalanan Dinas',
-            'icon' => 'plane',
-            'group' => 'Operasional',
-        ],
-        'accommodation' => [
-            'label' => 'Akomodasi',
-            'icon' => 'hotel',
-            'group' => 'Operasional',
-        ],
-        'transportation' => [
-            'label' => 'Transportasi',
-            'icon' => 'car',
-            'group' => 'Operasional',
-        ],
-        'communication' => [
-            'label' => 'Komunikasi & Internet',
-            'icon' => 'phone',
-            'group' => 'Operasional',
-        ],
-        'office_supplies' => [
-            'label' => 'ATK & Supplies',
-            'icon' => 'file-alt',
-            'group' => 'Operasional',
-        ],
-        'printing' => [
-            'label' => 'Printing & Dokumen',
-            'icon' => 'print',
-            'group' => 'Operasional',
-        ],
-
-        // Legal & Administrasi
-        'permit' => [
-            'label' => 'Perizinan',
-            'icon' => 'file-contract',
-            'group' => 'Legal & Administrasi',
-        ],
-        'insurance' => [
-            'label' => 'Asuransi',
-            'icon' => 'shield-alt',
-            'group' => 'Legal & Administrasi',
-        ],
-        'tax' => [
-            'label' => 'Pajak & Retribusi',
-            'icon' => 'dollar-sign',
-            'group' => 'Legal & Administrasi',
-        ],
-        'legal' => [
-            'label' => 'Legal & Notaris',
-            'icon' => 'balance-scale',
-            'group' => 'Legal & Administrasi',
-        ],
-        'administration' => [
-            'label' => 'Administrasi',
-            'icon' => 'clipboard-list',
-            'group' => 'Legal & Administrasi',
-        ],
-
-        // Marketing & Lainnya
-        'marketing' => [
-            'label' => 'Marketing & Promosi',
-            'icon' => 'bullhorn',
-            'group' => 'Marketing & Lainnya',
-        ],
-        'entertainment' => [
-            'label' => 'Entertainment & Jamuan',
-            'icon' => 'utensils',
-            'group' => 'Marketing & Lainnya',
-        ],
-        'donation' => [
-            'label' => 'Donasi & CSR',
-            'icon' => 'gift',
-            'group' => 'Marketing & Lainnya',
-        ],
-        'other' => [
-            'label' => 'Lainnya',
-            'icon' => 'ellipsis-h',
-            'group' => 'Marketing & Lainnya',
-        ],
-    ];
+    protected static ?Collection $categoryCache = null;
 
     protected $fillable = [
         'project_id',
@@ -194,26 +36,50 @@ class ProjectExpense extends Model
         'receivable_paid_amount' => 'decimal:2',
     ];
 
+    protected static function categoryDefinitions(): Collection
+    {
+        if (self::$categoryCache === null) {
+            self::$categoryCache = ExpenseCategory::options()->keyBy('slug');
+        }
+
+        return self::$categoryCache;
+    }
+
+    public static function clearCategoryCache(): void
+    {
+        self::$categoryCache = null;
+    }
+
     public static function categories(): array
     {
-        return self::CATEGORY_DEFINITIONS;
+        return self::categoryDefinitions()
+            ->map(fn ($category) => [
+                'label' => $category->name,
+                'icon' => $category->icon,
+                'group' => $category->group,
+            ])
+            ->toArray();
     }
 
     public static function categoryKeys(): array
     {
-        return array_keys(self::CATEGORY_DEFINITIONS);
+        return self::categoryDefinitions()->keys()->all();
     }
 
     public static function categoriesByGroup(): array
     {
-        $grouped = [];
-
-        foreach (self::CATEGORY_DEFINITIONS as $value => $definition) {
-            $group = $definition['group'] ?? 'Lainnya';
-            $grouped[$group][$value] = $definition;
-        }
-
-        return $grouped;
+        return self::categoryDefinitions()
+            ->groupBy(fn ($category) => $category->group ?? 'Lainnya')
+            ->map(function ($items) {
+                return $items->map(function ($category) {
+                    return [
+                        'label' => $category->name,
+                        'icon' => $category->icon,
+                        'group' => $category->group,
+                    ];
+                })->toArray();
+            })
+            ->toArray();
     }
 
     // Relationships
@@ -301,12 +167,16 @@ class ProjectExpense extends Model
 
     public function getCategoryNameAttribute()
     {
-        return self::CATEGORY_DEFINITIONS[$this->category]['label'] ?? 'Lainnya';
+        $category = self::categoryDefinitions()->get($this->category);
+
+        return $category?->name ?? 'Lainnya';
     }
 
     public function getCategoryIconAttribute()
     {
-        return self::CATEGORY_DEFINITIONS[$this->category]['icon'] ?? 'ellipsis-h';
+        $category = self::categoryDefinitions()->get($this->category);
+
+        return $category?->icon ?? 'ellipsis-h';
     }
 
     /**
@@ -323,9 +193,9 @@ class ProjectExpense extends Model
      */
     public static function renderCategoryIcon(string $category, string $additionalClass = ''): string
     {
-        $icon = self::CATEGORY_DEFINITIONS[$category]['icon'] ?? 'ellipsis-h';
+        $definition = self::categoryDefinitions()->get($category);
+        $icon = $definition?->icon ?? 'ellipsis-h';
         $class = 'fas fa-' . $icon . ($additionalClass ? ' ' . $additionalClass : '');
         return '<i class="' . $class . '"></i>';
     }
 }
-

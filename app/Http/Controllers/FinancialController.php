@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\PaymentMethod;
 use App\Models\PaymentSchedule;
 use App\Models\ProjectExpense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\Rule;
 
 class FinancialController extends Controller
 {
@@ -158,10 +160,12 @@ class FinancialController extends Controller
      */
     public function recordPayment(Request $request, Invoice $invoice)
     {
+        $allowedPaymentMethods = PaymentMethod::activeCodesRequiringAccount();
+
         $validated = $request->validate([
             'amount' => 'required|numeric|min:0.01',
             'payment_date' => 'required|date',
-            'payment_method' => 'required|in:bank_transfer,cash',
+            'payment_method' => ['required', Rule::in($allowedPaymentMethods)],
             'reference_number' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
         ]);
@@ -170,19 +174,11 @@ class FinancialController extends Controller
         try {
             // Automatically select cash account based on payment method
             $cashAccount = null;
-            if ($validated['payment_method'] === 'bank_transfer') {
-                // Get first active bank account
-                $cashAccount = \App\Models\CashAccount::active()
-                    ->where('account_type', 'bank')
-                    ->orderBy('id', 'asc')
-                    ->first();
-            } else if ($validated['payment_method'] === 'cash') {
-                // Get first active cash account
-                $cashAccount = \App\Models\CashAccount::active()
-                    ->where('account_type', 'cash')
-                    ->orderBy('id', 'asc')
-                    ->first();
-            }
+            $accountType = PaymentMethod::accountTypeFor($validated['payment_method']);
+            $cashAccount = \App\Models\CashAccount::active()
+                ->where('account_type', $accountType)
+                ->orderBy('id', 'asc')
+                ->first();
 
             if (!$cashAccount) {
                 throw new \Exception('No active cash account found for payment method: ' . $validated['payment_method']);
@@ -255,7 +251,7 @@ class FinancialController extends Controller
     public function markSchedulePaid(Request $request, PaymentSchedule $schedule)
     {
         $validated = $request->validate([
-            'payment_method' => 'required|in:transfer,cash,check,other',
+            'payment_method' => ['required', Rule::in(PaymentMethod::activeCodes())],
             'reference_number' => 'nullable|string|max:255',
         ]);
 
@@ -281,9 +277,9 @@ class FinancialController extends Controller
                 'description' => 'nullable|string|max:500',
                 'amount' => 'required|numeric|min:0.01',
                 'expense_date' => 'required|date',
-                'category' => 'required|in:personnel,commission,allowance,subcontractor,consultant,supplier,laboratory,survey,testing,certification,equipment_rental,equipment_purchase,materials,maintenance,travel,accommodation,transportation,communication,office_supplies,printing,permit,insurance,tax,legal,administration,marketing,entertainment,donation,other',
+                'category' => ['required', Rule::in(ProjectExpense::categoryKeys())],
                 'vendor_name' => 'nullable|string|max:255',
-                'payment_method' => 'required|in:bank_transfer,cash,check,giro,other',
+                'payment_method' => ['required', Rule::in(PaymentMethod::activeCodes())],
                 'bank_account_id' => 'nullable|exists:cash_accounts,id',
                 'receipt_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
                 'is_receivable' => 'nullable|boolean',
@@ -388,9 +384,9 @@ class FinancialController extends Controller
                 'description' => 'nullable|string|max:500',
                 'amount' => 'required|numeric|min:0.01',
                 'expense_date' => 'required|date',
-                'category' => 'required|in:personnel,commission,allowance,subcontractor,consultant,supplier,laboratory,survey,testing,certification,equipment_rental,equipment_purchase,materials,maintenance,travel,accommodation,transportation,communication,office_supplies,printing,permit,insurance,tax,legal,administration,marketing,entertainment,donation,other',
+                'category' => ['required', Rule::in(ProjectExpense::categoryKeys())],
                 'vendor_name' => 'nullable|string|max:255',
-                'payment_method' => 'required|in:bank_transfer,cash,check,giro,other',
+                'payment_method' => ['required', Rule::in(PaymentMethod::activeCodes())],
                 'bank_account_id' => 'nullable|exists:cash_accounts,id',
                 'receipt_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
                 'is_receivable' => 'nullable|boolean',

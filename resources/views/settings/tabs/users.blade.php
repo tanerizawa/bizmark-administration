@@ -56,10 +56,16 @@
                                 @endif
                             </div>
                             <div class="ml-3">
-                                <div class="text-sm font-medium" style="color: #FFFFFF;">{{ $user->name }}</div>
+                                <div class="text-sm font-medium" style="color: #FFFFFF;">{{ $user->full_name ?? $user->name }}</div>
                                 <div class="text-xs" style="color: rgba(235, 235, 245, 0.5);">{{ $user->email }}</div>
+                                @if($user->full_name && $user->name && $user->name !== $user->full_name)
+                                    <div class="text-xs" style="color: rgba(235, 235, 245, 0.4);">Username: {{ $user->name }}</div>
+                                @endif
                                 @if($user->position)
                                     <div class="text-xs" style="color: rgba(235, 235, 245, 0.4);">{{ $user->position }}</div>
+                                @endif
+                                @if($user->notes)
+                                    <div class="text-xs italic" style="color: rgba(235, 235, 245, 0.4);">{{ \Illuminate\Support\Str::limit($user->notes, 60) }}</div>
                                 @endif
                             </div>
                         </div>
@@ -167,10 +173,18 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
-                                Full Name <span style="color: rgba(255, 59, 48, 1);">*</span>
+                                Display Name <span style="color: rgba(255, 59, 48, 1);">*</span>
                             </label>
                             <input type="text" name="name" id="userName" required
-                                   class="input-apple w-full" placeholder="John Doe">
+                                   class="input-apple w-full" placeholder="Username">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                                Full Name
+                            </label>
+                            <input type="text" name="full_name" id="userFullName"
+                                   class="input-apple w-full" placeholder="Nama lengkap">
                         </div>
 
                         <div>
@@ -225,6 +239,13 @@
                                    class="input-apple w-full" placeholder="+62 xxx xxx xxx">
                         </div>
 
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                                Notes
+                            </label>
+                            <textarea name="notes" id="userNotes" class="input-apple w-full" rows="2" placeholder="Catatan internal"></textarea>
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
                                 Avatar
@@ -269,6 +290,7 @@ function openUserModal() {
     document.getElementById('userMethod').value = 'POST';
     document.getElementById('modalTitle').textContent = 'Add New User';
     document.getElementById('userForm').reset();
+    document.getElementById('userNotes').value = '';
     document.getElementById('editOnlyFields').classList.add('hidden');
     document.getElementById('userPassword').required = true;
     document.getElementById('userPasswordConfirm').required = true;
@@ -286,10 +308,12 @@ function editUser(userId) {
     document.getElementById('modalTitle').textContent = 'Edit User';
     
     document.getElementById('userName').value = user.name;
+    document.getElementById('userFullName').value = user.full_name || '';
     document.getElementById('userEmail').value = user.email;
     document.getElementById('userRole').value = user.role_id || '';
     document.getElementById('userPosition').value = user.position || '';
     document.getElementById('userPhone').value = user.phone || '';
+    document.getElementById('userNotes').value = user.notes || '';
     document.getElementById('userIsActive').checked = user.is_active;
     
     document.getElementById('userPassword').value = '';

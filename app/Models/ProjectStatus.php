@@ -24,7 +24,7 @@ class ProjectStatus extends Model
 
     public function projects(): HasMany
     {
-        return $this->hasMany(Project::class, 'current_status_id');
+        return $this->hasMany(Project::class, 'status_id');
     }
 
     public function scopeActive($query)

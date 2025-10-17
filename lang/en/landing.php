@@ -1,6 +1,9 @@
 <?php
 
 return [
+    // Meta & Schema
+    'schema_description' => 'Professional environmental permit consultant for manufacturing industry',
+    
     // Navigation
     'nav' => [
         'home' => 'Home',
@@ -18,7 +21,7 @@ return [
         'badge' => 'Trusted Permit Consultant',
         'title_prefix' => 'Industrial Permits',
         'title_highlight' => 'Fast, Transparent, & Reliable',
-        'description' => 'Specialist in B3 Waste, AMDAL, UKL-UPL permits for manufacturing industries in Karawang. With digital monitoring system, your permit process is more efficient and transparent.',
+        'description' => 'Specialist in B3 Waste, AMDAL, UKL-UPL permits for manufacturing industries in Karawang. Your permit process is more efficient with full assistance from our expert team.',
         'cta_primary' => 'Free Consultation',
         'cta_secondary' => 'View Services',
     ],
@@ -56,7 +59,7 @@ return [
         ],
         'step4' => [
             'title' => 'Monitoring',
-            'desc' => 'Track progress in real-time',
+            'desc' => 'Follow up and regular progress updates',
         ],
         'step5' => [
             'title' => 'Complete',
@@ -74,11 +77,11 @@ return [
         ],
         'transparent' => [
             'title' => 'Transparent',
-            'desc' => 'Digital monitoring system allows you to track every stage of the process in real-time with no hidden costs',
+            'desc' => 'Regular progress updates and complete documentation with no hidden costs',
         ],
         'trusted' => [
             'title' => 'Trusted',
-            'desc' => '500+ companies have entrusted their permits to us with a 98% satisfaction rate',
+            'desc' => 'Experienced in handling permits for various manufacturing companies in Karawang and surrounding areas',
         ],
         'expert' => [
             'title' => 'Expert Team',
