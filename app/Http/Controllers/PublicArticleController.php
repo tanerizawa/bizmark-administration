@@ -45,7 +45,7 @@ class PublicArticleController extends Controller
             ->firstOrFail();
 
         // Increment views
-        $article->increment('views');
+        $article->incrementViews();
 
         // Get related articles
         $relatedArticles = Article::published()

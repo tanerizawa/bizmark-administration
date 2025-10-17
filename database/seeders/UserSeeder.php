@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -20,7 +23,7 @@ class UserSeeder extends Seeder
                 'email' => 'hadez@bizmark.id',
                 'phone' => '081234567890',
                 'role' => 'admin',
-                'password' => bcrypt('T@n12089'),
+                'password' => 'T@n12089',
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Administrator utama sistem'
@@ -32,7 +35,7 @@ class UserSeeder extends Seeder
                 'email' => 'manager@bizmark.id',
                 'phone' => '081234567891',
                 'role' => 'admin',
-                'password' => bcrypt('manager123'),
+                'password' => 'manager123',
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Manager proyek perizinan'
@@ -44,7 +47,7 @@ class UserSeeder extends Seeder
                 'email' => 'siti@bizmark.id',
                 'phone' => '081234567892',
                 'role' => 'staff',
-                'password' => bcrypt('staff123'),
+                'password' => 'staff123',
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Konsultan perizinan lingkungan'
@@ -56,7 +59,7 @@ class UserSeeder extends Seeder
                 'email' => 'ahmad@bizmark.id',
                 'phone' => '081234567893',
                 'role' => 'staff',
-                'password' => bcrypt('staff123'),
+                'password' => 'staff123',
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Konsultan perizinan lalu lintas'
@@ -68,18 +71,31 @@ class UserSeeder extends Seeder
                 'email' => 'maya@bizmark.id',
                 'phone' => '081234567894',
                 'role' => 'staff',
-                'password' => bcrypt('staff123'),
+                'password' => 'staff123',
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Pengendali dokumen dan administrasi'
             ]
         ];
 
+        $roleIds = Role::pluck('id', 'name');
+        $defaultRoleId = $roleIds['staff'] ?? $roleIds->first();
+
         foreach ($users as $user) {
-            \DB::table('users')->insert(array_merge($user, [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]));
+            $roleName = $user['role'] ?? null;
+            $roleId = $roleIds[$roleName] ?? $defaultRoleId;
+
+            $payload = Arr::except($user, ['role']);
+            $payload['role_id'] = $roleId;
+            $payload['password'] = Hash::make($payload['password']);
+
+            User::updateOrCreate(
+                ['email' => $payload['email']],
+                array_merge($payload, [
+                    'name' => $payload['name'],
+                    'updated_at' => now(),
+                ])
+            );
         }
     }
 }

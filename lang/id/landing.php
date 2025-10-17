@@ -1,6 +1,9 @@
 <?php
 
 return [
+    // Meta & Schema
+    'schema_description' => 'Konsultan perizinan lingkungan profesional untuk industri manufaktur',
+    
     // Navigation
     'nav' => [
         'home' => 'Beranda',
@@ -18,7 +21,7 @@ return [
         'badge' => 'Konsultan Perizinan Terpercaya',
         'title_prefix' => 'Perizinan Industri Lebih',
         'title_highlight' => 'Cepat, Transparan, & Terpercaya',
-        'description' => 'Spesialis perizinan LB3, AMDAL, UKL-UPL untuk industri manufaktur di Karawang. Dengan sistem monitoring digital, proses perizinan Anda lebih efisien dan transparan.',
+        'description' => 'Spesialis perizinan LB3, AMDAL, UKL-UPL untuk industri manufaktur di Karawang. Proses perizinan Anda lebih efisien dengan pendampingan penuh dari tim ahli.',
         'cta_primary' => 'Konsultasi Gratis',
         'cta_secondary' => 'Lihat Layanan',
     ],
@@ -56,7 +59,7 @@ return [
         ],
         'step4' => [
             'title' => 'Monitoring',
-            'desc' => 'Pantau progress secara real-time',
+            'desc' => 'Follow up dan update progress berkala',
         ],
         'step5' => [
             'title' => 'Selesai',
@@ -74,11 +77,11 @@ return [
         ],
         'transparent' => [
             'title' => 'Transparan',
-            'desc' => 'Sistem monitoring digital memungkinkan Anda memantau setiap tahap proses secara real-time tanpa biaya tersembunyi',
+            'desc' => 'Update progress secara berkala dan dokumentasi lengkap tanpa biaya tersembunyi',
         ],
         'trusted' => [
             'title' => 'Terpercaya',
-            'desc' => '500+ perusahaan telah mempercayakan perizinan mereka kepada kami dengan tingkat kepuasan 98%',
+            'desc' => 'Berpengalaman menangani perizinan untuk berbagai perusahaan manufaktur di Karawang dan sekitarnya',
         ],
         'expert' => [
             'title' => 'Tim Berpengalaman',

@@ -1,4 +1,15 @@
 {{-- Invoice Creation Modal --}}
+@php
+    $expenseCategoryGroups = \App\Models\ProjectExpense::categoriesByGroup();
+    $activePaymentMethods = \App\Models\PaymentMethod::options()->filter(fn ($method) => $method->is_active);
+    $cashRequiredPaymentMethods = $activePaymentMethods->filter(fn ($method) => $method->requires_cash_account);
+    $paymentMethodMeta = $activePaymentMethods->map(fn ($method) => [
+        'code' => $method->code,
+        'name' => $method->name,
+        'requires_cash_account' => (bool) $method->requires_cash_account,
+        'account_type' => $method->code === 'cash' ? 'cash' : 'bank',
+    ])->values();
+@endphp
 <div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
     <div class="rounded-apple-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" style="background: rgba(28, 28, 30, 0.98);">
         <div class="flex justify-between items-center mb-6">
@@ -194,8 +205,9 @@
                 <select name="payment_method" id="payment_method" required onchange="updateCashAccountInfo()"
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Pilih metode pembayaran...</option>
-                    <option value="bank_transfer">Transfer Bank</option>
-                    <option value="cash">Tunai</option>
+                    @foreach($cashRequiredPaymentMethods as $method)
+                        <option value="{{ $method->code }}">{{ $method->name }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -337,11 +349,10 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Category<span class="text-red-500">*</span></label>
-                @php($categoryGroups = \App\Models\ProjectExpense::categoriesByGroup())
                 <select name="category" required
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Select category...</option>
-                    @foreach($categoryGroups as $groupLabel => $categories)
+                    @foreach($expenseCategoryGroups as $groupLabel => $categories)
                         <optgroup label="{{ $groupLabel }}">
                             @foreach($categories as $value => $category)
                                 <option value="{{ $value }}" {{ old('category') === $value ? 'selected' : '' }}>
@@ -365,11 +376,11 @@
                 <select name="payment_method" required
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Select method...</option>
-                    <option value="bank_transfer">Bank Transfer</option>
-                    <option value="cash">Cash</option>
-                    <option value="check">Check</option>
-                    <option value="giro">Giro</option>
-                    <option value="other">Other</option>
+                    @foreach($activePaymentMethods as $method)
+                        <option value="{{ $method->code }}" {{ old('payment_method') === $method->code ? 'selected' : '' }}>
+                            {{ $method->name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
@@ -433,6 +444,7 @@
 <script>
 // Cash Accounts Data (fetched from backend)
 let cashAccounts = [];
+const paymentMethods = @json($paymentMethodMeta);
 
 // Fetch cash accounts on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -457,13 +469,15 @@ function updateCashAccountInfo() {
     const accountNameDiv = document.getElementById('selected_account_name');
     const accountBalanceDiv = document.getElementById('selected_account_balance');
     
-    if (!paymentMethod) {
+    const methodMeta = paymentMethods.find(method => method.code === paymentMethod);
+
+    if (!paymentMethod || !methodMeta || !methodMeta.requires_cash_account) {
         infoDiv.classList.add('hidden');
         return;
     }
     
     // Find appropriate cash account
-    let accountType = paymentMethod === 'bank_transfer' ? 'bank' : 'cash';
+    let accountType = methodMeta.account_type || 'bank';
     let account = cashAccounts.find(acc => acc.account_type === accountType && acc.is_active);
     
     if (account) {

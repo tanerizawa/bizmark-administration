@@ -17,17 +17,30 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if locale is stored in session
+        // Check if locale is in session
         if (Session::has('locale')) {
             $locale = Session::get('locale');
-        } else {
-            // Default to Indonesian
+        } 
+        // Check if locale is in query string (?lang=en)
+        elseif ($request->has('lang')) {
+            $locale = $request->get('lang');
+            Session::put('locale', $locale);
+        }
+        // Default to Indonesian
+        else {
+            $locale = 'id';
+            Session::put('locale', $locale);
+        }
+
+        // Validate locale
+        $availableLocales = ['en', 'id'];
+        if (!in_array($locale, $availableLocales)) {
             $locale = 'id';
         }
-        
+
         // Set application locale
         App::setLocale($locale);
-        
+
         return $next($request);
     }
 }

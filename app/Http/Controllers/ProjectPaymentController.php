@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PaymentMethod;
 use App\Models\Project;
 use App\Models\ProjectPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ProjectPaymentController extends Controller
 {
@@ -15,7 +17,7 @@ class ProjectPaymentController extends Controller
             'payment_date' => 'required|date',
             'amount' => 'required|numeric|min:0',
             'payment_type' => 'required|in:dp,progress,final',
-            'payment_method' => 'required|in:transfer,cash,check,other',
+            'payment_method' => ['required', Rule::in(PaymentMethod::activeCodes())],
             'bank_account_id' => 'nullable|exists:cash_accounts,id',
             'reference_number' => 'nullable|string|max:100',
             'description' => 'nullable|string',
@@ -54,4 +56,3 @@ class ProjectPaymentController extends Controller
             ->with('success', 'Pembayaran berhasil dihapus');
     }
 }
-

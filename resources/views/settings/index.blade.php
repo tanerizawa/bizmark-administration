@@ -68,17 +68,21 @@
         <!-- Tab Content -->
         <div class="p-6">
             @if($activeTab === 'general')
-                @include('settings.tabs.general')
+                @include('settings.tabs.general', ['setting' => $businessSetting])
             @elseif($activeTab === 'users')
                 @include('settings.tabs.users', ['users' => $users, 'roles' => $roles])
             @elseif($activeTab === 'roles')
                 @include('settings.tabs.roles', ['roles' => $roles, 'permissions' => $permissions])
             @elseif($activeTab === 'financial')
-                @include('settings.tabs.financial')
+                @include('settings.tabs.financial', [
+                    'expenseCategories' => $expenseCategories,
+                    'paymentMethods' => $paymentMethods,
+                    'taxRates' => $taxRates,
+                ])
             @elseif($activeTab === 'project')
-                @include('settings.tabs.project')
+                @include('settings.tabs.project', ['statuses' => $projectStatuses])
             @elseif($activeTab === 'security')
-                @include('settings.tabs.security')
+                @include('settings.tabs.security', ['securitySetting' => $securitySetting])
             @endif
         </div>
     </div>

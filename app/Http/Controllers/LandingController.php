@@ -14,6 +14,7 @@ class LandingController extends Controller
     {
         // Get 3 latest published articles for landing page
         $latestArticles = Article::published()
+            ->with('author')
             ->orderBy('published_at', 'desc')
             ->limit(3)
             ->get();
