@@ -1,167 +1,141 @@
-<!-- FAQ Section -->
+@php
+    $faqItems = [
+        [
+            'id' => 'faq-duration',
+            'question' => [
+                'id' => 'Berapa lama proses pengurusan perizinan?',
+                'en' => 'How long does the permit process take?'
+            ],
+            'answer' => [
+                'id' => 'Waktu pengurusan bervariasi tergantung jenis izin. OSS (NIB) biasanya 1-3 hari kerja, UKL-UPL 14-30 hari kerja, sedangkan AMDAL dapat memakan waktu 3-6 bulan. Kami memberikan estimasi setelah konsultasi awal.',
+                'en' => 'Processing time depends on the permit type. OSS (NIB) usually takes 1-3 working days, UKL-UPL 14-30 days, while AMDAL can take 3-6 months. We provide a clear estimate after the initial consultation.'
+            ],
+        ],
+        [
+            'id' => 'faq-documents',
+            'question' => [
+                'id' => 'Apa saja dokumen yang perlu disiapkan?',
+                'en' => 'Which documents need to be prepared?'
+            ],
+            'answer' => [
+                'id' => 'Dokumen dasar meliputi KTP/NPWP Direktur, Akta Pendirian, SK Kemenkumham, NPWP Perusahaan, serta dokumen teknis tambahan sesuai jenis perizinan. Tim kami membantu menyiapkan seluruh kebutuhan tersebut.',
+                'en' => 'You typically need the director’s ID/tax number, company deed, Ministry of Law decree, company tax number, plus supporting technical documents depending on the permit. Our team helps you assemble everything.'
+            ],
+        ],
+        [
+            'id' => 'faq-payment',
+            'question' => [
+                'id' => 'Bagaimana skema pembayaran layanan Bizmark.ID?',
+                'en' => 'How is the Bizmark.ID payment schedule arranged?'
+            ],
+            'answer' => [
+                'id' => 'Kami menerapkan pembayaran bertahap: 50% saat kick-off sebagai DP dan 50% ketika izin terbit. Untuk proyek besar kami dapat menyesuaikan skema sesuai kesepakatan.',
+                'en' => 'We use staged payments: 50% at kick-off as a down payment and 50% after permit issuance. For larger mandates we can customise the schedule based on mutual agreement.'
+            ],
+        ],
+        [
+            'id' => 'faq-guarantee',
+            'question' => [
+                'id' => 'Apakah ada jaminan jika perizinan tidak berhasil?',
+                'en' => 'Is there a guarantee if the permit process fails?'
+            ],
+            'answer' => [
+                'id' => 'Ada. Jika kegagalan berasal dari sisi kami, biaya akan dikembalikan sebagian sesuai kesepakatan awal. Dengan tingkat keberhasilan di atas 95%, situasi tersebut jarang terjadi.',
+                'en' => 'Yes. If a failure is caused by our team we refund the agreed portion of the fee. With a success rate above 95%, this scenario is extremely rare.'
+            ],
+        ],
+        [
+            'id' => 'faq-tracking',
+            'question' => [
+                'id' => 'Bisakah saya memantau progress perizinan?',
+                'en' => 'Can I monitor the permit progress?'
+            ],
+            'answer' => [
+                'id' => 'Kami mengirimkan laporan berkala lewat WhatsApp atau email lengkap dengan milestone dan dokumen pendukung sehingga Anda memiliki visibilitas penuh.',
+                'en' => 'We send scheduled updates via WhatsApp or email with milestones and supporting documents so you maintain full visibility.'
+            ],
+        ],
+        [
+            'id' => 'faq-location',
+            'question' => [
+                'id' => 'Apakah melayani klien di luar Jawa Barat?',
+                'en' => 'Do you handle clients outside West Java?'
+            ],
+            'answer' => [
+                'id' => 'Ya. Walau kantor pusat di Karawang, kami memiliki jaringan konsultan di berbagai provinsi dan dapat mengurus izin di seluruh Indonesia. Konsultasi awal dapat dilakukan secara daring.',
+                'en' => 'Yes. Although our headquarters is in Karawang, we have consultants across Indonesia and can handle permits nationwide. The initial consultation can be done online.'
+            ],
+        ],
+        [
+            'id' => 'faq-start',
+            'question' => [
+                'id' => 'Bagaimana cara memulai proses perizinan?',
+                'en' => 'How do I start the permit process?'
+            ],
+            'answer' => [
+                'id' => 'Hubungi kami via WhatsApp, telepon, atau email untuk konsultasi gratis. Kami akan melakukan asesmen kebutuhan, mengirim proposal, dan langsung menyiapkan dokumen setelah persetujuan.',
+                'en' => 'Contact us via WhatsApp, phone, or email for a complimentary consultation. We will assess your needs, send a proposal, and begin preparing documents once approved.'
+            ],
+        ],
+        [
+            'id' => 'faq-renewal',
+            'question' => [
+                'id' => 'Apakah Bizmark.ID membantu perpanjangan izin?',
+                'en' => 'Do you provide permit renewal services?'
+            ],
+            'answer' => [
+                'id' => 'Tentu. Kami memantau masa berlaku izin, mengingatkan sebelum kedaluwarsa, dan mengurus seluruh proses perpanjangan agar operasional tidak terganggu.',
+                'en' => 'Absolutely. We track expiry dates, remind you before deadlines, and manage the renewal process end-to-end so operations run without disruption.'
+            ],
+        ],
+    ];
+    $locale = app()->getLocale();
+@endphp
+
 <section id="faq" class="section bg-gray-50">
     <div class="container max-w-4xl">
         <div class="text-center mb-12" data-aos="fade-up">
-            <span class="section-label">
-                {{ app()->getLocale() == 'id' ? 'FAQ' : 'FAQ' }}
-            </span>
+            <span class="section-label">FAQ</span>
             <h2 class="section-title mb-6">
-                {{ app()->getLocale() == 'id' ? 'Pertanyaan yang Sering Diajukan' : 'Frequently Asked Questions' }}
+                {{ $locale === 'id' ? 'Pertanyaan yang Sering Diajukan' : 'Frequently Asked Questions' }}
             </h2>
             <p class="section-description max-w-2xl mx-auto">
-                {{ app()->getLocale() == 'id' ? 'Temukan jawaban atas pertanyaan umum seputar layanan perizinan kami' : 'Find answers to common questions about our permit services' }}
+                {{ $locale === 'id' ? 'Temukan jawaban atas pertanyaan umum seputar layanan perizinan kami.' : 'Find quick answers about our permitting services and engagement model.' }}
             </p>
         </div>
 
-        <!-- FAQ Accordion -->
         <div class="space-y-4" id="faqAccordion">
-            <div class="faq-item bg-white rounded-2xl border border-gray-200" data-aos="fade-up" data-aos-delay="0">
-                <button type="button"
-                        class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition"
-                        data-faq-target="faq-answer-1"
-                        aria-expanded="false"
-                        aria-controls="faq-answer-1">
-                    <span class="text-lg font-semibold pr-4 text-gray-900">
-                        {{ app()->getLocale() == 'id' ? 'Berapa lama proses pengurusan perizinan?' : 'How long does the permit process take?' }}
-                    </span>
-                    <i class="fas fa-chevron-down faq-icon transition-transform duration-300 text-primary"></i>
-                </button>
-                <div id="faq-answer-1" class="faq-content hidden px-6 pb-5 text-gray-600 border-t border-gray-200">
-                    <p class="pt-4">
-                        @if(app()->getLocale() == 'id')
-                            Waktu pengurusan bervariasi tergantung jenis izin yang diajukan. Untuk OSS (NIB) biasanya 1-3 hari kerja, UKL-UPL sekitar 14-30 hari kerja, sedangkan AMDAL bisa memakan waktu 3-6 bulan. Kami akan memberikan estimasi waktu yang akurat setelah konsultasi awal.
-                        @else
-                            Processing time varies depending on the type of permit. OSS (NIB) usually takes 1-3 working days, UKL-UPL around 14-30 working days, while AMDAL can take 3-6 months. We will provide an accurate time estimate after initial consultation.
-                        @endif
-                    </p>
+            @foreach($faqItems as $index => $item)
+                @php
+                    $question = $locale === 'id' ? $item['question']['id'] : $item['question']['en'];
+                    $answer = $locale === 'id' ? $item['answer']['id'] : $item['answer']['en'];
+                @endphp
+                <div class="faq-item" data-aos="fade-up" data-aos-delay="{{ $index * 80 }}">
+                    <button type="button"
+                            class="faq-trigger"
+                            data-faq-target="{{ $item['id'] }}"
+                            aria-expanded="false"
+                            aria-controls="{{ $item['id'] }}">
+                        <span class="faq-question">{{ $question }}</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div id="{{ $item['id'] }}" class="faq-content hidden">
+                        <p>{{ $answer }}</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="faq-item bg-white rounded-2xl border border-gray-200" data-aos="fade-up" data-aos-delay="100">
-                <button type="button"
-                        class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition"
-                        data-faq-target="faq-answer-2"
-                        aria-expanded="false"
-                        aria-controls="faq-answer-2">
-                    <span class="text-lg font-semibold pr-4 text-gray-900">
-                        {{ app()->getLocale() == 'id' ? 'Apa saja dokumen yang perlu disiapkan?' : 'What documents need to be prepared?' }}
-                    </span>
-                    <i class="fas fa-chevron-down faq-icon transition-transform duration-300 text-primary"></i>
-                </button>
-                <div id="faq-answer-2" class="faq-content hidden px-6 pb-5 text-gray-600 border-t border-gray-200">
-                    <p class="pt-4">
-                        @if(app()->getLocale() == 'id')
-                            Dokumen dasar yang umumnya diperlukan meliputi: KTP/NPWP Direktur, Akta Pendirian Perusahaan, SK Kemenkumham, NPWP Perusahaan, dan dokumen pendukung lainnya sesuai jenis perizinan. Tim kami akan membantu Anda mempersiapkan seluruh dokumen yang diperlukan.
-                        @else
-                            Basic documents generally required include: Director's ID/Tax Number, Company Deed, Ministry of Law Decree, Company Tax Number, and other supporting documents according to permit type. Our team will help you prepare all required documents.
-                        @endif
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item bg-white rounded-2xl border border-gray-200" data-aos="fade-up" data-aos-delay="200">
-                <button type="button"
-                        class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition"
-                        data-faq-target="faq-answer-3"
-                        aria-expanded="false"
-                        aria-controls="faq-answer-3">
-                    <span class="text-lg font-semibold pr-4 text-gray-900">
-                        {{ app()->getLocale() == 'id' ? 'Bagaimana sistem pembayaran yang diterapkan?' : 'What payment system is applied?' }}
-                    </span>
-                    <i class="fas fa-chevron-down faq-icon transition-transform duration-300 text-primary"></i>
-                </button>
-                <div id="faq-answer-3" class="faq-content hidden px-6 pb-5 text-gray-600 border-t border-gray-200">
-                    <p class="pt-4">
-                        @if(app()->getLocale() == 'id')
-                            Kami menerapkan sistem pembayaran bertahap untuk memudahkan klien. Biasanya dibagi menjadi: 50% di awal sebagai down payment, dan 50% setelah izin terbit. Untuk proyek besar, kami bisa menyesuaikan skema pembayaran sesuai kesepakatan.
-                        @else
-                            We apply a staged payment system to facilitate clients. Usually divided into: 50% upfront as down payment, and 50% after permit issuance. For large projects, we can adjust the payment scheme as agreed.
-                        @endif
-                    </p>
-                </div>
-            </div>
-
-            <div class="faq-item glass rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="300">
-                <button type="button"
-                        class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between hover:bg-white/10 transition"
-                        data-faq-target="faq-answer-4"
-                        aria-expanded="false"
-                        aria-controls="faq-answer-4">
-                    <span class="text-lg font-semibold pr-4 text-white/90">Apakah ada jaminan jika perizinan tidak berhasil?</span>
-                    <i class="fas fa-chevron-down faq-icon transition-transform duration-300 text-white/80"></i>
-                </button>
-                <div id="faq-answer-4" class="faq-content hidden px-6 pb-5 text-white/70 border-t border-white/10">
-                    <p class="pt-4">Ya, kami memberikan jaminan kepuasan pelanggan. Jika perizinan tidak berhasil karena kesalahan dari pihak kami, kami akan mengembalikan sebagian biaya sesuai kesepakatan awal. Namun, dengan track record kami yang 98% sukses, hal ini sangat jarang terjadi.</p>
-                </div>
-            </div>
-
-            <div class="faq-item glass rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="400">
-                <button type="button"
-                        class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between hover:bg-white/10 transition"
-                        data-faq-target="faq-answer-5"
-                        aria-expanded="false"
-                        aria-controls="faq-answer-5">
-                    <span class="text-lg font-semibold pr-4 text-white/90">Apakah bisa memantau progress perizinan?</span>
-                    <i class="fas fa-chevron-down faq-icon transition-transform duration-300 text-white/80"></i>
-                </button>
-                <div id="faq-answer-5" class="faq-content hidden px-6 pb-5 text-white/70 border-t border-white/10">
-                    <p class="pt-4">Ya, kami memberikan update progress secara berkala melalui WhatsApp atau email. Anda akan mendapatkan informasi lengkap tentang setiap tahap proses perizinan yang sedang berjalan.</p>
-                </div>
-            </div>
-
-            <div class="faq-item glass rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="500">
-                <button type="button"
-                        class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between hover:bg-white/10 transition"
-                        data-faq-target="faq-answer-6"
-                        aria-expanded="false"
-                        aria-controls="faq-answer-6">
-                    <span class="text-lg font-semibold pr-4 text-white/90">Apakah melayani klien dari luar Jawa Barat?</span>
-                    <i class="fas fa-chevron-down faq-icon transition-transform duration-300 text-white/80"></i>
-                </button>
-                <div id="faq-answer-6" class="faq-content hidden px-6 pb-5 text-white/70 border-t border-white/10">
-                    <p class="pt-4">Ya, kami melayani klien dari seluruh Indonesia. Meskipun kantor pusat kami di Karawang, Jawa Barat, kami memiliki jaringan di berbagai kota dan dapat mengurus perizinan di berbagai lokasi. Konsultasi awal bisa dilakukan secara online.</p>
-                </div>
-            </div>
-
-            <div class="faq-item glass rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="600">
-                <button type="button"
-                        class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between hover:bg-white/10 transition"
-                        data-faq-target="faq-answer-7"
-                        aria-expanded="false"
-                        aria-controls="faq-answer-7">
-                    <span class="text-lg font-semibold pr-4 text-white/90">Bagaimana cara memulai proses perizinan?</span>
-                    <i class="fas fa-chevron-down faq-icon transition-transform duration-300 text-white/80"></i>
-                </button>
-                <div id="faq-answer-7" class="faq-content hidden px-6 pb-5 text-white/70 border-t border-white/10">
-                    <p class="pt-4">Sangat mudah! Cukup hubungi kami melalui WhatsApp, telepon, atau email untuk konsultasi gratis. Tim kami akan melakukan analisis kebutuhan, memberikan penawaran, dan setelah deal, kami akan segera memulai proses persiapan dokumen.</p>
-                </div>
-            </div>
-
-            <div class="faq-item glass rounded-2xl border border-white/10" data-aos="fade-up" data-aos-delay="700">
-                <button type="button"
-                        class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between hover:bg-white/10 transition"
-                        data-faq-target="faq-answer-8"
-                        aria-expanded="false"
-                        aria-controls="faq-answer-8">
-                    <span class="text-lg font-semibold pr-4 text-white/90">Apakah ada layanan perpanjangan izin?</span>
-                    <i class="fas fa-chevron-down faq-icon transition-transform duration-300 text-white/80"></i>
-                </button>
-                <div id="faq-answer-8" class="faq-content hidden px-6 pb-5 text-white/70 border-t border-white/10">
-                    <p class="pt-4">Ya, kami tidak hanya membantu pengurusan izin baru, tetapi juga perpanjangan izin yang sudah ada. Kami akan mengingatkan Anda sebelum masa berlaku habis dan membantu proses perpanjangan agar tidak terjadi gangguan operasional.</p>
-                </div>
-            </div>
+            @endforeach
         </div>
 
-        <!-- CTA Button -->
         <div class="text-center mt-12" data-aos="fade-up">
             <p class="text-gray-600 mb-4">
-                {{ app()->getLocale() == 'id' ? 'Masih punya pertanyaan lain?' : 'Have more questions?' }}
+                {{ $locale === 'id' ? 'Masih punya pertanyaan lain?' : 'Need help with something else?' }}
             </p>
-            <a href="https://wa.me/6281382605030?text={{ app()->getLocale() == 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits' }}" 
+            <a href="https://wa.me/6281382605030?text={{ $locale === 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits' }}"
                target="_blank"
-               class="btn btn-primary">
+               class="btn btn-primary"
+               data-cta="faq_whatsapp">
                 <i class="fab fa-whatsapp"></i>
-                {{ app()->getLocale() == 'id' ? 'Tanya Sekarang' : 'Ask Now' }}
+                {{ $locale === 'id' ? 'Tanya Sekarang' : 'Ask Now' }}
             </a>
         </div>
     </div>

@@ -12,8 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Change category column from ENUM to VARCHAR for more flexibility
-        DB::statement("ALTER TABLE project_expenses MODIFY COLUMN category VARCHAR(50) NOT NULL");
+        // PostgreSQL: Change category column from ENUM to VARCHAR
+        Schema::table('project_expenses', function (Blueprint $table) {
+            $table->dropColumn('category');
+        });
+        Schema::table('project_expenses', function (Blueprint $table) {
+            $table->string('category', 50)->after('description');
+        });
     }
 
     /**
@@ -21,7 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revert back to old enum values
-        DB::statement("ALTER TABLE project_expenses MODIFY COLUMN category ENUM('vendor','laboratory','survey','travel','operational','tax','other') NOT NULL");
+        Schema::table('project_expenses', function (Blueprint $table) {
+            $table->dropColumn('category');
+        });
+        Schema::table('project_expenses', function (Blueprint $table) {
+            $table->enum('category', ['vendor','laboratory','survey','travel','operational','tax','other'])->after('description');
+        });
     }
 };

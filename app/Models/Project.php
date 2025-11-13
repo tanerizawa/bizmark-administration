@@ -77,6 +77,17 @@ class Project extends Model
         return $this->hasMany(ProjectLog::class);
     }
 
+    // AI Document Paraphrasing relationships
+    public function documentDrafts(): HasMany
+    {
+        return $this->hasMany(DocumentDraft::class);
+    }
+
+    public function aiProcessingLogs(): HasMany
+    {
+        return $this->hasMany(AIProcessingLog::class);
+    }
+
     // Financial relationships (Phase 1)
     public function payments(): HasMany
     {

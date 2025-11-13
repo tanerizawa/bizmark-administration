@@ -16,6 +16,28 @@
             </div>
         </div>
         <div class="flex space-x-3">
+            <!-- AI Document Paraphrasing Button -->
+            <a href="{{ route('ai.paraphrase.create', $project) }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg"
+               style="background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%); color: #FFFFFF;"
+               title="Parafrase dokumen template dengan AI">
+                <i class="fas fa-robot mr-2"></i>AI Paraphrase
+            </a>
+            
+            <!-- View AI Drafts Button -->
+            <a href="{{ route('ai.drafts.index', $project) }}" 
+               class="px-4 py-2 rounded-lg font-medium transition-colors"
+               style="background: rgba(0, 122, 255, 0.2); color: #007AFF; border: 1px solid rgba(0, 122, 255, 0.3);"
+               title="Lihat draft dokumen AI">
+                <i class="fas fa-file-alt mr-2"></i>Draft AI
+                @if($project->documentDrafts && $project->documentDrafts->count() > 0)
+                <span class="ml-1 px-2 py-0.5 rounded-full text-xs font-bold"
+                      style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
+                    {{ $project->documentDrafts->count() }}
+                </span>
+                @endif
+            </a>
+
             <a href="{{ route('projects.edit', $project) }}" 
                class="px-4 py-2 rounded-lg font-medium transition-colors" style="background: rgba(255, 149, 0, 0.9); color: #FFFFFF;">
                 <i class="fas fa-edit mr-2"></i>Edit
