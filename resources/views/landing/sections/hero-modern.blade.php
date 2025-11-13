@@ -38,7 +38,7 @@
                 
                 {{-- CTA Button --}}
                 <div class="flex flex-wrap gap-4">
-                    <a href="https://wa.me/6281382605030?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi" 
+                    <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi" 
                        class="btn btn-primary group">
                         <span class="flex items-center justify-center h-8 w-8 rounded-full bg-white/15">
                             <i class="fab fa-whatsapp text-base"></i>

@@ -18,6 +18,7 @@
             <a href="{{ $isLandingPage ? '#services' : $landingUrl . '#services' }}" class="nav-link" role="menuitem">Layanan</a>
             <a href="{{ $isLandingPage ? '#process' : $landingUrl . '#process' }}" class="nav-link" role="menuitem">Proses</a>
             <a href="{{ route('blog.index') }}" class="nav-link" role="menuitem">Artikel</a>
+            <a href="{{ route('career.index') }}" class="nav-link" role="menuitem">Karir</a>
             <a href="{{ $isLandingPage ? '#about' : $landingUrl . '#about' }}" class="nav-link" role="menuitem">Tentang</a>
         </div>
 
@@ -25,10 +26,10 @@
             <div class="text-right text-xs uppercase tracking-[0.35em] text-slate-400">
                 <span aria-label="Hotline telephone number">Hotline</span>
                 <p class="text-base font-semibold tracking-normal text-slate-900">
-                    <a href="tel:+6281382605030" 
+                    <a href="tel:+6283879602855" 
                        class="hover:text-blue-600 transition"
-                       aria-label="Call us at +62 813 8260 5030">
-                        +62 813 8260 5030
+                       aria-label="Call us at +62 838 7960 2855">
+                        +62 838 7960 2855
                     </a>
                 </p>
             </div>

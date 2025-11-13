@@ -243,6 +243,8 @@ body {
     justify-content: center;
     gap: 0.65rem;
     padding: 0.85rem 1.9rem;
+    min-height: 48px; /* Touch-friendly (WCAG 2.5.5) */
+    min-width: 120px; /* Prevent narrow buttons */
     font-size: 0.95rem;
     font-weight: 600;
     border-radius: 9999px;
@@ -978,5 +980,45 @@ body {
     footer input,
     footer button {
         max-width: 100%;
+    }
+    
+    /* Mobile Performance Optimizations */
+    @media (max-width: 768px) {
+        /* Reduce animation complexity on mobile */
+        * {
+            animation-duration: 0.5s !important; /* Faster animations */
+        }
+        
+        /* Simplify hover effects on touch devices */
+        .btn:hover,
+        .card:hover,
+        .service-card:hover {
+            transform: none !important; /* Disable hover transforms */
+        }
+        
+        /* Optimize font rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeSpeed; /* Faster text rendering */
+        }
+        
+        /* Reduce blur effects */
+        .glass {
+            backdrop-filter: blur(8px); /* Reduce from 20px */
+            -webkit-backdrop-filter: blur(8px);
+        }
+    }
+    
+    /* Respect user's motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
     }
 </style>

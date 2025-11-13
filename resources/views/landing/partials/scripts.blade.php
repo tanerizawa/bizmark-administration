@@ -1,16 +1,5 @@
-<!-- AOS Animation -->
-<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-
-<!-- Alpine.js for dropdowns -->
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
 <script>
-// Initialize AOS
-AOS.init({
-    duration: 1000,
-    once: true,
-    offset: 100
-});
+// AOS and Alpine.js are now loaded via Vite (app.js)
 
 // Hide Loading Screen
 window.addEventListener('load', function() {
