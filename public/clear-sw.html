@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clearing Service Worker...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #1a1a1a;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+        .loading {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loading">🔄 Membersihkan Service Worker...</div>
+        <div id="status"></div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const resultDiv = document.getElementById('result');
+
+        function addStatus(message, isError = false) {
+            const div = document.createElement('div');
+            div.className = 'status ' + (isError ? 'error' : 'success');
+            div.textContent = message;
+            statusDiv.appendChild(div);
+        }
+
+        async function clearEverything() {
+            try {
+                // Unregister all service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        addStatus('✓ Service Worker dihapus: ' + registration.scope);
+                    }
+                    if (registrations.length === 0) {
+                        addStatus('ℹ Tidak ada Service Worker terdaftar');
+                    }
+                }
+
+                // Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (let name of cacheNames) {
+                        await caches.delete(name);
+                        addStatus('✓ Cache dihapus: ' + name);
+                    }
+                    if (cacheNames.length === 0) {
+                        addStatus('ℹ Tidak ada cache tersimpan');
+                    }
+                }
+
+                // Success
+                resultDiv.innerHTML = '<h2 class="success">✓ Selesai!</h2><p>Redirect ke dashboard dalam 3 detik...</p>';
+                
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 3000);
+
+            } catch (error) {
+                addStatus('✗ Error: ' + error.message, true);
+                resultDiv.innerHTML = '<h2 class="error">Gagal!</h2><p><a href="/dashboard" style="color: white;">Klik di sini untuk ke dashboard</a></p>';
+            }
+        }
+
+        clearEverything();
+    </script>
+</body>
+</html>

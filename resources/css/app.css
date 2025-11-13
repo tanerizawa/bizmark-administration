@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+/* Remove conflicting imports - use CDN instead for now */
+/* @import '@fortawesome/fontawesome-free/css/all.min.css'; */
+/* @import 'aos/dist/aos.css'; */
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';

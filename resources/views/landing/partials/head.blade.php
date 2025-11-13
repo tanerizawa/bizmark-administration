@@ -66,30 +66,43 @@
 
 <!-- Favicons -->
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
-<meta name="theme-color" content="#0066CC">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon-192.png">
+<meta name="theme-color" content="#1E40AF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bizmark.ID">
 
-<!-- Preload Critical Resources -->
+<!-- PWA Manifest -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- Preconnect for external resources -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link rel="preconnect" href="https://unpkg.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://images.pexels.com">
 <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
 
-<!-- Preload Font - Optimized -->
+<!-- Preload Critical Resources -->
+<link rel="preload" as="image" href="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1400&fm=webp" type="image/webp" fetchpriority="high">
+
+<!-- Google Fonts - Inter -->
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
-
-<!-- Preload Font Awesome -->
-<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
-
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"></noscript>
 
 <!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<!-- AOS Animation Library -->
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Critical CSS (Inline for LCP) -->
+@include('landing.partials.critical-css')
+
+<!-- Vite Assets (includes Font Awesome, AOS, Alpine.js) - Deferred -->
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
 <!-- Structured Data (JSON-LD Schema.org) -->
 <script type="application/ld+json">
@@ -109,13 +122,42 @@
     },
     "contactPoint": [{
         "@type": "ContactPoint",
-        "telephone": "+62-813-8260-5030",
+        "telephone": "+62-838-7960-2855",
         "contactType": "customer service",
         "availableLanguage": ["Indonesian", "English"],
         "areaServed": "ID"
     }],
     "sameAs": [
-        "https://wa.me/6281382605030"
+        "https://wa.me/6283879602855"
     ]
+}
+</script>
+
+<!-- Service Worker Registration - DISABLED -->
+<script>
+// Service Worker DISABLED - causing dashboard CSS issues
+// Uncomment to re-enable PWA features
+/*
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('[SW] Registered successfully:', registration.scope);
+            })
+            .catch((error) => {
+                console.error('[SW] Registration failed:', error);
+            });
+    });
+}
+*/
+
+// Instead, UNREGISTER any existing SW
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+            console.log('[Landing] Unregistering SW:', registration.scope);
+            registration.unregister();
+        }
+    });
 }
 </script>

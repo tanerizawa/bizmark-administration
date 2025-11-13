@@ -51,12 +51,23 @@
             </div>
 
             <figure class="rounded-[1.75rem] border border-gray-100 bg-gray-50 shadow-soft-lg overflow-hidden" data-aos="fade-left" data-aos-delay="180">
-                <img src="https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                     alt="Tim konsultan Bizmark.ID sedang berdiskusi"
-                     class="h-64 w-full object-cover object-center"
-                     loading="lazy"
-                     decoding="async"
-                     sizes="(min-width: 1024px) 480px, 100vw">
+                <picture>
+                    <source srcset="https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=600&fm=webp 600w,
+                                    https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=1200&fm=webp 1200w"
+                            type="image/webp"
+                            sizes="(min-width: 1024px) 480px, 100vw">
+                    <source srcset="https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=600 600w,
+                                    https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=1200 1200w"
+                            type="image/jpeg"
+                            sizes="(min-width: 1024px) 480px, 100vw">
+                    <img src="https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                         alt="Tim konsultan Bizmark.ID sedang berdiskusi"
+                         class="h-64 w-full object-cover object-center"
+                         loading="lazy"
+                         decoding="async"
+                         width="480"
+                         height="256">
+                </picture>
                 <figcaption class="text-xs text-gray-500 uppercase tracking-[0.3em] px-4 py-3">
                     Foto: Pexels / Fauxels
                 </figcaption>

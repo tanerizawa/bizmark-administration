@@ -72,17 +72,17 @@
         <!-- Footer Info -->
         <div class="pt-6 border-t border-white/20 mt-auto">
             <p class="text-white/80 text-sm mb-2">Hubungi Kami:</p>
-            <a href="https://wa.me/6281382605030" 
+            <a href="https://wa.me/6283879602855" 
                class="text-white hover:text-blue-200 flex items-center gap-2 mb-2"
                target="_blank"
                rel="noopener noreferrer"
-               aria-label="Contact us on WhatsApp at +62 813-8260-5030">
+               aria-label="Contact us on WhatsApp at +62 838-7960-2855">
                 <i class="fab fa-whatsapp" aria-hidden="true"></i>
-                <span class="text-sm">+62 813-8260-5030</span>
+                <span class="text-sm">+62 838-7960-2855</span>
             </a>
-            <a href="tel:+6281382605030" 
+            <a href="tel:+6283879602855" 
                class="text-white hover:text-blue-200 flex items-center gap-2"
-               aria-label="Call us directly at +62 813-8260-5030">
+               aria-label="Call us directly at +62 838-7960-2855">
                 <i class="fas fa-phone" aria-hidden="true"></i>
                 <span class="text-sm">Telepon Langsung</span>
             </a>

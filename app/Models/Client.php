@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class Client extends Model
+class Client extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Notifiable;
 
     protected $fillable = [
         'name',
@@ -16,6 +19,7 @@ class Client extends Model
         'industry',
         'contact_person',
         'email',
+        'password',
         'phone',
         'mobile',
         'address',
@@ -30,11 +34,25 @@ class Client extends Model
         'notes',
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected $casts = [
+        'email_verified_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    /**
+     * Get the email address for password reset.
+     */
+    public function getEmailForPasswordReset()
+    {
+        return $this->email;
+    }
 
     /**
      * Get all projects for this client

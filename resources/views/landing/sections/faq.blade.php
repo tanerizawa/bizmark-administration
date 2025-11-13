@@ -130,7 +130,7 @@
             <p class="text-gray-600 mb-4">
                 {{ $locale === 'id' ? 'Masih punya pertanyaan lain?' : 'Need help with something else?' }}
             </p>
-            <a href="https://wa.me/6281382605030?text={{ $locale === 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits' }}"
+            <a href="https://wa.me/6283879602855?text={{ $locale === 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits' }}"
                target="_blank"
                class="btn btn-primary"
                data-cta="faq_whatsapp">

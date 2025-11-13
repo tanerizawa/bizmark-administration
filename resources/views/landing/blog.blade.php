@@ -8,6 +8,28 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "{{ route('landing') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Artikel",
+                "item": "{{ route('blog.index') }}"
+            }
+        ]
+    }
+    </script>
+    
     <style>
         :root {
             --apple-blue: #007AFF;
