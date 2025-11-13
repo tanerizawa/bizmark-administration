@@ -2,8 +2,8 @@
 
 @section('content')
 
-{{-- Hero Section - MODERN REDESIGN --}}
-@include('landing.sections.hero-modern')
+{{-- Hero Section - Professional & Clean --}}
+@include('landing.sections.hero')
 
 {{-- Services Section --}}
 @include('landing.sections.services')

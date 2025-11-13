@@ -33,19 +33,22 @@ class SecurityHeaders
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
         
         // Content Security Policy (CSP)
-        $csp = [
-            "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net",
-            "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
-            "img-src 'self' data: https: blob:",
-            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
-            "connect-src 'self' https://www.google-analytics.com https://wa.me",
-            "frame-src 'self' https://www.youtube.com",
-            "object-src 'none'",
-            "base-uri 'self'",
-            "form-action 'self'",
-        ];
-        $response->headers->set('Content-Security-Policy', implode('; ', $csp));
+        // Only set if not already present to avoid duplicates
+        if (!$response->headers->has('Content-Security-Policy')) {
+            $csp = [
+                "default-src 'self'",
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net",
+                "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+                "img-src 'self' data: https: blob:",
+                "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+                "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://wa.me https://cdn.jsdelivr.net",
+                "frame-src 'self' https://www.youtube.com",
+                "object-src 'none'",
+                "base-uri 'self'",
+                "form-action 'self'",
+            ];
+            $response->headers->set('Content-Security-Policy', implode('; ', $csp));
+        }
         
         // Strict Transport Security (HSTS) - Only in production with HTTPS
         if (app()->environment('production')) {

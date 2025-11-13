@@ -1,5 +1,5 @@
 {{-- MODERN HERO SECTION - Bold, Dynamic, Impressive --}}
-<section id="home" class="relative min-h-[70vh] md:min-h-[75vh] flex items-center overflow-hidden pt-24 pb-20">
+<section id="home" class="relative min-h-[75vh] md:min-h-[80vh] flex items-center overflow-hidden pt-32 md:pt-36 pb-20">
     {{-- Animated Background --}}
     <div class="absolute inset-0 gradient-mesh opacity-80"></div>
     <div class="absolute inset-0">
@@ -36,7 +36,7 @@
                     Kami mendampingi perusahaan Anda mendapatkan izin <strong class="text-primary font-semibold">LB3, AMDAL, dan UKL-UPL</strong> dengan proses yang terstruktur, transparan, dan nyaman di setiap tahapannya.
                 </p>
                 
-                {{-- CTA Buttons - Large & Prominent --}}
+                {{-- CTA Button --}}
                 <div class="flex flex-wrap gap-4">
                     <a href="https://wa.me/6281382605030?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi" 
                        class="btn btn-primary group">
@@ -46,10 +46,16 @@
                         <span>Konsultasi Gratis</span>
                         <i class="fas fa-arrow-right text-sm transition-transform group-hover:translate-x-1"></i>
                     </a>
-                    <a href="#services" class="btn btn-secondary">
-                        <i class="fas fa-th-large text-sm"></i>
-                        <span>Lihat Layanan</span>
-                    </a>
+                </div>
+
+                {{-- Support details --}}
+                <div class="flex flex-col gap-3 text-gray-600 text-sm leading-relaxed max-w-xl">
+                    <p>
+                        Layanan kami mencakup pendampingan OSS/NIB, AMDAL, UKL-UPL, PBG/SLF, dan legalitas bisnis dengan monitoring digital 24/7.
+                    </p>
+                    <p>
+                        Tim konsultan bersertifikat memastikan setiap dokumen validated sesuai regulasi terbaru sehingga proses jadi lebih ringan.
+                    </p>
                 </div>
                 
                 {{-- Trust Indicators - Modern Layout --}}
@@ -77,13 +83,13 @@
             <div class="relative" data-aos="fade-left" data-aos-duration="900" data-aos-delay="150">
                 
                 {{-- Main Visual --}}
-                <div class="relative">
-                    {{-- Placeholder for hero image --}}
-                    <div class="aspect-[4/3] bg-white/75 backdrop-blur-xl border border-primary/10 rounded-3xl relative overflow-hidden shadow-[0_25px_60px_-40px_rgba(30,64,175,0.45)]">
-                        
-                        {{-- Hero Photo Placeholder --}}
-                        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=800&q=60'); filter: saturate(1.1);"></div>
-                        <div class="absolute inset-0 bg-gradient-to-tr from-primary/15 via-white/5 to-transparent"></div>
+                    <div class="relative">
+                        {{-- Professional Business Consultation Visual --}}
+                        <div class="aspect-[4/3] bg-white/75 backdrop-blur-xl border border-primary/10 rounded-3xl relative overflow-hidden shadow-[0_25px_60px_-40px_rgba(30,64,175,0.45)]">
+                            
+                            {{-- Hero Photo --}}
+                            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.pexels.com/photos/3183286/pexels-photo-3183286.jpeg?auto=compress&cs=tinysrgb&w=1400');"></div>
+                            <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 via-white/30 to-transparent opacity-80"></div>
                         
                         {{-- Overlay Card --}}
                         <div class="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur border border-primary/10 rounded-2xl p-5 shadow-[0_18px_35px_-28px_rgba(30,64,175,0.45)]">
@@ -110,7 +116,7 @@
                 {{-- Small Feature Cards --}}
                 <div class="grid grid-cols-2 gap-4 mt-6">
                     <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-primary/10">
-                        <i class="fas fa-shield-check text-xl text-green-500 mb-2"></i>
+                        <i class="fas fa-shield text-xl text-green-500 mb-2"></i>
                         <div class="text-sm font-semibold text-gray-900">100% Legal</div>
                         <div class="text-xs text-gray-600">Pendampingan penuh</div>
                     </div>
@@ -126,16 +132,14 @@
         </div>
     </div>
     
-    {{-- Scroll Indicator --}}
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <a href="#services" class="flex flex-col items-center gap-2 text-gray-500 hover:text-primary transition">
-            <span class="text-xs font-semibold tracking-[0.3em] uppercase">Jelajahi Layanan</span>
-            <i class="fas fa-chevron-down text-lg"></i>
+    <div class="container relative z-10 mt-10 flex flex-col items-center gap-3 text-gray-500 md:mt-16">
+        <a href="#services" class="inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-gray-600 hover:text-primary transition">
+            <span>Jelajahi Layanan</span>
+            <i class="fas fa-chevron-down text-base"></i>
         </a>
+        <span class="block h-px w-12 bg-gray-200"></span>
     </div>
-    
 </section>
-
 <style>
     @keyframes float {
         0%, 100% { transform: translateY(0px); }

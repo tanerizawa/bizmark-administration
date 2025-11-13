@@ -7,14 +7,12 @@
     
     <title>@yield('title', 'Dashboard') - Bizmark Permit Management</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
+    <!-- External CSS - CDN Only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Bootstrap CSS (for auth pages) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -516,6 +514,82 @@
                                 <span class="ml-3">Pengaturan</span>
                             </div>
                         </a>
+                        
+                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
+                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Recruitment</p>
+                            
+                            <a href="{{ route('admin.jobs.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.jobs.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-briefcase w-5"></i>
+                                    <span class="ml-3">Lowongan Kerja</span>
+                                </div>
+                            </a>
+                            
+                            <a href="{{ route('admin.applications.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.applications.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-tie w-5"></i>
+                                    <span class="ml-3">Lamaran Masuk</span>
+                                </div>
+                                @php
+                                    $pendingCount = \App\Models\JobApplication::where('status', 'pending')->count();
+                                @endphp
+                                @if($pendingCount > 0)
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.applications.*') ? 'bg-white text-apple-blue' : 'bg-red-500 text-white' }}">
+                                        {{ $pendingCount }}
+                                    </span>
+                                @endif
+                            </a>
+                        </div>
+                        
+                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
+                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Email Management</p>
+                            
+                            <a href="{{ route('admin.inbox.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.inbox.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-inbox w-5"></i>
+                                    <span class="ml-3">Inbox</span>
+                                </div>
+                                @php
+                                    $unreadCount = \App\Models\EmailInbox::where('category', 'inbox')->where('is_read', false)->count();
+                                @endphp
+                                @if($unreadCount > 0)
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.inbox.*') ? 'bg-white text-apple-blue' : 'bg-red-500 text-white' }}">
+                                        {{ $unreadCount }}
+                                    </span>
+                                @endif
+                            </a>
+                            
+                            <a href="{{ route('admin.campaigns.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.campaigns.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-paper-plane w-5"></i>
+                                    <span class="ml-3">Campaigns</span>
+                                </div>
+                            </a>
+                            
+                            <a href="{{ route('admin.subscribers.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.subscribers.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-users w-5"></i>
+                                    <span class="ml-3">Subscribers</span>
+                                </div>
+                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.subscribers.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
+                                    {{ \App\Models\EmailSubscriber::where('status', 'active')->count() }}
+                                </span>
+                            </a>
+                            
+                            <a href="{{ route('admin.templates.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.templates.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-file-alt w-5"></i>
+                                    <span class="ml-3">Templates</span>
+                                </div>
+                            </a>
+                            
+                            <a href="{{ route('admin.email.settings.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.email.settings.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-cog w-5"></i>
+                                    <span class="ml-3">Email Settings</span>
+                                </div>
+                            </a>
+                        </div>
                         
                         <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
                             <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Master Data</p>

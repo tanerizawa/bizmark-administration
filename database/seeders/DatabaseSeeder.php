@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             TaxRateSeeder::class,
             SecuritySettingSeeder::class,
             UserSeeder::class,
+            ProjectSeeder::class,
             TaskSeeder::class,
             DocumentSeeder::class,
         ]);

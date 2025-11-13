@@ -94,140 +94,165 @@
     body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background: #FFFFFF;
-        color: var(--gray-900);
+        color: #1F2937;
         overflow-x: hidden;
-        font-size: 18px;
-        line-height: 1.7;
+        font-size: 16px;
+        line-height: 1.6;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         font-weight: 400;
     }
     
-    /* Modern Typography System - Bold & Confident */
+    /* Professional Typography System */
     h1, h2, h3, h4, h5, h6 {
-        font-weight: 800;
-        line-height: 1.2;
-        color: var(--gray-900);
-        margin-bottom: 1.5rem;
-        letter-spacing: -0.025em;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #111827;
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
     }
     
     h1 { 
-        font-size: 4rem;      /* 64px - BOLD HERO */
-        font-weight: 900;
-    }
-    h2 { 
-        font-size: 3rem;      /* 48px - SECTION HEADERS */
+        font-size: 2.5rem;    /* 40px */
         font-weight: 800;
     }
-    h3 { 
+    h2 { 
         font-size: 2rem;      /* 32px */
         font-weight: 700;
     }
-    h4 { 
+    h3 { 
         font-size: 1.5rem;    /* 24px */
         font-weight: 700;
     }
-    h5 { 
+    h4 { 
         font-size: 1.25rem;   /* 20px */
         font-weight: 600;
     }
-    h6 { 
+    h5 { 
         font-size: 1.125rem;  /* 18px */
+        font-weight: 600;
+    }
+    h6 { 
+        font-size: 1rem;      /* 16px */
         font-weight: 600;
     }
     
     p {
-        margin-bottom: 1.5rem;
-        color: var(--gray-600);
+        margin-bottom: 1rem;
+        color: #4B5563;
         line-height: 1.7;
-        font-size: 1.125rem;  /* 18px - More readable */
+        font-size: 1rem;      /* 16px */
     }
     
     .lead {
-        font-size: 1.375rem;  /* 22px */
-        line-height: 1.6;
-        color: var(--gray-700);
+        font-size: 1.125rem;  /* 18px */
+        line-height: 1.75;
+        color: #374151;
         font-weight: 400;
     }
     
     a {
-        color: var(--primary);
+        color: #1E40AF;
         text-decoration: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.2s ease;
     }
     
     a:hover {
-        color: var(--primary-dark);
+        color: #1E3A8A;
     }
     
     /* Responsive Typography */
-    @media (max-width: 1024px) {
-        h1 { font-size: 3rem; }    /* 48px */
+    @media (min-width: 1024px) {
+        h1 { font-size: 3.5rem; }  /* 56px */
         h2 { font-size: 2.5rem; }  /* 40px */
-        h3 { font-size: 1.75rem; } /* 28px */
+        h3 { font-size: 1.875rem; } /* 30px */
+        p { font-size: 1.125rem; }  /* 18px */
     }
     
     @media (max-width: 768px) {
-        body { font-size: 16px; }
-        h1 { font-size: 2.5rem; }  /* 40px */
-        h2 { font-size: 2rem; }    /* 32px */
-        h3 { font-size: 1.5rem; }  /* 24px */
-        p { font-size: 1rem; }     /* 16px */
-        .lead { font-size: 1.125rem; } /* 18px */
+        h1 { font-size: 2rem; }     /* 32px */
+        h2 { font-size: 1.75rem; }  /* 28px */
+        h3 { font-size: 1.25rem; }  /* 20px */
     }
     
-    /* Navbar Styling - Light Magazine Style */
+    /* Navbar Styling - Clean & Professional */
     .navbar {
         position: fixed;
         top: 0;
         width: 100%;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid #E5E7EB;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(229, 231, 235, 0.8);
         z-index: 1000;
         transition: all 0.3s ease;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
     }
-    
+
     .navbar.scrolled {
-        background: rgba(255, 255, 255, 0.98);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        border-bottom-color: #D1D5DB;
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+        border-bottom-color: rgba(229, 231, 235, 1);
+    }
+
+    .nav-link {
+        position: relative;
+        color: #6B7280;
+        transition: color 0.3s ease;
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 100%;
+        height: 2px;
+        background: #1E40AF;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-link:hover {
+        color: #1E3A8A;
+    }
+
+    .nav-link:hover::after {
+        transform: scaleX(1);
     }
     
-    /* Container Widths for Magazine Layout - More Compact */
+    /* Container Widths - Professional Layout */
     .container-narrow {
         max-width: 680px;
         margin: 0 auto;
-        padding: 0 1.25rem;
+        padding: 0 1.5rem;
     }
     
     .container-wide {
-        max-width: 1140px;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 0 1.25rem;
+        padding: 0 1.5rem;
     }
     
     .container-full {
-        max-width: 1320px;
+        max-width: 1400px;
         margin: 0 auto;
-        padding: 0 1.25rem;
+        padding: 0 1.5rem;
     }
     
-    /* Section Spacing - More Compact & Elegant */
+    /* Section Spacing - Balanced & Professional */
     .section {
-        padding: 4rem 0;
-    }
-    
-    .section-lg {
         padding: 5rem 0;
     }
     
+    .section-lg {
+        padding: 6rem 0;
+    }
+    
     @media (max-width: 768px) {
-        .section { padding: 2.5rem 0; }
-        .section-lg { padding: 3.5rem 0; }
+        .section { padding: 3rem 0; }
+        .section-lg { padding: 4rem 0; }
     }
     
     /* Hero Section - Magazine Style */

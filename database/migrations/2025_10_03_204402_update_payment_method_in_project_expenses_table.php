@@ -12,8 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Change payment_method from ENUM to VARCHAR for flexibility
-        DB::statement("ALTER TABLE project_expenses MODIFY payment_method VARCHAR(50) NOT NULL DEFAULT 'transfer'");
+        // PostgreSQL: Change payment_method from ENUM to VARCHAR
+        Schema::table('project_expenses', function (Blueprint $table) {
+            $table->dropColumn('payment_method');
+        });
+        Schema::table('project_expenses', function (Blueprint $table) {
+            $table->string('payment_method', 50)->default('transfer')->after('category');
+        });
     }
 
     /**
@@ -21,7 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revert back to ENUM
-        DB::statement("ALTER TABLE project_expenses MODIFY payment_method ENUM('transfer', 'cash', 'check', 'other') NOT NULL DEFAULT 'transfer'");
+        Schema::table('project_expenses', function (Blueprint $table) {
+            $table->dropColumn('payment_method');
+        });
+        Schema::table('project_expenses', function (Blueprint $table) {
+            $table->enum('payment_method', ['transfer', 'cash', 'check', 'other'])->default('transfer')->after('category');
+        });
     }
 };

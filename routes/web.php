@@ -19,6 +19,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\PublicArticleController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\SitemapController;
 
@@ -29,19 +30,42 @@ Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 // Language Switcher
 Route::get('/locale/{locale}', [LocaleController::class, 'setLocale'])->name('locale.set');
 
-// Privacy Policy
-Route::get('/privacy-policy', function() {
-    return view('privacy-policy');
+// Legal Pages
+Route::get('/kebijakan-privasi', function() {
+    return view('legal.privacy');
 })->name('privacy.policy');
+
+Route::get('/syarat-ketentuan', function() {
+    return view('legal.terms');
+})->name('terms.conditions');
 
 // Landing Page (Public) - With Latest Articles
 Route::get('/', [PublicArticleController::class, 'landing'])->name('landing');
+
+// Service Pages (Public)
+Route::get('/layanan', [ServiceController::class, 'index'])->name('services.index');
+Route::get('/layanan/{slug}', [ServiceController::class, 'show'])->name('services.show');
 
 // Public Blog Routes
 Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index');
 Route::get('/blog/category/{category}', [PublicArticleController::class, 'category'])->name('blog.category');
 Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag');
 Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('blog.article');
+
+// Permit Calculator Tool (Public)
+Route::get('/kalkulator-perizinan', [App\Http\Controllers\CalculatorController::class, 'index'])->name('calculator.index');
+Route::post('/kalkulator-perizinan/calculate', [App\Http\Controllers\CalculatorController::class, 'calculate'])->name('calculator.calculate');
+
+// Career/Jobs Pages (Public)
+Route::get('/karir', [App\Http\Controllers\JobVacancyController::class, 'index'])->name('career.index');
+Route::get('/karir/{slug}', [App\Http\Controllers\JobVacancyController::class, 'show'])->name('career.show');
+Route::get('/karir/{vacancy_id}/apply', [App\Http\Controllers\JobApplicationController::class, 'create'])->name('career.apply');
+Route::post('/karir/apply', [App\Http\Controllers\JobApplicationController::class, 'store'])->name('career.apply.store');
+
+// Newsletter Subscription (Public)
+Route::post('/subscribe', [App\Http\Controllers\SubscriberController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::get('/unsubscribe/{email}/{token}', [App\Http\Controllers\SubscriberController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+Route::get('/email/track/{tracking_id}', [App\Http\Controllers\SubscriberController::class, 'trackOpen'])->name('email.track');
 
 // Custom Authentication Routes (Hidden Login Path for Security)
 // Login routes with custom path '/hadez' instead of '/login'
@@ -212,4 +236,99 @@ Route::middleware(['auth'])->group(function () {
 
     // Security Settings
     Route::put('settings/security', [App\Http\Controllers\SettingsController::class, 'updateSecurity'])->name('settings.security.update');
+
+    // Career Management Routes (Admin)
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // Job Vacancy Management
+        Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class);
+        
+        // Job Application Management
+        Route::get('applications', [App\Http\Controllers\Admin\JobApplicationController::class, 'index'])->name('applications.index');
+        Route::get('applications/{id}', [App\Http\Controllers\Admin\JobApplicationController::class, 'show'])->name('applications.show');
+        Route::patch('applications/{id}/status', [App\Http\Controllers\Admin\JobApplicationController::class, 'updateStatus'])->name('applications.update-status');
+        Route::get('applications/{id}/download-cv', [App\Http\Controllers\Admin\JobApplicationController::class, 'downloadCv'])->name('applications.download-cv');
+        Route::get('applications/{id}/download-portfolio', [App\Http\Controllers\Admin\JobApplicationController::class, 'downloadPortfolio'])->name('applications.download-portfolio');
+        Route::delete('applications/{id}', [App\Http\Controllers\Admin\JobApplicationController::class, 'destroy'])->name('applications.destroy');
+        
+        // Email Management Routes
+        // Email Campaigns
+        Route::resource('campaigns', App\Http\Controllers\Admin\EmailCampaignController::class);
+        Route::get('campaigns/{id}/send', [App\Http\Controllers\Admin\EmailCampaignController::class, 'send'])->name('campaigns.send');
+        Route::post('campaigns/{id}/process-send', [App\Http\Controllers\Admin\EmailCampaignController::class, 'processSend'])->name('campaigns.process-send');
+        Route::post('campaigns/{id}/cancel', [App\Http\Controllers\Admin\EmailCampaignController::class, 'cancel'])->name('campaigns.cancel');
+        
+        // Email Inbox
+        Route::get('inbox', [App\Http\Controllers\Admin\EmailInboxController::class, 'index'])->name('inbox.index');
+        Route::get('inbox/compose', [App\Http\Controllers\Admin\EmailInboxController::class, 'compose'])->name('inbox.compose');
+        Route::post('inbox/send', [App\Http\Controllers\Admin\EmailInboxController::class, 'send'])->name('inbox.send');
+        Route::get('inbox/{id}', [App\Http\Controllers\Admin\EmailInboxController::class, 'show'])->name('inbox.show');
+        Route::get('inbox/{id}/reply', [App\Http\Controllers\Admin\EmailInboxController::class, 'reply'])->name('inbox.reply');
+        Route::post('inbox/{id}/reply', [App\Http\Controllers\Admin\EmailInboxController::class, 'sendReply'])->name('inbox.send-reply');
+        Route::post('inbox/{id}/read', [App\Http\Controllers\Admin\EmailInboxController::class, 'markAsRead'])->name('inbox.mark-read');
+        Route::post('inbox/{id}/unread', [App\Http\Controllers\Admin\EmailInboxController::class, 'markAsUnread'])->name('inbox.mark-unread');
+        Route::post('inbox/{id}/star', [App\Http\Controllers\Admin\EmailInboxController::class, 'toggleStar'])->name('inbox.toggle-star');
+        Route::post('inbox/{id}/trash', [App\Http\Controllers\Admin\EmailInboxController::class, 'moveToTrash'])->name('inbox.trash');
+        Route::delete('inbox/{id}', [App\Http\Controllers\Admin\EmailInboxController::class, 'delete'])->name('inbox.delete');
+        
+        // Email Subscribers
+        Route::resource('subscribers', App\Http\Controllers\Admin\EmailSubscriberController::class);
+        
+        // Email Templates
+        Route::resource('templates', App\Http\Controllers\Admin\EmailTemplateController::class);
+        
+        // Email Settings
+        Route::get('email/settings', [App\Http\Controllers\Admin\EmailSettingsController::class, 'index'])->name('email.settings.index');
+        Route::put('email/settings', [App\Http\Controllers\Admin\EmailSettingsController::class, 'update'])->name('email.settings.update');
+        Route::post('email/settings/test', [App\Http\Controllers\Admin\EmailSettingsController::class, 'test'])->name('email.settings.test');
+    });
+
+    // AI Document Paraphrasing Routes
+    Route::prefix('projects/{project}/ai')->name('ai.')->group(function () {
+        // Paraphrase form and processing
+        Route::get('paraphrase', [App\Http\Controllers\AI\DocumentAIController::class, 'create'])->name('paraphrase.create');
+        Route::post('paraphrase', [App\Http\Controllers\AI\DocumentAIController::class, 'store'])->name('paraphrase.store');
+        
+        // Draft management
+        Route::get('drafts', [App\Http\Controllers\AI\DocumentAIController::class, 'index'])->name('drafts.index');
+        Route::get('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'show'])->name('drafts.show');
+        Route::put('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'update'])->name('drafts.update');
+        
+        // Draft actions
+        Route::post('drafts/{draft}/approve', [App\Http\Controllers\AI\DocumentAIController::class, 'approve'])->name('drafts.approve');
+        Route::post('drafts/{draft}/reject', [App\Http\Controllers\AI\DocumentAIController::class, 'reject'])->name('drafts.reject');
+        Route::delete('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'destroy'])->name('drafts.destroy');
+        Route::get('drafts/{draft}/export', [App\Http\Controllers\AI\DocumentAIController::class, 'export'])->name('drafts.export');
+        
+        // Compliance check routes
+        Route::post('drafts/{draft}/check-compliance', [App\Http\Controllers\AI\DocumentAIController::class, 'checkCompliance'])->name('drafts.check-compliance');
+        Route::get('drafts/{draft}/compliance-results', [App\Http\Controllers\AI\DocumentAIController::class, 'getComplianceResults'])->name('drafts.compliance-results');
+        Route::get('drafts/{draft}/compliance-report', [App\Http\Controllers\AI\DocumentAIController::class, 'exportComplianceReport'])->name('drafts.compliance-report');
+        
+        // Processing status (AJAX)
+        Route::get('status', [App\Http\Controllers\AI\DocumentAIController::class, 'status'])->name('status');
+    });
+
+    // Template upload (admin only)
+    Route::post('ai/templates/upload', [App\Http\Controllers\AI\DocumentAIController::class, 'uploadTemplate'])->name('ai.templates.upload');
+});
+
+// Client Portal Routes
+Route::prefix('client')->name('client.')->group(function () {
+    // Guest routes (login, register, password reset)
+    Route::middleware('guest:client')->group(function () {
+        Route::get('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'showLoginForm'])->name('login');
+        Route::post('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'login']);
+        
+        Route::get('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'showForgotPasswordForm'])->name('password.request');
+        Route::post('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'sendResetLinkEmail'])->name('password.email');
+        
+        Route::get('/reset-password/{token}', [App\Http\Controllers\Auth\ClientAuthController::class, 'showResetPasswordForm'])->name('password.reset');
+        Route::post('/reset-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'resetPassword'])->name('password.update');
+    });
+    
+    // Protected routes (requires authentication)
+    Route::middleware('auth:client')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\Client\DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/logout', [App\Http\Controllers\Auth\ClientAuthController::class, 'logout'])->name('logout');
+    });
 });
