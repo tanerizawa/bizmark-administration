@@ -19,7 +19,7 @@
         </div>
 
         <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
                 <div class="flex items-center justify-between">
                     <div>
@@ -32,45 +32,16 @@
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
                 <div class="flex items-center justify-between">
                     <div>
-                        <div class="text-sm opacity-90">Risiko Rendah</div>
+                        <div class="text-sm opacity-90">Total Sektor</div>
                         <div class="text-3xl font-bold mt-1">
-                            {{ $kbliStats['by_category']->where('category', 'Rendah')->first()->count ?? 0 }}
+                            {{ $kbliStats['by_sector']->count() }}
                         </div>
                     </div>
                     <div class="text-4xl opacity-75">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg shadow-lg p-6 text-white">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-sm opacity-90">Risiko Menengah</div>
-                        <div class="text-3xl font-bold mt-1">
-                            {{ ($kbliStats['by_category']->where('category', 'Menengah Rendah')->first()->count ?? 0) + 
-                               ($kbliStats['by_category']->where('category', 'Menengah Tinggi')->first()->count ?? 0) }}
-                        </div>
-                    </div>
-                    <div class="text-4xl opacity-75">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-lg p-6 text-white">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-sm opacity-90">Risiko Tinggi</div>
-                        <div class="text-3xl font-bold mt-1">
-                            {{ $kbliStats['by_category']->where('category', 'Tinggi')->first()->count ?? 0 }}
-                        </div>
-                    </div>
-                    <div class="text-4xl opacity-75">
-                        <i class="fas fa-shield-alt"></i>
+                        <i class="fas fa-th"></i>
                     </div>
                 </div>
             </div>
@@ -109,15 +80,20 @@
                             <i class="fas fa-info-circle mr-2"></i>Format CSV
                         </h3>
                         <p class="text-sm text-blue-800 dark:text-blue-300 mb-3">
-                            File CSV harus memiliki kolom berikut (urutan harus sesuai):
+                            File CSV harus memiliki header di baris pertama (nama kolom bisa bahasa Indonesia atau Inggris):
                         </p>
-                        <div class="bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-blue-700 p-3">
-                            <code class="text-xs text-gray-800 dark:text-gray-200">
-                                code, description, category, sector, notes
-                            </code>
+                        <div class="bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-blue-700 p-3 mb-3">
+                            <div class="text-xs text-gray-800 dark:text-gray-200 space-y-1">
+                                <div><strong>Kode/Code</strong> - Kode KBLI 4-5 digit (contoh: 0111, 62010)</div>
+                                <div><strong>Judul/Description</strong> - Nama/deskripsi singkat kegiatan usaha</div>
+                                <div><strong>Kategori/Sector</strong> - Sektor usaha (A, B, C, dst)</div>
+                                <div><strong>Deskripsi/Notes</strong> - Penjelasan detail (opsional)</div>
+                            </div>
                         </div>
-                        <p class="text-xs text-blue-700 dark:text-blue-400 mt-2">
-                            <strong>Contoh:</strong> 62010, Aktivitas Pemrograman Komputer, Rendah, J, Contoh keterangan
+                        <p class="text-xs text-blue-700 dark:text-blue-400">
+                            <strong>Contoh header Excel Anda:</strong><br>
+                            <code class="bg-white dark:bg-gray-800 px-2 py-1 rounded">Kategori, Kode, Judul, Deskripsi</code><br>
+                            <span class="text-green-600 dark:text-green-400">✓ Urutan kolom bebas, sistem akan otomatis mapping berdasarkan nama header</span>
                         </p>
                     </div>
 

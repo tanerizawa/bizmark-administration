@@ -116,34 +116,15 @@
                                 <i class="fas fa-industry mr-2 text-blue-600"></i>
                                 Klasifikasi Bidang Usaha (KBLI)
                             </h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="text-xs text-gray-600">Kode KBLI</label>
                                     <p class="text-sm font-bold text-blue-900">{{ $application->kbli_code }}</p>
                                 </div>
-                                <div class="md:col-span-2">
+                                <div>
                                     <label class="text-xs text-gray-600">Deskripsi</label>
                                     <p class="text-sm text-gray-900">{{ $application->kbli_description }}</p>
                                 </div>
-                                @if($application->kbli_category)
-                                    <div>
-                                        <label class="text-xs text-gray-600">Kategori Risiko</label>
-                                        <p class="text-sm">
-                                            @php
-                                                $categoryColors = [
-                                                    'Rendah' => 'bg-green-100 text-green-800',
-                                                    'Menengah Rendah' => 'bg-blue-100 text-blue-800',
-                                                    'Menengah Tinggi' => 'bg-yellow-100 text-yellow-800',
-                                                    'Tinggi' => 'bg-red-100 text-red-800'
-                                                ];
-                                                $colorClass = $categoryColors[$application->kbli_category] ?? 'bg-gray-100 text-gray-800';
-                                            @endphp
-                                            <span class="px-3 py-1 text-sm font-semibold rounded-full {{ $colorClass }}">
-                                                {{ $application->kbli_category }}
-                                            </span>
-                                        </p>
-                                    </div>
-                                @endif
                             </div>
                         </div>
                     @endif

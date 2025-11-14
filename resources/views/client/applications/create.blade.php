@@ -127,7 +127,6 @@
                         <!-- Hidden inputs for actual data -->
                         <input type="hidden" name="kbli_code" id="kbli_code" value="{{ old('kbli_code', $draft->kbli_code ?? '') }}">
                         <input type="hidden" name="kbli_description" id="kbli_description" value="{{ old('kbli_description', $draft->kbli_description ?? '') }}">
-                        <input type="hidden" name="kbli_category" id="kbli_category" value="{{ old('kbli_category', $draft->kbli_category ?? '') }}">
                         
                         <!-- Autocomplete dropdown -->
                         <div id="kbli_dropdown" class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
@@ -146,7 +145,6 @@
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-1">
                                     <span class="text-sm font-bold text-blue-900 dark:text-blue-300" id="selected_code"></span>
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full" id="selected_category_badge"></span>
                                 </div>
                                 <p class="text-sm text-gray-700 dark:text-gray-300" id="selected_description"></p>
                             </div>
@@ -286,8 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Load existing KBLI data
         showSelectedKBLI({
             code: document.getElementById('kbli_code').value,
-            description: document.getElementById('kbli_description').value,
-            category: document.getElementById('kbli_category').value
+            description: document.getElementById('kbli_description').value
         });
     }
 });
@@ -339,7 +336,6 @@ function displayKBLIResults(results) {
     let html = '<div class="py-2">';
     
     results.forEach(item => {
-        const categoryColor = getCategoryColor(item.category);
         html += `
             <button type="button" 
                     onclick='selectKBLI(${JSON.stringify(item)})' 
@@ -348,7 +344,6 @@ function displayKBLIResults(results) {
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1">
                             <span class="text-sm font-bold text-blue-600 dark:text-blue-400">${item.code}</span>
-                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full ${categoryColor}">${item.category}</span>
                         </div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">${item.description}</p>
                         <p class="text-xs text-gray-500 mt-1">Sektor: ${item.sector}</p>
@@ -381,7 +376,6 @@ function selectKBLI(kbli) {
     // Set hidden inputs
     document.getElementById('kbli_code').value = kbli.code;
     document.getElementById('kbli_description').value = kbli.description;
-    document.getElementById('kbli_category').value = kbli.category;
     
     // Clear search input
     document.getElementById('kbli_search').value = '';
@@ -395,14 +389,9 @@ function selectKBLI(kbli) {
 
 function showSelectedKBLI(kbli) {
     const selectedDiv = document.getElementById('kbli_selected');
-    const categoryColor = getCategoryColor(kbli.category);
     
     document.getElementById('selected_code').textContent = kbli.code;
     document.getElementById('selected_description').textContent = kbli.description;
-    
-    const categoryBadge = document.getElementById('selected_category_badge');
-    categoryBadge.textContent = kbli.category;
-    categoryBadge.className = `px-2 py-0.5 text-xs font-semibold rounded-full ${categoryColor}`;
     
     selectedDiv.classList.remove('hidden');
 }
@@ -411,20 +400,9 @@ function clearKBLI() {
     selectedKBLI = null;
     document.getElementById('kbli_code').value = '';
     document.getElementById('kbli_description').value = '';
-    document.getElementById('kbli_category').value = '';
     document.getElementById('kbli_selected').classList.add('hidden');
     document.getElementById('kbli_search').value = '';
     document.getElementById('kbli_search').focus();
-}
-
-function getCategoryColor(category) {
-    const colors = {
-        'Rendah': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-        'Menengah Rendah': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-        'Menengah Tinggi': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-        'Tinggi': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-    };
-    return colors[category] || 'bg-gray-100 text-gray-800';
 }
 
 // Close dropdown when clicking outside

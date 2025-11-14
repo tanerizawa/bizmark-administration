@@ -29,7 +29,6 @@ class KbliService
                 return [
                     'code' => $kbli->code,
                     'description' => $kbli->description,
-                    'category' => $kbli->category,
                     'sector' => $kbli->sector,
                     'notes' => $kbli->notes,
                 ];
@@ -54,7 +53,6 @@ class KbliService
             return [
                 'code' => $kbli->code,
                 'description' => $kbli->description,
-                'category' => $kbli->category,
                 'sector' => $kbli->sector,
                 'notes' => $kbli->notes,
             ];
@@ -73,29 +71,6 @@ class KbliService
                 return [
                     'code' => $kbli->code,
                     'description' => $kbli->description,
-                    'category' => $kbli->category,
-                    'sector' => $kbli->sector,
-                    'notes' => $kbli->notes,
-                ];
-            })->toArray();
-        });
-    }
-
-    /**
-     * Get KBLI by risk category
-     */
-    public function getByCategory(string $category): array
-    {
-        $cacheKey = 'kbli_category_' . md5($category);
-
-        return Cache::remember($cacheKey, 86400, function () use ($category) {
-            $results = Kbli::getByCategory($category);
-            
-            return $results->map(function ($kbli) {
-                return [
-                    'code' => $kbli->code,
-                    'description' => $kbli->description,
-                    'category' => $kbli->category,
                     'sector' => $kbli->sector,
                     'notes' => $kbli->notes,
                 ];
@@ -117,7 +92,6 @@ class KbliService
                 return [
                     'code' => $kbli->code,
                     'description' => $kbli->description,
-                    'category' => $kbli->category,
                     'sector' => $kbli->sector,
                     'notes' => $kbli->notes,
                 ];
