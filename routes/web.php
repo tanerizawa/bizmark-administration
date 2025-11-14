@@ -381,9 +381,10 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Client\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [App\Http\Controllers\Auth\ClientAuthController::class, 'logout'])->name('logout');
         
-        // Service Catalog Routes
+        // Service Catalog Routes (KBLI-based AI System)
         Route::get('/services', [App\Http\Controllers\Client\ServiceController::class, 'index'])->name('services.index');
-        Route::get('/services/{code}', [App\Http\Controllers\Client\ServiceController::class, 'show'])->name('services.show');
+        Route::get('/services/{kbliCode}/context', [App\Http\Controllers\Client\ServiceController::class, 'context'])->name('services.context');
+        Route::get('/services/{kbliCode}', [App\Http\Controllers\Client\ServiceController::class, 'show'])->name('services.show');
         
         // Application Routes
         Route::get('/applications', [App\Http\Controllers\Client\ApplicationController::class, 'index'])->name('applications.index');
