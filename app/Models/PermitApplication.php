@@ -33,7 +33,6 @@ class PermitApplication extends Model
         'submitted_at',
         'kbli_code',
         'kbli_description',
-        'kbli_category',
     ];
 
     protected $casts = [

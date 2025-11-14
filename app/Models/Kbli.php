@@ -17,7 +17,6 @@ class Kbli extends Model
     protected $fillable = [
         'code',
         'description',
-        'category',
         'sector',
         'notes',
     ];
@@ -47,14 +46,6 @@ class Kbli extends Model
     public static function findByCode(string $code)
     {
         return self::where('code', $code)->first();
-    }
-
-    /**
-     * Get KBLI by category
-     */
-    public static function getByCategory(string $category)
-    {
-        return self::where('category', $category)->get();
     }
 
     /**

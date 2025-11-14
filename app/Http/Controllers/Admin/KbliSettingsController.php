@@ -18,9 +18,6 @@ class KbliSettingsController extends Controller
         $totalKbli = Kbli::count();
         $kbliStats = [
             'total' => $totalKbli,
-            'by_category' => Kbli::select('category', DB::raw('count(*) as count'))
-                ->groupBy('category')
-                ->get(),
             'by_sector' => Kbli::select('sector', DB::raw('count(*) as count'))
                 ->groupBy('sector')
                 ->orderBy('sector')
@@ -53,6 +50,38 @@ class KbliSettingsController extends Controller
             $handle = fopen($file->getRealPath(), 'r');
             $header = fgetcsv($handle); // Read header row
             
+            // Normalize header (lowercase, trim)
+            $header = array_map(function($col) {
+                return strtolower(trim($col));
+            }, $header);
+            
+            // Map possible column names
+            $columnMap = [
+                'kode' => 'code',
+                'code' => 'code',
+                'judul' => 'description',
+                'title' => 'description',
+                'description' => 'description',
+                'kategori' => 'sector',
+                'sector' => 'sector',
+                'deskripsi' => 'notes',
+                'notes' => 'notes',
+                'keterangan' => 'notes',
+            ];
+            
+            // Find column indexes
+            $indexes = [];
+            foreach ($header as $index => $colName) {
+                if (isset($columnMap[$colName])) {
+                    $indexes[$columnMap[$colName]] = $index;
+                }
+            }
+            
+            // Validate required columns exist
+            if (!isset($indexes['code']) || !isset($indexes['description']) || !isset($indexes['sector'])) {
+                throw new \Exception('Format CSV tidak valid. Header harus memiliki kolom: Kode/Code, Judul/Description, Kategori/Sector');
+            }
+            
             $imported = 0;
             $skipped = 0;
             $errors = [];
@@ -66,17 +95,16 @@ class KbliSettingsController extends Controller
                         continue;
                     }
 
-                    // Expected CSV format: code, description, category, sector, notes
+                    // Map data from CSV using flexible column mapping
                     $data = [
-                        'code' => trim($row[0] ?? ''),
-                        'description' => trim($row[1] ?? ''),
-                        'category' => trim($row[2] ?? null),
-                        'sector' => trim($row[3] ?? ''),
-                        'notes' => trim($row[4] ?? null),
+                        'code' => trim($row[$indexes['code']] ?? ''),
+                        'description' => trim($row[$indexes['description']] ?? ''),
+                        'sector' => trim($row[$indexes['sector']] ?? ''),
+                        'notes' => isset($indexes['notes']) ? trim($row[$indexes['notes']] ?? null) : null,
                     ];
 
                     // Validate required fields
-                    if (empty($data['code']) || empty($data['description'])) {
+                    if (empty($data['code']) || empty($data['description']) || empty($data['sector'])) {
                         $skipped++;
                         continue;
                     }
@@ -136,13 +164,13 @@ class KbliSettingsController extends Controller
             $file = fopen('php://output', 'w');
             
             // Write header
-            fputcsv($file, ['code', 'description', 'category', 'sector', 'notes']);
+            fputcsv($file, ['code', 'description', 'sector', 'notes']);
             
             // Write sample data
-            fputcsv($file, ['62010', 'Aktivitas Pemrograman Komputer', 'Rendah', 'J', 'Contoh: Pengembangan software, aplikasi web/mobile']);
-            fputcsv($file, ['62020', 'Aktivitas Konsultasi Komputer', 'Rendah', 'J', 'Contoh: Konsultan IT, system integrator']);
-            fputcsv($file, ['55101', 'Hotel Bintang 5', 'Menengah Tinggi', 'I', 'Perhotelan berbintang lima']);
-            fputcsv($file, ['11010', 'Industri Minuman Keras', 'Tinggi', 'C', 'Produksi minuman beralkohol']);
+            fputcsv($file, ['62010', 'Aktivitas Pemrograman Komputer', 'J', 'Contoh: Pengembangan software, aplikasi web/mobile']);
+            fputcsv($file, ['62020', 'Aktivitas Konsultasi Komputer', 'J', 'Contoh: Konsultan IT, system integrator']);
+            fputcsv($file, ['55101', 'Hotel Bintang 5', 'I', 'Perhotelan berbintang lima']);
+            fputcsv($file, ['01111', 'Pertanian Padi', 'A', 'Pertanian padi sawah dan ladang']);
             
             fclose($file);
         };
@@ -182,7 +210,7 @@ class KbliSettingsController extends Controller
             $file = fopen('php://output', 'w');
             
             // Write header
-            fputcsv($file, ['code', 'description', 'category', 'sector', 'notes']);
+            fputcsv($file, ['code', 'description', 'sector', 'notes']);
             
             // Write data
             Kbli::orderBy('code')->chunk(100, function($kblis) use ($file) {
@@ -190,7 +218,6 @@ class KbliSettingsController extends Controller
                     fputcsv($file, [
                         $kbli->code,
                         $kbli->description,
-                        $kbli->category,
                         $kbli->sector,
                         $kbli->notes,
                     ]);

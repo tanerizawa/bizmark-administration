@@ -84,7 +84,6 @@ class ApplicationController extends Controller
             'save_as_draft' => 'boolean',
             'kbli_code' => 'nullable|string|max:10',
             'kbli_description' => 'nullable|string',
-            'kbli_category' => 'nullable|string',
         ]);
 
         $client = auth('client')->user();
@@ -100,7 +99,6 @@ class ApplicationController extends Controller
                 'submitted_at' => $isDraft ? null : now(),
                 'kbli_code' => $validated['kbli_code'] ?? null,
                 'kbli_description' => $validated['kbli_description'] ?? null,
-                'kbli_category' => $validated['kbli_category'] ?? null,
             ]);
 
             DB::commit();
