@@ -174,7 +174,7 @@
                         <div>
                             <h3 class="font-bold text-lg mb-1">✨ Rekomendasi Berhasil Dibuat!</h3>
                             <p class="text-sm text-green-50">
-                                AI kami telah menganalisis {{ count(json_decode($recommendation->recommended_permits, true) ?? []) }} jenis izin yang relevan untuk bisnis Anda
+                                AI kami telah menganalisis {{ count($recommendation->recommended_permits ?? []) }} jenis izin yang relevan untuk bisnis Anda
                             </p>
                         </div>
                     </div>
