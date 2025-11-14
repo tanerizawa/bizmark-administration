@@ -27,15 +27,174 @@
         @endif
 
         @if(!$recommendation)
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
-            <i class="fas fa-robot text-6xl text-gray-400 dark:text-gray-600 mb-4"></i>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Menganalisis Perizinan...</h2>
-            <p class="text-gray-600 dark:text-gray-400 mb-6">AI kami sedang mempelajari kebutuhan izin untuk usaha Anda. Harap tunggu sebentar.</p>
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-blue-600"></div>
+        <!-- Advanced Loading Animation -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-12 text-center">
+                <!-- Animated Icon Container -->
+                <div class="relative inline-block mb-6">
+                    <!-- Rotating Rings -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-32 h-32 border-4 border-blue-200 dark:border-blue-900 rounded-full animate-spin-slow"></div>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-24 h-24 border-4 border-purple-200 dark:border-purple-900 rounded-full animate-spin-reverse"></div>
+                    </div>
+                    
+                    <!-- Center Icon -->
+                    <div class="relative w-32 h-32 flex items-center justify-center">
+                        <i class="fas fa-brain text-5xl text-blue-600 dark:text-blue-400 animate-pulse"></i>
+                    </div>
+                </div>
+
+                <!-- Title with typing effect -->
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                    <span id="loadingText">Menganalisis Kebutuhan Perizinan</span>
+                    <span class="animate-pulse">...</span>
+                </h2>
+                
+                <!-- Progress Steps -->
+                <div class="max-w-md mx-auto mb-6" x-data="{ 
+                    steps: ['Memproses KBLI', 'Menganalisis Regulasi', 'Menyusun Rekomendasi'],
+                    currentStep: 0,
+                    init() {
+                        setInterval(() => {
+                            this.currentStep = (this.currentStep + 1) % this.steps.length;
+                        }, 3000);
+                    }
+                }">
+                    <div class="flex justify-between items-center mb-2">
+                        <template x-for="(step, index) in steps" :key="index">
+                            <div class="flex items-center">
+                                <div 
+                                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500"
+                                    :class="index <= currentStep ? 'bg-blue-600 text-white scale-110' : 'bg-gray-200 dark:bg-gray-700 text-gray-500'"
+                                >
+                                    <span x-show="index < currentStep">✓</span>
+                                    <span x-show="index >= currentStep" x-text="index + 1"></span>
+                                </div>
+                                <div 
+                                    x-show="index < steps.length - 1" 
+                                    class="w-16 h-1 mx-2 transition-all duration-500"
+                                    :class="index < currentStep ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'"
+                                ></div>
+                            </div>
+                        </template>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium transition-all duration-500" x-text="steps[currentStep]"></p>
+                </div>
+
+                <!-- Fun Facts Carousel -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 max-w-lg mx-auto" x-data="{
+                    facts: [
+                        '💡 AI kami menganalisis ribuan regulasi untuk memberikan rekomendasi terbaik',
+                        '🚀 Proses perizinan yang tepat dapat menghemat waktu hingga 60%',
+                        '📊 Kami telah membantu ribuan UKM dalam proses perizinan',
+                        '⚡ Rekomendasi AI disesuaikan dengan skala dan lokasi usaha Anda',
+                        '🎯 Tingkat akurasi rekomendasi kami mencapai 95%'
+                    ],
+                    currentFact: 0,
+                    init() {
+                        setInterval(() => {
+                            this.currentFact = (this.currentFact + 1) % this.facts.length;
+                        }, 4000);
+                    }
+                }">
+                    <p class="text-sm text-gray-700 dark:text-gray-300 transition-all duration-500" x-text="facts[currentFact]"></p>
+                </div>
+
+                <!-- Animated Progress Bar -->
+                <div class="mt-6 max-w-md mx-auto">
+                    <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Decorative Wave -->
+            <div class="h-2 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 animate-gradient-x"></div>
         </div>
+
+        <!-- Custom Animations CSS -->
+        <style>
+            @keyframes spin-slow {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            @keyframes spin-reverse {
+                from { transform: rotate(360deg); }
+                to { transform: rotate(0deg); }
+            }
+            @keyframes progress-bar {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+            }
+            @keyframes gradient-x {
+                0%, 100% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+            }
+            .animate-spin-slow {
+                animation: spin-slow 3s linear infinite;
+            }
+            .animate-spin-reverse {
+                animation: spin-reverse 4s linear infinite;
+            }
+            .animate-progress-bar {
+                animation: progress-bar 2s ease-in-out infinite;
+            }
+            .animate-gradient-x {
+                background-size: 200% 200%;
+                animation: gradient-x 3s ease infinite;
+            }
+        </style>
         @else
-        <!-- KBLI Header -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <!-- Success Entry Animation -->
+        <div x-data="{ show: false, showSuccess: true }" x-init="setTimeout(() => show = true, 100)">
+            
+            <!-- Success Notification Banner -->
+            <div 
+                x-show="showSuccess"
+                x-transition:enter="transition ease-out duration-500 delay-200"
+                x-transition:enter-start="opacity-0 transform -translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg shadow-lg p-4 mb-6 relative overflow-hidden"
+            >
+                <!-- Animated Background -->
+                <div class="absolute inset-0 bg-white opacity-10">
+                    <div class="absolute inset-0 animate-pulse"></div>
+                </div>
+                
+                <div class="relative flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="bg-white bg-opacity-20 rounded-full p-3 mr-4">
+                            <i class="fas fa-check-circle text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">✨ Rekomendasi Berhasil Dibuat!</h3>
+                            <p class="text-sm text-green-50">
+                                AI kami telah menganalisis {{ count(json_decode($recommendation->recommended_permits, true) ?? []) }} jenis izin yang relevan untuk bisnis Anda
+                            </p>
+                        </div>
+                    </div>
+                    <button 
+                        @click="showSuccess = false"
+                        class="text-white hover:text-green-100 transition-colors"
+                    >
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KBLI Header -->
+            <div 
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6"
+                x-show="show"
+                x-transition:enter="transition ease-out duration-500"
+                x-transition:enter-start="opacity-0 transform -translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+            >
             <div class="flex items-start justify-between">
                 <div>
                     <span class="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-mono font-semibold rounded mb-2">
@@ -63,7 +222,13 @@
 
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+            <div 
+                class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800"
+                x-show="show"
+                x-transition:enter="transition ease-out duration-500 delay-300"
+                x-transition:enter-start="opacity-0 transform translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+            >
                 <div class="flex items-center justify-between mb-2">
                     <i class="fas fa-file-alt text-2xl text-blue-600 dark:text-blue-400"></i>
                     <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">TOTAL IZIN</span>
@@ -74,7 +239,13 @@
                 <div class="text-sm text-blue-700 dark:text-blue-300 mt-1">Izin Wajib</div>
             </div>
 
-            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-6 border border-green-200 dark:border-green-800">
+            <div 
+                class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-6 border border-green-200 dark:border-green-800"
+                x-show="show"
+                x-transition:enter="transition ease-out duration-500 delay-400"
+                x-transition:enter-start="opacity-0 transform translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+            >
                 <div class="flex items-center justify-between mb-2">
                     <i class="fas fa-money-bill-wave text-2xl text-green-600 dark:text-green-400"></i>
                     <span class="text-xs text-green-600 dark:text-green-400 font-medium">ESTIMASI BIAYA</span>
@@ -87,7 +258,13 @@
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-6 border border-purple-200 dark:border-purple-800">
+            <div 
+                class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-6 border border-purple-200 dark:border-purple-800"
+                x-show="show"
+                x-transition:enter="transition ease-out duration-500 delay-500"
+                x-transition:enter-start="opacity-0 transform translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+            >
                 <div class="flex items-center justify-between mb-2">
                     <i class="fas fa-clock text-2xl text-purple-600 dark:text-purple-400"></i>
                     <span class="text-xs text-purple-600 dark:text-purple-400 font-medium">WAKTU PROSES</span>
