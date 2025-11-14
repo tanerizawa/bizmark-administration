@@ -110,61 +110,121 @@ class OpenRouterService
         if ($businessScale) $context .= "\nSkala Usaha: {$businessScale}";
         if ($locationType) $context .= "\nTipe Lokasi: {$locationType}";
 
-        return "Anda adalah ahli perizinan usaha Indonesia dengan spesialisasi dalam mencocokkan kode KBLI dengan persyaratan perizinan.
+        return "Anda adalah konsultan perizinan senior Indonesia dengan 15+ tahun pengalaman. Analisis LENGKAP dan MENDETAIL seluruh perizinan.
 
 INFORMASI USAHA:
 Kode KBLI: {$kbliCode}
 Deskripsi Kegiatan: {$description}
 Sektor: {$sector}{$context}
 
-TUGAS: Analisis kebutuhan perizinan secara komprehensif dan berikan rekomendasi dalam format JSON.
+INSTRUKSI PENTING:
+1. **IDENTIFIKASI SEMUA IZIN** - Jangan lewatkan izin pendukung, izin operasional, dan izin teknis
+2. **URUTAN DEPENDENCY** - Jelaskan izin mana yang harus didapat dulu (prerequisites)
+3. **IZIN BERCABANG** - Untuk sektor tertentu (Real Estate, Konstruksi, Industri), identifikasi:
+   - Izin lingkungan (UKL-UPL, AMDAL)
+   - Izin teknis (PBG/IMB, Pertek BPN, PKKPR)
+   - Izin operasional (SLF, Laik Fungsi)
+   - Izin khusus sektor
+4. **BEST PRACTICE** - Ikuti alur perizinan OSS 1.1 dan regulasi terbaru
 
 FORMAT OUTPUT (JSON):
 {
   \"permits\": [
     {
-      \"name\": \"Nama Izin\",
-      \"type\": \"mandatory|recommended|optional\",
+      \"name\": \"Nama Izin Lengkap\",
+      \"type\": \"mandatory|recommended|conditional\",
+      \"category\": \"foundational|environmental|technical|operational|sectoral\",
       \"issuing_authority\": \"Instansi Penerbit\",
       \"estimated_cost_range\": {\"min\": 0, \"max\": 0},
       \"estimated_days\": 0,
       \"priority\": 1,
-      \"description\": \"Penjelasan singkat\",
-      \"legal_basis\": \"Dasar hukum\",
-      \"prerequisites\": []
+      \"description\": \"Penjelasan detail fungsi dan pentingnya izin ini\",
+      \"legal_basis\": \"Undang-undang/Peraturan yang mendasari\",
+      \"prerequisites\": [\"Izin yang harus dimiliki terlebih dahulu\"],
+      \"triggers_next\": [\"Izin yang bisa diurus setelah ini\"],
+      \"exemptions\": \"Kondisi pengecualian jika ada\",
+      \"renewal_period\": \"Masa berlaku dan perpanjangan\",
+      \"compliance_requirements\": [\"Persyaratan berkelanjutan setelah izin terbit\"]
     }
   ],
   \"documents\": [
     {
       \"name\": \"Nama Dokumen\",
-      \"type\": \"identity|company|technical|financial|other\",
-      \"required_for_permits\": [],
+      \"type\": \"identity|company|technical|financial|environmental|legal|other\",
+      \"required_for_permits\": [\"List izin yang memerlukan dokumen ini\"],
       \"format\": \"PDF/JPG\",
-      \"notes\": \"Catatan\"
+      \"notes\": \"Catatan penting tentang dokumen\",
+      \"validity_period\": \"Masa berlaku dokumen jika ada\",
+      \"legalization_needed\": false
     }
   ],
+  \"permit_flow\": {
+    \"phases\": [
+      {
+        \"phase_name\": \"Fase 1: Persiapan Dasar\",
+        \"permits_in_phase\": [\"NIB\", \"NPWP\"],
+        \"estimated_days\": 7,
+        \"notes\": \"Izin dasar yang harus dimiliki dulu\"
+      }
+    ],
+    \"critical_dependencies\": [
+      {
+        \"permit\": \"IMB/PBG\",
+        \"depends_on\": [\"UKL-UPL\", \"Pertek BPN\", \"Pengesahan Siteplan\"],
+        \"reason\": \"Alasan dependency\"
+      }
+    ]
+  },
   \"risk_assessment\": {
     \"level\": \"low|medium|high\",
-    \"factors\": [],
-    \"mitigation\": []
+    \"factors\": [\"Faktor risiko spesifik\"],
+    \"mitigation\": [\"Langkah mitigasi\"],
+    \"common_pitfalls\": [\"Kesalahan umum yang harus dihindari\"]
   },
   \"timeline\": {
     \"minimum_days\": 0,
     \"maximum_days\": 0,
-    \"critical_path\": []
+    \"realistic_days\": 0,
+    \"critical_path\": [\"Urutan izin di jalur kritis\"],
+    \"parallel_tracks\": [\"Izin yang bisa diurus paralel\"]
   },
-  \"additional_considerations\": [],
-  \"regional_variations\": \"\"
+  \"cost_breakdown\": {
+    \"government_fees\": {\"min\": 0, \"max\": 0},
+    \"consulting_fees_estimate\": {\"min\": 0, \"max\": 0},
+    \"document_preparation\": {\"min\": 0, \"max\": 0},
+    \"total_estimate\": {\"min\": 0, \"max\": 0}
+  },
+  \"additional_considerations\": [
+    \"Pertimbangan tambahan khusus untuk usaha ini\"
+  ],
+  \"regional_variations\": \"Perbedaan perizinan antar daerah jika signifikan\"
 }
 
-ATURAN:
-1. Fokus pada regulasi Indonesia (OSS 1.1, BKPM, kementerian sektoral)
-2. Prioritaskan izin MANDATORY terlebih dahulu
-3. Berikan estimasi biaya dan waktu REALISTIS
-4. NIB adalah izin dasar untuk hampir semua usaha
-5. Estimasi biaya dalam Rupiah
+CONTOH UNTUK REAL ESTATE/PROPERTI (KBLI 68111):
+- FOUNDATIONAL: NIB, NPWP Badan
+- ENVIRONMENTAL: UKL-UPL atau AMDAL (tergantung skala)
+- TECHNICAL: 
+  * Pertek BPN (Pertimbangan Teknis Pertanahan)
+  * PKKPR (Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang)
+  * Pengesahan Siteplan
+  * IMB/PBG (Persetujuan Bangunan Gedung)
+- OPERATIONAL:
+  * Sertifikat Standar Real Estate
+  * SLF (Sertifikat Laik Fungsi) - setelah bangunan selesai
+- SECTORAL:
+  * Izin Prinsip Pemanfaatan Ruang (jika perlu)
+  * Izin Lokasi (untuk perumahan skala besar)
 
-Berikan HANYA output JSON tanpa penjelasan tambahan.";
+ATURAN KETAT:
+1. Minimal 8-12 izin untuk usaha yang kompleks (Real Estate, Industri, Konstruksi)
+2. Minimal 5-7 izin untuk usaha menengah
+3. Minimal 3-5 izin untuk usaha sederhana
+4. WAJIB menyertakan prerequisites dan triggers_next
+5. Estimasi biaya dan waktu REALISTIS berdasarkan praktek lapangan
+6. Sertakan SEMUA izin teknis yang relevan
+7. Gunakan kategori: foundational, environmental, technical, operational, sectoral
+
+Berikan HANYA output JSON valid tanpa markdown atau penjelasan tambahan.";
     }
 
     protected function callAI(string $prompt, string $model): array
