@@ -310,6 +310,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('email/settings', [App\Http\Controllers\Admin\EmailSettingsController::class, 'index'])->name('email.settings.index');
         Route::put('email/settings', [App\Http\Controllers\Admin\EmailSettingsController::class, 'update'])->name('email.settings.update');
         Route::post('email/settings/test', [App\Http\Controllers\Admin\EmailSettingsController::class, 'test'])->name('email.settings.test');
+        
+        // KBLI Settings
+        Route::prefix('settings/kbli')->name('settings.kbli.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\KbliSettingsController::class, 'index'])->name('index');
+            Route::post('import', [App\Http\Controllers\Admin\KbliSettingsController::class, 'import'])->name('import');
+            Route::get('template', [App\Http\Controllers\Admin\KbliSettingsController::class, 'downloadTemplate'])->name('template');
+            Route::get('export', [App\Http\Controllers\Admin\KbliSettingsController::class, 'export'])->name('export');
+            Route::delete('clear', [App\Http\Controllers\Admin\KbliSettingsController::class, 'clear'])->name('clear');
+        });
     });
 
     // AI Document Paraphrasing Routes
