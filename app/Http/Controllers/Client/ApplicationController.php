@@ -82,6 +82,9 @@ class ApplicationController extends Controller
             'permit_type_id' => 'required|exists:permit_types,id',
             'form_data' => 'required|array',
             'save_as_draft' => 'boolean',
+            'kbli_code' => 'nullable|string|max:10',
+            'kbli_description' => 'nullable|string',
+            'kbli_category' => 'nullable|string',
         ]);
 
         $client = auth('client')->user();
@@ -95,6 +98,9 @@ class ApplicationController extends Controller
                 'form_data' => $validated['form_data'],
                 'status' => $isDraft ? 'draft' : 'submitted',
                 'submitted_at' => $isDraft ? null : now(),
+                'kbli_code' => $validated['kbli_code'] ?? null,
+                'kbli_description' => $validated['kbli_description'] ?? null,
+                'kbli_category' => $validated['kbli_category'] ?? null,
             ]);
 
             DB::commit();
