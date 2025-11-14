@@ -327,8 +327,9 @@
         </div>
 
         <!-- Permits by Category -->
+        @if(!empty($recommendation->recommended_permits) && count($recommendation->recommended_permits) > 0)
         @php
-            $permitsByCategory = collect($recommendation->recommended_permits ?? [])
+            $permitsByCategory = collect($recommendation->recommended_permits)
                 ->groupBy(function($permit) {
                     return $permit['category'] ?? 'other';
                 });
@@ -565,7 +566,6 @@
                 </p>
             </div>
         @endif
-    </div>
 
         <!-- Required Documents -->
         @if(!empty($recommendation->required_documents))
