@@ -1,4 +1,4 @@
-@extends('layouts.client')
+@extends('client.layouts.app')
 
 @section('title', 'Konteks Bisnis - BizMark')
 
