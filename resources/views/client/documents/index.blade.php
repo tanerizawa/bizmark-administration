@@ -1,404 +1,259 @@
 @extends('client.layouts.app')
 
 @section('title', 'Dokumen')
-@section('page-title', 'Dokumen Perizinan')
-@section('page-subtitle', 'Akses dan download semua dokumen proyek Anda')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Header with Upload Button -->
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900">Dokumen Perizinan</h2>
-            <p class="text-gray-600 mt-1">Akses dan upload dokumen proyek Anda</p>
+@php
+    $totalDocs = $stats['total'] ?? 0;
+    $monthlyDocs = $stats['this_month'] ?? 0;
+    $sortBy = request('sort_by', 'created_at');
+    $sortOrder = request('sort_order', 'desc');
+    $hasFilters = request()->except('page');
+@endphp
+
+<div class="space-y-8">
+    <!-- Hero -->
+    <div class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-500 text-white rounded-3xl shadow-xl overflow-hidden relative">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png')]"></div>
+        <div class="relative p-6 lg:p-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="space-y-3 flex-1">
+                <p class="text-xs uppercase tracking-[0.35em] text-white/70">Manajemen Dokumen</p>
+                <h1 class="text-3xl font-bold leading-tight">Semua dokumen perizinan Anda tersimpan aman dan siap diunduh kapan saja.</h1>
+                <p class="text-white/80">Upload bukti, surat resmi, atau sertifikat penting dan hubungkan langsung dengan proyek yang berjalan.</p>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="openUploadModal()" class="inline-flex items-center gap-2 bg-white text-indigo-700 font-semibold px-5 py-3 rounded-xl shadow">
+                        <i class="fas fa-upload"></i> Upload Dokumen
+                    </button>
+                    <a href="{{ route('client.projects.index') }}" class="inline-flex items-center gap-2 bg-white/10 border border-white/30 px-5 py-3 rounded-xl font-semibold">
+                        <i class="fas fa-folder"></i> Lihat Proyek
+                    </a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 w-full lg:w-auto">
+                <div class="bg-white/15 rounded-2xl p-4 backdrop-blur">
+                    <p class="text-xs uppercase tracking-wide text-white/70">Total Dokumen</p>
+                    <p class="text-3xl font-bold">{{ $totalDocs }}</p>
+                    <p class="text-xs text-white/70 mt-1">tersimpan sepanjang proyek</p>
+                </div>
+                <div class="bg-white/15 rounded-2xl p-4 backdrop-blur">
+                    <p class="text-xs uppercase tracking-wide text-white/70">Bulan Ini</p>
+                    <p class="text-3xl font-bold">{{ $monthlyDocs }}</p>
+                    <p class="text-xs text-white/70 mt-1">dokumen baru diunggah</p>
+                </div>
+            </div>
         </div>
-        <button 
-            onclick="openUploadModal()"
-            class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2"
-        >
-            <i class="fas fa-upload"></i>Upload Dokumen
-        </button>
     </div>
 
-    <!-- Statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Total Dokumen</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $stats['total'] }}</p>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-file-alt text-blue-600 text-xl"></i>
-                </div>
+    <!-- Filters -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 space-y-4">
+        <form method="GET" action="{{ route('client.documents.index') }}" class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div>
+                <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Cari Dokumen</label>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Contoh: Sertifikat Halal" class="mt-1 w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
             </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Dokumen Bulan Ini</p>
-                    <p class="text-3xl font-bold text-purple-600 mt-2">{{ $stats['this_month'] }}</p>
-                </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-calendar text-purple-600 text-xl"></i>
-                </div>
+            <div>
+                <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Proyek</label>
+                <select name="project_id" class="mt-1 w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
+                    <option value="">Semua Proyek</option>
+                    @foreach($projects as $project)
+                        <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>
+                            {{ $project->name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-        </div>
-    </div>
-
-    <!-- Filters & Search -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <form method="GET" action="{{ route('client.documents.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Search -->
+            <div>
+                <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Kategori</label>
+                <select name="category" class="mt-1 w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
+                    <option value="">Semua Kategori</option>
+                    @foreach($documentTypes as $type)
+                        <option value="{{ $type }}" {{ request('category') == $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-search mr-2"></i>Cari Dokumen
-                    </label>
-                    <input 
-                        type="text" 
-                        name="search" 
-                        value="{{ request('search') }}"
-                        placeholder="Nama dokumen..."
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                </div>
-
-                <!-- Project Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-folder mr-2"></i>Proyek
-                    </label>
-                    <select 
-                        name="project_id" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                        <option value="">Semua Proyek</option>
-                        @foreach($projects as $project)
-                            <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>
-                                {{ $project->name }}
-                            </option>
-                        @endforeach
+                    <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Urutkan</label>
+                    <select name="sort_by" class="mt-1 w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
+                        <option value="created_at" {{ $sortBy === 'created_at' ? 'selected' : '' }}>Tanggal unggah</option>
+                        <option value="title" {{ $sortBy === 'title' ? 'selected' : '' }}>Nama dokumen</option>
                     </select>
                 </div>
-
-                <!-- Type Filter -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-filter mr-2"></i>Kategori Dokumen
-                    </label>
-                    <select 
-                        name="category" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                        <option value="">Semua Kategori</option>
-                        @foreach($documentTypes as $type)
-                            <option value="{{ $type }}" {{ request('category') == $type ? 'selected' : '' }}>
-                                {{ ucfirst($type) }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Sort -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-sort mr-2"></i>Urutkan
-                    </label>
-                    <select 
-                        name="sort_by" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                        <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Nama A-Z</option>
+                    <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Urutan</label>
+                    <select name="sort_order" class="mt-1 w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
+                        <option value="desc" {{ $sortOrder === 'desc' ? 'selected' : '' }}>Terbaru</option>
+                        <option value="asc" {{ $sortOrder === 'asc' ? 'selected' : '' }}>Terlama</option>
                     </select>
                 </div>
             </div>
-
-            <div class="flex items-center gap-3">
-                <button 
-                    type="submit" 
-                    class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                >
-                    <i class="fas fa-search mr-2"></i>Filter
+            <div class="lg:col-span-4 flex flex-wrap gap-2 justify-end">
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">
+                    <i class="fas fa-filter"></i> Terapkan
                 </button>
-                <a 
-                    href="{{ route('client.documents.index') }}" 
-                    class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-                >
-                    <i class="fas fa-redo mr-2"></i>Reset
+                @if($hasFilters)
+                <a href="{{ route('client.documents.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl font-semibold">
+                    <i class="fas fa-redo"></i> Reset
                 </a>
+                @endif
             </div>
         </form>
     </div>
 
-    <!-- Documents List -->
+    <!-- Documents -->
     @if($documents->count() > 0)
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                <i class="fas fa-file mr-2"></i>Nama Dokumen
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                <i class="fas fa-folder mr-2"></i>Proyek
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                <i class="fas fa-tag mr-2"></i>Tipe
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                <i class="fas fa-calendar mr-2"></i>Tanggal Upload
-                            </th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                <i class="fas fa-cog mr-2"></i>Aksi
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        @foreach($documents as $document)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            @php
-                                                $extension = pathinfo($document->file_path, PATHINFO_EXTENSION);
-                                                $iconClass = 'fa-file';
-                                                $iconColor = 'text-gray-600';
-                                                
-                                                if (in_array($extension, ['pdf'])) {
-                                                    $iconClass = 'fa-file-pdf';
-                                                    $iconColor = 'text-red-600';
-                                                } elseif (in_array($extension, ['doc', 'docx'])) {
-                                                    $iconClass = 'fa-file-word';
-                                                    $iconColor = 'text-blue-600';
-                                                } elseif (in_array($extension, ['xls', 'xlsx'])) {
-                                                    $iconClass = 'fa-file-excel';
-                                                    $iconColor = 'text-green-600';
-                                                } elseif (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                                                    $iconClass = 'fa-file-image';
-                                                    $iconColor = 'text-purple-600';
-                                                }
-                                            @endphp
-                                            <i class="fas {{ $iconClass }} {{ $iconColor }}"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-gray-900">{{ $document->title }}</p>
-                                            @if($document->description)
-                                                <p class="text-sm text-gray-500">{{ Str::limit($document->description, 50) }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <a href="{{ route('client.projects.show', $document->project_id) }}" 
-                                       class="text-purple-600 hover:text-purple-800 font-medium">
-                                        {{ $document->project->name }}
-                                    </a>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($document->category)
-                                        <span class="px-3 py-1 text-xs font-semibold bg-gray-100 text-gray-800 rounded-full">
-                                            {{ ucfirst($document->category) }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-400">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-600">
-                                    {{ $document->created_at->format('d M Y, H:i') }}
-                                    <p class="text-xs text-gray-400">{{ $document->created_at->diffForHumans() }}</p>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <a 
-                                        href="{{ route('client.documents.download', $document->id) }}" 
-                                        class="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition"
-                                    >
-                                        <i class="fas fa-download mr-2"></i>Download
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="hidden lg:grid lg:grid-cols-12 bg-gray-50 dark:bg-gray-800 text-xs font-semibold text-gray-500 dark:text-gray-400 px-6 py-3">
+            <div class="col-span-4">Nama Dokumen</div>
+            <div class="col-span-3">Proyek</div>
+            <div class="col-span-2">Kategori</div>
+            <div class="col-span-2">Diunggah</div>
+            <div class="col-span-1 text-center">Aksi</div>
         </div>
+        <div class="divide-y divide-gray-100 dark:divide-gray-800">
+            @foreach($documents as $document)
+            <div class="px-6 py-4 flex flex-col lg:grid lg:grid-cols-12 gap-3">
+                <div class="lg:col-span-4">
+                    <p class="font-semibold text-gray-900 dark:text-white">{{ $document->title }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 mt-1">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[11px]">
+                            <i class="fas fa-file"></i>{{ strtoupper($document->document_type ?? pathinfo($document->file_name, PATHINFO_EXTENSION)) }}
+                        </span>
+                        <span>{{ number_format(($document->file_size ?? 0) / 1024, 1) }} KB</span>
+                    </p>
+                    @if($document->description)
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ \Illuminate\Support\Str::limit($document->description, 80) }}</p>
+                    @endif
+                </div>
+                <div class="lg:col-span-3 text-sm text-gray-700 dark:text-gray-300">
+                    <p class="font-medium">{{ $document->project->name ?? 'Tanpa Proyek' }}</p>
+                    <p class="text-xs text-gray-400">#{{ $document->project->id ?? '-' }}</p>
+                </div>
+                <div class="lg:col-span-2">
+                    @if($document->category)
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200">
+                            {{ ucfirst($document->category) }}
+                        </span>
+                    @else
+                        <span class="text-xs text-gray-400">-</span>
+                    @endif
+                </div>
+                <div class="lg:col-span-2 text-sm text-gray-600 dark:text-gray-400">
+                    {{ optional($document->created_at)->format('d M Y, H:i') }}
+                    <p class="text-xs text-gray-400">{{ optional($document->created_at)->diffForHumans() }}</p>
+                </div>
+                <div class="lg:col-span-1 flex lg:justify-center">
+                    <a href="{{ route('client.documents.download', $document->id) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-full hover:bg-indigo-700">
+                        <i class="fas fa-download"></i> Unduh
+                    </a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
 
-        <!-- Pagination -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            {{ $documents->links() }}
-        </div>
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4">
+        {{ $documents->withQueryString()->links() }}
+    </div>
     @else
-        <!-- Empty State -->
-        <div class="bg-white rounded-xl shadow-sm p-12 border border-gray-100 text-center">
-            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-file-alt text-gray-400 text-4xl"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Tidak Ada Dokumen</h3>
-            <p class="text-gray-600 mb-6">
-                @if(request('search') || request('project_id') || request('type'))
-                    Tidak ada dokumen yang sesuai dengan filter Anda.
-                @else
-                    Belum ada dokumen yang tersedia untuk proyek Anda.
-                @endif
-            </p>
-            @if(request('search') || request('project_id') || request('type'))
-                <a 
-                    href="{{ route('client.documents.index') }}" 
-                    class="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                >
-                    <i class="fas fa-redo mr-2"></i>Reset Filter
-                </a>
-            @endif
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-12 text-center">
+        <div class="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-file text-3xl text-gray-400"></i>
         </div>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Dokumen tidak ditemukan</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+            @if($hasFilters)
+                Tidak ada dokumen yang sesuai dengan filter Anda.
+            @else
+                Mulai unggah dokumen pendukung untuk proyek Anda.
+            @endif
+        </p>
+        @if($hasFilters)
+        <a href="{{ route('client.documents.index') }}" class="inline-flex items-center gap-2 px-6 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl font-semibold">
+            <i class="fas fa-redo"></i> Reset Filter
+        </a>
+        @else
+        <button onclick="openUploadModal()" class="inline-flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">
+            <i class="fas fa-upload"></i> Upload Dokumen
+        </button>
+        @endif
+    </div>
     @endif
 </div>
 
 <!-- Upload Modal -->
-<div id="uploadModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-                <h3 class="text-xl font-bold text-gray-900">
-                    <i class="fas fa-upload text-purple-600 mr-2"></i>Upload Dokumen Baru
-                </h3>
-                <button 
-                    onclick="closeUploadModal()"
-                    class="text-gray-400 hover:text-gray-600 transition"
-                >
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-
-        <form action="{{ route('client.documents.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
-            @csrf
-
-            <!-- Project Selection -->
+<div id="uploadModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-gray-800">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="fas fa-folder mr-2"></i>Pilih Proyek <span class="text-red-500">*</span>
-                </label>
-                <select 
-                    name="project_id" 
-                    required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                >
+                <p class="text-xs uppercase tracking-[0.3em] text-gray-400 dark:text-gray-500">Unggah Dokumen</p>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Tambahkan dokumen pendukung izin</h3>
+            </div>
+            <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <form action="{{ route('client.documents.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
+            @csrf
+            <div>
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Proyek <span class="text-red-500">*</span></label>
+                <select name="project_id" required class="mt-1 w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
                     <option value="">-- Pilih Proyek --</option>
                     @foreach($projects as $project)
                         <option value="{{ $project->id }}">{{ $project->name }}</option>
                     @endforeach
                 </select>
             </div>
-
-            <!-- Document Title -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="fas fa-heading mr-2"></i>Judul Dokumen <span class="text-red-500">*</span>
-                </label>
-                <input 
-                    type="text" 
-                    name="title" 
-                    required
-                    maxlength="255"
-                    placeholder="Contoh: Akta Pendirian Perusahaan"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                >
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Judul Dokumen <span class="text-red-500">*</span></label>
+                <input type="text" name="title" required maxlength="255" placeholder="Contoh: Sertifikat Standar" class="mt-1 w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
             </div>
-
-            <!-- Category -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="fas fa-tag mr-2"></i>Kategori Dokumen <span class="text-red-500">*</span>
-                </label>
-                <select 
-                    name="category" 
-                    required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                >
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Kategori <span class="text-red-500">*</span></label>
+                <select name="category" required class="mt-1 w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
                     <option value="">-- Pilih Kategori --</option>
-                    <option value="akta">Akta Perusahaan</option>
-                    <option value="npwp">NPWP</option>
-                    <option value="sertifikat">Sertifikat</option>
-                    <option value="uji-lab">Hasil Uji Lab</option>
-                    <option value="desain">Desain/Label</option>
-                    <option value="surat">Surat Keterangan</option>
-                    <option value="izin">Izin/Lisensi</option>
-                    <option value="lainnya">Lainnya</option>
+                    @foreach(['akta','npwp','sertifikat','uji-lab','desain','surat','izin','lainnya'] as $category)
+                        <option value="{{ $category }}">{{ ucfirst($category) }}</option>
+                    @endforeach
                 </select>
             </div>
-
-            <!-- Description -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="fas fa-align-left mr-2"></i>Deskripsi (Opsional)
-                </label>
-                <textarea 
-                    name="description" 
-                    rows="3"
-                    maxlength="500"
-                    placeholder="Tambahkan catatan atau deskripsi dokumen..."
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                ></textarea>
-                <p class="text-xs text-gray-500 mt-1">Maksimal 500 karakter</p>
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Deskripsi</label>
+                <textarea name="description" rows="3" maxlength="500" placeholder="Tambahkan catatan penting atau detail dokumen" class="mt-1 w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white"></textarea>
+                <p class="text-xs text-gray-400 mt-1">Maksimal 500 karakter</p>
             </div>
-
-            <!-- File Upload -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="fas fa-file mr-2"></i>Upload File <span class="text-red-500">*</span>
-                </label>
-                <input 
-                    type="file" 
-                    name="file" 
-                    required
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                >
-                <p class="text-xs text-gray-500 mt-1">
-                    Format: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG. Maksimal 10MB
-                </p>
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Upload File <span class="text-red-500">*</span></label>
+                <input type="file" name="file" required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" class="mt-1 w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
+                <p class="text-xs text-gray-400 mt-1">Format: PDF, Word, Excel, JPG, PNG. Maksimal 10MB.</p>
             </div>
-
-            <!-- Actions -->
-            <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
-                <button 
-                    type="button"
-                    onclick="closeUploadModal()"
-                    class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                >
+            <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <button type="button" onclick="closeUploadModal()" class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800">
                     Batal
                 </button>
-                <button 
-                    type="submit"
-                    class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                >
-                    <i class="fas fa-upload mr-2"></i>Upload Dokumen
+                <button type="submit" class="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">
+                    <i class="fas fa-upload mr-2"></i> Upload
                 </button>
             </div>
         </form>
     </div>
 </div>
 
+@push('scripts')
 <script>
 function openUploadModal() {
-    document.getElementById('uploadModal').classList.remove('hidden');
+    const modal = document.getElementById('uploadModal');
+    modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
-
 function closeUploadModal() {
-    document.getElementById('uploadModal').classList.add('hidden');
+    const modal = document.getElementById('uploadModal');
+    modal.classList.add('hidden');
     document.body.style.overflow = 'auto';
 }
-
-// Close modal when clicking outside
 document.getElementById('uploadModal')?.addEventListener('click', function(e) {
     if (e.target === this) {
         closeUploadModal();
     }
 });
 </script>
-
+@endpush
 @endsection
