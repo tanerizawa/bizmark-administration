@@ -36,16 +36,32 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                 <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
                     <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                    Informasi Permohonan
+                    Informasi Dasar
                 </h2>
+                
+                @php
+                    $formData = is_string($application->form_data) 
+                        ? json_decode($application->form_data, true) 
+                        : $application->form_data;
+                    $isPackage = isset($formData['package_type']) && $formData['package_type'] === 'multi_permit';
+                @endphp
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <p class="text-sm text-gray-600 dark:text-gray-400">Nomor Permohonan</p>
                         <p class="font-semibold text-gray-900 dark:text-white">{{ $application->application_number }}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Jenis Izin</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ $application->permitType->name }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            @if($isPackage) Nama Proyek @else Jenis Izin @endif
+                        </p>
+                        <p class="font-semibold text-gray-900 dark:text-white">
+                            @if($isPackage)
+                                {{ $formData['project_name'] ?? 'N/A' }}
+                            @else
+                                {{ $application->permitType ? $application->permitType->name : ($formData['permit_name'] ?? 'N/A') }}
+                            @endif
+                        </p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-600 dark:text-gray-400">Tanggal Dibuat</p>
@@ -65,6 +81,96 @@
                     @endif
                 </div>
             </div>
+
+            <!-- Package Information (if multi-permit) -->
+            @if($isPackage)
+            <div class="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg shadow-sm p-6 border border-purple-200 dark:border-purple-800">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                    <i class="fas fa-box-open text-purple-600 mr-2"></i>
+                    Detail Paket Izin
+                </h2>
+                
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div class="bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg p-3 text-center">
+                        <i class="fas fa-handshake text-blue-600 dark:text-blue-400 text-xl mb-1"></i>
+                        <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">{{ $formData['permits_by_service']['bizmark'] ?? 0 }}</p>
+                        <p class="text-xs text-blue-700 dark:text-blue-300">BizMark.ID</p>
+                    </div>
+                    <div class="bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg p-3 text-center">
+                        <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-xl mb-1"></i>
+                        <p class="text-2xl font-bold text-green-900 dark:text-green-100">{{ $formData['permits_by_service']['owned'] ?? 0 }}</p>
+                        <p class="text-xs text-green-700 dark:text-green-300">Sudah Ada</p>
+                    </div>
+                    <div class="bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700 rounded-lg p-3 text-center">
+                        <i class="fas fa-user-check text-purple-600 dark:text-purple-400 text-xl mb-1"></i>
+                        <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">{{ $formData['permits_by_service']['self'] ?? 0 }}</p>
+                        <p class="text-xs text-purple-700 dark:text-purple-300">Dikerjakan Sendiri</p>
+                    </div>
+                </div>
+
+                <!-- Project Details -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4">
+                    <h3 class="font-semibold text-gray-800 dark:text-gray-200 text-sm mb-3">Informasi Proyek</h3>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        @if(isset($formData['project_location']))
+                        <div class="col-span-2">
+                            <p class="text-xs text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i>Lokasi</p>
+                            <p class="text-gray-900 dark:text-white">{{ $formData['project_location'] }}</p>
+                        </div>
+                        @endif
+                        @if(isset($formData['land_area']))
+                        <div>
+                            <p class="text-xs text-gray-600 dark:text-gray-400"><i class="fas fa-ruler-combined mr-1"></i>Luas Tanah</p>
+                            <p class="text-gray-900 dark:text-white">{{ number_format($formData['land_area'], 0, ',', '.') }} m²</p>
+                        </div>
+                        @endif
+                        @if(isset($formData['building_area']))
+                        <div>
+                            <p class="text-xs text-gray-600 dark:text-gray-400"><i class="fas fa-building mr-1"></i>Luas Bangunan</p>
+                            <p class="text-gray-900 dark:text-white">{{ number_format($formData['building_area'], 0, ',', '.') }} m²</p>
+                        </div>
+                        @endif
+                        @if(isset($formData['investment_value']))
+                        <div class="col-span-2">
+                            <p class="text-xs text-gray-600 dark:text-gray-400"><i class="fas fa-money-bill-wave mr-1"></i>Nilai Investasi</p>
+                            <p class="text-lg font-bold text-blue-600 dark:text-blue-400">Rp {{ number_format($formData['investment_value'], 0, ',', '.') }}</p>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Permits List -->
+                @if(isset($formData['selected_permits']) && count($formData['selected_permits']) > 0)
+                <div>
+                    <h3 class="font-semibold text-gray-800 dark:text-gray-200 text-sm mb-2">Daftar Izin ({{ count($formData['selected_permits']) }})</h3>
+                    <div class="space-y-2">
+                        @foreach($formData['selected_permits'] as $permit)
+                        <div class="bg-white dark:bg-gray-800 border rounded-lg p-3 
+                            @if($permit['service_type'] === 'bizmark') border-blue-200 dark:border-blue-800
+                            @elseif($permit['service_type'] === 'owned') border-green-200 dark:border-green-800
+                            @else border-purple-200 dark:border-purple-800
+                            @endif">
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold text-gray-900 dark:text-white text-sm">{{ $permit['name'] }}</span>
+                                <span class="text-xs px-2 py-1 rounded-full font-semibold
+                                    @if($permit['service_type'] === 'bizmark') bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300
+                                    @elseif($permit['service_type'] === 'owned') bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300
+                                    @else bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300
+                                    @endif">
+                                    @if($permit['service_type'] === 'bizmark') BizMark.ID
+                                    @elseif($permit['service_type'] === 'owned') Sudah Ada
+                                    @else Dikerjakan Sendiri
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+            @endif
 
             <!-- Company Information -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
