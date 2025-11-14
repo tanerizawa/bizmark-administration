@@ -296,30 +296,150 @@
         </div>
         @endif
 
-        <!-- Mandatory Permits -->
+        <!-- Important Disclaimer -->
+        <div class="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l-4 border-blue-600 dark:border-blue-400 rounded-r-lg p-6 shadow-sm">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-2xl mr-4"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-blue-900 dark:text-blue-100 mb-3 text-lg">📌 Penting untuk Diketahui</h3>
+                    <div class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                        <p class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 dark:text-blue-400 mr-2 mt-0.5"></i>
+                            <span><strong>Rekomendasi AI:</strong> Hasil analisis ini adalah estimasi berdasarkan kode KBLI, skala usaha, dan lokasi yang Anda berikan.</span>
+                        </p>
+                        <p class="flex items-start">
+                            <i class="fas fa-calculator text-blue-600 dark:text-blue-400 mr-2 mt-0.5"></i>
+                            <span><strong>Biaya Aktual:</strong> Biaya yang tertera adalah estimasi umum. Biaya sebenarnya akan dihitung ulang berdasarkan kompleksitas perizinan, luas area, zona lokasi, dan faktor teknis lainnya.</span>
+                        </p>
+                        <p class="flex items-start">
+                            <i class="fas fa-map-marked-alt text-blue-600 dark:text-blue-400 mr-2 mt-0.5"></i>
+                            <span><strong>Variasi Regional:</strong> Persyaratan dapat berbeda antar daerah. Beberapa izin mungkin memerlukan persetujuan tambahan dari pemerintah daerah setempat.</span>
+                        </p>
+                        <p class="flex items-start">
+                            <i class="fas fa-user-tie text-blue-600 dark:text-blue-400 mr-2 mt-0.5"></i>
+                            <span><strong>Konsultasi Lebih Lanjut:</strong> Tim ahli kami siap membantu Anda dengan analisis mendalam dan perhitungan biaya yang akurat. <a href="#" class="text-blue-600 dark:text-blue-400 underline font-semibold">Konsultasi Gratis →</a></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permits by Category -->
+        @php
+            $permitsByCategory = collect($recommendation->recommended_permits ?? [])
+                ->groupBy(function($permit) {
+                    return $permit['category'] ?? 'other';
+                });
+            
+            $categoryInfo = [
+                'foundational' => [
+                    'title' => 'Izin Dasar & Legalitas',
+                    'icon' => 'fa-building',
+                    'color' => 'blue',
+                    'description' => 'Izin fundamental yang menjadi dasar pendirian dan operasional usaha'
+                ],
+                'environmental' => [
+                    'title' => 'Izin Lingkungan',
+                    'icon' => 'fa-leaf',
+                    'color' => 'green',
+                    'description' => 'Izin terkait dampak lingkungan dan pengelolaan lingkungan hidup'
+                ],
+                'technical' => [
+                    'title' => 'Izin Teknis',
+                    'icon' => 'fa-tools',
+                    'color' => 'orange',
+                    'description' => 'Izin teknis terkait bangunan, lahan, dan infrastruktur'
+                ],
+                'operational' => [
+                    'title' => 'Izin Operasional',
+                    'icon' => 'fa-cogs',
+                    'color' => 'purple',
+                    'description' => 'Izin untuk menjalankan kegiatan operasional usaha'
+                ],
+                'sectoral' => [
+                    'title' => 'Izin Khusus Sektoral',
+                    'icon' => 'fa-certificate',
+                    'color' => 'indigo',
+                    'description' => 'Izin spesifik yang diperlukan untuk sektor usaha tertentu'
+                ],
+                'other' => [
+                    'title' => 'Izin Lainnya',
+                    'icon' => 'fa-file-alt',
+                    'color' => 'gray',
+                    'description' => 'Izin tambahan yang mungkin diperlukan'
+                ]
+            ];
+        @endphp
+
+        @foreach($permitsByCategory as $category => $permits)
+            @php
+                $info = $categoryInfo[$category] ?? $categoryInfo['other'];
+                $mandatoryCount = collect($permits)->where('type', 'mandatory')->count();
+                $totalCount = count($permits);
+            @endphp
+
+        <!-- Category Section -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-                    <i class="fas fa-star text-yellow-500 mr-2"></i>
-                    Izin Wajib
-                </h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Perizinan yang harus dipenuhi untuk menjalankan usaha secara legal
-                </p>
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-{{ $info['color'] }}-50 dark:bg-{{ $info['color'] }}-900/20">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-{{ $info['color'] }}-100 dark:bg-{{ $info['color'] }}-900 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas {{ $info['icon'] }} text-{{ $info['color'] }}-600 dark:text-{{ $info['color'] }}-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                                {{ $info['title'] }}
+                                <span class="ml-3 px-2 py-1 bg-{{ $info['color'] }}-600 text-white text-xs rounded-full">
+                                    {{ $totalCount }} izin
+                                </span>
+                            </h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                {{ $info['description'] }}
+                            </p>
+                        </div>
+                    </div>
+                    @if($mandatoryCount > 0)
+                    <div class="text-right">
+                        <span class="inline-flex items-center px-3 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs font-semibold rounded-full">
+                            <i class="fas fa-star text-yellow-500 mr-1"></i>
+                            {{ $mandatoryCount }} Wajib
+                        </span>
+                    </div>
+                    @endif
+                </div>
             </div>
 
-            <div class="divide-y divide-gray-200 dark:border-gray-700">
-                @forelse($recommendation->recommended_permits as $index => $permit)
-                @if(($permit['type'] ?? '') === 'mandatory')
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                @foreach($permits as $index => $permit)
                 <div class="p-6">
                     <div class="flex items-start">
                         <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4">
                             <span class="text-blue-600 dark:text-blue-400 font-bold">{{ $loop->iteration }}</span>
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                                {{ $permit['name'] }}
-                            </h3>
+                            <div class="flex items-start justify-between mb-2">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ $permit['name'] }}
+                                </h3>
+                                @if(($permit['type'] ?? '') === 'mandatory')
+                                <span class="inline-flex items-center px-2 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs font-semibold rounded">
+                                    <i class="fas fa-star text-yellow-500 mr-1"></i>
+                                    WAJIB
+                                </span>
+                                @elseif(($permit['type'] ?? '') === 'recommended')
+                                <span class="inline-flex items-center px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs font-semibold rounded">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    DIREKOMENDASIKAN
+                                </span>
+                                @elseif(($permit['type'] ?? '') === 'conditional')
+                                <span class="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded">
+                                    <i class="fas fa-question-circle mr-1"></i>
+                                    KONDISIONAL
+                                </span>
+                                @endif
+                            </div>
                             <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
                                 {{ $permit['description'] ?? 'Tidak ada deskripsi' }}
                             </p>
@@ -354,33 +474,98 @@
                                 </div>
                             </div>
 
+                            <!-- Prerequisites & Dependencies -->
+                            @if(!empty($permit['prerequisites']) || !empty($permit['triggers_next']))
+                            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                @if(!empty($permit['prerequisites']))
+                                <div class="mb-3">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-arrow-left text-blue-600 dark:text-blue-400 mr-2 mt-1"></i>
+                                        <div>
+                                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Memerlukan Izin:</span>
+                                            <div class="flex flex-wrap gap-2 mt-1">
+                                                @foreach($permit['prerequisites'] as $prereq)
+                                                <span class="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    {{ $prereq }}
+                                                </span>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+
+                                @if(!empty($permit['triggers_next']))
+                                <div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-arrow-right text-green-600 dark:text-green-400 mr-2 mt-1"></i>
+                                        <div>
+                                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Membuka Akses ke:</span>
+                                            <div class="flex flex-wrap gap-2 mt-1">
+                                                @foreach($permit['triggers_next'] as $next)
+                                                <span class="inline-flex items-center px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full">
+                                                    <i class="fas fa-unlock mr-1"></i>
+                                                    {{ $next }}
+                                                </span>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                            @endif
+
                             @if(!empty($permit['requirements']))
                             <div class="mt-3">
                                 <button 
-                                    onclick="toggleRequirements('permit-{{ $index }}')" 
+                                    onclick="toggleRequirements('permit-{{ $loop->parent->index }}-{{ $loop->index }}')" 
                                     class="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                                 >
-                                    <i class="fas fa-chevron-down mr-1" id="icon-permit-{{ $index }}"></i>
+                                    <i class="fas fa-chevron-down mr-1" id="icon-permit-{{ $loop->parent->index }}-{{ $loop->index }}"></i>
                                     Lihat Persyaratan ({{ count($permit['requirements']) }})
                                 </button>
-                                <ul id="permit-{{ $index }}" class="hidden mt-2 ml-4 space-y-1 text-sm text-gray-700 dark:text-gray-300 list-disc list-inside">
+                                <ul id="permit-{{ $loop->parent->index }}-{{ $loop->index }}" class="hidden mt-2 ml-4 space-y-1 text-sm text-gray-700 dark:text-gray-300 list-disc list-inside">
                                     @foreach($permit['requirements'] as $req)
                                     <li>{{ $req }}</li>
                                     @endforeach
                                 </ul>
                             </div>
                             @endif
+
+                            @if(!empty($permit['legal_basis']))
+                            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-gavel mr-1"></i>
+                                    <strong>Dasar Hukum:</strong> {{ $permit['legal_basis'] }}
+                                </p>
+                            </div>
+                            @endif
+
+                            @if(!empty($permit['renewal_period']))
+                            <div class="mt-2">
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-redo mr-1"></i>
+                                    <strong>Perpanjangan:</strong> {{ $permit['renewal_period'] }}
+                                </p>
+                            </div>
+                            @endif
                         </div>
                     </div>
-                </div>
-                @endif
-                @empty
-                <div class="p-6 text-center text-gray-500 dark:text-gray-400">
-                    Tidak ada izin wajib teridentifikasi
-                </div>
-                @endforelse
+                @endforeach
             </div>
-        </div>
+        @endforeach
+        @else
+            <!-- No permits found -->
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <p class="text-yellow-800 dark:text-yellow-200">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Belum ada rekomendasi izin yang tersedia untuk KBLI ini.
+                </p>
+            </div>
+        @endif
+    </div>
 
         <!-- Required Documents -->
         @if(!empty($recommendation->required_documents))
