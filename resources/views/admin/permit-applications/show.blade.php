@@ -301,6 +301,71 @@
                     @endif
                 </div>
 
+                <!-- Communication / Notes -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">
+                            <i class="fas fa-comments mr-2 text-blue-600"></i>Komunikasi
+                        </h2>
+                        <button onclick="document.getElementById('addNoteModal').classList.remove('hidden')" 
+                                class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Tambah Catatan
+                        </button>
+                    </div>
+
+                    @php
+                        $notes = $application->notes()->with('author')->orderBy('created_at', 'desc')->get();
+                    @endphp
+
+                    @if($notes->count() > 0)
+                        <div class="space-y-4 max-h-[500px] overflow-y-auto">
+                            @foreach($notes as $note)
+                                <div class="flex gap-4 {{ $note->is_internal ? 'bg-yellow-50 border-l-4 border-yellow-400' : 'bg-gray-50' }} p-4 rounded-lg">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 {{ $note->author_type === 'admin' ? 'bg-blue-100' : 'bg-green-100' }} rounded-full flex items-center justify-center">
+                                            <i class="fas {{ $note->author_type === 'admin' ? 'fa-user-shield text-blue-600' : 'fa-user text-green-600' }}"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-semibold text-gray-900">
+                                                    {{ $note->author->name ?? 'Unknown' }}
+                                                </span>
+                                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $note->author_type === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700' }}">
+                                                    {{ $note->author_type === 'admin' ? 'Admin' : 'Client' }}
+                                                </span>
+                                                @if($note->is_internal)
+                                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700">
+                                                        <i class="fas fa-lock mr-1"></i>Internal
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <span class="text-xs text-gray-500">{{ $note->created_at->diffForHumans() }}</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ $note->note }}</p>
+                                        
+                                        @if($note->author_id === Auth::id())
+                                            <form action="{{ route('admin.applications.notes.destroy', [$application->id, $note->id]) }}" method="POST" class="mt-2" onsubmit="return confirm('Hapus catatan ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-xs text-red-600 hover:text-red-700">
+                                                    <i class="fas fa-trash mr-1"></i>Hapus
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-comments text-4xl mb-3 text-gray-300"></i>
+                            <p>Belum ada komunikasi. Tambahkan catatan untuk memulai.</p>
+                        </div>
+                    @endif
+                </div>
+
                 <!-- Status History -->
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-xl font-bold text-gray-900 mb-4">
@@ -605,4 +670,68 @@ function rejectDocument(documentId) {
     }
 }
 </script>
+
+<!-- Add Note Modal -->
+<div id="addNoteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">
+                    <i class="fas fa-comment-medical mr-2 text-blue-600"></i>Tambah Catatan
+                </h3>
+                <button onclick="document.getElementById('addNoteModal').classList.add('hidden')" 
+                        class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('admin.applications.notes.store', $application->id) }}" method="POST">
+                @csrf
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                        <textarea 
+                            name="note" 
+                            rows="6" 
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Tulis catatan atau pesan untuk client..."
+                        ></textarea>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input 
+                            type="checkbox" 
+                            name="is_internal" 
+                            id="is_internal"
+                            value="1"
+                            class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        >
+                        <label for="is_internal" class="ml-2 text-sm text-gray-700">
+                            <i class="fas fa-lock mr-1 text-yellow-600"></i>
+                            Catatan internal (tidak terlihat oleh client)
+                        </label>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t">
+                        <button 
+                            type="button"
+                            onclick="document.getElementById('addNoteModal').classList.add('hidden')"
+                            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                        >
+                            Batal
+                        </button>
+                        <button 
+                            type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            <i class="fas fa-paper-plane mr-2"></i>Kirim
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
