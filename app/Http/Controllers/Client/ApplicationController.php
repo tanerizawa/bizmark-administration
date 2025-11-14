@@ -135,7 +135,7 @@ class ApplicationController extends Controller
             $client->notify(new ApplicationSubmittedNotification($application));
             
             // Notify all admins
-            $admins = User::where('guard', 'web')->get();
+            $admins = User::where('is_active', true)->get();
             Notification::send($admins, new NewApplicationNotification($application));
 
             return redirect()->route('client.applications.show', $application->id)
@@ -213,7 +213,7 @@ class ApplicationController extends Controller
             if (count($bizmarkApplications) > 0) {
                 $client->notify(new ApplicationSubmittedNotification($bizmarkApplications[0]));
                 
-                $admins = User::where('guard', 'web')->get();
+                $admins = User::where('is_active', true)->get();
                 foreach ($bizmarkApplications as $app) {
                     Notification::send($admins, new NewApplicationNotification($app));
                 }
