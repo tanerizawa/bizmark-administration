@@ -703,13 +703,7 @@
                                     </span>
                                 @endif
                             </a>
-                        </div>
-                            <a href="{{ route('reconciliations.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('reconciliations.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-sync-alt w-5"></i>
-                                    <span class="ml-3">Rekonsiliasi Bank</span>
-                                </div>
-                            </a>
+                            
                             <a href="{{ route('reconciliations.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('reconciliations.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
                                 <div class="flex items-center">
                                     <i class="fas fa-sync-alt w-5"></i>
