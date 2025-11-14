@@ -529,6 +529,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
         ->name('documents.bulk-approve');
     Route::post('applications/{application}/documents/approve-all', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approveAll'])
         ->name('applications.documents.approve-all');
+    
+    // Application Notes/Communication (Phase 4)
+    Route::post('applications/{application}/notes', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'store'])
+        ->name('applications.notes.store');
+    Route::delete('applications/{application}/notes/{note}', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'destroy'])
+        ->name('applications.notes.destroy');
+    Route::post('notes/{note}/mark-read', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'markAsRead'])
+        ->name('notes.mark-read');
+});
+
+// Client: Application Notes (Phase 4)
+Route::prefix('client')->name('client.')->middleware(['auth:client'])->group(function () {
+    Route::post('applications/{application}/notes', [App\Http\Controllers\Client\ApplicationNoteController::class, 'store'])
+        ->name('applications.notes.store');
 });
 
 // Payment Callback API (Phase 4)

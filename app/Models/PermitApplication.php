@@ -116,6 +116,11 @@ class PermitApplication extends Model
         return $this->hasMany(ApplicationStatusLog::class, 'application_id');
     }
 
+    public function notes(): HasMany
+    {
+        return $this->hasMany(ApplicationNote::class, 'application_id');
+    }
+
     // Scopes
     public function scopeStatus($query, string $status)
     {

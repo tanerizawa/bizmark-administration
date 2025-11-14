@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers\Client;
+
+use App\Http\Controllers\Controller;
+use App\Models\PermitApplication;
+use App\Models\ApplicationNote;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ApplicationNoteController extends Controller
+{
+    /**
+     * Store a new note (client side)
+     */
+    public function store(Request $request, $applicationId)
+    {
+        $request->validate([
+            'note' => 'required|string|max:5000',
+        ]);
+
+        $application = PermitApplication::where('client_id', Auth::guard('client')->id())
+            ->findOrFail($applicationId);
+
+        $note = ApplicationNote::create([
+            'application_id' => $application->id,
+            'author_type' => 'client',
+            'author_id' => $application->client_id,
+            'note' => $request->note,
+            'is_internal' => false, // Client notes are never internal
+        ]);
+
+        // TODO: Send email notification to admin
+
+        return back()->with('success', 'Pesan berhasil dikirim');
+    }
+
+    /**
+     * Mark note as read
+     */
+    public function markAsRead($noteId)
+    {
+        $note = ApplicationNote::findOrFail($noteId);
+        $note->markAsRead();
+
+        return response()->json(['success' => true]);
+    }
+}
