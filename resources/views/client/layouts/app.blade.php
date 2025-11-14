@@ -82,14 +82,28 @@
                         $submittedCount = \App\Models\PermitApplication::where('client_id', auth('client')->id())
                             ->whereIn('status', ['submitted', 'under_review', 'document_incomplete'])
                             ->count();
+                        
+                        // Count unread admin notes
+                        $unreadAdminNotes = \App\Models\ApplicationNote::whereHas('application', function($q) {
+                                $q->where('client_id', auth('client')->id());
+                            })
+                            ->where('author_type', 'admin')
+                            ->where('is_internal', false)
+                            ->where('is_read', false)
+                            ->count();
                     @endphp
-                    @if($draftCount > 0 || $submittedCount > 0)
+                    @if($draftCount > 0 || $submittedCount > 0 || $unreadAdminNotes > 0)
                         <span class="ml-auto flex items-center gap-1">
                             @if($draftCount > 0)
                             <span class="px-2 py-0.5 bg-gray-500 text-white text-xs rounded-full">{{ $draftCount }}</span>
                             @endif
                             @if($submittedCount > 0)
                             <span class="px-2 py-0.5 bg-blue-500 text-white text-xs rounded-full">{{ $submittedCount }}</span>
+                            @endif
+                            @if($unreadAdminNotes > 0)
+                            <span class="px-2 py-0.5 bg-yellow-500 text-white text-xs rounded-full" title="Pesan baru dari admin">
+                                <i class="fas fa-comment text-[10px]"></i> {{ $unreadAdminNotes }}
+                            </span>
                             @endif
                         </span>
                     @endif
