@@ -164,26 +164,44 @@
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="font-semibold text-gray-900 dark:text-white truncate">{{ $document->document_type }}</p>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="font-semibold text-gray-900 dark:text-white truncate">{{ $document->document_type }}</p>
+                                        @if($document->status === 'approved')
+                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                                                <i class="fas fa-check-circle mr-1"></i>Approved
+                                            </span>
+                                        @elseif($document->status === 'rejected')
+                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
+                                                <i class="fas fa-times-circle mr-1"></i>Rejected
+                                            </span>
+                                        @else
+                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300">
+                                                <i class="fas fa-clock mr-1"></i>Pending Review
+                                            </span>
+                                        @endif
+                                    </div>
                                     <p class="text-sm text-gray-600 dark:text-gray-400 truncate">{{ $document->file_name }}</p>
                                     <p class="text-xs text-gray-500 dark:text-gray-500">
                                         {{ $document->file_size_formatted }} • 
                                         {{ $document->created_at->format('d M Y H:i') }}
-                                        @if($document->is_verified)
-                                            • <span class="text-green-600"><i class="fas fa-check-circle"></i> Terverifikasi</span>
-                                        @endif
                                     </p>
+                                    @if($document->status === 'rejected' && $document->review_notes)
+                                        <p class="text-xs text-red-600 dark:text-red-400 mt-1 p-2 bg-red-50 dark:bg-red-900/20 rounded">
+                                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $document->review_notes }}
+                                        </p>
+                                    @endif
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                @if(!$document->is_verified && ($application->status === 'draft' || $application->status === 'document_incomplete'))
+                                @if($document->status === 'rejected' || (!$document->is_verified && ($application->status === 'draft' || $application->status === 'document_incomplete')))
                                 <form method="POST" 
                                       action="{{ route('client.applications.documents.delete', [$application->id, $document->id]) }}"
                                       onsubmit="return confirm('Yakin ingin menghapus dokumen ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 
-                                            class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 rounded transition">
+                                            class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 rounded transition"
+                                            title="Hapus dokumen">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>

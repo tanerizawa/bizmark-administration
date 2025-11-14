@@ -519,6 +519,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
         ->name('payments.verify');
     Route::post('payments/{id}/reject', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'reject'])
         ->name('payments.reject');
+    
+    // Document Review (Phase 3)
+    Route::post('documents/{document}/approve', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approve'])
+        ->name('documents.approve');
+    Route::post('documents/{document}/reject', [App\Http\Controllers\Admin\DocumentReviewController::class, 'reject'])
+        ->name('documents.reject');
+    Route::post('documents/bulk-approve', [App\Http\Controllers\Admin\DocumentReviewController::class, 'bulkApprove'])
+        ->name('documents.bulk-approve');
+    Route::post('applications/{application}/documents/approve-all', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approveAll'])
+        ->name('applications.documents.approve-all');
 });
 
 // Payment Callback API (Phase 4)

@@ -142,11 +142,11 @@
                         <h2 class="text-xl font-bold text-gray-900">
                             <i class="fas fa-folder mr-2 text-purple-600"></i>Dokumen
                         </h2>
-                        @if($application->status === 'under_review' && $application->documents->where('is_verified', false)->count() > 0)
-                            <form action="{{ route('admin.permit-applications.verify-all-documents', $application->id) }}" method="POST">
+                        @if($application->status === 'under_review' && $application->documents->where('status', 'pending')->count() > 0)
+                            <form action="{{ route('admin.applications.documents.approve-all', $application->id) }}" method="POST" onsubmit="return confirm('Approve semua dokumen pending?')">
                                 @csrf
-                                <button type="submit" class="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700">
-                                    <i class="fas fa-check-double mr-1"></i>Verifikasi Semua
+                                <button type="submit" class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fas fa-check-double mr-2"></i>Approve All Pending ({{ $application->documents->where('status', 'pending')->count() }})
                                 </button>
                             </form>
                         @endif
@@ -163,41 +163,101 @@
                             @foreach($requiredDocs as $requiredDoc)
                                 @php
                                     $uploadedDoc = $application->documents->firstWhere('document_type', $requiredDoc);
+                                    $statusClass = 'bg-gray-50 border-gray-200';
+                                    if ($uploadedDoc) {
+                                        if ($uploadedDoc->status === 'approved') {
+                                            $statusClass = 'bg-green-50 border-green-200';
+                                        } elseif ($uploadedDoc->status === 'rejected') {
+                                            $statusClass = 'bg-red-50 border-red-200';
+                                        } else {
+                                            $statusClass = 'bg-yellow-50 border-yellow-200';
+                                        }
+                                    }
                                 @endphp
-                                <div class="border rounded-lg p-4 {{ $uploadedDoc ? ($uploadedDoc->is_verified ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200') : 'bg-gray-50 border-gray-200' }}">
-                                    <div class="flex items-start justify-between">
+                                <div class="border rounded-lg p-4 {{ $statusClass }}">
+                                    <div class="flex items-start justify-between gap-4">
                                         <div class="flex-1">
                                             <div class="flex items-center gap-2">
                                                 @if($uploadedDoc)
-                                                    @if($uploadedDoc->is_verified)
+                                                    @if($uploadedDoc->status === 'approved')
                                                         <i class="fas fa-check-circle text-green-600"></i>
+                                                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700">Approved</span>
+                                                    @elseif($uploadedDoc->status === 'rejected')
+                                                        <i class="fas fa-times-circle text-red-600"></i>
+                                                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700">Rejected</span>
                                                     @else
                                                         <i class="fas fa-clock text-yellow-600"></i>
+                                                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700">Pending Review</span>
                                                     @endif
                                                 @else
                                                     <i class="fas fa-times-circle text-gray-400"></i>
+                                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">Not Uploaded</span>
                                                 @endif
                                                 <h4 class="font-semibold text-gray-900">{{ $requiredDoc }}</h4>
                                             </div>
                                             
                                             @if($uploadedDoc)
-                                                <p class="text-sm text-gray-600 mt-1">
+                                                <p class="text-sm text-gray-600 mt-2">
                                                     <i class="fas fa-file mr-1"></i>{{ $uploadedDoc->file_name }}
-                                                    ({{ number_format($uploadedDoc->file_size / 1024, 2) }} KB)
+                                                    <span class="text-gray-400 ml-2">({{ number_format($uploadedDoc->file_size / 1024, 2) }} KB)</span>
                                                 </p>
-                                                @if($uploadedDoc->notes)
-                                                    <p class="text-sm text-gray-600 mt-1">
-                                                        <i class="fas fa-comment mr-1"></i>{{ $uploadedDoc->notes }}
+                                                <p class="text-xs text-gray-500 mt-1">
+                                                    <i class="fas fa-clock mr-1"></i>Uploaded: {{ $uploadedDoc->created_at->format('d M Y H:i') }}
+                                                </p>
+                                                
+                                                @if($uploadedDoc->status === 'approved' && $uploadedDoc->review_notes)
+                                                    <p class="text-sm text-green-700 mt-2 p-2 bg-green-100 rounded">
+                                                        <i class="fas fa-comment mr-1"></i>{{ $uploadedDoc->review_notes }}
+                                                    </p>
+                                                @elseif($uploadedDoc->status === 'rejected' && $uploadedDoc->review_notes)
+                                                    <p class="text-sm text-red-700 mt-2 p-2 bg-red-100 rounded">
+                                                        <i class="fas fa-exclamation-circle mr-1"></i>{{ $uploadedDoc->review_notes }}
                                                     </p>
                                                 @endif
-                                                @if($uploadedDoc->is_verified && $uploadedDoc->verification_notes)
-                                                    <p class="text-sm text-green-700 mt-1">
-                                                        <i class="fas fa-check mr-1"></i>{{ $uploadedDoc->verification_notes }}
+                                                
+                                                @if($uploadedDoc->reviewed_by && $uploadedDoc->reviewed_at)
+                                                    <p class="text-xs text-gray-500 mt-1">
+                                                        Reviewed by {{ $uploadedDoc->reviewer->name ?? 'Admin' }} • {{ $uploadedDoc->reviewed_at->diffForHumans() }}
                                                     </p>
                                                 @endif
                                             @else
-                                                <p class="text-sm text-gray-500 mt-1">Belum diupload</p>
+                                                <p class="text-sm text-gray-500 mt-2">Belum diupload oleh client</p>
                                             @endif
+                                        </div>
+
+                                        @if($uploadedDoc && $application->status === 'under_review')
+                                            <div class="flex flex-col gap-2">
+                                                <a 
+                                                    href="{{ Storage::url($uploadedDoc->file_path) }}" 
+                                                    target="_blank"
+                                                    class="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-center"
+                                                    title="Preview Document"
+                                                >
+                                                    <i class="fas fa-eye mr-1"></i>View
+                                                </a>
+                                                
+                                                @if($uploadedDoc->status === 'pending')
+                                                    <button 
+                                                        onclick="approveDocument({{ $uploadedDoc->id }}, '{{ $requiredDoc }}')"
+                                                        class="px-3 py-1.5 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
+                                                        title="Approve Document"
+                                                    >
+                                                        <i class="fas fa-check mr-1"></i>Approve
+                                                    </button>
+                                                    <button 
+                                                        onclick="rejectDocument({{ $uploadedDoc->id }}, '{{ $requiredDoc }}')"
+                                                        class="px-3 py-1.5 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                                                        title="Reject Document"
+                                                    >
+                                                        <i class="fas fa-times mr-1"></i>Reject
+                                                    </button>
+                                                @elseif($uploadedDoc->status === 'rejected')
+                                                    <span class="text-xs text-gray-500 px-2 py-1">Waiting reupload</span>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                                         </div>
 
                                         @if($uploadedDoc && $application->status === 'under_review')
@@ -436,6 +496,57 @@ function showUpdateStatusModal() {
         form.appendChild(statusInput);
         form.appendChild(notesInput);
         document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function approveDocument(documentId, documentName) {
+    const notes = prompt(`Notes untuk approval "${documentName}" (optional):`);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/admin/documents/${documentId}/approve`;
+    
+    const csrf = document.createElement('input');
+    csrf.type = 'hidden';
+    csrf.name = '_token';
+    csrf.value = '{{ csrf_token() }}';
+    
+    const notesInput = document.createElement('input');
+    notesInput.type = 'hidden';
+    notesInput.name = 'notes';
+    notesInput.value = notes || '';
+    
+    form.appendChild(csrf);
+    form.appendChild(notesInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function rejectDocument(documentId, documentName) {
+    const notes = prompt(`Alasan reject "${documentName}" (wajib):`);
+    if (notes && notes.trim()) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/documents/${documentId}/reject`;
+        
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = '_token';
+        csrf.value = '{{ csrf_token() }}';
+        
+        const notesInput = document.createElement('input');
+        notesInput.type = 'hidden';
+        notesInput.name = 'notes';
+        notesInput.value = notes;
+        
+        form.appendChild(csrf);
+        form.appendChild(notesInput);
+        document.body.appendChild(form);
+        form.submit();
+    } else {
+        alert('Alasan reject wajib diisi!');
+    }
+}
         form.submit();
     }
 }
