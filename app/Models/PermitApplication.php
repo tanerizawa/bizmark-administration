@@ -33,10 +33,13 @@ class PermitApplication extends Model
         'submitted_at',
         'kbli_code',
         'kbli_description',
+        'ai_recommendation_id',
+        'business_context',
     ];
 
     protected $casts = [
         'form_data' => 'array',
+        'business_context' => 'array',
         'reviewed_at' => 'datetime',
         'quoted_at' => 'datetime',
         'quotation_expires_at' => 'datetime',
@@ -79,6 +82,11 @@ class PermitApplication extends Model
     public function permitType(): BelongsTo
     {
         return $this->belongsTo(PermitType::class);
+    }
+
+    public function aiRecommendation(): BelongsTo
+    {
+        return $this->belongsTo(KbliPermitRecommendation::class, 'ai_recommendation_id');
     }
 
     public function reviewer(): BelongsTo
