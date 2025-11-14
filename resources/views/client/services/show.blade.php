@@ -663,12 +663,11 @@
             </button>
             
             <a 
-                href="#" 
-                onclick="alert('Fitur konsultasi akan segera hadir. Silakan hubungi admin untuk bantuan.'); return false;"
+                href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}"
                 class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
             >
                 <i class="fas fa-comments"></i>
-                Konsultasi
+                Konsultasi Gratis
             </a>
             
             <a 
