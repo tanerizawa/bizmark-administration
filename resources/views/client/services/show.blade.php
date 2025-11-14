@@ -308,9 +308,9 @@
                 </p>
             </div>
 
-            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+            <div class="divide-y divide-gray-200 dark:border-gray-700">
                 @forelse($recommendation->recommended_permits as $index => $permit)
-                @if(($permit['is_mandatory'] ?? false))
+                @if(($permit['type'] ?? '') === 'mandatory')
                 <div class="p-6">
                     <div class="flex items-start">
                         <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4">
@@ -332,11 +332,14 @@
                                 <div>
                                     <span class="text-gray-500 dark:text-gray-400">Biaya:</span>
                                     <span class="ml-2 font-medium text-gray-900 dark:text-white">
-                                        @if(isset($permit['cost']))
-                                            @if($permit['cost'] == 0)
+                                        @if(isset($permit['estimated_cost_range']))
+                                            @if(($permit['estimated_cost_range']['min'] ?? 0) == 0 && ($permit['estimated_cost_range']['max'] ?? 0) == 0)
                                                 Gratis
                                             @else
-                                                Rp {{ number_format($permit['cost'], 0, ',', '.') }}
+                                                Rp {{ number_format($permit['estimated_cost_range']['min'] ?? 0, 0, ',', '.') }}
+                                                @if(($permit['estimated_cost_range']['max'] ?? 0) > ($permit['estimated_cost_range']['min'] ?? 0))
+                                                    - Rp {{ number_format($permit['estimated_cost_range']['max'], 0, ',', '.') }}
+                                                @endif
                                             @endif
                                         @else
                                             N/A
@@ -345,7 +348,9 @@
                                 </div>
                                 <div>
                                     <span class="text-gray-500 dark:text-gray-400">Waktu Proses:</span>
-                                    <span class="ml-2 font-medium text-gray-900 dark:text-white">{{ $permit['processing_time'] ?? 'N/A' }}</span>
+                                    <span class="ml-2 font-medium text-gray-900 dark:text-white">
+                                        {{ isset($permit['estimated_days']) ? $permit['estimated_days'] . ' hari' : ($permit['processing_time'] ?? 'N/A') }}
+                                    </span>
                                 </div>
                             </div>
 
