@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-8 max-w-3xl">
     <!-- Back Button -->
-    <a href="{{ route('services.index') }}" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-6">
+    <a href="{{ route('client.services.index') }}" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-6">
         <i class="fas fa-arrow-left mr-2"></i>
         Kembali ke Katalog
     </a>
@@ -43,7 +43,7 @@
             </p>
         </div>
 
-        <form action="{{ route('services.show', $kbli->code) }}" method="GET" class="space-y-6">
+        <form action="{{ route('client.services.show', $kbli->code) }}" method="GET" class="space-y-6">
             <!-- Business Scale -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
@@ -119,7 +119,7 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                 <a 
-                    href="{{ route('services.show', $kbli->code) }}" 
+                    href="{{ route('client.services.show', $kbli->code) }}" 
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                     Lewati (Rekomendasi Umum)
