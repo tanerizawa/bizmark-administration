@@ -470,6 +470,10 @@ Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('a
 
 // Admin: Permit Application Management (Phase 3)
 Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function () {
+    // Permit Dashboard
+    Route::get('permit-dashboard', [App\Http\Controllers\Admin\PermitDashboardController::class, 'index'])
+        ->name('permit-dashboard');
+    
     // Permit Application List & Detail
     Route::get('permit-applications', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'index'])
         ->name('permit-applications.index');
