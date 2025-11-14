@@ -38,6 +38,27 @@
         </div>
     </div>
 
+    <!-- Consultation Info Box -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l-4 border-blue-500 rounded-r-lg p-4 mb-6">
+        <div class="flex items-start gap-3">
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center">
+                    <i class="fas fa-comments text-blue-600 dark:text-blue-300"></i>
+                </div>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-bold text-blue-900 dark:text-blue-100 mb-1 text-sm">
+                    💬 Butuh Konsultasi Sebelum Mengajukan?
+                </h4>
+                <p class="text-sm text-blue-700 dark:text-blue-300">
+                    Tulis pertanyaan Anda di bagian <strong>"Catatan Tambahan"</strong> di bawah. 
+                    Simpan sebagai draft, dan tim konsultan kami akan merespons dalam <strong>1x24 jam</strong> 
+                    via sistem komunikasi yang tersedia di halaman detail aplikasi.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Form -->
     <form method="POST" action="{{ route('client.applications.store') }}" id="applicationForm">
         @csrf
