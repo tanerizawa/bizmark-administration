@@ -3,73 +3,76 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\PermitType;
+use App\Models\Kbli;
+use App\Services\KbliPermitCacheService;
 use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    public function __construct()
+    protected KbliPermitCacheService $cacheService;
+
+    public function __construct(KbliPermitCacheService $cacheService)
     {
         $this->middleware('auth:client');
+        $this->cacheService = $cacheService;
     }
 
     /**
-     * Display a listing of available permit services.
+     * Display KBLI selection page (new approach)
      */
     public function index(Request $request)
     {
-        $query = PermitType::where('is_active', true);
+        // Get sectors for filtering
+        $sectors = Kbli::select('sector')
+            ->distinct()
+            ->orderBy('sector')
+            ->pluck('sector');
 
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('description', 'ilike', "%{$search}%")
-                  ->orWhere('code', 'ilike', "%{$search}%");
-            });
-        }
+        // Get popular KBLI (most used in recommendations)
+        $popularKbli = Kbli::select('kbli.code', 'kbli.description', 'kbli.sector')
+            ->join('kbli_permit_recommendations', 'kbli.code', '=', 'kbli_permit_recommendations.kbli_code')
+            ->selectRaw('SUM(kbli_permit_recommendations.cache_hits) as total_hits')
+            ->groupBy('kbli.code', 'kbli.description', 'kbli.sector')
+            ->orderByDesc('total_hits')
+            ->limit(6)
+            ->get();
 
-        // Category filter
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        // Sort
-        $sortBy = $request->get('sort', 'name');
-        $sortDirection = $request->get('direction', 'asc');
-        
-        if (in_array($sortBy, ['name', 'estimated_cost_min', 'avg_processing_days'])) {
-            $query->orderBy($sortBy, $sortDirection);
-        }
-
-        $services = $query->paginate(12)->withQueryString();
-        
-        // Get categories for filter
-        $categories = PermitType::select('category')
-            ->where('is_active', true)
-            ->groupBy('category')
-            ->pluck('category');
-
-        return view('client.services.index', compact('services', 'categories'));
+        return view('client.services.index', compact('sectors', 'popularKbli'));
     }
 
     /**
-     * Display the specified permit service.
+     * Show permit recommendations for selected KBLI
      */
-    public function show(string $code)
+    public function show(Request $request, string $kbliCode)
     {
-        $service = PermitType::where('code', $code)
-            ->where('is_active', true)
-            ->firstOrFail();
+        $kbli = Kbli::where('code', $kbliCode)->firstOrFail();
+        
+        $businessScale = $request->get('scale');
+        $locationType = $request->get('location');
+        $clientId = auth('client')->id();
 
-        // Get related services in the same category
-        $relatedServices = PermitType::where('category', $service->category)
-            ->where('id', '!=', $service->id)
-            ->where('is_active', true)
-            ->limit(3)
-            ->get();
+        // Get or generate recommendations
+        $recommendation = $this->cacheService->getRecommendations(
+            $kbliCode,
+            $businessScale,
+            $locationType,
+            $clientId
+        );
 
-        return view('client.services.show', compact('service', 'relatedServices'));
+        if (!$recommendation) {
+            return back()->with('error', 'Gagal menghasilkan rekomendasi perizinan. Silakan coba lagi.');
+        }
+
+        return view('client.services.show', compact('kbli', 'recommendation', 'businessScale', 'locationType'));
+    }
+
+    /**
+     * Show business context form (optional step)
+     */
+    public function context(string $kbliCode)
+    {
+        $kbli = Kbli::where('code', $kbliCode)->firstOrFail();
+        
+        return view('client.services.context', compact('kbli'));
     }
 }
