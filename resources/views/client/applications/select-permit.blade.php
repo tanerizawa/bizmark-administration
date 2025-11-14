@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <form action="{{ route('client.applications.store-multiple') }}" method="POST" x-data="permitSelection()">
+    <form action="{{ route('client.applications.select-permits') }}" method="POST" x-data="permitSelection()">
         @csrf
         <input type="hidden" name="kbli_code" value="{{ $kbli->code }}">
         <input type="hidden" name="kbli_description" value="{{ $kbli->description }}">

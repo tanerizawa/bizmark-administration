@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PermitType;
 use App\Models\PermitApplication;
 use App\Models\ApplicationDocument;
+use App\Models\PermitDocument;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -149,9 +150,169 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Store multiple permit applications from KBLI recommendation
+     * Store selected permits to session and redirect to project form
+     */
+    public function selectPermits(Request $request)
+    {
+        $validated = $request->validate([
+            'kbli_code' => 'required|string|max:10',
+            'kbli_description' => 'required|string',
+            'permits' => 'required|array|min:1',
+            'permits.*.name' => 'required|string',
+            'permits.*.service_type' => 'required|in:bizmark,owned,self',
+            'permits.*.type' => 'required|string',
+            'permits.*.category' => 'nullable|string',
+            'permits.*.estimated_cost_min' => 'nullable|numeric',
+            'permits.*.estimated_cost_max' => 'nullable|numeric',
+            'permits.*.estimated_days' => 'nullable|integer',
+        ]);
+
+        // Store permit selection in session
+        session([
+            'permit_selection' => [
+                'kbli_code' => $validated['kbli_code'],
+                'kbli_description' => $validated['kbli_description'],
+                'permits' => $validated['permits']
+            ]
+        ]);
+
+        return redirect()->route('client.applications.create-package')
+            ->with('success', 'Silakan lengkapi detail proyek Anda');
+    }
+
+    /**
+     * Show project information form
+     */
+    public function createPackage()
+    {
+        // Check if permit selection exists in session
+        if (!session()->has('permit_selection')) {
+            return redirect()->route('client.services.index')
+                ->with('error', 'Silakan pilih izin terlebih dahulu');
+        }
+
+        return view('client.applications.create-package');
+    }
+
+    /**
+     * Store permit package application with project information
      */
     public function storeMultiple(Request $request)
+    {
+        $validated = $request->validate([
+            'project_name' => 'required|string|max:255',
+            'project_location' => 'required|string',
+            'land_area' => 'nullable|numeric|min:0',
+            'building_area' => 'nullable|numeric|min:0',
+            'building_floors' => 'nullable|integer|min:1',
+            'investment_value' => 'required|numeric|min:0',
+            'target_completion_date' => 'nullable|date|after:today',
+            'project_description' => 'required|string',
+            'supporting_documents.*' => 'nullable|file|max:10240|mimes:pdf,jpg,jpeg,png,doc,docx',
+        ]);
+
+        // Retrieve permit selection from session
+        $permitSelection = session('permit_selection');
+        if (!$permitSelection) {
+            return redirect()->route('client.services.index')
+                ->with('error', 'Silakan pilih izin terlebih dahulu');
+        }
+
+        $client = auth('client')->user();
+        
+        // Calculate permit breakdown
+        $bizmarkPermits = collect($permitSelection['permits'])->where('service_type', 'bizmark')->values()->all();
+        $ownedPermits = collect($permitSelection['permits'])->where('service_type', 'owned')->values()->all();
+        $selfPermits = collect($permitSelection['permits'])->where('service_type', 'self')->values()->all();
+
+        DB::beginTransaction();
+        try {
+            // Create SINGLE application with complete package data
+            $application = PermitApplication::create([
+                'client_id' => $client->id,
+                'permit_type_id' => null, // Package application
+                'status' => 'submitted',
+                'submitted_at' => now(),
+                'kbli_code' => $permitSelection['kbli_code'],
+                'kbli_description' => $permitSelection['kbli_description'],
+                'form_data' => [
+                    // Project Information
+                    'project_name' => $validated['project_name'],
+                    'project_location' => $validated['project_location'],
+                    'land_area' => $validated['land_area'] ?? null,
+                    'building_area' => $validated['building_area'] ?? null,
+                    'building_floors' => $validated['building_floors'] ?? null,
+                    'investment_value' => $validated['investment_value'],
+                    'target_completion_date' => $validated['target_completion_date'] ?? null,
+                    'project_description' => $validated['project_description'],
+                    
+                    // All Selected Permits
+                    'selected_permits' => $permitSelection['permits'],
+                    
+                    // Permit Breakdown by Service Type
+                    'permits_by_service' => [
+                        'bizmark' => count($bizmarkPermits),
+                        'owned' => count($ownedPermits),
+                        'self' => count($selfPermits),
+                    ],
+                    
+                    // Detailed Lists
+                    'bizmark_permits' => $bizmarkPermits,
+                    'owned_permits' => $ownedPermits,
+                    'self_permits' => $selfPermits,
+                    
+                    // Source
+                    'source' => 'kbli_recommendation_package',
+                    'package_type' => 'multi_permit',
+                ],
+                'notes' => "Paket {$validated['project_name']} dengan " . count($permitSelection['permits']) . " izin (BizMark.ID: " . count($bizmarkPermits) . ", Sudah Ada: " . count($ownedPermits) . ", Dikerjakan Sendiri: " . count($selfPermits) . ")",
+            ]);
+
+            // Handle document uploads
+            if ($request->hasFile('supporting_documents')) {
+                foreach ($request->file('supporting_documents') as $file) {
+                    $path = $file->store('permit-documents', 'public');
+                    
+                    PermitDocument::create([
+                        'permit_application_id' => $application->id,
+                        'document_name' => $file->getClientOriginalName(),
+                        'document_type' => 'supporting',
+                        'file_path' => $path,
+                        'uploaded_by' => 'client',
+                    ]);
+                }
+            }
+
+            // Send notification to admins
+            $admins = User::where('is_active', true)
+                          ->whereHas('roles', function($query) {
+                              $query->where('name', 'admin');
+                          })
+                          ->get();
+
+            foreach ($admins as $admin) {
+                $admin->notify(new NewApplicationNotification($application));
+            }
+
+            DB::commit();
+            
+            // Clear permit selection from session
+            session()->forget('permit_selection');
+
+            return redirect()->route('client.applications.show', $application->id)
+                ->with('success', 'Permohonan paket izin berhasil diajukan! Tim kami akan segera memproses dan memberikan quotation untuk ' . count($bizmarkPermits) . ' izin yang akan dikelola BizMark.ID.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * OLD METHOD - Kept for backward compatibility but should not be used
+     * @deprecated Use storeMultiple() with project form instead
+     */
+    public function storeMultipleOld(Request $request)
     {
         $validated = $request->validate([
             'kbli_code' => 'required|string|max:10',
