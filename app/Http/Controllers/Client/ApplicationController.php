@@ -56,7 +56,30 @@ class ApplicationController extends Controller
     public function create(Request $request)
     {
         $permitTypeId = $request->get('permit_type');
+        $kbliCode = $request->get('kbli_code');
         
+        // If kbli_code is provided, show permit selection page
+        if ($kbliCode && !$permitTypeId) {
+            $kbli = \App\Models\Kbli::where('code', $kbliCode)->first();
+            
+            if (!$kbli) {
+                return redirect()->route('client.services.index')
+                    ->with('error', 'Kode KBLI tidak ditemukan.');
+            }
+
+            // Get recommendation if exists
+            $recommendation = \App\Models\KbliPermitRecommendation::where('kbli_code', $kbliCode)
+                ->first();
+
+            // Get available permit types
+            $permitTypes = PermitType::where('status', 'active')
+                ->orderBy('name')
+                ->get();
+
+            return view('client.applications.select-permit', compact('kbli', 'recommendation', 'permitTypes'));
+        }
+        
+        // Original logic for direct permit_type access
         if (!$permitTypeId) {
             return redirect()->route('client.services.index')
                 ->with('error', 'Silakan pilih jenis izin terlebih dahulu.');
