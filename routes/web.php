@@ -509,6 +509,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
         ->name('permit-applications.verify-all-documents');
     Route::post('permit-applications/{id}/request-document-revision', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'requestDocumentRevision'])
         ->name('permit-applications.request-document-revision');
+    Route::post('permit-applications/{id}/convert-to-project', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'convertToProject'])
+        ->name('permit-applications.convert-to-project');
     
     // Quotation Management
     Route::get('quotations/create', [App\Http\Controllers\Admin\QuotationController::class, 'create'])
