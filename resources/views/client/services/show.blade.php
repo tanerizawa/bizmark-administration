@@ -203,9 +203,19 @@
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
                         {{ $kbli->description }}
                     </h1>
-                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">
                         Sektor {{ $kbli->sector }} • Kode: {{ $kbli->code }}
                     </div>
+                    @if($kbli->notes)
+                    <div class="mt-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                                {{ $kbli->notes }}
+                            </p>
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 <div class="text-right">
                     <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
