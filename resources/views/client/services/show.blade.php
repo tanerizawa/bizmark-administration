@@ -327,7 +327,7 @@
                         </p>
                         <p class="flex items-start gap-2">
                             <i class="fas fa-gavel text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
-                            <span><strong>Kepastian Hukum:</strong> Untuk analisis mendalam dan kepastian hukum, silakan <a href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" class="text-blue-600 dark:text-blue-400 underline font-semibold hover:text-blue-800 dark:hover:text-blue-200 transition">ajukan konsultasi gratis</a> atau <a href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" class="text-green-600 dark:text-green-400 underline font-semibold hover:text-green-800 dark:hover:text-green-200 transition">ajukan permohonan</a> agar kami dapat menindaklanjuti dengan analisis biaya aktual sesuai kegiatan Anda.</span>
+                            <span><strong>Kepastian Hukum:</strong> Untuk konsultasi gratis atau analisis biaya aktual, silakan <a href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" class="text-green-600 dark:text-green-400 underline font-semibold hover:text-green-800 dark:hover:text-green-200 transition">ajukan permohonan</a> dan tim konsultan kami akan merespons dalam 1x24 jam.</span>
                         </p>
                     </div>
                 </div>
@@ -663,19 +663,11 @@
             </button>
             
             <a 
-                href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}"
-                class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
-            >
-                <i class="fas fa-comments"></i>
-                Konsultasi Gratis
-            </a>
-            
-            <a 
                 href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" 
-                class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
+                class="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold text-sm rounded-lg transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2"
             >
                 <i class="fas fa-paper-plane"></i>
-                Ajukan Permohonan
+                Ajukan Permohonan / Konsultasi
             </a>
         </div>
 
