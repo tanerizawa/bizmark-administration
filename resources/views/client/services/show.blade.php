@@ -327,7 +327,7 @@
                         </p>
                         <p class="flex items-start gap-2">
                             <i class="fas fa-gavel text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
-                            <span><strong>Kepastian Hukum:</strong> Untuk analisis mendalam dan kepastian hukum, silakan <a href="#" onclick="alert('Fitur konsultasi akan segera hadir. Silakan hubungi admin untuk bantuan.'); return false;" class="text-blue-600 dark:text-blue-400 underline font-semibold">konsultasi gratis</a> atau <a href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" class="text-green-600 dark:text-green-400 underline font-semibold">ajukan permohonan</a> agar kami dapat menindaklanjuti dengan analisis biaya aktual sesuai kegiatan Anda.</span>
+                            <span><strong>Kepastian Hukum:</strong> Untuk analisis mendalam dan kepastian hukum, silakan <a href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" class="text-blue-600 dark:text-blue-400 underline font-semibold hover:text-blue-800 dark:hover:text-blue-200 transition">ajukan konsultasi gratis</a> atau <a href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" class="text-green-600 dark:text-green-400 underline font-semibold hover:text-green-800 dark:hover:text-green-200 transition">ajukan permohonan</a> agar kami dapat menindaklanjuti dengan analisis biaya aktual sesuai kegiatan Anda.</span>
                         </p>
                     </div>
                 </div>
