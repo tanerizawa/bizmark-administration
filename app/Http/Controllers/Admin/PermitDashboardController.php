@@ -33,7 +33,7 @@ class PermitDashboardController extends Controller
         $revenueThisMonth = Payment::where('status', 'success')
             ->whereMonth('paid_at', Carbon::now()->month)
             ->whereYear('paid_at', Carbon::now()->year)
-            ->sum('paid_amount');
+            ->sum('amount');
 
         // Applications by Status (for chart)
         $applicationsByStatus = PermitApplication::select('status', DB::raw('count(*) as total'))
@@ -44,15 +44,15 @@ class PermitDashboardController extends Controller
             });
 
         // Recent Activity (last 10 status changes)
-        $recentActivity = ApplicationStatusLog::with(['application.client', 'application.permitType'])
+        $recentActivity = ApplicationStatusLog::with(['application.client'])
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
 
         // Statistics for cards
         $totalApplications = PermitApplication::count();
-        $totalRevenue = Payment::where('status', 'success')->sum('paid_amount');
-        $activeProjects = PermitApplication::where('status', 'converted_to_project')->count();
+        $totalRevenue = Payment::where('status', 'success')->sum('amount');
+        $activeProjects = PermitApplication::whereNotNull('project_id')->count();
 
         // Applications This Month
         $applicationsThisMonth = PermitApplication::whereMonth('created_at', Carbon::now()->month)
