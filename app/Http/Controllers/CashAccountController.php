@@ -86,7 +86,7 @@ class CashAccountController extends Controller
         
         // Get invoice payment dates from payment_schedules
         $invoicePaymentDates = DB::table('payment_schedules')
-            ->selectRaw('YEAR(paid_date) as year, MONTH(paid_date) as month')
+            ->selectRaw('EXTRACT(YEAR FROM paid_date) as year, EXTRACT(MONTH FROM paid_date) as month')
             ->where('status', 'paid')
             ->whereNotNull('paid_date')
             ->groupBy('year', 'month')
@@ -95,7 +95,7 @@ class CashAccountController extends Controller
             ->get();
         
         // Get legacy manual payment dates
-        $manualPaymentDates = ProjectPayment::selectRaw('YEAR(payment_date) as year, MONTH(payment_date) as month')
+        $manualPaymentDates = ProjectPayment::selectRaw('EXTRACT(YEAR FROM payment_date) as year, EXTRACT(MONTH FROM payment_date) as month')
             ->whereNull('invoice_id')
             ->groupBy('year', 'month')
             ->orderBy('year', 'desc')
@@ -103,7 +103,7 @@ class CashAccountController extends Controller
             ->get();
         
         // Get expense dates
-        $expenseDates = ProjectExpense::selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month')
+        $expenseDates = ProjectExpense::selectRaw('EXTRACT(YEAR FROM expense_date) as year, EXTRACT(MONTH FROM expense_date) as month')
             ->groupBy('year', 'month')
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
