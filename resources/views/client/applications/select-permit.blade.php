@@ -210,7 +210,7 @@
                 <p class="text-xs text-blue-800 dark:text-blue-200 mb-2">
                     Tidak yakin izin mana yang harus dipilih? Tim ahli kami siap membantu Anda memilih dan mengurus izin yang tepat.
                 </p>
-                <a href="#" onclick="alert('Fitur konsultasi akan segera hadir. Silakan hubungi admin untuk bantuan.'); return false;" 
+                <a href="{{ route('client.applications.create') }}" 
                    class="inline-flex items-center text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">
                     <i class="fas fa-comments mr-1"></i>
                     Konsultasi Gratis
