@@ -30,7 +30,9 @@ class ApplicationNoteController extends Controller
             'is_internal' => false, // Client notes are never internal
         ]);
 
-        // TODO: Send email notification to admin
+        // Send email notification to admins
+        $admins = \App\Models\User::all();
+        \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\ClientNoteNotification($note));
 
         return back()->with('success', 'Pesan berhasil dikirim');
     }

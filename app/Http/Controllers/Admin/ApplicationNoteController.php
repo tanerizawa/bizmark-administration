@@ -30,7 +30,10 @@ class ApplicationNoteController extends Controller
             'is_internal' => $request->boolean('is_internal', false),
         ]);
 
-        // TODO: Send email notification to client if not internal
+        // Send email notification to client if not internal
+        if (!$note->is_internal && $application->client) {
+            $application->client->notify(new \App\Notifications\AdminNoteNotification($note));
+        }
 
         return back()->with('success', 'Catatan berhasil ditambahkan');
     }
