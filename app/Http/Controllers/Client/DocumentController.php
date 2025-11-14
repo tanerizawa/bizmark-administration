@@ -66,6 +66,64 @@ class DocumentController extends Controller
     }
     
     /**
+     * Store a newly created document.
+     */
+    public function store(Request $request)
+    {
+        $client = Auth::guard('client')->user();
+        
+        $validated = $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'category' => 'required|string',
+            'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png|max:10240', // 10MB max
+        ]);
+        
+        // Verify project belongs to client
+        $project = \App\Models\Project::where('id', $validated['project_id'])
+            ->where('client_id', $client->id)
+            ->firstOrFail();
+        
+        // Upload file
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('documents/' . $project->id, $fileName, 'public');
+            
+            // Create document record
+            $document = Document::create([
+                'project_id' => $project->id,
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'category' => $validated['category'],
+                'file_name' => $file->getClientOriginalName(),
+                'file_path' => $filePath,
+                'file_size' => $file->getSize(),
+                'mime_type' => $file->getMimeType(),
+                'document_type' => $file->getClientOriginalExtension(),
+                'uploaded_by' => $client->id,
+                'is_latest_version' => true,
+                'status' => 'final',
+            ]);
+            
+            // Log activity
+            \App\Models\ProjectLog::create([
+                'project_id' => $project->id,
+                'user_id' => null,
+                'action' => 'document_uploaded',
+                'entity_type' => 'Document',
+                'entity_id' => $document->id,
+                'description' => "Client uploaded document: {$document->title}",
+            ]);
+            
+            return back()->with('success', 'Dokumen berhasil diupload');
+        }
+        
+        return back()->with('error', 'File tidak ditemukan');
+    }
+    
+    /**
      * Download a document.
      */
     public function download($id)

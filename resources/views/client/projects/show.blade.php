@@ -233,28 +233,121 @@
 
             <!-- Documents -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                <div class="p-6 border-b border-gray-100">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="text-xl font-bold text-gray-900">
-                        <i class="fas fa-file-alt text-purple-600 mr-2"></i>Dokumen
+                        <i class="fas fa-file-alt text-purple-600 mr-2"></i>Dokumen Proyek
                     </h3>
+                    <button 
+                        onclick="openDocumentUploadModal()"
+                        class="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition"
+                    >
+                        <i class="fas fa-upload mr-2"></i>Upload Dokumen
+                    </button>
                 </div>
                 <div class="p-6">
+                    <!-- Required Documents Checklist -->
+                    @if($project->permitApplication && $project->permitApplication->permitType && $project->permitApplication->permitType->required_documents)
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                <i class="fas fa-clipboard-check text-blue-600 mr-2"></i>
+                                Dokumen yang Diperlukan
+                            </h4>
+                            <div class="space-y-2">
+                                @php
+                                    $requiredDocs = $project->permitApplication->permitType->required_documents;
+                                    $uploadedCategories = $project->documents->pluck('category')->unique()->toArray();
+                                @endphp
+                                @foreach($requiredDocs as $docName)
+                                    @php
+                                        // Map document names to categories
+                                        $categoryMap = [
+                                            'Akta Pendirian Perusahaan' => 'akta',
+                                            'NPWP' => 'npwp',
+                                            'Sertifikat Halal (jika diperlukan)' => 'sertifikat',
+                                            'Hasil Uji Lab Produk' => 'uji-lab',
+                                            'Desain Label Kemasan' => 'desain',
+                                        ];
+                                        $category = $categoryMap[$docName] ?? null;
+                                        $isUploaded = $category && in_array($category, $uploadedCategories);
+                                    @endphp
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center gap-3">
+                                            @if($isUploaded)
+                                                <i class="fas fa-check-circle text-green-500 text-lg"></i>
+                                            @else
+                                                <i class="far fa-circle text-gray-400 text-lg"></i>
+                                            @endif
+                                            <span class="text-sm {{ $isUploaded ? 'text-gray-900 font-medium' : 'text-gray-600' }}">
+                                                {{ $docName }}
+                                            </span>
+                                        </div>
+                                        @if($isUploaded)
+                                            <span class="px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                                                Sudah Upload
+                                            </span>
+                                        @else
+                                            <button 
+                                                onclick="openDocumentUploadModal('{{ $category }}', '{{ $docName }}')"
+                                                class="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                            >
+                                                Upload
+                                            </button>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 mb-6"></div>
+                    @endif
+
+                    <!-- Uploaded Documents List -->
                     @if($project->documents->count() > 0)
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-folder-open text-purple-600 mr-2"></i>
+                            Dokumen Terupload ({{ $project->documents->count() }})
+                        </h4>
                         <div class="space-y-3">
                             @foreach($project->documents as $document)
                                 <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
                                     <div class="flex items-center gap-4">
                                         <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <i class="fas fa-file-pdf text-blue-600"></i>
+                                            @php
+                                                $ext = strtolower($document->document_type ?? 'file');
+                                                $iconClass = 'fa-file';
+                                                $iconColor = 'text-gray-600';
+                                                
+                                                if ($ext === 'pdf') {
+                                                    $iconClass = 'fa-file-pdf';
+                                                    $iconColor = 'text-red-600';
+                                                } elseif (in_array($ext, ['doc', 'docx'])) {
+                                                    $iconClass = 'fa-file-word';
+                                                    $iconColor = 'text-blue-600';
+                                                } elseif (in_array($ext, ['xls', 'xlsx'])) {
+                                                    $iconClass = 'fa-file-excel';
+                                                    $iconColor = 'text-green-600';
+                                                } elseif (in_array($ext, ['jpg', 'jpeg', 'png'])) {
+                                                    $iconClass = 'fa-file-image';
+                                                    $iconColor = 'text-purple-600';
+                                                }
+                                            @endphp
+                                            <i class="fas {{ $iconClass }} {{ $iconColor }}"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-900">{{ $document->name }}</p>
-                                            <p class="text-sm text-gray-500">
-                                                {{ $document->created_at->format('d M Y') }}
-                                            </p>
+                                            <p class="font-medium text-gray-900">{{ $document->title }}</p>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                @if($document->category)
+                                                    <span class="px-2 py-0.5 text-xs font-semibold bg-gray-200 text-gray-700 rounded">
+                                                        {{ ucfirst($document->category) }}
+                                                    </span>
+                                                @endif
+                                                <span class="text-xs text-gray-500">
+                                                    {{ $document->created_at->format('d M Y') }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <a href="{{ route('client.documents.download', $document->id) }}" class="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition">
+                                    <a href="{{ route('client.documents.download', $document->id) }}" 
+                                       class="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition">
                                         <i class="fas fa-download mr-2"></i>Download
                                     </a>
                                 </div>
@@ -263,7 +356,13 @@
                     @else
                         <div class="text-center py-8">
                             <i class="fas fa-file-alt text-gray-300 text-4xl mb-3"></i>
-                            <p class="text-gray-500">Belum ada dokumen untuk proyek ini</p>
+                            <p class="text-gray-500 mb-4">Belum ada dokumen untuk proyek ini</p>
+                            <button 
+                                onclick="openDocumentUploadModal()"
+                                class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+                            >
+                                <i class="fas fa-upload mr-2"></i>Upload Dokumen Pertama
+                            </button>
                         </div>
                     @endif
                 </div>
@@ -321,4 +420,115 @@
         </div>
     </div>
 </div>
+
+<!-- Document Upload Modal -->
+<div id="documentUploadModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-gray-900">
+                    <i class="fas fa-upload text-purple-600 mr-2"></i>Upload Dokumen
+                </h3>
+                <button 
+                    onclick="closeDocumentUploadModal()"
+                    class="text-gray-400 hover:text-gray-600 transition"
+                >
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <form action="{{ route('client.documents.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+            @csrf
+            <input type="hidden" name="project_id" value="{{ $project->id }}">
+            <input type="hidden" name="category" id="doc_category">
+
+            <!-- Document Title -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Judul Dokumen <span class="text-red-500">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    id="doc_title"
+                    required
+                    maxlength="255"
+                    placeholder="Masukkan judul dokumen"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Deskripsi (Opsional)
+                </label>
+                <textarea 
+                    name="description" 
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Tambahkan catatan..."
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                ></textarea>
+            </div>
+
+            <!-- File Upload -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Upload File <span class="text-red-500">*</span>
+                </label>
+                <input 
+                    type="file" 
+                    name="file" 
+                    required
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                <p class="text-xs text-gray-500 mt-1">
+                    Format: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG. Max 10MB
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
+                <button 
+                    type="button"
+                    onclick="closeDocumentUploadModal()"
+                    class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                >
+                    Batal
+                </button>
+                <button 
+                    type="submit"
+                    class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+                >
+                    <i class="fas fa-upload mr-2"></i>Upload
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openDocumentUploadModal(category = 'lainnya', title = '') {
+    document.getElementById('doc_category').value = category;
+    document.getElementById('doc_title').value = title;
+    document.getElementById('documentUploadModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDocumentUploadModal() {
+    document.getElementById('documentUploadModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside
+document.getElementById('documentUploadModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDocumentUploadModal();
+    }
+});
+</script>
+
 @endsection
