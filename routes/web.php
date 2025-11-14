@@ -390,7 +390,9 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::get('/applications', [App\Http\Controllers\Client\ApplicationController::class, 'index'])->name('applications.index');
         Route::get('/applications/create', [App\Http\Controllers\Client\ApplicationController::class, 'create'])->name('applications.create');
         Route::post('/applications', [App\Http\Controllers\Client\ApplicationController::class, 'store'])->name('applications.store');
-        Route::post('/applications/create-multiple', [App\Http\Controllers\Client\ApplicationController::class, 'storeMultiple'])->name('applications.store-multiple');
+        Route::post('/applications/select-permits', [App\Http\Controllers\Client\ApplicationController::class, 'selectPermits'])->name('applications.select-permits');
+        Route::get('/applications/create-package', [App\Http\Controllers\Client\ApplicationController::class, 'createPackage'])->name('applications.create-package');
+        Route::post('/applications/store-package', [App\Http\Controllers\Client\ApplicationController::class, 'storeMultiple'])->name('applications.store-package');
         Route::get('/applications/{id}', [App\Http\Controllers\Client\ApplicationController::class, 'show'])->name('applications.show');
         Route::get('/applications/{id}/edit', [App\Http\Controllers\Client\ApplicationController::class, 'edit'])->name('applications.edit');
         Route::put('/applications/{id}', [App\Http\Controllers\Client\ApplicationController::class, 'update'])->name('applications.update');
