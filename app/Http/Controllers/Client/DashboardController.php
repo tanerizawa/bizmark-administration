@@ -62,6 +62,22 @@ class DashboardController extends Controller
             ->sortBy('due_date')
             ->take(5);
         
+        // Get pending documents count (documents not yet uploaded)
+        $pendingDocuments = $client->projects()
+            ->with('documents')
+            ->get()
+            ->pluck('documents')
+            ->flatten()
+            ->filter(function($doc) {
+                return empty($doc->file_path) || !$doc->verified_at;
+            })
+            ->count();
+        
+        // Get submitted projects count (projects in process)
+        $submittedCount = $projects->filter(function($project) {
+            return $project->status && in_array($project->status->name, ['Dalam Proses', 'Sedang Diproses']);
+        })->count();
+        
         return view('client.dashboard', compact(
             'client',
             'projects',
@@ -69,7 +85,9 @@ class DashboardController extends Controller
             'completedProjects',
             'totalInvested',
             'recentDocuments',
-            'upcomingDeadlines'
+            'upcomingDeadlines',
+            'pendingDocuments',
+            'submittedCount'
         ));
     }
 }
