@@ -689,6 +689,21 @@
                                 </div>
                             </a>
                             
+                            <a href="{{ route('admin.settings.kbli.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.settings.kbli.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-industry w-5"></i>
+                                    <span class="ml-3">Data KBLI</span>
+                                </div>
+                                @php
+                                    $kbliCount = \App\Models\Kbli::count();
+                                @endphp
+                                @if($kbliCount > 0)
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.settings.kbli.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
+                                        {{ $kbliCount }}
+                                    </span>
+                                @endif
+                            </a>
+                        </div>
                             <a href="{{ route('reconciliations.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('reconciliations.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
                                 <div class="flex items-center">
                                     <i class="fas fa-sync-alt w-5"></i>
