@@ -534,11 +534,25 @@
                                     $submittedCount = \App\Models\PermitApplication::where('status', 'submitted')->count();
                                     $underReviewCount = \App\Models\PermitApplication::where('status', 'under_review')->count();
                                     $totalPending = $submittedCount + $underReviewCount;
+                                    
+                                    // Count unread client notes
+                                    $unreadClientNotes = \App\Models\ApplicationNote::where('author_type', 'client')
+                                        ->where('is_read', false)
+                                        ->count();
                                 @endphp
-                                @if($totalPending > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.permit-applications.*') ? 'bg-white text-apple-blue' : 'bg-yellow-500 text-white' }}">
-                                        {{ $totalPending }}
-                                    </span>
+                                @if($totalPending > 0 || $unreadClientNotes > 0)
+                                    <div class="flex items-center gap-1">
+                                        @if($totalPending > 0)
+                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.permit-applications.*') ? 'bg-white text-apple-blue' : 'bg-yellow-500 text-white' }}">
+                                                {{ $totalPending }}
+                                            </span>
+                                        @endif
+                                        @if($unreadClientNotes > 0)
+                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.permit-applications.*') ? 'bg-white text-apple-blue' : 'bg-blue-500 text-white' }}" title="Pesan baru dari klien">
+                                                <i class="fas fa-comment text-[10px]"></i> {{ $unreadClientNotes }}
+                                            </span>
+                                        @endif
+                                    </div>
                                 @endif
                             </a>
                             

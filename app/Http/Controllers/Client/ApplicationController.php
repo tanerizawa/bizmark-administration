@@ -139,6 +139,16 @@ class ApplicationController extends Controller
                 ->first();
         }
 
+        // Mark all unread admin notes as read
+        \App\Models\ApplicationNote::where('application_id', $id)
+            ->where('author_type', 'admin')
+            ->where('is_internal', false)
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
+
         return view('client.applications.show', compact('application', 'pendingPayment'));
     }
 

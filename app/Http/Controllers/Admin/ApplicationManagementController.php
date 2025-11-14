@@ -121,6 +121,15 @@ class ApplicationManagementController extends Controller
             'project'
         ])->findOrFail($id);
         
+        // Mark all unread client notes as read
+        \App\Models\ApplicationNote::where('application_id', $id)
+            ->where('author_type', 'client')
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
+        
         return view('admin.permit-applications.show', compact('application'));
     }
     
