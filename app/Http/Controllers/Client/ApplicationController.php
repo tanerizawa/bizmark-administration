@@ -149,6 +149,104 @@ class ApplicationController extends Controller
     }
 
     /**
+     * Store multiple permit applications from KBLI recommendation
+     */
+    public function storeMultiple(Request $request)
+    {
+        $validated = $request->validate([
+            'kbli_code' => 'required|string|max:10',
+            'kbli_description' => 'required|string',
+            'permits' => 'required|array|min:1',
+            'permits.*.name' => 'required|string',
+            'permits.*.service_type' => 'required|in:bizmark,owned,self',
+            'permits.*.type' => 'required|string',
+            'permits.*.category' => 'nullable|string',
+            'permits.*.estimated_cost_min' => 'nullable|numeric',
+            'permits.*.estimated_cost_max' => 'nullable|numeric',
+            'permits.*.estimated_days' => 'nullable|integer',
+        ]);
+
+        $client = auth('client')->user();
+        $bizmarkApplications = [];
+        $referenceData = [
+            'owned' => [],
+            'self' => []
+        ];
+
+        DB::beginTransaction();
+        try {
+            foreach ($validated['permits'] as $permitData) {
+                // Create application only for permits handled by BizMark.ID
+                if ($permitData['service_type'] === 'bizmark') {
+                    $application = PermitApplication::create([
+                        'client_id' => $client->id,
+                        'permit_type_id' => null, // No specific permit type, based on AI recommendation
+                        'status' => 'submitted',
+                        'submitted_at' => now(),
+                        'kbli_code' => $validated['kbli_code'],
+                        'kbli_description' => $validated['kbli_description'],
+                        'form_data' => [
+                            'permit_name' => $permitData['name'],
+                            'permit_type' => $permitData['type'],
+                            'permit_category' => $permitData['category'] ?? null,
+                            'estimated_cost_min' => $permitData['estimated_cost_min'] ?? 0,
+                            'estimated_cost_max' => $permitData['estimated_cost_max'] ?? 0,
+                            'estimated_days' => $permitData['estimated_days'] ?? 0,
+                            'source' => 'kbli_recommendation',
+                        ],
+                        'notes' => "Permohonan izin {$permitData['name']} berdasarkan rekomendasi KBLI {$validated['kbli_code']}",
+                    ]);
+                    $bizmarkApplications[] = $application;
+                } else {
+                    // Store reference data for permits already owned or self-managed
+                    $referenceData[$permitData['service_type']][] = [
+                        'name' => $permitData['name'],
+                        'type' => $permitData['type'],
+                        'category' => $permitData['category'] ?? null,
+                    ];
+                }
+            }
+
+            DB::commit();
+
+            // Send notifications only if there are BizMark applications
+            if (count($bizmarkApplications) > 0) {
+                $client->notify(new ApplicationSubmittedNotification($bizmarkApplications[0]));
+                
+                $admins = User::where('guard', 'web')->get();
+                foreach ($bizmarkApplications as $app) {
+                    Notification::send($admins, new NewApplicationNotification($app));
+                }
+            }
+
+            // Prepare success message
+            $message = '';
+            if (count($bizmarkApplications) > 0) {
+                $message .= count($bizmarkApplications) . ' permohonan izin BizMark.ID berhasil dibuat! ';
+            }
+            if (count($referenceData['owned']) > 0) {
+                $message .= count($referenceData['owned']) . ' izin sudah dimiliki. ';
+            }
+            if (count($referenceData['self']) > 0) {
+                $message .= count($referenceData['self']) . ' izin dikerjakan sendiri. ';
+            }
+
+            if (count($bizmarkApplications) > 0) {
+                return redirect()->route('client.applications.index')
+                    ->with('success', trim($message));
+            } else {
+                return redirect()->route('client.services.index')
+                    ->with('info', 'Semua izin sudah dimiliki atau dikerjakan sendiri. Tidak ada permohonan yang dibuat.');
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Display the specified application.
      */
     public function show($id)
