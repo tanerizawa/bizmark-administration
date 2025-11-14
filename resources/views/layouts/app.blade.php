@@ -518,6 +518,13 @@
                         <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
                             <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Permit Management</p>
                             
+                            <a href="{{ route('admin.permit-dashboard') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.permit-dashboard') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-chart-pie w-5"></i>
+                                    <span class="ml-3">Dashboard Permit</span>
+                                </div>
+                            </a>
+                            
                             <a href="{{ route('admin.permit-applications.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.permit-applications.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
                                 <div class="flex items-center">
                                     <i class="fas fa-file-signature w-5"></i>
