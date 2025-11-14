@@ -549,3 +549,10 @@ Route::prefix('client')->name('client.')->middleware(['auth:client'])->group(fun
 // Payment Callback API (Phase 4)
 Route::post('/api/payment/callback', [App\Http\Controllers\Api\PaymentCallbackController::class, 'callback'])
     ->name('api.payment.callback');
+
+// KBLI API
+Route::prefix('api/kbli')->group(function () {
+    Route::get('/', [App\Http\Controllers\Api\KbliController::class, 'index'])->name('api.kbli.index');
+    Route::get('/search', [App\Http\Controllers\Api\KbliController::class, 'search'])->name('api.kbli.search');
+    Route::get('/{code}', [App\Http\Controllers\Api\KbliController::class, 'show'])->name('api.kbli.show');
+});
