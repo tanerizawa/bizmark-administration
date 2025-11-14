@@ -11,8 +11,8 @@
                 Katalog Layanan Perizinan Usaha
             </h1>
             <p class="text-gray-600 dark:text-gray-400">
-                Temukan izin usaha yang Anda butuhkan berdasarkan kode KBLI (Klasifikasi Baku Lapangan Usaha Indonesia).
-                Sistem kami akan memberikan rekomendasi perizinan yang dipersonalisasi menggunakan AI.
+                Temukan izin usaha yang Anda butuhkan berdasarkan kode KBLI (Klasifikasi Baku Lapangan Usaha Indonesia). 
+                Sistem kami akan memberikan rekomendasi perizinan yang dipersonalisasi berdasarkan regulasi terkini.
             </p>
         </div>
 
@@ -157,7 +157,7 @@
                     <ol class="list-decimal list-inside mt-2 space-y-1">
                         <li>Pilih kode KBLI yang sesuai dengan usaha Anda</li>
                         <li>Masukkan informasi bisnis (skala & lokasi) untuk rekomendasi lebih akurat</li>
-                        <li>Sistem AI kami akan menganalisis dan memberikan daftar izin yang dibutuhkan</li>
+                        <li>Sistem kami akan menganalisis dan memberikan daftar izin yang dibutuhkan</li>
                         <li>Download ringkasan atau langsung ajukan permohonan izin</li>
                     </ol>
                 </div>

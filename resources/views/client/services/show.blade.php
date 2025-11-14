@@ -86,10 +86,10 @@
                 <!-- Fun Facts Carousel -->
                 <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 max-w-lg mx-auto" x-data="{
                     facts: [
-                        '💡 AI kami menganalisis ribuan regulasi untuk memberikan rekomendasi terbaik',
+                        '💡 Sistem kami menganalisis ribuan regulasi untuk memberikan rekomendasi terbaik',
                         '🚀 Proses perizinan yang tepat dapat menghemat waktu hingga 60%',
                         '📊 Kami telah membantu ribuan UKM dalam proses perizinan',
-                        '⚡ Rekomendasi AI disesuaikan dengan skala dan lokasi usaha Anda',
+                        '⚡ Rekomendasi disesuaikan dengan skala dan lokasi usaha Anda',
                         '🎯 Tingkat akurasi rekomendasi kami mencapai 95%'
                     ],
                     currentFact: 0,

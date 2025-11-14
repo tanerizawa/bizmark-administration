@@ -39,7 +39,7 @@
                 Konteks Bisnis (Opsional)
             </h2>
             <p class="text-sm text-gray-600 dark:text-gray-400">
-                Informasi tambahan ini akan membantu AI memberikan rekomendasi perizinan yang lebih akurat dan relevan dengan kondisi bisnis Anda.
+                Informasi tambahan ini akan membantu sistem kami memberikan rekomendasi perizinan yang lebih akurat dan relevan dengan kondisi bisnis Anda.
             </p>
         </div>
 
@@ -198,7 +198,7 @@
 
             <!-- Loading Text -->
             <h3 class="text-3xl font-bold text-white mb-4">
-                Sedang Memproses AI Magic ✨
+                Sedang Memproses Analisis ✨
             </h3>
             
             <!-- Animated Steps -->
@@ -206,7 +206,7 @@
                 steps: [
                     '🔍 Menganalisis KBLI Anda...',
                     '📚 Mempelajari regulasi terkait...',
-                    '🤖 AI sedang berpikir...',
+                    '⚙️ Sistem sedang memproses...',
                     '📝 Menyusun rekomendasi...',
                     '✅ Hampir selesai...'
                 ],
