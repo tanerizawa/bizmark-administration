@@ -4,15 +4,55 @@
 
 @section('content')
 <div class="container-fluid">
+    @php
+        $openJobs = $vacancies->where('status', 'open')->count();
+        $draftJobs = $vacancies->where('status', 'draft')->count();
+        $closedJobs = $vacancies->where('status', 'closed')->count();
+        $totalApplicants = $vacancies->sum('applications_count');
+        $stats = [
+            [
+                'label' => 'Lowongan Aktif',
+                'value' => $openJobs,
+                'icon' => 'briefcase',
+                'accent' => '#0A84FF',
+                'tint' => 'rgba(10,132,255,0.18)',
+            ],
+            [
+                'label' => 'Draft',
+                'value' => $draftJobs,
+                'icon' => 'clock',
+                'accent' => '#FFD60A',
+                'tint' => 'rgba(255,214,10,0.18)',
+            ],
+            [
+                'label' => 'Ditutup',
+                'value' => $closedJobs,
+                'icon' => 'ban',
+                'accent' => '#FF453A',
+                'tint' => 'rgba(255,69,58,0.18)',
+            ],
+            [
+                'label' => 'Total Pelamar',
+                'value' => $totalApplicants,
+                'icon' => 'users',
+                'accent' => '#30D158',
+                'tint' => 'rgba(48,209,88,0.18)',
+            ],
+        ];
+    @endphp
+
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
         <div>
-            <h1 class="h3 mb-1">Manajemen Lowongan Kerja</h1>
-            <p class="text-muted">Kelola lowongan pekerjaan dan track aplikasi masuk</p>
+            <p class="text-uppercase small mb-2" style="color: rgba(235,235,245,0.6);">Talent Hub</p>
+            <h1 class="h4 mb-1 text-white">Manajemen Lowongan</h1>
+            <p class="mb-0" style="color: rgba(235,235,245,0.65);">Monitor status rekrutmen dan tindak lanjuti pelamar aktif.</p>
         </div>
-        <a href="{{ route('admin.jobs.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Tambah Lowongan
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('admin.jobs.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Tambah Lowongan
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -23,83 +63,106 @@
     @endif
 
     <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-dark border-dark shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-sm bg-success text-white rounded">
-                                <i class="fas fa-briefcase"></i>
+    <div class="row g-3 mb-4">
+        @foreach ($stats as $stat)
+            <div class="col-sm-6 col-lg-3">
+                <div class="card h-100 border-0 text-white" style="background: rgba(255,255,255,0.02); border: 1px solid {{ $stat['tint'] }}; box-shadow: 0 10px 35px rgba(0,0,0,0.35);">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: {{ $stat['tint'] }}; color: {{ $stat['accent'] }};">
+                                <i class="fas fa-{{ $stat['icon'] }}"></i>
                             </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small text-muted">Lowongan Aktif</div>
-                            <h4 class="mb-0 text-white">{{ $vacancies->where('status', 'open')->count() }}</h4>
+                            <div class="ms-3">
+                                <p class="text-uppercase small mb-1" style="color: rgba(235,235,245,0.6);">{{ $stat['label'] }}</p>
+                                <h4 class="mb-0 text-white">{{ $stat['value'] }}</h4>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-dark border-dark shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-sm bg-warning text-white rounded">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small text-muted">Draft</div>
-                            <h4 class="mb-0 text-white">{{ $vacancies->where('status', 'draft')->count() }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-dark border-dark shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-sm bg-danger text-white rounded">
-                                <i class="fas fa-ban"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small text-muted">Ditutup</div>
-                            <h4 class="mb-0 text-white">{{ $vacancies->where('status', 'closed')->count() }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-dark border-dark shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="avatar avatar-sm bg-info text-white rounded">
-                                <i class="fas fa-users"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small text-muted">Total Pelamar</div>
-                            <h4 class="mb-0 text-white">{{ $vacancies->sum('applications_count') }}</h4>
+        @endforeach
+    </div>
+
+    @php
+        $statusOptions = [
+            '' => 'Semua Status',
+            'open' => 'Aktif',
+            'draft' => 'Draft',
+            'closed' => 'Ditutup',
+        ];
+        $employmentOptions = $vacancies->pluck('employment_type')->filter()->unique()->values();
+        $locationOptions = $vacancies->pluck('location')->filter()->unique()->values();
+    @endphp
+
+    <div class="card bg-dark border-dark shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ route('admin.jobs.index') }}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small text-uppercase" style="color: rgba(235,235,245,0.8);">Pencarian</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(235,235,245,0.6);">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text"
+                                   name="search"
+                                   value="{{ request('search') }}"
+                                   class="form-control text-white"
+                                   style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);"
+                                   placeholder="Judul, posisi, atau lokasi" />
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label small text-uppercase" style="color: rgba(235,235,245,0.8);">Status</label>
+                        <select name="status" class="form-select form-select-sm text-white" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);">
+                            @foreach($statusOptions as $value => $label)
+                                <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }} style="background: #1C1C1E; color: #FFFFFF;">
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small text-uppercase" style="color: rgba(235,235,245,0.8);">Tipe</label>
+                        <select name="employment_type" class="form-select form-select-sm text-white" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);">
+                            <option value="" style="background: #1C1C1E; color: #FFFFFF;">Semua Tipe</option>
+                            @foreach($employmentOptions as $type)
+                                <option value="{{ $type }}" {{ request('employment_type') === $type ? 'selected' : '' }} style="background: #1C1C1E; color: #FFFFFF;">
+                                    {{ ucfirst(str_replace('-', ' ', $type)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small text-uppercase" style="color: rgba(235,235,245,0.8);">Lokasi</label>
+                        <select name="location" class="form-select form-select-sm text-white" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);">
+                            <option value="" style="background: #1C1C1E; color: #FFFFFF;">Semua Lokasi</option>
+                            @foreach($locationOptions as $location)
+                                <option value="{{ $location }}" {{ request('location') === $location ? 'selected' : '' }} style="background: #1C1C1E; color: #FFFFFF;">
+                                    {{ $location }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
     <!-- Job Vacancies Table -->
+    @php
+        $statusMeta = [
+            'open' => ['label' => 'Aktif', 'bg' => 'rgba(48,209,88,0.18)', 'color' => '#30D158'],
+            'draft' => ['label' => 'Draft', 'bg' => 'rgba(255,214,10,0.2)', 'color' => '#FFD60A'],
+            'closed' => ['label' => 'Ditutup', 'bg' => 'rgba(255,69,58,0.18)', 'color' => '#FF453A'],
+        ];
+    @endphp
+
     <div class="card bg-dark border-dark shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle">
-                    <thead class="table-dark">
+                <table class="table table-dark table-hover table-striped table-borderless align-middle mb-0" style="--bs-table-bg: rgba(255,255,255,0.02); --bs-table-striped-bg: rgba(255,255,255,0.05); --bs-table-striped-color: #fff;">
+                    <thead class="text-uppercase small" style="color: rgba(235,235,245,0.7);">
                         <tr>
                             <th>Posisi</th>
                             <th>Tipe</th>
@@ -116,43 +179,46 @@
                             <tr>
                                 <td>
                                     <div class="fw-semibold text-white">{{ $vacancy->title }}</div>
-                                    <div class="small text-muted">{{ $vacancy->position }}</div>
+                                    <div class="small" style="color: rgba(235,235,245,0.6);">{{ $vacancy->position ?? 'Posisi belum diisi' }}</div>
                                 </td>
-                                <td>
-                                    <span class="badge bg-secondary">
-                                        {{ ucfirst(str_replace('-', ' ', $vacancy->employment_type)) }}
+                                <td class="text-nowrap">
+                                    <span class="badge rounded-pill px-3" style="background: rgba(255,255,255,0.15); color: rgba(235,235,245,0.9);">
+                                        {{ $vacancy->employment_type ? ucfirst(str_replace('-', ' ', $vacancy->employment_type)) : 'N/A' }}
                                     </span>
                                 </td>
-                                <td>
-                                    <i class="fas fa-map-marker-alt text-muted me-1"></i>
-                                    <span class="text-white">{{ $vacancy->location }}</span>
+                                <td class="text-nowrap">
+                                    <i class="fas fa-map-marker-alt me-1" style="color: rgba(235,235,245,0.5);"></i>
+                                    <span class="text-white">{{ $vacancy->location ?? '-' }}</span>
                                 </td>
-                                <td>
-                                    @if($vacancy->status === 'open')
-                                        <span class="badge bg-success">Aktif</span>
-                                    @elseif($vacancy->status === 'draft')
-                                        <span class="badge bg-warning">Draft</span>
-                                    @else
-                                        <span class="badge bg-danger">Ditutup</span>
-                                    @endif
+                                <td class="text-nowrap">
+                                    @php
+                                        $meta = $statusMeta[$vacancy->status] ?? ['label' => ucfirst($vacancy->status), 'bg' => 'rgba(255,255,255,0.15)', 'color' => '#FFFFFF'];
+                                    @endphp
+                                    <span class="badge rounded-pill px-3" style="background: {{ $meta['bg'] }}; color: {{ $meta['color'] }};">
+                                        {{ $meta['label'] }}
+                                    </span>
                                 </td>
-                                <td>
+                                <td class="text-nowrap">
                                     @if($vacancy->deadline)
-                                        <span class="text-white {{ $vacancy->deadline->isPast() ? 'text-danger' : '' }}">
+                                        @php
+                                            $isOverdue = $vacancy->deadline->isPast();
+                                            $isSoon = !$isOverdue && $vacancy->deadline->diffInDays(now()) <= 7;
+                                        @endphp
+                                        <span class="{{ $isOverdue ? 'text-danger' : ($isSoon ? 'text-warning' : 'text-white') }}">
                                             {{ $vacancy->deadline->format('d M Y') }}
                                         </span>
                                     @else
-                                        <span class="text-muted">-</span>
+                                        <span style="color: rgba(235,235,245,0.5);">-</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-nowrap">
                                     <a href="{{ route('admin.applications.index', ['job_vacancy_id' => $vacancy->id]) }}" 
-                                       class="badge bg-info text-decoration-none">
+                                       class="badge bg-info text-decoration-none text-white">
                                         {{ $vacancy->applications_count }} pelamar
                                     </a>
                                 </td>
-                                <td>
-                                    <span class="text-muted small">{{ $vacancy->created_at->format('d M Y') }}</span>
+                                <td class="text-nowrap">
+                                    <span class="small" style="color: rgba(235,235,245,0.6);">{{ $vacancy->created_at->format('d M Y') }}</span>
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
@@ -192,8 +258,8 @@
                         @empty
                             <tr>
                                 <td colspan="8" class="text-center py-5">
-                                    <i class="fas fa-inbox text-muted fa-3x mb-3"></i>
-                                    <p class="text-muted">Belum ada lowongan kerja dibuat.</p>
+                                    <i class="fas fa-inbox fa-3x mb-3" style="color: rgba(235,235,245,0.3);"></i>
+                                    <p class="mb-3" style="color: rgba(235,235,245,0.6);">Belum ada lowongan yang dipublikasikan.</p>
                                     <a href="{{ route('admin.jobs.create') }}" class="btn btn-primary">
                                         <i class="fas fa-plus me-2"></i>Buat Lowongan Pertama
                                     </a>
@@ -221,6 +287,23 @@ function confirmDelete(id) {
         document.getElementById('delete-form-' + id).submit();
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const filterForm = document.querySelector('form[action="{{ route('admin.jobs.index') }}"]');
+    if (!filterForm) return;
+    filterForm.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', () => filterForm.submit());
+    });
+    const searchInput = filterForm.querySelector('input[name="search"]');
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                filterForm.submit();
+            }
+        });
+    }
+});
 </script>
 @endpush
 @endsection

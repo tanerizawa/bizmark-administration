@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Verified;
 use App\Models\Client;
 use Illuminate\Support\Str;
 
@@ -19,6 +20,48 @@ class ClientAuthController extends Controller
     public function showLoginForm()
     {
         return view('client.auth.login');
+    }
+
+    /**
+     * Show the client registration form.
+     */
+    public function showRegistrationForm()
+    {
+        return view('client.auth.register');
+    }
+
+    /**
+     * Handle client registration.
+     */
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'company_name' => ['nullable', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:clients'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        // Create the client
+        $client = Client::create([
+            'name' => $validated['name'],
+            'company_name' => $validated['company_name'] ?? $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'password' => Hash::make($validated['password']),
+            'status' => 'active',
+            'client_type' => $validated['company_name'] ? 'company' : 'individual',
+        ]);
+
+        // Send email verification notification
+        $client->sendEmailVerificationNotification();
+
+        // Log the client in
+        Auth::guard('client')->login($client);
+
+        return redirect()->route('client.verification.notice')
+            ->with('success', 'Akun Anda berhasil dibuat! Silakan verifikasi email Anda.');
     }
 
     /**
@@ -122,5 +165,60 @@ class ClientAuthController extends Controller
         return $status === Password::PASSWORD_RESET
             ? redirect()->route('client.login')->with('success', __($status))
             : back()->withErrors(['email' => [__($status)]]);
+    }
+
+    /**
+     * Show email verification notice.
+     */
+    public function showVerifyEmailNotice()
+    {
+        $client = Auth::guard('client')->user();
+        
+        if ($client->hasVerifiedEmail()) {
+            return redirect()->route('client.dashboard');
+        }
+        
+        return view('client.auth.verify-email');
+    }
+
+    /**
+     * Handle email verification.
+     */
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        $client = Client::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($client->getEmailForVerification()))) {
+            return redirect()->route('client.login')
+                ->withErrors(['email' => 'Link verifikasi tidak valid.']);
+        }
+
+        if ($client->hasVerifiedEmail()) {
+            return redirect()->route('client.dashboard')
+                ->with('success', 'Email Anda sudah terverifikasi!');
+        }
+
+        if ($client->markEmailAsVerified()) {
+            event(new Verified($client));
+        }
+
+        return redirect()->route('client.dashboard')
+            ->with('success', 'Email Anda berhasil diverifikasi!');
+    }
+
+    /**
+     * Resend email verification notification.
+     */
+    public function resendVerificationEmail(Request $request)
+    {
+        $client = Auth::guard('client')->user();
+
+        if ($client->hasVerifiedEmail()) {
+            return redirect()->route('client.dashboard');
+        }
+
+        $client->sendEmailVerificationNotification();
+
+        return back()->with('success', 'Link verifikasi baru telah dikirim ke email Anda!');
     }
 }

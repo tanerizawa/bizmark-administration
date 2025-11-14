@@ -27,6 +27,12 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name' => 'clients.edit', 'display_name' => 'Edit Clients', 'group' => 'clients'],
             ['name' => 'clients.delete', 'display_name' => 'Delete Clients', 'group' => 'clients'],
             
+            // Institutions
+            ['name' => 'institutions.view', 'display_name' => 'View Institutions', 'group' => 'institutions'],
+            ['name' => 'institutions.create', 'display_name' => 'Create Institutions', 'group' => 'institutions'],
+            ['name' => 'institutions.edit', 'display_name' => 'Edit Institutions', 'group' => 'institutions'],
+            ['name' => 'institutions.delete', 'display_name' => 'Delete Institutions', 'group' => 'institutions'],
+            
             // Invoices
             ['name' => 'invoices.view', 'display_name' => 'View Invoices', 'group' => 'invoices'],
             ['name' => 'invoices.create', 'display_name' => 'Create Invoices', 'group' => 'invoices'],
@@ -52,6 +58,36 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name' => 'documents.view', 'display_name' => 'View Documents', 'group' => 'documents'],
             ['name' => 'documents.upload', 'display_name' => 'Upload Documents', 'group' => 'documents'],
             ['name' => 'documents.delete', 'display_name' => 'Delete Documents', 'group' => 'documents'],
+            
+            // Recruitment
+            ['name' => 'recruitment.view', 'display_name' => 'View Recruitment', 'group' => 'recruitment'],
+            ['name' => 'recruitment.manage', 'display_name' => 'Manage Recruitment', 'group' => 'recruitment'],
+            ['name' => 'recruitment.view_jobs', 'display_name' => 'View Job Vacancies', 'group' => 'recruitment'],
+            ['name' => 'recruitment.manage_jobs', 'display_name' => 'Manage Job Vacancies', 'group' => 'recruitment'],
+            ['name' => 'recruitment.view_applications', 'display_name' => 'View Applications', 'group' => 'recruitment'],
+            ['name' => 'recruitment.process_applications', 'display_name' => 'Process Applications', 'group' => 'recruitment'],
+            
+            // Email Management
+            ['name' => 'email.manage', 'display_name' => 'Manage Email System', 'group' => 'email'],
+            ['name' => 'email.view_inbox', 'display_name' => 'View Email Inbox', 'group' => 'email'],
+            ['name' => 'email.send_email', 'display_name' => 'Send Email', 'group' => 'email'],
+            ['name' => 'email.manage_accounts', 'display_name' => 'Manage Email Accounts', 'group' => 'email'],
+            ['name' => 'email.manage_campaigns', 'display_name' => 'Manage Email Campaigns', 'group' => 'email'],
+            ['name' => 'email.manage_subscribers', 'display_name' => 'Manage Subscribers', 'group' => 'email'],
+            ['name' => 'email.manage_templates', 'display_name' => 'Manage Email Templates', 'group' => 'email'],
+            ['name' => 'email.manage_settings', 'display_name' => 'Manage Email Settings', 'group' => 'email'],
+            
+            // Content Management (Articles)
+            ['name' => 'content.manage', 'display_name' => 'Manage Content', 'group' => 'content'],
+            ['name' => 'content.view_articles', 'display_name' => 'View Articles', 'group' => 'content'],
+            ['name' => 'content.create_articles', 'display_name' => 'Create Articles', 'group' => 'content'],
+            ['name' => 'content.edit_articles', 'display_name' => 'Edit Articles', 'group' => 'content'],
+            ['name' => 'content.delete_articles', 'display_name' => 'Delete Articles', 'group' => 'content'],
+            ['name' => 'content.publish_articles', 'display_name' => 'Publish Articles', 'group' => 'content'],
+            
+            // Master Data
+            ['name' => 'master_data.view', 'display_name' => 'View Master Data', 'group' => 'master_data'],
+            ['name' => 'master_data.manage', 'display_name' => 'Manage Master Data', 'group' => 'master_data'],
             
             // Users & Settings
             ['name' => 'users.view', 'display_name' => 'View Users', 'group' => 'users'],

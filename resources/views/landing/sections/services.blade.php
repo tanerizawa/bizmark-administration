@@ -20,10 +20,10 @@
                 Layanan Bizmark.ID
             </div>
             <h2 class="text-3xl lg:text-4xl font-semibold text-slate-900 leading-tight">
-                Pilar perizinan yang kami kelola secara menyeluruh untuk keberlanjutan operasional Anda.
+                Layanan perizinan end-to-end agar operasional tetap jalan tanpa hambatan.
             </h2>
             <p class="text-lg text-slate-500">
-                Dari desk study hingga terbitnya izin, setiap layanan memiliki owner, dokumentasi, dan pelaporan yang simetris.
+                Mulai dari desk study sampai izin terbit, tiap layanan punya owner, dokumentasi, dan pelacakan jelas.
             </p>
         </div>
         

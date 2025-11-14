@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use App\Models\EmailCampaign;
 use App\Models\EmailTemplate;
 use App\Models\EmailSubscriber;
@@ -14,9 +15,12 @@ use Illuminate\Support\Facades\Mail;
 
 class EmailCampaignController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __construct()
     {
         $this->middleware('auth');
+        $this->authorizePermission('email.manage', 'Anda tidak memiliki akses untuk mengelola campaign email.');
     }
 
     public function index(Request $request)

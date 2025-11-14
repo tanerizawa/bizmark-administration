@@ -16,10 +16,10 @@
                 </span>
                 <div class="space-y-6">
                     <h1 class="text-4xl lg:text-[3.4rem] font-semibold leading-tight text-slate-900">
-                        Arsip, regulasi, dan koordinasi perizinan dalam satu ekosistem yang presisi.
+                        Arsip, regulasi, dan koordinasi perizinan berpadu dalam satu ekosistem.
                     </h1>
                     <p class="text-lg text-slate-500 leading-relaxed max-w-2xl">
-                        Kami menyusun kerangka kerja LB3, AMDAL, UKL-UPL, OSS, dan legalitas lain dengan pendekatan dokumentasi beserta timeline yang simetris antar-instansi sehingga pimpinan mendapatkan visibilitas penuh.
+                        Kami mengelola LB3, AMDAL, UKL-UPL, OSS, dan legalitas lain dengan SOP terdokumentasi sehingga pimpinan selalu punya visibilitas penuh.
                     </p>
                 </div>
                 <div class="grid grid-cols-3 gap-6" role="list" aria-label="Ringkasan capaian Bizmark.ID">

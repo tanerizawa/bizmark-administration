@@ -19,9 +19,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'full_name',
         'email',
         'position',
+        'department',
+        'employee_id',
         'phone',
         'notes',
         'password',
@@ -90,6 +93,76 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user has any of the given permissions
+     */
+    public function hasAnyPermission(array $permissions)
+    {
+        foreach ($permissions as $permission) {
+            if ($this->hasPermission($permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if user can access recruitment module
+     */
+    public function canAccessRecruitment()
+    {
+        // Admin always has access
+        if ($this->hasRole('admin')) {
+            return true;
+        }
+        
+        return $this->hasAnyPermission([
+            'recruitment.view_jobs',
+            'recruitment.manage_jobs',
+            'recruitment.view_applications',
+            'recruitment.process_applications'
+        ]);
+    }
+
+    /**
+     * Check if user can access email management
+     */
+    public function canAccessEmailManagement()
+    {
+        // Admin always has access
+        if ($this->hasRole('admin')) {
+            return true;
+        }
+        
+        return $this->hasAnyPermission([
+            'email.view_inbox',
+            'email.send_email',
+            'email.manage_accounts',
+            'email.manage_campaigns',
+            'email.manage_subscribers',
+            'email.manage_templates',
+            'email.manage_settings'
+        ]);
+    }
+
+    /**
+     * Check if user can access master data
+     */
+    public function canAccessMasterData()
+    {
+        // Admin always has access
+        if ($this->hasRole('admin')) {
+            return true;
+        }
+        
+        return $this->hasAnyPermission([
+            'master_data.view',
+            'master_data.edit_permit_types',
+            'master_data.edit_permit_templates',
+            'finances.manage_accounts', // Cash accounts included in master data
+        ]);
+    }
+
+    /**
      * Override Laravel's can() method to check custom permissions
      * @param mixed $abilities
      * @param array|mixed $arguments
@@ -97,6 +170,11 @@ class User extends Authenticatable
      */
     public function can($abilities, $arguments = []): bool
     {
+        // Admin role bypasses all permission checks
+        if ($this->hasRole('admin')) {
+            return true;
+        }
+        
         // If it's a string, check our custom permission system
         if (is_string($abilities)) {
             return $this->hasPermission($abilities);
@@ -120,5 +198,27 @@ class User extends Authenticatable
     public function tasks()
     {
         return $this->assignedTasks();
+    }
+
+    /**
+     * Email accounts assigned to this user
+     */
+    public function emailAccounts()
+    {
+        return $this->belongsToMany(
+            \App\Models\EmailAccount::class,
+            'email_assignments',
+            'user_id',
+            'email_account_id'
+        )->withPivot('can_read', 'can_send', 'can_delete', 'is_primary')
+         ->withTimestamps();
+    }
+
+    /**
+     * Email assignments for this user
+     */
+    public function emailAssignments()
+    {
+        return $this->hasMany(\App\Models\EmailAssignment::class, 'user_id');
     }
 }

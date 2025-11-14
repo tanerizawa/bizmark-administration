@@ -1,0 +1,40 @@
+# EMAIL SYSTEM - QUICK REFERENCE
+# ================================
+
+# CHECK SYSTEM STATUS
+supervisorctl status                    # Queue worker status
+php artisan queue:work --once          # Process 1 job manually
+tail -f storage/logs/worker.log        # View worker logs
+
+# SEND TEST EMAIL
+php artisan tinker --execute="
+use Illuminate\Support\Facades\Mail;
+Mail::raw('Test email', function(\$m) {
+    \$m->to('your@email.com')->subject('Test')->from('noreply@bizmark.id', 'Bizmark');
+});
+echo 'Email sent!';
+"
+
+# RESTART WORKER
+supervisorctl restart bizmark-worker:*
+
+# CHECK STATS
+php artisan tinker --execute="
+echo 'Subscribers: ' . \App\Models\EmailSubscriber::count() . PHP_EOL;
+echo 'Templates: ' . \App\Models\EmailTemplate::count() . PHP_EOL;
+echo 'Campaigns: ' . \App\Models\EmailCampaign::count() . PHP_EOL;
+echo 'Sent Emails: ' . \App\Models\EmailLog::where('status', 'sent')->count() . PHP_EOL;
+"
+
+# ADMIN URLS
+echo "Campaign Management: https://bizmark.id/admin/campaigns"
+echo "Email Templates: https://bizmark.id/admin/templates"
+echo "Subscribers: https://bizmark.id/admin/subscribers"
+echo "Inbox: https://bizmark.id/admin/inbox"
+echo "Settings: https://bizmark.id/admin/email/settings"
+
+# SMTP CONFIG
+# Host: smtp-relay.brevo.com:587
+# From: noreply@bizmark.id
+# Login: 9b8609001@smtp-brevo.com
+# Dashboard: https://app.brevo.com/

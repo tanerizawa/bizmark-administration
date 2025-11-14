@@ -5,41 +5,19 @@
 @section('content')
 <div class="max-w-6xl mx-auto">
     <!-- Header -->
-    <div class="flex justify-between items-start mb-6">
+    <div class="flex flex-col lg:flex-row justify-between gap-4 mb-6">
         <div class="flex items-center">
-            <a href="{{ route('projects.index') }}" class="text-apple-blue-dark hover:text-apple-blue mr-4">
-                <i class="fas fa-arrow-left text-lg"></i>
+            <a href="{{ route('projects.index') }}" class="text-apple-blue-dark hover:text-apple-blue mr-3">
+                <i class="fas fa-arrow-left text-base"></i>
             </a>
             <div>
-                <h1 class="text-3xl font-bold" style="color: #FFFFFF;">{{ $project->name }}</h1>
-                <p class="mt-1" style="color: rgba(235, 235, 245, 0.6);">Detail Proyek Perizinan</p>
+                <h1 class="text-2xl md:text-3xl font-semibold" style="color: #FFFFFF;">{{ $project->name }}</h1>
+                <p class="mt-1 text-sm" style="color: rgba(235, 235, 245, 0.65);">Ringkasan progres dan perizinan proyek.</p>
             </div>
         </div>
-        <div class="flex space-x-3">
-            <!-- AI Document Paraphrasing Button -->
-            <a href="{{ route('ai.paraphrase.create', $project) }}" 
-               class="px-4 py-2 rounded-lg font-medium transition-all hover:shadow-lg"
-               style="background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%); color: #FFFFFF;"
-               title="Parafrase dokumen template dengan AI">
-                <i class="fas fa-robot mr-2"></i>AI Paraphrase
-            </a>
-            
-            <!-- View AI Drafts Button -->
-            <a href="{{ route('ai.drafts.index', $project) }}" 
-               class="px-4 py-2 rounded-lg font-medium transition-colors"
-               style="background: rgba(0, 122, 255, 0.2); color: #007AFF; border: 1px solid rgba(0, 122, 255, 0.3);"
-               title="Lihat draft dokumen AI">
-                <i class="fas fa-file-alt mr-2"></i>Draft AI
-                @if($project->documentDrafts && $project->documentDrafts->count() > 0)
-                <span class="ml-1 px-2 py-0.5 rounded-full text-xs font-bold"
-                      style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
-                    {{ $project->documentDrafts->count() }}
-                </span>
-                @endif
-            </a>
-
+        <div class="flex flex-wrap gap-2">
             <a href="{{ route('projects.edit', $project) }}" 
-               class="px-4 py-2 rounded-lg font-medium transition-colors" style="background: rgba(255, 149, 0, 0.9); color: #FFFFFF;">
+               class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors" style="background: rgba(255, 149, 0, 0.95); color: #FFFFFF;">
                 <i class="fas fa-edit mr-2"></i>Edit
             </a>
             <form action="{{ route('projects.destroy', $project) }}" method="POST" 
@@ -47,7 +25,7 @@
                 @csrf
                 @method('DELETE')
                 <button type="submit" 
-                        class="px-4 py-2 rounded-lg font-medium transition-colors" style="background: rgba(255, 59, 48, 0.9); color: #FFFFFF;">
+                        class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors" style="background: rgba(255, 59, 48, 0.95); color: #FFFFFF;">
                     <i class="fas fa-trash mr-2"></i>Hapus
                 </button>
             </form>
@@ -55,13 +33,13 @@
     </div>
 
     <!-- Quick Status Update -->
-    <div class="card-elevated rounded-apple-lg p-4 mb-6">
-        <form action="{{ route('projects.update-status', $project) }}" method="POST" class="flex items-center space-x-4">
+    <div class="card-elevated rounded-apple-lg p-4 md:p-5 mb-6">
+        <form action="{{ route('projects.update-status', $project) }}" method="POST" class="flex flex-col lg:flex-row gap-3 lg:items-center">
             @csrf
             @method('PATCH')
-            <div class="flex items-center space-x-2">
-                <label class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.8);">Quick Status Update:</label>
-                <select name="status_id" class="input-dark px-3 py-2 rounded-md">
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold uppercase tracking-wide" style="color: rgba(235, 235, 245, 0.7);">Status:</label>
+                <select name="status_id" class="input-dark px-3 py-2 rounded-md text-sm">
                     @foreach($statuses as $status)
                     <option value="{{ $status->id }}" {{ $project->status_id == $status->id ? 'selected' : '' }}>
                         {{ $status->name }}
@@ -69,11 +47,11 @@
                     @endforeach
                 </select>
             </div>
-            <div class="flex-1">
-                <input type="text" name="notes" placeholder="Catatan perubahan status (opsional)" 
-                       class="input-dark w-full px-3 py-2 rounded-md">
+            <div class="flex-1 w-full">
+                <input type="text" name="notes" placeholder="Catatan singkat (opsional)" 
+                       class="input-dark w-full px-3 py-2 rounded-md text-sm">
             </div>
-            <button type="submit" class="btn-primary px-4 py-2 rounded-md">
+            <button type="submit" class="btn-primary px-4 py-2 rounded-md text-sm font-semibold">
                 <i class="fas fa-save mr-1"></i>Update
             </button>
         </form>
@@ -83,31 +61,31 @@
         <!-- Main Information -->
         <div class="md:col-span-2 min-w-0 space-y-6">
             <!-- Tab Navigation -->
-            <div class="card-elevated rounded-apple-lg p-1">
+            <div class="card-elevated rounded-apple-lg p-1.5">
                 <div class="flex space-x-1" role="tablist">
-                    <button class="tab-button active flex-1 px-4 py-3 rounded-lg font-medium transition-colors" 
+                    <button class="tab-button active flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
                             onclick="switchTab('overview')" id="tab-overview"
                             style="color: #FFFFFF;">
                         <i class="fas fa-info-circle mr-2"></i>Overview
                     </button>
-                    <button class="tab-button flex-1 px-4 py-3 rounded-lg font-medium transition-colors" 
+                    <button class="tab-button flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
                             onclick="switchTab('permits')" id="tab-permits"
-                            style="color: rgba(235, 235, 245, 0.6);">
+                            style="color: rgba(235, 235, 245, 0.7);">
                         <i class="fas fa-certificate mr-2"></i>Izin & Prasyarat
                     </button>
-                    <button class="tab-button flex-1 px-4 py-3 rounded-lg font-medium transition-colors" 
+                    <button class="tab-button flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
                             onclick="switchTab('tasks')" id="tab-tasks"
-                            style="color: rgba(235, 235, 245, 0.6);">
+                            style="color: rgba(235, 235, 245, 0.7);">
                         <i class="fas fa-tasks mr-2"></i>Tugas
                     </button>       
-                    <button class="tab-button flex-1 px-4 py-3 rounded-lg font-medium transition-colors" 
+                    <button class="tab-button flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
                             onclick="switchTab('documents')" id="tab-documents"
-                            style="color: rgba(235, 235, 245, 0.6);">
+                            style="color: rgba(235, 235, 245, 0.7);">
                         <i class="fas fa-file-alt mr-2"></i>Dokumen
                     </button>             
-                    <button class="tab-button flex-1 px-4 py-3 rounded-lg font-medium transition-colors" 
+                    <button class="tab-button flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
                             onclick="switchTab('financial')" id="tab-financial"
-                            style="color: rgba(235, 235, 245, 0.6);">
+                            style="color: rgba(235, 235, 245, 0.7);">
                         <i class="fas fa-file-invoice-dollar mr-2"></i>Financial
                     </button>
 
@@ -117,29 +95,28 @@
             <!-- Tab Content: Overview -->
             <div id="content-overview" class="tab-content">
             <!-- Project Overview -->
-            <div class="card-elevated rounded-apple-lg p-4">
-                <h3 class="text-base font-semibold mb-3" style="color: #FFFFFF;">
-                    <i class="fas fa-info-circle mr-2 text-apple-blue-dark"></i>Informasi Proyek
+            <div class="card-elevated rounded-apple-lg p-4 md:p-5">
+                <h3 class="text-xs font-semibold uppercase tracking-[0.3em] mb-4" style="color: rgba(235, 235, 245, 0.7);">
+                    Informasi Proyek
                 </h3>
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Nama Proyek</label>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Nama Proyek</p>
                         <p class="font-medium break-words" style="color: rgba(235, 235, 245, 0.9);">{{ $project->name }}</p>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Institusi Tujuan</label>
-                        <p class="break-words" style="color: rgba(235, 235, 245, 0.9);">{{ $project->institution->name }}</p>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Institusi Tujuan</p>
+                        <p class="break-words" style="color: rgba(235, 235, 245, 0.9);">{{ $project->institution->name ?? '-' }}</p>
                     </div>
                     
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Deskripsi</label>
-                        <p class="break-words" style="color: rgba(235, 235, 245, 0.9);">{{ $project->description }}</p>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Deskripsi</p>
+                        <p class="break-words" style="color: rgba(235, 235, 245, 0.9);">{{ $project->description ?? '-' }}</p>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Status Saat Ini</label>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Status Saat Ini</p>
                         @php
                             $statusColor = match($project->status->code ?? '') {
                                 'PENAWARAN' => 'background: rgba(255, 149, 0, 0.3); color: rgba(255, 149, 0, 1);',
@@ -159,7 +136,7 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Progress</label>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Progress</p>
                         <div class="flex items-center">
                             <div class="flex-1 rounded-full h-3 mr-3" style="background: rgba(58, 58, 60, 0.8);">
                                 <div class="h-3 rounded-full transition-all duration-300" 
@@ -172,14 +149,13 @@
             </div>
 
             <!-- Client Information -->
-            <div class="card-elevated rounded-apple-lg p-4">
-                <h3 class="text-base font-semibold mb-3" style="color: #FFFFFF;">
-                    <i class="fas fa-user mr-2 text-apple-blue-dark"></i>Informasi Klien
+            <div class="card-elevated rounded-apple-lg p-4 md:p-5">
+                <h3 class="text-xs font-semibold uppercase tracking-[0.3em] mb-4" style="color: rgba(235, 235, 245, 0.7);">
+                    Informasi Klien
                 </h3>
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Nama Klien</label>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Nama Klien</p>
                         @if($project->client)
                             <p class="font-medium break-words flex items-center" style="color: rgba(235, 235, 245, 0.9);">
                                 {{ $project->client->company_name ?? $project->client->name }}
@@ -198,7 +174,7 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Kontak</label>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Kontak</p>
                         @if($project->client)
                             <div class="space-y-1">
                                 @if($project->client->email)
@@ -229,7 +205,7 @@
                     
                     @if(($project->client && $project->client->address) || $project->client_address)
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Alamat</label>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Alamat</p>
                         <p class="break-words" style="color: rgba(235, 235, 245, 0.9);">
                             {{ $project->client ? $project->client->address : $project->client_address }}
                             @if($project->client && ($project->client->city || $project->client->province))
@@ -246,21 +222,20 @@
             </div>
 
             <!-- Schedule Information -->
-            <div class="card-elevated rounded-apple-lg p-4">
-                <h3 class="text-base font-semibold mb-3" style="color: #FFFFFF;">
-                    <i class="fas fa-calendar mr-2 text-apple-blue-dark"></i>Jadwal Proyek
+            <div class="card-elevated rounded-apple-lg p-4 md:p-5">
+                <h3 class="text-xs font-semibold uppercase tracking-[0.3em] mb-4" style="color: rgba(235, 235, 245, 0.7);">
+                    Jadwal Proyek
                 </h3>
-                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Tanggal Mulai</label>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Tanggal Mulai</p>
                         <p class="font-medium" style="color: rgba(235, 235, 245, 0.9);">
                             {{ $project->start_date ? $project->start_date->format('d M Y') : 'Belum ditentukan' }}
                         </p>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">Target Selesai</label>
+                        <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Target Selesai</p>
                         @if($project->deadline)
                             @php
                                 $isOverdue = $project->deadline->isPast();

@@ -12,6 +12,7 @@ class Project extends Model
         'name',
         'description',
         'client_id', // Added client_id
+        'permit_application_id', // Phase 5: Link to source permit application
         'client_name',
         'client_contact',
         'client_address',
@@ -60,6 +61,11 @@ class Project extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function permitApplication(): BelongsTo
+    {
+        return $this->belongsTo(PermitApplication::class);
     }
 
     public function tasks(): HasMany

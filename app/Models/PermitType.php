@@ -53,6 +53,14 @@ class PermitType extends Model
     }
 
     /**
+     * Get applications for this permit type.
+     */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(PermitApplication::class, 'permit_type_id');
+    }
+
+    /**
      * Get the full name with category.
      */
     public function getFullNameAttribute(): string

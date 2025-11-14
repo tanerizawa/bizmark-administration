@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\URL;
 
 class Client extends Authenticatable implements MustVerifyEmail
 {
@@ -55,11 +57,27 @@ class Client extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Send the email verification notification with client guard routes.
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\ClientVerifyEmail);
+    }
+
+    /**
      * Get all projects for this client
      */
     public function projects()
     {
         return $this->hasMany(Project::class);
+    }
+
+    /**
+     * Get all permit applications for this client
+     */
+    public function applications()
+    {
+        return $this->hasMany(PermitApplication::class, 'client_id');
     }
 
     /**

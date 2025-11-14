@@ -3,10 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizePermissions('clients');
+    }
+
     /**
      * Display a listing of the clients.
      */

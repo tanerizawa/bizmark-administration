@@ -43,7 +43,9 @@
     
     @include('landing.partials.scripts')
     
-    <!-- Tawk.to Live Chat Widget -->
+    <!-- Tawk.to Live Chat Widget - DISABLED (Placeholder configuration) -->
+    <!-- To enable: Replace YOUR_PROPERTY_ID/YOUR_WIDGET_ID with actual values -->
+    <!--
     <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
@@ -68,6 +70,8 @@
             }
         };
     })();
+    </script>
+    -->
     </script>
 </body>
 </html>
