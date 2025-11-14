@@ -189,113 +189,113 @@
 
             <!-- KBLI Header -->
             <div 
-                class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6"
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4"
                 x-show="show"
                 x-transition:enter="transition ease-out duration-500"
                 x-transition:enter-start="opacity-0 transform -translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
             >
-            <div class="flex items-start justify-between">
-                <div>
-                    <span class="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-mono font-semibold rounded mb-2">
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                    <span class="inline-block px-2.5 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-mono font-semibold rounded mb-2">
                         {{ $kbli->code }}
                     </span>
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
                         {{ $kbli->description }}
                     </h1>
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    <div class="text-xs text-gray-600 dark:text-gray-400">
                         Sektor {{ $kbli->sector }} • Kode: {{ $kbli->code }}
                     </div>
                     @if($kbli->notes)
-                    <div class="mt-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <div class="flex items-start">
-                            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 mr-2 mt-0.5 flex-shrink-0"></i>
-                            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <div class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
+                            <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
                                 {{ $kbli->notes }}
                             </p>
                         </div>
                     </div>
                     @endif
                 </div>
-                <div class="text-right">
-                    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                <div class="text-right flex-shrink-0">
+                    <div class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
                         {{ $recommendation->confidence_score >= 0.8 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }}">
                         <i class="fas fa-check-circle mr-1"></i>
-                        Confidence: {{ number_format($recommendation->confidence_score * 100, 0) }}%
+                        {{ number_format($recommendation->confidence_score * 100, 0) }}%
                     </div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        AI Model: {{ $recommendation->ai_model }}
+                        {{ $recommendation->ai_model }}
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div 
-                class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800"
+                class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800"
                 x-show="show"
                 x-transition:enter="transition ease-out duration-500 delay-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
             >
-                <div class="flex items-center justify-between mb-2">
-                    <i class="fas fa-file-alt text-2xl text-blue-600 dark:text-blue-400"></i>
-                    <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">TOTAL IZIN</span>
+                <div class="flex items-center justify-between mb-1">
+                    <i class="fas fa-file-alt text-xl text-blue-600 dark:text-blue-400"></i>
+                    <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">TOTAL</span>
                 </div>
-                <div class="text-3xl font-bold text-blue-900 dark:text-blue-100">
+                <div class="text-2xl font-bold text-blue-900 dark:text-blue-100">
                     {{ $recommendation->mandatory_permits_count }}
                 </div>
-                <div class="text-sm text-blue-700 dark:text-blue-300 mt-1">Izin Wajib</div>
+                <div class="text-xs text-blue-700 dark:text-blue-300">Izin Wajib</div>
             </div>
 
             <div 
-                class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-6 border border-green-200 dark:border-green-800"
+                class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4 border border-green-200 dark:border-green-800"
                 x-show="show"
                 x-transition:enter="transition ease-out duration-500 delay-400"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
             >
-                <div class="flex items-center justify-between mb-2">
-                    <i class="fas fa-money-bill-wave text-2xl text-green-600 dark:text-green-400"></i>
-                    <span class="text-xs text-green-600 dark:text-green-400 font-medium">ESTIMASI BIAYA</span>
+                <div class="flex items-center justify-between mb-1">
+                    <i class="fas fa-money-bill-wave text-xl text-green-600 dark:text-green-400"></i>
+                    <span class="text-xs text-green-600 dark:text-green-400 font-medium">ESTIMASI</span>
                 </div>
-                <div class="text-2xl font-bold text-green-900 dark:text-green-100">
+                <div class="text-lg font-bold text-green-900 dark:text-green-100">
                     Rp {{ number_format($recommendation->total_cost_range['min'] ?? 0, 0, ',', '.') }}
                 </div>
-                <div class="text-sm text-green-700 dark:text-green-300 mt-1">
+                <div class="text-xs text-green-700 dark:text-green-300">
                     s/d Rp {{ number_format($recommendation->total_cost_range['max'] ?? 0, 0, ',', '.') }}
                 </div>
             </div>
 
             <div 
-                class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-6 border border-purple-200 dark:border-purple-800"
+                class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800"
                 x-show="show"
                 x-transition:enter="transition ease-out duration-500 delay-500"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
             >
-                <div class="flex items-center justify-between mb-2">
-                    <i class="fas fa-clock text-2xl text-purple-600 dark:text-purple-400"></i>
-                    <span class="text-xs text-purple-600 dark:text-purple-400 font-medium">WAKTU PROSES</span>
+                <div class="flex items-center justify-between mb-1">
+                    <i class="fas fa-clock text-xl text-purple-600 dark:text-purple-400"></i>
+                    <span class="text-xs text-purple-600 dark:text-purple-400 font-medium">DURASI</span>
                 </div>
-                <div class="text-3xl font-bold text-purple-900 dark:text-purple-100">
+                <div class="text-2xl font-bold text-purple-900 dark:text-purple-100">
                     {{ $recommendation->estimated_timeline['total_days'] ?? '?' }}
                 </div>
-                <div class="text-sm text-purple-700 dark:text-purple-300 mt-1">Hari Kerja</div>
+                <div class="text-xs text-purple-700 dark:text-purple-300">Hari Kerja</div>
             </div>
         </div>
 
         <!-- Risk Assessment -->
         @if(!empty($recommendation->risk_assessment))
-        <div class="mb-6 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-6">
-            <div class="flex items-start">
-                <i class="fas fa-exclamation-triangle text-orange-600 dark:text-orange-400 text-xl mr-3 mt-1"></i>
+        <div class="mb-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-exclamation-triangle text-orange-600 dark:text-orange-400 text-lg mt-0.5"></i>
                 <div class="flex-1">
-                    <h3 class="font-semibold text-orange-900 dark:text-orange-200 mb-2">Penilaian Risiko</h3>
-                    <div class="text-sm text-orange-800 dark:text-orange-300 space-y-1">
+                    <h3 class="font-semibold text-orange-900 dark:text-orange-200 mb-1 text-sm">Penilaian Risiko</h3>
+                    <div class="text-xs text-orange-800 dark:text-orange-300 space-y-1">
                         @if(isset($recommendation->risk_assessment['level']))
-                        <p><strong>Level Risiko:</strong> {{ ucfirst($recommendation->risk_assessment['level']) }}</p>
+                        <p><strong>Level:</strong> {{ ucfirst($recommendation->risk_assessment['level']) }}</p>
                         @endif
                         @if(isset($recommendation->risk_assessment['notes']))
                         <p>{{ $recommendation->risk_assessment['notes'] }}</p>
@@ -307,29 +307,27 @@
         @endif
 
         <!-- Important Disclaimer -->
-        <div class="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l-4 border-blue-600 dark:border-blue-400 rounded-r-lg p-6 shadow-sm">
-            <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-2xl mr-4"></i>
-                </div>
+        <div class="mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l-4 border-blue-600 dark:border-blue-400 rounded-r-lg p-4 shadow-sm">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-lg flex-shrink-0 mt-0.5"></i>
                 <div class="flex-1">
-                    <h3 class="font-bold text-blue-900 dark:text-blue-100 mb-3 text-lg">📌 Penting untuk Diketahui</h3>
-                    <div class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                        <p class="flex items-start">
-                            <i class="fas fa-check-circle text-blue-600 dark:text-blue-400 mr-2 mt-0.5"></i>
-                            <span><strong>Rekomendasi AI:</strong> Hasil analisis ini adalah estimasi berdasarkan kode KBLI, skala usaha, dan lokasi yang Anda berikan.</span>
+                    <h3 class="font-bold text-blue-900 dark:text-blue-100 mb-2 text-sm">📌 Penting untuk Diketahui</h3>
+                    <div class="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
+                        <p class="flex items-start gap-2">
+                            <i class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
+                            <span><strong>Rekomendasi AI:</strong> Estimasi berdasarkan KBLI, skala usaha, dan lokasi.</span>
                         </p>
-                        <p class="flex items-start">
-                            <i class="fas fa-calculator text-blue-600 dark:text-blue-400 mr-2 mt-0.5"></i>
-                            <span><strong>Biaya Aktual:</strong> Biaya yang tertera adalah estimasi umum. Biaya sebenarnya akan dihitung ulang berdasarkan kompleksitas perizinan, luas area, zona lokasi, dan faktor teknis lainnya.</span>
+                        <p class="flex items-start gap-2">
+                            <i class="fas fa-calculator text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
+                            <span><strong>Biaya Aktual:</strong> Dihitung ulang dari kompleksitas, luas area, zona, dan faktor teknis.</span>
                         </p>
-                        <p class="flex items-start">
-                            <i class="fas fa-map-marked-alt text-blue-600 dark:text-blue-400 mr-2 mt-0.5"></i>
-                            <span><strong>Variasi Regional:</strong> Persyaratan dapat berbeda antar daerah. Beberapa izin mungkin memerlukan persetujuan tambahan dari pemerintah daerah setempat.</span>
+                        <p class="flex items-start gap-2">
+                            <i class="fas fa-map-marked-alt text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
+                            <span><strong>Variasi Regional:</strong> Persyaratan berbeda antar daerah.</span>
                         </p>
-                        <p class="flex items-start">
-                            <i class="fas fa-user-tie text-blue-600 dark:text-blue-400 mr-2 mt-0.5"></i>
-                            <span><strong>Konsultasi Lebih Lanjut:</strong> Tim ahli kami siap membantu Anda dengan analisis mendalam dan perhitungan biaya yang akurat. <a href="#" class="text-blue-600 dark:text-blue-400 underline font-semibold">Konsultasi Gratis →</a></span>
+                        <p class="flex items-start gap-2">
+                            <i class="fas fa-user-tie text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
+                            <span><strong>Konsultasi:</strong> Tim ahli siap membantu. <a href="#" class="text-blue-600 dark:text-blue-400 underline font-semibold">Konsultasi Gratis →</a></span>
                         </p>
                     </div>
                 </div>
@@ -392,77 +390,75 @@
             @endphp
 
         <!-- Category Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-{{ $info['color'] }}-50 dark:bg-{{ $info['color'] }}-900/20">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-4">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-{{ $info['color'] }}-50 dark:bg-{{ $info['color'] }}-900/20">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-{{ $info['color'] }}-100 dark:bg-{{ $info['color'] }}-900 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas {{ $info['icon'] }} text-{{ $info['color'] }}-600 dark:text-{{ $info['color'] }}-400 text-xl"></i>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-{{ $info['color'] }}-100 dark:bg-{{ $info['color'] }}-900 rounded-lg flex items-center justify-center">
+                            <i class="fas {{ $info['icon'] }} text-{{ $info['color'] }}-600 dark:text-{{ $info['color'] }}-400 text-lg"></i>
                         </div>
                         <div>
-                            <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                            <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                 {{ $info['title'] }}
-                                <span class="ml-3 px-2 py-1 bg-{{ $info['color'] }}-600 text-white text-xs rounded-full">
-                                    {{ $totalCount }} izin
+                                <span class="px-2 py-0.5 bg-{{ $info['color'] }}-600 text-white text-xs rounded-full">
+                                    {{ $totalCount }}
                                 </span>
                             </h2>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                                 {{ $info['description'] }}
                             </p>
                         </div>
                     </div>
                     @if($mandatoryCount > 0)
-                    <div class="text-right">
-                        <span class="inline-flex items-center px-3 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs font-semibold rounded-full">
-                            <i class="fas fa-star text-yellow-500 mr-1"></i>
-                            {{ $mandatoryCount }} Wajib
-                        </span>
-                    </div>
+                    <span class="inline-flex items-center px-2.5 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs font-semibold rounded">
+                        <i class="fas fa-star text-yellow-500 mr-1"></i>
+                        {{ $mandatoryCount }} Wajib
+                    </span>
                     @endif
                 </div>
             </div>
 
             <div class="divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach($permits as $index => $permit)
-                <div class="p-6">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-blue-600 dark:text-blue-400 font-bold">{{ $loop->iteration }}</span>
+                <div class="p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                            <span class="text-blue-600 dark:text-blue-400 font-bold text-sm">{{ $loop->iteration }}</span>
                         </div>
-                        <div class="flex-1">
-                            <div class="flex items-start justify-between mb-2">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2 mb-1">
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ $permit['name'] }}
                                 </h3>
                                 @if(($permit['type'] ?? '') === 'mandatory')
-                                <span class="inline-flex items-center px-2 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs font-semibold rounded">
+                                <span class="inline-flex items-center px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs font-semibold rounded flex-shrink-0">
                                     <i class="fas fa-star text-yellow-500 mr-1"></i>
                                     WAJIB
                                 </span>
                                 @elseif(($permit['type'] ?? '') === 'recommended')
-                                <span class="inline-flex items-center px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs font-semibold rounded">
+                                <span class="inline-flex items-center px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs font-semibold rounded flex-shrink-0">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    DIREKOMENDASIKAN
+                                    REKOMEN
                                 </span>
                                 @elseif(($permit['type'] ?? '') === 'conditional')
-                                <span class="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded">
+                                <span class="inline-flex items-center px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded flex-shrink-0">
                                     <i class="fas fa-question-circle mr-1"></i>
-                                    KONDISIONAL
+                                    KONDISI
                                 </span>
                                 @endif
                             </div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-2 leading-relaxed">
                                 {{ $permit['description'] ?? 'Tidak ada deskripsi' }}
                             </p>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                <div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs mb-2">
+                                <div class="flex items-center gap-1">
                                     <span class="text-gray-500 dark:text-gray-400">Penerbit:</span>
-                                    <span class="ml-2 font-medium text-gray-900 dark:text-white">{{ $permit['issuing_authority'] ?? 'N/A' }}</span>
+                                    <span class="font-medium text-gray-900 dark:text-white truncate">{{ $permit['issuing_authority'] ?? 'N/A' }}</span>
                                 </div>
-                                <div>
+                                <div class="flex items-center gap-1">
                                     <span class="text-gray-500 dark:text-gray-400">Biaya:</span>
-                                    <span class="ml-2 font-medium text-gray-900 dark:text-white">
+                                    <span class="font-medium text-gray-900 dark:text-white">
                                         @if(isset($permit['estimated_cost_range']))
                                             @if(($permit['estimated_cost_range']['min'] ?? 0) == 0 && ($permit['estimated_cost_range']['max'] ?? 0) == 0)
                                                 Gratis
@@ -477,51 +473,44 @@
                                         @endif
                                     </span>
                                 </div>
-                                <div>
-                                    <span class="text-gray-500 dark:text-gray-400">Waktu Proses:</span>
-                                    <span class="ml-2 font-medium text-gray-900 dark:text-white">
-                                        {{ isset($permit['estimated_days']) ? $permit['estimated_days'] . ' hari' : ($permit['processing_time'] ?? 'N/A') }}
-                                    </span>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-gray-500 dark:text-gray-400">Durasi:</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">{{ $permit['estimated_days'] ?? 'N/A' }} hari</span>
                                 </div>
                             </div>
 
                             <!-- Prerequisites & Dependencies -->
                             @if(!empty($permit['prerequisites']) || !empty($permit['triggers_next']))
-                            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
                                 @if(!empty($permit['prerequisites']))
-                                <div class="mb-3">
-                                    <div class="flex items-start">
-                                        <i class="fas fa-arrow-left text-blue-600 dark:text-blue-400 mr-2 mt-1"></i>
-                                        <div>
-                                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Memerlukan Izin:</span>
-                                            <div class="flex flex-wrap gap-2 mt-1">
-                                                @foreach($permit['prerequisites'] as $prereq)
-                                                <span class="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
-                                                    <i class="fas fa-check-circle mr-1"></i>
-                                                    {{ $prereq }}
-                                                </span>
-                                                @endforeach
-                                            </div>
+                                <div class="flex items-start gap-2">
+                                    <i class="fas fa-arrow-left text-blue-600 dark:text-blue-400 text-xs mt-1"></i>
+                                    <div class="flex-1">
+                                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Perlu:</span>
+                                        <div class="flex flex-wrap gap-1.5 mt-1">
+                                            @foreach($permit['prerequisites'] as $prereq)
+                                            <span class="inline-flex items-center px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded">
+                                                {{ $prereq }}
+                                            </span>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
                                 @endif
 
                                 @if(!empty($permit['triggers_next']))
-                                <div>
-                                    <div class="flex items-start">
-                                        <i class="fas fa-arrow-right text-green-600 dark:text-green-400 mr-2 mt-1"></i>
-                                        <div>
-                                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Membuka Akses ke:</span>
-                                            <div class="flex flex-wrap gap-2 mt-1">
-                                                @foreach($permit['triggers_next'] as $next)
-                                                <span class="inline-flex items-center px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full">
-                                                    <i class="fas fa-unlock mr-1"></i>
-                                                    {{ $next }}
-                                                </span>
-                                                @endforeach
-                                            </div>
+                                <div class="flex items-start gap-2">
+                                    <i class="fas fa-arrow-right text-green-600 dark:text-green-400 text-xs mt-1"></i>
+                                    <div class="flex-1">
+                                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Buka akses:</span>
+                                        <div class="flex flex-wrap gap-1.5 mt-1">
+                                            @foreach($permit['triggers_next'] as $next)
+                                            <span class="inline-flex items-center px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded">
+                                                {{ $next }}
+                                            </span>
+                                            @endforeach
                                         </div>
+                                    </div>
                                     </div>
                                 </div>
                                 @endif
@@ -529,15 +518,15 @@
                             @endif
 
                             @if(!empty($permit['requirements']))
-                            <div class="mt-3">
+                            <div class="mt-2">
                                 <button 
                                     onclick="toggleRequirements('permit-{{ $loop->parent->index }}-{{ $loop->index }}')" 
-                                    class="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                                    class="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                                 >
-                                    <i class="fas fa-chevron-down mr-1" id="icon-permit-{{ $loop->parent->index }}-{{ $loop->index }}"></i>
-                                    Lihat Persyaratan ({{ count($permit['requirements']) }})
+                                    <i class="fas fa-chevron-down text-xs" id="icon-permit-{{ $loop->parent->index }}-{{ $loop->index }}"></i>
+                                    Persyaratan ({{ count($permit['requirements']) }})
                                 </button>
-                                <ul id="permit-{{ $loop->parent->index }}-{{ $loop->index }}" class="hidden mt-2 ml-4 space-y-1 text-sm text-gray-700 dark:text-gray-300 list-disc list-inside">
+                                <ul id="permit-{{ $loop->parent->index }}-{{ $loop->index }}" class="hidden mt-2 ml-4 space-y-1 text-xs text-gray-700 dark:text-gray-300 list-disc list-inside">
                                     @foreach($permit['requirements'] as $req)
                                     <li>{{ $req }}</li>
                                     @endforeach
@@ -545,21 +534,20 @@
                             </div>
                             @endif
 
-                            @if(!empty($permit['legal_basis']))
-                            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            @if(!empty($permit['legal_basis']) || !empty($permit['renewal_period']))
+                            <div class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700 space-y-1">
+                                @if(!empty($permit['legal_basis']))
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
                                     <i class="fas fa-gavel mr-1"></i>
-                                    <strong>Dasar Hukum:</strong> {{ $permit['legal_basis'] }}
+                                    <strong>Dasar:</strong> {{ $permit['legal_basis'] }}
                                 </p>
-                            </div>
-                            @endif
-
-                            @if(!empty($permit['renewal_period']))
-                            <div class="mt-2">
+                                @endif
+                                @if(!empty($permit['renewal_period']))
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
                                     <i class="fas fa-redo mr-1"></i>
                                     <strong>Perpanjangan:</strong> {{ $permit['renewal_period'] }}
                                 </p>
+                                @endif
                             </div>
                             @endif
                         </div>
@@ -570,7 +558,7 @@
         @else
             <!-- No permits found -->
             <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                <p class="text-yellow-800 dark:text-yellow-200">
+                <p class="text-yellow-800 dark:text-yellow-200 text-sm">
                     <i class="fas fa-exclamation-triangle mr-2"></i>
                     Belum ada rekomendasi izin yang tersedia untuk KBLI ini.
                 </p>
@@ -579,34 +567,34 @@
 
         <!-- Required Documents -->
         @if(!empty($recommendation->required_documents))
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-                    <i class="fas fa-folder-open mr-2 text-blue-600"></i>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-4">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-folder-open text-blue-600 text-lg"></i>
                     Dokumen yang Dibutuhkan
                 </h2>
             </div>
-            <div class="p-6">
+            <div class="p-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     @foreach($recommendation->required_documents as $doc)
-                    <div class="flex items-start p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                        <i class="fas fa-file-alt text-blue-600 dark:text-blue-400 mt-1 mr-3"></i>
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                    <div class="flex items-start p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                        <i class="fas fa-file-alt text-blue-600 dark:text-blue-400 text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-gray-900 dark:text-white text-xs mb-0.5">
                                 {{ is_array($doc) ? ($doc['name'] ?? 'Dokumen') : $doc }}
                             </h4>
                             @if(is_array($doc) && isset($doc['notes']))
-                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">{{ $doc['notes'] }}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-1 leading-relaxed">{{ $doc['notes'] }}</p>
                             @endif
                             @if(is_array($doc))
-                            <div class="flex items-center gap-2 text-xs">
+                            <div class="flex items-center gap-1.5 text-xs">
                                 @if(isset($doc['type']))
-                                <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
+                                <span class="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded text-xs">
                                     {{ ucfirst($doc['type']) }}
                                 </span>
                                 @endif
                                 @if(isset($doc['format']))
-                                <span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded">
+                                <span class="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs">
                                     {{ strtoupper($doc['format']) }}
                                 </span>
                                 @endif
@@ -622,41 +610,39 @@
 
         <!-- Timeline -->
         @if(!empty($recommendation->estimated_timeline))
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-                    <i class="fas fa-calendar-alt mr-2 text-purple-600"></i>
-                    Timeline Proses Perizinan
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-4">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-calendar-alt text-purple-600 text-lg"></i>
+                    Timeline Proses
                 </h2>
             </div>
-            <div class="p-6">
+            <div class="p-4">
                 <!-- Timeline Summary -->
-                <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 mb-6">
+                <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 mb-3">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Estimasi Waktu Total</p>
-                            <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-0.5">Estimasi Total</p>
+                            <p class="text-lg font-bold text-purple-900 dark:text-purple-100">
                                 {{ $recommendation->estimated_timeline['minimum_days'] ?? 'N/A' }} - 
                                 {{ $recommendation->estimated_timeline['maximum_days'] ?? 'N/A' }} Hari
                             </p>
                         </div>
-                        <i class="fas fa-clock text-4xl text-purple-400"></i>
+                        <i class="fas fa-clock text-3xl text-purple-400"></i>
                     </div>
                 </div>
 
                 <!-- Critical Path -->
                 @if(!empty($recommendation->estimated_timeline['critical_path']))
                 <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Jalur Kritis Perizinan:</h3>
-                    <div class="space-y-3">
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Jalur Kritis:</h3>
+                    <div class="space-y-2">
                         @foreach($recommendation->estimated_timeline['critical_path'] as $index => $step)
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0 w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-4 mt-1">
-                                <span class="text-purple-600 dark:text-purple-400 font-bold text-sm">{{ $index + 1 }}</span>
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+                                <span class="text-purple-600 dark:text-purple-400 font-bold text-xs">{{ $index + 1 }}</span>
                             </div>
-                            <div class="flex-1">
-                                <h4 class="font-medium text-gray-900 dark:text-white">{{ $step }}</h4>
-                            </div>
+                            <p class="flex-1 text-xs text-gray-900 dark:text-white">{{ $step }}</p>
                         </div>
                         @endforeach
                     </div>
@@ -667,38 +653,37 @@
         @endif
 
         <!-- Action Buttons -->
-        <div class="flex flex-wrap gap-4 justify-center">
+        <div class="flex flex-wrap gap-3 justify-center mt-6">
             <button 
                 onclick="window.print()" 
-                class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors inline-flex items-center"
+                class="px-5 py-2.5 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
             >
-                <i class="fas fa-download mr-2"></i>
+                <i class="fas fa-download"></i>
                 Download PDF
             </button>
             
             <a 
                 href="#" 
                 onclick="alert('Fitur konsultasi akan segera hadir. Silakan hubungi admin untuk bantuan.'); return false;"
-                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors inline-flex items-center"
+                class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
             >
-                <i class="fas fa-comments mr-2"></i>
-                Konsultasi dengan Ahli
+                <i class="fas fa-comments"></i>
+                Konsultasi
             </a>
             
             <a 
                 href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" 
-                class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors inline-flex items-center"
+                class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
             >
-                <i class="fas fa-paper-plane mr-2"></i>
+                <i class="fas fa-paper-plane"></i>
                 Ajukan Permohonan
             </a>
         </div>
 
         <!-- Footer Note -->
-        <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+        <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
             <i class="fas fa-info-circle mr-1"></i>
-            Rekomendasi ini dihasilkan oleh AI berdasarkan data KBLI dan regulasi terkini.
-            Untuk kepastian hukum, silakan konsultasikan dengan ahli perizinan kami.
+            Rekomendasi dihasilkan AI berdasarkan KBLI dan regulasi terkini. Konsultasikan dengan ahli untuk kepastian hukum.
         </div>
         @endif
     </div>
