@@ -15,6 +15,10 @@ class ApplicationDocument extends Model
         'file_path',
         'file_size',
         'mime_type',
+        'status',
+        'reviewed_by',
+        'reviewed_at',
+        'review_notes',
         'is_verified',
         'verified_by',
         'verified_at',
@@ -25,6 +29,7 @@ class ApplicationDocument extends Model
     protected $casts = [
         'is_verified' => 'boolean',
         'verified_at' => 'datetime',
+        'reviewed_at' => 'datetime',
         'uploaded_at' => 'datetime',
         'file_size' => 'integer',
     ];
@@ -37,6 +42,27 @@ class ApplicationDocument extends Model
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    // Scopes
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('status', 'rejected');
     }
 
     public function getFileUrlAttribute(): string
