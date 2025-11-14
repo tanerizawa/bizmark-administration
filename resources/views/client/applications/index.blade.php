@@ -86,7 +86,8 @@
                                 <!-- Permit Type -->
                                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
                                     <i class="fas fa-file-alt mr-2"></i>
-                                    <strong>Jenis Izin:</strong> {{ $application->permitType->name }}
+                                    <strong>Jenis Izin:</strong> 
+                                    {{ $application->permitType ? $application->permitType->name : ($application->form_data['permit_name'] ?? 'N/A') }}
                                 </p>
 
                                 <!-- Dates -->
