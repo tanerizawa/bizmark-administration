@@ -13,6 +13,7 @@ use App\Models\Role;
 use App\Models\SecuritySetting;
 use App\Models\TaxRate;
 use App\Models\User;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
@@ -22,6 +23,13 @@ use Illuminate\Validation\Rules\Password;
 
 class SettingsController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizePermission('settings.manage', 'Anda tidak memiliki akses ke halaman pengaturan.');
+    }
+
     /**
      * Display settings page with tabs
      */
@@ -128,67 +136,106 @@ class SettingsController extends Controller
     {
         $rule = $this->passwordRule();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'full_name' => 'nullable|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => ['required', 'confirmed', $rule],
-            'role_id' => 'required|exists:roles,id',
-            'position' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:255',
-            'notes' => 'nullable|string',
-            'avatar' => 'nullable|image|max:2048',
-        ]);
+        try {
+            $validated = $request->validate([
+                'username' => 'required|string|max:255|unique:users,username|regex:/^[a-z0-9_]+$/',
+                'full_name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'employee_id' => 'nullable|string|max:255|unique:users,employee_id',
+                'password' => ['required', 'confirmed', $rule],
+                'role_id' => 'required|exists:roles,id',
+                'position' => 'nullable|string|max:255',
+                'department' => 'nullable|string|max:255',
+                'phone' => 'nullable|string|max:255',
+                'notes' => 'nullable|string',
+                'avatar' => 'nullable|image|max:2048',
+            ]);
 
-        $validated['password'] = Hash::make($validated['password']);
-        $validated['is_active'] = true;
+            // Set 'name' from username for backward compatibility
+            $validated['name'] = $validated['username'];
+            $validated['password'] = Hash::make($validated['password']);
+            $validated['is_active'] = true;
 
-        if ($request->hasFile('avatar')) {
-            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            if ($request->hasFile('avatar')) {
+                $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            }
+
+            User::create($validated);
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'User berhasil ditambahkan']);
+            }
+
+            return redirect()->route('settings.index', ['tab' => 'users'])
+                ->with('success', 'User berhasil ditambahkan');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
         }
-
-        User::create($validated);
-
-        return redirect()->route('settings.index', ['tab' => 'users'])
-            ->with('success', 'User berhasil ditambahkan');
     }
 
     public function updateUser(Request $request, User $user)
     {
         $rule = $this->passwordRule();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'full_name' => 'nullable|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => ['nullable', 'confirmed', $rule],
-            'role_id' => 'required|exists:roles,id',
-            'position' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:255',
-            'notes' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
-            'avatar' => 'nullable|image|max:2048',
-        ]);
+        try {
+            $validated = $request->validate([
+                'username' => 'required|string|max:255|unique:users,username,' . $user->id . '|regex:/^[a-z0-9_]+$/',
+                'full_name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'employee_id' => 'nullable|string|max:255|unique:users,employee_id,' . $user->id,
+                'password' => ['nullable', 'confirmed', $rule],
+                'role_id' => 'required|exists:roles,id',
+                'position' => 'nullable|string|max:255',
+                'department' => 'nullable|string|max:255',
+                'phone' => 'nullable|string|max:255',
+                'notes' => 'nullable|string',
+                'is_active' => 'nullable|boolean',
+                'avatar' => 'nullable|image|max:2048',
+            ]);
 
-        if (!empty($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']);
-        }
+            // Update 'name' from username for backward compatibility
+            $validated['name'] = $validated['username'];
 
-        $validated['is_active'] = $request->boolean('is_active', $user->is_active);
-
-        if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+            if (!empty($validated['password'])) {
+                $validated['password'] = Hash::make($validated['password']);
+            } else {
+                unset($validated['password']);
             }
-            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+
+            $validated['is_active'] = $request->boolean('is_active', $user->is_active);
+
+            if ($request->hasFile('avatar')) {
+                if ($user->avatar) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
+                $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            }
+
+            $user->update($validated);
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'User berhasil diperbarui']);
+            }
+
+            return redirect()->route('settings.index', ['tab' => 'users'])
+                ->with('success', 'User berhasil diperbarui');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
         }
-
-        $user->update($validated);
-
-        return redirect()->route('settings.index', ['tab' => 'users'])
-            ->with('success', 'User berhasil diperbarui');
     }
 
     public function deleteUser(User $user)

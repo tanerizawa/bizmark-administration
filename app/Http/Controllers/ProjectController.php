@@ -10,10 +10,26 @@ use App\Models\PermitType;
 use App\Models\Client;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizePermissions('projects');
+        
+        // Additional authorization for custom actions
+        $this->middleware(function ($request, $next) {
+            if (!auth()->user()->can('projects.edit')) {
+                abort(403, 'Anda tidak memiliki akses untuk mengubah status proyek.');
+            }
+            return $next($request);
+        })->only(['updateStatus']);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -112,6 +128,17 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         $validated = $request->validated();
+        
+        // Auto-fill client information from Client model
+        if (isset($validated['client_id'])) {
+            $client = \App\Models\Client::find($validated['client_id']);
+            if ($client) {
+                $validated['client_name'] = $client->name;
+                $validated['client_contact'] = $client->contact_person;
+                $validated['client_address'] = $client->address;
+                $validated['client_company'] = $client->company_name;
+            }
+        }
         
         $project = Project::create($validated);
 
@@ -237,6 +264,17 @@ class ProjectController extends Controller
     {
         $validated = $request->validated();
         $oldValues = $project->toArray();
+        
+        // Auto-fill client information if client_id changed
+        if (isset($validated['client_id']) && $validated['client_id'] != $project->client_id) {
+            $client = \App\Models\Client::find($validated['client_id']);
+            if ($client) {
+                $validated['client_name'] = $client->name;
+                $validated['client_contact'] = $client->contact_person;
+                $validated['client_address'] = $client->address;
+                $validated['client_company'] = $client->company_name;
+            }
+        }
         
         $project->update($validated);
 

@@ -1,114 +1,10 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Dashboard Client - Bizmark.id</title>
-    
-    <!-- External CSS - CDN Only -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
-</head>
-<body class="bg-gray-50">
-    <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">
-        
-        <!-- Sidebar -->
-        <aside 
-            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-purple-700 to-purple-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static"
-        >
-            <!-- Logo -->
-            <div class="flex items-center justify-between h-16 px-6 border-b border-purple-600">
-                <h1 class="text-2xl font-bold">Bizmark<span class="text-yellow-300">.id</span></h1>
-                <button @click="sidebarOpen = false" class="lg:hidden text-white">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
+@extends('client.layouts.app')
 
-            <!-- User Info -->
-            <div class="p-6 border-b border-purple-600">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
-                        <i class="fas fa-user text-xl"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-semibold truncate">{{ $client->name }}</p>
-                        <p class="text-sm text-purple-200 truncate">{{ $client->email }}</p>
-                    </div>
-                </div>
-            </div>
+@section('title', 'Dashboard Client')
 
-            <!-- Navigation -->
-            <nav class="flex-1 px-4 py-6 space-y-2">
-                <a href="{{ route('client.dashboard') }}" class="flex items-center px-4 py-3 bg-purple-600 rounded-lg">
-                    <i class="fas fa-home w-5"></i>
-                    <span class="ml-3">Dashboard</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 hover:bg-purple-600 rounded-lg transition">
-                    <i class="fas fa-folder w-5"></i>
-                    <span class="ml-3">Proyek Saya</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 hover:bg-purple-600 rounded-lg transition">
-                    <i class="fas fa-file-alt w-5"></i>
-                    <span class="ml-3">Dokumen</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 hover:bg-purple-600 rounded-lg transition">
-                    <i class="fas fa-credit-card w-5"></i>
-                    <span class="ml-3">Pembayaran</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 hover:bg-purple-600 rounded-lg transition">
-                    <i class="fas fa-user-circle w-5"></i>
-                    <span class="ml-3">Profil</span>
-                </a>
-            </nav>
+@section('content')
 
-            <!-- Logout -->
-            <div class="p-4 border-t border-purple-600">
-                <form method="POST" action="{{ route('client.logout') }}">
-                    @csrf
-                    <button type="submit" class="flex items-center w-full px-4 py-3 hover:bg-purple-600 rounded-lg transition">
-                        <i class="fas fa-sign-out-alt w-5"></i>
-                        <span class="ml-3">Logout</span>
-                    </button>
-                </form>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            
-            <!-- Header -->
-            <header class="bg-white shadow-sm z-10">
-                <div class="flex items-center justify-between h-16 px-6">
-                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-600">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                    
-                    <div class="flex-1 flex items-center justify-between">
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-800">Dashboard</h2>
-                            <p class="text-sm text-gray-500">Selamat datang kembali, {{ $client->name }}!</p>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4">
-                            <button class="relative text-gray-600 hover:text-purple-600">
-                                <i class="fas fa-bell text-xl"></i>
-                                <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Content -->
-            <main class="flex-1 overflow-y-auto p-6">
-                
-                @if (session('success'))
+@if (session('success'))
                     <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
                         <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
                     </div>
@@ -181,7 +77,7 @@
                                 <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                                     <div class="flex-1">
                                         <p class="font-medium text-gray-800">{{ $project->name }}</p>
-                                        <p class="text-sm text-gray-500">{{ $project->permitType->name ?? 'N/A' }}</p>
+                                        <p class="text-sm text-gray-500">{{ $project->permitApplication->permitType->name ?? 'N/A' }}</p>
                                     </div>
                                     <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $project->status && $project->status->name === 'Selesai' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
                                         {{ $project->status->name ?? 'N/A' }}
@@ -245,35 +141,4 @@
 
                 </div>
 
-            </main>
-
-        </div>
-
-    </div>
-
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <!-- Tawk.to Live Chat Widget -->
-    <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/YOUR_PROPERTY_ID/YOUR_WIDGET_ID';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-        
-        // Set visitor info
-        Tawk_API.onLoad = function(){
-            Tawk_API.setAttributes({
-                'name' : '{{ $client->name }}',
-                'email' : '{{ $client->email }}',
-                'hash' : '{{ hash_hmac("sha256", $client->email, config("services.tawk.api_key", "")) }}'
-            }, function(error){});
-        };
-    })();
-    </script>
-</body>
-</html>
+@endsection

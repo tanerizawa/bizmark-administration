@@ -109,6 +109,23 @@
                     <div class="w-full border-t border-gray-300"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Belum punya akun?</span>
+                </div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="text-center mb-6">
+                <a href="{{ route('client.register') }}" class="text-purple-600 hover:text-purple-800 font-medium">
+                    <i class="fas fa-user-plus mr-2"></i>Daftar Sekarang
+                </a>
+            </div>
+
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
                     <span class="px-2 bg-white text-gray-500">Butuh bantuan?</span>
                 </div>
             </div>

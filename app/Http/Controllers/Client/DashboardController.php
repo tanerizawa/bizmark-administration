@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,9 +16,12 @@ class DashboardController extends Controller
     {
         $client = Auth::guard('client')->user();
         
+        // Authorize that client can view their projects
+        $this->authorize('viewAnyAsClient', [Project::class, $client]);
+        
         // Get client's projects with latest status
         $projects = $client->projects()
-            ->with(['status', 'permitType', 'tasks' => function($query) {
+            ->with(['status', 'permitApplication.permitType', 'tasks' => function($query) {
                 $query->latest()->limit(5);
             }])
             ->latest()

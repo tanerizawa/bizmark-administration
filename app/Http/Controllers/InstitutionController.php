@@ -4,11 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Institution;
 use App\Models\Project;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class InstitutionController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizePermissions('institutions');
+    }
+
     /**
      * Display a listing of the resource.
      */

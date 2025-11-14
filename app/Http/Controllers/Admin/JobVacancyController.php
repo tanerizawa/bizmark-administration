@@ -3,12 +3,20 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use App\Models\JobVacancy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class JobVacancyController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizePermission('recruitment.manage', 'Anda tidak memiliki akses untuk mengelola lowongan kerja.');
+    }
+
     /**
      * Display a listing of job vacancies (ADMIN).
      */

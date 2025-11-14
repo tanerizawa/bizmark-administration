@@ -37,9 +37,14 @@ class EmailInboxController extends Controller
             });
         }
 
-        $emails = $query->orderBy('received_at', 'desc')->paginate(25);
+        if ($request->filled('to_email')) {
+            $query->where('to_email', $request->to_email);
+        }
+
+        $emails = $query->with('emailAccount')->orderBy('received_at', 'desc')->paginate(25);
 
         $stats = [
+            'total' => EmailInbox::count(),
             'inbox' => EmailInbox::where('category', 'inbox')->count(),
             'sent' => EmailInbox::where('category', 'sent')->count(),
             'unread' => EmailInbox::where('category', 'inbox')->where('is_read', false)->count(),

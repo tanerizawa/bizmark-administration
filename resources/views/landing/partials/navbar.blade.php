@@ -22,7 +22,7 @@
             <a href="{{ $isLandingPage ? '#about' : $landingUrl . '#about' }}" class="nav-link" role="menuitem">Tentang</a>
         </div>
 
-        <div class="hidden lg:flex items-center gap-6">
+        <div class="hidden lg:flex items-center gap-4">
             <div class="text-right text-xs uppercase tracking-[0.35em] text-slate-400">
                 <span aria-label="Hotline telephone number">Hotline</span>
                 <p class="text-base font-semibold tracking-normal text-slate-900">
@@ -33,12 +33,43 @@
                     </a>
                 </p>
             </div>
-            <a href="{{ $isLandingPage ? '#contact' : $landingUrl . '#contact' }}" 
-               class="btn btn-outline" 
-               data-cta="navbar_contact"
-               aria-label="Start free consultation">
-                Konsultasi
-            </a>
+            
+            <div class="h-8 w-px bg-gray-300"></div>
+            
+            <!-- Client Portal Dropdown -->
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open" 
+                        @click.away="open = false"
+                        class="flex items-center gap-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition shadow-sm"
+                        aria-label="Client portal menu"
+                        aria-expanded="false">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Portal Klien</span>
+                    <i class="fas fa-chevron-down text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                </button>
+                
+                <div x-show="open" 
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="transform opacity-0 scale-95"
+                     x-transition:enter-end="transform opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="transform opacity-100 scale-100"
+                     x-transition:leave-end="transform opacity-0 scale-95"
+                     class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
+                     style="display: none;">
+                    <a href="{{ route('client.login') }}" 
+                       class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                        <i class="fas fa-sign-in-alt w-4 text-gray-400"></i>
+                        <span>Login</span>
+                    </a>
+                    <a href="{{ route('client.register') }}" 
+                       class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+                       data-cta="navbar_register">
+                        <i class="fas fa-user-plus w-4 text-gray-400"></i>
+                        <span>Daftar Akun Baru</span>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <div class="lg:hidden flex items-center">

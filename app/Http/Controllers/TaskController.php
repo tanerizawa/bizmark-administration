@@ -6,11 +6,27 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Institution;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizePermissions('tasks');
+        
+        // Additional authorization for custom actions
+        $this->middleware(function ($request, $next) {
+            if (!auth()->user()->can('tasks.edit')) {
+                abort(403, 'Anda tidak memiliki akses untuk mengubah tugas.');
+            }
+            return $next($request);
+        })->only(['updateStatus', 'updateAssignment', 'reorder']);
+    }
+
     /**
      * Display a listing of the resource.
      */

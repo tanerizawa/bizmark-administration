@@ -43,6 +43,12 @@ class DashboardController extends Controller
             ];
         });
 
+        \Log::info('Dashboard data loaded', [
+            'user_id' => auth()->id(),
+            'critical_alerts_count' => $data['criticalAlerts']['total_urgent'] ?? 0,
+            'data_keys' => array_keys($data)
+        ]);
+
         return view('dashboard', $data);
     }
 
@@ -348,7 +354,7 @@ class DashboardController extends Controller
             
             // Get expenses grouped by month
             $monthlyExpenses = ProjectExpense::where('expense_date', '>=', $threeMonthsAgo)
-                ->selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month, SUM(amount) as total')
+                ->selectRaw("DATE_PART('year', expense_date) as year, DATE_PART('month', expense_date) as month, SUM(amount) as total")
                 ->groupBy('year', 'month')
                 ->get();
 
@@ -358,7 +364,7 @@ class DashboardController extends Controller
             
             // If no expenses in last 3 months, use all-time average as fallback
             if ($monthsWithExpenses === 0) {
-                $allTimeExpenses = ProjectExpense::selectRaw('YEAR(expense_date) as year, MONTH(expense_date) as month, SUM(amount) as total')
+                $allTimeExpenses = ProjectExpense::selectRaw("DATE_PART('year', expense_date) as year, DATE_PART('month', expense_date) as month, SUM(amount) as total")
                     ->groupBy('year', 'month')
                     ->get();
                 $monthsWithExpenses = $allTimeExpenses->count();
@@ -609,10 +615,10 @@ class DashboardController extends Controller
 
         // Group by aging buckets
         $aging = [
-            'current' => 0,      // 0-30 days
-            '31_60' => 0,        // 31-60 days
-            '61_90' => 0,        // 61-90 days
-            'over_90' => 0,      // 90+ days
+            'under_30' => 0,      // 0-30 days
+            'days_30_60' => 0,    // 31-60 days
+            'days_60_90' => 0,    // 61-90 days
+            'over_90' => 0,       // 90+ days
         ];
 
         // Process invoice receivables
@@ -621,11 +627,11 @@ class DashboardController extends Controller
             $daysOverdue = $today->diffInDays($dueDate, false); // negative if overdue
 
             if ($daysOverdue >= 0 || abs($daysOverdue) <= 30) {
-                $aging['current'] += $invoice->remaining_amount;
+                $aging['under_30'] += $invoice->remaining_amount;
             } elseif (abs($daysOverdue) <= 60) {
-                $aging['31_60'] += $invoice->remaining_amount;
+                $aging['days_30_60'] += $invoice->remaining_amount;
             } elseif (abs($daysOverdue) <= 90) {
-                $aging['61_90'] += $invoice->remaining_amount;
+                $aging['days_60_90'] += $invoice->remaining_amount;
             } else {
                 $aging['over_90'] += $invoice->remaining_amount;
             }
@@ -633,9 +639,9 @@ class DashboardController extends Controller
 
         // Process internal receivables (kasbon)
         $internalAgingBuckets = [
-            'current' => 0,
-            '31_60' => 0,
-            '61_90' => 0,
+            'under_30' => 0,
+            'days_30_60' => 0,
+            'days_60_90' => 0,
             'over_90' => 0,
         ];
 
@@ -645,14 +651,14 @@ class DashboardController extends Controller
             $remainingAmount = $receivable->amount - $receivable->receivable_paid_amount;
 
             if ($daysOld <= 30) {
-                $aging['current'] += $remainingAmount;
-                $internalAgingBuckets['current'] += $remainingAmount;
+                $aging['under_30'] += $remainingAmount;
+                $internalAgingBuckets['under_30'] += $remainingAmount;
             } elseif ($daysOld <= 60) {
-                $aging['31_60'] += $remainingAmount;
-                $internalAgingBuckets['31_60'] += $remainingAmount;
+                $aging['days_30_60'] += $remainingAmount;
+                $internalAgingBuckets['days_30_60'] += $remainingAmount;
             } elseif ($daysOld <= 90) {
-                $aging['61_90'] += $remainingAmount;
-                $internalAgingBuckets['61_90'] += $remainingAmount;
+                $aging['days_60_90'] += $remainingAmount;
+                $internalAgingBuckets['days_60_90'] += $remainingAmount;
             } else {
                 $aging['over_90'] += $remainingAmount;
                 $internalAgingBuckets['over_90'] += $remainingAmount;
@@ -828,20 +834,28 @@ class DashboardController extends Controller
                 : 'rgba(142, 142, 147, 1)';
             
             return [
+                'label' => $statusName,
                 'status_name' => $statusName,
                 'count' => $count,
                 'color' => $color,
-                'projects' => $projects->take(3) // Show max 3 projects per status
+                'projects' => $projects->take(3)->map(function($p) {
+                    return [
+                        'id' => $p->id,
+                        'name' => $p->name,
+                        'code' => $p->project_code ?? '',
+                    ];
+                })
             ];
         })
         ->sortByDesc('count')
-        ->take(5);
+        ->take(5)
+        ->values();
         
         $totalProjects = $projects->count();
         
         return [
-            'distribution' => $distribution,
-            'total_projects' => $totalProjects
+            'groups' => $distribution,
+            'total' => $totalProjects
         ];
     }
     

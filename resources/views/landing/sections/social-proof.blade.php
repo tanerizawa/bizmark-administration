@@ -14,10 +14,10 @@
                     Dipercaya Oleh
                 </div>
                 <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
-                    Partner Strategis dari Industri Manufaktur, Infrastruktur, hingga Energi
+                    Dipercaya perusahaan manufaktur, infrastruktur, dan energi.
                 </h2>
                 <p class="text-lg text-gray-600">
-                    Lebih dari 100 organisasi mempercayakan audit izin, penyusunan AMDAL, dan pengelolaan legalitasnya kepada tim Bizmark.ID demi memastikan tata kelola yang konsisten.
+                    100+ organisasi menyerahkan audit izin, AMDAL, dan pengelolaan legalitasnya kepada tim Bizmark.ID untuk menjaga tata kelola tetap rapi.
                 </p>
             </div>
 
@@ -49,9 +49,9 @@
         <div class="space-y-14">
             <div class="text-center max-w-3xl mx-auto space-y-4" data-aos="fade-up">
                 <span class="section-label">Testimoni Klien</span>
-                <h2 class="section-title">Kisah Sukses Bersama Kami</h2>
+                <h2 class="section-title">Cerita Singkat Mitra Kami</h2>
                 <p class="section-description">
-                    Dengarkan pengalaman para pemimpin yang mempercayakan proses perizinan dan tata kelola dokumen kepada Bizmark.ID.
+                    Lihat bagaimana para pemimpin menata perizinan dan dokumen dengan dukungan Bizmark.ID.
                 </p>
             </div>
 
@@ -147,7 +147,7 @@
         {{-- Bottom Note --}}
         <div class="text-center space-y-3" data-aos="fade-up">
             <p class="text-sm uppercase tracking-[0.4em] text-gray-400">Reference Projects</p>
-            <p class="text-base text-gray-600">Kumpulan studi kasus tersedia berdasarkan NDA – hubungi tim kami untuk penjadwalan review.</p>
+            <p class="text-base text-gray-600">Studi kasus lengkap tersedia via NDA - hubungi tim kami untuk menjadwalkan review.</p>
         </div>
     </div>
 </section>

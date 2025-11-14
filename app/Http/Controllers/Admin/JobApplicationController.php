@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use App\Models\JobApplication;
 use App\Models\JobVacancy;
 use Illuminate\Http\Request;
@@ -10,6 +11,13 @@ use Illuminate\Support\Facades\Storage;
 
 class JobApplicationController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizePermission('recruitment.view', 'Anda tidak memiliki akses untuk melihat lamaran kerja.');
+    }
+
     /**
      * Display applications list with filters (ADMIN).
      */

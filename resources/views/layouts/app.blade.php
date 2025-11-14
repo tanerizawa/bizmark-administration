@@ -516,6 +516,49 @@
                         </a>
                         
                         <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
+                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Permit Management</p>
+                            
+                            <a href="{{ route('admin.permit-applications.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.permit-applications.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-file-signature w-5"></i>
+                                    <span class="ml-3">Permohonan Izin</span>
+                                </div>
+                                @php
+                                    $submittedCount = \App\Models\PermitApplication::where('status', 'submitted')->count();
+                                    $underReviewCount = \App\Models\PermitApplication::where('status', 'under_review')->count();
+                                    $totalPending = $submittedCount + $underReviewCount;
+                                @endphp
+                                @if($totalPending > 0)
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.permit-applications.*') ? 'bg-white text-apple-blue' : 'bg-yellow-500 text-white' }}">
+                                        {{ $totalPending }}
+                                    </span>
+                                @endif
+                            </a>
+                            
+                            <a href="{{ route('permit-types.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('permit-types.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-certificate w-5"></i>
+                                    <span class="ml-3">Jenis Izin</span>
+                                </div>
+                            </a>
+                            
+                            <a href="{{ route('admin.payments.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.payments.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-money-check-alt w-5"></i>
+                                    <span class="ml-3">Verifikasi Pembayaran</span>
+                                </div>
+                                @php
+                                    $pendingPayments = \App\Models\Payment::where('payment_method', 'manual')->where('status', 'processing')->count();
+                                @endphp
+                                @if($pendingPayments > 0)
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.payments.*') ? 'bg-white text-apple-blue' : 'bg-green-500 text-white' }}">
+                                        {{ $pendingPayments }}
+                                    </span>
+                                @endif
+                            </a>
+                        </div>
+                        
+                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
                             <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Recruitment</p>
                             
                             <a href="{{ route('admin.jobs.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.jobs.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
@@ -531,11 +574,11 @@
                                     <span class="ml-3">Lamaran Masuk</span>
                                 </div>
                                 @php
-                                    $pendingCount = \App\Models\JobApplication::where('status', 'pending')->count();
+                                    $pendingJobApps = \App\Models\JobApplication::where('status', 'pending')->count();
                                 @endphp
-                                @if($pendingCount > 0)
+                                @if($pendingJobApps > 0)
                                     <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.applications.*') ? 'bg-white text-apple-blue' : 'bg-red-500 text-white' }}">
-                                        {{ $pendingCount }}
+                                        {{ $pendingJobApps }}
                                     </span>
                                 @endif
                             </a>

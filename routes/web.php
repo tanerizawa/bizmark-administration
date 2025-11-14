@@ -88,67 +88,87 @@ Route::middleware(['auth'])->group(function () {
     })->name('home');
 
     // Export Routes
-    Route::get('export/projects', [ExportController::class, 'exportProjects'])->name('export.projects');
-    Route::get('export/projects/{id}/details', [ExportController::class, 'exportProjectDetails'])->name('export.project.details');
+    Route::middleware('permission:projects.view')->group(function () {
+        Route::get('export/projects', [ExportController::class, 'exportProjects'])->name('export.projects');
+        Route::get('export/projects/{id}/details', [ExportController::class, 'exportProjectDetails'])->name('export.project.details');
+    });
 
     // Project Management Routes
-    Route::resource('projects', ProjectController::class);
-    Route::patch('projects/{project}/status', [ProjectController::class, 'updateStatus'])->name('projects.update-status');
+    Route::middleware('permission:projects.view')->group(function () {
+        Route::resource('projects', ProjectController::class);
+        Route::patch('projects/{project}/status', [ProjectController::class, 'updateStatus'])->name('projects.update-status');
+    });
 
     // Task Management Routes
-    Route::resource('tasks', TaskController::class);
-    Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
-    Route::patch('tasks/{task}/assignment', [TaskController::class, 'updateAssignment'])->name('tasks.update-assignment');
-    Route::patch('projects/{project}/tasks/reorder', [TaskController::class, 'reorder'])->name('projects.tasks.reorder');
+    Route::middleware('permission:tasks.view')->group(function () {
+        Route::resource('tasks', TaskController::class);
+        Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
+        Route::patch('tasks/{task}/assignment', [TaskController::class, 'updateAssignment'])->name('tasks.update-assignment');
+        Route::patch('projects/{project}/tasks/reorder', [TaskController::class, 'reorder'])->name('projects.tasks.reorder');
+    });
 
     // Document Management Routes
-    Route::resource('documents', DocumentController::class);
-    Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
-    Route::get('api/tasks-by-project', [DocumentController::class, 'getTasksByProject'])->name('api.tasks-by-project');
+    Route::middleware('permission:documents.view')->group(function () {
+        Route::resource('documents', DocumentController::class);
+        Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+        Route::get('api/tasks-by-project', [DocumentController::class, 'getTasksByProject'])->name('api.tasks-by-project');
+    });
 
     // Institution Management Routes
-    Route::resource('institutions', InstitutionController::class);
-    Route::get('api/institutions', [InstitutionController::class, 'apiIndex'])->name('api.institutions');
+    Route::middleware('permission:institutions.view')->group(function () {
+        Route::resource('institutions', InstitutionController::class);
+        Route::get('api/institutions', [InstitutionController::class, 'apiIndex'])->name('api.institutions');
+    });
 
     // Client Management Routes
-    Route::resource('clients', App\Http\Controllers\ClientController::class);
-    Route::get('api/clients', [App\Http\Controllers\ClientController::class, 'apiIndex'])->name('api.clients');
+    Route::middleware('permission:clients.view')->group(function () {
+        Route::resource('clients', App\Http\Controllers\ClientController::class);
+        Route::get('api/clients', [App\Http\Controllers\ClientController::class, 'apiIndex'])->name('api.clients');
+    });
 
     // Financial Management Routes (Phase 1)
-    Route::post('projects/{project}/payments', [ProjectPaymentController::class, 'store'])->name('projects.payments.store');
-    Route::delete('payments/{payment}', [ProjectPaymentController::class, 'destroy'])->name('payments.destroy');
-    Route::post('projects/{project}/expenses', [ProjectExpenseController::class, 'store'])->name('projects.expenses.store');
-    Route::delete('expenses/{expense}', [ProjectExpenseController::class, 'destroy'])->name('expenses.destroy');
-    Route::resource('cash-accounts', CashAccountController::class);
-    
-    // API endpoint for active cash accounts
-    Route::get('api/cash-accounts/active', [CashAccountController::class, 'getActiveCashAccounts'])->name('api.cash-accounts.active');
+    Route::middleware('permission:finances.view')->group(function () {
+        Route::post('projects/{project}/payments', [ProjectPaymentController::class, 'store'])->name('projects.payments.store');
+        Route::delete('payments/{payment}', [ProjectPaymentController::class, 'destroy'])->name('payments.destroy');
+        Route::post('projects/{project}/expenses', [ProjectExpenseController::class, 'store'])->name('projects.expenses.store');
+        Route::delete('expenses/{expense}', [ProjectExpenseController::class, 'destroy'])->name('expenses.destroy');
+        Route::resource('cash-accounts', CashAccountController::class);
+        
+        // API endpoint for active cash accounts
+        Route::get('api/cash-accounts/active', [CashAccountController::class, 'getActiveCashAccounts'])->name('api.cash-accounts.active');
 
-    // Bank Reconciliation Routes (Phase 1B)
-    Route::resource('reconciliations', BankReconciliationController::class);
-    Route::get('reconciliations/{reconciliation}/match', [BankReconciliationController::class, 'match'])->name('reconciliations.match');
-    Route::post('reconciliations/{reconciliation}/auto-match', [BankReconciliationController::class, 'autoMatch'])->name('reconciliations.auto-match');
-    Route::post('reconciliations/{reconciliation}/manual-match', [BankReconciliationController::class, 'manualMatch'])->name('reconciliations.manual-match');
-    Route::post('reconciliations/{reconciliation}/unmatch', [BankReconciliationController::class, 'unmatch'])->name('reconciliations.unmatch');
-    Route::post('reconciliations/{reconciliation}/complete', [BankReconciliationController::class, 'complete'])->name('reconciliations.complete');
+        // Bank Reconciliation Routes (Phase 1B)
+        Route::resource('reconciliations', BankReconciliationController::class);
+        Route::get('reconciliations/{reconciliation}/match', [BankReconciliationController::class, 'match'])->name('reconciliations.match');
+        Route::post('reconciliations/{reconciliation}/auto-match', [BankReconciliationController::class, 'autoMatch'])->name('reconciliations.auto-match');
+        Route::post('reconciliations/{reconciliation}/manual-match', [BankReconciliationController::class, 'manualMatch'])->name('reconciliations.manual-match');
+        Route::post('reconciliations/{reconciliation}/unmatch', [BankReconciliationController::class, 'unmatch'])->name('reconciliations.unmatch');
+        Route::post('reconciliations/{reconciliation}/complete', [BankReconciliationController::class, 'complete'])->name('reconciliations.complete');
+    });
 
     // Article Management Routes
-    Route::resource('articles', ArticleController::class);
-    Route::post('articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
-    Route::post('articles/{article}/unpublish', [ArticleController::class, 'unpublish'])->name('articles.unpublish');
-    Route::post('articles/{article}/archive', [ArticleController::class, 'archive'])->name('articles.archive');
-    Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])->name('articles.upload-image');
+    Route::middleware('permission:content.manage')->group(function () {
+        Route::resource('articles', ArticleController::class);
+        Route::post('articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
+        Route::post('articles/{article}/unpublish', [ArticleController::class, 'unpublish'])->name('articles.unpublish');
+        Route::post('articles/{article}/archive', [ArticleController::class, 'archive'])->name('articles.archive');
+        Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])->name('articles.upload-image');
+    });
 
     // Master Data - Permit Management Routes (Phase 2A)
-    Route::resource('permit-types', PermitTypeController::class);
-    Route::patch('permit-types/{permitType}/toggle-status', [PermitTypeController::class, 'toggleStatus'])->name('permit-types.toggle-status');
+    Route::middleware('permission:master_data.manage')->group(function () {
+        Route::resource('permit-types', PermitTypeController::class);
+        Route::patch('permit-types/{permitType}/toggle-status', [PermitTypeController::class, 'toggleStatus'])->name('permit-types.toggle-status');
 
-    Route::resource('permit-templates', PermitTemplateController::class);
-    Route::post('permit-templates/{permitTemplate}/apply', [PermitTemplateController::class, 'applyToProject'])->name('permit-templates.apply');
+        Route::resource('permit-templates', PermitTemplateController::class);
+        Route::post('permit-templates/{permitTemplate}/apply', [PermitTemplateController::class, 'applyToProject'])->name('permit-templates.apply');
+    });
 
     // Project Permit Management Routes (Phase 2A - Sprint 3)
-    // Individual permit status update (used by permits tab)
-    Route::patch('permits/{permit}/status', [ProjectPermitController::class, 'updateStatus'])->name('permits.update-status');
+    Route::middleware('permission:projects.view')->group(function () {
+        // Individual permit status update (used by permits tab)
+        Route::patch('permits/{permit}/status', [ProjectPermitController::class, 'updateStatus'])->name('permits.update-status');
+    });
     
     // Note: These routes are legacy and might overlap with PermitController routes below
     // Route::post('projects/{project}/permits', [ProjectPermitController::class, 'store'])->name('projects.permits.store');
@@ -159,86 +179,94 @@ Route::middleware(['auth'])->group(function () {
     // Route::delete('permits/{permit}', [ProjectPermitController::class, 'destroy'])->name('permits.destroy');
 
     // Financial Tab Management Routes (Phase 2A - Sprint 6)
-    Route::get('projects/{project}/financial', [FinancialController::class, 'index'])->name('projects.financial');
-    Route::post('projects/{project}/invoices', [FinancialController::class, 'storeInvoice'])->name('projects.invoices.store');
-    Route::get('invoices/{invoice}', [FinancialController::class, 'showInvoice'])->name('invoices.show');
-    Route::get('invoices/{invoice}/pdf', [FinancialController::class, 'downloadInvoicePDF'])->name('invoices.download-pdf');
-    Route::patch('invoices/{invoice}/status', [FinancialController::class, 'updateInvoiceStatus'])->name('invoices.update-status');
-    Route::post('invoices/{invoice}/payment', [FinancialController::class, 'recordPayment'])->name('invoices.record-payment');
-    Route::delete('invoices/{invoice}', [FinancialController::class, 'destroyInvoice'])->name('invoices.destroy');
-    Route::post('projects/{project}/payment-schedules', [FinancialController::class, 'storePaymentSchedule'])->name('projects.payment-schedules.store');
-    Route::patch('payment-schedules/{schedule}/paid', [FinancialController::class, 'markSchedulePaid'])->name('payment-schedules.mark-paid');
-    Route::delete('payment-schedules/{schedule}', [FinancialController::class, 'destroySchedule'])->name('payment-schedules.destroy');
-    Route::post('projects/{project}/financial-expenses', [FinancialController::class, 'storeExpense'])->name('projects.financial-expenses.store');
-    Route::get('financial-expenses/{expense}', [FinancialController::class, 'getExpense'])->name('financial-expenses.show');
-    Route::patch('financial-expenses/{expense}', [FinancialController::class, 'updateExpense'])->name('financial-expenses.update');
-    Route::delete('financial-expenses/{expense}', [FinancialController::class, 'destroyExpense'])->name('financial-expenses.destroy');
-    Route::delete('financial-expenses/{expense}/delete-receipt', [FinancialController::class, 'deleteReceipt'])->name('financial-expenses.delete-receipt');
-    Route::patch('financial-expenses/{expense}/mark-invoiced', [FinancialController::class, 'markExpenseInvoiced'])->name('financial-expenses.mark-invoiced');
-    Route::patch('financial-expenses/{expense}/record-payment', [FinancialController::class, 'recordReceivablePayment'])->name('financial-expenses.record-payment');
-    Route::patch('financial-expenses/{expense}/remove-receivable', [FinancialController::class, 'removeReceivable'])->name('financial-expenses.remove-receivable');
+    Route::middleware('permission:invoices.view')->group(function () {
+        Route::get('projects/{project}/financial', [FinancialController::class, 'index'])->name('projects.financial');
+        Route::post('projects/{project}/invoices', [FinancialController::class, 'storeInvoice'])->name('projects.invoices.store');
+        Route::get('invoices/{invoice}', [FinancialController::class, 'showInvoice'])->name('invoices.show');
+        Route::get('invoices/{invoice}/pdf', [FinancialController::class, 'downloadInvoicePDF'])->name('invoices.download-pdf');
+        Route::patch('invoices/{invoice}/status', [FinancialController::class, 'updateInvoiceStatus'])->name('invoices.update-status');
+        Route::post('invoices/{invoice}/payment', [FinancialController::class, 'recordPayment'])->name('invoices.record-payment');
+        Route::delete('invoices/{invoice}', [FinancialController::class, 'destroyInvoice'])->name('invoices.destroy');
+        Route::post('projects/{project}/payment-schedules', [FinancialController::class, 'storePaymentSchedule'])->name('projects.payment-schedules.store');
+        Route::patch('payment-schedules/{schedule}/paid', [FinancialController::class, 'markSchedulePaid'])->name('payment-schedules.mark-paid');
+        Route::delete('payment-schedules/{schedule}', [FinancialController::class, 'destroySchedule'])->name('payment-schedules.destroy');
+        Route::post('projects/{project}/financial-expenses', [FinancialController::class, 'storeExpense'])->name('projects.financial-expenses.store');
+        Route::get('financial-expenses/{expense}', [FinancialController::class, 'getExpense'])->name('financial-expenses.show');
+        Route::patch('financial-expenses/{expense}', [FinancialController::class, 'updateExpense'])->name('financial-expenses.update');
+        Route::delete('financial-expenses/{expense}', [FinancialController::class, 'destroyExpense'])->name('financial-expenses.destroy');
+        Route::delete('financial-expenses/{expense}/delete-receipt', [FinancialController::class, 'deleteReceipt'])->name('financial-expenses.delete-receipt');
+        Route::patch('financial-expenses/{expense}/mark-invoiced', [FinancialController::class, 'markExpenseInvoiced'])->name('financial-expenses.mark-invoiced');
+        Route::patch('financial-expenses/{expense}/record-payment', [FinancialController::class, 'recordReceivablePayment'])->name('financial-expenses.record-payment');
+        Route::patch('financial-expenses/{expense}/remove-receivable', [FinancialController::class, 'removeReceivable'])->name('financial-expenses.remove-receivable');
+    });
 
     // Excel Export Routes (Phase 2A - Sprint 7)
-    Route::get('exports/invoices', [FinancialController::class, 'exportInvoices'])->name('exports.invoices');
-    Route::get('exports/invoices/{invoice}', [FinancialController::class, 'exportInvoiceDetail'])->name('exports.invoice-detail');
-    Route::get('exports/expenses', [FinancialController::class, 'exportExpenses'])->name('exports.expenses');
-    Route::get('exports/financial-report', [FinancialController::class, 'exportFinancialReport'])->name('exports.financial-report');
+    Route::middleware('permission:invoices.view')->group(function () {
+        Route::get('exports/invoices', [FinancialController::class, 'exportInvoices'])->name('exports.invoices');
+        Route::get('exports/invoices/{invoice}', [FinancialController::class, 'exportInvoiceDetail'])->name('exports.invoice-detail');
+        Route::get('exports/expenses', [FinancialController::class, 'exportExpenses'])->name('exports.expenses');
+        Route::get('exports/financial-report', [FinancialController::class, 'exportFinancialReport'])->name('exports.financial-report');
+    });
 
     // Permit Management Routes (Phase 2A - Sprint 8)
-    Route::get('projects/{project}/permits', [PermitController::class, 'index'])->name('projects.permits');
-    Route::post('projects/{project}/permits', [PermitController::class, 'store'])->name('projects.permits.store');
-    Route::patch('permits/{permit}', [PermitController::class, 'update'])->name('permits.update');
-    Route::delete('permits/{permit}', [PermitController::class, 'destroy'])->name('permits.destroy');
-    Route::post('projects/{project}/permits/apply-template', [PermitController::class, 'applyTemplate'])->name('projects.permits.apply-template');
-    Route::post('permits/{permit}/dependencies', [PermitController::class, 'addDependency'])->name('permits.add-dependency');
-    Route::post('projects/{project}/permits/reorder', [PermitController::class, 'reorder'])->name('projects.permits.reorder');
-    // Bulk operations
-    Route::post('projects/{project}/permits/bulk-update-status', [PermitController::class, 'bulkUpdateStatus'])->name('projects.permits.bulk-update-status');
-    Route::post('projects/{project}/permits/bulk-delete', [PermitController::class, 'bulkDelete'])->name('projects.permits.bulk-delete');
-    // Document management
-    Route::post('projects/{project}/permits/{permit}/documents/upload', [PermitController::class, 'uploadDocument'])->name('permits.documents.upload');
-    Route::get('projects/{project}/permits/documents/{document}/download', [PermitController::class, 'downloadDocument'])->name('permits.documents.download');
-    Route::delete('projects/{project}/permits/documents/{document}', [PermitController::class, 'deleteDocument'])->name('permits.documents.delete');
-    Route::post('permits/documents/{document}/delete', [PermitController::class, 'deleteDocumentPost'])->name('permits.documents.delete-post');
+    Route::middleware('permission:projects.view')->group(function () {
+        Route::get('projects/{project}/permits', [PermitController::class, 'index'])->name('projects.permits');
+        Route::post('projects/{project}/permits', [PermitController::class, 'store'])->name('projects.permits.store');
+        Route::patch('permits/{permit}', [PermitController::class, 'update'])->name('permits.update');
+        Route::delete('permits/{permit}', [PermitController::class, 'destroy'])->name('permits.destroy');
+        Route::post('projects/{project}/permits/apply-template', [PermitController::class, 'applyTemplate'])->name('projects.permits.apply-template');
+        Route::post('permits/{permit}/dependencies', [PermitController::class, 'addDependency'])->name('permits.add-dependency');
+        Route::post('projects/{project}/permits/reorder', [PermitController::class, 'reorder'])->name('projects.permits.reorder');
+        // Bulk operations
+        Route::post('projects/{project}/permits/bulk-update-status', [PermitController::class, 'bulkUpdateStatus'])->name('projects.permits.bulk-update-status');
+        Route::post('projects/{project}/permits/bulk-delete', [PermitController::class, 'bulkDelete'])->name('projects.permits.bulk-delete');
+        // Document management
+        Route::post('projects/{project}/permits/{permit}/documents/upload', [PermitController::class, 'uploadDocument'])->name('permits.documents.upload');
+        Route::get('projects/{project}/permits/documents/{document}/download', [PermitController::class, 'downloadDocument'])->name('permits.documents.download');
+        Route::delete('projects/{project}/permits/documents/{document}', [PermitController::class, 'deleteDocument'])->name('permits.documents.delete');
+        Route::post('permits/documents/{document}/delete', [PermitController::class, 'deleteDocumentPost'])->name('permits.documents.delete-post');
+    });
 
     // Settings Management Routes (Phase 2A - Sprint 9)
-    Route::get('settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
-    Route::put('settings/general', [App\Http\Controllers\SettingsController::class, 'updateGeneral'])->name('settings.general.update');
-    
-    // User Management
-    Route::post('settings/users', [App\Http\Controllers\SettingsController::class, 'storeUser'])->name('settings.users.store');
-    Route::put('settings/users/{user}', [App\Http\Controllers\SettingsController::class, 'updateUser'])->name('settings.users.update');
-    Route::delete('settings/users/{user}', [App\Http\Controllers\SettingsController::class, 'deleteUser'])->name('settings.users.delete');
-    Route::patch('settings/users/{user}/toggle-status', [App\Http\Controllers\SettingsController::class, 'toggleUserStatus'])->name('settings.users.toggle-status');
+    Route::middleware('permission:settings.manage')->group(function () {
+        Route::get('settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+        Route::put('settings/general', [App\Http\Controllers\SettingsController::class, 'updateGeneral'])->name('settings.general.update');
+        
+        // User Management
+        Route::post('settings/users', [App\Http\Controllers\SettingsController::class, 'storeUser'])->name('settings.users.store');
+        Route::put('settings/users/{user}', [App\Http\Controllers\SettingsController::class, 'updateUser'])->name('settings.users.update');
+        Route::delete('settings/users/{user}', [App\Http\Controllers\SettingsController::class, 'deleteUser'])->name('settings.users.delete');
+        Route::patch('settings/users/{user}/toggle-status', [App\Http\Controllers\SettingsController::class, 'toggleUserStatus'])->name('settings.users.toggle-status');
 
-    // Role Management
-    Route::post('settings/roles', [App\Http\Controllers\SettingsController::class, 'storeRole'])->name('settings.roles.store');
-    Route::put('settings/roles/{role}', [App\Http\Controllers\SettingsController::class, 'updateRole'])->name('settings.roles.update');
-    Route::delete('settings/roles/{role}', [App\Http\Controllers\SettingsController::class, 'deleteRole'])->name('settings.roles.delete');
+        // Role Management
+        Route::post('settings/roles', [App\Http\Controllers\SettingsController::class, 'storeRole'])->name('settings.roles.store');
+        Route::put('settings/roles/{role}', [App\Http\Controllers\SettingsController::class, 'updateRole'])->name('settings.roles.update');
+        Route::delete('settings/roles/{role}', [App\Http\Controllers\SettingsController::class, 'deleteRole'])->name('settings.roles.delete');
 
-    // Financial Settings
-    Route::post('settings/financial/expense-categories', [App\Http\Controllers\SettingsController::class, 'storeExpenseCategory'])->name('settings.financial.expense-categories.store');
-    Route::put('settings/financial/expense-categories/{expenseCategory}', [App\Http\Controllers\SettingsController::class, 'updateExpenseCategory'])->name('settings.financial.expense-categories.update');
-    Route::delete('settings/financial/expense-categories/{expenseCategory}', [App\Http\Controllers\SettingsController::class, 'deleteExpenseCategory'])->name('settings.financial.expense-categories.delete');
+        // Financial Settings
+        Route::post('settings/financial/expense-categories', [App\Http\Controllers\SettingsController::class, 'storeExpenseCategory'])->name('settings.financial.expense-categories.store');
+        Route::put('settings/financial/expense-categories/{expenseCategory}', [App\Http\Controllers\SettingsController::class, 'updateExpenseCategory'])->name('settings.financial.expense-categories.update');
+        Route::delete('settings/financial/expense-categories/{expenseCategory}', [App\Http\Controllers\SettingsController::class, 'deleteExpenseCategory'])->name('settings.financial.expense-categories.delete');
 
-    Route::post('settings/financial/payment-methods', [App\Http\Controllers\SettingsController::class, 'storePaymentMethod'])->name('settings.financial.payment-methods.store');
-    Route::put('settings/financial/payment-methods/{paymentMethod}', [App\Http\Controllers\SettingsController::class, 'updatePaymentMethod'])->name('settings.financial.payment-methods.update');
-    Route::delete('settings/financial/payment-methods/{paymentMethod}', [App\Http\Controllers\SettingsController::class, 'deletePaymentMethod'])->name('settings.financial.payment-methods.delete');
+        Route::post('settings/financial/payment-methods', [App\Http\Controllers\SettingsController::class, 'storePaymentMethod'])->name('settings.financial.payment-methods.store');
+        Route::put('settings/financial/payment-methods/{paymentMethod}', [App\Http\Controllers\SettingsController::class, 'updatePaymentMethod'])->name('settings.financial.payment-methods.update');
+        Route::delete('settings/financial/payment-methods/{paymentMethod}', [App\Http\Controllers\SettingsController::class, 'deletePaymentMethod'])->name('settings.financial.payment-methods.delete');
 
-    Route::post('settings/financial/tax-rates', [App\Http\Controllers\SettingsController::class, 'storeTaxRate'])->name('settings.financial.tax-rates.store');
-    Route::put('settings/financial/tax-rates/{taxRate}', [App\Http\Controllers\SettingsController::class, 'updateTaxRate'])->name('settings.financial.tax-rates.update');
-    Route::delete('settings/financial/tax-rates/{taxRate}', [App\Http\Controllers\SettingsController::class, 'deleteTaxRate'])->name('settings.financial.tax-rates.delete');
+        Route::post('settings/financial/tax-rates', [App\Http\Controllers\SettingsController::class, 'storeTaxRate'])->name('settings.financial.tax-rates.store');
+        Route::put('settings/financial/tax-rates/{taxRate}', [App\Http\Controllers\SettingsController::class, 'updateTaxRate'])->name('settings.financial.tax-rates.update');
+        Route::delete('settings/financial/tax-rates/{taxRate}', [App\Http\Controllers\SettingsController::class, 'deleteTaxRate'])->name('settings.financial.tax-rates.delete');
 
-    // Project Settings
-    Route::post('settings/project/statuses', [App\Http\Controllers\SettingsController::class, 'storeProjectStatus'])->name('settings.project.statuses.store');
-    Route::put('settings/project/statuses/{projectStatus}', [App\Http\Controllers\SettingsController::class, 'updateProjectStatus'])->name('settings.project.statuses.update');
-    Route::delete('settings/project/statuses/{projectStatus}', [App\Http\Controllers\SettingsController::class, 'deleteProjectStatus'])->name('settings.project.statuses.delete');
+        // Project Settings
+        Route::post('settings/project/statuses', [App\Http\Controllers\SettingsController::class, 'storeProjectStatus'])->name('settings.project.statuses.store');
+        Route::put('settings/project/statuses/{projectStatus}', [App\Http\Controllers\SettingsController::class, 'updateProjectStatus'])->name('settings.project.statuses.update');
+        Route::delete('settings/project/statuses/{projectStatus}', [App\Http\Controllers\SettingsController::class, 'deleteProjectStatus'])->name('settings.project.statuses.delete');
 
-    // Security Settings
-    Route::put('settings/security', [App\Http\Controllers\SettingsController::class, 'updateSecurity'])->name('settings.security.update');
+        // Security Settings
+        Route::put('settings/security', [App\Http\Controllers\SettingsController::class, 'updateSecurity'])->name('settings.security.update');
+    });
 
     // Career Management Routes (Admin)
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('permission:recruitment.view')->group(function () {
         // Job Vacancy Management
         Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class);
         
@@ -249,8 +277,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('applications/{id}/download-cv', [App\Http\Controllers\Admin\JobApplicationController::class, 'downloadCv'])->name('applications.download-cv');
         Route::get('applications/{id}/download-portfolio', [App\Http\Controllers\Admin\JobApplicationController::class, 'downloadPortfolio'])->name('applications.download-portfolio');
         Route::delete('applications/{id}', [App\Http\Controllers\Admin\JobApplicationController::class, 'destroy'])->name('applications.destroy');
-        
-        // Email Management Routes
+    });
+    
+    // Email Management Routes
+    Route::prefix('admin')->name('admin.')->middleware('permission:email.manage')->group(function () {
         // Email Campaigns
         Route::resource('campaigns', App\Http\Controllers\Admin\EmailCampaignController::class);
         Route::get('campaigns/{id}/send', [App\Http\Controllers\Admin\EmailCampaignController::class, 'send'])->name('campaigns.send');
@@ -283,33 +313,35 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // AI Document Paraphrasing Routes
-    Route::prefix('projects/{project}/ai')->name('ai.')->group(function () {
-        // Paraphrase form and processing
-        Route::get('paraphrase', [App\Http\Controllers\AI\DocumentAIController::class, 'create'])->name('paraphrase.create');
-        Route::post('paraphrase', [App\Http\Controllers\AI\DocumentAIController::class, 'store'])->name('paraphrase.store');
-        
-        // Draft management
-        Route::get('drafts', [App\Http\Controllers\AI\DocumentAIController::class, 'index'])->name('drafts.index');
-        Route::get('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'show'])->name('drafts.show');
-        Route::put('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'update'])->name('drafts.update');
-        
-        // Draft actions
-        Route::post('drafts/{draft}/approve', [App\Http\Controllers\AI\DocumentAIController::class, 'approve'])->name('drafts.approve');
-        Route::post('drafts/{draft}/reject', [App\Http\Controllers\AI\DocumentAIController::class, 'reject'])->name('drafts.reject');
-        Route::delete('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'destroy'])->name('drafts.destroy');
-        Route::get('drafts/{draft}/export', [App\Http\Controllers\AI\DocumentAIController::class, 'export'])->name('drafts.export');
-        
-        // Compliance check routes
-        Route::post('drafts/{draft}/check-compliance', [App\Http\Controllers\AI\DocumentAIController::class, 'checkCompliance'])->name('drafts.check-compliance');
-        Route::get('drafts/{draft}/compliance-results', [App\Http\Controllers\AI\DocumentAIController::class, 'getComplianceResults'])->name('drafts.compliance-results');
-        Route::get('drafts/{draft}/compliance-report', [App\Http\Controllers\AI\DocumentAIController::class, 'exportComplianceReport'])->name('drafts.compliance-report');
-        
-        // Processing status (AJAX)
-        Route::get('status', [App\Http\Controllers\AI\DocumentAIController::class, 'status'])->name('status');
-    });
+    Route::middleware('permission:documents.view')->group(function () {
+        Route::prefix('projects/{project}/ai')->name('ai.')->group(function () {
+            // Paraphrase form and processing
+            Route::get('paraphrase', [App\Http\Controllers\AI\DocumentAIController::class, 'create'])->name('paraphrase.create');
+            Route::post('paraphrase', [App\Http\Controllers\AI\DocumentAIController::class, 'store'])->name('paraphrase.store');
+            
+            // Draft management
+            Route::get('drafts', [App\Http\Controllers\AI\DocumentAIController::class, 'index'])->name('drafts.index');
+            Route::get('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'show'])->name('drafts.show');
+            Route::put('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'update'])->name('drafts.update');
+            
+            // Draft actions
+            Route::post('drafts/{draft}/approve', [App\Http\Controllers\AI\DocumentAIController::class, 'approve'])->name('drafts.approve');
+            Route::post('drafts/{draft}/reject', [App\Http\Controllers\AI\DocumentAIController::class, 'reject'])->name('drafts.reject');
+            Route::delete('drafts/{draft}', [App\Http\Controllers\AI\DocumentAIController::class, 'destroy'])->name('drafts.destroy');
+            Route::get('drafts/{draft}/export', [App\Http\Controllers\AI\DocumentAIController::class, 'export'])->name('drafts.export');
+            
+            // Compliance check routes
+            Route::post('drafts/{draft}/check-compliance', [App\Http\Controllers\AI\DocumentAIController::class, 'checkCompliance'])->name('drafts.check-compliance');
+            Route::get('drafts/{draft}/compliance-results', [App\Http\Controllers\AI\DocumentAIController::class, 'getComplianceResults'])->name('drafts.compliance-results');
+            Route::get('drafts/{draft}/compliance-report', [App\Http\Controllers\AI\DocumentAIController::class, 'exportComplianceReport'])->name('drafts.compliance-report');
+            
+            // Processing status (AJAX)
+            Route::get('status', [App\Http\Controllers\AI\DocumentAIController::class, 'status'])->name('status');
+        });
 
-    // Template upload (admin only)
-    Route::post('ai/templates/upload', [App\Http\Controllers\AI\DocumentAIController::class, 'uploadTemplate'])->name('ai.templates.upload');
+        // Template upload (admin only)
+        Route::post('ai/templates/upload', [App\Http\Controllers\AI\DocumentAIController::class, 'uploadTemplate'])->name('ai.templates.upload');
+    });
 });
 
 // Client Portal Routes
@@ -317,18 +349,174 @@ Route::prefix('client')->name('client.')->group(function () {
     // Guest routes (login, register, password reset)
     Route::middleware('guest:client')->group(function () {
         Route::get('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'showLoginForm'])->name('login');
-        Route::post('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'login']);
+        Route::post('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'login'])
+            ->middleware('throttle:5,1'); // Max 5 attempts per minute
+        
+        Route::get('/register', [App\Http\Controllers\Auth\ClientAuthController::class, 'showRegistrationForm'])->name('register');
+        Route::post('/register', [App\Http\Controllers\Auth\ClientAuthController::class, 'register'])
+            ->middleware('throttle:3,1'); // Max 3 registrations per minute
         
         Route::get('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'showForgotPasswordForm'])->name('password.request');
-        Route::post('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'sendResetLinkEmail'])->name('password.email');
+        Route::post('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'sendResetLinkEmail'])
+            ->middleware('throttle:3,1') // Max 3 attempts per minute
+            ->name('password.email');
         
         Route::get('/reset-password/{token}', [App\Http\Controllers\Auth\ClientAuthController::class, 'showResetPasswordForm'])->name('password.reset');
-        Route::post('/reset-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'resetPassword'])->name('password.update');
+        Route::post('/reset-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'resetPassword'])
+            ->middleware('throttle:3,1') // Max 3 attempts per minute
+            ->name('password.update');
     });
     
     // Protected routes (requires authentication)
     Route::middleware('auth:client')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Client\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [App\Http\Controllers\Auth\ClientAuthController::class, 'logout'])->name('logout');
+        
+        // Service Catalog Routes
+        Route::get('/services', [App\Http\Controllers\Client\ServiceController::class, 'index'])->name('services.index');
+        Route::get('/services/{code}', [App\Http\Controllers\Client\ServiceController::class, 'show'])->name('services.show');
+        
+        // Application Routes
+        Route::get('/applications', [App\Http\Controllers\Client\ApplicationController::class, 'index'])->name('applications.index');
+        Route::get('/applications/create', [App\Http\Controllers\Client\ApplicationController::class, 'create'])->name('applications.create');
+        Route::post('/applications', [App\Http\Controllers\Client\ApplicationController::class, 'store'])->name('applications.store');
+        Route::get('/applications/{id}', [App\Http\Controllers\Client\ApplicationController::class, 'show'])->name('applications.show');
+        Route::get('/applications/{id}/edit', [App\Http\Controllers\Client\ApplicationController::class, 'edit'])->name('applications.edit');
+        Route::put('/applications/{id}', [App\Http\Controllers\Client\ApplicationController::class, 'update'])->name('applications.update');
+        Route::post('/applications/{id}/submit', [App\Http\Controllers\Client\ApplicationController::class, 'submit'])->name('applications.submit');
+        Route::post('/applications/{id}/cancel', [App\Http\Controllers\Client\ApplicationController::class, 'cancel'])->name('applications.cancel');
+        Route::post('/applications/{id}/documents', [App\Http\Controllers\Client\ApplicationController::class, 'uploadDocument'])->name('applications.documents.upload');
+        Route::delete('/applications/{applicationId}/documents/{documentId}', [App\Http\Controllers\Client\ApplicationController::class, 'deleteDocument'])->name('applications.documents.delete');
+        
+        // Quotation Routes (Phase 3.4)
+        Route::get('/applications/{id}/quotation', [App\Http\Controllers\Client\ClientQuotationController::class, 'show'])->name('quotations.show');
+        Route::post('/applications/{id}/quotation/accept', [App\Http\Controllers\Client\ClientQuotationController::class, 'accept'])->name('quotations.accept');
+        Route::post('/applications/{id}/quotation/reject', [App\Http\Controllers\Client\ClientQuotationController::class, 'reject'])->name('quotations.reject');
+        
+        // Payment Routes (Phase 4)
+        Route::get('/applications/{id}/payment', [App\Http\Controllers\Client\PaymentController::class, 'show'])->name('payments.show');
+        Route::post('/applications/{id}/payment/initiate', [App\Http\Controllers\Client\PaymentController::class, 'initiate'])->name('payments.initiate');
+        Route::post('/applications/{id}/payment/manual', [App\Http\Controllers\Client\PaymentController::class, 'manual'])->name('payments.manual');
+        Route::get('/applications/{id}/payment/{paymentId}/success', [App\Http\Controllers\Client\PaymentController::class, 'success'])->name('payments.success');
+        
+        // Project Routes
+        Route::get('/projects', [App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/{id}', [App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
+        
+        // Document Routes
+        Route::get('/documents', [App\Http\Controllers\Client\DocumentController::class, 'index'])->name('documents.index');
+        Route::get('/documents/{id}/download', [App\Http\Controllers\Client\DocumentController::class, 'download'])->name('documents.download');
+        
+        // Profile Routes
+        Route::get('/profile', [App\Http\Controllers\Client\ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
+        Route::get('/profile/password', [App\Http\Controllers\Client\ProfileController::class, 'editPassword'])->name('profile.password.edit');
+        Route::put('/profile/password', [App\Http\Controllers\Client\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+        
+        // Email Verification Routes
+        Route::get('/verify-email', [App\Http\Controllers\Auth\ClientAuthController::class, 'showVerifyEmailNotice'])
+            ->name('verification.notice');
+        Route::post('/email/verification-notification', [App\Http\Controllers\Auth\ClientAuthController::class, 'resendVerificationEmail'])
+            ->middleware('throttle:3,1')
+            ->name('verification.send');
     });
+    
+    // Email verification callback (accessible without auth to allow verification)
+    Route::get('/verify-email/{id}/{hash}', [App\Http\Controllers\Auth\ClientAuthController::class, 'verifyEmail'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
 });
+
+// Email Webhook Routes (untuk menerima email dari Cloudflare/external service)
+Route::prefix('webhook/email')->name('webhook.email.')->group(function () {
+    // Receive incoming email
+    Route::post('/receive', [App\Http\Controllers\EmailWebhookController::class, 'receive'])
+        ->name('receive');
+    
+    // Test webhook dengan data dummy
+    Route::post('/test', [App\Http\Controllers\EmailWebhookController::class, 'test'])
+        ->name('test');
+    
+    // Check webhook status
+    Route::get('/status', [App\Http\Controllers\EmailWebhookController::class, 'status'])
+        ->name('status');
+});
+
+// Multi-User Email System Routes
+Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('admin.')->group(function () {
+    // Email Accounts Management
+    Route::resource('email-accounts', App\Http\Controllers\Admin\EmailAccountController::class);
+    Route::get('email-accounts/{emailAccount}/available-users', [App\Http\Controllers\Admin\EmailAccountController::class, 'availableUsers'])
+        ->name('email-accounts.available-users');
+    Route::get('email-accounts-stats', [App\Http\Controllers\Admin\EmailAccountController::class, 'stats'])
+        ->name('email-accounts.stats');
+    
+    // Email Assignments
+    Route::post('email-accounts/{emailAccount}/assign', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'assign'])
+        ->name('email-accounts.assign');
+    Route::delete('email-accounts/{emailAccount}/unassign/{user}', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'unassign'])
+        ->name('email-accounts.unassign');
+    Route::patch('email-accounts/{emailAccount}/permissions/{user}', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'updatePermissions'])
+        ->name('email-accounts.permissions.update');
+    Route::post('email-accounts/{emailAccount}/bulk-assign', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'bulkAssign'])
+        ->name('email-accounts.bulk-assign');
+    Route::post('email-accounts/{emailAccount}/transfer-primary', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'transferPrimary'])
+        ->name('email-accounts.transfer-primary');
+    
+    // User's Email Accounts
+    Route::get('users/{user}/emails', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'userEmails'])
+        ->name('users.emails');
+});
+
+// Admin: Permit Application Management (Phase 3)
+Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function () {
+    // Permit Application List & Detail
+    Route::get('permit-applications', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'index'])
+        ->name('permit-applications.index');
+    Route::get('permit-applications/{id}', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'show'])
+        ->name('permit-applications.show');
+    
+    // Review Actions
+    Route::post('permit-applications/{id}/start-review', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'startReview'])
+        ->name('permit-applications.start-review');
+    Route::post('permit-applications/{id}/update-status', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'updateStatus'])
+        ->name('permit-applications.update-status');
+    Route::post('permit-applications/{id}/add-notes', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'addNotes'])
+        ->name('permit-applications.add-notes');
+    
+    // Document Verification
+    Route::post('permit-applications/{application}/documents/{document}/verify', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'verifyDocument'])
+        ->name('permit-applications.documents.verify');
+    Route::post('permit-applications/{id}/verify-all-documents', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'verifyAllDocuments'])
+        ->name('permit-applications.verify-all-documents');
+    Route::post('permit-applications/{id}/request-document-revision', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'requestDocumentRevision'])
+        ->name('permit-applications.request-document-revision');
+    
+    // Quotation Management
+    Route::get('quotations/create', [App\Http\Controllers\Admin\QuotationController::class, 'create'])
+        ->name('quotations.create');
+    Route::post('quotations', [App\Http\Controllers\Admin\QuotationController::class, 'store'])
+        ->name('quotations.store');
+    Route::get('quotations/{id}/edit', [App\Http\Controllers\Admin\QuotationController::class, 'edit'])
+        ->name('quotations.edit');
+    Route::put('quotations/{id}', [App\Http\Controllers\Admin\QuotationController::class, 'update'])
+        ->name('quotations.update');
+    Route::get('quotations/{id}/pdf', [App\Http\Controllers\Admin\QuotationController::class, 'generatePdf'])
+        ->name('quotations.pdf');
+    Route::post('quotations/{id}/send-email', [App\Http\Controllers\Admin\QuotationController::class, 'sendEmail'])
+        ->name('quotations.send-email');
+    
+    // Payment Verification (Phase 4)
+    Route::get('payments', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'index'])
+        ->name('payments.index');
+    Route::get('payments/{id}', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'show'])
+        ->name('payments.show');
+    Route::post('payments/{id}/verify', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'verify'])
+        ->name('payments.verify');
+    Route::post('payments/{id}/reject', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'reject'])
+        ->name('payments.reject');
+});
+
+// Payment Callback API (Phase 4)
+Route::post('/api/payment/callback', [App\Http\Controllers\Api\PaymentCallbackController::class, 'callback'])
+    ->name('api.payment.callback');

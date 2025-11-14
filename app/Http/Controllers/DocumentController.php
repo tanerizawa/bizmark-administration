@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use App\Models\Document;
 use App\Models\Project;
 use App\Models\Task;
@@ -15,6 +16,21 @@ use Illuminate\Support\Str;
 
 class DocumentController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizePermissions('documents');
+        
+        // Additional authorization for download
+        $this->middleware(function ($request, $next) {
+            if (!auth()->user()->can('documents.view')) {
+                abort(403, 'Anda tidak memiliki akses untuk mengunduh dokumen.');
+            }
+            return $next($request);
+        })->only(['download']);
+    }
+
     /**
      * Display a listing of the resource.
      */

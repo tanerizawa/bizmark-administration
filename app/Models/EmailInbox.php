@@ -24,14 +24,32 @@ class EmailInbox extends Model
         'replied_to',
         'assigned_to',
         'received_at',
+        // Multi-user email system fields
+        'email_account_id',
+        'department',
+        'priority',
+        'status',
+        'first_responded_at',
+        'resolved_at',
+        'response_time_minutes',
+        'resolution_time_minutes',
+        'handled_by',
+        'tags',
+        'internal_notes',
+        'sentiment',
     ];
 
     protected $casts = [
         'attachments' => 'array',
         'labels' => 'array',
+        'tags' => 'array',
         'is_read' => 'boolean',
         'is_starred' => 'boolean',
         'received_at' => 'datetime',
+        'first_responded_at' => 'datetime',
+        'resolved_at' => 'datetime',
+        'response_time_minutes' => 'integer',
+        'resolution_time_minutes' => 'integer',
     ];
 
     // Relationships
@@ -48,6 +66,22 @@ class EmailInbox extends Model
     public function assignedUser()
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    /**
+     * Email account this inbox belongs to
+     */
+    public function emailAccount()
+    {
+        return $this->belongsTo(EmailAccount::class);
+    }
+
+    /**
+     * User handling this email
+     */
+    public function handler()
+    {
+        return $this->belongsTo(User::class, 'handled_by');
     }
 
     // Scopes
@@ -69,6 +103,46 @@ class EmailInbox extends Model
     public function scopeSent($query)
     {
         return $query->where('category', 'sent');
+    }
+
+    /**
+     * Filter by email account
+     */
+    public function scopeForAccount($query, $emailAccountId)
+    {
+        return $query->where('email_account_id', $emailAccountId);
+    }
+
+    /**
+     * Filter by department
+     */
+    public function scopeForDepartment($query, $department)
+    {
+        return $query->where('department', $department);
+    }
+
+    /**
+     * Filter by priority
+     */
+    public function scopePriority($query, $priority)
+    {
+        return $query->where('priority', $priority);
+    }
+
+    /**
+     * Filter by status
+     */
+    public function scopeStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    /**
+     * Filter by handler
+     */
+    public function scopeHandledBy($query, $userId)
+    {
+        return $query->where('handled_by', $userId);
     }
 
     // Methods
@@ -111,5 +185,107 @@ class EmailInbox extends Model
         $labels = $this->labels ?? [];
         $labels = array_filter($labels, fn($l) => $l !== $label);
         $this->update(['labels' => array_values($labels)]);
+    }
+
+    /**
+     * Assign to handler
+     */
+    public function assignTo(User $user)
+    {
+        $this->update([
+            'handled_by' => $user->id,
+            'status' => 'open',
+        ]);
+    }
+
+    /**
+     * Mark as responded
+     */
+    public function markAsResponded()
+    {
+        if (!$this->first_responded_at) {
+            $responseTime = now()->diffInMinutes($this->received_at);
+            $this->update([
+                'first_responded_at' => now(),
+                'response_time_minutes' => $responseTime,
+                'status' => 'pending',
+            ]);
+        }
+    }
+
+    /**
+     * Mark as resolved
+     */
+    public function markAsResolved()
+    {
+        $resolutionTime = now()->diffInMinutes($this->received_at);
+        $this->update([
+            'resolved_at' => now(),
+            'resolution_time_minutes' => $resolutionTime,
+            'status' => 'resolved',
+        ]);
+    }
+
+    /**
+     * Reopen email
+     */
+    public function reopen()
+    {
+        $this->update([
+            'status' => 'open',
+            'resolved_at' => null,
+            'resolution_time_minutes' => null,
+        ]);
+    }
+
+    /**
+     * Add tag
+     */
+    public function addTag($tag)
+    {
+        $tags = $this->tags ?? [];
+        if (!in_array($tag, $tags)) {
+            $tags[] = $tag;
+            $this->update(['tags' => $tags]);
+        }
+    }
+
+    /**
+     * Remove tag
+     */
+    public function removeTag($tag)
+    {
+        $tags = $this->tags ?? [];
+        $tags = array_filter($tags, fn($t) => $t !== $tag);
+        $this->update(['tags' => array_values($tags)]);
+    }
+
+    /**
+     * Get priority badge color
+     */
+    public function getPriorityColorAttribute()
+    {
+        return match($this->priority) {
+            'urgent' => 'danger',
+            'high' => 'warning',
+            'normal' => 'info',
+            'low' => 'secondary',
+            default => 'secondary',
+        };
+    }
+
+    /**
+     * Get status badge color
+     */
+    public function getStatusColorAttribute()
+    {
+        return match($this->status) {
+            'new' => 'primary',
+            'open' => 'info',
+            'pending' => 'warning',
+            'resolved' => 'success',
+            'closed' => 'secondary',
+            default => 'secondary',
+        };
     }
 }
