@@ -408,4 +408,78 @@
         </form>
     </div>
 </div>
+
+<!-- Communication Section -->
+@if($application->status !== 'draft')
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mt-6">
+    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
+        <i class="fas fa-comments text-blue-600 mr-2"></i>
+        Komunikasi dengan Admin
+    </h2>
+
+    @php
+        $notes = $application->notes()
+            ->visibleToClient()
+            ->with('author')
+            ->orderBy('created_at', 'desc')
+            ->get();
+    @endphp
+
+    @if($notes->count() > 0)
+        <div class="space-y-4 mb-6 max-h-[400px] overflow-y-auto">
+            @foreach($notes as $note)
+                <div class="flex gap-3 {{ $note->author_type === 'admin' ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-green-50 dark:bg-green-900/20' }} p-4 rounded-lg">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 {{ $note->author_type === 'admin' ? 'bg-blue-100 dark:bg-blue-800' : 'bg-green-100 dark:bg-green-800' }} rounded-full flex items-center justify-center">
+                            <i class="fas {{ $note->author_type === 'admin' ? 'fa-user-shield text-blue-600 dark:text-blue-300' : 'fa-user text-green-600 dark:text-green-300' }}"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-gray-900 dark:text-white">
+                                    {{ $note->author->name ?? 'Unknown' }}
+                                </span>
+                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $note->author_type === 'admin' ? 'bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200' : 'bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200' }}">
+                                    {{ $note->author_type === 'admin' ? 'Admin' : 'Anda' }}
+                                </span>
+                            </div>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $note->created_at->diffForHumans() }}</span>
+                        </div>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $note->note }}</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="text-center py-8 text-gray-500 dark:text-gray-400 mb-6">
+            <i class="fas fa-comments text-4xl mb-3 text-gray-300 dark:text-gray-600"></i>
+            <p>Belum ada komunikasi. Kirim pesan ke admin jika ada pertanyaan.</p>
+        </div>
+    @endif
+
+    <!-- Reply Form -->
+    <form action="{{ route('client.applications.notes.store', $application->id) }}" method="POST" class="border-t dark:border-gray-700 pt-4">
+        @csrf
+        <div class="space-y-3">
+            <textarea 
+                name="note" 
+                rows="3" 
+                required
+                placeholder="Tulis pesan untuk admin..."
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+            ></textarea>
+            <div class="flex justify-end">
+                <button 
+                    type="submit"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+                >
+                    <i class="fas fa-paper-plane mr-2"></i>Kirim Pesan
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+@endif
+
 @endsection
