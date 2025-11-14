@@ -72,7 +72,7 @@ class ApplicationController extends Controller
                 ->first();
 
             // Get available permit types
-            $permitTypes = PermitType::where('status', 'active')
+            $permitTypes = PermitType::where('is_active', true)
                 ->orderBy('name')
                 ->get();
 
