@@ -96,6 +96,57 @@
                     </div>
                 @endif
 
+                @php
+                    $formData = is_string($application->form_data) 
+                        ? json_decode($application->form_data, true) 
+                        : $application->form_data;
+                    $isPackage = isset($formData['package_type']) && $formData['package_type'] === 'multi_permit';
+                @endphp
+
+                <!-- Convert to Project Action (for packages with payment_verified status) -->
+                @if($isPackage && $application->status === 'payment_verified' && !$application->project_id)
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-green-900">
+                                    <i class="fas fa-check-circle mr-2"></i>Pembayaran Terverifikasi - Siap Dikonversi
+                                </h3>
+                                <p class="text-sm text-green-700 mt-1">
+                                    Konversi aplikasi ini menjadi proyek untuk mulai mengelola {{ count($formData['bizmark_permits'] ?? []) }} izin dengan tracking progress dan dependencies
+                                </p>
+                            </div>
+                            <form action="{{ route('admin.permit-applications.convert-to-project', $application->id) }}" 
+                                  method="POST" 
+                                  onsubmit="return confirm('Konversi aplikasi ini menjadi proyek? Proses ini akan membuat project baru dengan {{ count($formData['bizmark_permits'] ?? []) }} permit yang dapat dikelola secara terpisah.')">
+                                @csrf
+                                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors whitespace-nowrap">
+                                    <i class="fas fa-rocket mr-2"></i>Konversi ke Proyek
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Already Converted Notice -->
+                @if($application->project_id)
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-purple-900">
+                                    <i class="fas fa-link mr-2"></i>Sudah Dikonversi ke Proyek
+                                </h3>
+                                <p class="text-sm text-purple-700 mt-1">
+                                    Aplikasi ini sudah dikonversi menjadi proyek pada {{ $application->converted_at ? $application->converted_at->format('d M Y H:i') : 'N/A' }}
+                                </p>
+                            </div>
+                            <a href="{{ route('client.projects.show', $application->project_id) }}" 
+                               class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors whitespace-nowrap">
+                                <i class="fas fa-external-link-alt mr-2"></i>Lihat Proyek
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Client Information -->
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-xl font-bold text-gray-900 mb-4">

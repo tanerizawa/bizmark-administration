@@ -7,6 +7,9 @@ use App\Models\PermitApplication;
 use App\Models\PermitType;
 use App\Models\Client;
 use App\Models\ApplicationStatusLog;
+use App\Models\Project;
+use App\Models\ProjectPermit;
+use App\Models\ProjectPermitDependency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -333,6 +336,119 @@ class ApplicationManagementController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal request revision: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Convert permit package application to Project with ProjectPermits
+     */
+    public function convertToProject($id)
+    {
+        $application = PermitApplication::with(['client'])->findOrFail($id);
+        
+        // Check if already converted
+        if ($application->project_id) {
+            return back()->with('error', 'Aplikasi ini sudah dikonversi menjadi proyek');
+        }
+        
+        // Check status - should be payment_verified
+        if ($application->status !== 'payment_verified') {
+            return back()->with('error', 'Hanya aplikasi dengan status "Payment Verified" yang bisa dikonversi menjadi proyek');
+        }
+        
+        $formData = is_string($application->form_data) 
+            ? json_decode($application->form_data, true) 
+            : $application->form_data;
+        
+        $isPackage = isset($formData['package_type']) && $formData['package_type'] === 'multi_permit';
+        
+        if (!$isPackage) {
+            return back()->with('error', 'Hanya aplikasi paket izin yang bisa dikonversi menjadi proyek');
+        }
+        
+        DB::beginTransaction();
+        try {
+            // Create Project
+            $project = \App\Models\Project::create([
+                'permit_application_id' => $application->id,
+                'client_id' => $application->client_id,
+                'project_name' => $formData['project_name'] ?? 'Untitled Project',
+                'project_location' => $formData['project_location'] ?? null,
+                'land_area' => $formData['land_area'] ?? null,
+                'building_area' => $formData['building_area'] ?? null,
+                'building_floors' => $formData['building_floors'] ?? null,
+                'project_budget' => $formData['investment_value'] ?? 0,
+                'target_completion_date' => isset($formData['target_completion_date']) 
+                    ? \Carbon\Carbon::parse($formData['target_completion_date']) 
+                    : null,
+                'description' => $formData['project_description'] ?? null,
+                'status' => 'active',
+            ]);
+            
+            // Create ProjectPermits (only for BizMark.ID permits)
+            $bizmarkPermits = $formData['bizmark_permits'] ?? [];
+            $sequenceOrder = 1;
+            $permitIdMap = []; // Map permit names to ProjectPermit IDs
+            
+            foreach ($bizmarkPermits as $permit) {
+                $projectPermit = \App\Models\ProjectPermit::create([
+                    'project_id' => $project->id,
+                    'permit_type_id' => null, // Custom permit from KBLI
+                    'custom_permit_name' => $permit['name'],
+                    'sequence_order' => $sequenceOrder++,
+                    'is_goal_permit' => false, // Can be updated later
+                    'status' => \App\Models\ProjectPermit::STATUS_NOT_STARTED,
+                    'estimated_cost' => isset($permit['estimated_cost_min']) && isset($permit['estimated_cost_max'])
+                        ? ($permit['estimated_cost_min'] + $permit['estimated_cost_max']) / 2
+                        : 0,
+                    'estimated_days' => $permit['estimated_days'] ?? null,
+                ]);
+                
+                $permitIdMap[$permit['name']] = $projectPermit->id;
+            }
+            
+            // Create ProjectPermitDependencies based on AI recommendations
+            foreach ($bizmarkPermits as $permit) {
+                if (!empty($permit['dependencies']) && isset($permitIdMap[$permit['name']])) {
+                    foreach ($permit['dependencies'] as $dependencyName) {
+                        // Find if dependency is in our BizMark permits
+                        if (isset($permitIdMap[$dependencyName])) {
+                            \App\Models\ProjectPermitDependency::create([
+                                'project_permit_id' => $permitIdMap[$permit['name']],
+                                'depends_on_permit_id' => $permitIdMap[$dependencyName],
+                                'dependency_type' => 'MANDATORY', // Default to mandatory
+                                'can_proceed_without' => false,
+                            ]);
+                        }
+                    }
+                }
+            }
+            
+            // Update application with project_id and status
+            $application->update([
+                'project_id' => $project->id,
+                'converted_at' => now(),
+                'status' => 'in_progress',
+            ]);
+            
+            // Log status change
+            ApplicationStatusLog::create([
+                'application_id' => $application->id,
+                'from_status' => 'payment_verified',
+                'to_status' => 'in_progress',
+                'changed_by_type' => 'user',
+                'changed_by_id' => Auth::id(),
+                'notes' => 'Aplikasi dikonversi menjadi proyek: ' . $project->project_name . ' dengan ' . count($bizmarkPermits) . ' izin',
+            ]);
+            
+            DB::commit();
+            
+            return redirect()
+                ->route('client.projects.show', $project->id)
+                ->with('success', 'Berhasil mengkonversi aplikasi menjadi proyek dengan ' . count($bizmarkPermits) . ' izin. Proyek sekarang dapat dikelola.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal konversi ke proyek: ' . $e->getMessage());
         }
     }
 }
