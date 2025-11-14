@@ -26,14 +26,16 @@ class ServiceController extends Controller
         $sectors = Kbli::select('sector')
             ->distinct()
             ->orderBy('sector')
-            ->pluck('sector');
+            ->get();
 
         // Get popular KBLI (most used in recommendations)
+        // If no recommendations yet, show random sample
         $popularKbli = Kbli::select('kbli.code', 'kbli.description', 'kbli.sector')
-            ->join('kbli_permit_recommendations', 'kbli.code', '=', 'kbli_permit_recommendations.kbli_code')
-            ->selectRaw('SUM(kbli_permit_recommendations.cache_hits) as total_hits')
+            ->leftJoin('kbli_permit_recommendations', 'kbli.code', '=', 'kbli_permit_recommendations.kbli_code')
+            ->selectRaw('COALESCE(SUM(kbli_permit_recommendations.cache_hits), 0) as cache_hits')
             ->groupBy('kbli.code', 'kbli.description', 'kbli.sector')
-            ->orderByDesc('total_hits')
+            ->orderByDesc('cache_hits')
+            ->orderBy('kbli.code')
             ->limit(6)
             ->get();
 

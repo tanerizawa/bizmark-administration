@@ -49,8 +49,7 @@
                                 <span class="text-gray-700 dark:text-gray-300 flex-1" x-text="result.description"></span>
                             </div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-16">
-                                <span x-text="result.sector"></span> &bull; 
-                                <span x-text="result.division_desc"></span>
+                                <span>Sektor: </span><span x-text="result.sector"></span>
                             </div>
                         </a>
                     </template>
@@ -127,9 +126,9 @@
                     </h3>
                     
                     <div class="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                        <span class="inline-block">{{ $kbli->sector }}</span>
+                        <span class="inline-block">Sektor {{ $kbli->sector }}</span>
                         <span class="mx-2">•</span>
-                        <span class="inline-block">{{ $kbli->division_desc }}</span>
+                        <span class="inline-block">Kode: {{ $kbli->code }}</span>
                     </div>
 
                     <a 

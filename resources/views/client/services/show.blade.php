@@ -45,7 +45,7 @@
                         {{ $kbli->description }}
                     </h1>
                     <div class="text-sm text-gray-600 dark:text-gray-400">
-                        {{ $kbli->sector }} • {{ $kbli->division_desc }}
+                        Sektor {{ $kbli->sector }} • Kode: {{ $kbli->code }}
                     </div>
                 </div>
                 <div class="text-right">
