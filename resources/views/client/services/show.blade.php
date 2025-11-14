@@ -174,7 +174,7 @@
                         <div>
                             <h3 class="font-bold text-lg mb-1">✨ Rekomendasi Berhasil Dibuat!</h3>
                             <p class="text-sm text-green-50">
-                                AI kami telah menganalisis {{ count($recommendation->recommended_permits ?? []) }} jenis izin yang relevan untuk bisnis Anda
+                                Sistem kami telah menganalisis {{ count($recommendation->recommended_permits ?? []) }} jenis izin berdasarkan data regulasi terkini dan pengalaman proyek perizinan yang telah kami tangani
                             </p>
                         </div>
                     </div>
@@ -224,7 +224,7 @@
                         {{ number_format($recommendation->confidence_score * 100, 0) }}%
                     </div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {{ $recommendation->ai_model }}
+                        Akurasi Data
                     </div>
                 </div>
             </div>
@@ -314,20 +314,20 @@
                     <h3 class="font-bold text-blue-900 dark:text-blue-100 mb-2 text-sm">📌 Penting untuk Diketahui</h3>
                     <div class="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
                         <p class="flex items-start gap-2">
-                            <i class="fas fa-check-circle text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
-                            <span><strong>Rekomendasi AI:</strong> Estimasi berdasarkan KBLI, skala usaha, dan lokasi.</span>
+                            <i class="fas fa-database text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
+                            <span><strong>Sumber Data:</strong> Hasil perhitungan otomatis berdasarkan regulasi terkini, database perizinan nasional, dan ratusan studi kasus proyek perizinan yang telah kami tangani.</span>
                         </p>
                         <p class="flex items-start gap-2">
                             <i class="fas fa-calculator text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
-                            <span><strong>Biaya Aktual:</strong> Dihitung ulang dari kompleksitas, luas area, zona, dan faktor teknis.</span>
+                            <span><strong>Biaya Aktual:</strong> Estimasi biaya akan dihitung ulang secara detail sesuai kompleksitas pekerjaan, luas area, zonasi, dan kegiatan usaha yang akan Anda ajukan.</span>
                         </p>
                         <p class="flex items-start gap-2">
                             <i class="fas fa-map-marked-alt text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
-                            <span><strong>Variasi Regional:</strong> Persyaratan berbeda antar daerah.</span>
+                            <span><strong>Variasi Regional:</strong> Persyaratan dan prosedur dapat berbeda antar daerah sesuai regulasi pemerintah daerah setempat.</span>
                         </p>
                         <p class="flex items-start gap-2">
-                            <i class="fas fa-user-tie text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
-                            <span><strong>Konsultasi:</strong> Tim ahli siap membantu. <a href="#" class="text-blue-600 dark:text-blue-400 underline font-semibold">Konsultasi Gratis →</a></span>
+                            <i class="fas fa-gavel text-blue-600 dark:text-blue-400 text-xs mt-0.5 flex-shrink-0"></i>
+                            <span><strong>Kepastian Hukum:</strong> Untuk analisis mendalam dan kepastian hukum, silakan <a href="#" onclick="alert('Fitur konsultasi akan segera hadir. Silakan hubungi admin untuk bantuan.'); return false;" class="text-blue-600 dark:text-blue-400 underline font-semibold">konsultasi gratis</a> atau <a href="{{ route('client.applications.create', ['kbli_code' => $kbli->code]) }}" class="text-green-600 dark:text-green-400 underline font-semibold">ajukan permohonan</a> agar kami dapat menindaklanjuti dengan analisis biaya aktual sesuai kegiatan Anda.</span>
                         </p>
                     </div>
                 </div>
@@ -682,8 +682,8 @@
 
         <!-- Footer Note -->
         <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
-            <i class="fas fa-info-circle mr-1"></i>
-            Rekomendasi dihasilkan AI berdasarkan KBLI dan regulasi terkini. Konsultasikan dengan ahli untuk kepastian hukum.
+            <i class="fas fa-shield-alt mr-1"></i>
+            Data perhitungan berdasarkan regulasi terkini dan pengalaman proyek perizinan yang telah kami tangani. Untuk kepastian hukum, konsultasikan dengan tim ahli kami.
         </div>
         @endif
     </div>
