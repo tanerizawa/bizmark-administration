@@ -83,12 +83,39 @@
                                     </span>
                                 </div>
 
-                                <!-- Permit Type -->
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                    <i class="fas fa-file-alt mr-2"></i>
-                                    <strong>Jenis Izin:</strong> 
-                                    {{ $application->permitType ? $application->permitType->name : ($application->form_data['permit_name'] ?? 'N/A') }}
-                                </p>
+                                <!-- Permit Type / Package Info -->
+                                @php
+                                    $formData = is_string($application->form_data) 
+                                        ? json_decode($application->form_data, true) 
+                                        : $application->form_data;
+                                    $isPackage = isset($formData['package_type']) && $formData['package_type'] === 'multi_permit';
+                                @endphp
+                                
+                                @if($isPackage)
+                                    <div class="mb-3 p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+                                        <p class="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                                            <i class="fas fa-box-open mr-2"></i>
+                                            {{ $formData['project_name'] ?? 'Paket Izin' }}
+                                        </p>
+                                        <div class="flex flex-wrap gap-2 text-xs">
+                                            <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
+                                                <i class="fas fa-handshake mr-1"></i>{{ $formData['permits_by_service']['bizmark'] ?? 0 }} BizMark.ID
+                                            </span>
+                                            <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">
+                                                <i class="fas fa-check-circle mr-1"></i>{{ $formData['permits_by_service']['owned'] ?? 0 }} Sudah Ada
+                                            </span>
+                                            <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded">
+                                                <i class="fas fa-user-check mr-1"></i>{{ $formData['permits_by_service']['self'] ?? 0 }} Dikerjakan Sendiri
+                                            </span>
+                                        </div>
+                                    </div>
+                                @else
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                        <i class="fas fa-file-alt mr-2"></i>
+                                        <strong>Jenis Izin:</strong> 
+                                        {{ $application->permitType ? $application->permitType->name : ($formData['permit_name'] ?? 'N/A') }}
+                                    </p>
+                                @endif
 
                                 <!-- Dates -->
                                 <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">

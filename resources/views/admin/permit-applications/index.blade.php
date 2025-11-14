@@ -203,7 +203,24 @@
                                     <div class="text-sm text-gray-500">{{ $app->client->email }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900">{{ $app->permitType->name }}</div>
+                                    @php
+                                        $formData = is_string($app->form_data) 
+                                            ? json_decode($app->form_data, true) 
+                                            : $app->form_data;
+                                        $isPackage = isset($formData['package_type']) && $formData['package_type'] === 'multi_permit';
+                                    @endphp
+                                    @if($isPackage)
+                                        <div class="text-sm font-medium text-gray-900">
+                                            <i class="fas fa-box-open text-purple-600 mr-1"></i>
+                                            {{ $formData['project_name'] ?? 'Paket Izin' }}
+                                        </div>
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            {{ count($formData['selected_permits'] ?? []) }} izin 
+                                            ({{ $formData['permits_by_service']['bizmark'] ?? 0 }} BizMark.ID)
+                                        </div>
+                                    @else
+                                        <div class="text-sm text-gray-900">{{ $app->permitType ? $app->permitType->name : ($formData['permit_name'] ?? 'N/A') }}</div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
