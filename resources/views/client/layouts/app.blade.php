@@ -127,7 +127,7 @@
 
                 <!-- Divider -->
                 <div class="px-4 pt-4 pb-2">
-                    <p class="text-xs uppercase tracking-wider text-purple-200 font-semibold">Dokumen & Keuangan</p>
+                    <p class="text-xs uppercase tracking-wider text-purple-200 font-semibold">Dokumen</p>
                 </div>
 
                 <a href="{{ route('client.documents.index') }}" 

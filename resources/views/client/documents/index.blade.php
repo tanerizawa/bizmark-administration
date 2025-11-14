@@ -6,6 +6,20 @@
 
 @section('content')
 <div class="space-y-6">
+    <!-- Header with Upload Button -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">Dokumen Perizinan</h2>
+            <p class="text-gray-600 mt-1">Akses dan upload dokumen proyek Anda</p>
+        </div>
+        <button 
+            onclick="openUploadModal()"
+            class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2"
+        >
+            <i class="fas fa-upload"></i>Upload Dokumen
+        </button>
+    </div>
+
     <!-- Statistics -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
@@ -241,4 +255,150 @@
         </div>
     @endif
 </div>
+
+<!-- Upload Modal -->
+<div id="uploadModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-gray-900">
+                    <i class="fas fa-upload text-purple-600 mr-2"></i>Upload Dokumen Baru
+                </h3>
+                <button 
+                    onclick="closeUploadModal()"
+                    class="text-gray-400 hover:text-gray-600 transition"
+                >
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <form action="{{ route('client.documents.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+            @csrf
+
+            <!-- Project Selection -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-folder mr-2"></i>Pilih Proyek <span class="text-red-500">*</span>
+                </label>
+                <select 
+                    name="project_id" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                    <option value="">-- Pilih Proyek --</option>
+                    @foreach($projects as $project)
+                        <option value="{{ $project->id }}">{{ $project->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Document Title -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-heading mr-2"></i>Judul Dokumen <span class="text-red-500">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    required
+                    maxlength="255"
+                    placeholder="Contoh: Akta Pendirian Perusahaan"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-tag mr-2"></i>Kategori Dokumen <span class="text-red-500">*</span>
+                </label>
+                <select 
+                    name="category" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                    <option value="">-- Pilih Kategori --</option>
+                    <option value="akta">Akta Perusahaan</option>
+                    <option value="npwp">NPWP</option>
+                    <option value="sertifikat">Sertifikat</option>
+                    <option value="uji-lab">Hasil Uji Lab</option>
+                    <option value="desain">Desain/Label</option>
+                    <option value="surat">Surat Keterangan</option>
+                    <option value="izin">Izin/Lisensi</option>
+                    <option value="lainnya">Lainnya</option>
+                </select>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-align-left mr-2"></i>Deskripsi (Opsional)
+                </label>
+                <textarea 
+                    name="description" 
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Tambahkan catatan atau deskripsi dokumen..."
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                ></textarea>
+                <p class="text-xs text-gray-500 mt-1">Maksimal 500 karakter</p>
+            </div>
+
+            <!-- File Upload -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-file mr-2"></i>Upload File <span class="text-red-500">*</span>
+                </label>
+                <input 
+                    type="file" 
+                    name="file" 
+                    required
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                <p class="text-xs text-gray-500 mt-1">
+                    Format: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG. Maksimal 10MB
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
+                <button 
+                    type="button"
+                    onclick="closeUploadModal()"
+                    class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                >
+                    Batal
+                </button>
+                <button 
+                    type="submit"
+                    class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+                >
+                    <i class="fas fa-upload mr-2"></i>Upload Dokumen
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openUploadModal() {
+    document.getElementById('uploadModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeUploadModal() {
+    document.getElementById('uploadModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside
+document.getElementById('uploadModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeUploadModal();
+    }
+});
+</script>
+
 @endsection

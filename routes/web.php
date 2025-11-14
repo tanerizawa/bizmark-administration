@@ -405,6 +405,7 @@ Route::prefix('client')->name('client.')->group(function () {
         
         // Document Routes
         Route::get('/documents', [App\Http\Controllers\Client\DocumentController::class, 'index'])->name('documents.index');
+        Route::post('/documents', [App\Http\Controllers\Client\DocumentController::class, 'store'])->name('documents.store');
         Route::get('/documents/{id}/download', [App\Http\Controllers\Client\DocumentController::class, 'download'])->name('documents.download');
         
         // Profile Routes
