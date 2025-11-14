@@ -482,7 +482,8 @@
             </button>
             
             <a 
-                href="{{ route('client.contact') }}" 
+                href="#" 
+                onclick="alert('Fitur konsultasi akan segera hadir. Silakan hubungi admin untuk bantuan.'); return false;"
                 class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors inline-flex items-center"
             >
                 <i class="fas fa-comments mr-2"></i>
