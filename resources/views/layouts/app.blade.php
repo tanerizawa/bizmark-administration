@@ -710,13 +710,17 @@
                                     <span class="ml-3">Rekonsiliasi Bank</span>
                                 </div>
                             </a>
+                            <a href="{{ route('reconciliations.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('reconciliations.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-sync-alt w-5"></i>
+                                    <span class="ml-3">Rekonsiliasi Bank</span>
+                                </div>
+                            </a>
                         </div>
-                    </div>
-
-                    <!-- Content & Media Section -->
-                    <div class="mb-6">
-                        <h3 class="px-3 mb-2 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider">Konten & Media</h3>
-                        <div class="space-y-1">
+                        
+                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
+                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Konten & Media</p>
+                            
                             <a href="{{ route('articles.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('articles.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
                                 <div class="flex items-center">
                                     <i class="fas fa-newspaper w-5"></i>
