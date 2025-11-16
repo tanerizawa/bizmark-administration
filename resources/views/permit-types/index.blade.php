@@ -3,55 +3,122 @@
 @section('title', 'Jenis Izin')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-3xl font-bold" style="color: #FFFFFF;">Jenis Izin</h1>
-            <p class="mt-1" style="color: rgba(235, 235, 245, 0.6);">Master data jenis izin dan perizinan</p>
+@php
+    $totalPermitTypes = \App\Models\PermitType::count();
+    $activePermitTypes = \App\Models\PermitType::where('is_active', true)->count();
+    $inactivePermitTypes = max(0, $totalPermitTypes - $activePermitTypes);
+    $institutionCount = $institutions->count();
+    $categoryDistribution = \App\Models\PermitType::select('category', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        ->groupBy('category')
+        ->pluck('total', 'category');
+    $topCategory = $categoryDistribution->sortDesc()->keys()->first();
+    $categoryStyles = [
+        'environmental' => ['bg' => 'rgba(52,199,89,0.15)', 'text' => 'rgba(52,199,89,1)', 'icon' => 'fa-leaf', 'label' => 'Environmental'],
+        'land' => ['bg' => 'rgba(175,82,222,0.15)', 'text' => 'rgba(175,82,222,1)', 'icon' => 'fa-map', 'label' => 'Land'],
+        'building' => ['bg' => 'rgba(10,132,255,0.15)', 'text' => 'rgba(10,132,255,1)', 'icon' => 'fa-building', 'label' => 'Building'],
+        'transportation' => ['bg' => 'rgba(90,200,250,0.15)', 'text' => 'rgba(90,200,250,1)', 'icon' => 'fa-truck', 'label' => 'Transportation'],
+        'business' => ['bg' => 'rgba(255,149,0,0.15)', 'text' => 'rgba(255,149,0,1)', 'icon' => 'fa-briefcase', 'label' => 'Business'],
+        'other' => ['bg' => 'rgba(142,142,147,0.15)', 'text' => 'rgba(142,142,147,1)', 'icon' => 'fa-layer-group', 'label' => 'Other'],
+        'default' => ['bg' => 'rgba(142,142,147,0.15)', 'text' => 'rgba(142,142,147,1)', 'icon' => 'fa-file-alt', 'label' => 'General'],
+    ];
+@endphp
+
+<div class="max-w-7xl mx-auto space-y-10">
+    {{-- Hero --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
-        <a href="{{ route('permit-types.create') }}" 
-           class="px-4 py-2 rounded-lg font-medium transition-colors" 
-           style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
-            <i class="fas fa-plus mr-2"></i>Tambah Jenis Izin
-        </a>
-    </div>
-
-    @if(session('success'))
-    <div class="mb-6 p-4 rounded-lg" style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3);">
-        <p style="color: rgba(52, 199, 89, 1);">
-            <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-        </p>
-    </div>
-    @endif
-
-    @if(session('error'))
-    <div class="mb-6 p-4 rounded-lg" style="background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.3);">
-        <p style="color: rgba(255, 59, 48, 1);">
-            <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
-        </p>
-    </div>
-    @endif
-
-    <!-- Filters -->
-    <div class="card-elevated rounded-apple-lg p-6 mb-6">
-        <form method="GET" action="{{ route('permit-types.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Search -->
-                <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.6);">Cari</label>
-                    <input type="text" 
-                           name="search" 
-                           value="{{ request('search') }}"
-                           placeholder="Nama atau kode izin..." 
-                           class="input-dark w-full px-3 py-2 rounded-md">
+        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="space-y-3">
+                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Permit Taxonomy</p>
+                <h1 class="text-2xl md:text-3xl font-bold" style="color:#FFFFFF;">Daftar Jenis Izin Bizmark.id</h1>
+                <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
+                    Kurasi seluruh jenis izin, kategorinya, serta institusi penanggung jawab dalam satu layar yang enak dibaca.
+                </p>
+                <div class="flex flex-wrap gap-3 text-xs" style="color: rgba(235,235,245,0.6);">
+                    <span><i class="fas fa-database mr-2"></i>{{ $totalPermitTypes }} jenis izin tercatat</span>
+                    <span><i class="fas fa-clock mr-2"></i>Terakhir diperbarui {{ now()->format('d M Y, H:i') }}</span>
                 </div>
+            </div>
+            <div class="flex flex-col items-start gap-3">
+                <a href="{{ route('permit-types.create') }}" class="btn-primary-sm">
+                    <i class="fas fa-plus mr-2"></i>Tambah Jenis Izin
+                </a>
+                <a href="{{ route('permit-types.create') }}" class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
+                    atau impor massal →
+                </a>
+            </div>
+        </div>
+    </section>
 
-                <!-- Category Filter -->
+    {{-- Flash messages --}}
+    @if(session('success') || session('error'))
+        <div class="space-y-3">
+            @if(session('success'))
+                <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+                    <i class="fas fa-check-circle"></i>
+                    <span class="text-sm">{{ session('success') }}</span>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(255,59,48,0.12); border: 1px solid rgba(255,59,48,0.3); color: rgba(255,59,48,1);">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span class="text-sm">{{ session('error') }}</span>
+                </div>
+            @endif
+        </div>
+    @endif
+
+    {{-- Stats --}}
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Total Jenis Izin</p>
+            <p class="text-3xl font-bold" style="color:#FFFFFF;">{{ $totalPermitTypes }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.55);">Termasuk draft & inactive</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Aktif</p>
+            <p class="text-3xl font-bold" style="color: rgba(52,199,89,1);">{{ $activePermitTypes }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $inactivePermitTypes }} nonaktif</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Institusi Mitra</p>
+            <p class="text-3xl font-bold" style="color: rgba(10,132,255,1);">{{ $institutionCount }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.55);">Memiliki data penanggung jawab</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Kategori Teratas</p>
+            <p class="text-3xl font-bold" style="color: rgba(255,149,0,1);">
+                {{ ucfirst($topCategory ?? 'N/A') }}
+            </p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $topCategory ? $categoryDistribution[$topCategory] : 0 }} jenis izin</p>
+        </div>
+    </section>
+
+    {{-- Filters --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
+                <h2 class="text-lg font-semibold text-white">Susun daftar sesuai kebutuhan</h2>
+            </div>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $permitTypes->total() }} hasil sesuai filter aktif</p>
+        </div>
+        <form method="GET" action="{{ route('permit-types.index') }}" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.6);">Kategori</label>
-                    <select name="category" class="input-dark w-full px-3 py-2 rounded-md">
-                        <option value="">Semua Kategori</option>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama, kode, deskripsi"
+                           class="w-full px-4 py-2.5 rounded-apple text-sm text-white placeholder-gray-500"
+                           style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                </div>
+                <div>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Kategori</label>
+                    <select name="category" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                        <option value="">Semua kategori</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
                                 {{ ucfirst($cat) }}
@@ -59,12 +126,11 @@
                         @endforeach
                     </select>
                 </div>
-
-                <!-- Institution Filter -->
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.6);">Institusi</label>
-                    <select name="institution" class="input-dark w-full px-3 py-2 rounded-md">
-                        <option value="">Semua Institusi</option>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Institusi</label>
+                    <select name="institution" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                        <option value="">Semua institusi</option>
                         @foreach($institutions as $inst)
                             <option value="{{ $inst->id }}" {{ request('institution') == $inst->id ? 'selected' : '' }}>
                                 {{ $inst->name }}
@@ -72,297 +138,198 @@
                         @endforeach
                     </select>
                 </div>
-
-                <!-- Status Filter -->
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.6);">Status</label>
-                    <select name="status" class="input-dark w-full px-3 py-2 rounded-md">
-                        <option value="">Semua Status</option>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Status</label>
+                    <select name="status" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                        <option value="">Semua status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak aktif</option>
                     </select>
                 </div>
             </div>
-
-            <div class="flex justify-end space-x-3">
-                <a href="{{ route('permit-types.index') }}" 
-                   class="px-4 py-2 rounded-md" 
-                   style="background: rgba(142, 142, 147, 0.3); color: rgba(235, 235, 245, 0.8);">
-                    Reset
-                </a>
-                <button type="submit" 
-                        class="px-4 py-2 rounded-md" 
-                        style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
-                    <i class="fas fa-search mr-2"></i>Filter
-                </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Urutkan berdasarkan</label>
+                    @php
+                        $sortOptions = [
+                            'name' => 'Nama',
+                            'code' => 'Kode',
+                            'category' => 'Kategori',
+                            'avg_processing_days' => 'Durasi proses',
+                        ];
+                    @endphp
+                    <select name="sort_by" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                        @foreach($sortOptions as $value => $label)
+                            <option value="{{ $value }}" {{ request('sort_by', 'name') === $value ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Arah</label>
+                        <select name="sort_order" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                                style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                            <option value="asc" {{ request('sort_order', 'asc') === 'asc' ? 'selected' : '' }}>A-Z</option>
+                            <option value="desc" {{ request('sort_order') === 'desc' ? 'selected' : '' }}>Z-A</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <button type="submit" class="btn-primary-sm flex-1">
+                            <i class="fas fa-search mr-2"></i>Terapkan
+                        </button>
+                        <a href="{{ route('permit-types.index') }}" class="btn-secondary-sm flex-1 text-center">
+                            Reset
+                        </a>
+                    </div>
+                </div>
             </div>
         </form>
-    </div>
+    </section>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div class="card-elevated rounded-apple-lg p-4">
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Total Jenis Izin</p>
-            <p class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $permitTypes->total() }}</p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-4">
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Environmental</p>
-            <p class="text-2xl font-bold mt-1" style="color: rgba(52, 199, 89, 1);">
-                {{ \App\Models\PermitType::where('category', 'environmental')->count() }}
-            </p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-4">
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Building</p>
-            <p class="text-2xl font-bold mt-1" style="color: rgba(10, 132, 255, 1);">
-                {{ \App\Models\PermitType::where('category', 'building')->count() }}
-            </p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-4">
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Business</p>
-            <p class="text-2xl font-bold mt-1" style="color: rgba(255, 149, 0, 1);">
-                {{ \App\Models\PermitType::where('category', 'business')->count() }}
-            </p>
-        </div>
-    </div>
-
-    <!-- Permit Types List -->
-    <div class="card-elevated rounded-apple-lg overflow-hidden">
+    {{-- Permit types table --}}
+    <section class="card-elevated rounded-apple-xl overflow-hidden">
         @if($permitTypes->count() > 0)
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y" style="border-color: rgba(58, 58, 60, 0.8);">
-                    <thead style="background: rgba(58, 58, 60, 0.6);">
+                <table class="min-w-full">
+                    <thead style="background: rgba(28,28,30,0.45);">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: rgba(235, 235, 245, 0.6);">
-                                Nama Izin
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: rgba(235, 235, 245, 0.6);">
-                                Kategori
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: rgba(235, 235, 245, 0.6);">
-                                Institusi
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: rgba(235, 235, 245, 0.6);">
-                                Waktu & Biaya
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: rgba(235, 235, 245, 0.6);">
-                                Status
-                            </th>
-                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider" style="color: rgba(235, 235, 245, 0.6);">
-                                Aksi
-                            </th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Jenis izin</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Kategori</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Institusi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Waktu & biaya</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
+                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y" style="border-color: rgba(58, 58, 60, 0.8);">
+                    <tbody>
                         @foreach($permitTypes as $permit)
-                        <tr class="group hover:bg-opacity-70 transition-colors cursor-pointer" 
-                            style="background: rgba(44, 44, 46, 0.3);"
-                            onclick="toggleDescription('desc-{{ $permit->id }}')">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <!-- Category Icon -->
-                                    <div class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
-                                         style="background: {{ 
-                                            $permit->category === 'environmental' ? 'rgba(52, 199, 89, 0.2)' : 
-                                            ($permit->category === 'building' ? 'rgba(10, 132, 255, 0.2)' : 
-                                            ($permit->category === 'business' ? 'rgba(255, 149, 0, 0.2)' : 
-                                            ($permit->category === 'land' ? 'rgba(175, 82, 222, 0.2)' : 
-                                            'rgba(142, 142, 147, 0.2)'))) }};">
-                                        <i class="fas {{ 
-                                            $permit->category === 'environmental' ? 'fa-leaf' : 
-                                            ($permit->category === 'building' ? 'fa-building' : 
-                                            ($permit->category === 'business' ? 'fa-briefcase' : 
-                                            ($permit->category === 'land' ? 'fa-map' : 
-                                            ($permit->category === 'transportation' ? 'fa-truck' : 'fa-file-alt')))) }}" 
-                                           style="color: {{ 
-                                            $permit->category === 'environmental' ? 'rgba(52, 199, 89, 1)' : 
-                                            ($permit->category === 'building' ? 'rgba(10, 132, 255, 1)' : 
-                                            ($permit->category === 'business' ? 'rgba(255, 149, 0, 1)' : 
-                                            ($permit->category === 'land' ? 'rgba(175, 82, 222, 1)' : 
-                                            'rgba(142, 142, 147, 1)'))) }};"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2">
-                                            <div class="text-sm font-medium" style="color: #FFFFFF;">
-                                                {{ $permit->name }}
-                                            </div>
-                                            @if($permit->description)
-                                                <button type="button" 
-                                                        class="text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                                                        style="color: rgba(10, 132, 255, 1);"
-                                                        title="Klik baris untuk melihat detail">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </button>
-                                            @endif
-                                        </div>
-                                        <div class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.6);">
-                                            {{ $permit->code }}
+                            @php
+                                $style = $categoryStyles[$permit->category] ?? $categoryStyles['default'];
+                            @endphp
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition cursor-pointer" onclick="toggleDescription('desc-{{ $permit->id }}')">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-10 h-10 rounded-apple flex items-center justify-center" style="background: {{ $style['bg'] }}; color: {{ $style['text'] }};">
+                                            <i class="fas {{ $style['icon'] }}"></i>
+                                        </span>
+                                        <div>
+                                            <p class="text-sm font-semibold text-white">{{ $permit->name }}</p>
+                                            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $permit->code }}</p>
                                         </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                                      style="background: {{ 
-                                            $permit->category === 'environmental' ? 'rgba(52, 199, 89, 0.2)' : 
-                                            ($permit->category === 'building' ? 'rgba(10, 132, 255, 0.2)' : 
-                                            ($permit->category === 'business' ? 'rgba(255, 149, 0, 0.2)' : 
-                                            ($permit->category === 'land' ? 'rgba(175, 82, 222, 0.2)' : 
-                                            'rgba(142, 142, 147, 0.2)'))) }}; 
-                                             color: {{ 
-                                            $permit->category === 'environmental' ? 'rgba(52, 199, 89, 1)' : 
-                                            ($permit->category === 'building' ? 'rgba(10, 132, 255, 1)' : 
-                                            ($permit->category === 'business' ? 'rgba(255, 149, 0, 1)' : 
-                                            ($permit->category === 'land' ? 'rgba(175, 82, 222, 1)' : 
-                                            'rgba(142, 142, 147, 1)'))) }};">
-                                    {{ ucfirst($permit->category) }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm" style="color: rgba(235, 235, 245, 0.9);">
-                                    {{ $permit->institution?->name ?? '-' }}
-                                </div>
-                                @if($permit->institution)
-                                    <div class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.5);">
-                                        {{ $permit->institution->type }}
-                                    </div>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="space-y-1">
-                                    @if($permit->avg_processing_days)
-                                        <div class="flex items-center gap-1.5 text-sm" style="color: rgba(235, 235, 245, 0.9);">
-                                            <i class="fas fa-clock text-xs" style="color: rgba(10, 132, 255, 1);"></i>
-                                            <span>{{ $permit->avg_processing_days }} hari</span>
-                                        </div>
-                                    @else
-                                        <div class="text-xs" style="color: rgba(142, 142, 147, 1);">
-                                            <i class="fas fa-clock"></i> Belum ditentukan
-                                        </div>
-                                    @endif
-                                    @if($permit->estimated_cost_min && $permit->estimated_cost_max)
-                                        <div class="flex items-center gap-1.5 text-xs" style="color: rgba(235, 235, 245, 0.6);">
-                                            <i class="fas fa-money-bill-wave text-xs" style="color: rgba(52, 199, 89, 1);"></i>
-                                            <span>{{ $permit->estimated_cost_range }}</span>
-                                        </div>
-                                    @else
-                                        <div class="text-xs" style="color: rgba(142, 142, 147, 1);">
-                                            <i class="fas fa-money-bill-wave"></i> Belum ditentukan
-                                        </div>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                @if($permit->is_active)
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                                          style="background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 1);">
-                                        Aktif
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-apple" style="background: {{ $style['bg'] }}; color: {{ $style['text'] }};">
+                                        {{ ucfirst($permit->category) }}
                                     </span>
-                                @else
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                                          style="background: rgba(142, 142, 147, 0.2); color: rgba(142, 142, 147, 1);">
-                                        Tidak Aktif
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-right text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-2" onclick="event.stopPropagation();">
-                                    <a href="{{ route('permit-types.show', $permit) }}" 
-                                       class="p-2 rounded-lg transition-colors"
-                                       style="color: rgba(10, 132, 255, 1);"
-                                       onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
-                                       onmouseout="this.style.background='transparent'"
-                                       title="Lihat Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('permit-types.edit', $permit) }}" 
-                                       class="p-2 rounded-lg transition-colors"
-                                       style="color: rgba(255, 149, 0, 1);"
-                                       onmouseover="this.style.background='rgba(255, 149, 0, 0.1)'"
-                                       onmouseout="this.style.background='transparent'"
-                                       title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('permit-types.destroy', $permit) }}" 
-                                          method="POST" 
-                                          class="inline"
-                                          onsubmit="return confirm('Yakin ingin menghapus jenis izin ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="p-2 rounded-lg transition-colors"
-                                                style="color: rgba(255, 59, 48, 1);"
-                                                onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
-                                                onmouseout="this.style.background='transparent'"
-                                                title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        
-                        <!-- Description Row (Expandable) -->
-                        @if($permit->description)
-                        <tr id="desc-{{ $permit->id }}" class="hidden transition-all" style="background: rgba(58, 58, 60, 0.4);">
-                            <td colspan="6" class="px-6 py-4">
-                                <div class="flex gap-3">
-                                    <div class="flex-shrink-0 pt-1">
-                                        <i class="fas fa-info-circle" style="color: rgba(10, 132, 255, 1);"></i>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ $permit->institution?->name ?? '-' }}</p>
+                                    @if($permit->institution)
+                                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">{{ $permit->institution->type }}</p>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="space-y-1 text-xs" style="color: rgba(235,235,245,0.7);">
+                                        <div><i class="fas fa-clock mr-2 text-apple-blue"></i>{{ $permit->avg_processing_days ? $permit->avg_processing_days . ' hari' : 'Durasi belum ditentukan' }}</div>
+                                        <div><i class="fas fa-money-bill-wave mr-2 text-apple-green"></i>{{ $permit->estimated_cost_min && $permit->estimated_cost_max ? $permit->estimated_cost_range : 'Biaya belum ditentukan' }}</div>
                                     </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium mb-2" style="color: rgba(10, 132, 255, 1);">
-                                            Deskripsi & Informasi:
-                                        </p>
-                                        <p class="text-sm leading-relaxed" style="color: rgba(235, 235, 245, 0.8);">
-                                            {{ $permit->description }}
-                                        </p>
-                                        @if($permit->required_documents && count($permit->required_documents) > 0)
-                                            <div class="mt-3">
-                                                <p class="text-xs font-semibold mb-2" style="color: rgba(235, 235, 245, 0.7);">
-                                                    <i class="fas fa-paperclip mr-1"></i>Dokumen yang Diperlukan:
-                                                </p>
-                                                <ul class="list-disc list-inside space-y-1 text-xs" style="color: rgba(235, 235, 245, 0.6);">
-                                                    @foreach($permit->required_documents as $doc)
-                                                        <li>{{ $doc }}</li>
-                                                    @endforeach
-                                                </ul>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if($permit->is_active)
+                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-apple" style="background: rgba(52,199,89,0.15); color: rgba(52,199,89,1);">
+                                            Aktif
+                                        </span>
+                                    @else
+                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-apple" style="background: rgba(142,142,147,0.15); color: rgba(142,142,147,1);">
+                                            Tidak Aktif
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-2" onclick="event.stopPropagation();">
+                                        <a href="{{ route('permit-types.show', $permit) }}" class="btn-secondary-sm">
+                                            <i class="fas fa-eye mr-1"></i>Detail
+                                        </a>
+                                        <a href="{{ route('permit-types.edit', $permit) }}" class="btn-primary-sm">
+                                            <i class="fas fa-edit mr-1"></i>Edit
+                                        </a>
+                                        <form action="{{ route('permit-types.destroy', $permit) }}" method="POST" onsubmit="return confirm('Hapus jenis izin ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9); border: 1px solid rgba(255,59,48,0.3);">
+                                                <i class="fas fa-trash mr-1"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @if($permit->description || $permit->required_documents)
+                                <tr id="desc-{{ $permit->id }}" class="hidden border-b border-white/5">
+                                    <td colspan="6" class="px-6 pb-6">
+                                        <div class="rounded-apple p-4" style="background: rgba(255,255,255,0.02);">
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div>
+                                                    <p class="text-xs uppercase tracking-widest mb-2" style="color: rgba(235,235,245,0.5);">Deskripsi</p>
+                                                    <p class="text-sm" style="color: rgba(235,235,245,0.8);">
+                                                        {{ $permit->description ?? 'Belum ada deskripsi tambahan.' }}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs uppercase tracking-widest mb-2" style="color: rgba(235,235,245,0.5);">Dokumen wajib</p>
+                                                    @if(is_array($permit->required_documents) && count($permit->required_documents))
+                                                        <ul class="list-disc pl-4 space-y-1 text-sm" style="color: rgba(235,235,245,0.75);">
+                                                            @foreach($permit->required_documents as $doc)
+                                                                <li>{{ $doc }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @else
+                                                        <p class="text-sm" style="color: rgba(235,235,245,0.55);">Belum ditentukan.</p>
+                                                    @endif
+                                                </div>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.5);">Durasi rata-rata</p>
+                                                        <p class="text-sm font-semibold" style="color:#FFFFFF;">{{ $permit->avg_processing_days ? $permit->avg_processing_days . ' hari' : '-' }}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.5);">Estimasi biaya</p>
+                                                        <p class="text-sm font-semibold" style="color:#FFFFFF;">{{ $permit->estimated_cost_min && $permit->estimated_cost_max ? $permit->estimated_cost_range : '-' }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
-            <div class="px-6 py-4" style="background: rgba(58, 58, 60, 0.3); border-top: 1px solid rgba(58, 58, 60, 0.8);">
+            <div class="px-6 py-4 border-t border-white/5">
                 {{ $permitTypes->links() }}
             </div>
         @else
-            <div class="text-center py-12">
-                <i class="fas fa-file-alt text-6xl mb-4" style="color: rgba(235, 235, 245, 0.3);"></i>
-                <p class="text-lg" style="color: rgba(235, 235, 245, 0.6);">
-                    Tidak ada data jenis izin
-                </p>
-                <a href="{{ route('permit-types.create') }}" 
-                   class="inline-block mt-4 px-6 py-2 rounded-lg" 
-                   style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+            <div class="text-center py-12 space-y-4">
+                <i class="fas fa-file-alt text-5xl" style="color: rgba(235,235,245,0.3);"></i>
+                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada data jenis izin yang cocok dengan filter Anda.</p>
+                <a href="{{ route('permit-types.create') }}" class="btn-primary-sm">
                     <i class="fas fa-plus mr-2"></i>Tambah Jenis Izin Pertama
                 </a>
             </div>
         @endif
-    </div>
+    </section>
 </div>
 
 <script>
 function toggleDescription(id) {
-    const descRow = document.getElementById(id);
-    if (descRow) {
-        descRow.classList.toggle('hidden');
+    const row = document.getElementById(id);
+    if (row) {
+        row.classList.toggle('hidden');
     }
 }
 </script>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force PWA Update - Bizmark.ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
+        <div class="text-center mb-6">
+            <div class="w-20 h-20 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse">
+                <i class="fas fa-sync-alt text-4xl text-white"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">Force PWA Update</h1>
+            <p class="text-gray-600">Memaksa update cache & service worker</p>
+        </div>
+
+        <div id="status" class="space-y-3 mb-6"></div>
+
+        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-500 rounded-lg p-4 mb-6">
+            <p class="text-sm text-yellow-800">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <strong>Penting:</strong> Setelah proses selesai, TUTUP PWA sepenuhnya dan buka kembali dari home screen.
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <button onclick="forceUpdate()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                <i class="fas fa-redo mr-2"></i>
+                Force Update Now
+            </button>
+            <button onclick="unregisterAll()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                <i class="fas fa-trash mr-2"></i>
+                Unregister All SW (Nuclear)
+            </button>
+            <a href="/client/dashboard" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold text-center transition-colors">
+                <i class="fas fa-arrow-right mr-2"></i>
+                Go to Dashboard
+            </a>
+        </div>
+
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-semibold text-gray-800 mb-2 text-sm">Langkah Manual:</h3>
+            <ol class="text-xs text-gray-600 space-y-1 list-decimal list-inside">
+                <li>Klik "Force Update Now"</li>
+                <li>Tunggu sampai semua proses selesai</li>
+                <li>TUTUP PWA sepenuhnya (swipe close app)</li>
+                <li>Buka kembali PWA dari icon home screen</li>
+                <li>Header seharusnya sudah NO hamburger menu!</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function addStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const colors = {
+                'info': 'bg-blue-50 border-blue-200 text-blue-800',
+                'success': 'bg-green-50 border-green-200 text-green-800',
+                'error': 'bg-red-50 border-red-200 text-red-800',
+                'warning': 'bg-yellow-50 border-yellow-200 text-yellow-800'
+            };
+            
+            const div = document.createElement('div');
+            div.className = `${colors[type]} border rounded-lg p-3 text-sm`;
+            div.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'} mr-2"></i>${message}`;
+            statusDiv.appendChild(div);
+            
+            // Auto scroll
+            div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        async function forceUpdate() {
+            document.getElementById('status').innerHTML = '';
+            addStatus('🚀 Memulai force update...', 'info');
+            
+            try {
+                // 1. Clear all caches
+                addStatus('🗑️ Menghapus semua cache...', 'info');
+                const cacheNames = await caches.keys();
+                await Promise.all(
+                    cacheNames.map(cacheName => {
+                        addStatus(`   - Menghapus cache: ${cacheName}`, 'info');
+                        return caches.delete(cacheName);
+                    })
+                );
+                addStatus('✅ Semua cache berhasil dihapus!', 'success');
+                
+                // 2. Update service workers
+                if ('serviceWorker' in navigator) {
+                    addStatus('🔄 Mengupdate service workers...', 'info');
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    
+                    for (let registration of registrations) {
+                        addStatus(`   - Update SW: ${registration.scope}`, 'info');
+                        await registration.update();
+                    }
+                    addStatus('✅ Service workers berhasil diupdate!', 'success');
+                } else {
+                    addStatus('⚠️ Service Worker tidak didukung', 'warning');
+                }
+                
+                // 3. Clear storage
+                addStatus('🗄️ Membersihkan storage...', 'info');
+                if ('storage' in navigator && 'estimate' in navigator.storage) {
+                    const estimate = await navigator.storage.estimate();
+                    addStatus(`   - Storage usage: ${(estimate.usage / 1024 / 1024).toFixed(2)} MB`, 'info');
+                }
+                
+                // 4. Final message
+                addStatus('🎉 UPDATE SELESAI!', 'success');
+                addStatus('⚠️ LANGKAH BERIKUTNYA: Tutup PWA sepenuhnya dan buka kembali!', 'warning');
+                
+                // Auto reload after 3 seconds
+                setTimeout(() => {
+                    addStatus('🔄 Auto reload dalam 3 detik...', 'info');
+                    setTimeout(() => {
+                        window.location.href = '/client/dashboard';
+                    }, 3000);
+                }, 2000);
+                
+            } catch (error) {
+                addStatus(`❌ Error: ${error.message}`, 'error');
+                console.error('Force update error:', error);
+            }
+        }
+
+        async function unregisterAll() {
+            if (!confirm('⚠️ INI AKAN MENGHAPUS SEMUA SERVICE WORKER!\n\nAnda yakin? PWA harus diinstall ulang setelah ini.')) {
+                return;
+            }
+            
+            document.getElementById('status').innerHTML = '';
+            addStatus('💣 Nuclear option activated...', 'warning');
+            
+            try {
+                // Unregister all service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    
+                    for (let registration of registrations) {
+                        addStatus(`🗑️ Unregistering: ${registration.scope}`, 'info');
+                        await registration.unregister();
+                    }
+                }
+                
+                // Clear all caches
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(name => caches.delete(name)));
+                
+                // Clear storage
+                if ('storage' in navigator && 'clear' in navigator.storage) {
+                    await navigator.storage.clear();
+                }
+                
+                addStatus('✅ Semua service worker & cache dihapus!', 'success');
+                addStatus('⚠️ Silakan INSTALL ULANG PWA dari browser!', 'warning');
+                
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+                
+            } catch (error) {
+                addStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto detect mode on load
+        window.addEventListener('load', () => {
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                          window.navigator.standalone === true;
+            
+            if (isPWA) {
+                addStatus('✅ Running in PWA mode', 'success');
+            } else {
+                addStatus('ℹ️ Running in browser mode', 'info');
+                addStatus('⚠️ Buka page ini dari PWA untuk force update!', 'warning');
+            }
+        });
+    </script>
+</body>
+</html>

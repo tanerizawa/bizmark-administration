@@ -10,10 +10,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\URL;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 
 class Client extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, SoftDeletes, Notifiable;
+    use HasFactory, SoftDeletes, Notifiable, HasPushSubscriptions;
 
     protected $fillable = [
         'name',

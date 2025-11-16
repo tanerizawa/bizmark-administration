@@ -1,32 +1,62 @@
 {
-  "name": "Bizmark.ID - Konsultan Perizinan",
+  "name": "Bizmark.ID - Konsultan Perizinan & Bisnis",
   "short_name": "Bizmark.ID",
-  "description": "Spesialis perizinan Limbah B3, AMDAL, UKL-UPL untuk industri manufaktur",
-  "start_url": "/",
+  "description": "Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan, dan digitalisasi administrasi perusahaan. Proses cepat, transparan, harga kompetitif.",
+  "version": "2.1.0",
+  "start_url": "/?utm_source=pwa&utm_medium=homescreen&v=2.1.0",
   "display": "standalone",
-  "background_color": "#1E40AF",
-  "theme_color": "#1E40AF",
+  "background_color": "#000000",
+  "theme_color": "#007AFF",
   "orientation": "portrait-primary",
+  "scope": "/",
   "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/favicon.ico",
       "sizes": "48x48",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "/favicon.ico",
-      "sizes": "192x192",
       "type": "image/x-icon",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/favicon.ico",
-      "sizes": "512x512",
-      "type": "image/x-icon",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
-  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Dashboard Klien",
+      "short_name": "Dashboard",
+      "description": "Akses dashboard portal klien",
+      "url": "/client/dashboard",
+      "icons": [{ "src": "/favicon.ico", "sizes": "96x96" }]
+    },
+    {
+      "name": "Ajukan Izin Baru",
+      "short_name": "Ajukan Izin",
+      "description": "Buat permohonan izin baru",
+      "url": "/client/applications/create",
+      "icons": [{ "src": "/favicon.ico", "sizes": "96x96" }]
+    },
+    {
+      "name": "Layanan Kami",
+      "short_name": "Layanan",
+      "description": "Lihat katalog layanan perizinan",
+      "url": "/#services",
+      "icons": [{ "src": "/favicon.ico", "sizes": "96x96" }]
+    },
+    {
+      "name": "Hubungi Kami",
+      "short_name": "Kontak",
+      "description": "Konsultasi gratis dengan tim kami",
+      "url": "/#contact",
+      "icons": [{ "src": "/favicon.ico", "sizes": "96x96" }]
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
   "lang": "id",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": ""
 }

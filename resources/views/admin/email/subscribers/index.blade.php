@@ -1,201 +1,205 @@
 @extends('layouts.app')
 
 @section('title', 'Email Subscribers')
+@section('page-title', 'Email Subscribers')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-2 text-white">Email Subscribers</h1>
-            <p class="text-muted">Kelola daftar subscriber newsletter</p>
-        </div>
-        <a href="{{ route('admin.subscribers.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Tambah Subscriber
-        </a>
-    </div>
+@php
+    $statusMeta = [
+        'active' => ['label' => 'Active', 'bg' => 'rgba(52,199,89,0.15)', 'text' => 'rgba(52,199,89,1)'],
+        'unsubscribed' => ['label' => 'Unsubscribed', 'bg' => 'rgba(255,149,0,0.15)', 'text' => 'rgba(255,149,0,1)'],
+        'bounced' => ['label' => 'Bounced', 'bg' => 'rgba(255,69,58,0.15)', 'text' => 'rgba(255,69,58,1)'],
+    ];
+@endphp
 
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-dark border-dark">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3">
-                                <i class="fas fa-users fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Total Subscribers</h6>
-                            <h3 class="mb-0 text-white">{{ number_format($stats['total']) }}</h3>
-                        </div>
-                    </div>
+<div class="max-w-7xl mx-auto space-y-10">
+    {{-- Hero --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+        </div>
+        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="space-y-3 max-w-3xl">
+                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Audience Ops</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-white">Email Subscribers Bizmark.id</h1>
+                <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
+                    Pantau daftar subscriber newsletter, status keaktifan, dan tag audience dengan gaya mission control.
+                </p>
+                <div class="flex flex-wrap gap-3 text-xs" style="color: rgba(235,235,245,0.6);">
+                    <span><i class="fas fa-users mr-2"></i>{{ number_format($stats['total']) }} total subscriber</span>
+                    <span><i class="fas fa-check-circle mr-2"></i>{{ number_format($stats['active']) }} aktif</span>
+                    <span><i class="fas fa-exclamation-triangle mr-2"></i>{{ number_format($stats['bounced']) }} bounced</span>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-dark border-dark">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-success bg-opacity-10 text-success rounded-circle p-3">
-                                <i class="fas fa-check-circle fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Active</h6>
-                            <h3 class="mb-0 text-white">{{ number_format($stats['active']) }}</h3>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex flex-col items-start gap-3">
+                <a href="{{ route('admin.subscribers.create') }}" class="btn-primary">
+                    <i class="fas fa-plus mr-2"></i>Tambah Subscriber
+                </a>
+                {{-- <a href="{{ route('admin.email.campaigns.index') }}" class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
+                    Kelola campaign →
+                </a> --}}
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-dark border-dark">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3">
-                                <i class="fas fa-user-slash fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Unsubscribed</h6>
-                            <h3 class="mb-0 text-white">{{ number_format($stats['unsubscribed']) }}</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-dark border-dark">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3">
-                                <i class="fas fa-exclamation-triangle fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="text-muted mb-1">Bounced</h6>
-                            <h3 class="mb-0 text-white">{{ number_format($stats['bounced']) }}</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
-    <!-- Filters -->
-    <div class="card bg-dark border-dark mb-4">
-        <div class="card-body">
-            <form action="{{ route('admin.subscribers.index') }}" method="GET" class="row g-3">
-                <div class="col-md-5">
-                    <input type="text" name="search" class="form-control bg-dark text-white border-secondary" 
-                           placeholder="Cari email atau nama..." value="{{ request('search') }}">
+    {{-- Stats --}}
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card-elevated rounded-apple-lg p-4">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Subscriber</p>
+            <p class="text-3xl font-bold text-white">{{ number_format($stats['total']) }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ number_format($stats['active']) }} aktif</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Active</p>
+            <p class="text-3xl font-bold text-white">{{ number_format($stats['active']) }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Audience yang bisa menerima email</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Unsubscribed</p>
+            <p class="text-3xl font-bold text-white">{{ number_format($stats['unsubscribed']) }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu follow up manual</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Bounced</p>
+            <p class="text-3xl font-bold text-white">{{ number_format($stats['bounced']) }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu cek email address</p>
+        </div>
+    </section>
+
+    {{-- Filters --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
+                <h2 class="text-lg font-semibold text-white">Cari subscriber</h2>
+            </div>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $subscribers->total() }} hasil ditemukan</p>
+        </div>
+        <form method="GET" action="{{ route('admin.subscribers.index') }}">
+            <div class="flex flex-col gap-3 md:flex-row md:items-end">
+                <div class="flex-1">
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Email atau nama"
+                               class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500"
+                               style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-left: none;">
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <select name="status" class="form-select bg-dark text-white border-secondary">
-                        <option value="">Semua Status</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="unsubscribed" {{ request('status') == 'unsubscribed' ? 'selected' : '' }}>Unsubscribed</option>
-                        <option value="bounced" {{ request('status') == 'bounced' ? 'selected' : '' }}>Bounced</option>
+                <div class="flex-1">
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Status</label>
+                    <select name="status" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                        <option value="">Semua status</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="unsubscribed" {{ request('status') === 'unsubscribed' ? 'selected' : '' }}>Unsubscribed</option>
+                        <option value="bounced" {{ request('status') === 'bounced' ? 'selected' : '' }}>Bounced</option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search me-2"></i>Filter
+                <div class="flex gap-3">
+                    <button type="submit" class="btn-primary-sm">
+                        <i class="fas fa-search mr-2"></i>Filter
                     </button>
+                    <a href="{{ route('admin.subscribers.index') }}" class="btn-secondary-sm text-center">
+                        Reset
+                    </a>
                 </div>
-                <div class="col-md-2">
-                    <a href="{{ route('admin.subscribers.index') }}" class="btn btn-secondary w-100">Reset</a>
-                </div>
-            </form>
-        </div>
-    </div>
+            </div>
+        </form>
+    </section>
 
-    <!-- Subscribers List -->
-    <div class="card bg-dark border-dark">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead>
+    {{-- Table --}}
+    <section class="card-elevated rounded-apple-xl overflow-hidden">
+        @if($subscribers->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead style="background: rgba(28,28,30,0.45);">
                         <tr>
-                            <th>Email</th>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Source</th>
-                            <th>Subscribed</th>
-                            <th>Actions</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Subscriber</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Tags</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Subscribedd</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Source</th>
+                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($subscribers as $subscriber)
-                            <tr>
-                                <td>
-                                    <a href="{{ route('admin.subscribers.show', $subscriber) }}" 
-                                       class="text-white text-decoration-none">
-                                        {{ $subscriber->email }}
-                                    </a>
-                                </td>
-                                <td>{{ $subscriber->name ?? '-' }}</td>
-                                <td>
-                                    @if($subscriber->status === 'active')
-                                        <span class="badge bg-success">Active</span>
-                                    @elseif($subscriber->status === 'unsubscribed')
-                                        <span class="badge bg-warning">Unsubscribed</span>
-                                    @elseif($subscriber->status === 'bounced')
-                                        <span class="badge bg-danger">Bounced</span>
+                        @foreach($subscribers as $subscriber)
+                            @php $meta = $statusMeta[$subscriber->status] ?? $statusMeta['active']; @endphp
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-semibold text-white">{{ $subscriber->name ?? $subscriber->email }}</p>
+                                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $subscriber->email }}</p>
+                                    @if($subscriber->phone)
+                                        <p class="text-xs" style="color: rgba(235,235,245,0.5);"><i class="fas fa-phone mr-1"></i>{{ $subscriber->phone }}</p>
                                     @endif
                                 </td>
-                                <td>
-                                    <span class="badge bg-secondary">{{ $subscriber->source ?? 'manual' }}</span>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-apple" style="background: {{ $meta['bg'] }}; color: {{ $meta['text'] }};">
+                                        {{ ucfirst($subscriber->status) }}
+                                    </span>
                                 </td>
-                                <td>
-                                    <small class="text-muted">{{ $subscriber->subscribed_at->format('d M Y') }}</small>
+                                <td class="px-6 py-4">
+                                    @if(is_array($subscriber->tags) && count($subscriber->tags))
+                                        <div class="flex flex-wrap gap-2">
+                                            @foreach($subscriber->tags as $tag)
+                                                <span class="px-2 py-0.5 text-[10px] rounded-full" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.75);">
+                                                    {{ $tag }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <span class="text-xs" style="color: rgba(235,235,245,0.4);">-</span>
+                                    @endif
                                 </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="{{ route('admin.subscribers.show', $subscriber) }}" 
-                                           class="btn btn-sm btn-info" title="View">
-                                            <i class="fas fa-eye"></i>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm" style="color: rgba(235,235,245,0.8);">
+                                        {{ $subscriber->subscribed_at ? $subscriber->subscribed_at->format('d M Y') : '-' }}
+                                    </p>
+                                    @if($subscriber->subscribed_at)<p class="text-xs" style="color: rgba(235,235,245,0.5);">{{ $subscriber->subscribed_at->diffForHumans() }}</p>@endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm" style="color: rgba(235,235,245,0.8);">{{ ucfirst($subscriber->source ?? 'unknown') }}</p>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-2">
+                                        <a href="{{ route('admin.subscribers.show', $subscriber) }}" class="btn-secondary-sm">
+                                            <i class="fas fa-eye mr-1"></i>Lihat
                                         </a>
-                                        <a href="{{ route('admin.subscribers.edit', $subscriber) }}" 
-                                           class="btn btn-sm btn-warning" title="Edit">
-                                            <i class="fas fa-edit"></i>
+                                        <a href="{{ route('admin.subscribers.edit', $subscriber) }}" class="btn-primary-sm">
+                                            <i class="fas fa-edit mr-1"></i>Edit
                                         </a>
-                                        <form action="{{ route('admin.subscribers.destroy', $subscriber) }}" 
-                                              method="POST" class="d-inline"
-                                              onsubmit="return confirm('Hapus subscriber ini?')">
+                                        <form action="{{ route('admin.subscribers.destroy', $subscriber) }}" method="POST" onsubmit="return confirm('Hapus subscriber ini?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                            <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9); border: 1px solid rgba(255,59,48,0.3);">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
-                                    <i class="fas fa-users fa-3x mb-3"></i>
-                                    <p>Belum ada subscriber</p>
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
             @if($subscribers->hasPages())
-                <div class="mt-4">
-                    {{ $subscribers->links() }}
+                <div class="px-6 py-4 border-t border-white/5">
+                    {{ $subscribers->withQueryString()->links() }}
                 </div>
             @endif
-        </div>
-    </div>
+        @else
+            <div class="text-center py-16 space-y-3">
+                <i class="fas fa-users text-4xl" style="color: rgba(235,235,245,0.35);"></i>
+                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada subscriber. Mulai bangun audience Anda.</p>
+                <a href="{{ route('admin.subscribers.create') }}" class="btn-primary">
+                    <i class="fas fa-plus mr-2"></i>Tambah Subscriber
+                </a>
+            </div>
+        @endif
+    </section>
 </div>
 @endsection

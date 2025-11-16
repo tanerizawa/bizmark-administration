@@ -411,7 +411,13 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::post('/applications/{id}/payment/initiate', [App\Http\Controllers\Client\PaymentController::class, 'initiate'])->name('payments.initiate');
         Route::post('/applications/{id}/payment/manual', [App\Http\Controllers\Client\PaymentController::class, 'manual'])->name('payments.manual');
         Route::get('/applications/{id}/payment/{paymentId}/success', [App\Http\Controllers\Client\PaymentController::class, 'success'])->name('payments.success');
-        
+
+        // Notifications
+        Route::get('/notifications', [App\Http\Controllers\Client\NotificationController::class, 'index'])
+            ->name('notifications.index');
+        Route::post('/notifications/read-all', [App\Http\Controllers\Client\NotificationController::class, 'markAllRead'])
+            ->name('notifications.read-all');
+
         // Project Routes
         Route::get('/projects', [App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
         Route::get('/projects/{id}', [App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
@@ -559,6 +565,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
 Route::prefix('client')->name('client.')->middleware(['auth:client'])->group(function () {
     Route::post('applications/{application}/notes', [App\Http\Controllers\Client\ApplicationNoteController::class, 'store'])
         ->name('applications.notes.store');
+});
+
+// Client: Push Notifications API (Phase 2)
+Route::prefix('api/client/push')->name('api.client.push.')->middleware(['auth:client'])->group(function () {
+    Route::post('/subscribe', [App\Http\Controllers\Api\PushNotificationController::class, 'subscribe'])->name('subscribe');
+    Route::post('/unsubscribe', [App\Http\Controllers\Api\PushNotificationController::class, 'unsubscribe'])->name('unsubscribe');
+    Route::get('/status', [App\Http\Controllers\Api\PushNotificationController::class, 'status'])->name('status');
 });
 
 // Payment Callback API (Phase 4)

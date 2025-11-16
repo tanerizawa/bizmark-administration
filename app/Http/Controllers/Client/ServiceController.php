@@ -22,9 +22,10 @@ class ServiceController extends Controller
      */
     public function index(Request $request)
     {
-        // Get sectors for filtering
+        // Get sectors with KBLI counts for filtering/UI
         $sectors = Kbli::select('sector')
-            ->distinct()
+            ->selectRaw('COUNT(*) as total_kbli')
+            ->groupBy('sector')
             ->orderBy('sector')
             ->get();
 

@@ -3,89 +3,246 @@
 @section('title', $project->name)
 
 @section('content')
-<div class="max-w-6xl mx-auto">
-    <!-- Header -->
-    <div class="flex flex-col lg:flex-row justify-between gap-4 mb-6">
-        <div class="flex items-center">
-            <a href="{{ route('projects.index') }}" class="text-apple-blue-dark hover:text-apple-blue mr-3">
-                <i class="fas fa-arrow-left text-base"></i>
-            </a>
-            <div>
-                <h1 class="text-2xl md:text-3xl font-semibold" style="color: #FFFFFF;">{{ $project->name }}</h1>
-                <p class="mt-1 text-sm" style="color: rgba(235, 235, 245, 0.65);">Ringkasan progres dan perizinan proyek.</p>
+@php
+    $totalTasks = $project->tasks->count();
+    $completedTasks = $project->tasks->where('status', 'done')->count();
+    $taskProgress = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100, 1) : 0;
+    $documentsCount = $project->documents->count();
+    $paymentProgress = $totalBudget > 0 ? round(($totalReceived / $totalBudget) * 100, 1) : 0;
+    $permitCompletionRate = $statistics['completion_rate'] ?? 0;
+    $permitCompleted = $statistics['completed'] ?? 0;
+    $clientDisplay = $project->client ? ($project->client->company_name ?? $project->client->name) : ($project->client_name ?? 'Klien Bizmark');
+    $statusColor = match($project->status->code ?? '') {
+        'PENAWARAN' => 'background: rgba(255, 149, 0, 0.2); color: rgba(255, 149, 0, 0.95); border: 1px solid rgba(255, 149, 0, 0.4);',
+        'KONTRAK' => 'background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 0.95); border: 1px solid rgba(10, 132, 255, 0.4);',
+        'PENGUMPULAN_DOK' => 'background: rgba(255, 159, 10, 0.2); color: rgba(255, 159, 10, 0.95); border: 1px solid rgba(255, 159, 10, 0.4);',
+        'PROSES_DLH', 'PROSES_BPN', 'PROSES_OSS', 'PROSES_NOTARIS' => 'background: rgba(191, 90, 242, 0.2); color: rgba(191, 90, 242, 0.95); border: 1px solid rgba(191, 90, 242, 0.4);',
+        'MENUNGGU_PERSETUJUAN' => 'background: rgba(255, 204, 0, 0.2); color: rgba(255, 204, 0, 0.95); border: 1px solid rgba(255, 204, 0, 0.4);',
+        'SK_TERBIT' => 'background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 0.95); border: 1px solid rgba(52, 199, 89, 0.4);',
+        'DIBATALKAN' => 'background: rgba(255, 59, 48, 0.2); color: rgba(255, 59, 48, 0.95); border: 1px solid rgba(255, 59, 48, 0.4);',
+        'DITUNDA' => 'background: rgba(142, 142, 147, 0.2); color: rgba(142, 142, 147, 0.95); border: 1px solid rgba(142, 142, 147, 0.4);',
+        default => 'background: rgba(58, 58, 60, 0.4); color: rgba(235, 235, 245, 0.85); border: 1px solid rgba(58, 58, 60, 0.8);'
+    };
+    $deadlineState = $project->deadline
+        ? ($project->deadline->isPast() ? 'overdue' : ($project->deadline->diffInDays(now()) <= 7 ? 'urgent' : 'ontrack'))
+        : null;
+    $deadlineBadge = match($deadlineState) {
+        'overdue' => ['label' => 'Terlambat', 'style' => 'background: rgba(255,59,48,0.15); color: rgba(255,59,48,0.95);'],
+        'urgent' => ['label' => 'Mendesak', 'style' => 'background: rgba(255,159,10,0.15); color: rgba(255,159,10,0.95);'],
+        'ontrack' => ['label' => 'On Track', 'style' => 'background: rgba(52,199,89,0.15); color: rgba(52,199,89,0.95);'],
+        default => ['label' => 'Jadwal belum ditentukan', 'style' => 'background: rgba(142,142,147,0.15); color: rgba(142,142,147,0.9);']
+    };
+@endphp
+
+<div class="max-w-7xl mx-auto space-y-10">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+        </div>
+        <div class="relative space-y-6">
+            <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
+                <div class="space-y-4">
+                    <div class="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">
+                        <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
+                            <i class="fas fa-arrow-left text-xs"></i> Projects
+                        </a>
+                        <span class="hidden sm:inline">Mission Control</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $project->name }}</h1>
+                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full" style="{{ $statusColor }}">
+                                {{ $project->status->name ?? 'Status Tidak Tersedia' }}
+                            </span>
+                        </div>
+                        <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                            {{ $project->description ?? 'Belum ada deskripsi proyek. Tambahkan ringkasan agar tim memahami konteks bisnis.' }}
+                        </p>
+                        <div class="flex flex-wrap gap-4 text-xs md:text-sm" style="color: rgba(235,235,245,0.7);">
+                            <span class="inline-flex items-center gap-2"><i class="fas fa-user-tie"></i>{{ $clientDisplay }}</span>
+                            @if($project->institution)
+                                <span class="inline-flex items-center gap-2"><i class="fas fa-landmark"></i>{{ $project->institution->name }}</span>
+                            @endif
+                            <span class="inline-flex items-center gap-2"><i class="fas fa-sync"></i>Diperbarui {{ $project->updated_at->diffForHumans() }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-3 w-full xl:w-72">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">Timeline</p>
+                        <p class="text-base font-semibold text-white">
+                            {{ $project->deadline ? $project->deadline->format('d M Y') : 'Deadline belum ditentukan' }}
+                        </p>
+                        <p class="text-xs" style="color: rgba(235,235,245,0.6);">
+                            {{ $project->start_date ? 'Dimulai ' . $project->start_date->format('d M Y') : 'Tanggal mulai belum tersedia' }}
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full">
+                        <a href="{{ route('projects.edit', $project) }}" class="btn-primary flex-1">
+                            <i class="fas fa-edit mr-2"></i>Edit Proyek
+                        </a>
+                        <form action="{{ route('projects.destroy', $project) }}" method="POST" class="flex-1" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-secondary-sm w-full" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,0.95); border-color: rgba(255,59,48,0.4);">
+                                <i class="fas fa-trash mr-1"></i>Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="rounded-apple-lg p-4" style="background: rgba(10,132,255,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Nilai Kontrak</p>
+                    <p class="text-2xl font-bold text-white mt-1">Rp {{ number_format($totalBudget, 0, ',', '.') }}</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Budget disepakati</p>
+                </div>
+                <div class="rounded-apple-lg p-4" style="background: rgba(52,199,89,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Diterima</p>
+                    <p class="text-2xl font-bold text-white mt-1">Rp {{ number_format($totalReceived, 0, ',', '.') }}</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $paymentProgress }}% dari kontrak</p>
+                </div>
+                <div class="rounded-apple-lg p-4" style="background: rgba(191,90,242,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Progress Izin</p>
+                    <p class="text-2xl font-bold text-white mt-1">{{ $permitCompletionRate }}%</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $permitCompleted }}/{{ $statistics['total'] ?? 0 }} izin tuntas</p>
+                </div>
+                <div class="rounded-apple-lg p-4" style="background: rgba(255,149,0,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Dokumen</p>
+                    <p class="text-2xl font-bold text-white mt-1">{{ $documentsCount }}</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Asset tersimpan</p>
+                </div>
             </div>
         </div>
-        <div class="flex flex-wrap gap-2">
-            <a href="{{ route('projects.edit', $project) }}" 
-               class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors" style="background: rgba(255, 149, 0, 0.95); color: #FFFFFF;">
-                <i class="fas fa-edit mr-2"></i>Edit
-            </a>
-            <form action="{{ route('projects.destroy', $project) }}" method="POST" 
-                  class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?')">
+    </section>
+
+    @if(session('success'))
+        <div class="alert alert-success flex items-center gap-3">
+            <i class="fas fa-check-circle text-lg"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger flex items-center gap-3">
+            <i class="fas fa-exclamation-circle text-lg"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    <section class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div class="card-elevated rounded-apple-xl p-5 space-y-4 xl:col-span-2">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">Operasional</p>
+                    <h2 class="text-lg font-semibold text-white">Pembaharuan Status Proyek</h2>
+                </div>
+                <span class="text-xs" style="color: rgba(235,235,245,0.6);">Terakhir update {{ $project->updated_at->diffForHumans() }}</span>
+            </div>
+            <form action="{{ route('projects.update-status', $project) }}" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-3">
                 @csrf
-                @method('DELETE')
-                <button type="submit" 
-                        class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors" style="background: rgba(255, 59, 48, 0.95); color: #FFFFFF;">
-                    <i class="fas fa-trash mr-2"></i>Hapus
-                </button>
+                @method('PATCH')
+                <div class="md:col-span-4">
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.65);">Status</label>
+                    <select name="status_id" class="w-full">
+                        @foreach($statuses as $status)
+                            <option value="{{ $status->id }}" {{ $project->status_id == $status->id ? 'selected' : '' }}>
+                                {{ $status->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="md:col-span-5">
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.65);">Catatan</label>
+                    <input type="text" name="notes" placeholder="Catatan singkat (opsional)" class="w-full">
+                </div>
+                <div class="md:col-span-3 flex items-end">
+                    <button type="submit" class="btn-primary w-full">
+                        <i class="fas fa-save mr-2"></i>Update Status
+                    </button>
+                </div>
             </form>
         </div>
-    </div>
-
-    <!-- Quick Status Update -->
-    <div class="card-elevated rounded-apple-lg p-4 md:p-5 mb-6">
-        <form action="{{ route('projects.update-status', $project) }}" method="POST" class="flex flex-col lg:flex-row gap-3 lg:items-center">
-            @csrf
-            @method('PATCH')
-            <div class="flex items-center gap-2">
-                <label class="text-xs font-semibold uppercase tracking-wide" style="color: rgba(235, 235, 245, 0.7);">Status:</label>
-                <select name="status_id" class="input-dark px-3 py-2 rounded-md text-sm">
-                    @foreach($statuses as $status)
-                    <option value="{{ $status->id }}" {{ $project->status_id == $status->id ? 'selected' : '' }}>
-                        {{ $status->name }}
-                    </option>
-                    @endforeach
-                </select>
+        <div class="card-elevated rounded-apple-xl p-5 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">Health</p>
+                    <h3 class="text-lg font-semibold text-white">Project Snapshot</h3>
+                </div>
+                <span class="px-3 py-1 text-xs font-semibold rounded-full" style="{{ $deadlineBadge['style'] }}">{{ $deadlineBadge['label'] }}</span>
             </div>
-            <div class="flex-1 w-full">
-                <input type="text" name="notes" placeholder="Catatan singkat (opsional)" 
-                       class="input-dark w-full px-3 py-2 rounded-md text-sm">
+            <div class="space-y-3">
+                <div>
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Target Selesai</p>
+                    <p class="text-base font-semibold text-white">
+                        {{ $project->deadline ? $project->deadline->format('d M Y') : 'Belum ditentukan' }}
+                    </p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">
+                        {{ $project->deadline ? $project->deadline->diffForHumans() : 'Tambahkan deadline untuk memantau timeline.' }}
+                    </p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between text-xs" style="color: rgba(235,235,245,0.6);">
+                        <span>Payment Progress</span>
+                        <span>{{ $paymentProgress }}%</span>
+                    </div>
+                    <div class="h-1.5 rounded-full bg-white/10 mt-1">
+                        <div class="h-full rounded-full bg-gradient-to-r from-apple-blue to-apple-green" style="width: {{ min(100, $paymentProgress) }}%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between text-xs" style="color: rgba(235,235,245,0.6);">
+                        <span>Permit Completion</span>
+                        <span>{{ $permitCompletionRate }}%</span>
+                    </div>
+                    <div class="h-1.5 rounded-full bg-white/10 mt-1">
+                        <div class="h-full rounded-full bg-gradient-to-r from-apple-purple to-apple-blue" style="width: {{ min(100, $permitCompletionRate) }}%"></div>
+                    </div>
+                    <p class="text-xs mt-1" style="color: rgba(235,235,245,0.6);">{{ $permitCompleted }}/{{ $statistics['total'] ?? 0 }} izin</p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between text-xs" style="color: rgba(235,235,245,0.6);">
+                        <span>Task Completion</span>
+                        <span>{{ $taskProgress }}%</span>
+                    </div>
+                    <div class="h-1.5 rounded-full bg-white/10 mt-1">
+                        <div class="h-full rounded-full bg-gradient-to-r from-apple-orange to-apple-pink" style="width: {{ min(100, $taskProgress) }}%"></div>
+                    </div>
+                    <p class="text-xs mt-1" style="color: rgba(235,235,245,0.6);">{{ $completedTasks }}/{{ $totalTasks }} tugas selesai</p>
+                </div>
+                <div class="flex items-center justify-between text-xs" style="color: rgba(235,235,245,0.7);">
+                    <span>Receivable Outstanding</span>
+                    <span class="text-white font-semibold">Rp {{ number_format($receivableOutstanding, 0, ',', '.') }}</span>
+                </div>
             </div>
-            <button type="submit" class="btn-primary px-4 py-2 rounded-md text-sm font-semibold">
-                <i class="fas fa-save mr-1"></i>Update
-            </button>
-        </form>
-    </div>
+        </div>
+    </section>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <!-- Main Information -->
-        <div class="md:col-span-2 min-w-0 space-y-6">
+        <div class="xl:col-span-2 min-w-0 space-y-6">
             <!-- Tab Navigation -->
-            <div class="card-elevated rounded-apple-lg p-1.5">
-                <div class="flex space-x-1" role="tablist">
-                    <button class="tab-button active flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
-                            onclick="switchTab('overview')" id="tab-overview"
-                            style="color: #FFFFFF;">
+            <div class="card-elevated rounded-apple-xl p-2" role="tablist">
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="tab-button active flex-1 px-3 py-2.5 rounded-apple text-sm font-semibold transition-apple" 
+                            onclick="switchTab('overview')" id="tab-overview">
                         <i class="fas fa-info-circle mr-2"></i>Overview
                     </button>
-                    <button class="tab-button flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
-                            onclick="switchTab('permits')" id="tab-permits"
-                            style="color: rgba(235, 235, 245, 0.7);">
+                    <button type="button" class="tab-button flex-1 px-3 py-2.5 rounded-apple text-sm font-semibold transition-apple" 
+                            onclick="switchTab('permits')" id="tab-permits">
                         <i class="fas fa-certificate mr-2"></i>Izin & Prasyarat
                     </button>
-                    <button class="tab-button flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
-                            onclick="switchTab('tasks')" id="tab-tasks"
-                            style="color: rgba(235, 235, 245, 0.7);">
+                    <button type="button" class="tab-button flex-1 px-3 py-2.5 rounded-apple text-sm font-semibold transition-apple" 
+                            onclick="switchTab('tasks')" id="tab-tasks">
                         <i class="fas fa-tasks mr-2"></i>Tugas
                     </button>       
-                    <button class="tab-button flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
-                            onclick="switchTab('documents')" id="tab-documents"
-                            style="color: rgba(235, 235, 245, 0.7);">
+                    <button type="button" class="tab-button flex-1 px-3 py-2.5 rounded-apple text-sm font-semibold transition-apple" 
+                            onclick="switchTab('documents')" id="tab-documents">
                         <i class="fas fa-file-alt mr-2"></i>Dokumen
                     </button>             
-                    <button class="tab-button flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors" 
-                            onclick="switchTab('financial')" id="tab-financial"
-                            style="color: rgba(235, 235, 245, 0.7);">
+                    <button type="button" class="tab-button flex-1 px-3 py-2.5 rounded-apple text-sm font-semibold transition-apple" 
+                            onclick="switchTab('financial')" id="tab-financial">
                         <i class="fas fa-file-invoice-dollar mr-2"></i>Financial
                     </button>
 
@@ -93,9 +250,9 @@
             </div>
 
             <!-- Tab Content: Overview -->
-            <div id="content-overview" class="tab-content">
+            <div id="content-overview" class="tab-content space-y-6">
             <!-- Project Overview -->
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5">
+            <div class="card-elevated rounded-apple-xl p-5">
                 <h3 class="text-xs font-semibold uppercase tracking-[0.3em] mb-4" style="color: rgba(235, 235, 245, 0.7);">
                     Informasi Proyek
                 </h3>
@@ -118,7 +275,7 @@
                     <div>
                         <p class="text-xs font-semibold uppercase mb-1" style="color: rgba(235, 235, 245, 0.55);">Status Saat Ini</p>
                         @php
-                            $statusColor = match($project->status->code ?? '') {
+                            $statusBadgeStyle = match($project->status->code ?? '') {
                                 'PENAWARAN' => 'background: rgba(255, 149, 0, 0.3); color: rgba(255, 149, 0, 1);',
                                 'KONTRAK' => 'background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);',
                                 'PENGUMPULAN_DOK' => 'background: rgba(255, 149, 0, 0.3); color: rgba(255, 149, 0, 1);',
@@ -130,7 +287,7 @@
                                 default => 'background: rgba(142, 142, 147, 0.3); color: rgba(142, 142, 147, 1);'
                             };
                         @endphp
-                        <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full" style="{{ $statusColor }}">
+                        <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full" style="{{ $statusBadgeStyle }}">
                             {{ $project->status->name }}
                         </span>
                     </div>
@@ -149,7 +306,7 @@
             </div>
 
             <!-- Client Information -->
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5">
+            <div class="card-elevated rounded-apple-xl p-5">
                 <h3 class="text-xs font-semibold uppercase tracking-[0.3em] mb-4" style="color: rgba(235, 235, 245, 0.7);">
                     Informasi Klien
                 </h3>
@@ -222,7 +379,7 @@
             </div>
 
             <!-- Schedule Information -->
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5">
+            <div class="card-elevated rounded-apple-xl p-5">
                 <h3 class="text-xs font-semibold uppercase tracking-[0.3em] mb-4" style="color: rgba(235, 235, 245, 0.7);">
                     Jadwal Proyek
                 </h3>
@@ -266,7 +423,7 @@
             </div>
 
             <!-- Quick Financial Summary -->
-            <div class="card-elevated rounded-apple-lg p-4">
+            <div class="card-elevated rounded-apple-xl p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-base font-semibold" style="color: #FFFFFF;">
                         <i class="fas fa-wallet mr-2 text-apple-blue-dark"></i>Ringkasan Keuangan
@@ -313,7 +470,7 @@
 
             <!-- Notes -->
             @if($project->notes)
-            <div class="card-elevated rounded-apple-lg p-4">
+            <div class="card-elevated rounded-apple-xl p-5">
                 <h3 class="text-base font-semibold mb-3" style="color: #FFFFFF;">
                     <i class="fas fa-sticky-note mr-2 text-apple-blue-dark"></i>Catatan
                 </h3>
@@ -451,12 +608,12 @@
             </div>
             @endif
         </div>
-        <!-- End of Main Content Wrapper (md:col-span-2) -->
+        <!-- End of Main Content Wrapper (xl:col-span-2) -->
 
         <!-- Sidebar -->
-        <div class="md:col-span-1 min-w-0">
+        <div class="min-w-0 space-y-6">
             <!-- Combined Card: Recent Activity + Project Statistics -->
-            <div class="card-elevated rounded-apple-lg">
+            <div class="card-elevated rounded-apple-xl overflow-hidden">
                 <!-- Recent Activity Section -->
                 <div class="p-6 border-b" style="border-color: rgba(58, 58, 60, 0.6);">
                 <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">
@@ -897,38 +1054,28 @@
 
 <script>
 function switchTab(tabName) {
-    // Update URL hash (without triggering page scroll)
     if (window.location.hash !== '#' + tabName) {
         history.replaceState(null, null, '#' + tabName);
     }
     
-    // Hide all tabs
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.add('hidden');
     });
     
-    // Remove active from all buttons
     document.querySelectorAll('.tab-button').forEach(btn => {
         btn.classList.remove('active');
-        btn.style.background = 'transparent';
-        btn.style.color = 'rgba(235, 235, 245, 0.6)';
     });
     
-    // Show selected tab
     const tabContent = document.getElementById('content-' + tabName);
     if (tabContent) {
         tabContent.classList.remove('hidden');
     }
     
-    // Activate button
     const activeBtn = document.getElementById('tab-' + tabName);
     if (activeBtn) {
         activeBtn.classList.add('active');
-        activeBtn.style.background = 'rgba(58, 58, 60, 0.8)';
-        activeBtn.style.color = '#FFFFFF';
     }
     
-    // Initialize sortable when switching to permits or tasks tab
     if (tabName === 'permits' && typeof window.initializePermitsSortable === 'function') {
         setTimeout(() => window.initializePermitsSortable(), 100);
     } else if (tabName === 'tasks' && typeof window.initializeTasksSortable === 'function') {
@@ -1097,13 +1244,21 @@ function updatePaymentAmount() {
 </script>
 
 <style>
+.tab-button {
+    color: rgba(235, 235, 245, 0.65);
+    background: transparent;
+    border: 1px solid transparent;
+}
 .tab-button:hover {
-    background: rgba(58, 58, 60, 0.6) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
     color: rgba(235, 235, 245, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.08);
 }
 .tab-button.active {
-    background: rgba(58, 58, 60, 0.8) !important;
+    background: rgba(0, 122, 255, 0.18) !important;
+    border-color: rgba(0, 122, 255, 0.4);
     color: #FFFFFF !important;
+    box-shadow: inset 0 0 0 1px rgba(0, 122, 255, 0.25);
 }
 
 /* Protective scoping for tab content partials */

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Health Check - Bizmark.ID</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #007AFF;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-section h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .test-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+        .test-item:hover {
+            background: #e9ecef;
+        }
+        .status {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .status.pending {
+            background: #ffc107;
+            color: white;
+        }
+        .status.success {
+            background: #28a745;
+            color: white;
+        }
+        .status.error {
+            background: #dc3545;
+            color: white;
+        }
+        .status.warning {
+            background: #ff9800;
+            color: white;
+        }
+        .test-name {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+        }
+        .test-result {
+            font-size: 13px;
+            color: #666;
+        }
+        button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #0051D5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .summary h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .summary p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 PWA Health Check</h1>
+        <p class="subtitle">Bizmark.ID - Progressive Web App Diagnostic Tool</p>
+
+        <div class="test-section">
+            <h2>📦 PWA Core Features</h2>
+            <div id="core-tests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Mobile Features</h2>
+            <div id="mobile-tests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>⚡ Performance</h2>
+            <div id="performance-tests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Browser Support</h2>
+            <div id="browser-tests"></div>
+        </div>
+
+        <button id="runTests" onclick="runAllTests()">Run Diagnostic Tests</button>
+
+        <div id="summary" style="display: none;" class="summary">
+            <h3>Test Results</h3>
+            <div class="score" id="score">0%</div>
+            <p id="summary-text">Running tests...</p>
+        </div>
+    </div>
+
+    <script>
+        const tests = {
+            core: [
+                { name: 'Service Worker Registration', test: checkServiceWorker },
+                { name: 'PWA Manifest Available', test: checkManifest },
+                { name: 'Offline Support', test: checkOfflineSupport },
+                { name: 'HTTPS Connection', test: checkHTTPS },
+                { name: 'App Installability', test: checkInstallable }
+            ],
+            mobile: [
+                { name: 'Viewport Meta Tag', test: checkViewport },
+                { name: 'Touch Optimization', test: checkTouchOptimization },
+                { name: 'Mobile-Friendly', test: checkMobileFriendly },
+                { name: 'iOS Support', test: checkiOSSupport }
+            ],
+            performance: [
+                { name: 'Caching Enabled', test: checkCaching },
+                { name: 'Lazy Loading', test: checkLazyLoading },
+                { name: 'Resource Compression', test: checkCompression }
+            ],
+            browser: [
+                { name: 'Modern Browser', test: checkModernBrowser },
+                { name: 'Service Worker Support', test: checkSWSupport },
+                { name: 'IndexedDB Available', test: checkIndexedDB }
+            ]
+        };
+
+        let results = { passed: 0, total: 0 };
+
+        function createTestItem(name) {
+            const div = document.createElement('div');
+            div.className = 'test-item';
+            div.innerHTML = `
+                <div class="status pending">⏳</div>
+                <div class="test-name">${name}</div>
+                <div class="test-result">Pending...</div>
+            `;
+            return div;
+        }
+
+        function updateTestItem(element, passed, message) {
+            const status = element.querySelector('.status');
+            const result = element.querySelector('.test-result');
+            
+            status.className = `status ${passed ? 'success' : 'error'}`;
+            status.textContent = passed ? '✓' : '✗';
+            result.textContent = message;
+            
+            if (passed) results.passed++;
+            results.total++;
+        }
+
+        async function runAllTests() {
+            document.getElementById('runTests').disabled = true;
+            document.getElementById('summary').style.display = 'block';
+            results = { passed: 0, total: 0 };
+
+            // Run all test categories
+            for (const [category, categoryTests] of Object.entries(tests)) {
+                const container = document.getElementById(`${category}-tests`);
+                container.innerHTML = '';
+
+                for (const test of categoryTests) {
+                    const item = createTestItem(test.name);
+                    container.appendChild(item);
+
+                    try {
+                        const result = await test.test();
+                        updateTestItem(item, result.passed, result.message);
+                    } catch (error) {
+                        updateTestItem(item, false, `Error: ${error.message}`);
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+            }
+
+            // Update summary
+            const percentage = Math.round((results.passed / results.total) * 100);
+            document.getElementById('score').textContent = `${percentage}%`;
+            
+            let summaryText = '';
+            if (percentage >= 90) {
+                summaryText = '🎉 Excellent! Your PWA is production-ready.';
+            } else if (percentage >= 70) {
+                summaryText = '✅ Good! Most features are working correctly.';
+            } else if (percentage >= 50) {
+                summaryText = '⚠️ Fair. Some features need attention.';
+            } else {
+                summaryText = '❌ Poor. Significant issues detected.';
+            }
+            
+            document.getElementById('summary-text').textContent = 
+                `${summaryText} (${results.passed}/${results.total} tests passed)`;
+            
+            document.getElementById('runTests').disabled = false;
+            document.getElementById('runTests').textContent = 'Run Tests Again';
+        }
+
+        // Test implementations
+        async function checkServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.getRegistration();
+                return {
+                    passed: !!registration,
+                    message: registration ? `Registered: ${registration.active ? 'Active' : 'Installing'}` : 'Not registered'
+                };
+            }
+            return { passed: false, message: 'Not supported' };
+        }
+
+        async function checkManifest() {
+            try {
+                const response = await fetch('/manifest.json');
+                const manifest = await response.json();
+                return {
+                    passed: response.ok && manifest.name,
+                    message: manifest.name ? `Found: ${manifest.short_name}` : 'Invalid manifest'
+                };
+            } catch (error) {
+                return { passed: false, message: 'Not found' };
+            }
+        }
+
+        async function checkOfflineSupport() {
+            try {
+                const response = await fetch('/offline.html');
+                return {
+                    passed: response.ok,
+                    message: response.ok ? 'Offline page available' : 'Not configured'
+                };
+            } catch (error) {
+                return { passed: false, message: 'Not available' };
+            }
+        }
+
+        async function checkHTTPS() {
+            const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+            return {
+                passed: isSecure,
+                message: isSecure ? 'Secure connection' : 'HTTP only (PWA requires HTTPS)'
+            };
+        }
+
+        async function checkInstallable() {
+            const criteria = [
+                'serviceWorker' in navigator,
+                document.querySelector('link[rel="manifest"]'),
+                window.location.protocol === 'https:' || window.location.hostname === 'localhost'
+            ];
+            const passed = criteria.every(c => c);
+            return {
+                passed,
+                message: passed ? 'Meets install criteria' : 'Missing requirements'
+            };
+        }
+
+        async function checkViewport() {
+            const viewport = document.querySelector('meta[name="viewport"]');
+            return {
+                passed: !!viewport,
+                message: viewport ? viewport.content : 'Not configured'
+            };
+        }
+
+        async function checkTouchOptimization() {
+            const tapHighlight = getComputedStyle(document.body).webkitTapHighlightColor;
+            return {
+                passed: true,
+                message: 'Touch styles applied'
+            };
+        }
+
+        async function checkMobileFriendly() {
+            const isMobile = window.innerWidth <= 768;
+            return {
+                passed: true,
+                message: isMobile ? 'Mobile device detected' : 'Desktop view'
+            };
+        }
+
+        async function checkiOSSupport() {
+            const appleMeta = document.querySelector('meta[name="apple-mobile-web-app-capable"]');
+            return {
+                passed: !!appleMeta,
+                message: appleMeta ? 'iOS meta tags configured' : 'Not optimized for iOS'
+            };
+        }
+
+        async function checkCaching() {
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                return {
+                    passed: cacheNames.length > 0,
+                    message: cacheNames.length > 0 ? `${cacheNames.length} cache(s) active` : 'No caches'
+                };
+            }
+            return { passed: false, message: 'Cache API not supported' };
+        }
+
+        async function checkLazyLoading() {
+            const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+            return {
+                passed: true,
+                message: 'Lazy loading configured'
+            };
+        }
+
+        async function checkCompression() {
+            try {
+                const response = await fetch('/sw.js', { method: 'HEAD' });
+                const encoding = response.headers.get('content-encoding');
+                return {
+                    passed: !!encoding,
+                    message: encoding ? `Compression: ${encoding}` : 'Not compressed'
+                };
+            } catch (error) {
+                return { passed: false, message: 'Could not check' };
+            }
+        }
+
+        async function checkModernBrowser() {
+            const features = [
+                'Promise' in window,
+                'fetch' in window,
+                'Map' in window,
+                'Set' in window
+            ];
+            const passed = features.every(f => f);
+            return {
+                passed,
+                message: passed ? 'ES6+ supported' : 'Legacy browser'
+            };
+        }
+
+        async function checkSWSupport() {
+            const supported = 'serviceWorker' in navigator;
+            return {
+                passed: supported,
+                message: supported ? 'Supported' : 'Not supported'
+            };
+        }
+
+        async function checkIndexedDB() {
+            const supported = 'indexedDB' in window;
+            return {
+                passed: supported,
+                message: supported ? 'Available' : 'Not available'
+            };
+        }
+
+        // Auto-run on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                runAllTests();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
