@@ -1,221 +1,261 @@
 @extends('layouts.app')
 
 @section('title', 'Lamaran Masuk')
+@section('page-title', 'Lamaran Masuk')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1">Lamaran Masuk</h1>
-            <p class="text-muted">Review dan kelola aplikasi kandidat</p>
-        </div>
-        <a href="{{ route('admin.jobs.index') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-briefcase me-2"></i>Kelola Lowongan
-        </a>
-    </div>
+@php
+    use App\Models\JobApplication;
 
+    $statusLabels = [
+        'pending' => 'Pending',
+        'reviewed' => 'Direview',
+        'interview' => 'Interview',
+        'accepted' => 'Diterima',
+        'rejected' => 'Ditolak',
+    ];
+
+    $statusColors = [
+        'pending' => ['bg' => 'rgba(255,214,10,0.15)', 'text' => 'rgba(255,214,10,1)'],
+        'reviewed' => ['bg' => 'rgba(10,132,255,0.15)', 'text' => 'rgba(10,132,255,1)'],
+        'interview' => ['bg' => 'rgba(175,82,222,0.15)', 'text' => 'rgba(175,82,222,1)'],
+        'accepted' => ['bg' => 'rgba(48,209,88,0.15)', 'text' => 'rgba(48,209,88,1)'],
+        'rejected' => ['bg' => 'rgba(255,69,58,0.15)', 'text' => 'rgba(255,69,58,1)'],
+    ];
+
+    $totalApplications = JobApplication::count();
+    $todayApplications = JobApplication::whereDate('created_at', today())->count();
+    $interviewPipeline = JobApplication::whereIn('status', ['reviewed', 'interview'])->count();
+    $lastReview = JobApplication::whereNotNull('reviewed_at')->latest('reviewed_at')->first();
+@endphp
+
+<div class="max-w-7xl mx-auto space-y-10">
+    {{-- Hero --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+        </div>
+        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="space-y-3 max-w-3xl">
+                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Talent Ops</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-white">Lamaran masuk Bizmark.id</h1>
+                <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
+                    Pantau funnel kandidat, status review, dan tindak lanjuti interview dalam satu layar seperti mission control.
+                </p>
+                <div class="text-xs flex flex-wrap gap-3" style="color: rgba(235,235,245,0.6);">
+                    <span><i class="fas fa-users mr-2"></i>{{ $totalApplications }} lamaran tersimpan</span>
+                    <span><i class="fas fa-calendar-plus mr-2"></i>{{ $todayApplications }} masuk hari ini</span>
+                    @if($lastReview)
+                        <span><i class="fas fa-user-check mr-2"></i>Review terakhir {{ $lastReview->reviewed_at->diffForHumans() }}</span>
+                    @endif
+                </div>
+            </div>
+            <div class="flex flex-col items-start gap-3">
+                <a href="{{ route('admin.jobs.index') }}" class="btn-secondary-sm">
+                    <i class="fas fa-briefcase mr-2"></i>Kelola Lowongan
+                </a>
+                <a href="{{ route('admin.jobs.create') }}" class="btn-primary-sm">
+                    <i class="fas fa-plus mr-2"></i>Tambah Lowongan
+                </a>
+            </div>
+        </div>
+    </section>
+
+    {{-- Flash messages --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+            <i class="fas fa-check-circle"></i>
+            <span class="text-sm">{{ session('success') }}</span>
         </div>
     @endif
 
-    <!-- Status Stats -->
-    <div class="row mb-4">
-        <div class="col-md-2">
-            <a href="{{ route('admin.applications.index') }}" class="text-decoration-none">
-                <div class="card bg-dark border-dark shadow-sm {{ !request('status') ? 'border-primary' : '' }}">
-                    <div class="card-body text-center">
-                        <h4 class="mb-1 text-white">{{ $applications->total() }}</h4>
-                        <small class="text-muted">Semua</small>
-                    </div>
-                </div>
-            </a>
+    {{-- Stats --}}
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Lamaran</p>
+            <p class="text-3xl font-bold text-white">{{ $totalApplications }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $todayApplications }} dari hari ini</p>
         </div>
-        <div class="col-md-2">
-            <a href="{{ route('admin.applications.index', ['status' => 'pending']) }}" class="text-decoration-none">
-                <div class="card bg-dark border-dark shadow-sm {{ request('status') === 'pending' ? 'border-warning' : '' }}">
-                    <div class="card-body text-center">
-                        <h4 class="mb-1 text-warning">{{ $statusCounts['pending'] ?? 0 }}</h4>
-                        <small class="text-muted">Pending</small>
-                    </div>
-                </div>
-            </a>
+        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Di Pipeline Interview</p>
+            <p class="text-3xl font-bold text-white">{{ $interviewPipeline }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Review + Interview</p>
         </div>
-        <div class="col-md-2">
-            <a href="{{ route('admin.applications.index', ['status' => 'reviewed']) }}" class="text-decoration-none">
-                <div class="card bg-dark border-dark shadow-sm {{ request('status') === 'reviewed' ? 'border-info' : '' }}">
-                    <div class="card-body text-center">
-                        <h4 class="mb-1 text-info">{{ $statusCounts['reviewed'] ?? 0 }}</h4>
-                        <small class="text-muted">Direview</small>
-                    </div>
-                </div>
-            </a>
+        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Pending</p>
+            <p class="text-3xl font-bold text-white">{{ $statusCounts['pending'] ?? 0 }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Menunggu review awal</p>
         </div>
-        <div class="col-md-2">
-            <a href="{{ route('admin.applications.index', ['status' => 'interview']) }}" class="text-decoration-none">
-                <div class="card bg-dark border-dark shadow-sm {{ request('status') === 'interview' ? 'border-purple' : '' }}">
-                    <div class="card-body text-center">
-                        <h4 class="mb-1 text-purple">{{ $statusCounts['interview'] ?? 0 }}</h4>
-                        <small class="text-muted">Interview</small>
-                    </div>
-                </div>
-            </a>
+        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditolak</p>
+            <p class="text-3xl font-bold text-white">{{ $statusCounts['rejected'] ?? 0 }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akan dihubungi ulang</p>
         </div>
-        <div class="col-md-2">
-            <a href="{{ route('admin.applications.index', ['status' => 'accepted']) }}" class="text-decoration-none">
-                <div class="card bg-dark border-dark shadow-sm {{ request('status') === 'accepted' ? 'border-success' : '' }}">
-                    <div class="card-body text-center">
-                        <h4 class="mb-1 text-success">{{ $statusCounts['accepted'] ?? 0 }}</h4>
-                        <small class="text-muted">Diterima</small>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-2">
-            <a href="{{ route('admin.applications.index', ['status' => 'rejected']) }}" class="text-decoration-none">
-                <div class="card bg-dark border-dark shadow-sm {{ request('status') === 'rejected' ? 'border-danger' : '' }}">
-                    <div class="card-body text-center">
-                        <h4 class="mb-1 text-danger">{{ $statusCounts['rejected'] ?? 0 }}</h4>
-                        <small class="text-muted">Ditolak</small>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
+    </section>
 
-    <!-- Filters -->
-    <div class="card bg-dark border-dark shadow-sm mb-4">
-        <div class="card-body">
-            <form method="GET" action="{{ route('admin.applications.index') }}">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <input type="text" name="search" class="form-control bg-dark text-white border-secondary" 
-                               placeholder="Cari nama atau email..." 
-                               value="{{ request('search') }}">
-                    </div>
-                    <div class="col-md-3">
-                        <select name="job_vacancy_id" class="form-select bg-dark text-white border-secondary">
-                            <option value="">Semua Lowongan</option>
-                            @foreach($vacancies as $vacancy)
-                                <option value="{{ $vacancy->id }}" {{ request('job_vacancy_id') == $vacancy->id ? 'selected' : '' }}>
-                                    {{ $vacancy->title }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="status" class="form-select bg-dark text-white border-secondary">
-                            <option value="">Semua Status</option>
-                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="reviewed" {{ request('status') === 'reviewed' ? 'selected' : '' }}>Direview</option>
-                            <option value="interview" {{ request('status') === 'interview' ? 'selected' : '' }}>Interview</option>
-                            <option value="accepted" {{ request('status') === 'accepted' ? 'selected' : '' }}>Diterima</option>
-                            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Ditolak</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-filter me-2"></i>Filter
-                        </button>
-                    </div>
-                </div>
-            </form>
+    {{-- Status pills --}}
+    <section class="card-elevated rounded-apple-xl p-4">
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('admin.applications.index') }}"
+               class="status-pill {{ !request('status') ? 'active' : '' }}">
+                Semua <span>{{ $totalApplications }}</span>
+            </a>
+            @foreach($statusLabels as $status => $label)
+                <a href="{{ route('admin.applications.index', ['status' => $status]) }}"
+                   class="status-pill {{ request('status') === $status ? 'active' : '' }}">
+                    {{ $label }} <span>{{ $statusCounts[$status] ?? 0 }}</span>
+                </a>
+            @endforeach
         </div>
-    </div>
+    </section>
 
-    <!-- Applications Table -->
-    <div class="card bg-dark border-dark shadow-sm">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle">
-                    <thead class="table-dark">
+    {{-- Filters --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
+                <h2 class="text-lg font-semibold text-white">Temukan kandidat terbaik</h2>
+            </div>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $applications->total() }} lamaran sesuai filter</p>
+        </div>
+        <form method="GET" action="{{ route('admin.applications.index') }}" class="flex flex-col gap-3 md:flex-row md:items-end">
+            <div class="flex-1">
+                <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari kandidat</label>
+                <div class="flex">
+                    <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama atau email"
+                           class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500"
+                           style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-left: none;">
+                </div>
+            </div>
+            <div class="flex-1">
+                <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Lowongan</label>
+                <select name="job_vacancy_id" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                        style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                    <option value="">Semua lowongan</option>
+                    @foreach($vacancies as $vacancy)
+                        <option value="{{ $vacancy->id }}" {{ request('job_vacancy_id') == $vacancy->id ? 'selected' : '' }}>
+                            {{ $vacancy->title }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex gap-3">
+                <button type="submit" class="btn-primary-sm">
+                    <i class="fas fa-search mr-2"></i>Filter
+                </button>
+                <a href="{{ route('admin.applications.index') }}" class="btn-secondary-sm text-center">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </section>
+
+    {{-- Applications table --}}
+    <section class="card-elevated rounded-apple-xl overflow-hidden">
+        @if($applications->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead style="background: rgba(28,28,30,0.45);">
                         <tr>
-                            <th>Kandidat</th>
-                            <th>Lowongan</th>
-                            <th>Pendidikan</th>
-                            <th>Status</th>
-                            <th>Tanggal Lamar</th>
-                            <th class="text-end">Aksi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Kandidat</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Lowongan</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Pendidikan</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Tanggal Lamar</th>
+                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($applications as $application)
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-sm bg-primary text-white rounded-circle me-2">
-                                            {{ substr($application->full_name, 0, 1) }}
-                                        </div>
+                        @foreach($applications as $application)
+                            @php $color = $statusColors[$application->status] ?? $statusColors['pending']; @endphp
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: rgba(255,255,255,0.1); color:#FFFFFF;">
+                                            {{ strtoupper(substr($application->full_name, 0, 1)) }}
+                                        </span>
                                         <div>
-                                            <div class="fw-semibold">{{ $application->full_name }}</div>
-                                            <div class="small text-muted">
-                                                <i class="fas fa-envelope me-1"></i>{{ $application->email }}
-                                            </div>
-                                            <div class="small text-muted">
-                                                <i class="fas fa-phone me-1"></i>{{ $application->phone }}
-                                            </div>
+                                            <p class="text-sm font-semibold text-white">{{ $application->full_name }}</p>
+                                            <p class="text-xs" style="color: rgba(235,235,245,0.6);"><i class="fas fa-envelope mr-2"></i>{{ $application->email }}</p>
+                                            <p class="text-xs" style="color: rgba(235,235,245,0.6);"><i class="fas fa-phone mr-2"></i>{{ $application->phone }}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td>
-                                    <div class="fw-semibold text-white">{{ $application->jobVacancy->title ?? '-' }}</div>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-semibold text-white">{{ $application->jobVacancy->title ?? '-' }}</p>
                                     @if($application->has_experience_ukl_upl)
-                                        <span class="badge bg-success badge-sm">UKL-UPL Exp ✓</span>
+                                        <span class="inline-flex px-2 py-0.5 text-[10px] rounded-apple" style="background: rgba(52,199,89,0.18); color: rgba(52,199,89,1);">
+                                            UKL-UPL Exp
+                                        </span>
                                     @endif
                                 </td>
-                                <td>
-                                    <div class="text-white">{{ $application->education_level }} {{ $application->major }}</div>
-                                    <div class="small text-muted">{{ $application->institution }}</div>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm" style="color:#FFFFFF;">{{ $application->education_level }} {{ $application->major }}</p>
+                                    <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $application->institution }}</p>
                                     @if($application->gpa)
-                                        <div class="small text-muted">IPK: {{ number_format($application->gpa, 2) }}</div>
+                                        <p class="text-xs" style="color: rgba(235,235,245,0.55);">IPK: {{ number_format($application->gpa, 2) }}</p>
                                     @endif
                                 </td>
-                                <td>
-                                    <span class="badge {{ $application->status_badge }}">
-                                        {{ $application->status_label }}
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-apple" style="background: {{ $color['bg'] }}; color: {{ $color['text'] }};">
+                                        {{ $statusLabels[$application->status] ?? ucfirst($application->status) }}
                                     </span>
                                 </td>
-                                <td>
-                                    <span class="text-muted small">
-                                        {{ $application->created_at->format('d M Y H:i') }}
-                                    </span>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ $application->created_at->format('d M Y H:i') }}</p>
                                 </td>
-                                <td class="text-end">
-                                    <a href="{{ route('admin.applications.show', $application->id) }}" 
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye me-1"></i>Detail
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ route('admin.applications.show', $application->id) }}" class="btn-primary-sm">
+                                        <i class="fas fa-eye mr-2"></i>Detail
                                     </a>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center py-5">
-                                    <i class="fas fa-inbox text-muted fa-3x mb-3"></i>
-                                    <p class="text-muted">Belum ada lamaran masuk.</p>
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
             @if($applications->hasPages())
-                <div class="d-flex justify-content-center mt-4">
+                <div class="px-6 py-4 border-t border-white/5">
                     {{ $applications->appends(request()->query())->links() }}
                 </div>
             @endif
-        </div>
-    </div>
+        @else
+            <div class="text-center py-12 space-y-4">
+                <i class="fas fa-inbox text-5xl" style="color: rgba(235,235,245,0.3);"></i>
+                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada lamaran masuk.</p>
+            </div>
+        @endif
+    </section>
 </div>
 
 <style>
-.text-purple { color: #6f42c1 !important; }
-.border-purple { border-color: #6f42c1 !important; }
-.avatar { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
-.avatar-sm { width: 32px; height: 32px; font-size: 0.875rem; }
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(84,84,88,0.35);
+    background: rgba(28,28,30,0.4);
+    color: rgba(235,235,245,0.65);
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.status-pill span {
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    font-size: 0.7rem;
+}
+.status-pill.active {
+    border-color: rgba(10,132,255,0.4);
+    background: rgba(10,132,255,0.15);
+    color: rgba(10,132,255,0.95);
+}
 </style>
 @endsection

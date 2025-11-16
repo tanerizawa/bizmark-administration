@@ -1,298 +1,165 @@
 @extends('layouts.app')
 
-@section('title', 'Email Detail')
+@section('title', 'Detail Email')
+@section('page-title', 'Detail Email')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
-    <!-- Back Button & Actions -->
-    <div class="mb-6">
-        <div class="flex items-center justify-between mb-4">
-            <a href="{{ route('admin.inbox.index') }}" 
-               class="inline-flex items-center text-sm text-dark-text-secondary hover:text-dark-text-primary transition-colors">
-                <i class="fas fa-arrow-left mr-2"></i>
-                Back to Inbox
+<div class="max-w-5xl mx-auto space-y-6">
+    {{-- Actions --}}
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <a href="{{ route('admin.inbox.index', ['category' => request('category', 'inbox')]) }}"
+           class="inline-flex items-center text-sm font-medium text-white/70 hover:text-white transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>Kembali ke Inbox
+        </a>
+        <div class="flex flex-wrap items-center gap-2">
+            <button type="button"
+                    onclick="toggleStar({{ $email->id }}, this)"
+                    data-star-button="{{ $email->is_starred ? 'true' : 'false' }}"
+                    class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold transition-apple {{ $email->is_starred ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40' : 'bg-white/5 text-white/80 border border-white/10' }}">
+                <i class="fas fa-star mr-2 {{ $email->is_starred ? 'text-yellow-400' : 'text-white/60' }}" data-star-icon></i>
+                <span data-star-label>{{ $email->is_starred ? 'Starred' : 'Star' }}</span>
+            </button>
+            <a href="{{ route('admin.inbox.reply', $email->id) }}"
+               class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold text-white bg-apple-blue transition-apple">
+                <i class="fas fa-reply mr-2"></i>Balas
             </a>
-            
-            <div class="flex gap-2">
-                <!-- Star Button -->
-                <button type="button" 
-                        onclick="toggleStar({{ $email->id }}, this)"
-                        class="btn-apple-secondary inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-apple">
-                    <i class="fas fa-star mr-2 {{ $email->is_starred ? 'text-yellow-500' : '' }}"></i>
-                    {{ $email->is_starred ? 'Starred' : 'Star' }}
+            <div class="relative" data-dropdown>
+                <button type="button"
+                        class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold text-white/80 bg-white/10 border border-white/15 hover:bg-white/15 transition-apple"
+                        data-dropdown-trigger>
+                    <i class="fas fa-ellipsis-v"></i>
                 </button>
-
-                <!-- Reply Button -->
-                <a href="{{ route('admin.inbox.reply', $email->id) }}" 
-                   class="btn-apple-blue inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-apple">
-                    <i class="fas fa-reply mr-2"></i>
-                    Reply
-                </a>
-
-                <!-- More Actions Dropdown -->
-                <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" 
-                            class="btn-apple-secondary inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-apple">
-                        <i class="fas fa-ellipsis-v"></i>
+                <div class="hidden absolute right-0 mt-2 w-48 card-elevated rounded-apple-lg py-2 z-20" data-dropdown-menu>
+                    <button type="button" onclick="window.print()"
+                            class="w-full px-4 py-2 text-left text-xs font-semibold text-white/70 hover:bg-white/5 transition-colors">
+                        <i class="fas fa-print mr-2"></i>Cetak
                     </button>
-                    
-                    <div x-show="open" 
-                         @click.away="open = false"
-                         class="absolute right-0 mt-2 w-48 card-apple py-2 z-50"
-                         style="display: none;">
-                        <button onclick="window.print()" 
-                                class="w-full px-4 py-2 text-left text-sm text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary transition-colors">
-                            <i class="fas fa-print mr-2"></i>Print
+                    <form action="{{ route('admin.inbox.mark-unread', $email->id) }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                                class="w-full px-4 py-2 text-left text-xs font-semibold text-white/70 hover:bg-white/5 transition-colors">
+                            <i class="fas fa-envelope mr-2"></i> Tandai belum dibaca
                         </button>
-                        <form action="{{ route('admin.inbox.mark-unread', $email->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" 
-                                    class="w-full px-4 py-2 text-left text-sm text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary transition-colors">
-                                <i class="fas fa-envelope mr-2"></i>Mark as Unread
-                            </button>
-                        </form>
-                        <hr class="my-2" style="border-color: var(--dark-separator);">
-                        <form action="{{ route('admin.inbox.trash', $email->id) }}" 
-                              method="POST" 
-                              onsubmit="return confirm('Move this email to trash?')">
-                            @csrf
-                            <button type="submit" 
-                                    class="w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-dark-bg-tertiary transition-colors">
-                                <i class="fas fa-trash mr-2"></i>Move to Trash
-                            </button>
-                        </form>
-                    </div>
+                    </form>
+                    <hr class="border-white/10 my-1">
+                    <form action="{{ route('admin.inbox.trash', $email->id) }}" method="POST" onsubmit="return confirm('Pindahkan email ini ke trash?');">
+                        @csrf
+                        <button type="submit"
+                                class="w-full px-4 py-2 text-left text-xs font-semibold text-red-400 hover:bg-white/5 transition-colors">
+                            <i class="fas fa-trash mr-2"></i> Trash
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-
-        @if(session('success'))
-            <div class="card-apple p-4 mb-4 bg-green-500 bg-opacity-10 border-green-500">
-                <div class="flex items-center">
-                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                    <span class="text-green-500 font-medium">{{ session('success') }}</span>
-                </div>
-            </div>
-        @endif
     </div>
 
-    <!-- Email Detail Card -->
-    <div class="card-apple overflow-hidden">
-        <!-- Email Header -->
-        <div class="px-6 py-5 border-b border-dark-separator">
-            <div class="flex items-start justify-between mb-4">
-                <div class="flex-grow">
-                    <h1 class="text-2xl font-semibold text-dark-text-primary mb-3">
-                        {{ $email->subject }}
-                    </h1>
-                    
-                    <!-- Labels -->
-                    @if($email->labels && count($email->labels) > 0)
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            @foreach($email->labels as $label)
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-500 bg-opacity-20 text-blue-400">
-                                    {{ $label }}
-                                </span>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
+    @if(session('success'))
+        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+            <i class="fas fa-check-circle"></i>
+            <span class="text-sm">{{ session('success') }}</span>
+        </div>
+    @endif
 
-                <!-- Category Badge -->
-                <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $email->category === 'inbox' ? 'bg-apple-blue text-white' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
-                    {{ ucfirst($email->category) }}
-                </span>
+    {{-- Email card --}}
+    <section class="card-elevated rounded-apple-xl overflow-hidden">
+        <div class="px-6 py-6 border-b border-white/5 space-y-4">
+            <div>
+                <h1 class="text-2xl font-semibold text-white">{{ $email->subject }}</h1>
+                @if($email->labels && count($email->labels) > 0)
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        @foreach($email->labels as $label)
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full" style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,0.9);">
+                                {{ $label }}
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
             </div>
 
-            <!-- Sender & Recipient Info -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- From -->
-                <div class="flex items-start gap-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-apple-blue to-purple-600 flex items-center justify-center text-white font-semibold">
-                            {{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 2)) }}
-                        </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-apple-blue to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                        {{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 2)) }}
                     </div>
-                    <div class="flex-grow min-w-0">
-                        <p class="text-xs font-medium text-dark-text-tertiary uppercase tracking-wide mb-1">From</p>
-                        <p class="text-sm font-semibold text-dark-text-primary truncate">
-                            {{ $email->from_name ?? $email->from_email }}
-                        </p>
-                        @if($email->from_name)
-                            <p class="text-xs text-dark-text-secondary truncate">
-                                {{ $email->from_email }}
-                            </p>
-                        @endif
+                    <div class="space-y-1">
+                        <p class="text-xs uppercase tracking-widest text-white/40">From</p>
+                        <p class="text-sm font-semibold text-white">{{ $email->from_name ?? $email->from_email }}</p>
+                        <p class="text-xs text-white/60">{{ $email->from_email }}</p>
                     </div>
                 </div>
-
-                <!-- To -->
-                <div class="flex items-start gap-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-semibold">
-                            {{ strtoupper(substr($email->to_email, 0, 2)) }}
-                        </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-semibold text-sm">
+                        {{ strtoupper(substr($email->to_email, 0, 2)) }}
                     </div>
-                    <div class="flex-grow min-w-0">
-                        <p class="text-xs font-medium text-dark-text-tertiary uppercase tracking-wide mb-1">To</p>
-                        <p class="text-sm font-semibold text-dark-text-primary truncate">
-                            {{ $email->to_email }}
-                        </p>
+                    <div class="space-y-1 min-w-0">
+                        <p class="text-xs uppercase tracking-widest text-white/40">To</p>
+                        <p class="text-sm font-semibold text-white truncate">{{ $email->to_email }}</p>
                         @if($email->emailAccount)
-                            <p class="text-xs text-dark-text-secondary">
-                                via {{ $email->emailAccount->display_name }}
-                            </p>
+                            <p class="text-xs text-white/60">via {{ $email->emailAccount->display_name }}</p>
                         @endif
                     </div>
                 </div>
             </div>
 
-            <!-- Metadata -->
-            <div class="mt-6 pt-4 border-t border-dark-separator">
-                <div class="flex flex-wrap items-center gap-6 text-sm">
+            <div class="pt-4 border-t border-white/5 flex flex-wrap gap-4 text-sm text-white/70">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-clock text-white/40"></i>
+                    <span>{{ $email->received_at->format('d M Y, H:i') }}</span>
+                    <span class="text-xs text-white/40">({{ $email->received_at->diffForHumans() }})</span>
+                </div>
+                @if($email->has_attachments)
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-clock text-dark-text-tertiary"></i>
-                        <span class="text-dark-text-secondary">{{ $email->received_at->format('d M Y, H:i') }}</span>
-                        <span class="text-dark-text-tertiary text-xs">({{ $email->received_at->diffForHumans() }})</span>
+                        <i class="fas fa-paperclip text-white/40"></i>
+                        <span>{{ count($email->attachments ?? []) }} lampiran</span>
                     </div>
-
-                    @if($email->has_attachments)
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-paperclip text-dark-text-tertiary"></i>
-                            <span class="text-dark-text-secondary">{{ count($email->attachments ?? []) }} attachment(s)</span>
-                        </div>
-                    @endif
-
-                    @if(!$email->is_read)
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-apple-blue text-white">
-                            Unread
-                        </span>
-                    @endif
-                </div>
+                @endif
+                @if(!$email->is_read)
+                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full" style="background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);">
+                        Unread
+                    </span>
+                @endif
             </div>
         </div>
 
-        <!-- Email Body -->
+        {{-- Body --}}
         <div class="px-6 py-6">
-            <div class="prose prose-invert max-w-none">
-                <div class="email-content p-6 rounded-xl" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06);">
-                    @if($email->body_html)
-                        <div class="text-dark-text-primary" style="color: var(--dark-text-primary) !important;">
-                            {!! $email->body_html !!}
-                        </div>
-                    @else
-                        <pre class="text-dark-text-primary font-sans whitespace-pre-wrap" style="color: var(--dark-text-primary) !important;">{{ $email->body_text }}</pre>
-                    @endif
-                </div>
+            <div class="rounded-apple-xl p-6" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);">
+                @if($email->body_html)
+                    <div class="prose prose-invert max-w-none" style="color: var(--dark-text-primary);">
+                        {!! $email->body_html !!}
+                    </div>
+                @else
+                    <pre class="text-sm font-sans text-white whitespace-pre-wrap">{{ $email->body_text }}</pre>
+                @endif
             </div>
         </div>
 
-        <!-- Attachments -->
+        {{-- Attachments --}}
         @if($email->attachments && count($email->attachments) > 0)
-            <div class="px-6 py-4 border-t border-dark-separator">
-                <h3 class="text-sm font-semibold text-dark-text-primary mb-4">
-                    <i class="fas fa-paperclip mr-2"></i>
-                    Attachments ({{ count($email->attachments) }})
+            <div class="px-6 py-5 border-t border-white/5 space-y-4">
+                <h3 class="text-sm font-semibold text-white">
+                    <i class="fas fa-paperclip mr-2"></i>Lampiran ({{ count($email->attachments) }})
                 </h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     @foreach($email->attachments as $attachment)
-                        <div class="p-4 rounded-apple border border-dark-separator hover:bg-dark-bg-tertiary transition-colors">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-start gap-3 min-w-0 flex-grow">
-                                    <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-apple-blue bg-opacity-10 flex items-center justify-center">
-                                        <i class="fas fa-file text-apple-blue"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="text-sm font-medium text-dark-text-primary truncate">
-                                            {{ $attachment['filename'] ?? 'Attachment' }}
-                                        </p>
-                                        <p class="text-xs text-dark-text-tertiary">
-                                            {{ isset($attachment['size']) ? number_format($attachment['size'] / 1024, 2) . ' KB' : 'Unknown size' }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <a href="#" 
-                                   class="flex-shrink-0 w-8 h-8 rounded-lg bg-apple-blue hover:bg-opacity-80 flex items-center justify-center transition-colors">
-                                    <i class="fas fa-download text-white text-xs"></i>
-                                </a>
+                        <div class="p-4 rounded-apple border border-white/10 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-semibold text-white">{{ $attachment['filename'] ?? 'Attachment' }}</p>
+                                <p class="text-xs text-white/50">{{ $attachment['content_type'] ?? 'File' }}</p>
                             </div>
+                            @if(isset($attachment['download_url']))
+                                <a href="{{ $attachment['download_url'] }}" class="text-xs font-semibold text-apple-blue hover:underline">
+                                    Unduh
+                                </a>
+                            @endif
                         </div>
                     @endforeach
                 </div>
             </div>
         @endif
-
-        <!-- Action Footer -->
-        <div class="px-6 py-4 bg-dark-bg-secondary border-t border-dark-separator">
-            <div class="flex flex-wrap gap-3">
-                <a href="{{ route('admin.inbox.reply', $email->id) }}" 
-                   class="btn-apple-blue inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-apple">
-                    <i class="fas fa-reply mr-2"></i>
-                    Reply
-                </a>
-                <button type="button" 
-                        onclick="window.print()"
-                        class="btn-apple-secondary inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-apple">
-                    <i class="fas fa-print mr-2"></i>
-                    Print
-                </button>
-                <form action="{{ route('admin.inbox.mark-unread', $email->id) }}" 
-                      method="POST" 
-                      class="inline-block">
-                    @csrf
-                    <button type="submit" 
-                            class="btn-apple-secondary inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-apple">
-                        <i class="fas fa-envelope mr-2"></i>
-                        Mark as Unread
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Thread / Replies -->
-    @if($email->replies && $email->replies->count() > 0)
-        <div class="mt-6">
-            <h2 class="text-lg font-semibold text-dark-text-primary mb-4">
-                <i class="fas fa-comments mr-2"></i>
-                Replies ({{ $email->replies->count() }})
-            </h2>
-            
-            <div class="space-y-3">
-                @foreach($email->replies as $reply)
-                    <div class="card-apple p-5">
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-semibold text-sm">
-                                    {{ strtoupper(substr($reply->from_name ?? $reply->from_email, 0, 2)) }}
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-dark-text-primary">
-                                        {{ $reply->from_name ?? $reply->from_email }}
-                                    </p>
-                                    <p class="text-xs text-dark-text-tertiary">
-                                        {{ $reply->received_at->diffForHumans() }}
-                                    </p>
-                                </div>
-                            </div>
-                            <a href="{{ route('admin.inbox.show', $reply->id) }}" 
-                               class="btn-apple-secondary inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple">
-                                View
-                            </a>
-                        </div>
-                        <div class="text-sm text-dark-text-secondary line-clamp-3">
-                            {{ Str::limit(strip_tags($reply->body_html ?? $reply->body_text), 200) }}
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @endif
+    </section>
 </div>
-
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <script>
 function toggleStar(emailId, button) {
@@ -307,93 +174,43 @@ function toggleStar(emailId, button) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            const icon = button.querySelector('i');
-            const buttonText = button.querySelector('span') || button.childNodes[2];
-            
-            if (data.starred) {
-                icon.classList.add('text-yellow-500');
-                if (buttonText && buttonText.nodeType === Node.TEXT_NODE) {
-                    button.innerHTML = '<i class="fas fa-star mr-2 text-yellow-500"></i>Starred';
-                }
-            } else {
-                icon.classList.remove('text-yellow-500');
-                if (buttonText && buttonText.nodeType === Node.TEXT_NODE) {
-                    button.innerHTML = '<i class="fas fa-star mr-2"></i>Star';
-                }
+            const isStarred = button.getAttribute('data-star-button') === 'true';
+            const nextState = !isStarred;
+            button.setAttribute('data-star-button', nextState ? 'true' : 'false');
+
+            button.classList.add('border');
+            button.classList.toggle('bg-yellow-500/20', nextState);
+            button.classList.toggle('text-yellow-400', nextState);
+            button.classList.toggle('border-yellow-500/40', nextState);
+            button.classList.toggle('border-white/10', !nextState);
+            button.classList.toggle('bg-white/5', !nextState);
+            button.classList.toggle('text-white/80', !nextState);
+
+            const icon = button.querySelector('[data-star-icon]');
+            const label = button.querySelector('[data-star-label]');
+            if (icon) {
+                icon.classList.toggle('text-yellow-400', nextState);
+                icon.classList.toggle('text-white/60', !nextState);
+            }
+            if (label) {
+                label.textContent = nextState ? 'Starred' : 'Star';
             }
         }
     })
-    .catch(error => {
-        console.error('Error toggling star:', error);
+    .catch(console.error);
+}
+
+document.querySelectorAll('[data-dropdown]').forEach(wrapper => {
+    const trigger = wrapper.querySelector('[data-dropdown-trigger]');
+    const menu = wrapper.querySelector('[data-dropdown-menu]');
+    trigger.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
     });
-}
+    document.addEventListener('click', (event) => {
+        if (!wrapper.contains(event.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+});
 </script>
-
-<style>
-/* Email content styling */
-.email-content p,
-.email-content div,
-.email-content span,
-.email-content td,
-.email-content th {
-    color: var(--dark-text-primary) !important;
-}
-
-.email-content a {
-    color: var(--apple-blue) !important;
-    text-decoration: underline;
-}
-
-.email-content a:hover {
-    color: #4da3ff !important;
-}
-
-.email-content img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin: 1rem 0;
-}
-
-.email-content table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 1rem 0;
-}
-
-.email-content table td,
-.email-content table th {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.5rem;
-}
-
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Print styles */
-@media print {
-    .btn, button, nav, aside, footer, [x-data] {
-        display: none !important;
-    }
-    
-    .card-apple {
-        border: none !important;
-        box-shadow: none !important;
-        background: white !important;
-    }
-    
-    .email-content {
-        background: white !important;
-        color: black !important;
-    }
-    
-    .email-content * {
-        color: black !important;
-    }
-}
-</style>
 @endsection

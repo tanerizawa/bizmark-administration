@@ -20,6 +20,7 @@ class ProjectController extends Controller
         $this->authorize('viewAnyAsClient', [Project::class, $client]);
         
         $query = Project::with(['status', 'institution', 'permitApplication.permitType'])
+            ->withCount(['documents', 'tasks'])
             ->where('client_id', $client->id);
         
         // Search by name

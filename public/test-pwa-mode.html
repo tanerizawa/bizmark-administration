@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Mode Tester - Bizmark.id</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .mode-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 9999;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .browser-mode {
+            background: #EF4444;
+            color: white;
+        }
+        
+        .pwa-mode {
+            background: #10B981;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Mode Indicator -->
+    <div id="modeIndicator" class="mode-indicator">
+        <i class="fas fa-spinner fa-spin"></i> Detecting...
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-mobile-alt text-4xl text-white"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">PWA Mode Tester</h1>
+                <p class="text-gray-600">Test perubahan header & navigation PWA</p>
+            </div>
+
+            <!-- Current Mode -->
+            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-info-circle text-indigo-600 mr-2"></i>
+                    Status Saat Ini
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">Display Mode:</span>
+                        <span id="displayMode" class="font-mono font-semibold text-indigo-600">-</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">Standalone:</span>
+                        <span id="standaloneStatus" class="font-mono font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">iOS Standalone:</span>
+                        <span id="iosStatus" class="font-mono font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">User Agent:</span>
+                        <span id="userAgent" class="font-mono text-xs text-gray-600 truncate max-w-xs">-</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">Screen Size:</span>
+                        <span id="screenSize" class="font-mono font-semibold text-gray-600">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expected Behavior -->
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <!-- Browser Mode -->
+                <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+                    <h3 class="font-semibold text-red-800 mb-3 flex items-center">
+                        <i class="fas fa-globe mr-2"></i>
+                        Browser Mode
+                    </h3>
+                    <ul class="space-y-2 text-sm text-red-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check mt-1 text-xs"></i>
+                            <span>Desktop: Sidebar kiri + Header full</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check mt-1 text-xs"></i>
+                            <span>Mobile: Hamburger menu + Bottom nav</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check mt-1 text-xs"></i>
+                            <span>Header dengan page title & badges</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- PWA Mode -->
+                <div class="bg-green-50 border-2 border-green-200 rounded-xl p-4">
+                    <h3 class="font-semibold text-green-800 mb-3 flex items-center">
+                        <i class="fas fa-mobile-screen-button mr-2"></i>
+                        PWA Mode
+                    </h3>
+                    <ul class="space-y-2 text-sm text-green-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check mt-1 text-xs"></i>
+                            <span>❌ TIDAK ADA sidebar</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check mt-1 text-xs"></i>
+                            <span>❌ TIDAK ADA hamburger menu</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check mt-1 text-xs"></i>
+                            <span>✅ Header minimal (Logo + Bell + Avatar)</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check mt-1 text-xs"></i>
+                            <span>✅ Bottom nav (5 icons + badges)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Checklist -->
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
+                <h3 class="font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-tasks mr-2 text-indigo-600"></i>
+                    Checklist Perubahan
+                </h3>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded">
+                        <span class="text-gray-700">PWA header tidak ada hamburger menu (☰)</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded">
+                        <span class="text-gray-700">PWA header hanya: Logo + Bell + Avatar dropdown</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded">
+                        <span class="text-gray-700">Bottom nav: Home, Proyek, Ajukan, Izin, Dokumen</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded">
+                        <span class="text-gray-700">Badge tampil: Proyek (hijau), Izin (indigo), Dokumen (kuning)</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded">
+                        <span class="text-gray-700">Avatar dropdown: Profil, Layanan, Bantuan, Logout</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded">
+                        <span class="text-gray-700">Desktop browser: Sidebar tetap ada (tidak berubah)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="/client/dashboard" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold text-center transition-colors">
+                    <i class="fas fa-arrow-right mr-2"></i>
+                    Go to Dashboard
+                </a>
+                <button onclick="location.reload()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold transition-colors">
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    Refresh Test
+                </button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+            <h3 class="font-semibold text-blue-900 mb-3">
+                <i class="fas fa-lightbulb mr-2"></i>
+                Cara Testing
+            </h3>
+            <ol class="list-decimal list-inside space-y-2 text-sm text-blue-800">
+                <li><strong>Browser Mode:</strong> Buka https://bizmark.id/client/dashboard di browser biasa</li>
+                <li><strong>PWA Mode:</strong> Install PWA (Add to Home Screen) → Buka dari icon home screen</li>
+                <li><strong>Desktop:</strong> Buka di laptop/PC → Sidebar harus tetap ada</li>
+                <li><strong>Mobile Browser:</strong> Buka di mobile browser → Ada hamburger menu</li>
+                <li><strong>Mobile PWA:</strong> Buka PWA di mobile → TIDAK ada hamburger, minimal header</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Detect PWA mode
+        function detectMode() {
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                          window.navigator.standalone === true;
+            
+            const indicator = document.getElementById('modeIndicator');
+            const displayMode = document.getElementById('displayMode');
+            const standaloneStatus = document.getElementById('standaloneStatus');
+            const iosStatus = document.getElementById('iosStatus');
+            const userAgent = document.getElementById('userAgent');
+            const screenSize = document.getElementById('screenSize');
+            
+            // Update indicator
+            if (isPWA) {
+                indicator.className = 'mode-indicator pwa-mode';
+                indicator.innerHTML = '<i class="fas fa-mobile-screen-button mr-2"></i>PWA Mode';
+            } else {
+                indicator.className = 'mode-indicator browser-mode';
+                indicator.innerHTML = '<i class="fas fa-globe mr-2"></i>Browser Mode';
+            }
+            
+            // Update details
+            displayMode.textContent = window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser';
+            standaloneStatus.textContent = window.matchMedia('(display-mode: standalone)').matches ? '✅ Yes' : '❌ No';
+            standaloneStatus.className = window.matchMedia('(display-mode: standalone)').matches ? 
+                'font-mono font-semibold text-green-600' : 'font-mono font-semibold text-red-600';
+            
+            iosStatus.textContent = window.navigator.standalone === true ? '✅ Yes' : '❌ No';
+            iosStatus.className = window.navigator.standalone === true ? 
+                'font-mono font-semibold text-green-600' : 'font-mono font-semibold text-gray-600';
+            
+            userAgent.textContent = navigator.userAgent;
+            screenSize.textContent = `${window.innerWidth}x${window.innerHeight}px`;
+        }
+        
+        // Run detection
+        detectMode();
+        
+        // Re-detect on resize
+        window.addEventListener('resize', detectMode);
+    </script>
+</body>
+</html>

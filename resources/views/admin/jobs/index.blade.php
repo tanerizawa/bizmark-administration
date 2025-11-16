@@ -1,309 +1,248 @@
 @extends('layouts.app')
 
 @section('title', 'Manajemen Lowongan Kerja')
+@section('page-title', 'Manajemen Lowongan Kerja')
 
 @section('content')
-<div class="container-fluid">
-    @php
-        $openJobs = $vacancies->where('status', 'open')->count();
-        $draftJobs = $vacancies->where('status', 'draft')->count();
-        $closedJobs = $vacancies->where('status', 'closed')->count();
-        $totalApplicants = $vacancies->sum('applications_count');
-        $stats = [
-            [
-                'label' => 'Lowongan Aktif',
-                'value' => $openJobs,
-                'icon' => 'briefcase',
-                'accent' => '#0A84FF',
-                'tint' => 'rgba(10,132,255,0.18)',
-            ],
-            [
-                'label' => 'Draft',
-                'value' => $draftJobs,
-                'icon' => 'clock',
-                'accent' => '#FFD60A',
-                'tint' => 'rgba(255,214,10,0.18)',
-            ],
-            [
-                'label' => 'Ditutup',
-                'value' => $closedJobs,
-                'icon' => 'ban',
-                'accent' => '#FF453A',
-                'tint' => 'rgba(255,69,58,0.18)',
-            ],
-            [
-                'label' => 'Total Pelamar',
-                'value' => $totalApplicants,
-                'icon' => 'users',
-                'accent' => '#30D158',
-                'tint' => 'rgba(48,209,88,0.18)',
-            ],
-        ];
-    @endphp
+@php
+    use App\Models\JobVacancy;
 
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
-        <div>
-            <p class="text-uppercase small mb-2" style="color: rgba(235,235,245,0.6);">Talent Hub</p>
-            <h1 class="h4 mb-1 text-white">Manajemen Lowongan</h1>
-            <p class="mb-0" style="color: rgba(235,235,245,0.65);">Monitor status rekrutmen dan tindak lanjuti pelamar aktif.</p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('admin.jobs.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Tambah Lowongan
-            </a>
-        </div>
-    </div>
+    $openCount = JobVacancy::where('status', 'open')->count();
+    $draftCount = JobVacancy::where('status', 'draft')->count();
+    $closedCount = JobVacancy::where('status', 'closed')->count();
+    $totalApplicants = JobVacancy::sum('applications_count');
+    $latestUpdate = JobVacancy::latest('updated_at')->first();
 
+    $employmentOptions = $vacancies->pluck('employment_type')->filter()->unique()->values();
+    $locationOptions = $vacancies->pluck('location')->filter()->unique()->values();
+
+    $statusMeta = [
+        'open' => ['label' => 'Aktif', 'bg' => 'rgba(52,199,89,0.15)', 'text' => 'rgba(52,199,89,1)'],
+        'draft' => ['label' => 'Draft', 'bg' => 'rgba(255,214,10,0.15)', 'text' => 'rgba(255,214,10,1)'],
+        'closed' => ['label' => 'Ditutup', 'bg' => 'rgba(255,69,58,0.15)', 'text' => 'rgba(255,69,58,1)'],
+    ];
+@endphp
+
+<div class="max-w-7xl mx-auto space-y-10">
+    {{-- Hero --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+        </div>
+        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="space-y-3 max-w-3xl">
+                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Talent Hub</p>
+                <h1 class="text-2xl md:text-3xl font-bold" style="color:#FFFFFF;">Manajemen Lowongan Bizmark.id</h1>
+                <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
+                    Monitor pipeline rekrutmen, status publikasi, serta performa pelamar dengan gaya mission control.
+                </p>
+                <div class="flex flex-wrap gap-3 text-xs" style="color: rgba(235,235,245,0.6);">
+                    <span><i class="fas fa-briefcase mr-2"></i>{{ $openCount }} lowongan aktif</span>
+                    <span><i class="fas fa-users mr-2"></i>{{ $totalApplicants }} pelamar tercatat</span>
+                    @if($latestUpdate)
+                        <span><i class="fas fa-clock mr-2"></i>Update terakhir {{ $latestUpdate->updated_at->diffForHumans() }}</span>
+                    @endif
+                </div>
+            </div>
+            <div class="flex flex-col items-start gap-3">
+                <a href="{{ route('admin.jobs.create') }}" class="btn-primary">
+                    <i class="fas fa-plus mr-2"></i>Tambah Lowongan
+                </a>
+                <a href="{{ route('admin.jobs.create') }}" class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
+                    Lihat panduan rekrutmen →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    {{-- Flash messages --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+            <i class="fas fa-check-circle"></i>
+            <span class="text-sm">{{ session('success') }}</span>
         </div>
     @endif
 
-    <!-- Stats Cards -->
-    <div class="row g-3 mb-4">
-        @foreach ($stats as $stat)
-            <div class="col-sm-6 col-lg-3">
-                <div class="card h-100 border-0 text-white" style="background: rgba(255,255,255,0.02); border: 1px solid {{ $stat['tint'] }}; box-shadow: 0 10px 35px rgba(0,0,0,0.35);">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: {{ $stat['tint'] }}; color: {{ $stat['accent'] }};">
-                                <i class="fas fa-{{ $stat['icon'] }}"></i>
-                            </div>
-                            <div class="ms-3">
-                                <p class="text-uppercase small mb-1" style="color: rgba(235,235,245,0.6);">{{ $stat['label'] }}</p>
-                                <h4 class="mb-0 text-white">{{ $stat['value'] }}</h4>
-                            </div>
-                        </div>
+    {{-- Stats --}}
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card-elevated rounded-apple-lg p-4">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Lowongan Aktif</p>
+            <p class="text-3xl font-bold text-white">{{ $openCount }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sedang tayang untuk publik</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Draft</p>
+            <p class="text-3xl font-bold text-white">{{ $draftCount }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Belum dipublikasikan</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditutup</p>
+            <p class="text-3xl font-bold text-white">{{ $closedCount }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Lowongan selesai</p>
+        </div>
+        <div class="card-elevated rounded-apple-lg p-4">
+            <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Total Pelamar</p>
+            <p class="text-3xl font-bold text-white">{{ $totalApplicants }}</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akumulasi seluruh lowongan</p>
+        </div>
+    </section>
+
+    {{-- Filters --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
+                <h2 class="text-lg font-semibold text-white">Susun daftar lowongan</h2>
+            </div>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $vacancies->total() }} hasil ditemukan</p>
+        </div>
+        <form method="GET" action="{{ route('admin.jobs.index') }}">
+            <div class="flex flex-col gap-3 md:flex-row md:items-end">
+                <div class="flex-1">
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Judul, posisi, lokasi"
+                               class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500"
+                               style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-left: none;">
                     </div>
+                </div>
+                <div class="flex-1">
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Status</label>
+                    <select name="status" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                        <option value="">Semua status</option>
+                        <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>Aktif</option>
+                        <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="closed" {{ request('status') === 'closed' ? 'selected' : '' }}>Ditutup</option>
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Tipe kerja</label>
+                    <select name="employment_type" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                        <option value="">Semua tipe</option>
+                        @foreach($employmentOptions as $type)
+                            <option value="{{ $type }}" {{ request('employment_type') === $type ? 'selected' : '' }}>
+                                {{ ucfirst(str_replace('-', ' ', $type)) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Lokasi</label>
+                    <select name="location" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                        <option value="">Semua lokasi</option>
+                        @foreach($locationOptions as $location)
+                            <option value="{{ $location }}" {{ request('location') === $location ? 'selected' : '' }}>
+                                {{ $location }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit" class="btn-primary-sm">
+                        <i class="fas fa-search mr-2"></i>Terapkan
+                    </button>
+                    <a href="{{ route('admin.jobs.index') }}" class="btn-secondary-sm text-center">
+                        Reset
+                    </a>
                 </div>
             </div>
-        @endforeach
-    </div>
+        </form>
+    </section>
 
-    @php
-        $statusOptions = [
-            '' => 'Semua Status',
-            'open' => 'Aktif',
-            'draft' => 'Draft',
-            'closed' => 'Ditutup',
-        ];
-        $employmentOptions = $vacancies->pluck('employment_type')->filter()->unique()->values();
-        $locationOptions = $vacancies->pluck('location')->filter()->unique()->values();
-    @endphp
-
-    <div class="card bg-dark border-dark shadow-sm mb-4">
-        <div class="card-body">
-            <form method="GET" action="{{ route('admin.jobs.index') }}">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                        <label class="form-label small text-uppercase" style="color: rgba(235,235,245,0.8);">Pencarian</label>
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(235,235,245,0.6);">
-                                <i class="fas fa-search"></i>
-                            </span>
-                            <input type="text"
-                                   name="search"
-                                   value="{{ request('search') }}"
-                                   class="form-control text-white"
-                                   style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);"
-                                   placeholder="Judul, posisi, atau lokasi" />
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small text-uppercase" style="color: rgba(235,235,245,0.8);">Status</label>
-                        <select name="status" class="form-select form-select-sm text-white" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);">
-                            @foreach($statusOptions as $value => $label)
-                                <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }} style="background: #1C1C1E; color: #FFFFFF;">
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small text-uppercase" style="color: rgba(235,235,245,0.8);">Tipe</label>
-                        <select name="employment_type" class="form-select form-select-sm text-white" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);">
-                            <option value="" style="background: #1C1C1E; color: #FFFFFF;">Semua Tipe</option>
-                            @foreach($employmentOptions as $type)
-                                <option value="{{ $type }}" {{ request('employment_type') === $type ? 'selected' : '' }} style="background: #1C1C1E; color: #FFFFFF;">
-                                    {{ ucfirst(str_replace('-', ' ', $type)) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label small text-uppercase" style="color: rgba(235,235,245,0.8);">Lokasi</label>
-                        <select name="location" class="form-select form-select-sm text-white" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);">
-                            <option value="" style="background: #1C1C1E; color: #FFFFFF;">Semua Lokasi</option>
-                            @foreach($locationOptions as $location)
-                                <option value="{{ $location }}" {{ request('location') === $location ? 'selected' : '' }} style="background: #1C1C1E; color: #FFFFFF;">
-                                    {{ $location }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Job Vacancies Table -->
-    @php
-        $statusMeta = [
-            'open' => ['label' => 'Aktif', 'bg' => 'rgba(48,209,88,0.18)', 'color' => '#30D158'],
-            'draft' => ['label' => 'Draft', 'bg' => 'rgba(255,214,10,0.2)', 'color' => '#FFD60A'],
-            'closed' => ['label' => 'Ditutup', 'bg' => 'rgba(255,69,58,0.18)', 'color' => '#FF453A'],
-        ];
-    @endphp
-
-    <div class="card bg-dark border-dark shadow-sm">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover table-striped table-borderless align-middle mb-0" style="--bs-table-bg: rgba(255,255,255,0.02); --bs-table-striped-bg: rgba(255,255,255,0.05); --bs-table-striped-color: #fff;">
-                    <thead class="text-uppercase small" style="color: rgba(235,235,245,0.7);">
+    {{-- Job list --}}
+    <section class="card-elevated rounded-apple-xl overflow-hidden">
+        @if($vacancies->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead style="background: rgba(28,28,30,0.45);">
                         <tr>
-                            <th>Posisi</th>
-                            <th>Tipe</th>
-                            <th>Lokasi</th>
-                            <th>Status</th>
-                            <th>Deadline</th>
-                            <th>Pelamar</th>
-                            <th>Dibuat</th>
-                            <th class="text-end">Aksi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Posisi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Tipe</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Lokasi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Deadline</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Pelamar</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Dibuat</th>
+                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($vacancies as $vacancy)
-                            <tr>
-                                <td>
-                                    <div class="fw-semibold text-white">{{ $vacancy->title }}</div>
-                                    <div class="small" style="color: rgba(235,235,245,0.6);">{{ $vacancy->position ?? 'Posisi belum diisi' }}</div>
+                        @foreach($vacancies as $vacancy)
+                            @php
+                                $meta = $statusMeta[$vacancy->status] ?? ['label' => ucfirst($vacancy->status), 'bg' => 'rgba(255,255,255,0.15)', 'text' => '#FFFFFF'];
+                            @endphp
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-semibold text-white">{{ $vacancy->title }}</p>
+                                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $vacancy->position ?? 'Posisi belum diisi' }}</p>
                                 </td>
-                                <td class="text-nowrap">
-                                    <span class="badge rounded-pill px-3" style="background: rgba(255,255,255,0.15); color: rgba(235,235,245,0.9);">
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex px-3 py-1 text-xs rounded-apple" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.9);">
                                         {{ $vacancy->employment_type ? ucfirst(str_replace('-', ' ', $vacancy->employment_type)) : 'N/A' }}
                                     </span>
                                 </td>
-                                <td class="text-nowrap">
-                                    <i class="fas fa-map-marker-alt me-1" style="color: rgba(235,235,245,0.5);"></i>
-                                    <span class="text-white">{{ $vacancy->location ?? '-' }}</span>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm" style="color:#FFFFFF;"><i class="fas fa-map-marker-alt mr-2" style="color: rgba(235,235,245,0.5);"></i>{{ $vacancy->location ?? '-' }}</p>
                                 </td>
-                                <td class="text-nowrap">
-                                    @php
-                                        $meta = $statusMeta[$vacancy->status] ?? ['label' => ucfirst($vacancy->status), 'bg' => 'rgba(255,255,255,0.15)', 'color' => '#FFFFFF'];
-                                    @endphp
-                                    <span class="badge rounded-pill px-3" style="background: {{ $meta['bg'] }}; color: {{ $meta['color'] }};">
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-apple" style="background: {{ $meta['bg'] }}; color: {{ $meta['text'] }};">
                                         {{ $meta['label'] }}
                                     </span>
                                 </td>
-                                <td class="text-nowrap">
-                                    @if($vacancy->deadline)
-                                        @php
-                                            $isOverdue = $vacancy->deadline->isPast();
-                                            $isSoon = !$isOverdue && $vacancy->deadline->diffInDays(now()) <= 7;
-                                        @endphp
-                                        <span class="{{ $isOverdue ? 'text-danger' : ($isSoon ? 'text-warning' : 'text-white') }}">
-                                            {{ $vacancy->deadline->format('d M Y') }}
-                                        </span>
-                                    @else
-                                        <span style="color: rgba(235,235,245,0.5);">-</span>
-                                    @endif
+                                <td class="px-6 py-4">
+                                    <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ $vacancy->deadline ? \Carbon\Carbon::parse($vacancy->deadline)->format('d M Y') : 'Tidak ditentukan' }}</p>
                                 </td>
-                                <td class="text-nowrap">
-                                    <a href="{{ route('admin.applications.index', ['job_vacancy_id' => $vacancy->id]) }}" 
-                                       class="badge bg-info text-decoration-none text-white">
-                                        {{ $vacancy->applications_count }} pelamar
-                                    </a>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-semibold text-white">{{ $vacancy->applications_count }}</p>
+                                    <p class="text-xs" style="color: rgba(235,235,245,0.55);">Pelamar</p>
                                 </td>
-                                <td class="text-nowrap">
-                                    <span class="small" style="color: rgba(235,235,245,0.6);">{{ $vacancy->created_at->format('d M Y') }}</span>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ $vacancy->created_at->format('d M Y') }}</p>
+                                    <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $vacancy->created_at->diffForHumans() }}</p>
                                 </td>
-                                <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('career.show', $vacancy->slug) }}" 
-                                           class="btn btn-outline-secondary" 
-                                           target="_blank"
-                                           title="Lihat di Public">
-                                            <i class="fas fa-eye"></i>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ route('admin.jobs.show', $vacancy->id) }}" class="btn-secondary-sm">
+                                            <i class="fas fa-eye mr-1"></i>Detail
                                         </a>
-                                        <a href="{{ route('admin.jobs.show', $vacancy->id) }}" 
-                                           class="btn btn-outline-primary"
-                                           title="Detail">
-                                            <i class="fas fa-info-circle"></i>
+                                        <a href="{{ route('admin.jobs.edit', $vacancy->id) }}" class="btn-primary-sm">
+                                            <i class="fas fa-edit mr-1"></i>Edit
                                         </a>
-                                        <a href="{{ route('admin.jobs.edit', $vacancy->id) }}" 
-                                           class="btn btn-outline-warning"
-                                           title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button type="button" 
-                                                class="btn btn-outline-danger" 
-                                                onclick="confirmDelete({{ $vacancy->id }})"
-                                                title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form action="{{ route('admin.jobs.destroy', $vacancy->id) }}" method="POST" onsubmit="return confirm('Hapus lowongan ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9); border: 1px solid rgba(255,59,48,0.3);">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
-
-                                    <form id="delete-form-{{ $vacancy->id }}" 
-                                          action="{{ route('admin.jobs.destroy', $vacancy->id) }}" 
-                                          method="POST" 
-                                          class="d-none">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center py-5">
-                                    <i class="fas fa-inbox fa-3x mb-3" style="color: rgba(235,235,245,0.3);"></i>
-                                    <p class="mb-3" style="color: rgba(235,235,245,0.6);">Belum ada lowongan yang dipublikasikan.</p>
-                                    <a href="{{ route('admin.jobs.create') }}" class="btn btn-primary">
-                                        <i class="fas fa-plus me-2"></i>Buat Lowongan Pertama
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
             @if($vacancies->hasPages())
-                <div class="d-flex justify-content-center mt-4">
+                <div class="px-6 py-4 border-t border-white/5">
                     {{ $vacancies->links() }}
                 </div>
             @endif
-        </div>
-    </div>
+        @else
+            <div class="text-center py-12 space-y-4">
+                <i class="fas fa-briefcase text-5xl" style="color: rgba(235,235,245,0.3);"></i>
+                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada lowongan yang sesuai filter Anda.</p>
+                <a href="{{ route('admin.jobs.create') }}" class="btn-primary">
+                    <i class="fas fa-plus mr-2"></i>Tambah Lowongan Pertama
+                </a>
+            </div>
+        @endif
+    </section>
 </div>
-
-@push('scripts')
-<script>
-function confirmDelete(id) {
-    if (confirm('Yakin ingin menghapus lowongan ini? Semua aplikasi yang masuk juga akan terhapus!')) {
-        document.getElementById('delete-form-' + id).submit();
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const filterForm = document.querySelector('form[action="{{ route('admin.jobs.index') }}"]');
-    if (!filterForm) return;
-    filterForm.querySelectorAll('select').forEach(select => {
-        select.addEventListener('change', () => filterForm.submit());
-    });
-    const searchInput = filterForm.querySelector('input[name="search"]');
-    if (searchInput) {
-        searchInput.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                filterForm.submit();
-            }
-        });
-    }
-});
-</script>
-@endpush
 @endsection

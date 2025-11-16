@@ -35,11 +35,16 @@
     
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#007AFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bizmark.ID">
     
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
@@ -204,6 +209,7 @@
             --dark-separator: rgba(84, 84, 88, 0.35);
             --dark-text-primary: #FFFFFF;
             --dark-text-secondary: rgba(235, 235, 245, 0.6);
+            --vh: 1vh;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -213,9 +219,16 @@
             color: var(--dark-text-primary);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             overflow-x: hidden;
+            /* Fix for mobile viewport height */
+            min-height: 100vh;
+            min-height: calc(var(--vh, 1vh) * 100);
         }
         
-        html { scroll-behavior: smooth; }
+        html { 
+            scroll-behavior: smooth;
+            /* Prevent horizontal scroll */
+            overflow-x: hidden;
+        }
         
         .navbar {
             position: fixed;
@@ -269,13 +282,19 @@
             background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-blue-dark) 100%);
             color: #fff;
             border-radius: 0.75rem;
-            padding: 1rem 2.5rem;
+            padding: 1rem 2rem;
             font-weight: 600;
             transition: all 0.3s ease;
             display: inline-block;
             text-decoration: none;
             border: none;
             cursor: pointer;
+            min-width: 200px;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .btn-primary:hover {
@@ -283,21 +302,35 @@
             box-shadow: 0 10px 30px rgba(0, 122, 255, 0.3);
         }
         
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
         .btn-secondary {
             background: transparent;
             color: var(--apple-blue);
             border: 2px solid var(--apple-blue);
             border-radius: 0.75rem;
-            padding: 1rem 2.5rem;
+            padding: 1rem 2rem;
             font-weight: 600;
             transition: all 0.3s ease;
             display: inline-block;
             text-decoration: none;
+            min-width: 200px;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .btn-secondary:hover {
             background: var(--apple-blue);
             color: #fff;
+        }
+        
+        .btn-secondary:active {
+            transform: scale(0.98);
         }
         
         .feature-card {
@@ -453,15 +486,15 @@
                 <i class="fas fa-shield-alt text-white text-4xl" aria-hidden="true"></i>
             </div>
             
-            <h1 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
                 Solusi <span style="background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Manajemen Perizinan</span><br>& Konsultan Bisnis Terpercaya
             </h1>
             
-            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto" style="color: var(--dark-text-secondary);">
+            <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 max-w-3xl mx-auto px-4" style="color: var(--dark-text-secondary);">
                 Digitalisasi administrasi, layanan perizinan profesional OSS, AMDAL, UKL-UPL, PBG, SLF, dan konsultasi bisnis untuk perusahaan modern di Indonesia. Proses cepat, transparan, dan terpercaya.
             </p>
             
-            <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 px-4">
                 <a href="#contact" class="btn-primary" aria-label="Hubungi kami untuk konsultasi gratis">
                     <i class="fas fa-phone-alt mr-2" aria-hidden="true"></i>Konsultasi Gratis
                 </a>
@@ -967,27 +1000,53 @@
                     <form id="contactForm" class="space-y-4">
                         <div>
                             <label class="block mb-2 font-medium">Nama Lengkap</label>
-                            <input type="text" name="name" required class="form-input" placeholder="Masukkan nama Anda">
+                            <input type="text" 
+                                   name="name" 
+                                   required 
+                                   autocomplete="name"
+                                   class="form-input" 
+                                   placeholder="Masukkan nama Anda">
                         </div>
                         
                         <div>
                             <label class="block mb-2 font-medium">Email</label>
-                            <input type="email" name="email" required class="form-input" placeholder="email@example.com">
+                            <input type="email" 
+                                   name="email" 
+                                   required 
+                                   inputmode="email"
+                                   autocomplete="email"
+                                   class="form-input" 
+                                   placeholder="email@example.com">
                         </div>
                         
                         <div>
-                            <label class="block mb-2 font-medium">Telepon</label>
-                            <input type="tel" name="phone" required class="form-input" placeholder="+62 812 3456 7890">
+                            <label class="block mb-2 font-medium">Telepon / WhatsApp</label>
+                            <input type="tel" 
+                                   name="phone" 
+                                   required 
+                                   inputmode="tel"
+                                   autocomplete="tel"
+                                   pattern="[0-9+\s-]+"
+                                   class="form-input" 
+                                   placeholder="08123456789">
                         </div>
                         
                         <div>
                             <label class="block mb-2 font-medium">Subjek</label>
-                            <input type="text" name="subject" required class="form-input" placeholder="Perihal yang ingin Anda tanyakan">
+                            <input type="text" 
+                                   name="subject" 
+                                   required 
+                                   class="form-input" 
+                                   placeholder="Perihal yang ingin Anda tanyakan">
                         </div>
                         
                         <div>
                             <label class="block mb-2 font-medium">Pesan</label>
-                            <textarea name="message" required class="form-textarea" rows="5" placeholder="Tuliskan pesan Anda di sini..."></textarea>
+                            <textarea name="message" 
+                                      required 
+                                      class="form-textarea" 
+                                      rows="5" 
+                                      placeholder="Tuliskan pesan Anda di sini..."></textarea>
                         </div>
                         
                         <button type="submit" class="btn-primary w-full">
@@ -1127,6 +1186,16 @@
     </script>
 
     <script>
+        // Fix viewport height on mobile browsers (especially iOS Safari)
+        function setVh() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setVh();
+        window.addEventListener('resize', setVh);
+        window.addEventListener('orientationchange', setVh);
+        
         // Mobile Menu Toggle
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
@@ -1187,6 +1256,159 @@
                 });
             }
         });
+        
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+        
+        // PWA Install Prompt
+        let deferredPrompt;
+        let installPromptShown = localStorage.getItem('installPromptShown') === 'true';
+        let installPromptDismissed = localStorage.getItem('installPromptDismissed');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Check if prompt was recently dismissed (within 7 days)
+            const dismissedDate = installPromptDismissed ? new Date(installPromptDismissed) : null;
+            const daysSinceDismissed = dismissedDate ? (Date.now() - dismissedDate.getTime()) / (1000 * 60 * 60 * 24) : 999;
+            
+            // Show prompt if:
+            // 1. Never shown before, OR
+            // 2. Was dismissed more than 7 days ago, AND
+            // 3. User has been on site for at least 30 seconds
+            if (!installPromptShown || daysSinceDismissed > 7) {
+                setTimeout(() => {
+                    if (window.scrollY > 200 || document.hidden === false) {
+                        showInstallPrompt();
+                    }
+                }, 30000); // Show after 30 seconds
+            }
+        });
+        
+        function showInstallPrompt() {
+            // Create install banner
+            const banner = document.createElement('div');
+            banner.id = 'pwa-install-banner';
+            banner.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+                color: white;
+                padding: 20px;
+                border-radius: 16px;
+                box-shadow: 0 8px 32px rgba(0, 122, 255, 0.4);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                animation: slideUp 0.3s ease-out;
+                max-width: 500px;
+                margin: 0 auto;
+            `;
+            
+            banner.innerHTML = `
+                <div style="font-size: 32px;">📱</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">Install Bizmark.ID</div>
+                    <div style="font-size: 13px; opacity: 0.9;">Akses lebih cepat dengan install aplikasi di home screen</div>
+                </div>
+                <button id="install-btn" style="
+                    background: white;
+                    color: #007AFF;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    font-size: 14px;
+                    white-space: nowrap;
+                ">Install</button>
+                <button id="dismiss-btn" style="
+                    background: transparent;
+                    color: white;
+                    border: 1px solid rgba(255,255,255,0.3);
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 20px;
+                ">✕</button>
+            `;
+            
+            document.body.appendChild(banner);
+            
+            // Install button handler
+            document.getElementById('install-btn').addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    console.log(`PWA install outcome: ${outcome}`);
+                    
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'pwa_install_prompt', {
+                            'event_category': 'PWA',
+                            'event_label': outcome
+                        });
+                    }
+                    
+                    localStorage.setItem('installPromptShown', 'true');
+                    deferredPrompt = null;
+                    banner.remove();
+                }
+            });
+            
+            // Dismiss button handler
+            document.getElementById('dismiss-btn').addEventListener('click', () => {
+                banner.remove();
+                localStorage.setItem('installPromptDismissed', new Date().toISOString());
+                
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'pwa_install_dismissed', {
+                        'event_category': 'PWA'
+                    });
+                }
+            });
+        }
+        
+        // Track PWA installation
+        window.addEventListener('appinstalled', () => {
+            console.log('✅ PWA installed successfully!');
+            
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'pwa_installed', {
+                    'event_category': 'PWA'
+                });
+            }
+        });
+        
+        // Add slide up animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

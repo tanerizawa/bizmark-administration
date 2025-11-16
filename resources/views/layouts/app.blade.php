@@ -80,6 +80,11 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--dark-separator);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.48);
+            overflow: hidden;
+        }
+
+        .card-elevated > * {
+            max-width: 100%;
         }
         
         .text-dark-text-primary { color: var(--dark-text-primary); }
@@ -112,6 +117,46 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 122, 255, 0.6);
+        }
+        
+        .btn-primary-sm {
+            background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-blue-dark) 100%);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        .btn-primary-sm:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.5);
+        }
+        
+        .btn-secondary-sm {
+            background-color: var(--dark-bg-tertiary);
+            border: 1px solid var(--dark-separator);
+            color: var(--dark-text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-secondary-sm:hover {
+            background-color: var(--dark-bg-secondary);
+            border-color: var(--apple-blue);
+            color: var(--dark-text-primary);
         }
         
         .hover-lift {
@@ -433,9 +478,9 @@
             'permit_templates' => \App\Models\PermitTemplate::count(),
         ]);
     @endphp
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex min-h-screen" style="background-color: var(--dark-bg);">
         <!-- Sidebar -->
-        <aside class="w-64 flex-shrink-0" style="background-color: var(--dark-bg-secondary); border-right: 1px solid var(--dark-separator);">
+        <aside class="w-64 flex-shrink-0 sticky top-0 h-screen z-40" style="background-color: var(--dark-bg-secondary); border-right: 1px solid var(--dark-separator);">
             <div class="h-full flex flex-col">
                 <!-- Logo -->
                 <div class="p-4" style="border-bottom: 1px solid var(--dark-separator);">
@@ -773,7 +818,7 @@
             </header>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-6">
+            <main class="flex-1 min-h-screen overflow-y-auto p-6" style="background: var(--dark-bg);">
                 @yield('content')
             </main>
         </div>

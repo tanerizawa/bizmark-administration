@@ -19,11 +19,11 @@
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div class="space-y-3">
+            <div class="space-y-3 max-w-3xl">
                 <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Communication Ops</p>
                 <h1 class="text-2xl md:text-3xl font-bold text-white">Email Inbox Bizmark.id</h1>
                 <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
-                    Pantau pesan masuk, balasan, dan prioritas tim dengan gaya mission control.
+                    Pantau pesan masuk, balasan, dan prioritas tim dalam satu layar mission control.
                 </p>
                 <div class="flex flex-wrap gap-3 text-xs" style="color: rgba(235,235,245,0.6);">
                     <span><i class="fas fa-envelope-open-text mr-2"></i>{{ $stats['total'] ?? 0 }} total email</span>
@@ -70,11 +70,9 @@
     <section class="card-elevated rounded-apple-xl p-4">
         <div class="flex flex-wrap gap-2">
             @foreach($categoryTabs as $key => $tab)
-                @php
-                    $isActive = $category === $key;
-                @endphp
+                @php $isActive = $category === $key; @endphp
                 <a href="{{ route('admin.inbox.index', array_merge(['category' => $key], request()->except('category'))) }}"
-                   class="category-pill {{ $isActive ? 'active' : '' }}">
+                   class="pill {{ $isActive ? 'pill-active' : '' }}">
                     <i class="fas fa-{{ $tab['icon'] }} mr-2"></i>{{ $tab['label'] }}
                     @if(!empty($tab['badge']) && ($tab['count'] ?? 0) > 0)
                         <span>{{ $tab['count'] }}</span>
@@ -82,7 +80,7 @@
                 </a>
             @endforeach
             <a href="{{ route('admin.inbox.index', array_merge(['is_starred' => 1], request()->except(['is_starred', 'category']))) }}"
-               class="category-pill {{ request('is_starred') ? 'active' : '' }}">
+               class="pill {{ request('is_starred') ? 'pill-active' : '' }}">
                 <i class="fas fa-star mr-2"></i>Starred
             </a>
         </div>
@@ -132,9 +130,7 @@
                     </select>
                 </div>
                 <div class="flex gap-3">
-                    <button type="submit" class="btn-primary-sm">
-                        <i class="fas fa-search mr-2"></i>Cari
-                    </button>
+                    <button type="submit" class="btn-primary-sm"><i class="fas fa-search mr-2"></i>Cari</button>
                     <a href="{{ route('admin.inbox.index', ['category' => $category]) }}" class="btn-secondary-sm text-center">
                         <i class="fas fa-redo mr-2"></i>Reset
                     </a>
@@ -151,7 +147,7 @@
         </div>
         <div class="divide-y divide-white/5">
             @forelse($emails as $email)
-                <div class="email-item px-6 py-4 hover:bg-white/5 transition-colors cursor-pointer {{ !$email->is_read ? 'bg-white/3' : '' }}"
+                <div class="email-item px-6 py-4 hover:bg-white/5 transition-colors cursor-pointer {{ !$email->is_read ? 'bg-white/5' : '' }}"
                      onclick="window.location='{{ route('admin.inbox.show', $email) }}'">
                     <div class="flex items-start gap-4">
                         <button type="button"
@@ -171,10 +167,12 @@
                                         {{ $category === 'sent' ? $email->to_email : ($email->from_name ?? $email->from_email) }}
                                     </p>
                                     @if(!$email->is_read && $category !== 'sent')
-                                        <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-full bg-apple-blue text-white">NEW</span>
+                                        <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-full" style="background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);">
+                                            NEW
+                                        </span>
                                     @endif
                                     @if($email->has_attachments)
-                                        <i class="fas fa-paperclip text-dark-text-tertiary text-xs"></i>
+                                        <i class="fas fa-paperclip text-xs" style="color: rgba(235,235,245,0.5);"></i>
                                     @endif
                                 </div>
                                 <span class="text-xs" style="color: rgba(235,235,245,0.6);">
@@ -189,14 +187,14 @@
                                     @endif
                                 </span>
                             </div>
-                            <h3 class="text-sm font-{{ !$email->is_read ? 'semibold' : 'normal' }} text-dark-text-{{ !$email->is_read ? 'primary' : 'secondary' }} mb-1 truncate">
+                            <h3 class="text-sm font-{{ !$email->is_read ? 'semibold' : 'normal' }} text-white mb-1 truncate">
                                 {{ $email->subject }}
                             </h3>
-                            <p class="text-xs text-dark-text-tertiary line-clamp-2 mb-2">
+                            <p class="text-xs line-clamp-2" style="color: rgba(235,235,245,0.55);">
                                 {{ Str::limit(strip_tags($email->body_text ?? $email->body_html), 160) }}
                             </p>
                             @if($email->emailAccount)
-                                <span class="inline-flex items-center px-2 py-1 text-xs rounded-apple bg-dark-bg-tertiary text-dark-text-secondary">
+                                <span class="inline-flex items-center px-2 py-1 text-xs rounded-apple" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.7);">
                                     <i class="fas fa-at mr-1"></i>{{ $email->emailAccount->email }}
                                 </span>
                             @endif
@@ -205,10 +203,10 @@
                 </div>
             @empty
                 <div class="text-center py-16 space-y-2">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-dark-bg-tertiary mb-4">
-                        <i class="fas fa-inbox text-3xl text-dark-text-tertiary"></i>
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full" style="background: rgba(255,255,255,0.05);">
+                        <i class="fas fa-inbox text-3xl" style="color: rgba(235,235,245,0.35);"></i>
                     </div>
-                    <p class="text-sm" style="color: rgba(235,235,245,0.6);">
+                    <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                         @if(request('search'))
                             Tidak ada email sesuai pencarian Anda.
                         @else
@@ -219,24 +217,24 @@
             @endforelse
         </div>
         @if($emails->hasPages())
-            <div class="px-6 py-4 border-t border-white/5 flex items-center justify-between text-sm" style="color: rgba(235,235,245,0.6);">
+            <div class="px-6 py-4 border-top flex items-center justify-between text-sm" style="color: rgba(235,235,245,0.6); border-color: rgba(255,255,255,0.08);">
                 <div>Menampilkan {{ $emails->firstItem() ?? 0 }} - {{ $emails->lastItem() ?? 0 }} dari {{ $emails->total() }} email</div>
                 <div class="space-x-2">
                     @if($emails->onFirstPage())
-                        <span class="px-4 py-2 rounded-apple bg-dark-bg-tertiary text-dark-text-tertiary cursor-not-allowed">
+                        <span class="px-4 py-2 rounded-apple" style="background: rgba(255,255,255,0.05); color: rgba(235,235,245,0.35);">
                             <i class="fas fa-chevron-left mr-2"></i>Sebelumnya
                         </span>
                     @else
-                        <a href="{{ $emails->previousPageUrl() }}" class="px-4 py-2 rounded-apple bg-dark-bg-tertiary text-dark-text-secondary hover:bg-dark-bg-quaternary transition-colors">
+                        <a href="{{ $emails->previousPageUrl() }}" class="px-4 py-2 rounded-apple" style="background: rgba(255,255,255,0.05); color: rgba(235,235,245,0.75);">
                             <i class="fas fa-chevron-left mr-2"></i>Sebelumnya
                         </a>
                     @endif
                     @if($emails->hasMorePages())
-                        <a href="{{ $emails->nextPageUrl() }}" class="px-4 py-2 rounded-apple bg-dark-bg-tertiary text-dark-text-secondary hover:bg-dark-bg-quaternary transition-colors">
+                        <a href="{{ $emails->nextPageUrl() }}" class="px-4 py-2 rounded-apple" style="background: rgba(255,255,255,0.05); color: rgba(235,235,245,0.75);">
                             Berikutnya<i class="fas fa-chevron-right ml-2"></i>
                         </a>
                     @else
-                        <span class="px-4 py-2 rounded-apple bg-dark-bg-tertiary text-dark-text-tertiary cursor-not-allowed">
+                        <span class="px-4 py-2 rounded-apple" style="background: rgba(255,255,255,0.05); color: rgba(235,235,245,0.35);">
                             Berikutnya<i class="fas fa-chevron-right ml-2"></i>
                         </span>
                     @endif
@@ -247,7 +245,7 @@
 </div>
 
 <style>
-.category-pill {
+.pill {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -260,19 +258,19 @@
     font-weight: 600;
     transition: all 0.2s;
 }
-.category-pill span {
+.pill span {
     padding: 0.1rem 0.45rem;
     border-radius: 999px;
     background: rgba(255,255,255,0.1);
     font-size: 0.7rem;
 }
-.category-pill.active {
+.pill-active {
     border-color: rgba(10,132,255,0.5);
     background: rgba(10,132,255,0.15);
     color: rgba(10,132,255,0.95);
 }
 .star-button {
-    color: rgba(235,235,245,0.45);
+    color: rgba(235,235,245,0.4);
     transition: color 0.2s ease;
 }
 .star-button.active {
@@ -283,6 +281,9 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+.email-item {
+    position: relative;
 }
 .email-item::before {
     content: '';
@@ -297,6 +298,9 @@
 }
 .email-item:hover::before {
     opacity: 1;
+}
+.border-top {
+    border-top: 1px solid rgba(255,255,255,0.08);
 }
 </style>
 
@@ -319,291 +323,4 @@ function toggleStar(emailId, button) {
     .catch(console.error);
 }
 </script>
-
-               class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-apple {{ request('is_starred') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                <i class="fas fa-star mr-2"></i>
-                Starred
-            </a>
-            
-            <a href="{{ route('admin.inbox.index', array_merge(['category' => 'trash'], request()->except('category'))) }}" 
-               class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-apple {{ $category === 'trash' ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                <i class="fas fa-trash mr-2"></i>
-                Trash
-            </a>
-        </div>
-
-        <!-- Search & Filters -->
-        <form action="{{ route('admin.inbox.index') }}" method="GET" class="space-y-4">
-            <input type="hidden" name="category" value="{{ $category }}">
-            @if(request('is_starred'))
-                <input type="hidden" name="is_starred" value="1">
-            @endif
-            
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
-                <!-- Search Input -->
-                <div class="md:col-span-5">
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-dark-text-tertiary"></i>
-                        <input type="text" 
-                               name="search" 
-                               value="{{ request('search') }}"
-                               placeholder="Search emails by subject, sender, or content..." 
-                               class="input-apple pl-10 w-full">
-                    </div>
-                </div>
-
-                <!-- Read Status Filter -->
-                <div class="md:col-span-2">
-                    <select name="is_read" class="input-apple w-full">
-                        <option value="">All Status</option>
-                        <option value="0" {{ request('is_read') === '0' ? 'selected' : '' }}>Unread</option>
-                        <option value="1" {{ request('is_read') === '1' ? 'selected' : '' }}>Read</option>
-                    </select>
-                </div>
-
-                <!-- Email Account Filter -->
-                <div class="md:col-span-3">
-                    <select name="to_email" class="input-apple w-full">
-                        <option value="">All Accounts</option>
-                        @foreach(\App\Models\EmailAccount::all() as $account)
-                            <option value="{{ $account->email }}" {{ request('to_email') === $account->email ? 'selected' : '' }}>
-                                {{ $account->email }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="md:col-span-2 flex gap-2">
-                    <button type="submit" class="btn-apple-blue flex-1 inline-flex items-center justify-center px-4 py-2 rounded-apple text-sm font-medium transition-apple">
-                        <i class="fas fa-search mr-2"></i>
-                        Search
-                    </button>
-                    <a href="{{ route('admin.inbox.index', ['category' => $category]) }}" 
-                       class="btn-apple-secondary flex-1 inline-flex items-center justify-center px-4 py-2 rounded-apple text-sm font-medium transition-apple">
-                        <i class="fas fa-redo mr-2"></i>
-                        Reset
-                    </a>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- Email List -->
-    <div class="card-apple overflow-hidden">
-        <!-- List Header -->
-        <div class="px-6 py-3 bg-dark-bg-tertiary border-b border-dark-separator">
-            <div class="flex items-center justify-between">
-                <p class="text-sm font-medium text-dark-text-secondary">
-                    {{ $emails->total() }} {{ Str::plural('email', $emails->total()) }} found
-                </p>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-dark-text-tertiary">
-                        Showing {{ $emails->firstItem() ?? 0 }} - {{ $emails->lastItem() ?? 0 }}
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Email Items -->
-        <div class="divide-y divide-dark-separator">
-            @forelse($emails as $email)
-                <div class="email-item px-6 py-4 hover:bg-dark-bg-tertiary transition-colors cursor-pointer {{ !$email->is_read ? 'bg-dark-bg-secondary' : '' }}"
-                     onclick="window.location='{{ route('admin.inbox.show', $email) }}'">
-                    <div class="flex items-start gap-4">
-                        <!-- Star Button -->
-                        <button type="button" 
-                                onclick="event.stopPropagation(); toggleStar({{ $email->id }}, this)"
-                                class="mt-1 text-{{ $email->is_starred ? 'yellow-500' : 'dark-text-tertiary' }} hover:text-yellow-500 transition-colors">
-                            <i class="fas fa-star"></i>
-                        </button>
-
-                        <!-- Avatar -->
-                        <div class="flex-shrink-0">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-apple-blue to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                                @if($category === 'sent')
-                                    {{ strtoupper(substr($email->to_email, 0, 2)) }}
-                                @else
-                                    {{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 2)) }}
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Email Content -->
-                        <div class="flex-grow min-w-0">
-                            <div class="flex items-start justify-between mb-1">
-                                <div class="flex items-center gap-2 min-w-0">
-                                    <p class="text-sm font-{{ !$email->is_read ? 'semibold' : 'medium' }} text-dark-text-primary truncate">
-                                        @if($category === 'sent')
-                                            To: {{ $email->to_email }}
-                                        @else
-                                            {{ $email->from_name ?? $email->from_email }}
-                                        @endif
-                                    </p>
-                                    
-                                    @if(!$email->is_read && $category !== 'sent')
-                                        <span class="flex-shrink-0 px-2 py-0.5 text-xs font-semibold rounded-full bg-apple-blue text-white">
-                                            New
-                                        </span>
-                                    @endif
-
-                                    @if($email->has_attachments)
-                                        <i class="fas fa-paperclip text-dark-text-tertiary text-xs"></i>
-                                    @endif
-                                </div>
-
-                                <span class="flex-shrink-0 text-xs text-dark-text-tertiary ml-4">
-                                    @if($email->received_at->isToday())
-                                        {{ $email->received_at->format('H:i') }}
-                                    @elseif($email->received_at->isYesterday())
-                                        Yesterday
-                                    @elseif($email->received_at->diffInDays() < 7)
-                                        {{ $email->received_at->format('l') }}
-                                    @else
-                                        {{ $email->received_at->format('M d') }}
-                                    @endif
-                                </span>
-                            </div>
-
-                            <h3 class="text-sm font-{{ !$email->is_read ? 'semibold' : 'normal' }} text-dark-text-{{ !$email->is_read ? 'primary' : 'secondary' }} mb-1 truncate">
-                                {{ $email->subject }}
-                            </h3>
-
-                            <p class="text-xs text-dark-text-tertiary line-clamp-2">
-                                {{ Str::limit(strip_tags($email->body_text ?? $email->body_html), 150) }}
-                            </p>
-
-                            <!-- Email Account Badge -->
-                            @if($email->emailAccount)
-                                <div class="mt-2">
-                                    <span class="inline-flex items-center px-2 py-1 text-xs rounded-apple bg-dark-bg-tertiary text-dark-text-secondary">
-                                        <i class="fas fa-at mr-1"></i>
-                                        {{ $email->emailAccount->email }}
-                                    </span>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="text-center py-16">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-dark-bg-tertiary mb-4">
-                        <i class="fas fa-inbox text-3xl text-dark-text-tertiary"></i>
-                    </div>
-                    <h3 class="text-lg font-medium text-dark-text-primary mb-1">No emails found</h3>
-                    <p class="text-sm text-dark-text-secondary">
-                        @if(request('search'))
-                            Try adjusting your search or filters
-                        @else
-                            Your inbox is empty
-                        @endif
-                    </p>
-                </div>
-            @endforelse
-        </div>
-
-        <!-- Pagination -->
-        @if($emails->hasPages())
-            <div class="px-6 py-4 border-t border-dark-separator">
-                <div class="flex items-center justify-between">
-                    <div class="text-sm text-dark-text-secondary">
-                        Showing {{ $emails->firstItem() ?? 0 }} to {{ $emails->lastItem() ?? 0 }} of {{ $emails->total() }} results
-                    </div>
-                    <div class="flex gap-2">
-                        @if($emails->onFirstPage())
-                            <span class="px-4 py-2 rounded-apple text-sm font-medium text-dark-text-tertiary bg-dark-bg-tertiary cursor-not-allowed">
-                                <i class="fas fa-chevron-left mr-2"></i>Previous
-                            </span>
-                        @else
-                            <a href="{{ $emails->previousPageUrl() }}" 
-                               class="px-4 py-2 rounded-apple text-sm font-medium text-dark-text-secondary bg-dark-bg-tertiary hover:bg-dark-bg-quaternary transition-colors">
-                                <i class="fas fa-chevron-left mr-2"></i>Previous
-                            </a>
-                        @endif
-
-                        @if($emails->hasMorePages())
-                            <a href="{{ $emails->nextPageUrl() }}" 
-                               class="px-4 py-2 rounded-apple text-sm font-medium text-dark-text-secondary bg-dark-bg-tertiary hover:bg-dark-bg-quaternary transition-colors">
-                                Next<i class="fas fa-chevron-right ml-2"></i>
-                            </a>
-                        @else
-                            <span class="px-4 py-2 rounded-apple text-sm font-medium text-dark-text-tertiary bg-dark-bg-tertiary cursor-not-allowed">
-                                Next<i class="fas fa-chevron-right ml-2"></i>
-                            </span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        @endif
-    </div>
-</div>
-
-<!-- Star Toggle Script -->
-<script>
-function toggleStar(emailId, button) {
-    fetch(`/admin/inbox/${emailId}/star`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Toggle star color
-            if (button.classList.contains('text-yellow-500')) {
-                button.classList.remove('text-yellow-500');
-                button.classList.add('text-dark-text-tertiary');
-            } else {
-                button.classList.remove('text-dark-text-tertiary');
-                button.classList.add('text-yellow-500');
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error toggling star:', error);
-    });
-}
-
-// Optional: Mark as read when clicking email
-document.querySelectorAll('.email-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-        if (!e.target.closest('button')) {
-            // Add visual feedback
-            this.classList.remove('bg-dark-bg-secondary');
-        }
-    });
-});
-</script>
-
-<style>
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.email-item {
-    position: relative;
-}
-
-.email-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--apple-blue);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.email-item:hover::before {
-    opacity: 1;
-}
-</style>
 @endsection
