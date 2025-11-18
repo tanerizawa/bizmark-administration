@@ -18,7 +18,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     {{-- PWA Meta Tags --}}
-    <meta name="theme-color" content="#3B82F6">
+    <meta name="theme-color" content="#0a66c2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Bizmark Admin">
@@ -43,7 +43,9 @@
         * {
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantarell, 'Droid Sans', Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         body {
@@ -55,17 +57,18 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        /* Fixed Header with safe area */
+        /* Fixed Header with safe area - LinkedIn style */
         .mobile-header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 50;
-            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
             height: calc(56px + env(safe-area-inset-top));
             padding-top: env(safe-area-inset-top);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(10, 102, 194, 0.2);
+            transition: transform 0.3s ease;
         }
         
         /* Content area padding */
@@ -227,55 +230,60 @@
         </div>
     </main>
 
-    {{-- Bottom Navigation --}}
-    <nav class="mobile-bottom-nav">
-        <div class="h-16 flex items-center justify-around px-2">
+    {{-- Bottom Navigation - LinkedIn Style (5 items with center FAB) --}}
+    <nav id="bottom-nav" class="mobile-bottom-nav">
+        <div class="grid grid-cols-5 h-14">
             
             {{-- Home --}}
             <a href="{{ mobile_route('dashboard') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth
-                      {{ request()->routeIs('mobile.dashboard') ? 'text-blue-600' : 'text-gray-500' }}">
-                <i class="fas fa-home text-xl mb-1"></i>
-                <span class="text-xs font-medium">Home</span>
+               class="flex flex-col items-center justify-center gap-0.5
+                      {{ request()->routeIs('mobile.dashboard') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
+                      hover:text-[#0a66c2] transition-colors">
+                <i class="fas fa-house text-xl"></i>
+                <span class="text-[9px] font-medium">Home</span>
             </a>
             
-            {{-- Stats --}}
-            <a href="{{ mobile_route('stats') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth
-                      {{ request()->routeIs('mobile.stats') ? 'text-blue-600' : 'text-gray-500' }}">
-                <i class="fas fa-chart-pie text-xl mb-1"></i>
-                <span class="text-xs font-medium">Stats</span>
+            {{-- Projects --}}
+            <a href="{{ mobile_route('projects.index') }}" 
+               class="flex flex-col items-center justify-center gap-0.5
+                      {{ request()->routeIs('mobile.projects*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
+                      hover:text-[#0a66c2] transition-colors">
+                <i class="fas fa-briefcase text-xl"></i>
+                <span class="text-[9px] font-medium">Proyek</span>
             </a>
             
-            {{-- Quick Add (Center) --}}
-            <button onclick="showQuickAdd()" 
-                    class="flex flex-col items-center justify-center flex-1 -mt-6">
-                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg 
-                            flex items-center justify-center text-white hover:scale-110 transition-smooth">
+            {{-- Quick Add (Center - Elevated FAB style) --}}
+            <div class="flex items-center justify-center">
+                <button onclick="showQuickAdd()" 
+                        class="flex items-center justify-center w-12 h-12 -mt-5 rounded-full 
+                               bg-[#0a66c2] hover:bg-[#004182] text-white shadow-lg hover:shadow-xl 
+                               transition-all active:scale-95">
                     <i class="fas fa-plus text-xl"></i>
-                </div>
-            </button>
+                </button>
+            </div>
             
             {{-- Approvals --}}
             <a href="{{ mobile_route('approvals.index') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth relative
-                      {{ request()->routeIs('mobile.approvals*') ? 'text-blue-600' : 'text-gray-500' }}">
-                <i class="fas fa-clipboard-check text-xl mb-1"></i>
-                <span class="text-xs font-medium">Approvals</span>
+               class="flex flex-col items-center justify-center gap-0.5 relative
+                      {{ request()->routeIs('mobile.approvals*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
+                      hover:text-[#0a66c2] transition-colors">
+                <i class="fas fa-clipboard-check text-xl"></i>
+                <span class="text-[9px] font-medium">Approvals</span>
                 @if(isset($pendingApprovalsCount) && $pendingApprovalsCount > 0)
-                    <span class="absolute top-0 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 
+                    <span class="absolute top-0.5 right-[28%] w-4 h-4 bg-red-500 text-white text-[9px] rounded-full 
                                  flex items-center justify-center font-bold">
-                        {{ $pendingApprovalsCount }}
+                        {{ $pendingApprovalsCount > 9 ? '9' : $pendingApprovalsCount }}
                     </span>
                 @endif
             </a>
             
             {{-- Profile --}}
             <a href="{{ mobile_route('profile.show') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth
-                      {{ request()->routeIs('mobile.profile') ? 'text-blue-600' : 'text-gray-500' }}">
-                <i class="fas fa-user text-xl mb-1"></i>
-                <span class="text-xs font-medium">Profile</span>
+               class="flex flex-col items-center justify-center gap-0.5
+                      {{ request()->routeIs('mobile.profile*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
+                      hover:text-[#0a66c2] transition-colors">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-[9px] font-medium">Profil</span>
             </a>
             
         </div>
@@ -539,6 +547,47 @@
         }
 
         checkSafeArea();
+
+        // Auto-hide header and bottom nav on scroll (LinkedIn-style)
+        let lastScrollY = window.scrollY;
+        let scrollTimeout;
+        
+        function handleScroll() {
+            const header = document.querySelector('.mobile-header');
+            const bottomNav = document.getElementById('bottom-nav');
+            const currentScrollY = window.scrollY;
+            
+            if (!header || !bottomNav) return;
+            
+            // Clear existing timeout
+            clearTimeout(scrollTimeout);
+            
+            // Add delay before processing (debounce)
+            scrollTimeout = setTimeout(() => {
+                if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                    // Scrolling DOWN - hide header and bottom nav
+                    header.style.transform = 'translateY(-100%)';
+                    bottomNav.style.transform = 'translateY(100%)';
+                } else {
+                    // Scrolling UP - show header and bottom nav
+                    header.style.transform = 'translateY(0)';
+                    bottomNav.style.transform = 'translateY(0)';
+                }
+                
+                lastScrollY = currentScrollY;
+            }, 10);
+        }
+        
+        // Attach scroll listener with passive flag for better performance
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        
+        // Ensure nav is visible on page load
+        window.addEventListener('load', () => {
+            const header = document.querySelector('.mobile-header');
+            const bottomNav = document.getElementById('bottom-nav');
+            if (header) header.style.transform = 'translateY(0)';
+            if (bottomNav) bottomNav.style.transform = 'translateY(0)';
+        });
 
         // Standalone Mode Detection
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
