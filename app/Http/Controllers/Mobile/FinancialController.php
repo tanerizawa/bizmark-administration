@@ -69,7 +69,7 @@ class FinancialController extends Controller
                     'payment_date' => $request->transaction_date,
                     'description' => $request->description ?? $this->getCategoryLabel($request->category),
                     'payment_type' => 'other', // or map from category
-                    'payment_method' => 'transfer',
+                    'payment_method' => 'bank_transfer',
                     'created_by' => auth()->id(),
                 ]);
                 
