@@ -62,8 +62,8 @@
         <div onclick="window.location.href='{{ mobile_route('approvals.index') }}'"
              class="bg-white border-2 border-gray-200 rounded-lg p-3 shadow-sm active:scale-95 transition-transform cursor-pointer">
             <div class="flex items-center gap-2 mb-2">
-                <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-file-signature text-blue-600 text-sm"></i>
+                <div class="w-8 h-8 bg-[#f0f7fa] rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file-signature text-[#0077b5] text-sm"></i>
                 </div>
                 <div class="text-xs text-gray-600 font-medium">Approvals</div>
             </div>
@@ -138,7 +138,7 @@
     <div class="mb-6">
         <div class="flex items-center justify-between mb-3">
             <h2 class="text-lg font-bold text-gray-900">
-                <i class="fas fa-calendar-day text-blue-600 mr-2"></i>
+                <i class="fas fa-calendar-day text-[#0077b5] mr-2"></i>
                 Agenda Hari Ini
             </h2>
             <span class="text-xs text-gray-500">{{ now()->format('d M Y') }}</span>
@@ -177,9 +177,9 @@
             <button @click="expanded = !expanded" 
                     class="w-full px-4 py-3 flex items-center justify-between text-left">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-folder-open text-blue-600"></i>
+                    <i class="fas fa-folder-open text-[#0077b5]"></i>
                     <span class="font-semibold text-gray-900">Proyek Aktif</span>
-                    <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                    <span class="text-xs px-2 py-1 bg-[#e7f3f8] text-[#004d6d] rounded-full font-medium">
                         {{ $projectStats['active'] }}
                     </span>
                 </div>
@@ -191,7 +191,7 @@
                  x-transition:leave="transition ease-in duration-150"
                  class="px-4 pb-3">
                 <a href="{{ mobile_route('projects.index') }}" 
-                   class="block py-2 text-sm text-blue-600 font-medium">
+                   class="block py-2 text-sm text-[#0077b5] font-medium">
                     Lihat semua proyek →
                 </a>
             </div>
@@ -215,7 +215,7 @@
                  x-transition
                  class="px-4 pb-3">
                 <a href="{{ mobile_route('financial.index') }}" 
-                   class="block py-2 text-sm text-blue-600 font-medium">
+                   class="block py-2 text-sm text-[#0077b5] font-medium">
                     Lihat pending payments →
                 </a>
             </div>
@@ -227,8 +227,8 @@
     <button x-show="showBackToTop" 
             @click="scrollToTop()"
             x-transition
-            class="fixed bottom-24 right-4 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg 
-                   flex items-center justify-center hover:bg-blue-700 transition-colors z-40">
+            class="fixed bottom-24 right-4 w-12 h-12 bg-[#0077b5] text-white rounded-full shadow-lg 
+                   flex items-center justify-center hover:bg-[#004d6d] transition-colors z-40">
         <i class="fas fa-arrow-up"></i>
     </button>
 
@@ -342,7 +342,7 @@ function dashboardMobile() {
             // Simple toast notification
             const toast = document.createElement('div');
             toast.className = `fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 
-                              ${type === 'success' ? 'bg-green-500' : 'bg-blue-500'} text-white`;
+                              ${type === 'success' ? 'bg-green-500' : 'bg-[#0077b5]'} text-white`;
             toast.textContent = message;
             document.body.appendChild(toast);
 

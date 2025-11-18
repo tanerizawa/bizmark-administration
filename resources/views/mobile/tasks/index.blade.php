@@ -3,7 +3,7 @@
 @section('title', 'My Tasks')
 
 @section('header-actions')
-<a href="{{ mobile_route('tasks.create', fallback: '#') }}" class="text-blue-600 hover:text-blue-700 transition-colors">
+<a href="{{ mobile_route('tasks.create', fallback: '#') }}" class="text-[#0077b5] hover:text-[#004d6d] transition-colors">
     <i class="fas fa-plus text-xl"></i>
 </a>
 @endsection
@@ -15,25 +15,25 @@
         <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
             <button 
                 @click="filter = 'today'" 
-                :class="filter === 'today' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'today' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-calendar-day text-xs"></i>
                 <span>Hari Ini</span>
                 <span x-show="stats.today > 0" 
-                      :class="filter === 'today' ? 'bg-white text-blue-600' : 'bg-blue-100 text-blue-600'"
+                      :class="filter === 'today' ? 'bg-white text-[#0077b5]' : 'bg-[#e7f3f8] text-[#0077b5]'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.today"></span>
             </button>
             <button 
                 @click="filter = 'week'" 
-                :class="filter === 'week' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'week' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-calendar-week text-xs"></i>
                 <span>Minggu Ini</span>
                 <span x-show="stats.week > 0" 
-                      :class="filter === 'week' ? 'bg-white text-blue-600' : 'bg-gray-100 text-gray-600'"
+                      :class="filter === 'week' ? 'bg-white text-[#0077b5]' : 'bg-gray-100 text-gray-600'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.week"></span>
             </button>
@@ -51,12 +51,12 @@
             </button>
             <button 
                 @click="filter = 'all'" 
-                :class="filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'all' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <span>Semua</span>
                 <span x-show="filter === 'all'" 
-                      :class="filter === 'all' ? 'bg-white text-blue-600' : 'bg-gray-100 text-gray-600'"
+                      :class="filter === 'all' ? 'bg-white text-[#0077b5]' : 'bg-gray-100 text-gray-600'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.all"></span>
             </button>
@@ -106,7 +106,7 @@
                         
                         {{-- Right: More Options --}}
                         <div class="flex-1"></div>
-                        <div class="w-20 bg-blue-500 flex items-center justify-center">
+                        <div class="w-20 bg-[#0077b5] flex items-center justify-center">
                             <i class="fas fa-ellipsis-h text-white text-xl"></i>
                         </div>
                     </div>
@@ -127,7 +127,7 @@
                                            active:scale-95 transition-all"
                                     :class="task.status === 'completed' 
                                         ? 'bg-green-500 border-green-500' 
-                                        : 'border-gray-300 hover:border-blue-500'">
+                                        : 'border-gray-300 hover:border-[#0077b5]'">
                                     <i x-show="task.status === 'completed'" 
                                        class="fas fa-check text-white text-xs"></i>
                                 </button>
@@ -166,7 +166,7 @@
                                             :class="{
                                                 'bg-red-100 text-red-600': task.priority === 'urgent',
                                                 'bg-orange-100 text-orange-600': task.priority === 'high',
-                                                'bg-blue-100 text-blue-600': task.priority === 'low'
+                                                'bg-[#e7f3f8] text-[#0077b5]': task.priority === 'low'
                                             }">
                                             <span x-text="task.priority_label"></span>
                                         </span>

@@ -383,16 +383,16 @@
     {{-- Install PWA Prompt --}}
     <div id="installPrompt" class="fixed bottom-20 left-4 right-4 bg-white rounded-2xl shadow-xl p-4 hidden z-50">
         <div class="flex items-start gap-3">
-            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-mobile-alt text-blue-600 text-xl"></i>
+            <div class="w-12 h-12 bg-[#e7f3f8] rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-mobile-alt text-[#0077b5] text-xl"></i>
             </div>
             <div class="flex-1">
                 <h4 class="font-bold text-gray-900 mb-1">Install Bizmark Admin</h4>
                 <p class="text-sm text-gray-600 mb-3">Tambah ke home screen untuk akses cepat</p>
                 <div class="flex gap-2">
                     <button onclick="installPWA()" 
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium 
-                                   hover:bg-blue-700 transition-colors">
+                            class="px-4 py-2 bg-[#0077b5] text-white rounded-lg text-sm font-medium 
+                                   hover:bg-[#004d6d] transition-colors">
                         Install
                     </button>
                     <button onclick="dismissInstallPrompt()" 

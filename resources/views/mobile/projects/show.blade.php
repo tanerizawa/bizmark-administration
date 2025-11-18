@@ -5,11 +5,11 @@
 @section('content')
 <div class="mobile-page pb-20" x-data="projectDetail({{ $project->id }})">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 safe-top">
+    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] text-white p-6 safe-top">
         <div class="flex items-start justify-between mb-3">
             <div class="flex-1 min-w-0 pr-3">
                 <h1 class="text-xl font-bold mb-1">{{ $project->name }}</h1>
-                <p class="text-blue-100 text-sm">{{ $project->institution->name ?? '-' }}</p>
+                <p class="text-white text-sm">{{ $project->institution->name ?? '-' }}</p>
             </div>
             <span class="flex-shrink-0 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
                 {{ $project->status->name ?? 'Unknown' }}
@@ -19,7 +19,7 @@
         <!-- Progress -->
         <div class="mb-4">
             <div class="flex justify-between text-sm mb-1.5">
-                <span class="text-blue-100">Progress</span>
+                <span class="text-white">Progress</span>
                 <span class="font-semibold">{{ $project->progress ?? 0 }}%</span>
             </div>
             <div class="h-2 bg-white/20 rounded-full overflow-hidden">
@@ -32,15 +32,15 @@
         <div class="grid grid-cols-3 gap-3">
             <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                 <div class="text-2xl font-bold">{{ $stats['totalTasks'] ?? 0 }}</div>
-                <div class="text-xs text-blue-100 mt-0.5">Tasks</div>
+                <div class="text-xs text-white mt-0.5">Tasks</div>
             </div>
             <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                 <div class="text-2xl font-bold">{{ $stats['daysLeft'] ?? 0 }}</div>
-                <div class="text-xs text-blue-100 mt-0.5">Hari Lagi</div>
+                <div class="text-xs text-white mt-0.5">Hari Lagi</div>
             </div>
             <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                 <div class="text-2xl font-bold">{{ number_format(($stats['totalSpent'] / $stats['totalBudget']) * 100, 0) }}%</div>
-                <div class="text-xs text-blue-100 mt-0.5">Budget Used</div>
+                <div class="text-xs text-white mt-0.5">Budget Used</div>
             </div>
         </div>
     </div>
@@ -49,22 +49,22 @@
     <div class="sticky top-14 z-10 bg-white border-b border-gray-200">
         <div class="flex overflow-x-auto scrollbar-hide">
             <button @click="activeTab = 'overview'" 
-                    :class="activeTab === 'overview' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'overview' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Overview
             </button>
             <button @click="activeTab = 'tasks'" 
-                    :class="activeTab === 'tasks' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'tasks' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Tasks ({{ $stats['totalTasks'] }})
             </button>
             <button @click="activeTab = 'timeline'" 
-                    :class="activeTab === 'timeline' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'timeline' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Timeline
             </button>
             <button @click="activeTab = 'files'" 
-                    :class="activeTab === 'files' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'files' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Files
             </button>
@@ -110,8 +110,8 @@
                         <div class="text-2xl font-bold text-green-600">{{ $stats['completedTasks'] }}</div>
                         <div class="text-xs text-gray-600 mt-1">Selesai</div>
                     </div>
-                    <div class="text-center p-3 bg-blue-50 rounded-lg">
-                        <div class="text-2xl font-bold text-blue-600">{{ $stats['totalTasks'] - $stats['completedTasks'] }}</div>
+                    <div class="text-center p-3 bg-[#f0f7fa] rounded-lg">
+                        <div class="text-2xl font-bold text-[#0077b5]">{{ $stats['totalTasks'] - $stats['completedTasks'] }}</div>
                         <div class="text-xs text-gray-600 mt-1">Aktif</div>
                     </div>
                     <div class="text-center p-3 bg-red-50 rounded-lg">
@@ -131,7 +131,7 @@
                     </button>
                     <button @click="showStatusModal = true" 
                             class="p-3 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100">
-                        <i class="fas fa-exchange-alt mr-2 text-blue-500"></i>Update Status
+                        <i class="fas fa-exchange-alt mr-2 text-[#0077b5]"></i>Update Status
                     </button>
                 </div>
             </div>
@@ -147,7 +147,7 @@
                         <h4 class="font-medium text-gray-900 flex-1 pr-3">{{ $task->title }}</h4>
                         <span class="flex-shrink-0 px-2 py-1 text-xs rounded-full
                             {{ $task->status === 'done' ? 'bg-green-100 text-green-800' : 
-                               ($task->status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') }}">
+                               ($task->status === 'in_progress' ? 'bg-[#e7f3f8] text-[#0077b5]' : 'bg-gray-100 text-gray-800') }}">
                             {{ ucfirst($task->status) }}
                         </span>
                     </div>
@@ -206,8 +206,8 @@
                 <a href="{{ Storage::url($doc->file_path) }}" 
                    target="_blank"
                    class="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
-                    <div class="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-file-alt text-blue-500"></i>
+                    <div class="flex-shrink-0 w-10 h-10 bg-[#f0f7fa] rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-alt text-[#0077b5]"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <h4 class="font-medium text-gray-900 text-sm truncate">{{ $doc->title }}</h4>
@@ -259,7 +259,7 @@ function projectDetail(projectId) {
         getEventColor(color) {
             const colors = {
                 'green': 'bg-green-500',
-                'blue': 'bg-blue-500',
+                'blue': 'bg-[#0077b5]',
                 'red': 'bg-red-500',
                 'yellow': 'bg-yellow-500',
                 'purple': 'bg-purple-500'

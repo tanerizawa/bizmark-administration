@@ -33,7 +33,7 @@
                 Semua ({{ $stats['total'] }})
             </button>
             <button @click="filterType('expenses')" 
-                    :class="currentType === 'expenses' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+                    :class="currentType === 'expenses' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Expenses ({{ $stats['expenses'] }})
             </button>
@@ -53,9 +53,9 @@
     <!-- Bulk Actions Bar (when items selected) -->
     <div x-show="selectedItems.length > 0" 
          x-transition
-         class="sticky top-[106px] z-10 bg-blue-50 border-b border-blue-200 p-3">
+         class="sticky top-[106px] z-10 bg-[#f0f7fa] border-b border-[#caccce] p-3">
         <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-blue-900">
+            <span class="text-sm font-medium text-[#000000]">
                 <span x-text="selectedItems.length"></span> item dipilih
             </span>
             <div class="flex gap-2">
@@ -122,7 +122,7 @@
                             <input type="checkbox" 
                                    :checked="isSelected(approval)"
                                    @change="toggleSelection(approval)"
-                                   class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                   class="w-5 h-5 rounded border-gray-300 text-[#0077b5] focus:ring-[#0077b5]">
                         </div>
 
                         <a :href="`/m/approvals/${approval.type}/${approval.id}`" 
@@ -405,7 +405,7 @@ function approvalsPage() {
 
         getIconColor(type) {
             const colors = {
-                'expenses': 'bg-blue-100 text-blue-600',
+                'expenses': 'bg-[#e7f3f8] text-[#0077b5]',
                 'documents': 'bg-purple-100 text-purple-600',
                 'invoices': 'bg-green-100 text-green-600'
             };
@@ -414,7 +414,7 @@ function approvalsPage() {
 
         getTypeBadge(type) {
             const badges = {
-                'expenses': 'bg-blue-100 text-blue-700',
+                'expenses': 'bg-[#e7f3f8] text-[#0077b5]',
                 'documents': 'bg-purple-100 text-purple-700',
                 'invoices': 'bg-green-100 text-green-700'
             };

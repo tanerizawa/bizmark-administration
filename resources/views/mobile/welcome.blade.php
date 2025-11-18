@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#0077b5">
     <title>Bizmark Mobile Admin</title>
     <style>
         * {
@@ -14,7 +14,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0077b5 0%, #004d6d 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -55,7 +55,7 @@
         .btn {
             display: inline-block;
             background: white;
-            color: #667eea;
+            color: #0077b5;
             padding: 16px 40px;
             border-radius: 50px;
             text-decoration: none;
