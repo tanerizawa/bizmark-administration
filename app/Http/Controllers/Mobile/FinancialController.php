@@ -142,8 +142,9 @@ class FinancialController extends Controller
         
         $stats = [
             'all' => ProjectExpense::count(),
-            'pending' => ProjectExpense::where('status', 'pending')->count(),
-            'approved' => ProjectExpense::where('status', 'approved')->count(),
+            'receivable' => ProjectExpense::where('is_receivable', true)
+                ->where('receivable_status', '!=', 'paid')->count(),
+            'billable' => ProjectExpense::where('is_billable', true)->count(),
             'thisMonth' => ProjectExpense::whereMonth('expense_date', now()->month)->sum('amount'),
         ];
         
