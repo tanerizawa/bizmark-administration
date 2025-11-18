@@ -199,17 +199,17 @@ class DashboardController extends Controller
      */
     private function getTasksMetric()
     {
-        $today = Task::where('assignee_id', auth()->id())
+        $today = Task::where('assigned_user_id', auth()->id())
             ->whereDate('due_date', now()->toDateString())
             ->where('status', '!=', 'done')
             ->count();
             
-        $overdue = Task::where('assignee_id', auth()->id())
+        $overdue = Task::where('assigned_user_id', auth()->id())
             ->where('due_date', '<', now())
             ->where('status', '!=', 'done')
             ->count();
             
-        $upcoming = Task::where('assignee_id', auth()->id())
+        $upcoming = Task::where('assigned_user_id', auth()->id())
             ->whereBetween('due_date', [now()->addDay(), now()->addDays(7)])
             ->where('status', '!=', 'done')
             ->count();

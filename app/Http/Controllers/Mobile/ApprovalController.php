@@ -329,9 +329,6 @@ class ApprovalController extends Controller
         
         if ($type === 'all' || $type === 'invoices') {
             $invoices = Invoice::where('status', 'draft')
-                ->whereHas('project', function($query) {
-                    $query->where('manager_id', auth()->id());
-                })
                 ->with(['project', 'client'])
                 ->get()
                 ->map(function($invoice) {
