@@ -650,7 +650,8 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
                 
-                const response = await fetch('/api/ping', {
+                // Use a simple HEAD request to current domain to check connectivity
+                const response = await fetch('/m/ping', {
                     method: 'HEAD',
                     cache: 'no-store',
                     signal: controller.signal
@@ -659,6 +660,7 @@
                 clearTimeout(timeoutId);
                 isOnline = response.ok;
             } catch (error) {
+                console.log('Connection check failed:', error.message);
                 isOnline = false;
             } finally {
                 checkingConnection = false;
@@ -669,19 +671,26 @@
         function updateOnlineStatus() {
             const offlineIndicator = document.getElementById('offlineIndicator');
             
-            // Check both browser online status and our server check
-            const isActuallyOnline = navigator.onLine && isOnline;
-            
-            if (isActuallyOnline) {
-                offlineIndicator.classList.remove('show');
-            } else {
+            // Only show offline indicator if BOTH browser and server check fail
+            // Trust browser online status first
+            if (!navigator.onLine) {
                 offlineIndicator.classList.add('show');
+                return;
+            }
+            
+            // If browser says online, trust it and hide indicator
+            // Only show if server check explicitly failed
+            if (navigator.onLine) {
+                offlineIndicator.classList.remove('show');
             }
         }
 
         // Check connection when browser reports online/offline
         window.addEventListener('online', () => {
-            checkServerConnection();
+            isOnline = true;
+            updateOnlineStatus();
+            // Optionally verify with server
+            setTimeout(checkServerConnection, 1000);
         });
         
         window.addEventListener('offline', () => {
@@ -689,15 +698,15 @@
             updateOnlineStatus();
         });
         
-        // Initial check
-        checkServerConnection();
+        // Initial check - trust browser status
+        updateOnlineStatus();
         
-        // Periodic check every 30 seconds if offline
+        // Optional: Periodic check every 60 seconds (less aggressive)
         setInterval(() => {
-            if (!isOnline) {
+            if (navigator.onLine && !isOnline) {
                 checkServerConnection();
             }
-        }, 30000);
+        }, 60000);
 
         // PWA Install Prompt
         let deferredPrompt;
