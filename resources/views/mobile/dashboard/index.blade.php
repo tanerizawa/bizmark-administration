@@ -16,7 +16,7 @@
 
 @section('header-actions')
     {{-- Notification badge --}}
-    <button onclick="window.location.href='{{ route('mobile.notifications') }}'" 
+    <button onclick="window.location.href='{{ route('mobile.notifications.index') }}'" 
             class="relative p-2 rounded-full hover:bg-white/10 transition-colors">
         <i class="fas fa-bell text-white"></i>
         @if($metrics['urgent_count'] > 0)
@@ -81,7 +81,7 @@
                 {{-- Card 3: Pending Approvals --}}
                 <div class="flex-shrink-0 w-[85vw] snap-start">
                     <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg"
-                         onclick="window.location.href='{{ route('mobile.approvals') }}'">
+                         onclick="window.location.href='{{ route('mobile.approvals.index') }}'">
                         <div class="flex items-center justify-between mb-3">
                             <div class="bg-white/20 rounded-full p-2">
                                 <i class="fas fa-file-signature text-2xl"></i>
@@ -100,7 +100,7 @@
                 {{-- Card 4: Today's Tasks --}}
                 <div class="flex-shrink-0 w-[85vw] snap-start">
                     <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg"
-                         onclick="window.location.href='{{ route('mobile.tasks') }}'">
+                         onclick="window.location.href='{{ route('mobile.tasks.index') }}'">
                         <div class="flex items-center justify-between mb-3">
                             <div class="bg-white/20 rounded-full p-2">
                                 <i class="fas fa-tasks text-2xl"></i>
@@ -290,7 +290,7 @@
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:leave="transition ease-in duration-150"
                  class="px-4 pb-3">
-                <a href="{{ route('mobile.projects') }}" 
+                <a href="{{ route('mobile.projects.index') }}" 
                    class="block py-2 text-sm text-blue-600 font-medium">
                     Lihat semua proyek →
                 </a>
