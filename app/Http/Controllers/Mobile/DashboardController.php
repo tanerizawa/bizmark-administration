@@ -47,8 +47,39 @@ class DashboardController extends Controller
         });
         
         $recentActivity = $this->getRecentActivity(5);
+
+        $runway = $this->getRunwayMetric();
+        $cash_pulse = [
+            'status' => $runway['color'] === 'green' ? 'healthy' : ($runway['color'] === 'yellow' ? 'warning' : 'critical'),
+            'balance' => $runway['cash'] ?? 0,
+            'runway' => is_numeric($runway['months']) ? $runway['months'] : 12,
+        ];
+
+        $alerts = $this->getAlerts();
+        $agenda = $this->getAgenda();
+        $projectStats = [
+            'active' => $metrics['active_projects'] ?? 0,
+            'delayed' => $alerts->count(),
+            'blocked' => 0,
+        ];
+        $paymentStats = [
+            'pending' => Invoice::where('status', 'draft')->count(),
+            'overdue' => Invoice::where('status', 'sent')->whereDate('due_date', '<', now())->count(),
+            'paid' => Invoice::where('status', 'paid')->count(),
+        ];
         
-        return view('mobile.dashboard.index', compact('metrics', 'recentActivity'));
+        return view(
+            'mobile.dashboard.index',
+            compact(
+                'metrics',
+                'recentActivity',
+                'cash_pulse',
+                'alerts',
+                'agenda',
+                'projectStats',
+                'paymentStats'
+            )
+        );
     }
     
     /**
@@ -115,12 +146,14 @@ class DashboardController extends Controller
      */
     private function getUrgentMetric()
     {
-        $overdueProjects = Project::where('deadline', '<', now())
+        $overdueProjects = Project::whereNotNull('deadline')
+            ->where('deadline', '<', now())
             ->whereDoesntHave('status', function($query) {
                 $query->where('name', 'Selesai');
             })->count();
             
-        $overdueTasks = Task::where('due_date', '<', now())
+        $overdueTasks = Task::whereNotNull('due_date')
+            ->where('due_date', '<', now())
             ->where('status', '!=', 'done')
             ->count();
             
@@ -289,6 +322,70 @@ class DashboardController extends Controller
             ->values();
         
         return $activities;
+    }
+
+    /**
+     * Alerts: overdue projects and tasks for quick actions.
+     */
+    private function getAlerts()
+    {
+        $alerts = collect();
+
+        $overdueProjects = Project::where('deadline', '<', now())
+            ->orderBy('deadline', 'asc')
+            ->take(5)
+            ->get();
+
+        foreach ($overdueProjects as $project) {
+            $alerts->push([
+                'id' => $project->id,
+                'type' => 'project',
+                'title' => $project->name,
+                'subtitle' => 'Lewat dari tenggat',
+                'days_overdue' => Carbon::parse($project->deadline)->diffInDays(now()),
+            ]);
+        }
+
+        $overdueTasks = Task::where('due_date', '<', now())
+            ->where('status', '!=', 'done')
+            ->orderBy('due_date', 'asc')
+            ->take(5)
+            ->get();
+
+        foreach ($overdueTasks as $task) {
+            $alerts->push([
+                'id' => $task->id,
+                'type' => 'task',
+                'title' => $task->title ?? 'Task',
+                'subtitle' => optional($task->project)->name ?? 'Task terjadwal',
+                'days_overdue' => Carbon::parse($task->due_date)->diffInDays(now()),
+            ]);
+        }
+
+        return $alerts;
+    }
+
+    /**
+     * Agenda: tasks due today for the current user.
+     */
+    private function getAgenda()
+    {
+        $tasksToday = Task::whereNotNull('due_date')
+            ->where('assigned_user_id', auth()->id())
+            ->whereDate('due_date', now()->toDateString())
+            ->orderBy('due_date')
+            ->take(5)
+            ->get();
+
+        return $tasksToday->map(function ($task) {
+            return [
+                'time' => Carbon::parse($task->due_date)->format('H:i'),
+                'icon' => '📌',
+                'title' => $task->title ?? 'Task',
+                'project' => optional($task->project)->name ?? 'Tanpa proyek',
+                'link' => route('mobile.tasks.show', $task),
+            ];
+        });
     }
     
     /**

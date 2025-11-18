@@ -41,7 +41,7 @@
                 {{-- Card 1: Urgent Alerts --}}
                 <div class="flex-shrink-0 w-[85vw] snap-start">
                     <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg"
-                         onclick="window.location.href='{{ route('mobile.alerts') }}'">
+                         onclick="window.location.href='{{ route('mobile.tasks.urgent') }}'">
                         <div class="flex items-center justify-between mb-3">
                             <div class="bg-white/20 rounded-full p-2">
                                 <i class="fas fa-exclamation-triangle text-2xl"></i>
@@ -60,7 +60,7 @@
                 {{-- Card 2: Cash & Runway --}}
                 <div class="flex-shrink-0 w-[85vw] snap-start">
                     <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-5 text-white shadow-lg"
-                         onclick="window.location.href='{{ route('mobile.financials') }}'">
+                         onclick="window.location.href='{{ route('mobile.financial.index') }}'">
                         <div class="flex items-center justify-between mb-3">
                             <div class="bg-white/20 rounded-full p-2">
                                 <i class="fas fa-wallet text-2xl"></i>
@@ -88,7 +88,7 @@
                             </div>
                             <span class="text-xs uppercase tracking-wider opacity-90">Approvals</span>
                         </div>
-                        <div class="text-5xl font-bold mb-2">{{ $metrics['pending_approvals'] }}</div>
+                        <div class="text-5xl font-bold mb-2">{{ $metrics['approvals_count'] ?? 0 }}</div>
                         <div class="text-sm opacity-90">Dokumen menunggu</div>
                         <div class="mt-3 flex items-center text-xs">
                             <span class="opacity-75">Quick approve</span>
@@ -107,8 +107,8 @@
                             </div>
                             <span class="text-xs uppercase tracking-wider opacity-90">Today</span>
                         </div>
-                        <div class="text-5xl font-bold mb-2">{{ $metrics['today_tasks'] }}</div>
-                        <div class="text-sm opacity-90">Agenda hari ini</div>
+                        <div class="text-5xl font-bold mb-2">{{ $metrics['tasks_today'] ?? 0 }}</div>
+                        <div class="text-sm opacity-90">{{ $metrics['tasks_today'] ?? 0 }} hari ini • {{ $metrics['tasks_overdue'] ?? 0 }} overdue</div>
                         <div class="mt-3 flex items-center text-xs">
                             <span class="opacity-75">View all tasks</span>
                             <i class="fas fa-arrow-right ml-2"></i>
@@ -136,7 +136,7 @@
                 Perlu Tindakan Sekarang
             </h2>
             @if(count($alerts) > 3)
-                <a href="{{ route('mobile.alerts') }}" class="text-sm text-blue-600 font-medium">
+                <a href="{{ route('mobile.tasks.urgent') }}" class="text-sm text-blue-600 font-medium">
                     + {{ count($alerts) - 3 }} lagi
                 </a>
             @endif
@@ -227,7 +227,7 @@
                 </div>
             </div>
 
-            <button onclick="window.location.href='{{ route('mobile.financials') }}'" 
+            <button onclick="window.location.href='{{ route('mobile.financial.index') }}'" 
                     class="w-full py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                 Lihat Detail Keuangan →
             </button>
@@ -314,7 +314,7 @@
             <div x-show="expanded" 
                  x-transition
                  class="px-4 pb-3">
-                <a href="{{ route('mobile.payments') }}" 
+                <a href="{{ route('mobile.financial.index') }}" 
                    class="block py-2 text-sm text-blue-600 font-medium">
                     Lihat pending payments →
                 </a>
@@ -429,7 +429,7 @@ function dashboardMobile() {
 
         markAsDone(id) {
             // API call to mark as done
-            fetch(`/mobile/alerts/${id}/complete`, {
+            fetch(`/m/tasks/${id}/complete`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -531,13 +531,13 @@ function showQuickActions() {
                     <span class="font-medium text-gray-900">Proyek Baru</span>
                 </a>
                 
-                <a href="{{ route('mobile.tasks.create') }}" 
+                <a href="{{ route('mobile.tasks.index') }}" 
                    class="block p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
                     <i class="fas fa-plus-circle text-green-600 mr-3"></i>
                     <span class="font-medium text-gray-900">Task Baru</span>
                 </a>
                 
-                <a href="{{ route('mobile.payments.create') }}" 
+                <a href="{{ route('mobile.financial.index') }}" 
                    class="block p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
                     <i class="fas fa-money-bill-wave text-purple-600 mr-3"></i>
                     <span class="font-medium text-gray-900">Catat Pembayaran</span>
