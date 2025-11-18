@@ -203,9 +203,19 @@
     <header class="mobile-header">
         <div class="h-14 px-4 flex items-center justify-between">
             {{-- Left: Menu or Back --}}
-            <button onclick="history.back()" class="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-smooth">
-                <i class="fas fa-arrow-left text-xl"></i>
-            </button>
+            @if(request()->routeIs('mobile.dashboard'))
+                {{-- Dashboard: Show logo/icon instead of back button --}}
+                <div class="p-2 -ml-2">
+                    <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-briefcase text-white text-sm"></i>
+                    </div>
+                </div>
+            @else
+                {{-- Other pages: Show back button --}}
+                <button onclick="history.back()" class="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-smooth">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </button>
+            @endif
             
             {{-- Center: Title --}}
             <h1 class="text-lg font-bold text-white flex-1 text-center px-4 truncate">
@@ -216,7 +226,7 @@
             <div class="flex items-center gap-2">
                 @yield('header-actions')
                 
-                <button onclick="toggleSettings()" 
+                <button onclick="showSettings()" 
                         class="p-2 -mr-2 text-white hover:bg-white/10 rounded-full transition-smooth">
                     <i class="fas fa-cog text-xl"></i>
                 </button>
@@ -381,6 +391,211 @@
         </div>
     </div>
 
+    {{-- Settings Bottom Sheet --}}
+    <div id="settingsSheet" class="fixed inset-0 bg-black/50 hidden z-50" onclick="hideSettings()">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-3"></div>
+            
+            <h3 class="text-base font-bold text-gray-900 mb-3">Pengaturan</h3>
+            
+            <div class="space-y-2">
+                {{-- Profile --}}
+                <a href="{{ route('profile.edit') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-[#f0f7fa] rounded-lg flex items-center justify-center">
+                            <i class="fas fa-user text-[#0077b5] text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Profile Saya</div>
+                            <div class="text-xs text-gray-500">{{ auth()->user()->name }}</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+                
+                {{-- Preferences --}}
+                <button onclick="window.location.href='{{ route('settings.index') }}'" 
+                        class="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-sliders text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Preferensi</div>
+                            <div class="text-xs text-gray-500">Notifikasi, bahasa, tema</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </button>
+                
+                {{-- About --}}
+                <button onclick="window.location.href='{{ route('about') }}'" 
+                        class="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-info-circle text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Tentang Aplikasi</div>
+                            <div class="text-xs text-gray-500">Versi, bantuan, privacy</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </button>
+                
+                {{-- Logout --}}
+                <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                    @csrf
+                    <button type="submit" 
+                            class="block w-full p-3 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors text-left">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-sign-out-alt text-red-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-red-600 text-sm">Keluar</div>
+                            </div>
+                        </div>
+                    </button>
+                </form>
+            </div>
+            
+            <button onclick="hideSettings()" 
+                    class="w-full mt-4 py-3 text-gray-600 font-medium hover:bg-gray-50 rounded-lg transition-colors">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    {{-- Menu Bottom Sheet --}}
+    <div id="menuSheet" class="fixed inset-0 bg-black/50 hidden z-50" onclick="hideMenu()">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-3"></div>
+            
+            <h3 class="text-base font-bold text-gray-900 mb-3">Menu</h3>
+            
+            <div class="space-y-2 max-h-96 overflow-y-auto">
+                {{-- Dashboard --}}
+                <a href="{{ mobile_route('dashboard') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-[#f0f7fa] rounded-lg flex items-center justify-center">
+                            <i class="fas fa-house text-[#0077b5] text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Dashboard</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+                
+                {{-- Projects --}}
+                <a href="{{ mobile_route('projects.index') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-folder text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Proyek</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+                
+                {{-- Clients --}}
+                <a href="{{ mobile_route('clients.index') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-building text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Klien</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+                
+                {{-- Tasks --}}
+                <a href="{{ mobile_route('tasks.index') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-circle-check text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Tasks</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+                
+                {{-- Financial --}}
+                <a href="{{ mobile_route('financial.index') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-wallet text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Keuangan</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+                
+                {{-- Documents --}}
+                <a href="{{ mobile_route('documents.index') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Dokumen</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+                
+                {{-- Reports --}}
+                <a href="{{ mobile_route('reports.index') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-line text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Laporan</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+                
+                {{-- Team --}}
+                <a href="{{ mobile_route('team.index') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users text-gray-700 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Tim</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <button onclick="hideMenu()" 
+                    class="w-full mt-4 py-3 text-gray-600 font-medium hover:bg-gray-50 rounded-lg transition-colors">
+                Tutup
+            </button>
+        </div>
+    </div>
+
     {{-- Install PWA Prompt --}}
     <div id="installPrompt" class="fixed bottom-20 left-4 right-4 bg-white rounded-2xl shadow-xl p-4 hidden z-50">
         <div class="flex items-start gap-3">
@@ -501,15 +716,36 @@
 
         // Menu Handler (replaces Profile)
         function showMenu() {
-            // Implementation for menu overlay
-            console.log('Menu clicked');
-            // TODO: Show menu overlay with Profile, Settings, Logout
+            const sheet = document.getElementById('menuSheet');
+            sheet.classList.remove('hidden');
+            setTimeout(() => {
+                sheet.querySelector('.bottom-sheet').classList.add('show');
+            }, 10);
         }
 
-        // Settings Menu
-        function toggleSettings() {
-            // Implementation for settings menu
-            console.log('Settings clicked');
+        function hideMenu() {
+            const sheet = document.getElementById('menuSheet');
+            sheet.querySelector('.bottom-sheet').classList.remove('show');
+            setTimeout(() => {
+                sheet.classList.add('hidden');
+            }, 300);
+        }
+
+        // Settings Handler
+        function showSettings() {
+            const sheet = document.getElementById('settingsSheet');
+            sheet.classList.remove('hidden');
+            setTimeout(() => {
+                sheet.querySelector('.bottom-sheet').classList.add('show');
+            }, 10);
+        }
+
+        function hideSettings() {
+            const sheet = document.getElementById('settingsSheet');
+            sheet.querySelector('.bottom-sheet').classList.remove('show');
+            setTimeout(() => {
+                sheet.classList.add('hidden');
+            }, 300);
         }
 
         // Pull to Refresh
