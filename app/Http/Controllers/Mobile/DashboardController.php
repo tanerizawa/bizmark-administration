@@ -21,9 +21,20 @@ class DashboardController extends Controller
      * Only shows "What Matters Now"
      * Cache: 2 minutes (more frequent than desktop for real-time feel)
      */
-    public function index()
+    public function index(Request $request)
     {
         $cacheKey = 'mobile_dashboard_' . auth()->id();
+        
+        // Clear cache if refresh parameter is present (from pull-to-refresh)
+        if ($request->has('_refresh')) {
+            Cache::forget($cacheKey);
+            
+            // Also clear related caches
+            Cache::forget('urgent_metric_' . auth()->id());
+            Cache::forget('runway_metric_' . auth()->id());
+            Cache::forget('approvals_metric_' . auth()->id());
+            Cache::forget('tasks_metric_' . auth()->id());
+        }
         
         $metrics = Cache::remember($cacheKey, 120, function() {
             $urgent = $this->getUrgentMetric();
@@ -68,7 +79,7 @@ class DashboardController extends Controller
             'paid' => Invoice::where('status', 'paid')->count(),
         ];
         
-        return view(
+        $response = response()->view(
             'mobile.dashboard.index',
             compact(
                 'metrics',
@@ -80,6 +91,15 @@ class DashboardController extends Controller
                 'paymentStats'
             )
         );
+        
+        // Add no-cache headers if this is a refresh request
+        if ($request->has('_refresh')) {
+            $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+            $response->header('Pragma', 'no-cache');
+            $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+        }
+        
+        return $response;
     }
     
     /**

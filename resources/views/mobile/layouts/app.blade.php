@@ -638,19 +638,66 @@
                 });
         }
 
-        // Offline/Online Detection
+        // Offline/Online Detection with Server Ping
+        let isOnline = true;
+        let checkingConnection = false;
+        
+        async function checkServerConnection() {
+            if (checkingConnection) return;
+            checkingConnection = true;
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+                
+                const response = await fetch('/api/ping', {
+                    method: 'HEAD',
+                    cache: 'no-store',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                isOnline = response.ok;
+            } catch (error) {
+                isOnline = false;
+            } finally {
+                checkingConnection = false;
+                updateOnlineStatus();
+            }
+        }
+
         function updateOnlineStatus() {
             const offlineIndicator = document.getElementById('offlineIndicator');
-            if (navigator.onLine) {
+            
+            // Check both browser online status and our server check
+            const isActuallyOnline = navigator.onLine && isOnline;
+            
+            if (isActuallyOnline) {
                 offlineIndicator.classList.remove('show');
             } else {
                 offlineIndicator.classList.add('show');
             }
         }
 
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
-        updateOnlineStatus();
+        // Check connection when browser reports online/offline
+        window.addEventListener('online', () => {
+            checkServerConnection();
+        });
+        
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            updateOnlineStatus();
+        });
+        
+        // Initial check
+        checkServerConnection();
+        
+        // Periodic check every 30 seconds if offline
+        setInterval(() => {
+            if (!isOnline) {
+                checkServerConnection();
+            }
+        }, 30000);
 
         // PWA Install Prompt
         let deferredPrompt;
@@ -748,61 +795,120 @@
             }, 300);
         }
 
-        // Pull to Refresh
+        // Pull to Refresh - Best Practice Implementation
         let pullStartY = 0;
         let pullEndY = 0;
         let pulling = false;
+        let isRefreshing = false;
 
         document.addEventListener('touchstart', (e) => {
-            if (window.scrollY === 0) {
+            if (window.scrollY === 0 && !isRefreshing) {
                 pullStartY = e.touches[0].pageY;
                 pulling = true;
             }
-        });
+        }, { passive: true });
 
         document.addEventListener('touchmove', (e) => {
-            if (!pulling) return;
+            if (!pulling || isRefreshing) return;
             pullEndY = e.touches[0].pageY;
             const pullDistance = pullEndY - pullStartY;
 
             const indicator = document.getElementById('refreshIndicator');
             if (pullDistance > 80) {
                 indicator.classList.add('show');
-                indicator.querySelector('i').style.transform = `rotate(${pullDistance}deg)`;
+                const rotation = Math.min(pullDistance * 2, 360);
+                indicator.querySelector('i').style.transform = `rotate(${rotation}deg)`;
             }
-        });
+        }, { passive: true });
 
         document.addEventListener('touchend', () => {
-            if (!pulling) return;
+            if (!pulling || isRefreshing) return;
             const pullDistance = pullEndY - pullStartY;
             const indicator = document.getElementById('refreshIndicator');
 
             if (pullDistance > 80) {
                 // Trigger refresh
                 refreshPage();
+            } else {
+                indicator.classList.remove('show');
             }
             
-            indicator.classList.remove('show');
             pulling = false;
         });
 
-        function refreshPage() {
-            // Add spinner animation
+        async function refreshPage() {
+            if (isRefreshing) return;
+            isRefreshing = true;
+            
             const indicator = document.getElementById('refreshIndicator');
-            indicator.querySelector('i').classList.add('fa-spin');
-
-            // Fetch fresh data
-            fetch(window.location.href, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+            const icon = indicator.querySelector('i');
+            
+            // Show spinning animation
+            icon.classList.add('fa-spin');
+            icon.style.transform = '';
+            
+            try {
+                // Check if we're actually online first
+                if (!navigator.onLine) {
+                    throw new Error('No internet connection');
                 }
-            })
-            .then(response => response.text())
-            .then(() => {
+                
+                // Clear service worker cache for this page
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (const cacheName of cacheNames) {
+                        const cache = await caches.open(cacheName);
+                        await cache.delete(window.location.href);
+                    }
+                }
+                
+                // Fetch fresh data with cache busting
+                const timestamp = new Date().getTime();
+                const url = new URL(window.location.href);
+                url.searchParams.set('_refresh', timestamp);
+                
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    },
+                    cache: 'no-store'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch fresh data');
+                }
+                
+                // Success - reload with cache bypass
                 setTimeout(() => {
-                    window.location.reload();
+                    window.location.reload(true);
                 }, 500);
-            });
+                
+            } catch (error) {
+                console.error('Refresh failed:', error);
+                
+                // Show error message
+                const offlineIndicator = document.getElementById('offlineIndicator');
+                const originalText = offlineIndicator.innerHTML;
+                offlineIndicator.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i><span>Gagal memuat data fresh. Cek koneksi internet Anda.</span>';
+                offlineIndicator.classList.add('show');
+                
+                // Restore after 3 seconds
+                setTimeout(() => {
+                    offlineIndicator.innerHTML = originalText;
+                    if (navigator.onLine && isOnline) {
+                        offlineIndicator.classList.remove('show');
+                    }
+                }, 3000);
+                
+                // Stop spinning
+                icon.classList.remove('fa-spin');
+                indicator.classList.remove('show');
+                isRefreshing = false;
+            }
         }
 
         // Haptic Feedback
