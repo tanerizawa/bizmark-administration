@@ -49,7 +49,7 @@ class PermitStatusUpdated extends Notification
             ])
             ->tag('permit-status-' . $this->application->id)
             ->requireInteraction(true)
-            ->vibrate([200, 100, 200]);
+            ->vibrate([200, 100, 200, 100, 200]);
     }
 
     /**

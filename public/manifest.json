@@ -2,16 +2,22 @@
   "name": "Bizmark.ID - Konsultan Perizinan & Bisnis",
   "short_name": "Bizmark.ID",
   "description": "Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan, dan digitalisasi administrasi perusahaan. Proses cepat, transparan, harga kompetitif.",
-  "version": "2.1.0",
-  "start_url": "/?utm_source=pwa&utm_medium=homescreen&v=2.1.0",
+  "version": "2.2.0",
+  "start_url": "/?utm_source=pwa&utm_medium=homescreen&v=2.2.0",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#007AFF",
+  "background_color": "#ffffff",
+  "theme_color": "#0a66c2",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [
     {
-      "src": "/icons/icon.svg",
+      "src": "/images/logo-bizmark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
@@ -25,32 +31,46 @@
   ],
   "shortcuts": [
     {
+      "name": "Admin Dashboard",
+      "short_name": "Admin",
+      "description": "Akses admin mobile dashboard",
+      "url": "/m",
+      "icons": [{ "src": "/images/favicon.svg", "sizes": "any" }]
+    },
+    {
       "name": "Dashboard Klien",
       "short_name": "Dashboard",
       "description": "Akses dashboard portal klien",
       "url": "/client/dashboard",
-      "icons": [{ "src": "/favicon.ico", "sizes": "96x96" }]
+      "icons": [{ "src": "/images/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Approvals",
+      "short_name": "Approvals",
+      "description": "Approve pending items dari mobile",
+      "url": "/m/approvals",
+      "icons": [{ "src": "/images/favicon.svg", "sizes": "any" }]
     },
     {
       "name": "Ajukan Izin Baru",
       "short_name": "Ajukan Izin",
       "description": "Buat permohonan izin baru",
       "url": "/client/applications/create",
-      "icons": [{ "src": "/favicon.ico", "sizes": "96x96" }]
+      "icons": [{ "src": "/images/favicon.svg", "sizes": "any" }]
     },
     {
       "name": "Layanan Kami",
       "short_name": "Layanan",
       "description": "Lihat katalog layanan perizinan",
       "url": "/#services",
-      "icons": [{ "src": "/favicon.ico", "sizes": "96x96" }]
+      "icons": [{ "src": "/images/favicon.svg", "sizes": "any" }]
     },
     {
       "name": "Hubungi Kami",
       "short_name": "Kontak",
       "description": "Konsultasi gratis dengan tim kami",
       "url": "/#contact",
-      "icons": [{ "src": "/favicon.ico", "sizes": "96x96" }]
+      "icons": [{ "src": "/images/favicon.svg", "sizes": "any" }]
     }
   ],
   "categories": ["business", "productivity", "utilities"],

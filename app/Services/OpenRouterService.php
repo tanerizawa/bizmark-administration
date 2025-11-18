@@ -127,6 +127,23 @@ INSTRUKSI PENTING:
    - Izin khusus sektor
 4. **BEST PRACTICE** - Ikuti alur perizinan OSS 1.1 dan regulasi terbaru
 
+⚠️ **ATURAN BIAYA PEMERINTAH (PENTING):**
+- **estimated_cost_range** adalah HANYA biaya resmi ke PEMERINTAH (PNBP, retribusi daerah)
+- NIB, NPWP, Sertifikat Standar = Rp 0 (memang gratis dari pemerintah)
+- Izin teknis (IMB/PBG, SLF, dll) = ada biaya pemerintah sesuai perda
+- Izin lingkungan (UKL-UPL, AMDAL) = ada biaya pemerintah
+- Izin sektoral = bervariasi tergantung jenis
+
+⚠️ **ESTIMASI BIAYA PEMERINTAH REALISTIS:**
+- IMB/PBG: Rp 50,000 - 500,000 per m² (tergantung fungsi bangunan & daerah)
+- SLF: Rp 1,000,000 - 5,000,000 (tergantung luas & kompleksitas)
+- UKL-UPL: Rp 2,000,000 - 5,000,000
+- AMDAL: Rp 10,000,000 - 50,000,000 (tergantung skala)
+- Izin Usaha Perdagangan: Rp 250,000 - 1,000,000
+- Izin Lokasi: Rp 500,000 - 2,000,000
+- TDP: Rp 100,000 - 500,000
+- SIUP: Rp 250,000 - 1,000,000
+
 FORMAT OUTPUT (JSON):
 {
   \"permits\": [
@@ -190,9 +207,9 @@ FORMAT OUTPUT (JSON):
   },
   \"cost_breakdown\": {
     \"government_fees\": {\"min\": 0, \"max\": 0},
-    \"consulting_fees_estimate\": {\"min\": 0, \"max\": 0},
-    \"document_preparation\": {\"min\": 0, \"max\": 0},
-    \"total_estimate\": {\"min\": 0, \"max\": 0}
+    \"consulting_fees_estimate\": {\"min\": 2000000, \"max\": 50000000},
+    \"document_preparation\": {\"min\": 500000, \"max\": 5000000},
+    \"total_estimate\": {\"min\": 2500000, \"max\": 55000000}
   },
   \"additional_considerations\": [
     \"Pertimbangan tambahan khusus untuk usaha ini\"
@@ -201,28 +218,31 @@ FORMAT OUTPUT (JSON):
 }
 
 CONTOH UNTUK REAL ESTATE/PROPERTI (KBLI 68111):
-- FOUNDATIONAL: NIB, NPWP Badan
-- ENVIRONMENTAL: UKL-UPL atau AMDAL (tergantung skala)
+- FOUNDATIONAL: NIB (Rp 0), NPWP Badan (Rp 0)
+- ENVIRONMENTAL: UKL-UPL (Rp 2-5 juta) atau AMDAL (Rp 10-50 juta)
 - TECHNICAL: 
-  * Pertek BPN (Pertimbangan Teknis Pertanahan)
-  * PKKPR (Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang)
-  * Pengesahan Siteplan
-  * IMB/PBG (Persetujuan Bangunan Gedung)
+  * Pertek BPN (Rp 500 ribu - 2 juta)
+  * PKKPR (Rp 1-3 juta)
+  * Pengesahan Siteplan (Rp 500 ribu - 1,5 juta)
+  * IMB/PBG (Rp 50-500 ribu per m² × luas bangunan)
 - OPERATIONAL:
-  * Sertifikat Standar Real Estate
-  * SLF (Sertifikat Laik Fungsi) - setelah bangunan selesai
+  * Sertifikat Standar Real Estate (Rp 0 - via OSS)
+  * SLF (Rp 1-5 juta)
 - SECTORAL:
-  * Izin Prinsip Pemanfaatan Ruang (jika perlu)
-  * Izin Lokasi (untuk perumahan skala besar)
+  * Izin Prinsip Pemanfaatan Ruang (Rp 1-3 juta)
+  * Izin Lokasi (Rp 500 ribu - 2 juta)
 
 ATURAN KETAT:
 1. Minimal 8-12 izin untuk usaha yang kompleks (Real Estate, Industri, Konstruksi)
 2. Minimal 5-7 izin untuk usaha menengah
 3. Minimal 3-5 izin untuk usaha sederhana
 4. WAJIB menyertakan prerequisites dan triggers_next
-5. Estimasi biaya dan waktu REALISTIS berdasarkan praktek lapangan
-6. Sertakan SEMUA izin teknis yang relevan
-7. Gunakan kategori: foundational, environmental, technical, operational, sectoral
+5. **Estimasi biaya PEMERINTAH harus REALISTIS** - jangan semua Rp 0
+6. **estimated_cost_range = biaya ke PEMERINTAH saja** (bukan biaya konsultan)
+7. Sertakan SEMUA izin teknis yang relevan
+8. Gunakan kategori: foundational, environmental, technical, operational, sectoral
+9. **PENTING**: Hanya NIB, NPWP, dan Sertifikat Standar yang benar-benar gratis (Rp 0)
+10. **Izin lainnya hampir selalu ada biaya pemerintah** (PNBP/retribusi daerah)
 
 Berikan HANYA output JSON valid tanpa markdown atau penjelasan tambahan.";
     }

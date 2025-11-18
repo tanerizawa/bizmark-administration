@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Bizmark.ID</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+            opacity: 0.9;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            opacity: 0.95;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            margin-top: 32px;
+            padding: 16px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4444;
+            margin-right: 8px;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .cached-pages {
+            margin-top: 24px;
+            text-align: left;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .cached-pages h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .cached-pages ul {
+            list-style: none;
+        }
+
+        .cached-pages li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .cached-pages li:last-child {
+            border-bottom: none;
+        }
+
+        .cached-pages a {
+            color: #ffffff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .cached-pages a:hover {
+            opacity: 1;
+        }
+
+        .cached-pages a::before {
+            content: '→';
+            margin-right: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📡</div>
+        
+        <h1>Kamu Sedang Offline</h1>
+        
+        <p>
+            Sepertinya koneksi internet kamu terputus. 
+            Jangan khawatir, kamu masih bisa mengakses halaman yang sudah dibuka sebelumnya.
+        </p>
+
+        <button class="button" onclick="window.location.reload()">
+            Coba Lagi
+        </button>
+
+        <div class="status">
+            <span class="status-indicator"></span>
+            <span>Menunggu koneksi...</span>
+        </div>
+
+        <div class="cached-pages">
+            <h3>📄 Halaman Tersimpan</h3>
+            <p style="font-size: 14px; opacity: 0.8; margin-bottom: 12px;">
+                Halaman ini bisa diakses secara offline:
+            </p>
+            <ul>
+                <li><a href="/m">Dashboard</a></li>
+                <li><a href="/m/projects">Projects</a></li>
+                <li><a href="/m/tasks">Tasks</a></li>
+                <li><a href="/m/approvals">Approvals</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Auto-retry connection every 5 seconds
+        let retryCount = 0;
+        const maxRetries = 12; // 1 minute total
+
+        function checkConnection() {
+            fetch('/manifest.json', { 
+                method: 'HEAD',
+                cache: 'no-store'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Connection restored
+                    showSuccess();
+                    setTimeout(() => {
+                        window.location.href = document.referrer || '/m';
+                    }, 1500);
+                }
+            })
+            .catch(() => {
+                retryCount++;
+                if (retryCount < maxRetries) {
+                    setTimeout(checkConnection, 5000);
+                }
+            });
+        }
+
+        function showSuccess() {
+            const statusDiv = document.querySelector('.status');
+            statusDiv.innerHTML = `
+                <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #44ff44; margin-right: 8px;"></span>
+                <span>Koneksi kembali! Redirecting...</span>
+            `;
+            statusDiv.style.background = 'rgba(68, 255, 68, 0.2)';
+        }
+
+        // Start checking connection
+        setTimeout(checkConnection, 2000);
+
+        // Update retry button
+        const button = document.querySelector('.button');
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            button.textContent = 'Mengecek...';
+            button.style.opacity = '0.7';
+            
+            fetch('/manifest.json', { 
+                method: 'HEAD',
+                cache: 'no-store'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    throw new Error('Still offline');
+                }
+            })
+            .catch(() => {
+                button.textContent = 'Masih Offline - Coba Lagi';
+                button.style.opacity = '1';
+                setTimeout(() => {
+                    button.textContent = 'Coba Lagi';
+                }, 2000);
+            });
+        });
+
+        // Show last update time
+        const lastUpdate = localStorage.getItem('lastOnlineTime');
+        if (lastUpdate) {
+            const timeAgo = Math.floor((Date.now() - parseInt(lastUpdate)) / 1000 / 60);
+            const statusDiv = document.querySelector('.status');
+            statusDiv.innerHTML += `<br><small style="opacity: 0.7;">Terakhir online: ${timeAgo} menit yang lalu</small>`;
+        }
+    </script>
+</body>
+</html>

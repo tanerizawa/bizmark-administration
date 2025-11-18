@@ -114,7 +114,7 @@
                         name="phone" 
                         value="{{ old('phone') }}" 
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="081234567890"
+                        placeholder="6283879602855"
                     >
                 </div>
 

@@ -12,90 +12,77 @@
     $sortOrder = request('sort_order', 'desc');
 @endphp
 
-<div class="space-y-8">
-    <!-- Hero -->
-    <div class="bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-800 text-white rounded-3xl shadow-xl overflow-hidden relative">
-        <div class="absolute inset-0 opacity-20 bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png')]"></div>
-        <div class="relative p-6 lg:p-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div class="space-y-3 flex-1">
-                <p class="text-xs uppercase tracking-[0.35em] text-white/70">Monitor Proyek</p>
-                <h1 class="text-3xl font-bold leading-tight">Pantau progres seluruh proyek perizinan Anda secara real-time.</h1>
-                <p class="text-white/80">Lihat status terkini, nilai kontrak, dan timeline pengerjaan yang ditangani tim Bizmark.</p>
-                <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('client.applications.index') }}" class="inline-flex items-center gap-2 bg-white text-indigo-700 font-semibold px-5 py-3 rounded-xl shadow">
-                        <i class="fas fa-file-signature"></i> Lihat Permohonan
-                    </a>
-                    <a href="{{ route('client.documents.index') }}" class="inline-flex items-center gap-2 bg-white/10 border border-white/30 px-5 py-3 rounded-xl font-semibold">
-                        <i class="fas fa-paperclip"></i> Kelola Dokumen
-                    </a>
-                </div>
+<div class="space-y-1">
+    <!-- Mobile Compact Hero (PWA only) -->
+    <div class="lg:hidden border-y border-[#0a66c2] bg-[#0a66c2] text-white px-4 lg:px-6 py-4">
+        <div class="flex items-center justify-between mb-3">
+            <div>
+                <p class="text-xs text-white/70">Proyek Anda</p>
+                <h1 class="text-lg font-bold">{{ $totalProjects }} Proyek</h1>
             </div>
-            <div class="grid grid-cols-2 gap-4 w-full lg:w-auto">
-                <div class="bg-white/15 rounded-2xl p-4 backdrop-blur">
-                    <p class="text-xs uppercase tracking-wide text-white/70">Total Proyek</p>
-                    <p class="text-3xl font-bold">{{ $totalProjects }}</p>
-                    <p class="text-xs text-white/70 mt-1">{{ $completedProjects }} selesai</p>
-                </div>
-                <div class="bg-white/15 rounded-2xl p-4 backdrop-blur">
-                    <p class="text-xs uppercase tracking-wide text-white/70">Proyek Aktif</p>
-                    <p class="text-3xl font-bold">{{ $activeProjects }}</p>
-                    <p class="text-xs text-white/70 mt-1">Sedang dikerjakan</p>
-                </div>
-                <div class="bg-white/15 rounded-2xl p-4 backdrop-blur col-span-2">
-                    <p class="text-xs uppercase tracking-wide text-white/70">Total Nilai Kontrak</p>
-                    <p class="text-2xl font-bold">Rp {{ number_format($totalValue, 0, ',', '.') }}</p>
-                    <p class="text-xs text-white/70 mt-1">Termasuk DP yang telah diterima</p>
-                </div>
+            @if($activeProjects > 0)
+            <a href="#projects" class="flex items-center gap-1.5 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full active:scale-95 transition-transform">
+                <i class="fas fa-spinner text-sm"></i>
+                <span class="text-xs font-semibold">{{ $activeProjects }} aktif</span>
+            </a>
+            @endif
+        </div>
+        
+        <!-- Compact Stats Grid (2x2, no horizontal scroll) -->
+        <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="bg-white/10 backdrop-blur border border-white/20 p-2.5">
+                <p class="text-xs text-white/70">Total</p>
+                <p class="text-xl font-bold">{{ $totalProjects }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur border border-white/20 p-2.5">
+                <p class="text-xs text-white/70">Aktif</p>
+                <p class="text-xl font-bold text-green-300">{{ $activeProjects }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur border border-white/20 p-2.5">
+                <p class="text-xs text-white/70">Selesai</p>
+                <p class="text-xl font-bold">{{ $completedProjects }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur border border-white/20 p-2.5">
+                <p class="text-xs text-white/70">Nilai</p>
+                <p class="text-base font-bold">{{ number_format($totalValue / 1000000, 0) }}Jt</p>
             </div>
         </div>
     </div>
 
-    <!-- Filters -->
-    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-        <form method="GET" action="{{ route('client.projects.index') }}" class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            <div class="lg:col-span-2">
-                <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Cari Proyek</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Contoh: Proyek OSS Kawasan Industri" class="mt-1 w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
-            </div>
-            <div>
-                <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Status</label>
-                <select name="status" class="mt-1 w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
-                    <option value="">Semua Status</option>
-                    @foreach($statuses as $status)
-                        <option value="{{ $status->id }}" {{ request('status') == $status->id ? 'selected' : '' }}>
-                            {{ $status->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Urutkan</label>
-                    <select name="sort_by" class="mt-1 w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
-                        <option value="created_at" {{ $sortBy === 'created_at' ? 'selected' : '' }}>Tanggal dibuat</option>
-                        <option value="name" {{ $sortBy === 'name' ? 'selected' : '' }}>Nama proyek</option>
-                        <option value="contract_value" {{ $sortBy === 'contract_value' ? 'selected' : '' }}>Nilai kontrak</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Urutan</label>
-                    <select name="sort_order" class="mt-1 w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white">
-                        <option value="asc" {{ $sortOrder === 'asc' ? 'selected' : '' }}>Naik</option>
-                        <option value="desc" {{ $sortOrder === 'desc' ? 'selected' : '' }}>Turun</option>
-                    </select>
+    <!-- Desktop Hero -->
+    <div class="hidden lg:block border-y border-[#0a66c2] bg-[#0a66c2] text-white overflow-hidden">
+        <div class="px-6 lg:px-8 py-8 flex items-center justify-between gap-8">
+            <div class="space-y-4 flex-1">
+                <p class="text-xs uppercase tracking-[0.35em] text-white/70">Monitor Proyek</p>
+                <h1 class="text-3xl font-bold leading-tight">Pantau progres seluruh proyek perizinan Anda secara real-time.</h1>
+                <p class="text-white/80">Lihat status terkini, nilai kontrak, dan timeline pengerjaan yang ditangani tim Bizmark.</p>
+                <div class="flex flex-wrap gap-3 pt-2">
+                    <a href="{{ route('client.applications.index') }}" class="inline-flex items-center gap-2 bg-white text-[#0a66c2] font-semibold px-5 py-3 shadow hover:shadow-md active:scale-95 transition-all">
+                        <i class="fas fa-file-signature"></i> Lihat Permohonan
+                    </a>
+                    <a href="{{ route('client.documents.index') }}" class="inline-flex items-center gap-2 bg-white/10 border border-white/30 px-5 py-3 font-semibold hover:bg-white/20 active:scale-95 transition-all">
+                        <i class="fas fa-paperclip"></i> Kelola Dokumen
+                    </a>
                 </div>
             </div>
-            <div class="lg:col-span-4 flex flex-wrap gap-2 justify-end">
-                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">
-                    <i class="fas fa-filter"></i> Terapkan
-                </button>
-                @if(request()->except(['page']))
-                <a href="{{ route('client.projects.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl font-semibold">
-                    <i class="fas fa-redo"></i> Reset
-                </a>
-                @endif
+            <div class="grid grid-cols-2 gap-4 w-80">
+                <div class="bg-white/15 border border-white/20 p-5 backdrop-blur">
+                    <p class="text-xs uppercase tracking-wide text-white/70">Total Proyek</p>
+                    <p class="text-3xl font-bold mt-2">{{ $totalProjects }}</p>
+                    <p class="text-xs text-white/70 mt-1">{{ $completedProjects }} selesai</p>
+                </div>
+                <div class="bg-white/15 border border-white/20 p-5 backdrop-blur">
+                    <p class="text-xs uppercase tracking-wide text-white/70">Proyek Aktif</p>
+                    <p class="text-3xl font-bold mt-2 text-green-300">{{ $activeProjects }}</p>
+                    <p class="text-xs text-white/70 mt-1">Sedang dikerjakan</p>
+                </div>
+                <div class="bg-white/15 border border-white/20 p-5 backdrop-blur col-span-2">
+                    <p class="text-xs uppercase tracking-wide text-white/70">Total Nilai Kontrak</p>
+                    <p class="text-2xl font-bold mt-2">Rp {{ number_format($totalValue, 0, ',', '.') }}</p>
+                    <p class="text-xs text-white/70 mt-1">Termasuk DP yang telah diterima</p>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 
     <!-- Projects -->
@@ -108,10 +95,10 @@
             $documentsCount = $project->documents_count ?? 0;
             $tasksCount = $project->tasks_count ?? 0;
         @endphp
-        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg transition p-5 flex flex-col gap-4">
+        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg hover:border-[#0a66c2]/30 transition-all p-5 flex flex-col gap-4">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <a href="{{ route('client.projects.show', $project->id) }}" class="text-lg font-semibold text-gray-900 dark:text-white hover:text-indigo-600">
+                    <a href="{{ route('client.projects.show', $project->id) }}" class="text-lg font-semibold text-gray-900 dark:text-white hover:text-[#0a66c2] active:scale-[0.98] inline-block transition-transform">
                         {{ $project->name }}
                     </a>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -134,7 +121,7 @@
                         <span>{{ $progress }}%</span>
                     </div>
                     <div class="mt-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-indigo-500 to-blue-500" style="width: {{ min(100, $progress) }}%"></div>
+                        <div class="h-full bg-gradient-to-r bg-[#0a66c2]" style="width: {{ min(100, $progress) }}%"></div>
                     </div>
                 </div>
                 @endif
@@ -145,10 +132,10 @@
                 </div>
             </div>
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('client.projects.show', $project->id) }}" class="flex-1 px-4 py-2.5 rounded-xl text-center text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                <a href="{{ route('client.projects.show', $project->id) }}" class="flex-1 px-4 py-2.5 text-center text-sm font-semibold bg-[#0a66c2] text-white hover:bg-[#004182] active:scale-95 transition-all">
                     Detail Proyek
                 </a>
-                <a href="{{ route('client.documents.index') }}" class="px-4 py-2.5 rounded-xl text-center text-sm font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                <a href="{{ route('client.documents.index') }}" class="px-4 py-2.5 text-center text-sm font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 active:scale-95 transition-all">
                     Dokumen
                 </a>
             </div>
@@ -156,15 +143,15 @@
         @endforeach
     </div>
 
-    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4">
+    <div class="border-y border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-4">
         {{ $projects->withQueryString()->links() }}
     </div>
     @else
-    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-12 text-center">
+    <div class="border-y border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 lg:px-6 py-16 text-center">
         <i class="fas fa-road text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Belum ada proyek tercatat</h3>
         <p class="text-gray-600 dark:text-gray-400 mb-6">Ajukan permohonan izin terlebih dahulu, dan proyek akan otomatis tercatat di sini.</p>
-        <a href="{{ route('client.services.index') }}" class="inline-flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">
+        <a href="{{ route('client.services.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#0a66c2] hover:bg-[#004182] text-white font-semibold active:scale-95 transition-all">
             <i class="fas fa-plus"></i> Ajukan Permohonan
         </a>
     </div>

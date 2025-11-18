@@ -452,8 +452,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchCashAccounts() {
-    fetch('/api/cash-accounts/active')
-        .then(response => response.json())
+    fetch('/api/cash-accounts/active', {
+        headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             cashAccounts = data;
             console.log('Cash accounts loaded:', cashAccounts);
@@ -730,8 +741,10 @@ function submitInvoicePayment(event) {
     fetch(url, {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
         },
+        credentials: 'same-origin',
         body: formData
     })
     .then(response => {
@@ -1079,7 +1092,8 @@ function deleteInvoice(invoiceId) {
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'Accept': 'application/json',
-        }
+        },
+        credentials: 'same-origin'
     })
     .then(response => {
         if (!response.ok) {
@@ -1507,5 +1521,221 @@ function viewInvoice(invoiceId) {
 // Helper function
 function formatNumber(num) {
     return new Intl.NumberFormat('id-ID').format(Math.round(num));
+}
+</script>
+
+{{-- Direct Income Modal (Pemasukan Tanpa Invoice) --}}
+<div id="directIncomeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center" style="z-index: 9999;">
+    <div class="rounded-apple-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" style="background: rgba(28, 28, 30, 0.98);">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold" style="color: #FFFFFF;">
+                <i class="fas fa-hand-holding-usd mr-2" style="color: rgba(52, 199, 89, 1);"></i>Catat Pemasukan Langsung
+            </h2>
+            <button onclick="window.closeDirectIncomeModal()" type="button" class="text-2xl" style="color: rgba(235, 235, 245, 0.6);">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="rounded-lg p-4 mb-6" style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3);">
+            <p class="text-sm" style="color: rgba(52, 199, 89, 1);">
+                <i class="fas fa-info-circle mr-2"></i>
+                Gunakan form ini untuk mencatat pemasukan yang <strong>tidak terkait dengan invoice</strong> (misal: uang muka, hibah, atau pembayaran langsung tanpa invoice formal).
+            </p>
+        </div>
+
+        <form id="directIncomeForm" onsubmit="window.submitDirectIncome(event); return false;">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        Tanggal Terima<span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" name="payment_date" required
+                           class="input-dark w-full px-4 py-2.5 rounded-lg"
+                           value="{{ date('Y-m-d') }}">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        Jumlah (Rp)<span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" name="amount" step="0.01" min="0.01" required
+                           class="input-dark w-full px-4 py-2.5 rounded-lg"
+                           placeholder="5000000">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    Metode Pembayaran<span class="text-red-500">*</span>
+                </label>
+                <select name="payment_method_id" id="directIncomePaymentMethod" required
+                        onchange="window.handleDirectIncomePaymentMethodChange()"
+                        class="input-dark w-full px-4 py-2.5 rounded-lg">
+                    <option value="">-- Pilih Metode --</option>
+                    @foreach($activePaymentMethods as $method)
+                    <option value="{{ $method->id }}" 
+                            data-requires-account="{{ $method->requires_cash_account ? 'true' : 'false' }}">
+                        {{ $method->name }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div id="directIncomeCashAccountContainer" class="mb-4" style="display: none;">
+                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    Rekening/Kas Tujuan<span class="text-red-500">*</span>
+                </label>
+                <select name="cash_account_id" id="directIncomeCashAccount"
+                        class="input-dark w-full px-4 py-2.5 rounded-lg">
+                    <option value="">-- Pilih Rekening/Kas --</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    Keterangan/Deskripsi<span class="text-red-500">*</span>
+                </label>
+                <textarea name="description" required rows="3"
+                          class="input-dark w-full px-4 py-2.5 rounded-lg"
+                          placeholder="Contoh: Uang muka proyek, Pembayaran langsung dari klien, dll."></textarea>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    Referensi/Nomor Bukti (Opsional)
+                </label>
+                <input type="text" name="reference"
+                       class="input-dark w-full px-4 py-2.5 rounded-lg"
+                       placeholder="Nomor transfer, nomor kwitansi, dll.">
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeDirectIncomeModal()"
+                        class="px-4 py-2.5 rounded-lg font-medium transition-colors"
+                        style="background: rgba(142, 142, 147, 0.3); color: rgba(235, 235, 245, 0.8);">
+                    Batal
+                </button>
+                <button type="submit"
+                        class="px-4 py-2.5 rounded-lg font-medium transition-colors"
+                        style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
+                    <i class="fas fa-save mr-2"></i>Simpan Pemasukan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Direct Income Modal Functions
+window.openDirectIncomeModal = function() {
+    console.log('Opening direct income modal...');
+    const modal = document.getElementById('directIncomeModal');
+    if (!modal) {
+        console.error('Modal not found!');
+        return;
+    }
+    
+    // Force show modal
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.style.display = 'flex';
+    
+    console.log('Modal display:', window.getComputedStyle(modal).display);
+    console.log('Modal z-index:', window.getComputedStyle(modal).zIndex);
+    
+    // Reset form
+    const form = document.getElementById('directIncomeForm');
+    if (form) form.reset();
+    
+    const container = document.getElementById('directIncomeCashAccountContainer');
+    if (container) container.style.display = 'none';
+}
+
+window.closeDirectIncomeModal = function() {
+    const modal = document.getElementById('directIncomeModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
+}
+
+window.handleDirectIncomePaymentMethodChange = function() {
+    const select = document.getElementById('directIncomePaymentMethod');
+    const selectedOption = select.options[select.selectedIndex];
+    const requiresAccount = selectedOption.getAttribute('data-requires-account') === 'true';
+    const container = document.getElementById('directIncomeCashAccountContainer');
+    const accountSelect = document.getElementById('directIncomeCashAccount');
+
+    if (requiresAccount) {
+        container.style.display = 'block';
+        accountSelect.required = true;
+        // Load cash accounts
+        window.fetchCashAccountsForDirectIncome();
+    } else {
+        container.style.display = 'none';
+        accountSelect.required = false;
+    }
+}
+
+window.fetchCashAccountsForDirectIncome = async function() {
+    try {
+        const response = await fetch('/api/cash-accounts/active', {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch accounts');
+
+        const accounts = await response.json();
+        const select = document.getElementById('directIncomeCashAccount');
+        select.innerHTML = '<option value="">-- Pilih Rekening/Kas --</option>';
+
+        accounts.forEach(account => {
+            const option = document.createElement('option');
+            option.value = account.id;
+            option.textContent = `${account.name} (${account.account_number || 'N/A'}) - Saldo: Rp ${formatNumber(account.balance)}`;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching cash accounts:', error);
+        alert('Gagal memuat daftar rekening/kas');
+    }
+}
+
+window.submitDirectIncome = async function(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const projectId = {{ $project->id }};
+
+    try {
+        const response = await fetch(`/projects/${projectId}/direct-income`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            alert(result.message || 'Pemasukan berhasil dicatat!');
+            window.closeDirectIncomeModal();
+            location.reload();
+        } else {
+            alert(result.message || 'Gagal mencatat pemasukan');
+        }
+    } catch (error) {
+        console.error('Error submitting direct income:', error);
+        alert('Terjadi kesalahan saat mencatat pemasukan');
+    }
 }
 </script>

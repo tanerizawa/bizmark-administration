@@ -265,10 +265,10 @@ Email Accounts:
   📧 sales@bizmark.id (shared)
      └─ hadez@bizmark.id (primary) ✓
 
-  �� support@bizmark.id (shared)
+  �� cs@bizmark.id (shared)
      └─ hadez@bizmark.id (primary) ✓
 
-  📧 info@bizmark.id (shared)
+  📧 cs@bizmark.id (shared)
      └─ hadez@bizmark.id (primary) ✓
 
 Latest Email Test:

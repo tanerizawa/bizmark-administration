@@ -3,27 +3,36 @@
 @section('title', 'Detail Proyek - BizMark')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
-    <!-- Breadcrumb -->
-    <nav class="mb-6 text-sm">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Mobile: Back Button Only -->
+    <div class="sm:hidden mb-4">
+        <a href="{{ route('client.services.show', session('permit_selection.kbli_code')) }}" 
+           class="inline-flex items-center text-[#0a66c2] hover:text-[#004182] font-medium text-sm">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Kembali
+        </a>
+    </div>
+
+    <!-- Desktop: Breadcrumb -->
+    <nav class="hidden sm:block mb-6 text-sm">
         <ol class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-            <li><a href="{{ route('client.services.index') }}" class="hover:text-blue-600">Katalog Layanan</a></li>
+            <li><a href="{{ route('client.services.index') }}" class="hover:text-[#0a66c2]">Katalog Layanan</a></li>
             <li><i class="fas fa-chevron-right text-xs"></i></li>
-            <li><a href="{{ route('client.services.show', session('permit_selection.kbli_code')) }}" class="hover:text-blue-600">{{ session('permit_selection.kbli_description') }}</a></li>
+            <li><a href="{{ route('client.services.show', session('permit_selection.kbli_code')) }}" class="hover:text-[#0a66c2] max-w-sm truncate inline-block">{{ session('permit_selection.kbli_description') }}</a></li>
             <li><i class="fas fa-chevron-right text-xs"></i></li>
             <li class="text-gray-900 dark:text-white font-medium">Detail Proyek</li>
         </ol>
     </nav>
 
     <!-- Header -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
-        <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <i class="fas fa-building text-blue-600 dark:text-blue-400 text-lg"></i>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+        <div class="flex flex-col sm:flex-row items-start gap-3">
+            <div class="flex-shrink-0 w-10 h-10 bg-[#0a66c2]/10 dark:bg-[#0a66c2]/20 rounded-lg flex items-center justify-center">
+                <i class="fas fa-building text-[#0a66c2] text-lg"></i>
             </div>
-            <div class="flex-1">
-                <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Informasi Proyek</h1>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
+            <div class="flex-1 min-w-0">
+                <h1 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-1">Informasi Proyek</h1>
+                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     Lengkapi detail proyek Anda untuk memproses {{ count(session('permit_selection.permits', [])) }} izin yang dipilih
                 </p>
             </div>
@@ -34,10 +43,10 @@
         @csrf
 
         <!-- Bagian 1: Informasi Proyek -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                Detail Proyek
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+            <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                <i class="fas fa-info-circle text-[#0a66c2] mr-2 flex-shrink-0"></i>
+                <span>Detail Proyek</span>
             </h2>
 
             <div class="space-y-4">
@@ -51,7 +60,7 @@
                            value="{{ old('project_name') }}"
                            required
                            placeholder="Contoh: Pembangunan Gedung Kantor PT ABC"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('project_name')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -66,7 +75,7 @@
                               rows="3"
                               required
                               placeholder="Alamat lengkap lokasi proyek (Jalan, Nomor, Kelurahan, Kecamatan, Kota/Kabupaten, Provinsi)"
-                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">{{ old('project_location') }}</textarea>
+                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">{{ old('project_location') }}</textarea>
                     @error('project_location')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -83,7 +92,7 @@
                                value="{{ old('land_area') }}"
                                step="0.01"
                                placeholder="500"
-                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                         @error('land_area')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -98,7 +107,7 @@
                                value="{{ old('building_area') }}"
                                step="0.01"
                                placeholder="300"
-                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                         @error('building_area')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -116,7 +125,7 @@
                                value="{{ old('building_floors') }}"
                                min="1"
                                placeholder="3"
-                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                         @error('building_floors')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -132,7 +141,7 @@
                                required
                                step="1000000"
                                placeholder="5000000000"
-                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                         @error('investment_value')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -149,7 +158,7 @@
                            name="target_completion_date" 
                            value="{{ old('target_completion_date') }}"
                            min="{{ date('Y-m-d') }}"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('target_completion_date')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -164,7 +173,7 @@
                               rows="4"
                               required
                               placeholder="Jelaskan detail proyek Anda, tujuan, dan informasi relevan lainnya..."
-                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">{{ old('project_description') }}</textarea>
+                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">{{ old('project_description') }}</textarea>
                     @error('project_description')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -173,10 +182,10 @@
         </div>
 
         <!-- Bagian 2: Review Izin yang Dipilih -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                <i class="fas fa-clipboard-check text-green-600 mr-2"></i>
-                Izin yang Dipilih
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+            <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                <i class="fas fa-clipboard-check text-[#0a66c2] mr-2 flex-shrink-0"></i>
+                <span>Izin yang Dipilih</span>
             </h2>
 
             @php
@@ -192,33 +201,33 @@
             @endphp
 
             <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-handshake text-2xl text-blue-600 dark:text-blue-400"></i>
-                        <div>
-                            <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">{{ $bizmarkCount }}</p>
-                            <p class="text-xs text-blue-700 dark:text-blue-300">BizMark.ID</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4">
+                <div class="bg-[#0a66c2]/5 dark:bg-[#0a66c2]/10 border border-[#0a66c2]/20 dark:border-[#0a66c2]/30 rounded-xl p-3 sm:p-4">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <i class="fas fa-handshake text-xl sm:text-2xl text-[#0a66c2] flex-shrink-0"></i>
+                        <div class="min-w-0">
+                            <p class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{{ $bizmarkCount }}</p>
+                            <p class="text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 truncate">BizMark.ID</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-check-circle text-2xl text-green-600 dark:text-green-400"></i>
-                        <div>
-                            <p class="text-2xl font-bold text-green-900 dark:text-green-100">{{ $ownedCount }}</p>
-                            <p class="text-xs text-green-700 dark:text-green-300">Sudah Ada</p>
+                <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-3 sm:p-4">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <i class="fas fa-check-circle text-xl sm:text-2xl text-emerald-600 dark:text-emerald-400 flex-shrink-0"></i>
+                        <div class="min-w-0">
+                            <p class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{{ $ownedCount }}</p>
+                            <p class="text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 truncate">Sudah Ada</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-user-check text-2xl text-purple-600 dark:text-purple-400"></i>
-                        <div>
-                            <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">{{ $selfCount }}</p>
-                            <p class="text-xs text-purple-700 dark:text-purple-300">Dikerjakan Sendiri</p>
+                <div class="bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl p-3 sm:p-4">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <i class="fas fa-user-check text-xl sm:text-2xl text-gray-600 dark:text-gray-400 flex-shrink-0"></i>
+                        <div class="min-w-0">
+                            <p class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{{ $selfCount }}</p>
+                            <p class="text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 truncate">Dikerjakan Sendiri</p>
                         </div>
                     </div>
                 </div>
@@ -227,88 +236,93 @@
             <!-- Permit List -->
             <div class="space-y-3">
                 @forelse($permits as $index => $permit)
-                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 
-                            @if($permit['service_type'] === 'bizmark') bg-blue-50/50 dark:bg-blue-900/10
-                            @elseif($permit['service_type'] === 'owned') bg-green-50/50 dark:bg-green-900/10
-                            @else bg-purple-50/50 dark:bg-purple-900/10
+                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-3 sm:p-4 
+                            @if($permit['service_type'] === 'bizmark') bg-[#0a66c2]/5 dark:bg-[#0a66c2]/10
+                            @elseif($permit['service_type'] === 'owned') bg-emerald-50 dark:bg-emerald-900/10
+                            @else bg-gray-50 dark:bg-gray-700/20
                             @endif">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <h3 class="font-semibold text-gray-900 dark:text-white text-sm">
+                    <div class="flex flex-col sm:flex-row items-start justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-2">
+                                <h3 class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">
                                     {{ $permit['name'] }}
                                 </h3>
-                                <span class="text-xs px-2 py-0.5 rounded-full 
+                                <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full flex-shrink-0
                                     @if($permit['type'] === 'mandatory') bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300
-                                    @else bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300
+                                    @else bg-[#0a66c2]/10 text-[#0a66c2] dark:bg-[#0a66c2]/20
                                     @endif">
                                     {{ $permit['type'] === 'mandatory' ? 'Wajib' : 'Opsional' }}
                                 </span>
                             </div>
                             
-                            <div class="flex flex-wrap items-center gap-3 text-xs text-gray-600 dark:text-gray-400">
+                            <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
                                 @if(!empty($permit['category']))
-                                <span>
-                                    <i class="fas fa-folder mr-1"></i>{{ $permit['category'] }}
+                                <span class="flex items-center gap-1">
+                                    <i class="fas fa-folder flex-shrink-0"></i>
+                                    <span class="truncate">{{ $permit['category'] }}</span>
                                 </span>
                                 @endif
                                 
                                 @if($permit['service_type'] === 'bizmark')
                                     @if(!empty($permit['estimated_days']))
-                                    <span>
-                                        <i class="fas fa-clock mr-1"></i>~{{ $permit['estimated_days'] }} hari
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-clock flex-shrink-0"></i>~{{ $permit['estimated_days'] }} hari
                                     </span>
                                     @endif
                                     
                                     @if(!empty($permit['estimated_cost_min']) && !empty($permit['estimated_cost_max']))
-                                    <span>
-                                        <i class="fas fa-money-bill-wave mr-1"></i>
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-money-bill-wave flex-shrink-0"></i>
+                                        <span class="truncate">
                                         Rp {{ number_format($permit['estimated_cost_min'], 0, ',', '.') }} - 
                                         Rp {{ number_format($permit['estimated_cost_max'], 0, ',', '.') }}
+                                        </span>
                                     </span>
                                     @endif
                                 @endif
                             </div>
                         </div>
 
-                        <span class="flex-shrink-0 px-3 py-1 text-xs font-semibold rounded-full
-                            @if($permit['service_type'] === 'bizmark') bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300
-                            @elseif($permit['service_type'] === 'owned') bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300
-                            @else bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300
+                        <span class="flex-shrink-0 px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold rounded-full
+                            @if($permit['service_type'] === 'bizmark') bg-[#0a66c2]/10 text-[#0a66c2] dark:bg-[#0a66c2]/20
+                            @elseif($permit['service_type'] === 'owned') bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300
+                            @else bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300
                             @endif">
                             @if($permit['service_type'] === 'bizmark')
-                                <i class="fas fa-handshake mr-1"></i>BizMark.ID
+                                <i class="fas fa-handshake mr-1"></i><span class="hidden sm:inline">BizMark.ID</span><span class="sm:hidden">BizMark</span>
                             @elseif($permit['service_type'] === 'owned')
                                 <i class="fas fa-check-circle mr-1"></i>Sudah Ada
                             @else
-                                <i class="fas fa-user-check mr-1"></i>Dikerjakan Sendiri
+                                <i class="fas fa-user-check mr-1"></i><span class="hidden sm:inline">Dikerjakan Sendiri</span><span class="sm:hidden">Sendiri</span>
                             @endif
                         </span>
                     </div>
                 </div>
                 @empty
                 <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-                    <i class="fas fa-inbox text-3xl mb-2"></i>
-                    <p>Tidak ada izin yang dipilih</p>
+                    <i class="fas fa-inbox text-2xl sm:text-3xl mb-2"></i>
+                    <p class="text-sm">Tidak ada izin yang dipilih</p>
                 </div>
                 @endforelse
             </div>
 
             @if($bizmarkCount > 0)
-            <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p class="text-sm text-blue-800 dark:text-blue-200">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    <strong>{{ $bizmarkCount }} izin</strong> akan dikelola oleh tim BizMark.ID. Anda akan menerima quotation untuk paket izin ini.
+            <div class="mt-4 p-3 bg-[#0a66c2]/5 dark:bg-[#0a66c2]/10 border border-[#0a66c2]/20 dark:border-[#0a66c2]/30 rounded-xl">
+                <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
+                    <i class="fas fa-info-circle text-[#0a66c2] flex-shrink-0 mt-0.5"></i>
+                    <span>
+                        <strong>{{ $bizmarkCount }} izin</strong> akan dikelola oleh tim BizMark.ID. Anda akan menerima quotation untuk paket izin ini.
+                    </span>
                 </p>
             </div>
             @endif
         </div>
 
         <!-- Bagian 3: Dokumen Pendukung (Optional) -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                <i class="fas fa-paperclip text-gray-600 mr-2"></i>
-                Dokumen Pendukung (Opsional)
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+            <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                <i class="fas fa-paperclip text-gray-600 mr-2 flex-shrink-0"></i>
+                <span>Dokumen Pendukung (Opsional)</span>
             </h2>
 
             <div>
@@ -319,26 +333,27 @@
                        name="supporting_documents[]" 
                        multiple
                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
-                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Format yang didukung: PDF, JPG, PNG, DOC, DOCX (Maks. 10MB per file)
+                       class="w-full px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#0a66c2] file:text-white hover:file:bg-[#004182] file:cursor-pointer">
+                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-start gap-1">
+                    <i class="fas fa-info-circle flex-shrink-0 mt-0.5"></i>
+                    <span>Format yang didukung: PDF, JPG, PNG, DOC, DOCX (Maks. 10MB per file)</span>
                 </p>
             </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <a href="{{ route('client.applications.create', ['kbli_code' => session('permit_selection.kbli_code')]) }}" 
-               class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors inline-flex items-center gap-2">
+               class="order-2 sm:order-1 text-center px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors inline-flex items-center justify-center gap-2 font-medium">
                 <i class="fas fa-arrow-left"></i>
                 Kembali
             </a>
 
             <button type="submit" 
-                    class="px-6 py-3 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors inline-flex items-center gap-2 font-semibold">
+                    class="order-1 sm:order-2 px-6 py-3 bg-[#0a66c2] text-white rounded-xl hover:bg-[#004182] transition-colors inline-flex items-center justify-center gap-2 font-semibold shadow-sm">
                 <i class="fas fa-paper-plane"></i>
-                Ajukan Permohonan Paket Izin
+                <span class="hidden sm:inline">Ajukan Permohonan Paket Izin</span>
+                <span class="sm:hidden">Ajukan Permohonan</span>
             </button>
         </div>
     </form>

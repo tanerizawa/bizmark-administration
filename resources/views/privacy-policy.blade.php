@@ -155,7 +155,7 @@
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <p class="font-bold text-white mb-2">📧 Email</p>
-                            <a href="mailto:info@bizmark.id" class="text-apple-blue hover:underline">info@bizmark.id</a>
+                            <a href="mailto:cs@bizmark.id" class="text-apple-blue hover:underline">cs@bizmark.id</a>
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">💬 WhatsApp</p>
@@ -308,7 +308,7 @@
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <p class="font-bold text-white mb-2">📧 Email</p>
-                            <a href="mailto:info@bizmark.id" class="text-apple-blue hover:underline">info@bizmark.id</a>
+                            <a href="mailto:cs@bizmark.id" class="text-apple-blue hover:underline">cs@bizmark.id</a>
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">💬 WhatsApp</p>

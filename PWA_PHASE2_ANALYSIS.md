@@ -543,7 +543,7 @@ php artisan webpush:vapid
 # Add to .env:
 VAPID_PUBLIC_KEY=BOabc123...
 VAPID_PRIVATE_KEY=xyz789...
-VAPID_SUBJECT=mailto:info@bizmark.id
+VAPID_SUBJECT=mailto:cs@bizmark.id
 ```
 
 ---

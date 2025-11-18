@@ -11,16 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {}
-            }
-        }
-    </script>
+    <!-- Tailwind CSS Browser Build (Local Fallback) -->
+    <script src="{{ asset('js/tailwind-browser.js') }}" type="module"></script>
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -55,8 +47,6 @@
         }
 
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
 
@@ -67,6 +57,20 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow-x: hidden !important;
+        }
+        
+
+        
+        /* Ensure all text is visible in dark mode */
+        h1, h2, h3, h4, h5, h6, p, span, div, label, a, td, th {
+            color: var(--dark-text-primary);
+        }
+        
+        small, .text-muted {
+            color: var(--dark-text-secondary) !important;
         }
 
         /* Custom Tailwind Extensions */
@@ -80,11 +84,6 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--dark-separator);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.48);
-            overflow: hidden;
-        }
-
-        .card-elevated > * {
-            max-width: 100%;
         }
         
         .text-dark-text-primary { color: var(--dark-text-primary); }
@@ -117,46 +116,6 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 122, 255, 0.6);
-        }
-        
-        .btn-primary-sm {
-            background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-blue-dark) 100%);
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
-        }
-        
-        .btn-primary-sm:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.5);
-        }
-        
-        .btn-secondary-sm {
-            background-color: var(--dark-bg-tertiary);
-            border: 1px solid var(--dark-separator);
-            color: var(--dark-text-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-secondary-sm:hover {
-            background-color: var(--dark-bg-secondary);
-            border-color: var(--apple-blue);
-            color: var(--dark-text-primary);
         }
         
         .hover-lift {
@@ -198,6 +157,60 @@
         .dropdown-item:hover {
             background-color: var(--dark-bg-secondary);
             color: var(--apple-blue);
+        }
+        
+        /* Fix Bootstrap vs Tailwind Conflicts */
+        button, .btn {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-weight: 500;
+        }
+        
+        /* Ensure text is visible and properly styled */
+        p, span, div, label, a {
+            color: inherit;
+        }
+        
+        /* Button fixes */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .btn-sm, .btn-primary-sm, .btn-secondary-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
+            border-radius: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-primary-sm {
+            background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-blue-dark) 100%);
+            color: #FFFFFF;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        .btn-primary-sm:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.5);
+        }
+        
+        .btn-secondary-sm {
+            background: rgba(142, 142, 147, 0.3);
+            color: rgba(235, 235, 245, 0.9);
+            border: 1px solid rgba(142, 142, 147, 0.5);
+        }
+        
+        .btn-secondary-sm:hover {
+            background: rgba(142, 142, 147, 0.4);
+            border-color: rgba(142, 142, 147, 0.7);
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
         }
 
         /* Custom Scrollbar */
@@ -456,6 +469,125 @@
             outline: 2px solid var(--apple-blue);
             outline-offset: 2px;
         }
+
+        /* Layout Structure */
+        .app-shell {
+            display: grid !important;
+            grid-template-columns: 256px 1fr !important;
+            min-height: 100vh !important;
+            width: 100% !important;
+            background-color: var(--dark-bg) !important;
+        }
+
+        .app-sidebar {
+            background-color: var(--dark-bg-secondary) !important;
+            border-right: 1px solid var(--dark-separator) !important;
+            height: 100vh !important;
+            position: sticky !important;
+            top: 0 !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            z-index: 10 !important;
+            grid-column: 1 !important;
+        }
+
+        .app-sidebar .sidebar-inner {
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .app-main {
+            display: flex !important;
+            flex-direction: column !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            background-color: var(--dark-bg) !important;
+            grid-column: 2 !important;
+        }
+
+        .app-topbar {
+            height: 4rem !important;
+            min-height: 4rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 0 1.5rem !important;
+            background-color: var(--dark-bg-elevated) !important;
+            border-bottom: 1px solid var(--dark-separator) !important;
+            flex-shrink: 0 !important;
+        }
+
+        .app-content {
+            flex: 1 1 auto !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            padding: 1.5rem;
+            background-color: var(--dark-bg);
+        }
+        
+        /* Content Container Fallback - Tailwind classes replacement */
+        .app-content > div[class*="max-w"],
+        .app-content > div:first-child {
+            max-width: 80rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        
+        .app-content > div[class*="space-y"] {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2.5rem !important;
+        }
+        
+        /* Essential Layout Fix Only */
+        .app-content > div:first-child {
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+        
+        /* Navigation Links Critical Fallback - Prevent Layout Breaking */
+        .app-sidebar nav > div {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.25rem !important;
+        }
+        
+        .app-sidebar nav a {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 0.5rem 0.75rem !important;
+            border-radius: 10px !important;
+            font-size: 0.875rem !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            text-decoration: none !important;
+        }
+        
+        .app-sidebar nav a > div {
+            display: flex !important;
+            align-items: center !important;
+        }
+        
+        .app-sidebar nav a i {
+            width: 1.25rem !important;
+            text-align: center !important;
+        }
+        
+        .app-sidebar nav a span {
+            margin-left: 0.75rem !important;
+        }
+        
+        .app-sidebar nav a span[class*="px-2"],
+        .app-sidebar nav a > span:last-child {
+            margin-left: 0 !important;
+            padding: 0.125rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            border-radius: 9999px !important;
+        }
     </style>
     
     @stack('styles')
@@ -478,36 +610,36 @@
             'permit_templates' => \App\Models\PermitTemplate::count(),
         ]);
     @endphp
-    <div class="flex min-h-screen" style="background-color: var(--dark-bg);">
+    <div class="app-shell" style="display: grid !important; grid-template-columns: 256px 1fr !important; min-height: 100vh !important; width: 100% !important; overflow: hidden !important; background-color: var(--dark-bg) !important;">
         <!-- Sidebar -->
-        <aside class="w-64 flex-shrink-0 sticky top-0 h-screen z-40" style="background-color: var(--dark-bg-secondary); border-right: 1px solid var(--dark-separator);">
-            <div class="h-full flex flex-col">
+        <aside class="app-sidebar" style="background-color: var(--dark-bg-secondary) !important; border-right: 1px solid var(--dark-separator) !important; height: 100% !important; position: relative !important; z-index: 10 !important;">
+            <div class="sidebar-inner" style="height: 100%; display: flex; flex-direction: column;">
                 <!-- Logo -->
-                <div class="p-4" style="border-bottom: 1px solid var(--dark-separator);">
-                    <h1 class="text-xl font-bold text-dark-text-primary">
-                        <i class="fas fa-shield-alt text-apple-blue mr-2"></i>
+                <div style="padding: 1rem; border-bottom: 1px solid var(--dark-separator);">
+                    <h1 style="font-size: 1.25rem; font-weight: 700; color: var(--dark-text-primary);">
+                        <i class="fas fa-shield-alt" style="color: var(--apple-blue); margin-right: 0.5rem;"></i>
                         Bizmark.ID
                     </h1>
-                    <p class="text-xs text-dark-text-secondary mt-1">Permit Management System</p>
+                    <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin-top: 0.25rem;">Permit Management System</p>
                 </div>
 
                 <!-- Navigation -->
-                <nav class="flex-1 p-4 overflow-y-auto">
-                    <div class="space-y-1">
-                        <a href="{{ route('dashboard') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('dashboard') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                            <div class="flex items-center">
-                                <i class="fas fa-home w-5"></i>
-                                <span class="ml-3">Dashboard</span>
+                <nav style="flex: 1 1 auto; padding: 1rem; overflow-y: auto;">
+                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <a href="{{ route('dashboard') }}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.875rem; font-weight: 500; transition: all 0.3s; {{ request()->routeIs('dashboard') ? 'background: var(--apple-blue); color: #FFFFFF;' : 'color: var(--dark-text-secondary);' }}">
+                            <div style="display: flex; align-items: center;">
+                                <i class="fas fa-home" style="width: 1.25rem;"></i>
+                                <span style="margin-left: 0.75rem;">Dashboard</span>
                             </div>
                         </a>
                         
-                        <a href="{{ route('projects.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('projects.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                            <div class="flex items-center">
-                                <i class="fas fa-project-diagram w-5"></i>
-                                <span class="ml-3">Proyek</span>
+                        <a href="{{ route('projects.index') }}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.875rem; font-weight: 500; transition: all 0.3s; {{ request()->routeIs('projects.*') ? 'background: var(--apple-blue); color: #FFFFFF;' : 'color: var(--dark-text-secondary);' }}">
+                            <div style="display: flex; align-items: center;">
+                                <i class="fas fa-project-diagram" style="width: 1.25rem;"></i>
+                                <span style="margin-left: 0.75rem;">Proyek</span>
                             </div>
                             @if(isset($navCounts['projects']) && $navCounts['projects'] > 0)
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('projects.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
+                                <span style="padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; {{ request()->routeIs('projects.*') ? 'background: #FFFFFF; color: var(--apple-blue);' : 'background: var(--dark-bg-tertiary); color: var(--dark-text-secondary);' }}">
                                     {{ $navCounts['projects'] }}
                                 </span>
                             @endif
@@ -800,25 +932,25 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="app-main" style="display: flex !important; flex-direction: column !important; min-width: 0 !important; overflow: hidden !important; background-color: var(--dark-bg) !important; grid-column: 2 !important;">
             <!-- Top Bar -->
-            <header class="h-16 flex items-center justify-between px-6" style="background-color: var(--dark-bg-elevated); border-bottom: 1px solid var(--dark-separator);">
+            <header class="app-topbar" style="height: 4rem; min-height: 4rem; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; background-color: var(--dark-bg-elevated); border-bottom: 1px solid var(--dark-separator); flex-shrink: 0;">
                 <div>
-                    <h2 class="text-lg font-semibold text-dark-text-primary">@yield('page-title', 'Dashboard')</h2>
-                    <p class="text-xs text-dark-text-secondary">{{ now()->format('l, d F Y') }}</p>
+                    <h2 style="font-size: 1.125rem; font-weight: 600; color: var(--dark-text-primary); margin: 0;">@yield('page-title', 'Dashboard')</h2>
+                    <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin: 0;">{{ now()->format('l, d F Y') }}</p>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <button class="p-2 rounded-apple text-dark-text-secondary hover:text-dark-text-primary hover:bg-dark-bg-tertiary transition-apple">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <button style="padding: 0.5rem; border-radius: 10px; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer;">
                         <i class="fas fa-bell"></i>
                     </button>
-                    <button class="p-2 rounded-apple text-dark-text-secondary hover:text-dark-text-primary hover:bg-dark-bg-tertiary transition-apple">
+                    <button style="padding: 0.5rem; border-radius: 10px; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer;">
                         <i class="fas fa-cog"></i>
                     </button>
                 </div>
             </header>
 
             <!-- Content Area -->
-            <main class="flex-1 min-h-screen overflow-y-auto p-6" style="background: var(--dark-bg);">
+            <main class="app-content" style="flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding: 1.5rem; background-color: var(--dark-bg);">
                 @yield('content')
             </main>
         </div>

@@ -14,12 +14,13 @@ class CashAccountController extends Controller
 {
     public function index(Request $request)
     {
-        // Get filter parameters
-        $filterType = $request->input('filter_type', 'month'); // month, quarter, year, custom
-        $selectedMonth = $request->input('month', Carbon::now()->month);
-        $selectedYear = $request->input('year', Carbon::now()->year);
-        $startDateInput = $request->input('start_date');
-        $endDateInput = $request->input('end_date');
+        try {
+            // Get filter parameters
+            $filterType = $request->input('filter_type', 'month'); // month, quarter, year, custom
+            $selectedMonth = $request->input('month', Carbon::now()->month);
+            $selectedYear = $request->input('year', Carbon::now()->year);
+            $startDateInput = $request->input('start_date');
+            $endDateInput = $request->input('end_date');
         
         // Create date range based on filter type
         switch ($filterType) {
@@ -63,18 +64,22 @@ class CashAccountController extends Controller
         $cashFlowStatement = $this->getCashFlowStatement($startDate, $endDate);
         $recentTransactions = $this->getRecentTransactions(50, $startDate, $endDate); // Increased from 15 to 50
         
-        return view('cash-accounts.index', compact(
-            'accounts',
-            'financialSummary',
-            'cashFlowStatement',
-            'recentTransactions',
-            'availablePeriods',
-            'selectedMonth',
-            'selectedYear',
-            'filterType',
-            'startDate',
-            'endDate'
-        ));
+            return view('cash-accounts.index', compact(
+                'accounts',
+                'financialSummary',
+                'cashFlowStatement',
+                'recentTransactions',
+                'availablePeriods',
+                'selectedMonth',
+                'selectedYear',
+                'filterType',
+                'startDate',
+                'endDate'
+            ));
+        } catch (\Exception $e) {
+            \Log::error('CashAccountController@index error: ' . $e->getMessage());
+            return redirect()->route('dashboard')->with('error', 'Error loading cash accounts page');
+        }
     }
     
     /**

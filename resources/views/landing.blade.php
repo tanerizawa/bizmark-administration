@@ -34,8 +34,8 @@
     <meta name="twitter:image" content="https://bizmark.id/images/twitter-image.jpg">
     
     <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon.svg') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
     
@@ -59,11 +59,11 @@
         "@context": "https://schema.org",
         "@type": "ProfessionalService",
         "name": "Bizmark.ID",
-        "image": "https://bizmark.id/images/logo.png",
+        "image": "https://bizmark.id/images/logo-bizmark.svg",
         "description": "Konsultan perizinan dan bisnis terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan, dan digitalisasi administrasi perusahaan.",
         "url": "https://bizmark.id",
         "telephone": "+62-21-1234-5678",
-        "email": "info@bizmark.id",
+        "email": "cs@bizmark.id",
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "Jl. Sudirman No. 123",
@@ -128,7 +128,7 @@
         "@type": "Organization",
         "name": "Bizmark.ID",
         "url": "https://bizmark.id",
-        "logo": "https://bizmark.id/images/logo.png",
+        "logo": "https://bizmark.id/images/logo-bizmark.svg",
         "contactPoint": {
             "@type": "ContactPoint",
             "telephone": "+62-21-1234-5678",
@@ -462,6 +462,10 @@
                     <a href="#services" class="hover:text-blue-400 transition">Layanan</a>
                     <a href="#why-us" class="hover:text-blue-400 transition">Keunggulan</a>
                     <a href="#contact" class="hover:text-blue-400 transition">Kontak</a>
+                    <a href="{{ route('client.login') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition text-white">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login / Registrasi</span>
+                    </a>
                 </div>
                 
                 <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">
@@ -477,13 +481,18 @@
         <a href="#services" class="block py-2 hover:text-blue-400">Layanan</a>
         <a href="#why-us" class="block py-2 hover:text-blue-400">Keunggulan</a>
         <a href="#contact" class="block py-2 hover:text-blue-400">Kontak</a>
+        <a href="{{ route('client.login') }}" class="block py-3 mt-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-center text-white transition">
+            <i class="fas fa-sign-in-alt mr-2"></i>Login / Registrasi
+        </a>
     </div>
 
     <!-- Hero Section -->
     <section id="home" class="hero-gradient pt-32 pb-20 px-4" role="banner">
         <div class="container mx-auto text-center max-w-5xl relative z-10">
-            <div class="logo-container" aria-label="Logo Bizmark.ID">
-                <i class="fas fa-shield-alt text-white text-4xl" aria-hidden="true"></i>
+            <div class="logo-container mb-8" aria-label="Logo Bizmark.ID">
+                <img src="{{ asset('images/logo-bizmark.svg') }}" 
+                     alt="BizMark Indonesia - Konsultan Perizinan" 
+                     class="w-24 h-24 mx-auto filter drop-shadow-lg">
             </div>
             
             <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
@@ -951,7 +960,7 @@
                                 <i class="fas fa-phone text-2xl text-blue-500 mr-4 mt-1"></i>
                                 <div>
                                     <h4 class="font-bold mb-1">Telepon</h4>
-                                    <p style="color: var(--dark-text-secondary);">+62 21 1234 5678<br>+62 812 3456 7890</p>
+                                    <p style="color: var(--dark-text-secondary);">+62 21 1234 5678<br>+62 838 7960 2855</p>
                                 </div>
                             </div>
                             
@@ -959,7 +968,7 @@
                                 <i class="fas fa-envelope text-2xl text-blue-500 mr-4 mt-1"></i>
                                 <div>
                                     <h4 class="font-bold mb-1">Email</h4>
-                                    <p style="color: var(--dark-text-secondary);">info@bizmark.id<br>support@bizmark.id</p>
+                                    <p style="color: var(--dark-text-secondary);">cs@bizmark.id<br>cs@bizmark.id</p>
                                 </div>
                             </div>
                             
@@ -1028,7 +1037,7 @@
                                    autocomplete="tel"
                                    pattern="[0-9+\s-]+"
                                    class="form-input" 
-                                   placeholder="08123456789">
+                                   placeholder="083879602855">
                         </div>
                         
                         <div>
@@ -1102,7 +1111,10 @@
                         <li><a href="#why-us" class="hover:text-blue-400 transition">Keunggulan</a></li>
                         <li><a href="#faq" class="hover:text-blue-400 transition">FAQ</a></li>
                         <li><a href="#contact" class="hover:text-blue-400 transition">Kontak</a></li>
-                        <li><a href="/hadez" class="hover:text-blue-400 transition">Portal Klien</a></li>
+                        <li><a href="{{ route('client.login') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login / Registrasi</span>
+                        </a></li>
                     </ul>
                 </div>
                 
@@ -1117,14 +1129,14 @@
                             <i class="fas fa-phone mr-2 mt-1" aria-hidden="true"></i>
                             <div class="text-sm">
                                 <a href="tel:+622112345678" class="hover:text-blue-400">+62 21 1234 5678</a><br>
-                                <a href="tel:+628123456789" class="hover:text-blue-400">+62 812 3456 7890</a>
+                                <a href="tel:+6283879602855" class="hover:text-blue-400">+62 838 7960 2855</a>
                             </div>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-envelope mr-2 mt-1" aria-hidden="true"></i>
                             <div class="text-sm">
-                                <a href="mailto:info@bizmark.id" class="hover:text-blue-400">info@bizmark.id</a><br>
-                                <a href="mailto:support@bizmark.id" class="hover:text-blue-400">support@bizmark.id</a>
+                                <a href="mailto:cs@bizmark.id" class="hover:text-blue-400">cs@bizmark.id</a><br>
+                                <a href="mailto:cs@bizmark.id" class="hover:text-blue-400">cs@bizmark.id</a>
                             </div>
                         </li>
                     </ul>
@@ -1167,7 +1179,7 @@
     </footer>
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/628123456789?text=Halo%20Bizmark.ID,%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
+    <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID,%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
        target="_blank" 
        rel="noopener"
        aria-label="Chat WhatsApp"

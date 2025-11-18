@@ -13,7 +13,7 @@
             </a>
             <div>
                 <h1 class="text-3xl font-bold text-gray-900">Buat Quotation</h1>
-                <p class="text-gray-600 mt-1">{{ $application->application_number }} - {{ $application->permitType->name }}</p>
+                <p class="text-gray-600 mt-1">{{ $application->application_number }} - {{ $application->permitType?->name ?? 'Tipe Izin Tidak Tersedia' }}</p>
             </div>
         </div>
 
@@ -33,7 +33,7 @@
                 </div>
                 <div class="text-right">
                     <p class="text-sm text-gray-600">Harga Dasar</p>
-                    <p class="font-semibold text-gray-900">Rp {{ number_format($application->permitType->base_price, 0, ',', '.') }}</p>
+                    <p class="font-semibold text-gray-900">Rp {{ number_format($application->permitType?->base_price ?? 0, 0, ',', '.') }}</p>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
                         type="number" 
                         name="base_price" 
                         id="basePrice"
-                        value="{{ old('base_price', $application->permitType->base_price) }}"
+                        value="{{ old('base_price', $application->permitType?->base_price ?? 0) }}"
                         required
                         min="0"
                         step="1000"

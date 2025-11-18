@@ -179,7 +179,7 @@
                                id="mobile" 
                                name="mobile" 
                                value="{{ old('mobile', $client->mobile) }}" 
-                               placeholder="Contoh: 08123456789">
+                               placeholder="Contoh: 083879602855">
                         @error('mobile')
                             <p class="text-xs mt-1 text-apple-red">{{ $message }}</p>
                         @enderror

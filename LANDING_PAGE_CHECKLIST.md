@@ -75,7 +75,7 @@ http://localhost (atau domain production)
 - [ ] Address: Jl. Permata Sari Indah No.2, Karawang Timur, Jawa Barat 41314 ✅
 - [ ] Phone: +62 267 123 4567 ✅
 - [ ] WhatsApp: +62 812 3456 7890 ✅
-- [ ] Email: info@bizmark.id, konsultasi@bizmark.id ✅
+- [ ] Email: cs@bizmark.id, konsultasi@bizmark.id ✅
 - [ ] Service areas: Karawang, Purwakarta, Subang, Bekasi ✅
 
 #### Service Descriptions

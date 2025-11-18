@@ -1,0 +1,350 @@
+<?php
+
+namespace App\Http\Controllers\Mobile;
+
+use App\Http\Controllers\Controller;
+use App\Models\CashAccount;
+use App\Models\ProjectExpense;
+use App\Models\Invoice;
+use App\Models\ProjectPayment;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class FinancialController extends Controller
+{
+    /**
+     * Financial dashboard overview
+     */
+    public function index()
+    {
+        $data = [
+            'cashBalance' => $this->getCashBalance(),
+            'runway' => $this->getRunway(),
+            'thisMonth' => $this->getMonthlyStats(),
+            'pendingReceivables' => $this->getPendingReceivables(),
+            'recentTransactions' => $this->getRecentTransactions(10)
+        ];
+        
+        return view('mobile.financial.index', $data);
+    }
+    
+    /**
+     * Cash flow details
+     */
+    public function cashFlow(Request $request)
+    {
+        $period = $request->get('period', 'month'); // week, month, quarter, year
+        
+        $startDate = match($period) {
+            'week' => now()->startOfWeek(),
+            'month' => now()->startOfMonth(),
+            'quarter' => now()->startOfQuarter(),
+            'year' => now()->startOfYear(),
+            default => now()->startOfMonth()
+        };
+        
+        // Income (Payments + Invoices paid)
+        $income = ProjectPayment::where('payment_date', '>=', $startDate)
+            ->sum('amount');
+        
+        $invoicePaid = Invoice::where('status', 'paid')
+            ->where('paid_at', '>=', $startDate)
+            ->sum('total_amount');
+        
+        // Expenses
+        $expenses = ProjectExpense::where('expense_date', '>=', $startDate)
+            ->where('status', 'approved')
+            ->sum('amount');
+        
+        // Daily breakdown
+        $dailyFlow = DB::table(DB::raw('
+            (SELECT payment_date as date, amount as income, 0 as expense
+             FROM project_payments
+             WHERE payment_date >= :start1
+             UNION ALL
+             SELECT expense_date as date, 0 as income, amount as expense
+             FROM project_expenses
+             WHERE expense_date >= :start2 AND status = \'approved\')
+        '))
+        ->setBindings(['start1' => $startDate, 'start2' => $startDate])
+        ->select(DB::raw('
+            date,
+            SUM(income) as daily_income,
+            SUM(expense) as daily_expense,
+            SUM(income - expense) as daily_net
+        '))
+        ->groupBy('date')
+        ->orderBy('date', 'desc')
+        ->get();
+        
+        return view('mobile.financial.cash-flow', [
+            'period' => $period,
+            'totalIncome' => $income + $invoicePaid,
+            'totalExpenses' => $expenses,
+            'netCashFlow' => ($income + $invoicePaid) - $expenses,
+            'dailyFlow' => $dailyFlow
+        ]);
+    }
+    
+    /**
+     * Receivables aging
+     */
+    public function receivables()
+    {
+        $receivables = Invoice::where('status', '!=', 'paid')
+            ->with(['project', 'client'])
+            ->orderBy('issue_date', 'asc')
+            ->get()
+            ->map(function($invoice) {
+                $daysOverdue = now()->diffInDays(Carbon::parse($invoice->due_date), false);
+                
+                return [
+                    'id' => $invoice->id,
+                    'invoice_number' => $invoice->invoice_number,
+                    'client' => $invoice->client->name ?? '-',
+                    'amount' => $invoice->total_amount,
+                    'due_date' => $invoice->due_date,
+                    'days_overdue' => $daysOverdue < 0 ? abs($daysOverdue) : 0,
+                    'aging_bucket' => $this->getAgingBucket($daysOverdue),
+                    'status' => $invoice->status
+                ];
+            });
+        
+        $summary = [
+            'current' => $receivables->where('aging_bucket', 'current')->sum('amount'),
+            '1-30' => $receivables->where('aging_bucket', '1-30')->sum('amount'),
+            '31-60' => $receivables->where('aging_bucket', '31-60')->sum('amount'),
+            '60+' => $receivables->where('aging_bucket', '60+')->sum('amount'),
+        ];
+        
+        return view('mobile.financial.receivables', [
+            'receivables' => $receivables,
+            'summary' => $summary
+        ]);
+    }
+    
+    /**
+     * Expenses list
+     */
+    public function expenses(Request $request)
+    {
+        $status = $request->get('status', 'all'); // all, pending, approved, rejected
+        
+        $query = ProjectExpense::with(['project', 'category', 'approver'])
+            ->orderBy('expense_date', 'desc');
+        
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+        
+        $expenses = $query->paginate(20);
+        
+        $stats = [
+            'all' => ProjectExpense::count(),
+            'pending' => ProjectExpense::where('status', 'pending')->count(),
+            'approved' => ProjectExpense::where('status', 'approved')->count(),
+            'thisMonth' => ProjectExpense::whereMonth('expense_date', now()->month)->sum('amount'),
+        ];
+        
+        if ($request->expectsJson()) {
+            return response()->json([
+                'expenses' => $expenses->items(),
+                'hasMore' => $expenses->hasMorePages()
+            ]);
+        }
+        
+        return view('mobile.financial.expenses', [
+            'expenses' => $expenses,
+            'currentStatus' => $status,
+            'stats' => $stats
+        ]);
+    }
+    
+    /**
+     * Invoice detail
+     */
+    public function showInvoice(Invoice $invoice)
+    {
+        $invoice->load(['project', 'client', 'items']);
+        
+        return view('mobile.financial.invoice', compact('invoice'));
+    }
+    
+    /**
+     * Quick expense entry (from bottom sheet)
+     */
+    public function quickExpense(Request $request)
+    {
+        $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'amount' => 'required|numeric|min:0',
+            'description' => 'required|string|max:255',
+            'expense_date' => 'required|date',
+            'category_id' => 'nullable|exists:expense_categories,id'
+        ]);
+        
+        $expense = ProjectExpense::create([
+            'project_id' => $request->project_id,
+            'amount' => $request->amount,
+            'description' => $request->description,
+            'expense_date' => $request->expense_date,
+            'category_id' => $request->category_id,
+            'recorded_by' => auth()->id(),
+            'status' => 'pending'
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'expense' => $expense,
+            'message' => 'Expense berhasil dicatat'
+        ], 201);
+    }
+    
+    /**
+     * Get total cash balance
+     */
+    private function getCashBalance()
+    {
+        return [
+            'total' => CashAccount::sum('balance'),
+            'accounts' => CashAccount::select('id', 'name', 'balance', 'currency')
+                ->orderBy('balance', 'desc')
+                ->get()
+        ];
+    }
+    
+    /**
+     * Calculate cash runway
+     */
+    private function getRunway()
+    {
+        $totalCash = CashAccount::sum('balance');
+        
+        $monthlyBurn = ProjectExpense::where('expense_date', '>=', now()->subDays(30))
+            ->where('status', 'approved')
+            ->sum('amount');
+        
+        $runway = $monthlyBurn > 0 ? round($totalCash / $monthlyBurn, 1) : 999;
+        
+        return [
+            'months' => $runway > 99 ? '∞' : $runway,
+            'cash' => $totalCash,
+            'monthly_burn' => $monthlyBurn,
+            'status' => $runway < 3 ? 'critical' : ($runway < 6 ? 'warning' : 'healthy')
+        ];
+    }
+    
+    /**
+     * Monthly stats (current month)
+     */
+    private function getMonthlyStats()
+    {
+        $startOfMonth = now()->startOfMonth();
+        
+        $income = ProjectPayment::where('payment_date', '>=', $startOfMonth)->sum('amount');
+        $expenses = ProjectExpense::where('expense_date', '>=', $startOfMonth)
+            ->where('status', 'approved')
+            ->sum('amount');
+        
+        $lastMonthIncome = ProjectPayment::whereBetween('payment_date', [
+            now()->subMonth()->startOfMonth(),
+            now()->subMonth()->endOfMonth()
+        ])->sum('amount');
+        
+        $lastMonthExpenses = ProjectExpense::whereBetween('expense_date', [
+            now()->subMonth()->startOfMonth(),
+            now()->subMonth()->endOfMonth()
+        ])->where('status', 'approved')->sum('amount');
+        
+        return [
+            'income' => $income,
+            'expenses' => $expenses,
+            'net' => $income - $expenses,
+            'income_change' => $lastMonthIncome > 0 ? 
+                round((($income - $lastMonthIncome) / $lastMonthIncome) * 100, 1) : 0,
+            'expense_change' => $lastMonthExpenses > 0 ?
+                round((($expenses - $lastMonthExpenses) / $lastMonthExpenses) * 100, 1) : 0,
+        ];
+    }
+    
+    /**
+     * Pending receivables
+     */
+    private function getPendingReceivables()
+    {
+        return Invoice::where('status', '!=', 'paid')
+            ->select('id', 'invoice_number', 'total_amount', 'due_date')
+            ->orderBy('due_date', 'asc')
+            ->take(5)
+            ->get()
+            ->map(function($invoice) {
+                $daysOverdue = now()->diffInDays(Carbon::parse($invoice->due_date), false);
+                return [
+                    'id' => $invoice->id,
+                    'invoice_number' => $invoice->invoice_number,
+                    'amount' => $invoice->total_amount,
+                    'due_date' => $invoice->due_date,
+                    'is_overdue' => $daysOverdue < 0,
+                    'days' => abs($daysOverdue)
+                ];
+            });
+    }
+    
+    /**
+     * Recent transactions
+     */
+    private function getRecentTransactions($limit = 10)
+    {
+        $payments = ProjectPayment::with('project')
+            ->select('id', 'project_id', 'amount', 'payment_date', 'description')
+            ->orderBy('payment_date', 'desc')
+            ->take($limit)
+            ->get()
+            ->map(function($p) {
+                return [
+                    'type' => 'income',
+                    'date' => $p->payment_date,
+                    'description' => $p->description ?? $p->project->name ?? 'Payment',
+                    'amount' => $p->amount,
+                    'icon' => 'arrow-down',
+                    'color' => 'green'
+                ];
+            });
+        
+        $expenses = ProjectExpense::with('project')
+            ->where('status', 'approved')
+            ->select('id', 'project_id', 'amount', 'expense_date', 'description')
+            ->orderBy('expense_date', 'desc')
+            ->take($limit)
+            ->get()
+            ->map(function($e) {
+                return [
+                    'type' => 'expense',
+                    'date' => $e->expense_date,
+                    'description' => $e->description ?? $e->project->name ?? 'Expense',
+                    'amount' => $e->amount,
+                    'icon' => 'arrow-up',
+                    'color' => 'red'
+                ];
+            });
+        
+        return $payments->merge($expenses)
+            ->sortByDesc('date')
+            ->take($limit)
+            ->values();
+    }
+    
+    /**
+     * Get aging bucket for receivable
+     */
+    private function getAgingBucket($daysOverdue)
+    {
+        if ($daysOverdue >= 0) return 'current';
+        
+        $days = abs($daysOverdue);
+        if ($days <= 30) return '1-30';
+        if ($days <= 60) return '31-60';
+        return '60+';
+    }
+}

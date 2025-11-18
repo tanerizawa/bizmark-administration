@@ -404,7 +404,7 @@ Untuk detail teknis lengkap, lihat:
 
 **Website:** https://bizmark.id  
 **WhatsApp:** +62 813-8260-5030  
-**Email:** info@bizmark.id  
+**Email:** cs@bizmark.id  
 
 **Developer:** GitHub Copilot  
 **Status:** Phase 3 Complete - 100% ✅  

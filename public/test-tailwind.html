@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind Test</title>
+    
+    <!-- Config BEFORE CDN -->
+    <script>
+        window.tailwindConfig = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-4 text-blue-500">✅ Tailwind CSS Test</h1>
+        
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-4">
+            <h2 class="text-xl font-semibold mb-2">Test 1: Basic Colors</h2>
+            <div class="flex gap-4">
+                <div class="bg-red-500 w-20 h-20 rounded"></div>
+                <div class="bg-green-500 w-20 h-20 rounded"></div>
+                <div class="bg-blue-500 w-20 h-20 rounded"></div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-4">
+            <h2 class="text-xl font-semibold mb-2">Test 2: Flexbox</h2>
+            <div class="flex justify-between items-center">
+                <span>Left</span>
+                <span class="bg-blue-600 px-4 py-2 rounded">Center</span>
+                <span>Right</span>
+            </div>
+        </div>
+        
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-2">Test 3: Dark Mode</h2>
+            <p class="text-gray-300">If you see this with dark background, dark mode is working!</p>
+        </div>
+        
+        <div class="mt-8 p-4 bg-green-900 border border-green-500 rounded">
+            <p class="text-green-200">
+                ✓ If all boxes appear styled correctly, Tailwind is working!
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        console.log('✅ Tailwind loaded:', typeof tailwind !== 'undefined');
+        console.log('✅ Dark mode class on html:', document.documentElement.classList.contains('dark'));
+    </script>
+</body>
+</html>

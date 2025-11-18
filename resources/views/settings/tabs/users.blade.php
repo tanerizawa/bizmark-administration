@@ -313,7 +313,7 @@
                                 Phone Number
                             </label>
                             <input type="text" name="phone" id="userPhone"
-                                   class="input-apple w-full" placeholder="+62 812 3456 7890">
+                                   class="input-apple w-full" placeholder="+62 838 7960 2855">
                         </div>
 
                         <!-- Notes -->

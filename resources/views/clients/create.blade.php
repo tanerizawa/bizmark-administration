@@ -128,7 +128,7 @@
                             <label for="mobile" class="form-label">Handphone / WhatsApp</label>
                             <input type="text" class="form-control @error('mobile') is-invalid @enderror" 
                                    id="mobile" name="mobile" value="{{ old('mobile') }}" 
-                                   placeholder="Contoh: 08123456789">
+                                   placeholder="Contoh: 083879602855">
                             @error('mobile')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

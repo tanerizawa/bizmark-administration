@@ -4,9 +4,9 @@
 @section('page-title', 'Manajemen Keuangan')
 
 @section('content')
-<div class="max-w-7xl mx-auto space-y-10">
+<div style="max-width: 80rem; margin: 0 auto; padding: 0;">
     {{-- Hero Section Dashboard-Style --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden" style="margin-bottom: 2.5rem;">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
@@ -149,7 +149,6 @@
             </div>
         </div>
 
-        <div class="p-6">
         <div class="p-6">
             <!-- Tab 1: Cash Flow Statement -->
             <div id="content-cash-flow" class="tab-content">
@@ -414,7 +413,3 @@ document.getElementById('periodModal').addEventListener('click', function(e) {
 });
 </script>
 @endsection
-                    <button type="button" onclick="setFilterType('month')" 
-                            class="px-3 py-1.5 text-xs font-medium transition-all {{ $filterType == 'month' ? 'filter-active' : 'filter-inactive' }}"
-                            style="background: {{ $filterType == 'month' ? 'rgba(0, 122, 255, 0.2)' : 'transparent' }}; color: {{ $filterType == 'month' ? 'rgba(0, 122, 255, 1)' : 'rgba(235, 235, 245, 0.6)' }};">
-                        Bulan

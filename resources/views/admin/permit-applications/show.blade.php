@@ -103,6 +103,25 @@
                     $isPackage = isset($formData['package_type']) && $formData['package_type'] === 'multi_permit';
                 @endphp
 
+                <!-- Package Revision Action (for packages under review) -->
+                @if($isPackage && in_array($application->status, ['under_review', 'submitted', 'document_incomplete', 'quoted']))
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded mb-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-purple-900">
+                                    <i class="fas fa-edit mr-2"></i>Perlu Revisi Paket?
+                                </h3>
+                                <p class="text-sm text-purple-700 mt-1">
+                                    Buat revisi untuk menyesuaikan izin, biaya, atau data setelah kajian teknis
+                                </p>
+                            </div>
+                            <a href="{{ route('admin.permit-applications.revise', $application->id) }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors whitespace-nowrap">
+                                <i class="fas fa-exchange-alt mr-2"></i>Revisi Paket
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Convert to Project Action (for packages with payment_verified status) -->
                 @if($isPackage && $application->status === 'payment_verified' && !$application->project_id)
                     <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
@@ -442,9 +461,12 @@
                     </div>
 
                     @php
-                        $requiredDocs = is_string($application->permitType->required_documents) 
-                            ? json_decode($application->permitType->required_documents, true) 
-                            : $application->permitType->required_documents;
+                        $requiredDocs = [];
+                        if ($application->permitType) {
+                            $requiredDocs = is_string($application->permitType->required_documents) 
+                                ? json_decode($application->permitType->required_documents, true) 
+                                : $application->permitType->required_documents;
+                        }
                     @endphp
 
                     @if($requiredDocs && count($requiredDocs) > 0)
@@ -603,7 +625,7 @@
                     </div>
 
                     @php
-                        $notes = $application->notes()->with('author')->orderBy('created_at', 'desc')->get();
+                        $notes = $application->notes()->orderBy('created_at', 'desc')->get();
                     @endphp
 
                     @if($notes->count() > 0)
@@ -709,12 +731,14 @@
                                 {{ $application->submitted_at ? $application->submitted_at->format('d M Y H:i') : '-' }}
                             </p>
                         </div>
+                        @if($application->permitType)
                         <div>
                             <label class="text-gray-600">Harga Dasar</label>
                             <p class="text-gray-900">
                                 Rp {{ number_format($application->permitType->base_price, 0, ',', '.') }}
                             </p>
                         </div>
+                        @endif
                         @if($application->quoted_price)
                             <div>
                                 <label class="text-gray-600">Harga Quoted</label>
@@ -723,12 +747,14 @@
                                 </p>
                             </div>
                         @endif
+                        @if($application->permitType)
                         <div>
                             <label class="text-gray-600">Waktu Proses (Est.)</label>
                             <p class="text-gray-900">
                                 {{ $application->permitType->avg_processing_days }} hari
                             </p>
                         </div>
+                        @endif
                         @if($application->reviewed_by)
                             <div>
                                 <label class="text-gray-600">Direview oleh</label>
@@ -901,9 +927,6 @@ function rejectDocument(documentId, documentName) {
         alert('Alasan reject wajib diisi!');
     }
 }
-        form.submit();
-    }
-}
 
 function showAddNotesModal() {
     const notes = prompt('Tambahkan catatan:');
@@ -923,36 +946,6 @@ function showAddNotesModal() {
         notesInput.value = notes;
         
         form.appendChild(csrf);
-        form.appendChild(notesInput);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-
-function rejectDocument(documentId) {
-    const notes = prompt('Alasan penolakan dokumen:');
-    if (notes && notes.trim()) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/admin/applications/{{ $application->id }}/documents/' + documentId + '/verify';
-        
-        const csrf = document.createElement('input');
-        csrf.type = 'hidden';
-        csrf.name = '_token';
-        csrf.value = '{{ csrf_token() }}';
-        
-        const actionInput = document.createElement('input');
-        actionInput.type = 'hidden';
-        actionInput.name = 'action';
-        actionInput.value = 'reject';
-        
-        const notesInput = document.createElement('input');
-        notesInput.type = 'hidden';
-        notesInput.name = 'notes';
-        notesInput.value = notes;
-        
-        form.appendChild(csrf);
-        form.appendChild(actionInput);
         form.appendChild(notesInput);
         document.body.appendChild(form);
         form.submit();

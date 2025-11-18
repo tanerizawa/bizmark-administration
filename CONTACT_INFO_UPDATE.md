@@ -23,7 +23,7 @@ https://wa.me/6281382605030
 - **Phone:** `+62 813 8260 5030` (main number)
 - **WhatsApp:** `+62 813 8260 5030` (same number with WhatsApp link)
 - **Email Primary:** `headoffice.tck@gmail.com` ✅ GMAIL (more secure)
-- **Email Secondary:** `info@bizmark.id`
+- **Email Secondary:** `cs@bizmark.id`
 
 **Location:** Lines ~954-963
 
@@ -42,7 +42,7 @@ https://wa.me/6281382605030
 - **Phone:** `+62 813 8260 5030` with clickable tel: link
 - **WhatsApp:** `+62 813 8260 5030` with wa.me link
 - **Email:** `headoffice.tck@gmail.com` (primary)
-- **Email:** `info@bizmark.id` (secondary)
+- **Email:** `cs@bizmark.id` (secondary)
 
 **Location:** Lines ~1093-1104
 
@@ -88,7 +88,7 @@ https://wa.me/6281382605030
 
 ### 📧 Email Addresses
 - **Primary (Gmail):** headoffice.tck@gmail.com ✅ (More secure)
-- **Secondary:** info@bizmark.id
+- **Secondary:** cs@bizmark.id
 
 ### 🌐 Social Media
 All handles: **@bizmark.id**
@@ -260,7 +260,7 @@ All contact methods optimized for mobile:
 ║                                                          ║
 ║  📧 EMAIL:                                              ║
 ║     headoffice.tck@gmail.com (Primary)                 ║
-║     info@bizmark.id (Secondary)                        ║
+║     cs@bizmark.id (Secondary)                        ║
 ║                                                          ║
 ║  🌐 WEBSITE:                                            ║
 ║     https://bizmark.id                                  ║

@@ -100,7 +100,7 @@
                     <span>Periksa folder spam/junk di email Anda</span>
                 </li>
             </ul>
-            <a href="https://wa.me/6281234567890" target="_blank" class="block mt-3 text-white hover:text-yellow-300 text-sm font-medium">
+            <a href="https://wa.me/62838796028550" target="_blank" class="block mt-3 text-white hover:text-yellow-300 text-sm font-medium">
                 <i class="fab fa-whatsapp mr-2"></i>Hubungi Support via WhatsApp
             </a>
         </div>

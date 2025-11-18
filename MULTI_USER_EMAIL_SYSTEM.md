@@ -236,7 +236,7 @@ Assigned Users:
 Email Accounts:
 - cs@bizmark.id      → CS Department (3 staff)
 - sales@bizmark.id   → Sales Department (2 staff)
-- support@bizmark.id → Support Department (4 staff)
+- cs@bizmark.id → Support Department (4 staff)
 ```
 
 **Workflow:**

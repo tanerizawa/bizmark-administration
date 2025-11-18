@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Auto-Update Demo - Bizmark.ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .phone-frame {
+            width: 375px;
+            height: 667px;
+            border: 12px solid #1a1a1a;
+            border-radius: 36px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 25px;
+            background: #1a1a1a;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 10;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        .update-banner {
+            animation: slideDown 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-mobile-alt text-blue-600"></i>
+                PWA Auto-Update System
+            </h1>
+            <p class="text-xl text-gray-600">Demo Visual - Bizmark.ID Portal Klien</p>
+            <p class="text-sm text-gray-500 mt-2">Sistem update otomatis tanpa perlu install ulang</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <!-- State 1: Normal Usage -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+                <h3 class="text-lg font-bold mb-4 text-center">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 mr-2">1</span>
+                    Penggunaan Normal
+                </h3>
+                <div class="phone-frame mx-auto">
+                    <div class="phone-notch"></div>
+                    <div class="bg-gradient-to-b from-indigo-600 to-blue-600 h-full overflow-auto">
+                        <div class="p-4 text-white">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-xl font-bold">Dashboard</h2>
+                                <div class="w-8 h-8 rounded-full bg-white/20"></div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur rounded-xl p-4 mb-4">
+                                <p class="text-xs uppercase tracking-wider opacity-70 mb-1">Proyek Aktif</p>
+                                <p class="text-3xl font-bold">3</p>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="bg-white rounded-xl p-4 text-gray-900">
+                                    <p class="font-semibold">OSS & NIB</p>
+                                    <p class="text-sm text-gray-500">Sedang diproses</p>
+                                </div>
+                                <div class="bg-white rounded-xl p-4 text-gray-900">
+                                    <p class="font-semibold">AMDAL</p>
+                                    <p class="text-sm text-gray-500">Dokumen review</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-4">User menggunakan aplikasi seperti biasa</p>
+            </div>
+
+            <!-- State 2: Update Detected -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+                <h3 class="text-lg font-bold mb-4 text-center">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 mr-2">2</span>
+                    Update Terdeteksi
+                </h3>
+                <div class="phone-frame mx-auto">
+                    <div class="phone-notch"></div>
+                    <div class="bg-gradient-to-b from-indigo-600 to-blue-600 h-full overflow-auto relative">
+                        <!-- Update Banner -->
+                        <div class="update-banner absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 shadow-lg z-20">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-sync-alt animate-spin text-lg"></i>
+                                    <div class="text-xs">
+                                        <p class="font-semibold">Update Tersedia</p>
+                                        <p class="opacity-80">Versi baru siap diinstal</p>
+                                    </div>
+                                </div>
+                                <button class="bg-white text-blue-600 px-3 py-1 rounded-lg text-xs font-semibold">
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 text-white pt-20">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-xl font-bold">Dashboard</h2>
+                                <div class="w-8 h-8 rounded-full bg-white/20"></div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur rounded-xl p-4 mb-4">
+                                <p class="text-xs uppercase tracking-wider opacity-70 mb-1">Proyek Aktif</p>
+                                <p class="text-3xl font-bold">3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-4">
+                    <i class="fas fa-bell text-yellow-500"></i> Banner notifikasi muncul otomatis
+                </p>
+            </div>
+
+            <!-- State 3: Updating -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+                <h3 class="text-lg font-bold mb-4 text-center">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 mr-2">3</span>
+                    Mengupdate
+                </h3>
+                <div class="phone-frame mx-auto">
+                    <div class="phone-notch"></div>
+                    <div class="bg-gradient-to-b from-indigo-600 to-blue-600 h-full overflow-auto relative">
+                        <!-- Loading Overlay -->
+                        <div class="absolute inset-0 bg-white/95 flex items-center justify-center z-30">
+                            <div class="text-center">
+                                <i class="fas fa-spinner fa-spin text-6xl text-blue-600 mb-4"></i>
+                                <p class="text-xl font-bold text-gray-900">Menginstal Update</p>
+                                <p class="text-sm text-gray-600 mt-2">Mohon tunggu sebentar...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-4">
+                    <i class="fas fa-clock text-blue-500"></i> Proses update 2-5 detik
+                </p>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="bg-white rounded-2xl p-8 shadow-lg mb-8">
+            <h2 class="text-2xl font-bold text-center mb-8">Fitur-Fitur Auto-Update</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-robot text-3xl text-blue-600"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">Otomatis</h3>
+                    <p class="text-sm text-gray-600">Cek update setiap 60 detik tanpa intervensi user</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-3xl text-green-600"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">Cepat</h3>
+                    <p class="text-sm text-gray-600">Update selesai dalam 2-5 detik, sangat efisien</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-3xl text-purple-600"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">Aman</h3>
+                    <p class="text-sm text-gray-600">Data user tetap aman, tidak ada data yang hilang</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-hand-pointer text-3xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">User Friendly</h3>
+                    <p class="text-sm text-gray-600">UI yang jelas dan mudah dipahami</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Check Demo -->
+        <div class="bg-white rounded-2xl p-8 shadow-lg mb-8">
+            <h2 class="text-2xl font-bold text-center mb-8">Manual Update Check</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="fas fa-mobile-alt text-indigo-600 text-xl"></i>
+                                <h3 class="text-lg font-semibold text-gray-900">Versi Aplikasi</h3>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-4">
+                                Pastikan Anda menggunakan versi terbaru untuk mendapatkan fitur dan perbaikan terbaru.
+                            </p>
+                            <div class="space-y-2 text-sm">
+                                <p class="flex items-center gap-2 text-gray-600">
+                                    <i class="fas fa-code-branch text-gray-400"></i>
+                                    <span>Versi: <strong>2.2.0</strong></span>
+                                </p>
+                                <p class="flex items-center gap-2 text-gray-600">
+                                    <i class="fas fa-clock text-gray-400"></i>
+                                    <span>Update terakhir: <strong>16 November 2025, 10:00</strong></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Cek Update</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-8 text-white shadow-lg">
+                <h3 class="text-2xl font-bold mb-4">
+                    <i class="fas fa-code mr-2"></i>
+                    Technical Details
+                </h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle mt-1"></i>
+                        <span>Service Worker Lifecycle Management</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle mt-1"></i>
+                        <span>Smart Cache Versioning</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle mt-1"></i>
+                        <span>Message Channel Communication</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle mt-1"></i>
+                        <span>skipWaiting() & clients.claim()</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle mt-1"></i>
+                        <span>Periodic Update Checker (60s)</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-8 text-white shadow-lg">
+                <h3 class="text-2xl font-bold mb-4">
+                    <i class="fas fa-users mr-2"></i>
+                    User Benefits
+                </h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-heart mt-1"></i>
+                        <span>Tidak perlu uninstall/reinstall</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-heart mt-1"></i>
+                        <span>Data tetap aman, tidak hilang</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-heart mt-1"></i>
+                        <span>Update dalam hitungan detik</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-heart mt-1"></i>
+                        <span>Notifikasi yang jelas</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-heart mt-1"></i>
+                        <span>Selalu dapat fitur terbaru</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-12 p-6 bg-gray-800 rounded-2xl text-white">
+            <p class="text-lg font-bold mb-2">Bizmark.ID PWA Auto-Update System</p>
+            <p class="text-sm opacity-80">Version 2.2.0 • November 16, 2025</p>
+            <p class="text-xs opacity-60 mt-2">Dokumentasi lengkap tersedia di PWA_AUTO_UPDATE.md</p>
+        </div>
+    </div>
+</body>
+</html>

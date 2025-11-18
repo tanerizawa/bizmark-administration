@@ -324,7 +324,7 @@ echo 'Unread: ' . \App\Models\EmailInbox::where('is_read', false)->count() . PHP
 4. **Multiple Inboxes:** Buat inbox terpisah per department:
    - cs@bizmark.id → Customer Service team
    - sales@bizmark.id → Sales team  
-   - support@bizmark.id → Technical Support
+   - cs@bizmark.id → Technical Support
 
 5. **SLA Tracking:** Track response time per email untuk improve customer service
 

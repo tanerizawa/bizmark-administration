@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#007AFF">
+    <meta name="theme-color" content="#0a66c2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>@yield('title', 'Client Portal') - Bizmark.id</title>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon.svg') }}">
     
     <!-- External CSS - CDN Only -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,6 +19,13 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <style>
+        /* LinkedIn-style font stack */
+        * {
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantarell, 'Droid Sans', Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
         [x-cloak] { display: none !important; }
         
         /* Touch optimization */
@@ -150,20 +161,20 @@
             left: 0;
             right: 0;
             z-index: 50;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
+            background: #0a66c2;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             height: 56px;
             display: flex;
             align-items: center;
             padding-left: calc(1rem + env(safe-area-inset-left));
             padding-right: calc(1rem + env(safe-area-inset-right));
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
         
         html.pwa-mode body,
         html.mobile-ui body {
             padding-top: 56px !important;
-            padding-bottom: 65px !important;
+            padding-bottom: 56px !important;
         }
         
         @media (display-mode: standalone) {
@@ -173,19 +184,19 @@
                 left: 0;
                 right: 0;
                 z-index: 50;
-                background: white;
-                border-bottom: 1px solid #e5e7eb;
+                background: #0a66c2;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 height: 56px;
                 display: flex;
                 align-items: center;
                 padding-left: calc(1rem + env(safe-area-inset-left));
                 padding-right: calc(1rem + env(safe-area-inset-right));
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             }
             
             body {
                 padding-top: 56px !important;
-                padding-bottom: 65px !important;
+                padding-bottom: 56px !important;
             }
         }
         
@@ -194,22 +205,10 @@
             display: none;
         }
         
-        html.pwa-mode .bottom-nav-icon,
-        html.mobile-ui .bottom-nav-icon {
-            font-size: 1.5rem;
-        }
-        
-        html.pwa-mode .center-action-btn,
-        html.mobile-ui .center-action-btn {
-            width: 3.5rem;
-            height: 3.5rem;
-            margin-top: -1.75rem;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-        
         html.pwa-mode .pwa-header *,
         html.mobile-ui .pwa-header * {
             transition: all 0.2s ease;
+            color: white;
         }
         
         html.pwa-mode .pwa-header button,
@@ -221,6 +220,15 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            color: white;
+        }
+        
+        html.pwa-mode .pwa-header button:hover,
+        html.mobile-ui .pwa-header button:hover,
+        html.pwa-mode .pwa-header a:hover,
+        html.mobile-ui .pwa-header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
         }
         
         html.pwa-mode body,
@@ -278,7 +286,7 @@
             
             body {
                 padding-top: 56px;
-                padding-bottom: 65px;
+                padding-bottom: 56px;
             }
         }
     </style>
@@ -335,16 +343,10 @@
         setVh();
         window.addEventListener('resize', setVh);
         window.addEventListener('orientationchange', setVh);
-        
-        // Force refresh service worker for PWA updates
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(let registration of registrations) {
-                    registration.update();
-                }
-            });
-        }
     </script>
+    
+    <!-- PWA Update Handler -->
+    <script src="/js/pwa-update-handler.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-900">
     @php
@@ -402,11 +404,11 @@
                 'route' => route('client.applications.index'),
                 'active' => request()->routeIs('client.applications.*'),
                 'badge' => $submittedCount + $draftCount,
-                'badge_color' => 'bg-indigo-600'
+                'badge_color' => 'bg-[#0a66c2]'
             ],
             [
                 'label' => 'Proyek Aktif',
-                'icon' => 'fa-diagram-project',
+                'icon' => 'fa-briefcase',
                 'route' => route('client.projects.index'),
                 'active' => request()->routeIs('client.projects.*'),
                 'badge' => $activeProjects,
@@ -414,7 +416,7 @@
             ],
             [
                 'label' => 'Dokumen',
-                'icon' => 'fa-folder-open',
+                'icon' => 'fa-folder',
                 'route' => route('client.documents.index'),
                 'active' => request()->routeIs('client.documents.*'),
                 'badge' => $pendingDocuments,
@@ -422,55 +424,321 @@
             ],
             [
                 'label' => 'Profil & Akun',
-                'icon' => 'fa-user-circle',
+                'icon' => 'fa-id-card',
                 'route' => route('client.profile.edit'),
                 'active' => request()->routeIs('client.profile.*'),
             ],
         ];
     @endphp
-    <div x-data="{ sidebarOpen: false }" class="flex min-h-screen overflow-hidden">
-        <!-- PWA-Only Minimal Header (App-like) -->
-        <header class="pwa-only pwa-header">
-            <div class="flex items-center justify-between w-full">
-                <!-- Left: Brand -->
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-                        <i class="fas fa-building text-white text-sm"></i>
+    <div x-data="{ sidebarOpen: false, searchOpen: false, searchQuery: '', profileOpen: false }" class="flex min-h-screen overflow-hidden">
+        
+        <!-- Profile Dropdown Menu (LinkedIn-style - Full Height Slide from Left) - PORTAL LEVEL -->
+        <div 
+            x-show="profileOpen"
+            @click.self="profileOpen = false"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-black/50 z-[100]"
+            style="z-index: 9999;"
+            x-cloak
+        >
+            <div 
+                x-show="profileOpen"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="-translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="-translate-x-full"
+                class="absolute top-0 left-0 bottom-0 w-[70%] max-w-xs bg-white shadow-2xl overflow-y-auto flex flex-col"
+                style="padding-bottom: env(safe-area-inset-bottom); z-index: 10000;"
+            >
+                <!-- Close Button -->
+                <button 
+                    @click="profileOpen = false"
+                    class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors z-10"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <!-- User Info Header -->
+                <div class="p-6 bg-[#0a66c2] text-white flex-shrink-0">
+                    <div class="flex items-start gap-4">
+                        @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
+                        <img src="{{ asset('storage/' . $client->profile_picture) }}" 
+                             alt="{{ $client->name }}" 
+                             class="w-16 h-16 rounded-full object-cover border-2 border-white/20 flex-shrink-0">
+                        @else
+                        <div class="w-16 h-16 rounded-full bg-white/20 text-white flex items-center justify-center text-2xl border-2 border-white/20 flex-shrink-0">
+                            <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }}"></i>
+                        </div>
+                        @endif
+                        <div class="flex-1 min-w-0 pt-1">
+                            <p class="font-semibold text-base text-white truncate">{{ $client->name }}</p>
+                            <p class="text-sm text-white/70 truncate">{{ $client->email }}</p>
+                            <p class="text-xs text-white/60 mt-1">
+                                <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }} mr-1"></i>
+                                {{ $client->client_type === 'company' ? 'Perusahaan' : 'Perorangan' }}
+                            </p>
+                        </div>
                     </div>
-                    <h1 class="text-base font-bold text-gray-800">
-                        Bizmark<span class="text-indigo-600">.id</span>
-                    </h1>
                 </div>
                 
-                <!-- Right: Action Icons -->
-                <div class="flex items-center gap-4">
-                    <!-- Notifications Link -->
-                    <a 
-                        href="{{ route('client.notifications.index') }}"
-                        class="relative text-gray-600 hover:text-indigo-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 rounded-full"
-                        aria-label="Lihat notifikasi"
-                    >
-                        <i class="fas fa-bell text-xl"></i>
-                        @if($notificationCount > 0)
-                        <span class="notification-badge absolute -top-1 -right-1 bg-red-500 text-white rounded-full font-semibold shadow-sm px-1.5">
-                            {{ $notificationCount > 9 ? '9+' : $notificationCount }}
+                <!-- Menu Items - Scrollable -->
+                <div class="flex-1 overflow-y-auto py-2">
+                    <!-- Profile -->
+                    <a href="{{ route('client.profile.edit') }}" 
+                       @click="profileOpen = false"
+                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                        <i class="fas fa-id-card text-gray-600 w-5 text-center"></i>
+                        <span class="text-sm font-medium text-gray-900 flex-1">Profil Saya</span>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </a>
+                    
+                    <!-- Payments -->
+                    <a href="{{ route('client.applications.index', ['status' => 'payment_pending']) }}" 
+                       @click="profileOpen = false"
+                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                        <i class="fas fa-wallet text-gray-600 w-5 text-center"></i>
+                        <span class="text-sm font-medium text-gray-900 flex-1">Pembayaran</span>
+                        @php
+                            $pendingPayments = \App\Models\PermitApplication::where('client_id', $client->id)
+                                ->where('status', 'payment_pending')
+                                ->count();
+                        @endphp
+                        @if($pendingPayments > 0)
+                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full bg-red-600 min-w-[20px] text-center">
+                            {{ $pendingPayments }}
                         </span>
+                        @else
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
                         @endif
                     </a>
                     
-                    <!-- Profile Link -->
-                    <a 
-                        href="{{ route('client.profile.edit') }}"
-                        class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 rounded-full"
-                        aria-label="Buka profil"
-                    >
-                        <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-semibold">
-                            {{ strtoupper(substr($client->name, 0, 1)) }}
-                        </div>
+                    <!-- Quotations -->
+                    <a href="{{ route('client.applications.index', ['status' => 'quoted']) }}" 
+                       @click="profileOpen = false"
+                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                        <i class="fas fa-file-invoice-dollar text-gray-600 w-5 text-center"></i>
+                        <span class="text-sm font-medium text-gray-900 flex-1">Penawaran</span>
+                        @php
+                            $pendingQuotations = \App\Models\PermitApplication::where('client_id', $client->id)
+                                ->where('status', 'quoted')
+                                ->count();
+                        @endphp
+                        @if($pendingQuotations > 0)
+                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full bg-red-600 min-w-[20px] text-center">
+                            {{ $pendingQuotations }}
+                        </span>
+                        @else
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                        @endif
+                    </a>
+                    
+                    <!-- Notifications -->
+                    <a href="{{ route('client.notifications.index') }}" 
+                       @click="profileOpen = false"
+                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                        <i class="fas fa-bell text-gray-600 w-5 text-center"></i>
+                        <span class="text-sm font-medium text-gray-900 flex-1">Notifikasi</span>
+                        @if($notificationCount > 0)
+                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full bg-red-600 min-w-[20px] text-center">
+                            {{ $notificationCount > 9 ? '9+' : $notificationCount }}
+                        </span>
+                        @else
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                        @endif
+                    </a>
+                    
+                    <!-- Divider -->
+                    <div class="my-2 border-t border-gray-200"></div>
+                    
+                    <!-- Support -->
+                    <a href="https://wa.me/6283879602855" 
+                       target="_blank"
+                       @click="profileOpen = false"
+                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                        <i class="fab fa-whatsapp text-gray-600 w-5 text-center"></i>
+                        <span class="text-sm font-medium text-gray-900 flex-1">Bantuan</span>
+                        <i class="fas fa-external-link-alt text-gray-400 text-xs"></i>
                     </a>
                 </div>
+                
+                <!-- Footer - Logout (Sticky) -->
+                <div class="flex-shrink-0 border-t border-gray-200 bg-white">
+                    <form method="POST" action="{{ route('client.logout') }}">
+                        @csrf
+                        <button type="submit" 
+                                class="w-full flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                            <i class="fas fa-sign-out-alt text-gray-600 w-5 text-center"></i>
+                            <span class="text-sm font-medium text-gray-900 flex-1 text-left">Logout</span>
+                            <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PWA-Only Minimal Header (LinkedIn-style - Profile left, Search center, Notif right) -->
+        <header id="pwa-header" class="pwa-only pwa-header transition-transform duration-300">
+            <div class="flex items-center justify-between w-full gap-2">
+                <!-- Left: Profile Photo with Dropdown -->
+                <div class="relative flex-shrink-0">
+                    <button 
+                        @click="profileOpen = !profileOpen"
+                        class="focus:outline-none"
+                        aria-label="Menu Profil"
+                        aria-expanded="false"
+                        :aria-expanded="profileOpen"
+                    >
+                        @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
+                        <img src="{{ asset('storage/' . $client->profile_picture) }}" 
+                             alt="{{ $client->name }}" 
+                             class="w-8 h-8 rounded-full object-cover border-2 transition-all"
+                             :class="profileOpen ? 'border-white' : 'border-white/70'">
+                        @else
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all"
+                             :class="profileOpen ? 'border-white bg-white/90 text-[#0a66c2]' : 'border-white/70 bg-white/20 text-white'">
+                            <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }} text-sm"></i>
+                        </div>
+                        @endif
+                    </button>
+                </div>
+                
+                <!-- Center: Search Bar -->
+                <button 
+                    @click="searchOpen = true"
+                    class="flex-1 flex items-center gap-2 bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1.5 text-left transition-colors backdrop-blur-sm"
+                >
+                    <i class="fas fa-search text-white/80 text-sm"></i>
+                    <span class="text-sm text-white/90 truncate">Cari...</span>
+                </button>
+                
+                <!-- Right: Notifications (Quick Access) -->
+                <a 
+                    href="{{ route('client.notifications.index') }}"
+                    class="relative text-white hover:text-white/80 transition-colors p-1.5 rounded-lg hover:bg-white/20 flex-shrink-0"
+                    aria-label="Notifikasi"
+                >
+                    <i class="fas fa-bell text-lg"></i>
+                    @if($notificationCount > 0)
+                    <span class="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold shadow-lg">
+                        {{ $notificationCount > 9 ? '9' : $notificationCount }}
+                    </span>
+                    @endif
+                </a>
             </div>
         </header>
+        
+        <!-- Search Overlay (Full Screen) -->
+        <div 
+            x-show="searchOpen" 
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-black/50 z-[60] lg:hidden"
+            @click="searchOpen = false"
+            x-cloak
+        ></div>
+        
+        <div 
+            x-show="searchOpen"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 translate-y-4"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 translate-y-4"
+            class="fixed inset-x-0 top-0 bg-white z-[70] lg:hidden shadow-lg"
+            @click.away="searchOpen = false"
+            x-cloak
+        >
+            <!-- Search Header -->
+            <div class="flex items-center gap-3 p-4 border-b border-gray-200">
+                <button @click="searchOpen = false" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </button>
+                <div class="flex-1 relative">
+                    <input 
+                        type="search"
+                        x-model="searchQuery"
+                        placeholder="Cari proyek, dokumen, izin..."
+                        class="w-full bg-gray-100 rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
+                        autofocus
+                        @keyup.escape="searchOpen = false"
+                    >
+                    <button 
+                        x-show="searchQuery.length > 0"
+                        @click="searchQuery = ''"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Results -->
+            <div class="overflow-y-auto" style="max-height: calc(100vh - 120px);">
+                <!-- Recent Searches -->
+                <div x-show="searchQuery.length === 0" class="p-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Pencarian Terkini</p>
+                    <div class="space-y-2">
+                        <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                            <i class="fas fa-clock-rotate-left text-gray-400 text-sm"></i>
+                            <span class="text-sm text-gray-700">Proyek Konstruksi</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                            <i class="fas fa-clock-rotate-left text-gray-400 text-sm"></i>
+                            <span class="text-sm text-gray-700">IMB Jakarta</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Search Results (when typing) -->
+                <div x-show="searchQuery.length > 0" class="divide-y divide-gray-100">
+                    <!-- Projects -->
+                    <div class="p-4">
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Proyek</p>
+                        <a href="#" class="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50">
+                            <div class="w-10 h-10 rounded-lg bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-diagram-project"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">Proyek Konstruksi Gedung</p>
+                                <p class="text-xs text-gray-500">Dalam Proses • 5 dokumen</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Documents -->
+                    <div class="p-4">
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Dokumen</p>
+                        <a href="#" class="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50">
+                            <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">KTP Direktur.pdf</p>
+                                <p class="text-xs text-gray-500">Diupload 2 hari lalu</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- No Results -->
+                    <div x-show="false" class="p-8 text-center">
+                        <i class="fas fa-search text-gray-300 text-4xl mb-3"></i>
+                        <p class="text-sm text-gray-500">Tidak ada hasil untuk "<span x-text="searchQuery"></span>"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <div 
             class="fixed inset-0 bg-black/40 z-40 lg:hidden"
@@ -478,7 +746,8 @@
             x-transition.opacity
             @click="sidebarOpen = false"
             x-cloak
-        ></div>
+        >
+        </div>
         
         <!-- Sidebar (Browser Mode) - Hidden in PWA standalone -->
         <aside 
@@ -486,7 +755,16 @@
             class="browser-only fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:shadow-none"
         >
             <div class="flex items-center justify-between h-16 px-6 border-b border-gray-100">
-                <h1 class="text-xl font-bold text-gray-800">Bizmark<span class="text-indigo-600">.id</span></h1>
+                <!-- Logo BizMark Official -->
+                <a href="{{ route('client.dashboard') }}" class="flex items-center gap-2 group">
+                    <img src="{{ asset('images/logo-bizmark.svg') }}" 
+                         alt="BizMark Indonesia" 
+                         class="h-10 w-10 transition-transform group-hover:scale-105">
+                    <div class="flex flex-col">
+                        <span class="text-lg font-bold text-gray-800 leading-tight">BizMark</span>
+                        <span class="text-[9px] text-gray-500 tracking-wider leading-tight">INDONESIA</span>
+                    </div>
+                </a>
                 <button @click="sidebarOpen = false" class="lg:hidden text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times text-xl"></i>
                 </button>
@@ -494,12 +772,21 @@
 
             <div class="px-6 py-5 border-b border-gray-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-lg font-semibold">
-                        {{ strtoupper(substr($client->name, 0, 1)) }}
+                    @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
+                    <img src="{{ asset('storage/' . $client->profile_picture) }}" 
+                         alt="{{ $client->name }}" 
+                         class="w-12 h-12 rounded-2xl object-cover border-2 border-[#0a66c2]/20">
+                    @else
+                    <div class="w-12 h-12 rounded-2xl bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center text-lg">
+                        <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }}"></i>
                     </div>
+                    @endif
                     <div class="min-w-0">
                         <p class="font-semibold text-gray-900 truncate">{{ $client->name }}</p>
-                        <p class="text-sm text-gray-500 truncate">{{ $client->email }}</p>
+                        <p class="text-sm text-gray-500 truncate flex items-center gap-1">
+                            <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }} text-xs"></i>
+                            {{ $client->client_type === 'company' ? 'Perusahaan' : 'Perorangan' }}
+                        </p>
                     </div>
                 </div>
                 <p class="mt-4 text-xs text-gray-500 leading-relaxed">
@@ -511,7 +798,7 @@
                 @foreach($navItems as $item)
                     <a 
                         href="{{ $item['route'] }}" 
-                        class="flex items-center px-4 py-3 rounded-lg text-sm font-medium transition {{ $item['active'] ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'text-gray-600 hover:bg-gray-50' }}"
+                        class="flex items-center px-4 py-3 rounded-lg text-sm font-medium transition {{ $item['active'] ? 'bg-[#0a66c2]/10 text-[#0a66c2] border border-[#0a66c2]/20' : 'text-gray-600 hover:bg-gray-50' }}"
                     >
                         <i class="fas {{ $item['icon'] }} w-5"></i>
                         <span class="ml-3 flex-1">{{ $item['label'] }}</span>
@@ -527,8 +814,8 @@
             <div class="p-4 border-t border-gray-100 space-y-3">
                 <div class="text-xs text-gray-500">
                     <p class="font-semibold text-gray-600 mb-1">Butuh Bantuan?</p>
-                    <a href="mailto:support@bizmark.id" class="inline-flex items-center gap-2 text-indigo-600 font-semibold">
-                        <i class="fas fa-headset"></i> support@bizmark.id
+                    <a href="mailto:cs@bizmark.id" class="inline-flex items-center gap-2 text-[#0a66c2] font-semibold hover:text-[#004182]">
+                        <i class="fas fa-headset"></i> cs@bizmark.id
                     </a>
                 </div>
                 <form method="POST" action="{{ route('client.logout') }}">
@@ -548,7 +835,7 @@
             <header class="browser-only desktop-header bg-white shadow-sm z-10 sticky top-0">
                 <div class="flex items-center justify-between h-20 px-4 sm:px-6">
                     <!-- Hamburger Menu (Mobile Browser Only) -->
-                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-600 hover:text-indigo-600 transition-colors">
+                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-600 hover:text-[#0a66c2] transition-colors">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                     
@@ -557,7 +844,7 @@
                             <h2 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight">@yield('page-title', 'Portal Klien')</h2>
                             <p class="text-sm text-gray-500 hidden sm:block">@yield('page-subtitle', 'Selamat datang kembali, ' . $client->name . '!')</p>
                             <div class="hidden md:flex items-center gap-2">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-indigo-50 text-indigo-700">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-[#0a66c2]/10 text-[#0a66c2]">
                                     Draft: {{ $draftCount }}
                                 </span>
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-emerald-50 text-emerald-700">
@@ -580,7 +867,7 @@
                                     aria-haspopup="true"
                                     :aria-expanded="open"
                                     title="Lihat notifikasi"
-                                    class="relative text-gray-600 hover:text-indigo-600 focus:outline-none"
+                                    class="relative text-gray-600 hover:text-[#0a66c2] focus:outline-none"
                                     @click="open = !open"
                                 >
                                     <i class="fas fa-bell text-xl"></i>
@@ -593,13 +880,22 @@
                                 
                                 @include('client.components.notification-dropdown')
                             </div>
-                            <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
-                                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-semibold">
-                                    {{ strtoupper(substr($client->name, 0, 1)) }}
+                        <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
+                                @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
+                                <img src="{{ asset('storage/' . $client->profile_picture) }}" 
+                                     alt="{{ $client->name }}" 
+                                     class="w-8 h-8 rounded-full object-cover">
+                                @else
+                                <div class="w-8 h-8 rounded-full bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center">
+                                    <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }}"></i>
                                 </div>
+                                @endif
                                 <div class="hidden sm:block text-xs leading-tight">
                                     <p class="font-semibold text-gray-700">{{ \Illuminate\Support\Str::limit($client->company_name ?? $client->name, 18) }}</p>
-                                    <p class="text-gray-400">Client Premium</p>
+                                    <p class="text-gray-400">
+                                        <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }} text-[10px] mr-1"></i>
+                                        {{ $client->client_type === 'company' ? 'Perusahaan' : 'Perorangan' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -607,23 +903,23 @@
                 </div>
             </header>
 
-            <!-- Content -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6">
+            <!-- Content - LinkedIn Style Full Width -->
+            <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
                 
                 @if (session('success'))
-                    <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded animate-fade-in">
+                    <div class="mx-4 sm:mx-6 mt-4 p-4 bg-green-100 dark:bg-green-900/30 border-l-4 border-green-500 text-green-700 dark:text-green-400 rounded animate-fade-in">
                         <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded animate-fade-in">
+                    <div class="mx-4 sm:mx-6 mt-4 p-4 bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-400 rounded animate-fade-in">
                         <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
                     </div>
                 @endif
 
                 @if ($errors->any())
-                    <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded animate-fade-in">
+                    <div class="mx-4 sm:mx-6 mt-4 p-4 bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-400 rounded animate-fade-in">
                         <p class="font-semibold mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>Terjadi Kesalahan:</p>
                         <ul class="list-disc list-inside">
                             @foreach ($errors->all() as $error)
@@ -637,57 +933,51 @@
                 
             </main>
             
-            <!-- Mobile Bottom Navigation -->
-            <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-bottom" aria-label="Navigasi utama mobile">
-                <div class="grid grid-cols-5 h-16">
-                    <!-- Dashboard -->
+            <!-- Mobile Bottom Navigation (LinkedIn/Instagram-style - 5 items with center action) -->
+            <nav id="bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-bottom transition-transform duration-300" aria-label="Navigasi utama">
+                <div class="grid grid-cols-5 h-14">
+                    <!-- Home -->
                     <a href="{{ route('client.dashboard') }}" 
-                       class="flex flex-col items-center justify-center gap-1 {{ request()->routeIs('client.dashboard') ? 'text-indigo-600' : 'text-gray-500' }} transition-colors">
-                        <i class="fas fa-home text-xl bottom-nav-icon"></i>
-                        <span class="text-[10px] font-medium bottom-nav-text">Home</span>
+                       class="flex flex-col items-center justify-center gap-0.5 {{ request()->routeIs('client.dashboard') ? 'text-[#0a66c2]' : 'text-gray-600' }} hover:text-[#0a66c2] transition-colors">
+                        <i class="fas fa-house text-xl"></i>
+                        <span class="text-[9px] font-medium">Home</span>
                     </a>
                     
-                    <!-- Proyek Aktif -->
+                    <!-- Layanan/Katalog -->
+                    <a href="{{ route('client.services.index') }}" 
+                       class="flex flex-col items-center justify-center gap-0.5 {{ request()->routeIs('client.services.*') ? 'text-[#0a66c2]' : 'text-gray-600' }} hover:text-[#0a66c2] transition-colors">
+                        <i class="fas fa-layer-group text-xl"></i>
+                        <span class="text-[9px] font-medium">Layanan</span>
+                    </a>
+                    
+                    <!-- Ajukan (Center - Elevated FAB style) -->
+                    <div class="flex items-center justify-center">
+                        <a href="{{ route('client.applications.create') }}" 
+                           class="flex items-center justify-center w-12 h-12 -mt-5 rounded-full bg-[#0a66c2] hover:bg-[#004182] text-white shadow-lg hover:shadow-xl transition-all active:scale-95">
+                            <i class="fas fa-plus text-xl"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Proyek -->
                     <a href="{{ route('client.projects.index') }}" 
-                       class="flex flex-col items-center justify-center gap-1 relative {{ request()->routeIs('client.projects.*') ? 'text-indigo-600' : 'text-gray-500' }} transition-colors">
-                        <i class="fas fa-diagram-project text-xl bottom-nav-icon"></i>
-                        <span class="text-[10px] font-medium bottom-nav-text">Proyek</span>
+                       class="flex flex-col items-center justify-center gap-0.5 relative {{ request()->routeIs('client.projects.*') ? 'text-[#0a66c2]' : 'text-gray-600' }} hover:text-[#0a66c2] transition-colors">
+                        <i class="fas fa-briefcase text-xl"></i>
+                        <span class="text-[9px] font-medium">Proyek</span>
                         @if($activeProjects > 0)
-                        <span class="absolute top-1 right-2 inline-flex min-w-[1.15rem] h-5 bg-green-500 text-white text-[10px] rounded-full items-center justify-center font-semibold px-1.5 leading-none shadow-sm">
-                            {{ $activeProjects > 9 ? '9+' : $activeProjects }}
-                        </span>
-                        @endif
-                    </a>
-                    
-                    <!-- Ajukan (Center - Elevated) -->
-                    <a href="{{ route('client.applications.create') }}" 
-                       class="flex flex-col items-center justify-center relative -top-4">
-                        <div class="w-14 h-14 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow center-action-btn">
-                            <i class="fas fa-plus text-white text-2xl"></i>
-                        </div>
-                        <span class="text-[10px] font-medium text-gray-500 mt-1">Ajukan</span>
-                    </a>
-                    
-                    <!-- Permohonan/Izin -->
-                    <a href="{{ route('client.applications.index') }}" 
-                       class="flex flex-col items-center justify-center gap-1 relative {{ request()->routeIs('client.applications.*') ? 'text-indigo-600' : 'text-gray-500' }} transition-colors">
-                        <i class="fas fa-file-signature text-xl bottom-nav-icon"></i>
-                        <span class="text-[10px] font-medium bottom-nav-text">Izin</span>
-                        @if($submittedCount + $draftCount > 0)
-                        <span class="absolute top-1 right-2 inline-flex min-w-[1.15rem] h-5 bg-indigo-500 text-white text-[10px] rounded-full items-center justify-center font-semibold px-1.5 leading-none shadow-sm">
-                            {{ $submittedCount + $draftCount > 9 ? '9+' : $submittedCount + $draftCount }}
+                        <span class="absolute top-0.5 right-[28%] w-4 h-4 bg-green-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold">
+                            {{ $activeProjects > 9 ? '9' : $activeProjects }}
                         </span>
                         @endif
                     </a>
                     
                     <!-- Dokumen -->
                     <a href="{{ route('client.documents.index') }}" 
-                       class="flex flex-col items-center justify-center gap-1 relative {{ request()->routeIs('client.documents.*') ? 'text-indigo-600' : 'text-gray-500' }} transition-colors">
-                        <i class="fas fa-folder-open text-xl bottom-nav-icon"></i>
-                        <span class="text-[10px] font-medium bottom-nav-text">Dokumen</span>
+                       class="flex flex-col items-center justify-center gap-0.5 relative {{ request()->routeIs('client.documents.*') ? 'text-[#0a66c2]' : 'text-gray-600' }} hover:text-[#0a66c2] transition-colors">
+                        <i class="fas fa-folder text-xl"></i>
+                        <span class="text-[9px] font-medium">Dokumen</span>
                         @if($pendingDocuments > 0)
-                        <span class="absolute top-1 right-2 inline-flex min-w-[1.15rem] h-5 bg-amber-500 text-white text-[10px] rounded-full items-center justify-center font-semibold px-1.5 leading-none shadow-sm">
-                            {{ $pendingDocuments > 9 ? '9+' : $pendingDocuments }}
+                        <span class="absolute top-0.5 right-[28%] w-4 h-4 bg-amber-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold">
+                            {{ $pendingDocuments > 9 ? '9' : $pendingDocuments }}
                         </span>
                         @endif
                     </a>
@@ -823,7 +1113,270 @@
         }
     </script>
     
+    <!-- PWA Install Prompt Handler -->
     <script>
+        (function() {
+            let deferredPrompt;
+            let installPromptShown = localStorage.getItem('pwa-install-prompt-shown');
+            let installDismissed = localStorage.getItem('pwa-install-dismissed');
+            
+            console.log('[PWA Install] Initializing...');
+            console.log('[PWA Install] Is PWA?', isPWA());
+            console.log('[PWA Install] Prompt shown before?', installPromptShown);
+            console.log('[PWA Install] Dismissed?', installDismissed);
+            
+            // Capture the beforeinstallprompt event
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('[PWA Install] beforeinstallprompt event fired');
+                
+                // Prevent the mini-infobar from appearing on mobile
+                e.preventDefault();
+                
+                // Stash the event so it can be triggered later
+                deferredPrompt = e;
+                
+                // Check if app is not installed and prompt hasn't been dismissed
+                if (!isPWA() && !installDismissed) {
+                    // Show install prompt after a short delay (better UX)
+                    setTimeout(() => {
+                        showInstallPrompt();
+                    }, 3000); // 3 seconds delay
+                }
+            });
+            
+            // Show custom install prompt
+            function showInstallPrompt() {
+                if (!deferredPrompt) {
+                    console.log('[PWA Install] No deferred prompt available');
+                    return;
+                }
+                
+                console.log('[PWA Install] Showing install prompt');
+                
+                // Create custom install banner
+                const banner = document.createElement('div');
+                banner.id = 'pwa-install-banner';
+                banner.className = 'fixed bottom-20 left-4 right-4 bg-[#0a66c2] text-white rounded-lg shadow-2xl p-4 z-50 animate-slide-up';
+                banner.style.maxWidth = '500px';
+                banner.style.margin = '0 auto';
+                
+                banner.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0 w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                            <i class="fas fa-download text-[#0a66c2] text-xl"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-white mb-1">Install Aplikasi Bizmark</h4>
+                            <p class="text-sm text-blue-100 mb-3">
+                                Akses lebih cepat dan notifikasi real-time langsung di perangkat Anda!
+                            </p>
+                            <div class="flex gap-2">
+                                <button id="pwa-install-btn" class="px-4 py-2 bg-white text-[#0a66c2] font-semibold rounded-lg hover:bg-gray-50 transition text-sm">
+                                    <i class="fas fa-download mr-1"></i>Install Sekarang
+                                </button>
+                                <button id="pwa-dismiss-btn" class="px-4 py-2 bg-[#004182] text-white font-medium rounded-lg hover:bg-[#003366] transition text-sm">
+                                    Nanti
+                                </button>
+                            </div>
+                        </div>
+                        <button id="pwa-close-btn" class="flex-shrink-0 text-white hover:text-blue-100 transition">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(banner);
+                
+                // Add animation styles if not exist
+                if (!document.getElementById('pwa-install-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'pwa-install-styles';
+                    style.textContent = `
+                        @keyframes slide-up {
+                            from {
+                                transform: translateY(100px);
+                                opacity: 0;
+                            }
+                            to {
+                                transform: translateY(0);
+                                opacity: 1;
+                            }
+                        }
+                        .animate-slide-up {
+                            animation: slide-up 0.3s ease-out;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                // Handle install button click
+                document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+                    console.log('[PWA Install] User clicked install');
+                    
+                    if (!deferredPrompt) {
+                        console.log('[PWA Install] No deferred prompt available');
+                        return;
+                    }
+                    
+                    // Show the install prompt
+                    deferredPrompt.prompt();
+                    
+                    // Wait for the user to respond to the prompt
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    console.log('[PWA Install] User choice:', outcome);
+                    
+                    if (outcome === 'accepted') {
+                        console.log('[PWA Install] User accepted the install prompt');
+                        localStorage.setItem('pwa-installed', 'true');
+                    } else {
+                        console.log('[PWA Install] User dismissed the install prompt');
+                        localStorage.setItem('pwa-install-dismissed', 'true');
+                    }
+                    
+                    // Mark that prompt was shown
+                    localStorage.setItem('pwa-install-prompt-shown', 'true');
+                    
+                    // Clear the deferred prompt
+                    deferredPrompt = null;
+                    
+                    // Remove banner
+                    banner.remove();
+                });
+                
+                // Handle dismiss button
+                document.getElementById('pwa-dismiss-btn').addEventListener('click', () => {
+                    console.log('[PWA Install] User clicked dismiss (later)');
+                    localStorage.setItem('pwa-install-prompt-shown', 'true');
+                    banner.remove();
+                    
+                    // Show again after 1 day
+                    setTimeout(() => {
+                        localStorage.removeItem('pwa-install-prompt-shown');
+                    }, 24 * 60 * 60 * 1000);
+                });
+                
+                // Handle close button
+                document.getElementById('pwa-close-btn').addEventListener('click', () => {
+                    console.log('[PWA Install] User closed banner');
+                    localStorage.setItem('pwa-install-dismissed', 'true');
+                    localStorage.setItem('pwa-install-prompt-shown', 'true');
+                    banner.remove();
+                });
+            }
+            
+            // Detect when app is installed
+            window.addEventListener('appinstalled', (e) => {
+                console.log('[PWA Install] App was installed successfully');
+                localStorage.setItem('pwa-installed', 'true');
+                localStorage.removeItem('pwa-install-dismissed');
+                
+                // Remove banner if still visible
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner) {
+                    banner.remove();
+                }
+                
+                // Show success message
+                if (typeof window.showToast === 'function') {
+                    window.showToast('✅ Aplikasi berhasil diinstall!', 'success');
+                }
+            });
+            
+            // Manual trigger function (can be called from UI button)
+            window.triggerPWAInstall = function() {
+                console.log('[PWA Install] Manual trigger called');
+                
+                if (isPWA()) {
+                    alert('Aplikasi sudah terinstall!');
+                    return;
+                }
+                
+                if (deferredPrompt) {
+                    showInstallPrompt();
+                } else {
+                    console.log('[PWA Install] No install prompt available');
+                    alert('Install prompt tidak tersedia. Pastikan Anda menggunakan browser yang mendukung PWA (Chrome/Edge) dan belum menginstall aplikasi.');
+                }
+            };
+            
+            // Expose install status checker
+            window.checkPWAInstallStatus = function() {
+                const isInstalled = isPWA();
+                const canInstall = !!deferredPrompt;
+                
+                console.log('[PWA Install] Status check:');
+                console.log('- Is installed:', isInstalled);
+                console.log('- Can install:', canInstall);
+                console.log('- Has deferred prompt:', !!deferredPrompt);
+                
+                return {
+                    isInstalled,
+                    canInstall,
+                    hasPrompt: !!deferredPrompt
+                };
+            };
+            
+            // Debug: Force show prompt (untuk testing)
+            window.forceShowPWAInstall = function() {
+                console.log('[PWA Install] Force showing install prompt');
+                localStorage.removeItem('pwa-install-prompt-shown');
+                localStorage.removeItem('pwa-install-dismissed');
+                
+                if (deferredPrompt) {
+                    showInstallPrompt();
+                } else {
+                    console.log('[PWA Install] No deferred prompt available yet. Reload page and try again.');
+                }
+            };
+            
+        })();
+    </script>
+    
+    <script>
+        // Auto-hide header and bottom nav on scroll (LinkedIn-style) - INSTANT RESPONSE
+        (function() {
+            if (window.innerWidth >= 1024) return; // Only for mobile
+            
+            const header = document.getElementById('pwa-header');
+            const bottomNav = document.getElementById('bottom-nav');
+            
+            if (!header || !bottomNav) return;
+            
+            let lastScrollTop = 0;
+            let ticking = false;
+            
+            function updateNavigation(currentScroll) {
+                if (currentScroll > lastScrollTop && currentScroll > 50) {
+                    // Scrolling DOWN - hide header and bottom nav
+                    header.style.transform = 'translateY(-100%)';
+                    bottomNav.style.transform = 'translateY(100%)';
+                } else if (currentScroll < lastScrollTop) {
+                    // Scrolling UP - show header and bottom nav
+                    header.style.transform = 'translateY(0)';
+                    bottomNav.style.transform = 'translateY(0)';
+                }
+                
+                lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+                ticking = false;
+            }
+            
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateNavigation(currentScroll);
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+            
+            // Always show on page load
+            header.style.transform = 'translateY(0)';
+            bottomNav.style.transform = 'translateY(0)';
+        })();
+        
         // Universal lazy loading for images
         if ('IntersectionObserver' in window) {
             const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -863,7 +1416,7 @@
         /* Adjust main content padding for bottom nav on mobile */
         @media (max-width: 1023px) {
             main {
-                padding-bottom: calc(4rem + env(safe-area-inset-bottom)) !important;
+                padding-bottom: calc(3.5rem + env(safe-area-inset-bottom)) !important;
             }
         }
         

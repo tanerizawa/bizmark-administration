@@ -18,7 +18,7 @@ All migrations successfully created and run:
    - Auto-reply configuration
    - Statistics tracking (total_sent, total_received)
    - Soft deletes support
-   - Currently has: cs@, sales@, support@, info@bizmark.id
+   - Currently has: cs@, sales@, support@, cs@bizmark.id
 
 3. **email_assignments table** - User-Email relationships ✅
    - Links users to email accounts
@@ -102,8 +102,8 @@ All migrations successfully created and run:
 Created 4 default email accounts:
 - ✅ cs@bizmark.id (Customer Service - shared)
 - ✅ sales@bizmark.id (Sales Team - shared)
-- ✅ support@bizmark.id (Technical Support - shared)
-- ✅ info@bizmark.id (General Information - shared with auto-reply)
+- ✅ cs@bizmark.id (Technical Support - shared)
+- ✅ cs@bizmark.id (General Information - shared with auto-reply)
 
 All assigned to hadez@bizmark.id as primary handler with full permissions.
 
@@ -118,10 +118,10 @@ Total Assignments: 4
 📧 sales@bizmark.id (shared) - Department: sales
    └─ hadez@bizmark.id (primary) - Send:Y Receive:Y
 
-📧 support@bizmark.id (shared) - Department: support
+📧 cs@bizmark.id (shared) - Department: support
    └─ hadez@bizmark.id (primary) - Send:Y Receive:Y
 
-📧 info@bizmark.id (shared) - Department: general
+📧 cs@bizmark.id (shared) - Department: general
    └─ hadez@bizmark.id (primary) - Send:Y Receive:Y
 ```
 
@@ -372,7 +372,7 @@ public function send(Request $request)
    - Admin creates user: mike@bizmark.id
    - Admin goes to /admin/users/3/emails
    - Clicks "Assign Email"
-   - Selects: support@bizmark.id
+   - Selects: cs@bizmark.id
    - Role: Primary
    - Permissions: Send ✓, Receive ✓, Delete ✗
    - Mike now sees support@ emails in his inbox
@@ -415,7 +415,7 @@ public function send(Request $request)
 Emails automatically routed based on to_email department:
 - cs@bizmark.id → department = 'cs'
 - sales@bizmark.id → department = 'sales'
-- support@bizmark.id → department = 'support'
+- cs@bizmark.id → department = 'support'
 
 Users filter by department or view all their assigned emails.
 

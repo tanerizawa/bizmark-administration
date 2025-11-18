@@ -3,34 +3,43 @@
 @section('title', 'Ajukan Permohonan - ' . $permitType->name)
 
 @section('content')
-<div class="max-w-4xl mx-auto">
-    <!-- Breadcrumb -->
-    <nav class="mb-6 text-sm">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Mobile: Back Button Only -->
+    <div class="sm:hidden mb-4">
+        <a href="{{ route('client.services.show', $permitType->code) }}" 
+           class="inline-flex items-center text-[#0a66c2] hover:text-[#004182] font-medium text-sm">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Kembali
+        </a>
+    </div>
+
+    <!-- Desktop: Breadcrumb -->
+    <nav class="hidden sm:block mb-6 text-sm">
         <ol class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-            <li><a href="{{ route('client.services.index') }}" class="hover:text-blue-600">Katalog Layanan</a></li>
+            <li><a href="{{ route('client.services.index') }}" class="hover:text-[#0a66c2]">Katalog Layanan</a></li>
             <li><i class="fas fa-chevron-right text-xs"></i></li>
-            <li><a href="{{ route('client.services.show', $permitType->code) }}" class="hover:text-blue-600">{{ $permitType->name }}</a></li>
+            <li><a href="{{ route('client.services.show', $permitType->code) }}" class="hover:text-[#0a66c2] max-w-sm truncate inline-block">{{ $permitType->name }}</a></li>
             <li><i class="fas fa-chevron-right text-xs"></i></li>
             <li class="text-gray-900 dark:text-white font-medium">Ajukan Permohonan</li>
         </ol>
     </nav>
 
     <!-- Header -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-        <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <i class="fas fa-file-alt text-blue-600 dark:text-blue-400 text-xl"></i>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+        <div class="flex flex-col sm:flex-row items-start gap-4">
+            <div class="flex-shrink-0 w-12 h-12 bg-[#0a66c2]/10 dark:bg-[#0a66c2]/20 rounded-xl flex items-center justify-center">
+                <i class="fas fa-file-alt text-[#0a66c2] text-xl"></i>
             </div>
-            <div class="flex-1">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ $permitType->name }}</h1>
-                <p class="text-gray-600 dark:text-gray-400">{{ $permitType->description }}</p>
-                <div class="mt-3 flex flex-wrap gap-4 text-sm">
-                    <span class="text-gray-600 dark:text-gray-400">
-                        <i class="fas fa-money-bill-wave mr-1"></i>
-                        Estimasi: Rp {{ number_format($permitType->estimated_cost_min, 0, ',', '.') }} - Rp {{ number_format($permitType->estimated_cost_max, 0, ',', '.') }}
+            <div class="flex-1 min-w-0">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ $permitType->name }}</h1>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ $permitType->description }}</p>
+                <div class="mt-3 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm">
+                    <span class="text-gray-600 dark:text-gray-400 flex items-center">
+                        <i class="fas fa-money-bill-wave mr-1 flex-shrink-0"></i>
+                        <span class="truncate">Estimasi: Rp {{ number_format($permitType->estimated_cost_min, 0, ',', '.') }} - Rp {{ number_format($permitType->estimated_cost_max, 0, ',', '.') }}</span>
                     </span>
-                    <span class="text-gray-600 dark:text-gray-400">
-                        <i class="fas fa-clock mr-1"></i>
+                    <span class="text-gray-600 dark:text-gray-400 flex items-center">
+                        <i class="fas fa-clock mr-1 flex-shrink-0"></i>
                         Proses: {{ $permitType->avg_processing_days }} hari kerja
                     </span>
                 </div>
@@ -39,18 +48,18 @@
     </div>
 
     <!-- Consultation Info Box -->
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l-4 border-blue-500 rounded-r-lg p-4 mb-6">
-        <div class="flex items-start gap-3">
+    <div class="bg-[#0a66c2]/5 dark:bg-[#0a66c2]/10 border-l-4 border-[#0a66c2] rounded-r-xl p-4 mb-6">
+        <div class="flex flex-col sm:flex-row items-start gap-3">
             <div class="flex-shrink-0">
-                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center">
-                    <i class="fas fa-comments text-blue-600 dark:text-blue-300"></i>
+                <div class="w-10 h-10 bg-[#0a66c2]/10 dark:bg-[#0a66c2]/30 rounded-full flex items-center justify-center">
+                    <i class="fas fa-comments text-[#0a66c2]"></i>
                 </div>
             </div>
-            <div class="flex-1">
-                <h4 class="font-bold text-blue-900 dark:text-blue-100 mb-1 text-sm">
-                    💬 Butuh Konsultasi Sebelum Mengajukan?
+            <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-gray-900 dark:text-white mb-1 text-sm">
+                    Butuh Konsultasi Sebelum Mengajukan?
                 </h4>
-                <p class="text-sm text-blue-700 dark:text-blue-300">
+                <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                     Tulis pertanyaan Anda di bagian <strong>"Catatan Tambahan"</strong> di bawah. 
                     Simpan sebagai draft, dan tim konsultan kami akan merespons dalam <strong>1x24 jam</strong> 
                     via sistem komunikasi yang tersedia di halaman detail aplikasi.
@@ -65,10 +74,10 @@
         <input type="hidden" name="permit_type_id" value="{{ $permitType->id }}">
 
         <!-- Company Information -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                <i class="fas fa-building text-blue-600 mr-2"></i>
-                Informasi Perusahaan
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+            <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                <i class="fas fa-building text-[#0a66c2] mr-2 flex-shrink-0"></i>
+                <span>Informasi Perusahaan</span>
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -81,7 +90,8 @@
                            name="form_data[company_name]" 
                            value="{{ old('form_data.company_name', $draft->form_data['company_name'] ?? auth('client')->user()->company_name) }}"
                            required
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           autocomplete="organization"
+                           class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('form_data.company_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -95,7 +105,8 @@
                     <textarea name="form_data[company_address]" 
                               rows="3"
                               required
-                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">{{ old('form_data.company_address', $draft->form_data['company_address'] ?? auth('client')->user()->address) }}</textarea>
+                              autocomplete="street-address"
+                              class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">{{ old('form_data.company_address', $draft->form_data['company_address'] ?? auth('client')->user()->address) }}</textarea>
                     @error('form_data.company_address')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -111,7 +122,9 @@
                            value="{{ old('form_data.company_npwp', $draft->form_data['company_npwp'] ?? '') }}"
                            placeholder="00.000.000.0-000.000"
                            required
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           inputmode="numeric"
+                           autocomplete="off"
+                           class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('form_data.company_npwp')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -129,7 +142,7 @@
                            inputmode="tel"
                            autocomplete="tel"
                            pattern="[0-9+\s\-\(\)]+"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('form_data.company_phone')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -146,34 +159,34 @@
                                id="kbli_search"
                                placeholder="Ketik untuk mencari KBLI (min. 2 karakter)..."
                                autocomplete="off"
-                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                               class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                         
                         <!-- Hidden inputs for actual data -->
                         <input type="hidden" name="kbli_code" id="kbli_code" value="{{ old('kbli_code', $draft->kbli_code ?? '') }}">
                         <input type="hidden" name="kbli_description" id="kbli_description" value="{{ old('kbli_description', $draft->kbli_description ?? '') }}">
                         
                         <!-- Autocomplete dropdown -->
-                        <div id="kbli_dropdown" class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        <div id="kbli_dropdown" class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                             <!-- Results will be populated here -->
                         </div>
 
                         <!-- Loading indicator -->
                         <div id="kbli_loading" class="hidden absolute right-3 top-3">
-                            <i class="fas fa-spinner fa-spin text-blue-600"></i>
+                            <i class="fas fa-spinner fa-spin text-[#0a66c2]"></i>
                         </div>
                     </div>
 
                     <!-- Selected KBLI display -->
-                    <div id="kbli_selected" class="hidden mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
+                    <div id="kbli_selected" class="hidden mt-2 p-2.5 sm:p-3 bg-[#0a66c2]/5 dark:bg-[#0a66c2]/20 border border-[#0a66c2]/20 dark:border-[#0a66c2]/30 rounded-xl">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-sm font-bold text-blue-900 dark:text-blue-300" id="selected_code"></span>
+                                    <span class="text-xs sm:text-sm font-bold text-[#0a66c2] dark:text-[#0a66c2]" id="selected_code"></span>
                                 </div>
-                                <p class="text-sm text-gray-700 dark:text-gray-300" id="selected_description"></p>
+                                <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300" id="selected_description"></p>
                             </div>
-                            <button type="button" onclick="clearKBLI()" class="ml-2 text-red-600 hover:text-red-800">
-                                <i class="fas fa-times"></i>
+                            <button type="button" onclick="clearKBLI()" class="ml-2 text-red-600 hover:text-red-800 flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                                <i class="fas fa-times text-sm"></i>
                             </button>
                         </div>
                     </div>
@@ -190,10 +203,10 @@
         </div>
 
         <!-- PIC Information -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                <i class="fas fa-user text-blue-600 mr-2"></i>
-                Penanggung Jawab (PIC)
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+            <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                <i class="fas fa-user text-[#0a66c2] mr-2 flex-shrink-0"></i>
+                <span>Penanggung Jawab (PIC)</span>
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -206,7 +219,8 @@
                            name="form_data[pic_name]" 
                            value="{{ old('form_data.pic_name', $draft->form_data['pic_name'] ?? auth('client')->user()->name) }}"
                            required
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           autocomplete="name"
+                           class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('form_data.pic_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -221,7 +235,8 @@
                            name="form_data[pic_position]" 
                            value="{{ old('form_data.pic_position', $draft->form_data['pic_position'] ?? '') }}"
                            required
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           autocomplete="organization-title"
+                           class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('form_data.pic_position')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -236,7 +251,9 @@
                            name="form_data[pic_email]" 
                            value="{{ old('form_data.pic_email', $draft->form_data['pic_email'] ?? auth('client')->user()->email) }}"
                            required
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           inputmode="email"
+                           autocomplete="email"
+                           class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('form_data.pic_email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -251,7 +268,9 @@
                            name="form_data[pic_phone]" 
                            value="{{ old('form_data.pic_phone', $draft->form_data['pic_phone'] ?? auth('client')->user()->phone) }}"
                            required
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                           inputmode="tel"
+                           autocomplete="tel"
+                           class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
                     @error('form_data.pic_phone')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -260,36 +279,37 @@
         </div>
 
         <!-- Additional Notes -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                <i class="fas fa-sticky-note text-blue-600 mr-2"></i>
-                Catatan Tambahan (Opsional)
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+            <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                <i class="fas fa-sticky-note text-[#0a66c2] mr-2 flex-shrink-0"></i>
+                <span>Catatan Tambahan (Opsional)</span>
             </h2>
             <textarea name="form_data[notes]" 
                       rows="4"
                       placeholder="Tambahkan catatan atau informasi khusus terkait permohonan Anda..."
-                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">{{ old('form_data.notes', $draft->form_data['notes'] ?? '') }}</textarea>
+                      class="w-full px-4 py-2.5 text-base border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] focus:border-[#0a66c2] dark:bg-gray-700 dark:text-white transition-colors">{{ old('form_data.notes', $draft->form_data['notes'] ?? '') }}</textarea>
         </div>
 
         <!-- Form Actions -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <div class="flex flex-col md:flex-row gap-3 justify-end">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 sticky bottom-0 sm:static">
+            <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
                 <a href="{{ route('client.services.show', $permitType->code) }}" 
-                   class="text-center px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition">
+                   class="order-3 sm:order-1 text-center px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-colors font-medium">
                     <i class="fas fa-arrow-left mr-2"></i>
                     Kembali
                 </a>
                 <button type="submit" 
                         name="save_as_draft" 
                         value="1"
-                        class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
+                        class="order-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl transition-colors font-medium shadow-sm">
                     <i class="fas fa-save mr-2"></i>
                     Simpan sebagai Draft
                 </button>
                 <button type="submit" 
-                        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                        class="order-1 sm:order-3 px-6 py-3 bg-[#0a66c2] hover:bg-[#004182] text-white rounded-xl transition-colors font-medium shadow-sm">
                     <i class="fas fa-arrow-right mr-2"></i>
-                    Lanjutkan ke Upload Dokumen
+                    <span class="hidden sm:inline">Lanjutkan ke Upload Dokumen</span>
+                    <span class="sm:hidden">Lanjutkan</span>
                 </button>
             </div>
         </div>
@@ -357,22 +377,22 @@ function searchKBLI(keyword) {
 
 function displayKBLIResults(results) {
     const dropdown = document.getElementById('kbli_dropdown');
-    let html = '<div class="py-2">';
+    let html = '<div class="py-1 sm:py-2">';
     
     results.forEach(item => {
         html += `
             <button type="button" 
                     onclick='selectKBLI(${JSON.stringify(item)})' 
-                    class="w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition border-b border-gray-100 dark:border-gray-700 last:border-0">
+                    class="w-full px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition border-b border-gray-100 dark:border-gray-700 last:border-0">
                 <div class="flex items-start justify-between gap-2">
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-sm font-bold text-blue-600 dark:text-blue-400">${item.code}</span>
+                            <span class="text-xs sm:text-sm font-bold text-[#0a66c2] dark:text-[#0a66c2]">${item.code}</span>
                         </div>
-                        <p class="text-sm text-gray-700 dark:text-gray-300">${item.description}</p>
-                        <p class="text-xs text-gray-500 mt-1">Sektor: ${item.sector}</p>
+                        <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 line-clamp-2">${item.description}</p>
+                        <p class="text-[10px] sm:text-xs text-gray-500 mt-1">Sektor: ${item.sector}</p>
                     </div>
-                    <i class="fas fa-chevron-right text-gray-400 text-xs mt-1"></i>
+                    <i class="fas fa-chevron-right text-gray-400 text-xs mt-1 flex-shrink-0"></i>
                 </div>
             </button>
         `;
@@ -386,9 +406,9 @@ function displayKBLIResults(results) {
 function displayNoResults() {
     const dropdown = document.getElementById('kbli_dropdown');
     dropdown.innerHTML = `
-        <div class="p-4 text-center text-gray-500">
-            <i class="fas fa-search mb-2 text-2xl"></i>
-            <p class="text-sm">Tidak ada hasil ditemukan</p>
+        <div class="p-3 sm:p-4 text-center text-gray-500">
+            <i class="fas fa-search mb-2 text-xl sm:text-2xl"></i>
+            <p class="text-xs sm:text-sm">Tidak ada hasil ditemukan</p>
         </div>
     `;
     dropdown.classList.remove('hidden');

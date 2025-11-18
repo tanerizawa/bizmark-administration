@@ -28,8 +28,8 @@ Anda sekarang memiliki **sistem email multi-user yang lengkap** dengan database 
 **Saat ini sudah ada 4 email:**
 - ✅ cs@bizmark.id (Customer Service - shared)
 - ✅ sales@bizmark.id (Sales Team - shared)  
-- ✅ support@bizmark.id (Technical Support - shared)
-- ✅ info@bizmark.id (General - shared with auto-reply)
+- ✅ cs@bizmark.id (Technical Support - shared)
+- ✅ cs@bizmark.id (General - shared with auto-reply)
 
 #### Tabel `email_assignments` - Hubungkan user dengan email:
 - Role: `primary` (utama), `backup` (cadangan), `viewer` (lihat saja)
@@ -195,10 +195,10 @@ Total Assignments: 4
 📧 sales@bizmark.id (shared) - Department: sales
    └─ hadez@bizmark.id (primary) - Send:Y Receive:Y
 
-📧 support@bizmark.id (shared) - Department: support
+📧 cs@bizmark.id (shared) - Department: support
    └─ hadez@bizmark.id (primary) - Send:Y Receive:Y
 
-📧 info@bizmark.id (shared) - Department: general
+📧 cs@bizmark.id (shared) - Department: general
    └─ hadez@bizmark.id (primary) - Send:Y Receive:Y
 ```
 
@@ -246,7 +246,7 @@ Admin bisa:
 
 ### Use Case 3: Intern View-Only
 - Intern perlu lihat email support@ untuk belajar
-- Assign intern sebagai "viewer" ke support@bizmark.id
+- Assign intern sebagai "viewer" ke cs@bizmark.id
 - Permissions:
   - can_send: NO
   - can_receive: YES (read-only)
