@@ -257,9 +257,9 @@
             </button>
             
             {{-- Approvals --}}
-            <a href="{{ route('mobile.approvals') }}" 
+            <a href="{{ route('mobile.approvals.index') }}" 
                class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth relative
-                      {{ request()->routeIs('mobile.approvals') ? 'text-blue-600' : 'text-gray-500' }}">
+                      {{ request()->routeIs('mobile.approvals*') ? 'text-blue-600' : 'text-gray-500' }}">
                 <i class="fas fa-clipboard-check text-xl mb-1"></i>
                 <span class="text-xs font-medium">Approvals</span>
                 @if(isset($pendingApprovalsCount) && $pendingApprovalsCount > 0)
@@ -271,7 +271,7 @@
             </a>
             
             {{-- Profile --}}
-            <a href="{{ route('mobile.profile') }}" 
+            <a href="{{ route('mobile.profile.show') }}" 
                class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth
                       {{ request()->routeIs('mobile.profile') ? 'text-blue-600' : 'text-gray-500' }}">
                 <i class="fas fa-user text-xl mb-1"></i>
