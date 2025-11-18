@@ -107,7 +107,7 @@
                 <a href="{{ route('client.login') }}" class="block text-sm text-gray-600 hover:text-purple-600 font-medium">
                     <i class="fas fa-arrow-left mr-2"></i>Kembali ke Halaman Login
                 </a>
-                <a href="https://wa.me/6281234567890" target="_blank" class="block text-sm text-gray-600 hover:text-purple-600">
+                <a href="https://wa.me/62838796028550" target="_blank" class="block text-sm text-gray-600 hover:text-purple-600">
                     <i class="fab fa-whatsapp mr-2"></i>Hubungi Support
                 </a>
             </div>

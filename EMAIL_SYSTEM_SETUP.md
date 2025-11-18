@@ -206,7 +206,7 @@ composer require webklex/php-imap
 IMAP_HOST=mail.bizmark.id
 IMAP_PORT=993
 IMAP_ENCRYPTION=ssl
-IMAP_USERNAME=support@bizmark.id
+IMAP_USERNAME=cs@bizmark.id
 IMAP_PASSWORD=your-password
 ```
 
@@ -293,7 +293,7 @@ Data tracking tersimpan di `email_logs` table dengan fields:
 
 Create these email addresses:
 - `noreply@bizmark.id` - Untuk campaign emails
-- `support@bizmark.id` - Untuk customer support (inbox)
+- `cs@bizmark.id` - Untuk customer support (inbox)
 - `hello@bizmark.id` - Untuk general inquiries
 - `admin@bizmark.id` - Untuk internal notifications
 

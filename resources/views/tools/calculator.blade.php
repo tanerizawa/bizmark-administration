@@ -238,7 +238,7 @@
                     <h3 class="text-2xl font-bold mb-3">Mulai Konsultasi Gratis</h3>
                     <p class="mb-6 text-blue-100">Diskusikan kebutuhan perizinan Anda dengan expert kami</p>
                     <a 
-                        href="https://wa.me/6281234567890?text=Halo,%20saya%20tertarik%20untuk%20konsultasi%20perizinan" 
+                        href="https://wa.me/62838796028550?text=Halo,%20saya%20tertarik%20untuk%20konsultasi%20perizinan" 
                         target="_blank"
                         class="inline-block bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-blue-50 transition"
                     >

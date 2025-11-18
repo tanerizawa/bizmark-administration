@@ -101,7 +101,7 @@ Edit: `/root/bizmark.id/resources/views/landing.blade.php`
 ```html
 <p>Jl. Sudirman No. 123, Jakarta Selatan</p>
 <p>+62 21 1234 5678</p>
-<p>info@bizmark.id</p>
+<p>cs@bizmark.id</p>
 ```
 
 **Statistics** (Line ~295):
@@ -288,7 +288,7 @@ docker exec bizmark_app php artisan make:controller ContactController
 ## 📞 Support
 
 Untuk pertanyaan atau bantuan:
-- 📧 Email: support@bizmark.id
+- 📧 Email: cs@bizmark.id
 - 📱 WhatsApp: +62 812 3456 7890
 - 🌐 Website: https://bizmark.id
 

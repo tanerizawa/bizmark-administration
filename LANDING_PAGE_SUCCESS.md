@@ -90,7 +90,7 @@ Landing page company profile Bizmark.ID telah berhasil dibuat dan siap digunakan
 **Informasi Kontak:**
 - ✅ Alamat: Jl. Sudirman No. 123, Jakarta Selatan
 - ✅ Telepon: +62 21 1234 5678 & +62 812 3456 7890
-- ✅ Email: info@bizmark.id & support@bizmark.id
+- ✅ Email: cs@bizmark.id & cs@bizmark.id
 - ✅ Jam Operasional: Senin-Jumat 08:00-17:00, Sabtu 08:00-12:00
 
 **Social Media:**

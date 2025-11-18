@@ -61,11 +61,14 @@ class KbliService
 
     /**
      * Get all KBLI data
+     * Only returns 5-digit KBLI codes
      */
     public function getAll(): array
     {
         return Cache::remember('kbli_all', 86400, function () {
-            $results = Kbli::orderBy('code')->get();
+            $results = Kbli::whereRaw('LENGTH(code) = 5')
+                ->orderBy('code')
+                ->get();
             
             return $results->map(function ($kbli) {
                 return [

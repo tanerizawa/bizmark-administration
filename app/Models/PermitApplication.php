@@ -35,6 +35,11 @@ class PermitApplication extends Model
         'kbli_description',
         'ai_recommendation_id',
         'business_context',
+        'terms_accepted_at',
+        'terms_version',
+        'terms_accepted_language',
+        'terms_ip_address',
+        'terms_user_agent',
     ];
 
     protected $casts = [
@@ -45,6 +50,7 @@ class PermitApplication extends Model
         'quotation_expires_at' => 'datetime',
         'submitted_at' => 'datetime',
         'converted_at' => 'datetime',
+        'terms_accepted_at' => 'datetime',
         'quoted_price' => 'decimal:2',
         'down_payment_amount' => 'decimal:2',
     ];
@@ -129,6 +135,26 @@ class PermitApplication extends Model
     public function notes(): HasMany
     {
         return $this->hasMany(ApplicationNote::class, 'application_id');
+    }
+
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(ApplicationRevision::class, 'application_id');
+    }
+
+    public function locationDetail()
+    {
+        return $this->hasOne(ApplicationLocationDetail::class, 'application_id');
+    }
+
+    public function legalityDocuments(): HasMany
+    {
+        return $this->hasMany(ApplicationLegalityDocument::class, 'application_id');
+    }
+
+    public function quotationItems(): HasMany
+    {
+        return $this->hasMany(QuotationItem::class, 'application_id');
     }
 
     // Scopes

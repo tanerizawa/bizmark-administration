@@ -223,7 +223,7 @@ await window.subscribeToPushNotifications();
 ```env
 VAPID_PUBLIC_KEY=BGPaRuSL7BiFtcV6O569YhP3sFoiCem_L-c5rAwGdYAlfHCTlGMwNdsgDsWegQOsXV9h_IpVuqaDzdyDuzjCjuc
 VAPID_PRIVATE_KEY=KUh5EI-HKvX2Out3-pWKwwYRDFlFBKrcfQB4yt1rLrg
-VAPID_SUBJECT=mailto:info@bizmark.id
+VAPID_SUBJECT=mailto:cs@bizmark.id
 ```
 
 **Security Measures**:

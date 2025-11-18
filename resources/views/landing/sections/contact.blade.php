@@ -74,7 +74,7 @@
                             </label>
                             <input type="tel" 
                                    id="phone" 
-                                   placeholder="+62 812 3456 7890" 
+                                   placeholder="+62 838 7960 2855" 
                                    required 
                                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition">
                         </div>

@@ -94,9 +94,6 @@
 <!-- Critical CSS (Inline for LCP) -->
 @include('landing.partials.critical-css')
 
-<!-- Vite Assets (includes Font Awesome, AOS, Alpine.js) - Deferred -->
-@vite(['resources/css/app.css', 'resources/js/app.js'])
-
 <!-- Structured Data (JSON-LD Schema.org) -->
 <script type="application/ld+json">
 {

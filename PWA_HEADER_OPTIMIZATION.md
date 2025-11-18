@@ -545,7 +545,7 @@ body::before {
 ## 📞 Support
 
 **Butuh bantuan?**
-- Email: support@bizmark.id
+- Email: cs@bizmark.id
 - Documentation: /docs/pwa
 - Testing: https://bizmark.id/client/dashboard
 

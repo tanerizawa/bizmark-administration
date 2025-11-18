@@ -351,7 +351,7 @@ php artisan queue:restart
 
 **Website:** https://bizmark.id  
 **WhatsApp:** +62 813-8260-5030  
-**Email:** info@bizmark.id  
+**Email:** cs@bizmark.id  
 
 **Technical Support:**
 - Check documentation first

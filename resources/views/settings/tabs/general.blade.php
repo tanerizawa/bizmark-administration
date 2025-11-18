@@ -25,7 +25,7 @@
                         Email
                     </label>
                     <input type="email" name="company_email" id="company_email" class="input-apple w-full"
-                           value="{{ old('company_email', $setting->company_email) }}" placeholder="support@bizmark.id">
+                           value="{{ old('company_email', $setting->company_email) }}" placeholder="cs@bizmark.id">
                     @error('company_email')
                         <p class="text-xs mt-1" style="color: rgba(255, 69, 58, 0.9);">{{ $message }}</p>
                     @enderror

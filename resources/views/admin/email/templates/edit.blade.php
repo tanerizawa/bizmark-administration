@@ -328,7 +328,7 @@ function insertFooter() {
     <p style="color: #6c757d; margin: 0 0 10px 0;">© ${new Date().getFullYear()} Bizmark.ID. All rights reserved.</p>
     <p style="color: #6c757d; margin: 0;">
         <a href="https://bizmark.id" style="color: #667eea; text-decoration: none;">Visit Website</a> |
-        <a href="https://wa.me/6281234567890" style="color: #667eea; text-decoration: none;">WhatsApp</a>
+        <a href="https://wa.me/62838796028550" style="color: #667eea; text-decoration: none;">WhatsApp</a>
     </p>
 </div>
 `;
@@ -365,7 +365,7 @@ function previewTemplate() {
     let previewContent = content
         .replace(/\{\{name\}\}/g, 'John Doe')
         .replace(/\{\{email\}\}/g, 'john@example.com')
-        .replace(/\{\{phone\}\}/g, '081234567890')
+        .replace(/\{\{phone\}\}/g, '6283879602855')
         .replace(/\{\{month\}\}/g, 'November')
         .replace(/\{\{year\}\}/g, '2025')
         .replace(/\{\{unsubscribe_url\}\}/g, '#unsubscribe');

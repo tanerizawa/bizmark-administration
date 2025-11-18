@@ -82,6 +82,7 @@ Route::get('/login', function () {
 Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
     Route::post('/dashboard/clear-cache', [DashboardController::class, 'clearCache'])->name('dashboard.clear-cache');
     Route::get('/home', function () {
         return redirect()->route('dashboard');
@@ -127,15 +128,26 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Financial Management Routes (Phase 1)
+    // Read-only routes (auth required)
+    Route::middleware('auth')->group(function () {
+        Route::get('cash-accounts', [CashAccountController::class, 'index'])->name('cash-accounts.index');
+        Route::get('cash-accounts/{cash_account}', [CashAccountController::class, 'show'])->name('cash-accounts.show');
+    });
+    
+    // Write routes (require permission)
     Route::middleware('permission:finances.view')->group(function () {
         Route::post('projects/{project}/payments', [ProjectPaymentController::class, 'store'])->name('projects.payments.store');
         Route::delete('payments/{payment}', [ProjectPaymentController::class, 'destroy'])->name('payments.destroy');
         Route::post('projects/{project}/expenses', [ProjectExpenseController::class, 'store'])->name('projects.expenses.store');
         Route::delete('expenses/{expense}', [ProjectExpenseController::class, 'destroy'])->name('expenses.destroy');
-        Route::resource('cash-accounts', CashAccountController::class);
         
-        // API endpoint for active cash accounts
-        Route::get('api/cash-accounts/active', [CashAccountController::class, 'getActiveCashAccounts'])->name('api.cash-accounts.active');
+        // Cash accounts write operations
+        Route::get('cash-accounts/create', [CashAccountController::class, 'create'])->name('cash-accounts.create');
+        Route::post('cash-accounts', [CashAccountController::class, 'store'])->name('cash-accounts.store');
+        Route::get('cash-accounts/{cash_account}/edit', [CashAccountController::class, 'edit'])->name('cash-accounts.edit');
+        Route::put('cash-accounts/{cash_account}', [CashAccountController::class, 'update'])->name('cash-accounts.update');
+        Route::patch('cash-accounts/{cash_account}', [CashAccountController::class, 'update']);
+        Route::delete('cash-accounts/{cash_account}', [CashAccountController::class, 'destroy'])->name('cash-accounts.destroy');
 
         // Bank Reconciliation Routes (Phase 1B)
         Route::resource('reconciliations', BankReconciliationController::class);
@@ -144,6 +156,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('reconciliations/{reconciliation}/manual-match', [BankReconciliationController::class, 'manualMatch'])->name('reconciliations.manual-match');
         Route::post('reconciliations/{reconciliation}/unmatch', [BankReconciliationController::class, 'unmatch'])->name('reconciliations.unmatch');
         Route::post('reconciliations/{reconciliation}/complete', [BankReconciliationController::class, 'complete'])->name('reconciliations.complete');
+    });
+    
+    // API endpoints for AJAX calls (requires auth only, no specific permission)
+    Route::middleware('auth')->group(function () {
+        Route::get('api/cash-accounts/active', [CashAccountController::class, 'getActiveCashAccounts'])->name('api.cash-accounts.active');
     });
 
     // Article Management Routes
@@ -187,6 +204,7 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('invoices/{invoice}/status', [FinancialController::class, 'updateInvoiceStatus'])->name('invoices.update-status');
         Route::post('invoices/{invoice}/payment', [FinancialController::class, 'recordPayment'])->name('invoices.record-payment');
         Route::delete('invoices/{invoice}', [FinancialController::class, 'destroyInvoice'])->name('invoices.destroy');
+        Route::post('projects/{project}/direct-income', [FinancialController::class, 'storeDirectIncome'])->name('projects.direct-income.store');
         Route::post('projects/{project}/payment-schedules', [FinancialController::class, 'storePaymentSchedule'])->name('projects.payment-schedules.store');
         Route::patch('payment-schedules/{schedule}/paid', [FinancialController::class, 'markSchedulePaid'])->name('payment-schedules.mark-paid');
         Route::delete('payment-schedules/{schedule}', [FinancialController::class, 'destroySchedule'])->name('payment-schedules.destroy');
@@ -384,6 +402,8 @@ Route::prefix('client')->name('client.')->group(function () {
         // Service Catalog Routes (KBLI-based AI System)
         Route::get('/services', [App\Http\Controllers\Client\ServiceController::class, 'index'])->name('services.index');
         Route::get('/services/{kbliCode}/context', [App\Http\Controllers\Client\ServiceController::class, 'context'])->name('services.context');
+        Route::post('/services/{kbliCode}/context', [App\Http\Controllers\Client\ServiceController::class, 'storeContext'])->name('services.storeContext');
+        Route::get('/services/{kbliCode}/download-summary', [App\Http\Controllers\Client\ServiceController::class, 'downloadSummary'])->name('services.downloadSummary');
         Route::get('/services/{kbliCode}', [App\Http\Controllers\Client\ServiceController::class, 'show'])->name('services.show');
         
         // Application Routes
@@ -396,6 +416,7 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::get('/applications/{id}', [App\Http\Controllers\Client\ApplicationController::class, 'show'])->name('applications.show');
         Route::get('/applications/{id}/edit', [App\Http\Controllers\Client\ApplicationController::class, 'edit'])->name('applications.edit');
         Route::put('/applications/{id}', [App\Http\Controllers\Client\ApplicationController::class, 'update'])->name('applications.update');
+        Route::get('/applications/{id}/preview-submit', [App\Http\Controllers\Client\ApplicationController::class, 'previewSubmit'])->name('applications.preview-submit');
         Route::post('/applications/{id}/submit', [App\Http\Controllers\Client\ApplicationController::class, 'submit'])->name('applications.submit');
         Route::post('/applications/{id}/cancel', [App\Http\Controllers\Client\ApplicationController::class, 'cancel'])->name('applications.cancel');
         Route::post('/applications/{id}/documents', [App\Http\Controllers\Client\ApplicationController::class, 'uploadDocument'])->name('applications.documents.upload');
@@ -430,8 +451,6 @@ Route::prefix('client')->name('client.')->group(function () {
         // Profile Routes
         Route::get('/profile', [App\Http\Controllers\Client\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
-        Route::get('/profile/password', [App\Http\Controllers\Client\ProfileController::class, 'editPassword'])->name('profile.password.edit');
-        Route::put('/profile/password', [App\Http\Controllers\Client\ProfileController::class, 'updatePassword'])->name('profile.password.update');
         
         // Email Verification Routes
         Route::get('/verify-email', [App\Http\Controllers\Auth\ClientAuthController::class, 'showVerifyEmailNotice'])
@@ -518,6 +537,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
     Route::post('permit-applications/{id}/convert-to-project', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'convertToProject'])
         ->name('permit-applications.convert-to-project');
     
+    // Package Revision Management
+    Route::get('permit-applications/{id}/revise', [App\Http\Controllers\Admin\PackageRevisionController::class, 'create'])
+        ->name('permit-applications.revise');
+    Route::post('permit-applications/{id}/revisions', [App\Http\Controllers\Admin\PackageRevisionController::class, 'store'])
+        ->name('permit-applications.revisions.store');
+    Route::get('permit-applications/{applicationId}/revisions/{revisionId}', [App\Http\Controllers\Admin\PackageRevisionController::class, 'show'])
+        ->name('permit-applications.revisions.show');
+    
     // Quotation Management
     Route::get('quotations/create', [App\Http\Controllers\Admin\QuotationController::class, 'create'])
         ->name('quotations.create');
@@ -565,6 +592,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
 Route::prefix('client')->name('client.')->middleware(['auth:client'])->group(function () {
     Route::post('applications/{application}/notes', [App\Http\Controllers\Client\ApplicationNoteController::class, 'store'])
         ->name('applications.notes.store');
+    
+    // Package Revision Management for Client
+    Route::get('applications/{applicationId}/revisions/{revisionId}', [App\Http\Controllers\Client\RevisionController::class, 'show'])
+        ->name('applications.revisions.show');
+    Route::post('applications/{applicationId}/revisions/{revisionId}/approve', [App\Http\Controllers\Client\RevisionController::class, 'approve'])
+        ->name('applications.revisions.approve');
+    Route::post('applications/{applicationId}/revisions/{revisionId}/reject', [App\Http\Controllers\Client\RevisionController::class, 'reject'])
+        ->name('applications.revisions.reject');
 });
 
 // Client: Push Notifications API (Phase 2)
@@ -572,7 +607,13 @@ Route::prefix('api/client/push')->name('api.client.push.')->middleware(['auth:cl
     Route::post('/subscribe', [App\Http\Controllers\Api\PushNotificationController::class, 'subscribe'])->name('subscribe');
     Route::post('/unsubscribe', [App\Http\Controllers\Api\PushNotificationController::class, 'unsubscribe'])->name('unsubscribe');
     Route::get('/status', [App\Http\Controllers\Api\PushNotificationController::class, 'status'])->name('status');
+    Route::post('/test', [App\Http\Controllers\Api\PushNotificationController::class, 'test'])->name('test');
 });
+
+// Push Notification Test Tool (Debug only - remove in production)
+Route::get('/test-push', function () {
+    return view('test-push');
+})->middleware(['auth:client'])->name('test.push');
 
 // Payment Callback API (Phase 4)
 Route::post('/api/payment/callback', [App\Http\Controllers\Api\PaymentCallbackController::class, 'callback'])

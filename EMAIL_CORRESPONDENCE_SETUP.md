@@ -415,8 +415,8 @@ Schema::create('email_accounts', function (Blueprint $table) {
 <select name="from_email" class="form-control">
     <option value="cs@bizmark.id">Customer Service (cs@bizmark.id)</option>
     <option value="sales@bizmark.id">Sales Team (sales@bizmark.id)</option>
-    <option value="support@bizmark.id">Technical Support (support@bizmark.id)</option>
-    <option value="info@bizmark.id">General Info (info@bizmark.id)</option>
+    <option value="cs@bizmark.id">Technical Support (cs@bizmark.id)</option>
+    <option value="cs@bizmark.id">General Info (cs@bizmark.id)</option>
 </select>
 ```
 

@@ -169,7 +169,7 @@
                             <i class="fas fa-headset"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold" style="color: #FFFFFF;">support@bizmark.id</p>
+                            <p class="text-sm font-semibold" style="color: #FFFFFF;">cs@bizmark.id</p>
                             <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">SLA &lt; 1 x 24 jam kerja</p>
                         </div>
                     </div>

@@ -411,7 +411,7 @@
                     <p class="text-sm text-gray-700 mb-4">
                         Hubungi tim kami untuk informasi lebih lanjut tentang proyek ini
                     </p>
-                    <a href="https://wa.me/6281234567890" target="_blank" 
+                    <a href="https://wa.me/62838796028550" target="_blank" 
                        class="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                         <i class="fab fa-whatsapp mr-2"></i>Hubungi via WhatsApp
                     </a>

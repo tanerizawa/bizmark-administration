@@ -466,7 +466,7 @@ public function boot()
                 <h2 class="text-2xl font-bold text-white mb-4">9. Hubungi Kami</h2>
                 <p class="mb-4">Jika Anda memiliki pertanyaan tentang kebijakan privasi ini, silakan hubungi kami:</p>
                 <div class="bg-white/5 rounded-xl p-6 space-y-2">
-                    <p><strong>Email:</strong> info@bizmark.id</p>
+                    <p><strong>Email:</strong> cs@bizmark.id</p>
                     <p><strong>WhatsApp:</strong> +62 813-8260-5030</p>
                     <p><strong>Website:</strong> <a href="https://bizmark.id" class="text-apple-blue hover:underline">bizmark.id</a></p>
                 </div>
@@ -549,7 +549,7 @@ public function boot()
                 <h2 class="text-2xl font-bold text-white mb-4">9. Contact Us</h2>
                 <p class="mb-4">If you have questions about this privacy policy, please contact us:</p>
                 <div class="bg-white/5 rounded-xl p-6 space-y-2">
-                    <p><strong>Email:</strong> info@bizmark.id</p>
+                    <p><strong>Email:</strong> cs@bizmark.id</p>
                     <p><strong>WhatsApp:</strong> +62 813-8260-5030</p>
                     <p><strong>Website:</strong> <a href="https://bizmark.id" class="text-apple-blue hover:underline">bizmark.id</a></p>
                 </div>

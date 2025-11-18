@@ -81,7 +81,7 @@ class ClientAuthController extends Controller
             $request->session()->regenerate();
 
             return redirect()->intended(route('client.dashboard'))
-                ->with('success', 'Selamat datang kembali!');
+                ->with('success', 'Login berhasil. Anda sudah masuk ke Portal Klien Bizmark.id.');
         }
 
         return back()->withErrors([

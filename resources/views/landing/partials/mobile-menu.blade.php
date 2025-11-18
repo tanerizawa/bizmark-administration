@@ -62,22 +62,12 @@
             <div class="border-t border-white/20 my-4"></div>
             
             <!-- Client Portal Section -->
-            <div class="px-4 mb-2">
-                <p class="text-white/60 text-xs uppercase tracking-wider font-semibold">Portal Klien</p>
-            </div>
             <a href="{{ route('client.login') }}" 
-               class="text-white hover:text-blue-200 transition px-4 py-3 rounded-lg hover:bg-white/10" 
-               onclick="toggleMobileMenu()"
-               aria-label="Login to client portal">
-                <i class="fas fa-sign-in-alt w-6 inline-block" aria-hidden="true"></i>
-                <span>Login</span>
-            </a>
-            <a href="{{ route('client.register') }}" 
                class="text-white bg-blue-600 hover:bg-blue-700 transition px-4 py-3 rounded-lg font-medium" 
                onclick="toggleMobileMenu()"
-               aria-label="Register for client portal">
-                <i class="fas fa-user-plus w-6 inline-block" aria-hidden="true"></i>
-                <span>Daftar Akun Baru</span>
+               aria-label="Login atau Registrasi Portal Klien">
+                <i class="fas fa-sign-in-alt w-6 inline-block" aria-hidden="true"></i>
+                <span>Login / Registrasi</span>
             </a>
         
         <!-- CTA Contact Section -->

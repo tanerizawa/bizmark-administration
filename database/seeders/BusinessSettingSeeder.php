@@ -14,7 +14,7 @@ class BusinessSettingSeeder extends Seeder
     {
         BusinessSetting::query()->firstOrCreate([], [
             'company_name' => 'Bizmark.ID',
-            'company_email' => 'support@bizmark.id',
+            'company_email' => 'cs@bizmark.id',
             'company_phone' => '0812-1234-5678',
             'company_website' => 'https://bizmark.id',
             'company_address' => 'Jl. Contoh No. 123, Jakarta',

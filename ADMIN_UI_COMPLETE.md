@@ -214,7 +214,7 @@ PATCH /admin/email-accounts/{id}/permissions/{user} → Update permissions
 1. Admin clicks "New Email Account" di index page
 2. Opens create form dengan 3 sections
 3. Fill form:
-   - Email: support@bizmark.id
+   - Email: cs@bizmark.id
    - Name: Technical Support Team
    - Type: Shared
    - Department: Support
@@ -231,9 +231,9 @@ PATCH /admin/email-accounts/{id}/permissions/{user} → Update permissions
 ### Scenario 2: User Receives Email
 
 ```
-1. Email arrives at support@bizmark.id
+1. Email arrives at cs@bizmark.id
 2. Webhook receives → EmailWebhookController
-3. Auto-finds EmailAccount (support@bizmark.id)
+3. Auto-finds EmailAccount (cs@bizmark.id)
 4. Auto-assigns to Primary handler (John)
 5. Creates EmailInbox entry dengan:
    - email_account_id = support@ ID

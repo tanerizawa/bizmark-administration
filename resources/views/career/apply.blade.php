@@ -289,7 +289,7 @@
                                     <i class="fas fa-phone text-blue-600 mr-2"></i>
                                     Nomor Telepon <span class="text-red-500">*</span>
                                 </label>
-                                <input type="tel" name="phone" value="{{ old('phone') }}" required placeholder="08123456789"
+                                <input type="tel" name="phone" value="{{ old('phone') }}" required placeholder="083879602855"
                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                                 @error('phone')
                                     <p class="text-red-500 text-xs mt-1 flex items-center">

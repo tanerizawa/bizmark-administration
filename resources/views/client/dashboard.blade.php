@@ -4,6 +4,15 @@
 
 @push('styles')
 <style>
+    /* Active/touch feedback */
+    .active\:scale-95:active {
+        transform: scale(0.95);
+    }
+    
+    .active\:bg-gray-50:active {
+        background-color: #f9fafb;
+    }
+    
     /* Pull-to-refresh indicator */
     .pull-to-refresh {
         position: absolute;
@@ -17,6 +26,12 @@
         background: white;
         transition: top 0.3s ease;
         z-index: 10;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+        .pull-to-refresh {
+            background: #1f2937;
+        }
     }
     
     .pull-to-refresh.active {
@@ -39,271 +54,288 @@
 @section('content')
 @php
     $statusColors = [
-        'Selesai' => 'bg-green-100 text-green-800',
-        'Dalam Proses' => 'bg-blue-100 text-blue-800',
-        'Sedang Diproses' => 'bg-blue-100 text-blue-800',
-        'Draft' => 'bg-gray-100 text-gray-700',
-        'Dokumen Kurang' => 'bg-yellow-100 text-yellow-800',
+        'Selesai' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+        'Dalam Proses' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+        'Sedang Diproses' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+        'Draft' => 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+        'Dokumen Kurang' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
     ];
+
+    // Calculate document completion based on uploaded vs required
+    $totalDocuments = $client->projects()
+        ->with('documents')
+        ->get()
+        ->pluck('documents')
+        ->flatten()
+        ->count();
+    
+    $uploadedDocuments = $client->projects()
+        ->with('documents')
+        ->get()
+        ->pluck('documents')
+        ->flatten()
+        ->filter(function($doc) {
+            return !empty($doc->file_path);
+        })
+        ->count();
+    
+    $documentCompletion = $totalDocuments > 0 
+        ? round(($uploadedDocuments / $totalDocuments) * 100) 
+        : 0;
+    
+    $totalTrackedApplications = max(1, $activeProjects + $submittedCount);
+    $submissionProgress = min(100, round(($submittedCount / $totalTrackedApplications) * 100));
 @endphp
 
-<div class="space-y-8">
-    @if (session('success'))
-        <div class="p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-center gap-3">
-            <i class="fas fa-check-circle"></i>
-            <p>{{ session('success') }}</p>
-        </div>
-    @endif
-
-    <!-- Welcome / CTA -->
-    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl shadow-lg text-white relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png')]"></div>
-        <div class="relative flex flex-col lg:flex-row gap-6 items-center p-6 lg:p-8">
-            <div class="flex-1 space-y-4">
-                <p class="text-sm uppercase tracking-[0.35em] text-white/70">Ringkasan Hari Ini</p>
-                <h1 class="text-2xl lg:text-3xl font-bold leading-snug">
-                    Hai {{ $client->name }}, lihat progres terbaru izin usaha Anda dan lanjutkan langkah berikutnya.
-                </h1>
-                <div class="flex flex-wrap gap-3 text-sm">
-                    <span class="px-3 py-1 rounded-full bg-white/15 border border-white/30">
-                        {{ $activeProjects }} Proyek aktif
-                    </span>
-                    <span class="px-3 py-1 rounded-full bg-white/15 border border-white/30">
-                        {{ $completedProjects }} Telah selesai
-                    </span>
-                    <span class="px-3 py-1 rounded-full bg-white/15 border border-white/30">
-                        {{ $upcomingDeadlines->count() }} deadline dekat
-                    </span>
-                </div>
-                <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('client.applications.create') }}" class="inline-flex items-center gap-2 bg-white text-indigo-700 font-semibold px-5 py-3 rounded-xl shadow">
-                        <i class="fas fa-plus"></i> Ajukan permohonan baru
-                    </a>
-                    <a href="{{ route('client.services.index') }}" class="inline-flex items-center gap-2 bg-white/15 backdrop-blur px-5 py-3 rounded-xl border border-white/30 font-semibold">
-                        <i class="fas fa-layer-group"></i> Jelajahi rekomendasi
-                    </a>
-                </div>
+<div class="space-y-0">
+    <!-- Mobile Compact Header (PWA only) - LinkedIn Style -->
+    <div class="lg:hidden bg-[#0a66c2] text-white p-6 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <p class="text-xs text-white/70 leading-tight">Selamat datang kembali</p>
+                <h1 class="text-lg sm:text-xl font-bold leading-tight">{{ $client->name }}</h1>
             </div>
-            <div class="w-full lg:w-auto bg-white/10 rounded-2xl border border-white/20 p-5 backdrop-blur">
-                <p class="text-xs uppercase tracking-[0.3em] text-white/70 mb-3">Progress Track</p>
-                <div class="space-y-3">
+            @if($upcomingDeadlines->count() > 0)
+            <a href="#deadlines" class="flex items-center gap-1.5 bg-white/20 backdrop-blur px-4 py-2.5 min-h-[44px] rounded-full active:scale-95 transition-transform">
+                <i class="fas fa-bell text-sm"></i>
+                <span class="text-xs font-semibold">{{ $upcomingDeadlines->count() }} urgent</span>
+            </a>
+            @endif
+        </div>
+        
+        <!-- Compact Stats Grid (LinkedIn Style) -->
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white/10 backdrop-blur px-4 py-3 hover:bg-white/15 transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                    <p class="text-xs text-white/70 leading-tight">Proyek Aktif</p>
+                    <i class="fas fa-folder-open text-white/50 text-xs"></i>
+                </div>
+                <p class="text-2xl font-bold leading-tight">{{ $activeProjects }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur px-4 py-3 hover:bg-white/15 transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                    <p class="text-xs text-white/70 leading-tight">Selesai</p>
+                    <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                </div>
+                <p class="text-2xl font-bold leading-tight">{{ $completedProjects }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur px-4 py-3 hover:bg-white/15 transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                    <p class="text-xs text-white/70 leading-tight">Deadline 7 hari</p>
+                    <i class="fas fa-clock text-amber-400 text-xs"></i>
+                </div>
+                <p class="text-2xl font-bold leading-tight">{{ $upcomingDeadlines->count() }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur px-4 py-3 hover:bg-white/15 transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                    <p class="text-xs text-white/70 leading-tight">Total Investasi</p>
+                    <i class="fas fa-wallet text-purple-400 text-xs"></i>
+                </div>
+                <p class="text-lg font-bold leading-tight">Rp {{ number_format($totalInvested / 1000000, 1) }}M</p>
+            </div>
+        </div>
+        
+        <!-- Progress Summary (LinkedIn Style) -->
+        <div class="mt-4 pt-4 border-t border-white/20">
+            <div class="flex items-center justify-between text-sm leading-normal">
+                <span class="text-white/80 flex items-center gap-2">
+                    <i class="fas fa-file-alt text-xs"></i> Dokumen terupload
+                </span>
+                <span class="font-semibold">{{ $uploadedDocuments }}/{{ $totalDocuments }}</span>
+            </div>
+            <div class="flex items-center justify-between text-sm leading-normal mt-2">
+                <span class="text-white/80 flex items-center gap-2">
+                    <i class="fas fa-paper-plane text-xs"></i> Permohonan aktif
+                </span>
+                <span class="font-semibold">{{ $submittedCount }}</span>
+            </div>
+        </div>
+        
+        <!-- Quick Actions Mobile -->
+        <div class="mt-4 pt-4 border-t border-white/20 grid grid-cols-3 gap-2">
+            <a href="{{ route('client.applications.create') }}" class="flex flex-col items-center gap-1.5 px-3 py-2.5 bg-white/10 backdrop-blur rounded-lg active:scale-95 transition-transform">
+                <i class="fas fa-plus text-lg"></i>
+                <span class="text-xs font-medium">Ajukan</span>
+            </a>
+            <a href="{{ route('client.documents.index') }}" class="flex flex-col items-center gap-1.5 px-3 py-2.5 bg-white/10 backdrop-blur rounded-lg active:scale-95 transition-transform">
+                <i class="fas fa-folder text-lg"></i>
+                <span class="text-xs font-medium">Dokumen</span>
+            </a>
+            <a href="{{ route('client.projects.index') }}" class="flex flex-col items-center gap-1.5 px-3 py-2.5 bg-white/10 backdrop-blur rounded-lg active:scale-95 transition-transform">
+                <i class="fas fa-briefcase text-lg"></i>
+                <span class="text-xs font-medium">Proyek</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Desktop Hero - LinkedIn Style (hidden on mobile) -->
+    <div class="hidden lg:block bg-[#0a66c2] border-b border-gray-200 dark:border-gray-700 text-white">
+        <div class="px-6 lg:px-8 py-8">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
                     <div>
-                        <div class="flex justify-between text-sm text-white/80">
-                            <span>Dokumen terkumpul</span>
-                            <span>{{ min(100, ($pendingDocuments ? 100 - $pendingDocuments * 10 : 100)) }}%</span>
-                        </div>
-                        <div class="h-2 bg-white/20 rounded-full mt-1">
-                            <div class="h-2 rounded-full bg-lime-300" style="width: {{ min(100, ($pendingDocuments ? 100 - $pendingDocuments * 10 : 100)) }}%;"></div>
-                        </div>
+                        <h1 class="text-2xl lg:text-3xl font-bold leading-tight mb-2">
+                            Hai, {{ $client->name }}
+                        </h1>
+                        <p class="text-base text-white/90 leading-normal">
+                            Pantau progres izin usaha dan kelola proyek Anda
+                        </p>
                     </div>
-                    <div>
-                        <div class="flex justify-between text-sm text-white/80">
-                            <span>Permohonan aktif</span>
-                            <span>{{ $submittedCount }} proses</span>
-                        </div>
-                        <div class="h-2 bg-white/20 rounded-full mt-1">
-                            <div class="h-2 rounded-full bg-yellow-300" style="width: {{ min(100, $submittedCount ? ($submittedCount / max(1, $activeProjects + $submittedCount)) * 100 : 0) }}%;"></div>
-                        </div>
+                    <div class="flex gap-3">
+                        <a href="{{ route('client.applications.create') }}" class="inline-flex items-center gap-2 bg-white text-[#0a66c2] font-semibold px-5 py-3 rounded-lg hover:shadow-lg active:scale-95 transition-all">
+                            <i class="fas fa-plus"></i> Ajukan Permohonan
+                        </a>
+                        <a href="{{ route('client.services.index') }}" class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/30 px-5 py-3 rounded-lg hover:bg-white/20 active:scale-95 transition-all">
+                            <i class="fas fa-layer-group"></i> Jelajahi Layanan
+                        </a>
                     </div>
                 </div>
-                <p class="text-xs text-white/70 mt-4">Terakhir diperbarui {{ now()->diffForHumans(null, true) }}</p>
+                
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="bg-white/10 backdrop-blur border border-white/20 px-5 py-4 hover:bg-white/15 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs uppercase tracking-wider text-white/70 leading-tight">Proyek Aktif</p>
+                            <i class="fas fa-folder-open text-white/50"></i>
+                        </div>
+                        <p class="text-3xl font-bold leading-tight">{{ $activeProjects }}</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur border border-white/20 px-5 py-4 hover:bg-white/15 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs uppercase tracking-wider text-white/70 leading-tight">Selesai</p>
+                            <i class="fas fa-check-circle text-emerald-400"></i>
+                        </div>
+                        <p class="text-3xl font-bold leading-tight">{{ $completedProjects }}</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur border border-white/20 px-5 py-4 hover:bg-white/15 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs uppercase tracking-wider text-white/70 leading-tight">Deadline 7 Hari</p>
+                            <i class="fas fa-clock text-amber-400"></i>
+                        </div>
+                        <p class="text-3xl font-bold leading-tight">{{ $upcomingDeadlines->count() }}</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur border border-white/20 px-5 py-4 hover:bg-white/15 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs uppercase tracking-wider text-white/70 leading-tight">Total Investasi</p>
+                            <i class="fas fa-wallet text-purple-400"></i>
+                        </div>
+                        <p class="text-xl font-bold leading-tight">Rp {{ number_format($totalInvested / 1000000, 1) }}M</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Metrics row -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
+    <!-- LinkedIn Style: Full-width Cards with Minimal Spacing -->
+    <div class="space-y-1 lg:mt-1">
+        <!-- Project overview - Full Width Card -->
+        <div class="bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-700">
+            <div class="p-4 lg:p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
                 <div>
-                    <p class="text-xs uppercase tracking-wider text-gray-500">Proyek Aktif</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ $activeProjects }}</p>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-900 dark:text-white leading-tight">Ringkasan Proyek</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5 leading-normal">4 proyek terbaru dengan status terkini</p>
                 </div>
-                <span class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
-                    <i class="fas fa-folder-tree"></i>
-                </span>
-            </div>
-            <p class="text-sm text-gray-500 mt-3">Sedang berlangsung & dalam pengawalan tim Bizmark.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs uppercase tracking-wider text-gray-500">Selesai</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ $completedProjects }}</p>
-                </div>
-                <span class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                    <i class="fas fa-flag-checkered"></i>
-                </span>
-            </div>
-            <p class="text-sm text-gray-500 mt-3">Sudah tuntas dan siap Anda ekspansi.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs uppercase tracking-wider text-gray-500">Total Investasi</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">Rp {{ number_format($totalInvested, 0, ',', '.') }}</p>
-                </div>
-                <span class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
-                    <i class="fas fa-wallet"></i>
-                </span>
-            </div>
-            <p class="text-sm text-gray-500 mt-3">Nilai estimasi dari seluruh proyek berjalan.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs uppercase tracking-wider text-gray-500">Deadline Minggu Ini</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ $upcomingDeadlines->count() }}</p>
-                </div>
-                <span class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
-                    <i class="fas fa-bell"></i>
-                </span>
-            </div>
-            <p class="text-sm text-gray-500 mt-3">Pastikan dokumen Anda siap tepat waktu.</p>
-        </div>
-    </div>
-
-    <!-- Quick actions -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <a href="{{ route('client.documents.index') }}" class="bg-white rounded-2xl border border-gray-100 p-5 flex items-start gap-4 hover:border-indigo-200 transition">
-            <span class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
-                <i class="fas fa-upload"></i>
-            </span>
-            <div>
-                <p class="text-sm text-gray-500">Dokumen</p>
-                <p class="text-lg font-semibold text-gray-900">Lengkapi berkas terbaru</p>
-                <p class="text-sm text-gray-500 mt-1">Unggah keperluan OSS / teknis sebelum batas waktu.</p>
-            </div>
-        </a>
-        <a href="{{ route('client.applications.index') }}" class="bg-white rounded-2xl border border-gray-100 p-5 flex items-start gap-4 hover:border-indigo-200 transition">
-            <span class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                <i class="fas fa-file-signature"></i>
-            </span>
-            <div>
-                <p class="text-sm text-gray-500">Permohonan</p>
-                <p class="text-lg font-semibold text-gray-900">Pantau status pengajuan</p>
-                <p class="text-sm text-gray-500 mt-1">Lihat daftar pengajuan dan catatan tim.</p>
-            </div>
-        </a>
-        <a href="{{ route('client.projects.index') }}" class="bg-white rounded-2xl border border-gray-100 p-5 flex items-start gap-4 hover:border-indigo-200 transition">
-            <span class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
-                <i class="fas fa-clipboard-list"></i>
-            </span>
-            <div>
-                <p class="text-sm text-gray-500">Proyek</p>
-                <p class="text-lg font-semibold text-gray-900">Lihat detail pengerjaan</p>
-                <p class="text-sm text-gray-500 mt-1">Progress harian, tim PIC, dan catatan inspeksi.</p>
-            </div>
-        </a>
-    </div>
-
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <!-- Project overview -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 xl:col-span-2">
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Ringkasan Proyek</h3>
-                    <p class="text-sm text-gray-500 mt-1">4 proyek terbaru dengan status terkini.</p>
-                </div>
-                <a href="{{ route('client.projects.index') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">Lihat Semua</a>
+                <a href="{{ route('client.projects.index') }}" class="text-sm font-medium text-[#0a66c2] hover:text-[#004182] px-3 py-2 min-h-[44px] flex items-center active:scale-95 transition-transform">
+                    Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                </a>
             </div>
             <div>
                 @forelse($projects->take(4) as $project)
-                <div class="px-6 py-5 border-b border-gray-50 flex items-center gap-4">
+                <!-- Mobile & Desktop Unified Version -->
+                <a href="{{ route('client.projects.show', $project->id) }}" class="flex items-center gap-3 px-4 lg:px-5 py-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 active:bg-gray-100 dark:active:bg-gray-700 transition-colors">
                     <div class="flex-1 min-w-0">
-                        <p class="text-base font-semibold text-gray-900 truncate">{{ $project->name }}</p>
-                        <p class="text-sm text-gray-500">
-                            {{ $project->permitApplication->permitType->name ?? 'Jenis izin belum ditetapkan' }}
-                        </p>
+                        <p class="text-base font-semibold text-gray-900 dark:text-white leading-tight">{{ $project->name }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-normal">{{ $project->permitApplication->permitType->name ?? 'Jenis izin belum ditetapkan' }}</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 leading-tight">{{ optional($project->updated_at)->diffForHumans() }}</p>
                     </div>
-                    <div class="text-right text-sm text-gray-500 hidden lg:block">
-                        <p>{{ optional($project->updated_at)->diffForHumans() }}</p>
-                        <p>Project ID #{{ $project->id }}</p>
-                    </div>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $statusColors[$project->status->name ?? ''] ?? 'bg-blue-50 text-blue-700' }}">
+                    <span class="px-3 py-1.5 text-xs font-semibold rounded-full {{ $statusColors[$project->status->name ?? ''] ?? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' }} whitespace-nowrap">
                         {{ $project->status->name ?? 'Belum ada status' }}
                     </span>
-                    <a href="{{ route('client.projects.show', $project->id) }}" class="ml-4 text-indigo-600 hover:text-indigo-800 text-sm font-semibold">
-                        Detail
-                    </a>
-                </div>
+                    <i class="fas fa-chevron-right text-gray-400 text-xs hidden sm:block"></i>
+                </a>
                 @empty
-                <div class="p-6 text-center text-gray-500">
-                    Belum ada proyek tercatat. Mulai permohonan pertama Anda.
+                <div class="px-4 lg:px-5 py-12 text-center">
+                    <i class="fas fa-folder-open text-gray-300 dark:text-gray-600 text-4xl mb-3"></i>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-normal">Belum ada proyek. <a href="{{ route('client.applications.create') }}" class="text-[#0a66c2] font-medium hover:underline">Ajukan permohonan pertama</a></p>
                 </div>
                 @endforelse
             </div>
         </div>
 
-        <!-- Recent documents -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+        <!-- Documents Section - Full Width Card -->
+        <div class="bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-700">
+            <div class="p-4 lg:p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Dokumen Terbaru</h3>
-                    <p class="text-sm text-gray-500 mt-1">Unggahan terakhir 14 hari.</p>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-900 dark:text-white leading-tight">Dokumen Terbaru</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5 leading-normal">Unggahan terakhir 14 hari</p>
                 </div>
-                <a href="{{ route('client.documents.index') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">Kelola</a>
+                <a href="{{ route('client.documents.index') }}" class="text-sm font-medium text-[#0a66c2] hover:text-[#004182] px-3 py-2 min-h-[44px] flex items-center active:scale-95 transition-transform">
+                    Kelola <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                </a>
             </div>
-            <div class="divide-y divide-gray-100">
+            <div>
                 @forelse($recentDocuments as $document)
-                <div class="px-6 py-4 flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500">
+                <a href="{{ Storage::url($document->file_path) }}" target="_blank" class="flex items-center gap-3 px-4 lg:px-5 py-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 active:bg-gray-100 dark:active:bg-gray-700 transition-colors">
+                    <span class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 flex-shrink-0">
                         <i class="fas fa-file-alt"></i>
                     </span>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-gray-900 truncate">{{ $document->document_name }}</p>
-                        <p class="text-xs text-gray-500">{{ optional($document->created_at)->diffForHumans() }}</p>
+                        <p class="text-base font-semibold text-gray-900 dark:text-white leading-tight">{{ $document->document_name }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-normal">{{ optional($document->created_at)->diffForHumans() }}</p>
                     </div>
-                    <a href="{{ Storage::url($document->file_path) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold">
-                        Unduh
-                    </a>
-                </div>
+                    <i class="fas fa-download text-[#0a66c2] text-sm"></i>
+                </a>
                 @empty
-                <div class="p-6 text-center text-gray-500">Belum ada dokumen diunggah.</div>
+                <div class="px-4 lg:px-5 py-12 text-center">
+                    <i class="fas fa-file text-gray-300 dark:text-gray-600 text-4xl mb-3"></i>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-normal">Belum ada dokumen diunggah</p>
+                </div>
                 @endforelse
             </div>
         </div>
-    </div>
 
-    <!-- Deadlines timeline -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
-        <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900">Timeline Deadline (7 Hari)</h3>
-                <p class="text-sm text-gray-500 mt-1">Prioritaskan task dengan label merah.</p>
+        <!-- Deadlines Timeline - Full Width Card -->
+        <div class="bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-700">
+            <div class="p-4 lg:p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-900 dark:text-white leading-tight">Timeline Deadline (7 Hari)</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5 leading-normal">Prioritaskan task dengan label merah</p>
+                </div>
+                <a href="{{ route('client.projects.index') }}" class="text-sm font-medium text-[#0a66c2] hover:text-[#004182] px-3 py-2 min-h-[44px] flex items-center active:scale-95 transition-transform">
+                    Kelola Task <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                </a>
             </div>
-            <a href="{{ route('client.projects.index') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">Kelola Task</a>
-        </div>
-        <div class="divide-y divide-gray-100">
-            @forelse($upcomingDeadlines as $task)
-            <div class="px-6 py-4 flex items-start gap-4">
-                <div class="w-10">
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full {{ $loop->first ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600' }}">
+            <div>
+                @forelse($upcomingDeadlines as $task)
+                <div class="flex items-start gap-3 px-4 lg:px-5 py-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <span class="flex-shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold {{ $loop->first ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
                         {{ $loop->iteration }}
                     </span>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-gray-900">{{ $task->name }}</p>
-                    <p class="text-sm text-gray-500">{{ $task->project->name ?? 'Tanpa nama proyek' }}</p>
-                    <div class="mt-2 flex flex-wrap gap-2 text-xs">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
-                            Jatuh tempo {{ optional($task->due_date)->diffForHumans() }}
-                        </span>
-                        @if($task->assigned_to)
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
-                            PIC: {{ $task->assigned_to }}
-                        </span>
-                        @endif
+                    <div class="flex-1 min-w-0">
+                        <p class="text-base font-semibold text-gray-900 dark:text-white leading-tight">{{ $task->name }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-normal">{{ $task->project->name ?? 'Tanpa nama proyek' }}</p>
+                        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-medium">
+                                <i class="fas fa-clock mr-1.5 text-xs"></i>
+                                {{ optional($task->due_date)->format('d M Y') }}
+                            </span>
+                            @if($task->assigned_to)
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-medium">
+                                <i class="fas fa-user mr-1.5 text-xs"></i>
+                                {{ $task->assigned_to }}
+                            </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="text-right text-xs text-gray-400 dark:text-gray-500 hidden lg:block">
+                        {{ optional($task->due_date)->diffForHumans() }}
                     </div>
                 </div>
-                <div class="text-right text-sm text-gray-500">
-                    <p>{{ optional($task->due_date)->format('d M Y') }}</p>
-                    <p>{{ optional($task->due_date)->format('H:i') }}</p>
+                @empty
+                <div class="px-4 lg:px-5 py-12 text-center">
+                    <i class="fas fa-calendar-check text-gray-300 dark:text-gray-600 text-4xl mb-3"></i>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-normal">Tidak ada deadline dalam 7 hari ke depan</p>
                 </div>
-            </div>
-            @empty
-            <div class="p-6 text-center text-gray-500">Tidak ada deadline dalam 7 hari ke depan.</div>
-            @endforelse
+                @endforelse
         </div>
     </div>
 </div>

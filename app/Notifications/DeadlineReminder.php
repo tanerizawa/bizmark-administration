@@ -52,7 +52,7 @@ class DeadlineReminder extends Notification
             ])
             ->tag('deadline-' . $this->application->id)
             ->requireInteraction(true)
-            ->vibrate([300, 100, 300]);
+            ->vibrate([200, 100, 200, 100, 200]);
     }
 
     /**

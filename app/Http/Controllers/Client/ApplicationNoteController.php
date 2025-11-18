@@ -22,17 +22,25 @@ class ApplicationNoteController extends Controller
         $application = PermitApplication::where('client_id', Auth::guard('client')->id())
             ->findOrFail($applicationId);
 
+        $clientId = Auth::guard('client')->id();
+        
         $note = ApplicationNote::create([
             'application_id' => $application->id,
             'author_type' => 'client',
-            'author_id' => $application->client_id,
+            'author_id' => $clientId, // Now nullable, will store client_id
             'note' => $request->note,
             'is_internal' => false, // Client notes are never internal
         ]);
 
-        // Send email notification to admins
-        $admins = \App\Models\User::all();
-        \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\ClientNoteNotification($note));
+        // Send email notification to admins (wrapped in try-catch to prevent errors)
+        try {
+            $admins = \App\Models\User::all();
+            if ($admins->count() > 0 && class_exists('\App\Notifications\ClientNoteNotification')) {
+                \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\ClientNoteNotification($note));
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send client note notification: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Pesan berhasil dikirim');
     }

@@ -19,7 +19,7 @@
 - **Alamat:** Jl. Permata Sari Indah No.2, Palumbonsari, Kec. Karawang Timur, Karawang, Jawa Barat 41314
 - **Telepon:** +62 267 123 4567
 - **WhatsApp:** +62 812 3456 7890
-- **Email:** info@bizmark.id, konsultasi@bizmark.id
+- **Email:** cs@bizmark.id, konsultasi@bizmark.id
 
 ### Target Market
 - **Geografis Utama:** Karawang, Purwakarta, Subang, Bekasi
@@ -191,7 +191,7 @@ Konsultan Perizinan Limbah B3 & AMDAL
 - ✅ **Alamat:** Jl. Permata Sari Indah No.2, Palumbonsari, Kec. Karawang Timur, Karawang, Jawa Barat 41314
 - ✅ **Telepon:** +62 267 123 4567 (Karawang area code)
 - ✅ **WhatsApp:** +62 812 3456 7890
-- ✅ **Email:** info@bizmark.id, konsultasi@bizmark.id (changed from support@)
+- ✅ **Email:** cs@bizmark.id, konsultasi@bizmark.id (changed from support@)
 - ✅ **Jam Operasional:** Senin-Jumat 08:00-17:00, Sabtu 08:00-13:00
 
 ---
@@ -573,7 +573,7 @@ Route::get('/', function() {
 ## 📞 CONTACT & SUPPORT
 
 Jika ada pertanyaan atau perlu update lebih lanjut:
-- Email: info@bizmark.id
+- Email: cs@bizmark.id
 - WhatsApp: +62 812 3456 7890
 - Office: Jl. Permata Sari Indah No.2, Karawang Timur 41314
 

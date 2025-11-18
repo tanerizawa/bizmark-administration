@@ -16,7 +16,8 @@ class CheckPermission
     public function handle(Request $request, Closure $next, string $permission): Response
     {
         if (!auth()->check()) {
-            return redirect()->route('login');
+            // Redirect to landing page instead of login page to keep /__REDACTED_LEGACY_ADMIN_SEGMENT__ hidden
+            return redirect()->route('landing')->with('warning', 'Silakan login terlebih dahulu untuk mengakses halaman ini.');
         }
 
         if (!auth()->user()->can($permission)) {

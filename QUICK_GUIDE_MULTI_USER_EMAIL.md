@@ -4,7 +4,7 @@
 
 ### Current Status
 ✅ **Database & Models**: Fully implemented and working  
-✅ **4 Email Accounts Created**: cs@, sales@, support@, info@bizmark.id  
+✅ **4 Email Accounts Created**: cs@, sales@, support@, cs@bizmark.id  
 ✅ **User Assignment Working**: hadez@bizmark.id has access to all emails  
 🚧 **Controllers**: Created but need implementation  
 🚧 **Admin UI**: Not yet created  
@@ -222,8 +222,8 @@ echo "✅ Sarah promoted to primary handler for cs@bizmark.id\n";
 ### Scenario 3: Temporary Email Access (Viewer Role)
 
 ```php
-// Give intern read-only access to support@bizmark.id
-$supportEmail = App\Models\EmailAccount::where('email', 'support@bizmark.id')->first();
+// Give intern read-only access to cs@bizmark.id
+$supportEmail = App\Models\EmailAccount::where('email', 'cs@bizmark.id')->first();
 $intern = App\Models\User::where('email', 'intern@bizmark.id')->first();
 
 $supportEmail->assignUser($intern, [
@@ -234,7 +234,7 @@ $supportEmail->assignUser($intern, [
     'can_assign_others' => false,
 ]);
 
-echo "✅ Intern has read-only access to support@bizmark.id\n";
+echo "✅ Intern has read-only access to cs@bizmark.id\n";
 ```
 
 ---

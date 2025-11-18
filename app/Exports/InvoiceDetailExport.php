@@ -19,7 +19,7 @@ class InvoiceDetailExport
         // Company Header
         yield ['BIZMARK PERIZINAN'];
         yield ['Jl. Contoh No. 123, Jakarta'];
-        yield ['Telp: (021) 1234567 | Email: info@bizmark.id'];
+        yield ['Telp: (021) 1234567 | Email: cs@bizmark.id'];
         yield [];
 
         // Invoice Header

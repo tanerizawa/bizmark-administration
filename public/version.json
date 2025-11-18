@@ -1,0 +1,26 @@
+{
+  "version": "2.2.0",
+  "build_timestamp": "2025-11-16T10:00:00Z",
+  "build_number": "initial",
+  "changelog": [
+    {
+      "version": "2.2.0",
+      "date": "2025-11-16",
+      "changes": [
+        "Implementasi auto-update PWA",
+        "Notifikasi update otomatis",
+        "Peningkatan cache management",
+        "Perbaikan duplikasi pesan login"
+      ]
+    },
+    {
+      "version": "2.1.0",
+      "date": "2025-11-15",
+      "changes": [
+        "Portal klien dengan push notification",
+        "Dashboard monitoring real-time",
+        "Upload dokumen dengan preview"
+      ]
+    }
+  ]
+}

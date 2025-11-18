@@ -851,4 +851,111 @@ class FinancialController extends Controller
         return (new \Rap2hpoutre\FastExcel\FastExcel($sheets))
             ->download($filename);
     }
+
+    /**
+     * Store direct income (pemasukan tanpa invoice).
+     */
+    public function storeDirectIncome(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'payment_date' => 'required|date',
+            'amount' => 'required|numeric|min:0.01',
+            'payment_method_id' => 'required|exists:payment_methods,id',
+            'cash_account_id' => 'nullable|exists:cash_accounts,id',
+            'description' => 'required|string|max:1000',
+            'reference' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Get payment method to check if it requires cash account
+            $paymentMethod = PaymentMethod::findOrFail($validated['payment_method_id']);
+            
+            if ($paymentMethod->requires_cash_account && empty($validated['cash_account_id'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Metode pembayaran ini memerlukan rekening/kas tujuan'
+                ], 422);
+            }
+
+            // Create a dummy invoice for direct income (invoice_id = null means direct income)
+            // Or we can use ProjectPayment model directly if it exists
+            // For now, let's create an invoice with special flag or use existing ProjectPayment model
+            
+            // Check if ProjectPayment model exists
+            if (class_exists(\App\Models\ProjectPayment::class)) {
+                $payment = new \App\Models\ProjectPayment();
+                $payment->project_id = $project->id;
+                $payment->invoice_id = null; // No invoice - direct income
+                $payment->payment_date = $validated['payment_date'];
+                $payment->amount = $validated['amount'];
+                $payment->payment_method_id = $validated['payment_method_id'];
+                $payment->cash_account_id = $validated['cash_account_id'] ?? null;
+                $payment->description = $validated['description'];
+                $payment->reference = $validated['reference'] ?? null;
+                $payment->save();
+            } else {
+                // Fallback: Create invoice with special type "direct_income"
+                $invoice = new Invoice();
+                $invoice->project_id = $project->id;
+                $invoice->invoice_number = 'DI-' . now()->format('Ymd') . '-' . strtoupper(substr(md5(time()), 0, 6));
+                $invoice->invoice_date = $validated['payment_date'];
+                $invoice->due_date = $validated['payment_date']; // Same date for direct income
+                $invoice->subtotal = $validated['amount'];
+                $invoice->tax_rate = 0;
+                $invoice->tax_amount = 0;
+                $invoice->total_amount = $validated['amount'];
+                $invoice->paid_amount = $validated['amount']; // Fully paid immediately
+                $invoice->remaining_amount = 0;
+                $invoice->status = 'paid';
+                $invoice->notes = 'PEMASUKAN LANGSUNG (Tanpa Invoice Formal): ' . $validated['description'];
+                $invoice->payment_terms = $validated['reference'] ?? 'Direct Income';
+                $invoice->save();
+
+                // Create invoice item
+                $item = new InvoiceItem();
+                $item->invoice_id = $invoice->id;
+                $item->description = $validated['description'];
+                $item->quantity = 1;
+                $item->unit_price = $validated['amount'];
+                $item->total = $validated['amount'];
+                $item->save();
+            }
+
+            // Update cash account balance if applicable
+            if (!empty($validated['cash_account_id'])) {
+                $cashAccount = \App\Models\CashAccount::findOrFail($validated['cash_account_id']);
+                $cashAccount->balance += $validated['amount'];
+                $cashAccount->save();
+
+                // Record transaction
+                \App\Models\CashAccountTransaction::create([
+                    'cash_account_id' => $cashAccount->id,
+                    'project_id' => $project->id,
+                    'type' => 'income',
+                    'amount' => $validated['amount'],
+                    'description' => 'Pemasukan Langsung: ' . $validated['description'],
+                    'reference' => $validated['reference'] ?? null,
+                    'transaction_date' => $validated['payment_date'],
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pemasukan berhasil dicatat! Jumlah: Rp ' . number_format($validated['amount'], 0, ',', '.')
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error storing direct income: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mencatat pemasukan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

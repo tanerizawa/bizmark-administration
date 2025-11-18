@@ -35,7 +35,7 @@
 Anda ingin bisa:
 - ✉️ Mengirim email dari `noreply@bizmark.id`
 - 📧 Mengirim campaign dari `marketing@bizmark.id`
-- 📮 Menerima email di `info@bizmark.id`
+- 📮 Menerima email di `cs@bizmark.id`
 - 🔒 Professional email dengan domain sendiri
 
 ---
@@ -135,8 +135,8 @@ Add:
 ```
 noreply@bizmark.id      laravel@localhost
 marketing@bizmark.id    laravel@localhost
-info@bizmark.id         laravel@localhost
-support@bizmark.id      laravel@localhost
+cs@bizmark.id         laravel@localhost
+cs@bizmark.id      laravel@localhost
 ```
 
 ```bash
@@ -484,7 +484,7 @@ If Hostinger VPS includes cPanel/Plesk:
 3. Create email accounts:
    - noreply@bizmark.id
    - marketing@bizmark.id
-   - info@bizmark.id
+   - cs@bizmark.id
 4. Get SMTP credentials
 5. Configure Laravel:
 

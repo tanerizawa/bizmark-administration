@@ -31,9 +31,25 @@ class ApplicationNote extends Model
         return $this->belongsTo(PermitApplication::class, 'application_id');
     }
 
-    public function author(): BelongsTo
+    /**
+     * Get the author dynamically based on author_type
+     * This uses accessor pattern to handle polymorphic-like behavior
+     */
+    public function getAuthorAttribute()
     {
-        return $this->belongsTo(User::class, 'author_id');
+        // If already loaded, return it
+        if (array_key_exists('author', $this->relations)) {
+            return $this->relations['author'];
+        }
+
+        // Load based on author_type
+        if ($this->author_type === 'admin' && $this->attributes['author_id']) {
+            return $this->relations['author'] = User::find($this->attributes['author_id']);
+        } elseif ($this->author_type === 'client' && $this->attributes['author_id']) {
+            return $this->relations['author'] = Client::find($this->attributes['author_id']);
+        }
+        
+        return null;
     }
 
     /**

@@ -35,7 +35,7 @@ class EmailAccountSeeder extends Seeder
                 'signature' => "Best regards,\nSales Team\nBizmark.id",
             ],
             [
-                'email' => 'support@bizmark.id',
+                'email' => 'cs@bizmark.id',
                 'name' => 'Technical Support',
                 'type' => 'shared',
                 'department' => 'support',
@@ -45,7 +45,7 @@ class EmailAccountSeeder extends Seeder
                 'signature' => "Best regards,\nTechnical Support Team\nBizmark.id",
             ],
             [
-                'email' => 'info@bizmark.id',
+                'email' => 'cs@bizmark.id',
                 'name' => 'General Information',
                 'type' => 'shared',
                 'department' => 'general',

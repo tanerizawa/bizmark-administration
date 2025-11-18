@@ -432,7 +432,7 @@ php artisan serve
 
 **Website:** https://bizmark.id  
 **WhatsApp:** +62 813-8260-5030  
-**Email:** info@bizmark.id  
+**Email:** cs@bizmark.id  
 
 ---
 

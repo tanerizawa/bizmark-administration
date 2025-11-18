@@ -107,11 +107,19 @@
         <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
             <i class="fas fa-file-invoice mr-2 text-apple-blue-dark"></i>Daftar Invoice
         </h3>
-        <button onclick="openInvoiceModal()" 
-                class="text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors" 
-                style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
-            <i class="fas fa-plus mr-1"></i>Tambah
-        </button>
+        <div class="flex gap-2">
+            <button onclick="openDirectIncomeModal()" 
+                    class="text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors" 
+                    style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;"
+                    title="Catat pemasukan tanpa invoice">
+                <i class="fas fa-hand-holding-usd mr-1"></i>Pemasukan Langsung
+            </button>
+            <button onclick="openInvoiceModal()" 
+                    class="text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors" 
+                    style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
+                <i class="fas fa-plus mr-1"></i>Tambah Invoice
+            </button>
+        </div>
     </div>
 
     @if($project->invoices && $project->invoices->count() > 0)

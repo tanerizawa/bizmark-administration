@@ -285,7 +285,7 @@ class ApplicationController extends Controller
 
             // Send notification to admins
             $admins = User::where('is_active', true)
-                          ->whereHas('roles', function($query) {
+                          ->whereHas('role', function($query) {
                               $query->where('name', 'admin');
                           })
                           ->get();
@@ -554,10 +554,38 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Submit application after documents uploaded.
+     * Preview terms and conditions before submission.
      */
-    public function submit($id)
+    public function previewSubmit($id)
     {
+        $application = PermitApplication::where('client_id', auth('client')->id())
+            ->with(['permitType', 'documents'])
+            ->findOrFail($id);
+
+        if (!$application->canBeSubmitted()) {
+            return redirect()->route('client.applications.show', $id)
+                ->with('error', 'Permohonan tidak dapat diajukan saat ini.');
+        }
+
+        if ($application->documents->isEmpty()) {
+            return redirect()->route('client.applications.show', $id)
+                ->with('error', 'Silakan upload minimal satu dokumen sebelum mengajukan permohonan.');
+        }
+
+        return view('client.applications.preview-submit', compact('application'));
+    }
+
+    /**
+     * Submit application after terms acceptance.
+     */
+    public function submit(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'terms_accepted' => 'required|accepted',
+            'terms_version' => 'required|string',
+            'terms_language' => 'required|in:id,en',
+        ]);
+
         $application = PermitApplication::where('client_id', auth('client')->id())
             ->with('documents')
             ->findOrFail($id);
@@ -570,22 +598,44 @@ class ApplicationController extends Controller
             return back()->with('error', 'Silakan upload minimal satu dokumen sebelum mengajukan permohonan.');
         }
 
-        $application->update([
-            'status' => 'submitted',
-            'submitted_at' => now(),
-        ]);
+        DB::beginTransaction();
+        try {
+            $application->update([
+                'status' => 'submitted',
+                'submitted_at' => now(),
+                'terms_accepted_at' => now(),
+                'terms_version' => $validated['terms_version'],
+                'terms_accepted_language' => $validated['terms_language'],
+                'terms_ip_address' => $request->ip(),
+                'terms_user_agent' => $request->userAgent(),
+            ]);
 
-        // Log status change
-        $application->statusLogs()->create([
-            'from_status' => 'draft',
-            'to_status' => 'submitted',
-            'notes' => 'Permohonan diajukan oleh klien',
-            'changed_by_type' => 'App\Models\Client',
-            'changed_by_id' => auth('client')->id(),
-        ]);
+            // Log status change
+            $application->statusLogs()->create([
+                'from_status' => 'draft',
+                'to_status' => 'submitted',
+                'notes' => 'Permohonan diajukan oleh klien dengan persetujuan Syarat & Ketentuan versi ' . $validated['terms_version'],
+                'changed_by_type' => 'App\Models\Client',
+                'changed_by_id' => auth('client')->id(),
+            ]);
 
-        return redirect()->route('client.applications.show', $id)
-            ->with('success', 'Permohonan berhasil diajukan! Tim kami akan segera meninjaunya.');
+            // Send notifications
+            $client = auth('client')->user();
+            $client->notify(new ApplicationSubmittedNotification($application));
+            
+            // Notify all admins
+            $admins = User::where('is_active', true)->get();
+            Notification::send($admins, new NewApplicationNotification($application));
+
+            DB::commit();
+
+            return redirect()->route('client.applications.show', $id)
+                ->with('success', 'Permohonan berhasil diajukan! Tim kami akan segera meninjaunya.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     /**

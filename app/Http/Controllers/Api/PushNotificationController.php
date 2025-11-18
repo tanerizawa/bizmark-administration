@@ -103,4 +103,52 @@ class PushNotificationController extends Controller
             'subscription_count' => $subscriptions
         ]);
     }
+
+    /**
+     * Send test notification
+     */
+    public function test(Request $request)
+    {
+        $client = Auth::guard('client')->user();
+
+        if (!$client) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        try {
+            // Check if client has any push subscriptions
+            $subscriptionCount = $client->pushSubscriptions()->count();
+            
+            if ($subscriptionCount === 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No push subscriptions found. Please enable notifications first.'
+                ], 400);
+            }
+
+            // Send test notification to all client's devices
+            $client->notify(new \App\Notifications\TestNotification());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Test notification sent successfully!',
+                'devices' => $subscriptionCount
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to send test notification', [
+                'client_id' => $client->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send test notification: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
