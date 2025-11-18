@@ -98,26 +98,6 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* Offline indicator */
-        .offline-indicator {
-            position: fixed;
-            top: calc(56px + env(safe-area-inset-top));
-            left: 0;
-            right: 0;
-            background: #EF4444;
-            color: white;
-            padding: 8px;
-            text-align: center;
-            font-size: 12px;
-            z-index: 40;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .offline-indicator.show {
-            transform: translateY(0);
-        }
-        
         /* Loading skeleton animation */
         @keyframes shimmer {
             0% { background-position: -200% 0; }
@@ -187,12 +167,6 @@
     @stack('styles')
 </head>
 <body>
-    
-    {{-- Offline Indicator --}}
-    <div id="offlineIndicator" class="offline-indicator">
-        <i class="fas fa-wifi-slash mr-2"></i>
-        <span>Anda sedang offline. Data akan disinkronkan saat online kembali.</span>
-    </div>
     
     {{-- Pull to Refresh Indicator --}}
     <div id="refreshIndicator" class="refresh-indicator">
@@ -638,76 +612,6 @@
                 });
         }
 
-        // Offline/Online Detection with Server Ping
-        let isOnline = true;
-        let checkingConnection = false;
-        
-        async function checkServerConnection() {
-            if (checkingConnection) return;
-            checkingConnection = true;
-            
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-                
-                // Use a simple HEAD request to current domain to check connectivity
-                const response = await fetch('/m/ping', {
-                    method: 'HEAD',
-                    cache: 'no-store',
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                isOnline = response.ok;
-            } catch (error) {
-                console.log('Connection check failed:', error.message);
-                isOnline = false;
-            } finally {
-                checkingConnection = false;
-                updateOnlineStatus();
-            }
-        }
-
-        function updateOnlineStatus() {
-            const offlineIndicator = document.getElementById('offlineIndicator');
-            
-            // Only show offline indicator if BOTH browser and server check fail
-            // Trust browser online status first
-            if (!navigator.onLine) {
-                offlineIndicator.classList.add('show');
-                return;
-            }
-            
-            // If browser says online, trust it and hide indicator
-            // Only show if server check explicitly failed
-            if (navigator.onLine) {
-                offlineIndicator.classList.remove('show');
-            }
-        }
-
-        // Check connection when browser reports online/offline
-        window.addEventListener('online', () => {
-            isOnline = true;
-            updateOnlineStatus();
-            // Optionally verify with server
-            setTimeout(checkServerConnection, 1000);
-        });
-        
-        window.addEventListener('offline', () => {
-            isOnline = false;
-            updateOnlineStatus();
-        });
-        
-        // Initial check - trust browser status
-        updateOnlineStatus();
-        
-        // Optional: Periodic check every 60 seconds (less aggressive)
-        setInterval(() => {
-            if (navigator.onLine && !isOnline) {
-                checkServerConnection();
-            }
-        }, 60000);
-
         // PWA Install Prompt
         let deferredPrompt;
 
@@ -899,21 +803,7 @@
             } catch (error) {
                 console.error('Refresh failed:', error);
                 
-                // Show error message
-                const offlineIndicator = document.getElementById('offlineIndicator');
-                const originalText = offlineIndicator.innerHTML;
-                offlineIndicator.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i><span>Gagal memuat data fresh. Cek koneksi internet Anda.</span>';
-                offlineIndicator.classList.add('show');
-                
-                // Restore after 3 seconds
-                setTimeout(() => {
-                    offlineIndicator.innerHTML = originalText;
-                    if (navigator.onLine && isOnline) {
-                        offlineIndicator.classList.remove('show');
-                    }
-                }, 3000);
-                
-                // Stop spinning
+                // Just stop the indicator, don't show error notification
                 icon.classList.remove('fa-spin');
                 indicator.classList.remove('show');
                 isRefreshing = false;
