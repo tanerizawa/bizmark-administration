@@ -79,7 +79,7 @@ Route::get('/login', function () {
 });
 
 // Protected Routes (require authentication)
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'mobile'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
