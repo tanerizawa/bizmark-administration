@@ -243,13 +243,19 @@
                 <span class="text-[9px] font-medium">Home</span>
             </a>
             
-            {{-- Projects --}}
-            <a href="{{ mobile_route('projects.index') }}" 
-               class="flex flex-col items-center justify-center gap-0.5
-                      {{ request()->routeIs('mobile.projects*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
+            {{-- Tasks --}}
+            <a href="{{ mobile_route('tasks.index') }}" 
+               class="flex flex-col items-center justify-center gap-0.5 relative
+                      {{ request()->routeIs('mobile.tasks*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
                       hover:text-[#0a66c2] transition-colors">
-                <i class="fas fa-briefcase text-xl"></i>
-                <span class="text-[9px] font-medium">Proyek</span>
+                <i class="fas fa-circle-check text-xl"></i>
+                <span class="text-[9px] font-medium">Tasks</span>
+                @if(isset($myTasksCount) && $myTasksCount > 0)
+                    <span class="absolute top-0.5 right-[28%] w-4 h-4 bg-red-500 text-white text-[9px] rounded-full 
+                                 flex items-center justify-center font-bold">
+                        {{ $myTasksCount > 9 ? '9' : $myTasksCount }}
+                    </span>
+                @endif
             </a>
             
             {{-- Quick Add (Center - Elevated FAB style) --}}
@@ -262,29 +268,28 @@
                 </button>
             </div>
             
-            {{-- Approvals --}}
-            <a href="{{ mobile_route('approvals.index') }}" 
+            {{-- Notifications --}}
+            <a href="{{ mobile_route('notifications.index') }}" 
                class="flex flex-col items-center justify-center gap-0.5 relative
-                      {{ request()->routeIs('mobile.approvals*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
+                      {{ request()->routeIs('mobile.notifications*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
                       hover:text-[#0a66c2] transition-colors">
-                <i class="fas fa-clipboard-check text-xl"></i>
-                <span class="text-[9px] font-medium">Approvals</span>
-                @if(isset($pendingApprovalsCount) && $pendingApprovalsCount > 0)
-                    <span class="absolute top-0.5 right-[28%] w-4 h-4 bg-red-500 text-white text-[9px] rounded-full 
+                <i class="fas fa-bell text-xl"></i>
+                <span class="text-[9px] font-medium">Notif</span>
+                @if(isset($unreadNotifCount) && $unreadNotifCount > 0)
+                    <span class="absolute top-0.5 right-[28%] w-4 h-4 bg-amber-500 text-white text-[9px] rounded-full 
                                  flex items-center justify-center font-bold">
-                        {{ $pendingApprovalsCount > 9 ? '9' : $pendingApprovalsCount }}
+                        {{ $unreadNotifCount > 9 ? '9' : $unreadNotifCount }}
                     </span>
                 @endif
             </a>
             
-            {{-- Profile --}}
-            <a href="{{ mobile_route('profile.show') }}" 
-               class="flex flex-col items-center justify-center gap-0.5
-                      {{ request()->routeIs('mobile.profile*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
-                      hover:text-[#0a66c2] transition-colors">
-                <i class="fas fa-user text-xl"></i>
-                <span class="text-[9px] font-medium">Profil</span>
-            </a>
+            {{-- Menu --}}
+            <button onclick="showMenu()" 
+                    class="flex flex-col items-center justify-center gap-0.5 text-gray-600 
+                           hover:text-[#0a66c2] transition-colors">
+                <i class="fas fa-bars text-xl"></i>
+                <span class="text-[9px] font-medium">Menu</span>
+            </button>
             
         </div>
     </nav>
@@ -297,32 +302,49 @@
             <h3 class="text-lg font-bold text-gray-900 mb-4">Tambah Baru</h3>
             
             <div class="space-y-2">
-                <a href="{{ mobile_route('projects.create') }}" 
-                   class="block p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-folder-plus text-blue-600"></i>
-                        </div>
-                        <div>
-                            <div class="font-medium text-gray-900">Proyek Baru</div>
-                            <div class="text-xs text-gray-600">Tambah proyek perizinan baru</div>
-                        </div>
-                    </div>
-                </a>
-                
-                <a href="{{ mobile_route('tasks.index') }}" 
-                   class="block p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
+                {{-- Input Uang Masuk --}}
+                <button onclick="showFinancialInput('income')" 
+                        class="block w-full p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors text-left">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-plus-circle text-green-600"></i>
+                            <i class="fas fa-arrow-down text-green-600"></i>
                         </div>
                         <div>
-                            <div class="font-medium text-gray-900">Task Baru</div>
-                            <div class="text-xs text-gray-600">Buat task atau to-do</div>
+                            <div class="font-medium text-gray-900">Input Uang Masuk</div>
+                            <div class="text-xs text-gray-600">Pembayaran, invoice, dll</div>
                         </div>
                     </div>
-                </a>
+                </button>
                 
+                {{-- Input Uang Keluar --}}
+                <button onclick="showFinancialInput('expense')" 
+                        class="block w-full p-4 bg-red-50 rounded-xl hover:bg-red-100 transition-colors text-left">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-arrow-up text-red-600"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900">Input Uang Keluar</div>
+                            <div class="text-xs text-gray-600">Operasional, gaji, dll</div>
+                        </div>
+                    </div>
+                </button>
+                
+                {{-- Quick Task --}}
+                <button onclick="showTaskInput()" 
+                        class="block w-full p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors text-left">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-circle-check text-blue-600"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900">Quick Task</div>
+                            <div class="text-xs text-gray-600">Buat task cepat</div>
+                        </div>
+                    </div>
+                </button>
+                
+                {{-- Upload Dokumen --}}
                 <a href="{{ mobile_route('documents.upload') }}" 
                    class="block p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
                     <div class="flex items-center">
@@ -336,15 +358,16 @@
                     </div>
                 </a>
                 
-                <a href="{{ mobile_route('financial.index') }}" 
-                   class="block p-4 bg-orange-50 rounded-xl hover:bg-orange-100 transition-colors">
+                {{-- Proyek Baru --}}
+                <a href="{{ mobile_route('projects.create') }}" 
+                   class="block p-4 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors">
                     <div class="flex items-center">
-                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-money-bill-wave text-orange-600"></i>
+                        <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-folder-plus text-indigo-600"></i>
                         </div>
                         <div>
-                            <div class="font-medium text-gray-900">Catat Pembayaran</div>
-                            <div class="text-xs text-gray-600">Tambah transaksi keuangan</div>
+                            <div class="font-medium text-gray-900">Proyek Baru</div>
+                            <div class="text-xs text-gray-600">Tambah proyek perizinan</div>
                         </div>
                     </div>
                 </a>
@@ -459,6 +482,27 @@
             setTimeout(() => {
                 sheet.classList.add('hidden');
             }, 300);
+        }
+
+        // Financial Input Handler
+        function showFinancialInput(type) {
+            hideQuickAdd();
+            // Redirect to financial quick input page with type parameter
+            window.location.href = '{{ mobile_route("financial.quick-input") }}?type=' + type;
+        }
+
+        // Task Input Handler
+        function showTaskInput() {
+            hideQuickAdd();
+            // Redirect to quick task creation page
+            window.location.href = '{{ mobile_route("tasks.create") }}';
+        }
+
+        // Menu Handler (replaces Profile)
+        function showMenu() {
+            // Implementation for menu overlay
+            console.log('Menu clicked');
+            // TODO: Show menu overlay with Profile, Settings, Logout
         }
 
         // Settings Menu

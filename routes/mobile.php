@@ -72,6 +72,8 @@ Route::prefix('m')->middleware(['auth', 'mobile'])->name('mobile.')->group(funct
     // Financial
     Route::prefix('financial')->name('financial.')->group(function () {
         Route::get('/', [FinancialController::class, 'index'])->name('index');
+        Route::get('/quick-input', [FinancialController::class, 'quickInput'])->name('quick-input');
+        Route::post('/store', [FinancialController::class, 'store'])->name('store');
         Route::get('/cash-flow', [FinancialController::class, 'cashFlow'])->name('cash-flow');
         Route::get('/receivables', [FinancialController::class, 'receivables'])->name('receivables');
         Route::get('/expenses', [FinancialController::class, 'expenses'])->name('expenses');
