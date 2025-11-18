@@ -88,7 +88,7 @@
                 
                 {{-- Unread Indicator --}}
                 <div x-show="!notif.read_at" 
-                     class="absolute left-1 top-4 w-2 h-2 bg-[#0a66c2] rounded-full"></div>
+                     class="absolute left-1 top-4 w-2 h-2 bg-[#0077b5] rounded-full"></div>
 
                 <div class="flex gap-2 ml-3">
                     {{-- Icon --}}
@@ -133,7 +133,7 @@
                             <template x-for="action in notif.actions" :key="action.label">
                                 <button 
                                     @click.stop="handleAction(notif, action)"
-                                    :class="action.primary ? 'bg-[#0a66c2] text-white' : 'bg-gray-100 text-gray-700'"
+                                    :class="action.primary ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-700'"
                                     class="px-3 py-1 rounded-lg text-xs font-medium 
                                            active:scale-95 transition-all">
                                     <span x-text="action.label"></span>
@@ -146,7 +146,7 @@
                     <button 
                         x-show="!notif.read_at"
                         @click.stop="markAsRead(notif.id)"
-                        class="text-gray-400 hover:text-[#0a66c2] transition-colors">
+                        class="text-gray-400 hover:text-[#0077b5] transition-colors">
                         <i class="fas fa-check text-sm"></i>
                     </button>
                 </div>
