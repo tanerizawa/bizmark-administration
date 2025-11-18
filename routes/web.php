@@ -79,9 +79,9 @@ Route::get('/login', function () {
 });
 
 // Protected Routes (require authentication)
-Route::middleware(['auth', 'mobile'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth'])->group(function () {
+    // Dashboard - dengan mobile auto-redirect
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('mobile');
     
     Route::post('/dashboard/clear-cache', [DashboardController::class, 'clearCache'])->name('dashboard.clear-cache');
     Route::get('/home', function () {

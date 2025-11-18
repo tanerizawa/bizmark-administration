@@ -18,7 +18,7 @@ class DetectMobile
         // Cek jika user force desktop mode via session
         if (session('force_desktop')) {
             // Jika user akses mobile route tapi force desktop, redirect ke desktop
-            if ($request->is('m/*')) {
+            if ($request->is('m/*') || $request->is('m')) {
                 return redirect('/dashboard');
             }
             return $next($request);
@@ -31,12 +31,20 @@ class DetectMobile
         view()->share('isMobile', $isMobile);
         
         // Jika mobile device akses desktop route (bukan /m/*), redirect ke mobile
-        if ($isMobile && !$request->is('m/*') && $request->is('dashboard*')) {
+        if ($isMobile && !$request->is('m/*') && !$request->is('m') && $request->is('dashboard*')) {
             return redirect()->route('mobile.dashboard');
         }
         
         // Jika desktop device akses mobile route, redirect ke desktop
-        if (!$isMobile && $request->is('m/*') && !session('force_mobile')) {
+        // PENTING: Cek jika sudah ada header X-Redirect-Loop untuk prevent infinite loop
+        if (!$isMobile && ($request->is('m/*') || $request->is('m')) && !session('force_mobile')) {
+            // Cek apakah ini redirect dari dashboard
+            $referer = $request->header('referer');
+            if ($referer && str_contains($referer, '/dashboard')) {
+                // Sudah dari dashboard, jangan redirect lagi - infinite loop protection
+                session(['force_mobile' => true]); // Force mobile untuk sesi ini
+                return $next($request);
+            }
             return redirect('/dashboard');
         }
         
