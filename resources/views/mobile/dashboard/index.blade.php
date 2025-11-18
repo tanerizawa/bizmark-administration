@@ -31,88 +31,70 @@
 <div class="pb-20" x-data="dashboardMobile()">
     
     {{-- Swipeable Metrics Cards --}}
-    <div class="relative -mx-4 mb-6">
+    <div class="relative mb-6">
         <div class="overflow-x-auto snap-x snap-mandatory scrollbar-hide" 
              x-ref="metricsCarousel"
              @touchstart="handleTouchStart($event)"
              @touchend="handleTouchEnd($event)">
-            <div class="flex gap-4 px-4">
+            <div class="flex gap-3 px-0">
                 
                 {{-- Card 1: Urgent Alerts --}}
-                <div class="flex-shrink-0 w-[85vw] snap-start">
-                    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg"
+                <div class="flex-shrink-0 w-64 snap-start">
+                    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-4 text-white shadow-md"
                          onclick="window.location.href='{{ mobile_route('tasks.urgent') }}'">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="bg-white/20 rounded-full p-2">
-                                <i class="fas fa-exclamation-triangle text-2xl"></i>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="bg-white/20 rounded-lg p-2">
+                                <i class="fas fa-exclamation-triangle text-xl"></i>
                             </div>
-                            <span class="text-xs uppercase tracking-wider opacity-90">Urgent</span>
+                            <span class="text-xs uppercase tracking-wide opacity-90">Urgent</span>
                         </div>
-                        <div class="text-5xl font-bold mb-2">{{ $metrics['urgent_count'] }}</div>
-                        <div class="text-sm opacity-90">Perlu tindakan sekarang</div>
-                        <div class="mt-3 flex items-center text-xs">
-                            <span class="opacity-75">Tap untuk detail</span>
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </div>
+                        <div class="text-4xl font-bold mb-1">{{ $metrics['urgent_count'] }}</div>
+                        <div class="text-sm opacity-90">Perlu tindakan</div>
                     </div>
                 </div>
 
                 {{-- Card 2: Cash & Runway --}}
-                <div class="flex-shrink-0 w-[85vw] snap-start">
-                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-5 text-white shadow-lg"
+                <div class="flex-shrink-0 w-64 snap-start">
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white shadow-md"
                          onclick="window.location.href='{{ mobile_route('financial.index') }}'">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="bg-white/20 rounded-full p-2">
-                                <i class="fas fa-wallet text-2xl"></i>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="bg-white/20 rounded-lg p-2">
+                                <i class="fas fa-wallet text-xl"></i>
                             </div>
-                            <span class="text-xs uppercase tracking-wider opacity-90">Runway</span>
+                            <span class="text-xs uppercase tracking-wide opacity-90">Runway</span>
                         </div>
-                        <div class="text-4xl font-bold mb-1">{{ $metrics['runway_months'] }} bln</div>
+                        <div class="text-3xl font-bold mb-1">{{ $metrics['runway_months'] }} bulan</div>
                         <div class="text-sm opacity-90">Rp {{ number_format($cash_pulse['balance'] / 1000000, 1) }}M</div>
-                        <div class="mt-3 flex items-center justify-between">
-                            <span class="text-xs px-2 py-1 bg-white/20 rounded-full">
-                                {{ ucfirst($cash_pulse['status']) }}
-                            </span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
                     </div>
                 </div>
 
                 {{-- Card 3: Pending Approvals --}}
-                <div class="flex-shrink-0 w-[85vw] snap-start">
-                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg"
+                <div class="flex-shrink-0 w-64 snap-start">
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-md"
                          onclick="window.location.href='{{ mobile_route('approvals.index') }}'">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="bg-white/20 rounded-full p-2">
-                                <i class="fas fa-file-signature text-2xl"></i>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="bg-white/20 rounded-lg p-2">
+                                <i class="fas fa-file-signature text-xl"></i>
                             </div>
-                            <span class="text-xs uppercase tracking-wider opacity-90">Approvals</span>
+                            <span class="text-xs uppercase tracking-wide opacity-90">Approvals</span>
                         </div>
-                        <div class="text-5xl font-bold mb-2">{{ $metrics['approvals_count'] ?? 0 }}</div>
-                        <div class="text-sm opacity-90">Dokumen menunggu</div>
-                        <div class="mt-3 flex items-center text-xs">
-                            <span class="opacity-75">Quick approve</span>
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </div>
+                        <div class="text-4xl font-bold mb-1">{{ $metrics['approvals_count'] ?? 0 }}</div>
+                        <div class="text-sm opacity-90">Perlu approval</div>
                     </div>
                 </div>
 
                 {{-- Card 4: Today's Tasks --}}
-                <div class="flex-shrink-0 w-[85vw] snap-start">
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg"
+                <div class="flex-shrink-0 w-64 snap-start">
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-md"
                          onclick="window.location.href='{{ mobile_route('tasks.index') }}'">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="bg-white/20 rounded-full p-2">
-                                <i class="fas fa-tasks text-2xl"></i>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="bg-white/20 rounded-lg p-2">
+                                <i class="fas fa-tasks text-xl"></i>
                             </div>
-                            <span class="text-xs uppercase tracking-wider opacity-90">Today</span>
+                            <span class="text-xs uppercase tracking-wide opacity-90">Today</span>
                         </div>
-                        <div class="text-5xl font-bold mb-2">{{ $metrics['tasks_today'] ?? 0 }}</div>
-                        <div class="text-sm opacity-90">{{ $metrics['tasks_today'] ?? 0 }} hari ini • {{ $metrics['tasks_overdue'] ?? 0 }} overdue</div>
-                        <div class="mt-3 flex items-center text-xs">
-                            <span class="opacity-75">View all tasks</span>
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </div>
+                        <div class="text-4xl font-bold mb-1">{{ $metrics['tasks_today'] ?? 0 }}</div>
+                        <div class="text-sm opacity-90">{{ $metrics['tasks_overdue'] ?? 0 }} overdue</div>
                     </div>
                 </div>
 
@@ -173,12 +155,6 @@
                                 <i class="fas fa-ellipsis-v text-gray-400"></i>
                             </button>
                         </div>
-
-                        {{-- Swipe hint (subtle animation) --}}
-                        <div class="px-4 pb-2 text-xs text-gray-400 flex items-center justify-center gap-2">
-                            <i class="fas fa-hand-point-left animate-pulse"></i>
-                            <span>Swipe untuk aksi cepat</span>
-                        </div>
                     </div>
                 @endforeach
             </div>
@@ -188,50 +164,6 @@
                 <p class="text-sm text-green-700">Tidak ada alert kritis! 🎉</p>
             </div>
         @endif
-    </div>
-
-    {{-- Cash Pulse Widget --}}
-    <div class="mb-6">
-        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-900">
-                    <i class="fas fa-chart-line text-blue-600 mr-2"></i>
-                    Kas & Runway
-                </h2>
-                <span class="text-xs px-3 py-1 rounded-full font-medium
-                             {{ $cash_pulse['status'] === 'healthy' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
-                    {{ ucfirst($cash_pulse['status']) }}
-                </span>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <p class="text-xs text-gray-600 mb-1">Saldo Saat Ini</p>
-                    <p class="text-2xl font-bold text-gray-900">
-                        {{ number_format($cash_pulse['balance'] / 1000000, 1) }}M
-                    </p>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-600 mb-1">Runway</p>
-                    <p class="text-2xl font-bold text-blue-600">
-                        {{ $cash_pulse['runway'] }} bln
-                    </p>
-                </div>
-            </div>
-
-            {{-- Progress Bar --}}
-            <div class="mb-3">
-                <div class="h-2 bg-white/50 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500"
-                         style="width: {{ min($cash_pulse['runway'] / 12 * 100, 100) }}%"></div>
-                </div>
-            </div>
-
-            <button onclick="window.location.href='{{ mobile_route('financial.index') }}'" 
-                    class="w-full py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                Lihat Detail Keuangan →
-            </button>
-        </div>
     </div>
 
     {{-- Today's Agenda --}}
@@ -327,20 +259,13 @@
     <button x-show="showBackToTop" 
             @click="scrollToTop()"
             x-transition
-            class="fixed bottom-20 right-4 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg 
-                   flex items-center justify-center hover:bg-blue-700 transition-colors z-50">
+            class="fixed bottom-24 right-4 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg 
+                   flex items-center justify-center hover:bg-blue-700 transition-colors z-40">
         <i class="fas fa-arrow-up"></i>
     </button>
 
 </div>
 
-{{-- Floating Action Button (Quick Add) --}}
-<button onclick="showQuickActions()" 
-        class="fixed bottom-20 right-4 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 
-               text-white rounded-full shadow-xl flex items-center justify-center 
-               hover:scale-110 transition-transform z-50">
-    <i class="fas fa-plus text-xl"></i>
-</button>
 @endsection
 
 @push('scripts')
@@ -514,43 +439,6 @@ function dashboardMobile() {
             }, 3000);
         }
     }
-}
-
-function showQuickActions() {
-    // Show bottom sheet with quick action options
-    const modal = `
-        <div class="fixed inset-0 bg-black/50 z-50 flex items-end" onclick="this.remove()">
-            <div class="bg-white rounded-t-2xl w-full p-6 space-y-3" onclick="event.stopPropagation()">
-                <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
-                
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Tambah Baru</h3>
-                
-                <a href="{{ mobile_route('projects.create') }}" 
-                   class="block p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
-                    <i class="fas fa-folder-plus text-blue-600 mr-3"></i>
-                    <span class="font-medium text-gray-900">Proyek Baru</span>
-                </a>
-                
-                <a href="{{ mobile_route('tasks.index') }}" 
-                   class="block p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
-                    <i class="fas fa-plus-circle text-green-600 mr-3"></i>
-                    <span class="font-medium text-gray-900">Task Baru</span>
-                </a>
-                
-                <a href="{{ mobile_route('financial.index') }}" 
-                   class="block p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
-                    <i class="fas fa-money-bill-wave text-purple-600 mr-3"></i>
-                    <span class="font-medium text-gray-900">Catat Pembayaran</span>
-                </a>
-
-                <button onclick="this.closest('.fixed').remove()" 
-                        class="w-full py-3 text-gray-600 font-medium">
-                    Batal
-                </button>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', modal);
 }
 
 function toggleOptions(id) {
