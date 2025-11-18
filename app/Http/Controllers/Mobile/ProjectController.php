@@ -22,8 +22,8 @@ class ProjectController extends Controller
         $status = $request->get('status', 'active');
         $search = $request->get('q');
         
-        $query = Project::with(['status', 'institution', 'manager'])
-            ->select('id', 'name', 'budget', 'deadline', 'project_status_id', 'institution_id', 'manager_id', 'progress');
+        $query = Project::with(['status', 'institution'])
+            ->select('id', 'name', 'budget', 'deadline', 'status_id', 'institution_id', 'progress_percentage');
         
         // Filter by status
         if ($status === 'active') {
@@ -257,10 +257,9 @@ class ProjectController extends Controller
             'institution_id' => $request->institution_id,
             'deadline' => $request->deadline,
             'budget' => $request->budget ?? 0,
-            'manager_id' => auth()->id(),
-            'project_status_id' => ProjectStatus::where('name', 'Aktif')->first()?->id,
+            'status_id' => ProjectStatus::where('name', 'Aktif')->first()?->id,
             'start_date' => now(),
-            'progress' => 0
+            'progress_percentage' => 0
         ]);
         
         return response()->json([

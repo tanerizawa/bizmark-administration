@@ -19,7 +19,7 @@ class TaskController extends Controller
         $filter = $request->get('filter', 'all'); // all, today, week, overdue
         
         $query = Task::with(['project', 'assignee'])
-            ->select('id', 'title', 'description', 'status', 'due_date', 'project_id', 'assignee_id', 'priority');
+            ->select('id', 'title', 'description', 'status', 'due_date', 'project_id', 'assigned_user_id', 'priority');
         
         // Apply filters
         switch ($filter) {
@@ -48,12 +48,12 @@ class TaskController extends Controller
         ->paginate(20);
         
         $stats = [
-            'all' => Task::where('assignee_id', auth()->id())->where('status', '!=', 'done')->count(),
-            'today' => Task::where('assignee_id', auth()->id())
+            'all' => Task::where('assigned_user_id', auth()->id())->where('status', '!=', 'done')->count(),
+            'today' => Task::where('assigned_user_id', auth()->id())
                 ->whereDate('due_date', now()->toDateString())
                 ->where('status', '!=', 'done')
                 ->count(),
-            'overdue' => Task::where('assignee_id', auth()->id())
+            'overdue' => Task::where('assigned_user_id', auth()->id())
                 ->where('due_date', '<', now())
                 ->where('status', '!=', 'done')
                 ->count(),
@@ -79,7 +79,7 @@ class TaskController extends Controller
      */
     public function myTasks(Request $request)
     {
-        $tasks = Task::where('assignee_id', auth()->id())
+        $tasks = Task::where('assigned_user_id', auth()->id())
             ->with(['project'])
             ->where('status', '!=', 'done')
             ->orderBy('due_date', 'asc')
@@ -93,7 +93,7 @@ class TaskController extends Controller
      */
     public function urgent(Request $request)
     {
-        $tasks = Task::where('assignee_id', auth()->id())
+        $tasks = Task::where('assigned_user_id', auth()->id())
             ->where(function($q) {
                 $q->where('due_date', '<', now())
                   ->orWhereDate('due_date', now()->toDateString());
@@ -130,8 +130,8 @@ class TaskController extends Controller
      */
     public function complete(Request $request, Task $task)
     {
-        // Check permission
-        if ($task->assignee_id !== auth()->id() && $task->project->manager_id !== auth()->id()) {
+        // Check permission - hanya assigned user yang bisa complete
+        if ($task->assigned_user_id !== auth()->id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'
@@ -225,7 +225,7 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'due_date' => 'required|date|after:today',
             'priority' => 'nullable|in:low,medium,high',
-            'assignee_id' => 'nullable|exists:users,id'
+            'assigned_user_id' => 'nullable|exists:users,id'
         ]);
         
         $task = Task::create([
@@ -233,7 +233,7 @@ class TaskController extends Controller
             'project_id' => $request->project_id,
             'due_date' => $request->due_date,
             'priority' => $request->priority ?? 'medium',
-            'assignee_id' => $request->assignee_id ?? auth()->id(),
+            'assigned_user_id' => $request->assigned_user_id ?? auth()->id(),
             'creator_id' => auth()->id(),
             'status' => 'todo'
         ]);
