@@ -400,7 +400,7 @@
             
             <div class="space-y-2">
                 {{-- Profile --}}
-                <a href="{{ route('profile.edit') }}" 
+                <a href="{{ mobile_route('profile.show') }}" 
                    class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-[#f0f7fa] rounded-lg flex items-center justify-center">
@@ -415,8 +415,8 @@
                 </a>
                 
                 {{-- Preferences --}}
-                <button onclick="window.location.href='{{ route('settings.index') }}'" 
-                        class="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left">
+                <a href="{{ mobile_route('profile.show') }}" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-sliders text-gray-700 text-sm"></i>
@@ -427,11 +427,11 @@
                         </div>
                         <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
                     </div>
-                </button>
+                </a>
                 
                 {{-- About --}}
-                <button onclick="window.location.href='{{ route('about') }}'" 
-                        class="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left">
+                <a href="#" onclick="alert('Bizmark Admin v2.5.0\n\nUntuk bantuan, hubungi support@bizmark.id'); return false;" 
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-info-circle text-gray-700 text-sm"></i>
@@ -442,7 +442,7 @@
                         </div>
                         <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
                     </div>
-                </button>
+                </a>
                 
                 {{-- Logout --}}
                 <form method="POST" action="{{ route('logout') }}" class="mt-4">
