@@ -302,7 +302,7 @@
                     </div>
                 </a>
                 
-                <a href="{{ route('mobile.tasks.create') }}" 
+                <a href="{{ route('mobile.tasks.index') }}" 
                    class="block p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
@@ -328,7 +328,7 @@
                     </div>
                 </a>
                 
-                <a href="{{ route('mobile.payments.create') }}" 
+                <a href="{{ route('mobile.financial.index') }}" 
                    class="block p-4 bg-orange-50 rounded-xl hover:bg-orange-100 transition-colors">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
