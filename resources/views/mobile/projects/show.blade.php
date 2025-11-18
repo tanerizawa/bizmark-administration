@@ -59,6 +59,11 @@
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Overview
             </button>
+            <button @click="activeTab = 'financial'" 
+                    :class="activeTab === 'financial' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
+                    class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
+                Financial
+            </button>
             <button @click="activeTab = 'tasks'" 
                     :class="activeTab === 'tasks' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
@@ -139,6 +144,131 @@
                             class="p-3 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100">
                         <i class="fas fa-exchange-alt mr-2 text-[#0077b5]"></i>Update Status
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Tab -->
+        <div x-show="activeTab === 'financial'" x-transition>
+            <!-- Financial Summary -->
+            <div class="bg-white rounded-lg border border-gray-200 p-4 mb-4">
+                <h3 class="font-semibold text-gray-900 mb-3">Ringkasan Keuangan</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrow-down text-green-600 text-sm"></i>
+                            </div>
+                            <span class="text-sm text-gray-600">Total Pemasukan</span>
+                        </div>
+                        <span class="font-semibold text-green-600">Rp {{ number_format($stats['totalIncome'] ?? 0, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrow-up text-red-600 text-sm"></i>
+                            </div>
+                            <span class="text-sm text-gray-600">Total Pengeluaran</span>
+                        </div>
+                        <span class="font-semibold text-red-600">Rp {{ number_format($stats['totalSpent'], 0, ',', '.') }}</span>
+                    </div>
+                    <div class="pt-2 border-t border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-900">Saldo</span>
+                            <span class="font-bold text-lg {{ ($stats['totalIncome'] - $stats['totalSpent']) >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                Rp {{ number_format(($stats['totalIncome'] ?? 0) - $stats['totalSpent'], 0, ',', '.') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pemasukan Section -->
+            <div class="mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                        <i class="fas fa-arrow-down text-green-600"></i>
+                        Pemasukan
+                    </h3>
+                    <span class="text-xs text-gray-500">{{ $project->payments->count() }} transaksi</span>
+                </div>
+                <div class="space-y-2">
+                    @forelse($project->payments as $payment)
+                    <div class="bg-white rounded-lg border border-gray-200 p-3">
+                        <div class="flex justify-between items-start mb-1">
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900">{{ $payment->description ?? 'Pembayaran' }}</div>
+                                <div class="text-xs text-gray-500 mt-0.5">
+                                    {{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}
+                                    @if($payment->payment_method)
+                                    <span class="mx-1">•</span>
+                                    <span class="capitalize">{{ str_replace('_', ' ', $payment->payment_method) }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="text-right ml-3">
+                                <div class="font-semibold text-green-600">+Rp {{ number_format($payment->amount, 0, ',', '.') }}</div>
+                                @if($payment->payment_type)
+                                <div class="text-xs text-gray-500 mt-0.5">{{ ucfirst($payment->payment_type) }}</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="bg-gray-50 rounded-lg p-6 text-center">
+                        <i class="fas fa-inbox text-gray-300 text-3xl mb-2"></i>
+                        <p class="text-sm text-gray-500">Belum ada pemasukan</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Pengeluaran/Kasbon Section -->
+            <div class="mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                        <i class="fas fa-arrow-up text-red-600"></i>
+                        Pengeluaran/Kasbon
+                    </h3>
+                    <span class="text-xs text-gray-500">{{ $project->expenses->count() }} transaksi</span>
+                </div>
+                <div class="space-y-2">
+                    @forelse($project->expenses as $expense)
+                    <div class="bg-white rounded-lg border border-gray-200 p-3">
+                        <div class="flex justify-between items-start mb-1">
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900">{{ $expense->description ?? 'Pengeluaran' }}</div>
+                                <div class="text-xs text-gray-500 mt-0.5">
+                                    {{ \Carbon\Carbon::parse($expense->expense_date)->format('d M Y') }}
+                                    @if($expense->category)
+                                    <span class="mx-1">•</span>
+                                    <span class="capitalize">{{ $expense->category }}</span>
+                                    @endif
+                                </div>
+                                @if($expense->notes)
+                                <div class="text-xs text-gray-600 mt-1">{{ Str::limit($expense->notes, 50) }}</div>
+                                @endif
+                            </div>
+                            <div class="text-right ml-3">
+                                <div class="font-semibold text-red-600">-Rp {{ number_format($expense->amount, 0, ',', '.') }}</div>
+                                @if($expense->status)
+                                <div class="text-xs mt-0.5">
+                                    <span class="px-2 py-0.5 rounded-full
+                                        {{ $expense->status === 'approved' ? 'bg-green-100 text-green-700' : 
+                                           ($expense->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700') }}">
+                                        {{ ucfirst($expense->status) }}
+                                    </span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="bg-gray-50 rounded-lg p-6 text-center">
+                        <i class="fas fa-inbox text-gray-300 text-3xl mb-2"></i>
+                        <p class="text-sm text-gray-500">Belum ada pengeluaran</p>
+                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>
