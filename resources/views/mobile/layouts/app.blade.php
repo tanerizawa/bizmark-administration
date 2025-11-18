@@ -232,7 +232,7 @@
         <div class="h-16 flex items-center justify-around px-2">
             
             {{-- Home --}}
-            <a href="{{ route('mobile.dashboard') }}" 
+            <a href="{{ mobile_route('dashboard') }}" 
                class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth
                       {{ request()->routeIs('mobile.dashboard') ? 'text-blue-600' : 'text-gray-500' }}">
                 <i class="fas fa-home text-xl mb-1"></i>
@@ -240,7 +240,7 @@
             </a>
             
             {{-- Stats --}}
-            <a href="{{ route('mobile.stats') }}" 
+            <a href="{{ mobile_route('stats') }}" 
                class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth
                       {{ request()->routeIs('mobile.stats') ? 'text-blue-600' : 'text-gray-500' }}">
                 <i class="fas fa-chart-pie text-xl mb-1"></i>
@@ -257,7 +257,7 @@
             </button>
             
             {{-- Approvals --}}
-            <a href="{{ route('mobile.approvals.index') }}" 
+            <a href="{{ mobile_route('approvals.index') }}" 
                class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth relative
                       {{ request()->routeIs('mobile.approvals*') ? 'text-blue-600' : 'text-gray-500' }}">
                 <i class="fas fa-clipboard-check text-xl mb-1"></i>
@@ -271,7 +271,7 @@
             </a>
             
             {{-- Profile --}}
-            <a href="{{ route('mobile.profile.show') }}" 
+            <a href="{{ mobile_route('profile.show') }}" 
                class="flex flex-col items-center justify-center flex-1 py-2 rounded-lg transition-smooth
                       {{ request()->routeIs('mobile.profile') ? 'text-blue-600' : 'text-gray-500' }}">
                 <i class="fas fa-user text-xl mb-1"></i>
@@ -289,7 +289,7 @@
             <h3 class="text-lg font-bold text-gray-900 mb-4">Tambah Baru</h3>
             
             <div class="space-y-2">
-                <a href="{{ route('mobile.projects.create') }}" 
+                <a href="{{ mobile_route('projects.create') }}" 
                    class="block p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
@@ -302,7 +302,7 @@
                     </div>
                 </a>
                 
-                <a href="{{ route('mobile.tasks.index') }}" 
+                <a href="{{ mobile_route('tasks.index') }}" 
                    class="block p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
@@ -315,7 +315,7 @@
                     </div>
                 </a>
                 
-                <a href="{{ route('mobile.documents.upload') }}" 
+                <a href="{{ mobile_route('documents.upload') }}" 
                    class="block p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
@@ -328,7 +328,7 @@
                     </div>
                 </a>
                 
-                <a href="{{ route('mobile.financial.index') }}" 
+                <a href="{{ mobile_route('financial.index') }}" 
                    class="block p-4 bg-orange-50 rounded-xl hover:bg-orange-100 transition-colors">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">

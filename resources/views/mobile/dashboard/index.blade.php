@@ -16,7 +16,7 @@
 
 @section('header-actions')
     {{-- Notification badge --}}
-    <button onclick="window.location.href='{{ route('mobile.notifications.index') }}'" 
+    <button onclick="window.location.href='{{ mobile_route('notifications.index') }}'" 
             class="relative p-2 rounded-full hover:bg-white/10 transition-colors">
         <i class="fas fa-bell text-white"></i>
         @if($metrics['urgent_count'] > 0)
@@ -41,7 +41,7 @@
                 {{-- Card 1: Urgent Alerts --}}
                 <div class="flex-shrink-0 w-[85vw] snap-start">
                     <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-5 text-white shadow-lg"
-                         onclick="window.location.href='{{ route('mobile.tasks.urgent') }}'">
+                         onclick="window.location.href='{{ mobile_route('tasks.urgent') }}'">
                         <div class="flex items-center justify-between mb-3">
                             <div class="bg-white/20 rounded-full p-2">
                                 <i class="fas fa-exclamation-triangle text-2xl"></i>
@@ -60,7 +60,7 @@
                 {{-- Card 2: Cash & Runway --}}
                 <div class="flex-shrink-0 w-[85vw] snap-start">
                     <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-5 text-white shadow-lg"
-                         onclick="window.location.href='{{ route('mobile.financial.index') }}'">
+                         onclick="window.location.href='{{ mobile_route('financial.index') }}'">
                         <div class="flex items-center justify-between mb-3">
                             <div class="bg-white/20 rounded-full p-2">
                                 <i class="fas fa-wallet text-2xl"></i>
@@ -81,7 +81,7 @@
                 {{-- Card 3: Pending Approvals --}}
                 <div class="flex-shrink-0 w-[85vw] snap-start">
                     <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg"
-                         onclick="window.location.href='{{ route('mobile.approvals.index') }}'">
+                         onclick="window.location.href='{{ mobile_route('approvals.index') }}'">
                         <div class="flex items-center justify-between mb-3">
                             <div class="bg-white/20 rounded-full p-2">
                                 <i class="fas fa-file-signature text-2xl"></i>
@@ -100,7 +100,7 @@
                 {{-- Card 4: Today's Tasks --}}
                 <div class="flex-shrink-0 w-[85vw] snap-start">
                     <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg"
-                         onclick="window.location.href='{{ route('mobile.tasks.index') }}'">
+                         onclick="window.location.href='{{ mobile_route('tasks.index') }}'">
                         <div class="flex items-center justify-between mb-3">
                             <div class="bg-white/20 rounded-full p-2">
                                 <i class="fas fa-tasks text-2xl"></i>
@@ -136,7 +136,7 @@
                 Perlu Tindakan Sekarang
             </h2>
             @if(count($alerts) > 3)
-                <a href="{{ route('mobile.tasks.urgent') }}" class="text-sm text-blue-600 font-medium">
+                <a href="{{ mobile_route('tasks.urgent') }}" class="text-sm text-blue-600 font-medium">
                     + {{ count($alerts) - 3 }} lagi
                 </a>
             @endif
@@ -227,7 +227,7 @@
                 </div>
             </div>
 
-            <button onclick="window.location.href='{{ route('mobile.financial.index') }}'" 
+            <button onclick="window.location.href='{{ mobile_route('financial.index') }}'" 
                     class="w-full py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                 Lihat Detail Keuangan →
             </button>
@@ -290,7 +290,7 @@
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:leave="transition ease-in duration-150"
                  class="px-4 pb-3">
-                <a href="{{ route('mobile.projects.index') }}" 
+                <a href="{{ mobile_route('projects.index') }}" 
                    class="block py-2 text-sm text-blue-600 font-medium">
                     Lihat semua proyek →
                 </a>
@@ -314,7 +314,7 @@
             <div x-show="expanded" 
                  x-transition
                  class="px-4 pb-3">
-                <a href="{{ route('mobile.financial.index') }}" 
+                <a href="{{ mobile_route('financial.index') }}" 
                    class="block py-2 text-sm text-blue-600 font-medium">
                     Lihat pending payments →
                 </a>
@@ -525,19 +525,19 @@ function showQuickActions() {
                 
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Tambah Baru</h3>
                 
-                <a href="{{ route('mobile.projects.create') }}" 
+                <a href="{{ mobile_route('projects.create') }}" 
                    class="block p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
                     <i class="fas fa-folder-plus text-blue-600 mr-3"></i>
                     <span class="font-medium text-gray-900">Proyek Baru</span>
                 </a>
                 
-                <a href="{{ route('mobile.tasks.index') }}" 
+                <a href="{{ mobile_route('tasks.index') }}" 
                    class="block p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
                     <i class="fas fa-plus-circle text-green-600 mr-3"></i>
                     <span class="font-medium text-gray-900">Task Baru</span>
                 </a>
                 
-                <a href="{{ route('mobile.financial.index') }}" 
+                <a href="{{ mobile_route('financial.index') }}" 
                    class="block p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
                     <i class="fas fa-money-bill-wave text-purple-600 mr-3"></i>
                     <span class="font-medium text-gray-900">Catat Pembayaran</span>
