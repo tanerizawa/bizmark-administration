@@ -148,8 +148,8 @@ class DashboardController extends Controller
     {
         $overdueProjects = Project::whereNotNull('deadline')
             ->where('deadline', '<', now())
-            ->whereDoesntHave('status', function($query) {
-                $query->where('name', 'Selesai');
+            ->whereHas('status', function($query) {
+                $query->where('is_active', true);
             })->count();
             
         $overdueTasks = Task::whereNotNull('due_date')
@@ -263,7 +263,7 @@ class DashboardController extends Controller
     {
         return [
             'activeProjects' => Project::whereHas('status', function($query) {
-                $query->where('name', 'Aktif');
+                $query->where('is_active', true);
             })->count(),
             'teamMembers' => \App\Models\User::where('is_active', true)->count(),
             'monthRevenue' => Invoice::whereMonth('created_at', now()->month)

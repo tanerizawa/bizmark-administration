@@ -27,12 +27,12 @@ class ProjectController extends Controller
         
         // Filter by status
         if ($status === 'active') {
-            $query->whereHas('status', fn($q) => $q->where('name', 'Aktif'));
+            $query->whereHas('status', fn($q) => $q->where('is_active', true));
         } elseif ($status === 'overdue') {
             $query->where('deadline', '<', now())
-                ->whereDoesntHave('status', fn($q) => $q->where('name', 'Selesai'));
+                ->whereHas('status', fn($q) => $q->where('is_active', true));
         } elseif ($status === 'completed') {
-            $query->whereHas('status', fn($q) => $q->where('name', 'Selesai'));
+            $query->whereHas('status', fn($q) => $q->where('is_active', false));
         }
         
         // Search
@@ -73,7 +73,6 @@ class ProjectController extends Controller
         $project->load([
             'status',
             'institution',
-            'manager',
             'tasks' => fn($q) => $q->orderBy('due_date'),
             'documents' => fn($q) => $q->latest()->take(5),
             'expenses' => fn($q) => $q->latest()->take(5)
@@ -161,7 +160,7 @@ class ProjectController extends Controller
         ]);
         
         $oldStatus = $project->status->name ?? 'Unknown';
-        $project->update(['project_status_id' => $request->status_id]);
+        $project->update(['status_id' => $request->status_id]);
         $newStatus = $project->fresh()->status->name ?? 'Unknown';
         
         // Log activity
@@ -257,7 +256,7 @@ class ProjectController extends Controller
             'institution_id' => $request->institution_id,
             'deadline' => $request->deadline,
             'budget' => $request->budget ?? 0,
-            'status_id' => ProjectStatus::where('name', 'Aktif')->first()?->id,
+            'status_id' => ProjectStatus::where('is_active', true)->first()?->id ?? 1,
             'start_date' => now(),
             'progress_percentage' => 0
         ]);

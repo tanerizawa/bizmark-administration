@@ -20,10 +20,10 @@
         <div class="mb-4">
             <div class="flex justify-between text-sm mb-1.5">
                 <span class="text-white">Progress</span>
-                <span class="font-semibold">{{ $project->progress ?? 0 }}%</span>
+                <span class="font-semibold">{{ $project->progress_percentage ?? 0 }}%</span>
             </div>
             <div class="h-2 bg-white/20 rounded-full overflow-hidden">
-                <div style="width: {{ $project->progress ?? 0 }}%" 
+                <div style="width: {{ $project->progress_percentage ?? 0 }}%" 
                      class="h-full bg-white rounded-full transition-all duration-500"></div>
             </div>
         </div>
@@ -39,7 +39,13 @@
                 <div class="text-xs text-white mt-0.5">Hari Lagi</div>
             </div>
             <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                <div class="text-2xl font-bold">{{ number_format(($stats['totalSpent'] / $stats['totalBudget']) * 100, 0) }}%</div>
+                <div class="text-2xl font-bold">
+                    @if($stats['totalBudget'] > 0)
+                        {{ number_format(($stats['totalSpent'] / $stats['totalBudget']) * 100, 0) }}%
+                    @else
+                        0%
+                    @endif
+                </div>
                 <div class="text-xs text-white mt-0.5">Budget Used</div>
             </div>
         </div>
