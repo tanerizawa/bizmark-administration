@@ -3,7 +3,7 @@
 @section('title', 'Notifikasi')
 
 @section('header-actions')
-<button @click="markAllAsRead" class="text-gray-600 hover:text-blue-600 transition-colors text-sm font-medium">
+<button @click="markAllAsRead" class="text-gray-600 hover:text-[#0077b5] transition-colors text-sm font-medium">
     <i class="fas fa-check-double mr-1"></i>
     Tandai Semua
 </button>
@@ -16,47 +16,47 @@
         <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
             <button 
                 @click="filter = 'all'" 
-                :class="filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'all' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <span>Semua</span>
                 <span x-show="filter === 'all' && stats.all > 0" 
-                      class="bg-white text-blue-600 px-2 py-0.5 rounded-full text-xs font-bold"
+                      class="bg-white text-[#0077b5] px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.all"></span>
             </button>
             <button 
                 @click="filter = 'tasks'" 
-                :class="filter === 'tasks' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'tasks' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-circle-check text-xs"></i>
                 <span>Task</span>
                 <span x-show="stats.tasks > 0" 
-                      :class="filter === 'tasks' ? 'bg-white text-blue-600' : 'bg-blue-100 text-blue-600'"
+                      :class="filter === 'tasks' ? 'bg-white text-[#0077b5]' : 'bg-[#e7f3f8] text-[#0077b5]'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.tasks"></span>
             </button>
             <button 
                 @click="filter = 'approvals'" 
-                :class="filter === 'approvals' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'approvals' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-clipboard-check text-xs"></i>
                 <span>Approval</span>
                 <span x-show="stats.approvals > 0" 
-                      :class="filter === 'approvals' ? 'bg-white text-blue-600' : 'bg-orange-100 text-orange-600'"
+                      :class="filter === 'approvals' ? 'bg-white text-[#0077b5]' : 'bg-orange-100 text-orange-600'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.approvals"></span>
             </button>
             <button 
                 @click="filter = 'cash'" 
-                :class="filter === 'cash' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'cash' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-money-bill-wave text-xs"></i>
                 <span>Keuangan</span>
                 <span x-show="stats.cash > 0" 
-                      :class="filter === 'cash' ? 'bg-white text-blue-600' : 'bg-green-100 text-green-600'"
+                      :class="filter === 'cash' ? 'bg-white text-[#0077b5]' : 'bg-green-100 text-green-600'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.cash"></span>
             </button>
@@ -82,7 +82,7 @@
 
         <template x-for="notif in filteredNotifications" :key="notif.id">
             <div 
-                :class="!notif.read_at ? 'bg-blue-50' : 'bg-white'"
+                :class="!notif.read_at ? 'bg-[#f0f7fa]' : 'bg-white'"
                 class="p-3 hover:bg-gray-50 transition-colors relative border-b border-gray-100"
                 @click="handleNotification(notif)">
                 
