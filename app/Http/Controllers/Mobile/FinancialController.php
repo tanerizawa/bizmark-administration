@@ -30,6 +30,101 @@ class FinancialController extends Controller
     }
     
     /**
+     * Quick input form for income/expense
+     */
+    public function quickInput(Request $request)
+    {
+        // Get active projects for dropdown
+        $projects = \App\Models\Project::select('id', 'name')
+            ->where('status_id', '!=', 5) // Exclude completed projects
+            ->orderBy('name')
+            ->get();
+        
+        return view('mobile.financial.quick-input', compact('projects'));
+    }
+    
+    /**
+     * Store transaction from quick input
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:income,expense',
+            'amount' => 'required|numeric|min:0',
+            'category' => 'required|string',
+            'transaction_date' => 'required|date',
+            'project_id' => 'nullable|exists:projects,id',
+            'description' => 'nullable|string|max:500',
+            'receipt' => 'nullable|image|max:5120' // 5MB max
+        ]);
+        
+        try {
+            DB::beginTransaction();
+            
+            if ($request->type === 'income') {
+                // Store as ProjectPayment
+                $payment = \App\Models\ProjectPayment::create([
+                    'project_id' => $request->project_id,
+                    'amount' => $request->amount,
+                    'payment_date' => $request->transaction_date,
+                    'description' => $request->description ?? $this->getCategoryLabel($request->category),
+                    'payment_type' => 'other', // or map from category
+                    'payment_method' => 'transfer',
+                    'created_by' => auth()->id(),
+                ]);
+                
+                // Update cash account
+                if ($cashAccount = CashAccount::first()) {
+                    $cashAccount->increment('current_balance', $request->amount);
+                }
+                
+                $transaction = $payment;
+            } else {
+                // Store as ProjectExpense
+                $expense = ProjectExpense::create([
+                    'project_id' => $request->project_id,
+                    'amount' => $request->amount,
+                    'expense_date' => $request->transaction_date,
+                    'description' => $request->description ?? $this->getCategoryLabel($request->category),
+                    'recorded_by' => auth()->id(),
+                    'status' => 'approved', // Auto-approve mobile entries
+                ]);
+                
+                // Update cash account
+                if ($cashAccount = CashAccount::first()) {
+                    $cashAccount->decrement('current_balance', $request->amount);
+                }
+                
+                $transaction = $expense;
+            }
+            
+            // Handle receipt upload
+            if ($request->hasFile('receipt')) {
+                $path = $request->file('receipt')->store('receipts', 'public');
+                $transaction->update(['receipt_path' => $path]);
+            }
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => $request->type === 'income' 
+                    ? 'Pemasukan berhasil dicatat!' 
+                    : 'Pengeluaran berhasil dicatat!',
+                'transaction' => $transaction
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan transaksi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
      * Cash flow details
      */
     public function cashFlow(Request $request)
@@ -348,4 +443,28 @@ class FinancialController extends Controller
         if ($days <= 60) return '31-60';
         return '60+';
     }
+    
+    /**
+     * Get category label from code
+     */
+    private function getCategoryLabel($code)
+    {
+        $labels = [
+            // Income
+            'client_payment' => 'Pembayaran Klien',
+            'down_payment' => 'DP Proyek',
+            'final_payment' => 'Pelunasan',
+            'other_income' => 'Pemasukan Lainnya',
+            // Expense
+            'operational' => 'Operasional',
+            'salary' => 'Gaji Karyawan',
+            'tax_payment' => 'Pembayaran Pajak',
+            'permit_fee' => 'Biaya Perizinan',
+            'transport' => 'Transportasi',
+            'other_expense' => 'Pengeluaran Lainnya',
+        ];
+        
+        return $labels[$code] ?? $code;
+    }
 }
+

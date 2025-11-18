@@ -29,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
         
         // Share navigation counts to layout
         View::composer('layouts.app', NavCountComposer::class);
+        
+        // Share mobile layout data
+        View::composer('mobile.layouts.app', \App\Http\View\Composers\MobileLayoutComposer::class);
 
         // Register observers to invalidate nav counts cache
         \App\Models\Project::observe(\App\Observers\NavCountObserver::class);
