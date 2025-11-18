@@ -80,12 +80,98 @@ class TaskController extends Controller
     public function myTasks(Request $request)
     {
         $tasks = Task::where('assigned_user_id', auth()->id())
-            ->with(['project'])
-            ->where('status', '!=', 'done')
+            ->with(['project', 'assignee'])
             ->orderBy('due_date', 'asc')
             ->paginate(20);
         
-        return view('mobile.tasks.my', compact('tasks'));
+        // Transform tasks for mobile display
+        $transformedTasks = $tasks->map(function($task) {
+            return $this->transformTask($task);
+        });
+        
+        // Calculate stats
+        $now = Carbon::now();
+        $today = $now->copy()->startOfDay();
+        $weekEnd = $today->copy()->addDays(7);
+        
+        $stats = [
+            'all' => Task::where('assigned_user_id', auth()->id())
+                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->count(),
+            'today' => Task::where('assigned_user_id', auth()->id())
+                ->whereDate('due_date', $today)
+                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->count(),
+            'week' => Task::where('assigned_user_id', auth()->id())
+                ->whereBetween('due_date', [$today, $weekEnd])
+                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->count(),
+            'overdue' => Task::where('assigned_user_id', auth()->id())
+                ->where('due_date', '<', $today)
+                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->count(),
+        ];
+        
+        if ($request->expectsJson()) {
+            return response()->json([
+                'tasks' => $transformedTasks,
+                'has_more' => $tasks->hasMorePages(),
+                'stats' => $stats
+            ]);
+        }
+        
+        return view('mobile.tasks.my', compact('tasks', 'stats'));
+    }
+    
+    /**
+     * Transform task for mobile display
+     */
+    private function transformTask($task)
+    {
+        $now = Carbon::now();
+        $dueDate = Carbon::parse($task->due_date);
+        
+        $priorityLabels = [
+            'urgent' => 'Urgent',
+            'high' => 'High',
+            'medium' => 'Medium',
+            'low' => 'Low'
+        ];
+        
+        return [
+            'id' => $task->id,
+            'title' => $task->title,
+            'description' => $task->description,
+            'status' => $task->status,
+            'priority' => $task->priority ?? 'medium',
+            'priority_label' => $priorityLabels[$task->priority ?? 'medium'] ?? 'Medium',
+            'due_date' => $task->due_date,
+            'due_date_formatted' => $this->formatDueDate($dueDate),
+            'is_overdue' => $dueDate->isPast() && $task->status !== 'completed',
+            'is_due_soon' => $dueDate->isToday() || ($dueDate->isTomorrow() && $task->status !== 'completed'),
+            'project_id' => $task->project_id,
+            'project_name' => $task->project->name ?? null,
+            'assigned_to_id' => $task->assigned_user_id,
+            'assigned_to_name' => $task->assignee->name ?? null,
+        ];
+    }
+    
+    /**
+     * Format due date for display
+     */
+    private function formatDueDate($date)
+    {
+        if ($date->isToday()) {
+            return 'Hari Ini';
+        } elseif ($date->isTomorrow()) {
+            return 'Besok';
+        } elseif ($date->isYesterday()) {
+            return 'Kemarin';
+        } elseif ($date->diffInDays() <= 7) {
+            return $date->format('l'); // Day name
+        } else {
+            return $date->format('d M');
+        }
     }
     
     /**
