@@ -1,7 +1,7 @@
 // Service Worker for Bizmark.ID PWA
 // IMPORTANT: Increment this version when you make ANY changes to the app
-const CACHE_VERSION = 'v2.5.1'; // Fixed duplicate pull-to-refresh logic
-const BUILD_TIMESTAMP = '2025-11-18T21:45:00Z'; // Auto-generated on build
+const CACHE_VERSION = 'v2.5.3'; // Removed connection check - cleaner UX
+const BUILD_TIMESTAMP = '2025-11-18T22:05:00Z'; // Auto-generated on build
 const STATIC_CACHE = `bizmark-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `bizmark-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bizmark-images-${CACHE_VERSION}`;

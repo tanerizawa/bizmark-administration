@@ -20,11 +20,6 @@ use App\Http\Controllers\Mobile\ProfileController;
 |
 */
 
-// Ping endpoint for connectivity check (no middleware, no auth)
-Route::match(['head', 'get'], 'm/ping', function() {
-    return response()->json(['status' => 'ok', 'time' => now()->toIso8601String()], 200);
-})->name('mobile.ping');
-
 // Mobile welcome page (tidak perlu auth)
 Route::prefix('m')->middleware(['mobile'])->group(function () {
     Route::get('/welcome', function() {
