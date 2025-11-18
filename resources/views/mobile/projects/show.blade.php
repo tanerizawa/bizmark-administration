@@ -35,7 +35,7 @@
                 <div class="text-xs text-white mt-0.5">Tasks</div>
             </div>
             <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                <div class="text-2xl font-bold">{{ $stats['daysLeft'] ?? 0 }}</div>
+                <div class="text-2xl font-bold">{{ (int)($stats['daysLeft'] ?? 0) }}</div>
                 <div class="text-xs text-white mt-0.5">Hari Lagi</div>
             </div>
             <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
@@ -46,38 +46,48 @@
                         0%
                     @endif
                 </div>
-                <div class="text-xs text-white mt-0.5">Budget Used</div>
+                <div class="text-xs text-white mt-0.5">Kontrak Used</div>
             </div>
         </div>
     </div>
 
     <!-- Tabs -->
     <div class="sticky top-14 z-10 bg-white border-b border-gray-200">
-        <div class="flex overflow-x-auto scrollbar-hide">
+        <div class="flex justify-around">
             <button @click="activeTab = 'overview'" 
                     :class="activeTab === 'overview' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
-                    class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
-                Overview
+                    class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs">
+                <i class="fas fa-info-circle text-base"></i>
+                <span>Info</span>
             </button>
             <button @click="activeTab = 'financial'" 
                     :class="activeTab === 'financial' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
-                    class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
-                Financial
+                    class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs">
+                <i class="fas fa-wallet text-base"></i>
+                <span>Keuangan</span>
             </button>
             <button @click="activeTab = 'tasks'" 
                     :class="activeTab === 'tasks' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
-                    class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
-                Tasks ({{ $stats['totalTasks'] }})
+                    class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs relative">
+                <i class="fas fa-tasks text-base"></i>
+                <span>Tasks</span>
+                @if($stats['totalTasks'] > 0)
+                <span class="absolute top-1 right-2 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                    {{ $stats['totalTasks'] > 9 ? '9+' : $stats['totalTasks'] }}
+                </span>
+                @endif
             </button>
             <button @click="activeTab = 'timeline'" 
                     :class="activeTab === 'timeline' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
-                    class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
-                Timeline
+                    class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs">
+                <i class="fas fa-stream text-base"></i>
+                <span>Timeline</span>
             </button>
             <button @click="activeTab = 'files'" 
                     :class="activeTab === 'files' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
-                    class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
-                Files
+                    class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs">
+                <i class="fas fa-folder text-base"></i>
+                <span>Files</span>
             </button>
         </div>
     </div>
@@ -99,7 +109,7 @@
                         <span class="font-medium">{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Budget</span>
+                        <span class="text-gray-600">Nilai Kontrak</span>
                         <span class="font-medium">{{ number_format($project->budget, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
