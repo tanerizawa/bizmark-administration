@@ -317,8 +317,9 @@ class FinancialController extends Controller
     {
         $totalCash = CashAccount::sum('current_balance');
         
+        // Monthly burn = total expenses in last 30 days (only reconciled ones)
         $monthlyBurn = ProjectExpense::where('expense_date', '>=', now()->subDays(30))
-            ->where('status', 'approved')
+            ->where('is_reconciled', true)
             ->sum('amount');
         
         $runway = $monthlyBurn > 0 ? round($totalCash / $monthlyBurn, 1) : 999;
@@ -340,7 +341,7 @@ class FinancialController extends Controller
         
         $income = ProjectPayment::where('payment_date', '>=', $startOfMonth)->sum('amount');
         $expenses = ProjectExpense::where('expense_date', '>=', $startOfMonth)
-            ->where('status', 'approved')
+            ->where('is_reconciled', true)
             ->sum('amount');
         
         $lastMonthIncome = ProjectPayment::whereBetween('payment_date', [
@@ -351,7 +352,7 @@ class FinancialController extends Controller
         $lastMonthExpenses = ProjectExpense::whereBetween('expense_date', [
             now()->subMonth()->startOfMonth(),
             now()->subMonth()->endOfMonth()
-        ])->where('status', 'approved')->sum('amount');
+        ])->where('is_reconciled', true)->sum('amount');
         
         return [
             'income' => $income,
