@@ -43,7 +43,7 @@
                     inputmode="numeric"
                     placeholder="0"
                     class="w-full pl-12 pr-3 py-3 text-xl font-bold border-2 border-gray-200 rounded-lg 
-                           focus:border-[#0a66c2] focus:ring-2 focus:ring-blue-100 transition-all"
+                           focus:border-[#0077b5] focus:ring-2 focus:ring-blue-100 transition-all"
                     required>
             </div>
 
@@ -86,7 +86,7 @@
             <select 
                 x-model="category" 
                 class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg 
-                       focus:border-[#0a66c2] focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                       focus:border-[#0077b5] focus:ring-2 focus:ring-blue-100 transition-all text-sm"
                 required>
                 <option value="">Pilih kategori...</option>
                 <template x-if="type === 'income'">
@@ -199,7 +199,7 @@
             <button 
                 type="submit"
                 :disabled="loading || !amount || !category"
-                class="w-full py-3 bg-[#0a66c2] hover:bg-[#004182] text-white rounded-lg font-bold 
+                class="w-full py-3 bg-[#0077b5] hover:bg-[#004182] text-white rounded-lg font-bold 
                        disabled:opacity-50 disabled:cursor-not-allowed 
                        active:scale-95 transition-all flex items-center justify-center gap-2">
                 <template x-if="loading">

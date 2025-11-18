@@ -18,7 +18,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     {{-- PWA Meta Tags --}}
-    <meta name="theme-color" content="#0a66c2">
+    <meta name="theme-color" content="#0077b5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Bizmark Admin">
@@ -64,10 +64,10 @@
             left: 0;
             right: 0;
             z-index: 50;
-            background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+            background: linear-gradient(135deg, #0077b5 0%, #004d6d 100%);
             height: calc(56px + env(safe-area-inset-top));
             padding-top: env(safe-area-inset-top);
-            box-shadow: 0 2px 8px rgba(10, 102, 194, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 119, 181, 0.15);
             transition: transform 0.3s ease;
         }
         
@@ -86,7 +86,7 @@
             right: 0;
             z-index: 50;
             background: white;
-            border-top: 1px solid #E5E7EB;
+            border-top: 1px solid #caccce;
             height: calc(64px + env(safe-area-inset-bottom));
             padding-bottom: env(safe-area-inset-bottom);
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
@@ -195,7 +195,7 @@
     
     {{-- Pull to Refresh Indicator --}}
     <div id="refreshIndicator" class="refresh-indicator">
-        <i class="fas fa-sync-alt text-blue-600"></i>
+        <i class="fas fa-sync-alt" style="color: #0077b5;"></i>
     </div>
 
     {{-- Fixed Header --}}
@@ -237,8 +237,8 @@
             {{-- Home --}}
             <a href="{{ mobile_route('dashboard') }}" 
                class="flex flex-col items-center justify-center gap-0.5
-                      {{ request()->routeIs('mobile.dashboard') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
-                      hover:text-[#0a66c2] transition-colors">
+                      {{ request()->routeIs('mobile.dashboard') ? 'text-[#0077b5]' : 'text-gray-600' }} 
+                      hover:text-[#0077b5] transition-colors">
                 <i class="fas fa-house text-xl"></i>
                 <span class="text-[9px] font-medium">Home</span>
             </a>
@@ -246,8 +246,8 @@
             {{-- Tasks --}}
             <a href="{{ mobile_route('tasks.index') }}" 
                class="flex flex-col items-center justify-center gap-0.5 relative
-                      {{ request()->routeIs('mobile.tasks*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
-                      hover:text-[#0a66c2] transition-colors">
+                      {{ request()->routeIs('mobile.tasks*') ? 'text-[#0077b5]' : 'text-gray-600' }} 
+                      hover:text-[#0077b5] transition-colors">
                 <i class="fas fa-circle-check text-xl"></i>
                 <span class="text-[9px] font-medium">Tasks</span>
                 @if(isset($myTasksCount) && $myTasksCount > 0)
@@ -262,7 +262,7 @@
             <div class="flex items-center justify-center">
                 <button onclick="showQuickAdd()" 
                         class="flex items-center justify-center w-12 h-12 -mt-5 rounded-full 
-                               bg-[#0a66c2] hover:bg-[#004182] text-white shadow-lg hover:shadow-xl 
+                               bg-[#0077b5] hover:bg-[#004182] text-white shadow-lg hover:shadow-xl 
                                transition-all active:scale-95">
                     <i class="fas fa-plus text-xl"></i>
                 </button>
@@ -271,8 +271,8 @@
             {{-- Notifications --}}
             <a href="{{ mobile_route('notifications.index') }}" 
                class="flex flex-col items-center justify-center gap-0.5 relative
-                      {{ request()->routeIs('mobile.notifications*') ? 'text-[#0a66c2]' : 'text-gray-600' }} 
-                      hover:text-[#0a66c2] transition-colors">
+                      {{ request()->routeIs('mobile.notifications*') ? 'text-[#0077b5]' : 'text-gray-600' }} 
+                      hover:text-[#0077b5] transition-colors">
                 <i class="fas fa-bell text-xl"></i>
                 <span class="text-[9px] font-medium">Notif</span>
                 @if(isset($unreadNotifCount) && $unreadNotifCount > 0)
@@ -286,7 +286,7 @@
             {{-- Menu --}}
             <button onclick="showMenu()" 
                     class="flex flex-col items-center justify-center gap-0.5 text-gray-600 
-                           hover:text-[#0a66c2] transition-colors">
+                           hover:text-[#0077b5] transition-colors">
                 <i class="fas fa-bars text-xl"></i>
                 <span class="text-[9px] font-medium">Menu</span>
             </button>

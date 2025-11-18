@@ -95,7 +95,7 @@
                 Perlu Tindakan
             </h2>
             @if(count($alerts) > 3)
-                <a href="{{ mobile_route('tasks.urgent') }}" class="text-xs text-[#0a66c2] font-medium">
+                <a href="{{ mobile_route('tasks.urgent') }}" class="text-xs text-[#0077b5] font-medium">
                     +{{ count($alerts) - 3 }} lagi
                 </a>
             @endif
