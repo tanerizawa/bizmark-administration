@@ -243,10 +243,7 @@ function dashboardMobile() {
         showBackToTop: false,
 
         init() {
-            // Pull to refresh
-            this.initPullToRefresh();
-            
-            // Scroll detection
+            // Scroll detection for back to top button
             window.addEventListener('scroll', () => {
                 this.showBackToTop = window.scrollY > 300;
             });
@@ -282,53 +279,6 @@ function dashboardMobile() {
                     setTimeout(() => window.location.reload(), 1000);
                 }
             });
-        },
-
-        initPullToRefresh() {
-            let startY = 0;
-            let currentY = 0;
-            let pulling = false;
-
-            document.addEventListener('touchstart', (e) => {
-                if (window.scrollY === 0) {
-                    startY = e.touches[0].pageY;
-                    pulling = true;
-                }
-            });
-
-            document.addEventListener('touchmove', (e) => {
-                if (!pulling) return;
-                currentY = e.touches[0].pageY;
-                const pullDistance = currentY - startY;
-
-                if (pullDistance > 80) {
-                    // Show refresh indicator
-                    this.showRefreshIndicator();
-                }
-            });
-
-            document.addEventListener('touchend', () => {
-                if (!pulling) return;
-                const pullDistance = currentY - startY;
-
-                if (pullDistance > 80) {
-                    this.refreshData();
-                }
-                pulling = false;
-            });
-        },
-
-        refreshData() {
-            // Show loading
-            this.showToast('Memuat data...', 'info');
-
-            // Fetch fresh data
-            fetch('/mobile/dashboard/refresh')
-                .then(response => response.json())
-                .then(data => {
-                    this.showToast('✓ Data diperbarui!', 'success');
-                    setTimeout(() => window.location.reload(), 500);
-                });
         },
 
         scrollToTop() {
