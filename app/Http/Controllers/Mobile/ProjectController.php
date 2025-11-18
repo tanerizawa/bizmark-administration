@@ -75,7 +75,8 @@ class ProjectController extends Controller
             'institution',
             'tasks' => fn($q) => $q->orderBy('due_date'),
             'documents' => fn($q) => $q->latest()->take(5),
-            'expenses' => fn($q) => $q->latest()->take(5)
+            'expenses' => fn($q) => $q->latest()->take(10),
+            'payments' => fn($q) => $q->latest()->take(10)
         ]);
         
         $stats = [
@@ -85,6 +86,7 @@ class ProjectController extends Controller
                 ->where('status', '!=', 'done')->count(),
             'totalBudget' => $project->budget,
             'totalSpent' => $project->expenses->sum('amount'),
+            'totalIncome' => $project->payments->sum('amount'),
             'daysLeft' => now()->diffInDays($project->deadline, false),
         ];
         
