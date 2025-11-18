@@ -207,9 +207,9 @@ class FinancialController extends Controller
     private function getCashBalance()
     {
         return [
-            'total' => CashAccount::sum('balance'),
-            'accounts' => CashAccount::select('id', 'name', 'balance', 'currency')
-                ->orderBy('balance', 'desc')
+            'total' => CashAccount::sum('current_balance'),
+            'accounts' => CashAccount::select('id', 'account_name as name', 'current_balance as balance')
+                ->orderBy('current_balance', 'desc')
                 ->get()
         ];
     }
@@ -219,7 +219,7 @@ class FinancialController extends Controller
      */
     private function getRunway()
     {
-        $totalCash = CashAccount::sum('balance');
+        $totalCash = CashAccount::sum('current_balance');
         
         $monthlyBurn = ProjectExpense::where('expense_date', '>=', now()->subDays(30))
             ->where('status', 'approved')

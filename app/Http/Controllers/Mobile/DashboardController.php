@@ -25,18 +25,30 @@ class DashboardController extends Controller
     {
         $cacheKey = 'mobile_dashboard_' . auth()->id();
         
-        $data = Cache::remember($cacheKey, 120, function() {
+        $metrics = Cache::remember($cacheKey, 120, function() {
+            $urgent = $this->getUrgentMetric();
+            $runway = $this->getRunwayMetric();
+            $approvals = $this->getApprovalsMetric();
+            $tasks = $this->getTasksMetric();
+            $quickStats = $this->getQuickStats();
+            
             return [
-                'urgent' => $this->getUrgentMetric(),
-                'runway' => $this->getRunwayMetric(),
-                'approvals' => $this->getApprovalsMetric(),
-                'tasks' => $this->getTasksMetric(),
-                'recentActivity' => $this->getRecentActivity(5), // Only 5 items
-                'quickStats' => $this->getQuickStats(),
+                'urgent_count' => $urgent['count'],
+                'runway_months' => $runway['months'],
+                'runway_label' => $runway['label'],
+                'runway_color' => $runway['color'],
+                'approvals_count' => $approvals['count'],
+                'tasks_today' => $tasks['today'],
+                'tasks_overdue' => $tasks['overdue'],
+                'active_projects' => $quickStats['activeProjects'],
+                'month_revenue' => $quickStats['monthRevenue'],
+                'month_expenses' => $quickStats['monthExpenses'],
             ];
         });
         
-        return view('mobile.dashboard.index', $data);
+        $recentActivity = $this->getRecentActivity(5);
+        
+        return view('mobile.dashboard.index', compact('metrics', 'recentActivity'));
     }
     
     /**
@@ -112,7 +124,7 @@ class DashboardController extends Controller
             ->where('status', '!=', 'done')
             ->count();
             
-        $criticalCash = CashAccount::where('balance', '<', 0)->count();
+        $criticalCash = CashAccount::where('current_balance', '<', 0)->count();
         
         $total = $overdueProjects + $overdueTasks + $criticalCash;
         
@@ -134,7 +146,7 @@ class DashboardController extends Controller
      */
     private function getRunwayMetric()
     {
-        $totalCash = CashAccount::sum('balance');
+        $totalCash = CashAccount::sum('current_balance');
         
         // Calculate monthly burn rate (last 30 days)
         $monthlyExpenses = ProjectExpense::where('expense_date', '>=', now()->subDays(30))
