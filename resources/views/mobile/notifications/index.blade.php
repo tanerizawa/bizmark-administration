@@ -12,8 +12,8 @@
 @section('content')
 <div x-data="notificationCenter()" class="pb-20">
     {{-- Filter Tabs --}}
-    <div class="sticky top-16 bg-white z-10 border-b border-gray-200 px-4 pt-3">
-        <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-3">
+    <div class="sticky top-16 bg-white z-10 border-b border-gray-200 px-3 pt-2">
+        <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
             <button 
                 @click="filter = 'all'" 
                 :class="filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
@@ -73,68 +73,68 @@
         </template>
 
         <template x-if="!loading && filteredNotifications.length === 0">
-            <div class="p-12 text-center">
-                <i class="fas fa-bell-slash text-gray-300 text-4xl mb-3"></i>
+            <div class="p-8 text-center">
+                <i class="fas fa-bell-slash text-gray-300 text-3xl mb-2"></i>
                 <p class="text-gray-500 font-medium">Tidak ada notifikasi</p>
-                <p class="text-sm text-gray-400 mt-1">Semua notifikasi sudah dibaca</p>
+                <p class="text-sm text-gray-400 mt-1">Semua sudah dibaca</p>
             </div>
         </template>
 
         <template x-for="notif in filteredNotifications" :key="notif.id">
             <div 
                 :class="!notif.read_at ? 'bg-blue-50' : 'bg-white'"
-                class="p-4 hover:bg-gray-50 transition-colors relative"
+                class="p-3 hover:bg-gray-50 transition-colors relative border-b border-gray-100"
                 @click="handleNotification(notif)">
                 
                 {{-- Unread Indicator --}}
                 <div x-show="!notif.read_at" 
-                     class="absolute left-2 top-6 w-2 h-2 bg-blue-600 rounded-full"></div>
+                     class="absolute left-1 top-4 w-2 h-2 bg-[#0a66c2] rounded-full"></div>
 
-                <div class="flex gap-3 ml-4">
+                <div class="flex gap-2 ml-3">
                     {{-- Icon --}}
                     <div 
                         :class="{
-                            'bg-blue-100 text-blue-600': notif.type === 'task',
-                            'bg-orange-100 text-orange-600': notif.type === 'approval',
-                            'bg-green-100 text-green-600': notif.type === 'cash',
-                            'bg-purple-100 text-purple-600': notif.type === 'document',
+                            'bg-gray-100 text-gray-600': notif.type === 'task',
+                            'bg-gray-100 text-gray-600': notif.type === 'approval',
+                            'bg-gray-100 text-gray-600': notif.type === 'cash',
+                            'bg-gray-100 text-gray-600': notif.type === 'document',
                             'bg-gray-100 text-gray-600': notif.type === 'other'
                         }"
-                        class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                        class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
                         <i :class="{
                             'fa-circle-check': notif.type === 'task',
                             'fa-clipboard-check': notif.type === 'approval',
                             'fa-money-bill-wave': notif.type === 'cash',
                             'fa-file-alt': notif.type === 'document',
                             'fa-info-circle': notif.type === 'other'
-                        }" class="fas"></i>
+                        }" class="fas text-sm"></i>
                     </div>
 
                     {{-- Content --}}
                     <div class="flex-1 min-w-0">
                         <p 
-                            :class="!notif.read_at ? 'text-gray-900 font-semibold' : 'text-gray-700'"
-                            class="text-sm mb-1" 
+                            :class="!notif.read_at ? 'text-gray-900 font-medium' : 'text-gray-700'"
+                            class="text-sm mb-0.5" 
                             x-text="notif.title"></p>
-                        <p class="text-xs text-gray-600 mb-2" x-text="notif.message"></p>
+                        <p class="text-xs text-gray-600 mb-1" x-text="notif.message"></p>
                         
                         {{-- Meta Info --}}
-                        <div class="flex items-center gap-3 text-xs text-gray-500">
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
                             <span x-text="notif.time_ago"></span>
                             <span x-show="notif.project_name" class="flex items-center gap-1">
-                                <i class="fas fa-folder text-gray-400"></i>
+                                <i class="fas fa-folder text-gray-400 text-[10px]"></i>
                                 <span x-text="notif.project_name"></span>
                             </span>
                         </div>
 
                         {{-- Quick Actions --}}
                         <div x-show="notif.actions && notif.actions.length > 0" 
-                             class="flex gap-2 mt-3">
+                             class="flex gap-1.5 mt-2">
                             <template x-for="action in notif.actions" :key="action.label">
                                 <button 
                                     @click.stop="handleAction(notif, action)"
-                                    :class="action.primary ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'"
-                                    class="px-3 py-1.5 rounded-lg text-xs font-medium 
+                                    :class="action.primary ? 'bg-[#0a66c2] text-white' : 'bg-gray-100 text-gray-700'"
+                                    class="px-3 py-1 rounded-lg text-xs font-medium 
                                            active:scale-95 transition-all">
                                     <span x-text="action.label"></span>
                                 </button>
@@ -146,8 +146,8 @@
                     <button 
                         x-show="!notif.read_at"
                         @click.stop="markAsRead(notif.id)"
-                        class="text-gray-400 hover:text-blue-600 transition-colors">
-                        <i class="fas fa-check"></i>
+                        class="text-gray-400 hover:text-[#0a66c2] transition-colors">
+                        <i class="fas fa-check text-sm"></i>
                     </button>
                 </div>
             </div>
@@ -155,7 +155,7 @@
     </div>
 
     {{-- Load More --}}
-    <div x-show="hasMore && !loading" class="p-4 text-center">
+    <div x-show="hasMore && !loading" class="p-3 text-center">
         <button 
             @click="loadMore"
             class="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg 
