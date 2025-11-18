@@ -20,6 +20,17 @@ use App\Http\Controllers\Mobile\ProfileController;
 |
 */
 
+// Mobile welcome page (tidak perlu auth)
+Route::prefix('m')->middleware(['mobile'])->group(function () {
+    Route::get('/welcome', function() {
+        if (auth()->check()) {
+            return redirect()->route('mobile.dashboard');
+        }
+        return view('mobile.welcome');
+    })->name('mobile.welcome');
+});
+
+// Protected mobile routes (perlu auth)
 Route::prefix('m')->middleware(['auth', 'mobile'])->name('mobile.')->group(function () {
     
     // Dashboard Mobile
