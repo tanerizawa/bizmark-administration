@@ -260,6 +260,7 @@ class DashboardController extends Controller
                     'title' => $p->name,
                     'subtitle' => $p->status->name ?? 'Unknown',
                     'time' => $p->updated_at->diffForHumans(),
+                    'timestamp' => $p->updated_at->timestamp, // Untuk sorting
                     'url' => route('mobile.projects.show', $p->id)
                 ];
             });
@@ -277,14 +278,13 @@ class DashboardController extends Controller
                     'title' => $t->title,
                     'subtitle' => 'Selesai',
                     'time' => $t->updated_at->diffForHumans(),
+                    'timestamp' => $t->updated_at->timestamp, // Untuk sorting
                     'url' => route('mobile.tasks.show', $t->id)
                 ];
             });
         
         $activities = $projects->merge($tasks)
-            ->sortByDesc(function($item) {
-                return Carbon::parse($item['time']);
-            })
+            ->sortByDesc('timestamp') // Sort by timestamp, bukan parse time string
             ->take($limit)
             ->values();
         
