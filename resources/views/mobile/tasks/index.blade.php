@@ -11,8 +11,8 @@
 @section('content')
 <div x-data="taskManager()" class="pb-20">
     {{-- Filter Tabs --}}
-    <div class="sticky top-16 bg-white z-10 border-b border-gray-200 px-4 pt-3">
-        <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-3">
+    <div class="sticky top-16 bg-white z-10 border-b border-gray-200 px-3 pt-2">
+        <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
             <button 
                 @click="filter = 'today'" 
                 :class="filter === 'today' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'"
@@ -64,7 +64,7 @@
     </div>
 
     {{-- Task List --}}
-    <div class="p-4 space-y-3">
+    <div class="p-3 space-y-2">
         <template x-if="loading">
             <div class="p-8 text-center">
                 <i class="fas fa-spinner fa-spin text-gray-400 text-2xl"></i>
@@ -73,17 +73,17 @@
         </template>
 
         <template x-if="!loading && filteredTasks.length === 0">
-            <div class="p-12 text-center">
-                <i class="fas fa-check-circle text-green-300 text-4xl mb-3"></i>
+            <div class="p-8 text-center">
+                <i class="fas fa-check-circle text-gray-300 text-3xl mb-2"></i>
                 <p class="text-gray-500 font-medium">Tidak ada task</p>
-                <p class="text-sm text-gray-400 mt-1">Semua task sudah selesai 🎉</p>
+                <p class="text-sm text-gray-400 mt-1">Semua task sudah selesai</p>
             </div>
         </template>
 
         <template x-for="task in filteredTasks" :key="task.id">
             <div 
-                class="bg-white rounded-xl border-2 border-gray-200 overflow-hidden 
-                       hover:border-blue-300 transition-all"
+                class="bg-white rounded-lg border border-gray-200 overflow-hidden 
+                       hover:border-gray-300 transition-all"
                 :class="{
                     'border-red-200': task.is_overdue,
                     'opacity-60': task.status === 'completed'
@@ -117,9 +117,9 @@
                         :style="`transform: translateX(${swipeX}px); transition: ${swiping ? 'none' : 'transform 0.3s ease'}`"
                         @click="!swiping && viewTask()">
                         
-                        <div class="p-4">
+                        <div class="p-3">
                             {{-- Header --}}
-                            <div class="flex items-start gap-3 mb-3">
+                            <div class="flex items-start gap-2 mb-2">
                                 {{-- Checkbox --}}
                                 <button 
                                     @click.stop="toggleComplete"
@@ -135,19 +135,19 @@
                                 {{-- Task Info --}}
                                 <div class="flex-1 min-w-0">
                                     <h3 
-                                        class="font-semibold text-gray-900 mb-1"
+                                        class="font-medium text-gray-900 text-sm mb-1"
                                         :class="task.status === 'completed' && 'line-through text-gray-500'"
                                         x-text="task.title"></h3>
                                     
                                     {{-- Project --}}
-                                    <p class="text-xs text-gray-600 flex items-center gap-1 mb-2" 
+                                    <p class="text-xs text-gray-600 flex items-center gap-1 mb-1.5" 
                                        x-show="task.project_name">
-                                        <i class="fas fa-folder text-gray-400"></i>
+                                        <i class="fas fa-folder text-gray-400 text-[10px]"></i>
                                         <span x-text="task.project_name"></span>
                                     </p>
 
                                     {{-- Meta Info --}}
-                                    <div class="flex items-center gap-3 text-xs text-gray-500">
+                                    <div class="flex items-center gap-2 text-xs text-gray-500">
                                         {{-- Due Date --}}
                                         <span 
                                             class="flex items-center gap-1"

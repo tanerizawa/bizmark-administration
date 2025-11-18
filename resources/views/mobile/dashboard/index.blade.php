@@ -30,69 +30,73 @@
 @section('content')
 <div class="pb-20" x-data="dashboardMobile()">
     
-    {{-- Metrics Grid 2x2 - All Visible at Once --}}
-    <div class="grid grid-cols-2 gap-3 mb-6">
+    {{-- Metrics Grid 2x2 - Compact & Clean --}}
+    <div class="grid grid-cols-2 gap-2 mb-4">
         
-        {{-- Card 1: Urgent Alerts (Top Left) --}}
+        {{-- Card 1: Urgent Alerts --}}
         <div onclick="window.location.href='{{ mobile_route('tasks.urgent') }}'"
-             class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-4 text-white shadow-md active:scale-95 transition-transform cursor-pointer">
-            <div class="flex items-center justify-between mb-2">
-                <div class="bg-white/20 rounded-lg p-2">
-                    <i class="fas fa-exclamation-triangle text-lg"></i>
+             class="bg-white border-2 border-gray-200 rounded-lg p-3 shadow-sm active:scale-95 transition-transform cursor-pointer">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-exclamation-circle text-red-600 text-sm"></i>
                 </div>
+                <div class="text-xs text-gray-600 font-medium">Urgent</div>
             </div>
-            <div class="text-3xl font-bold mb-1">{{ $metrics['urgent_count'] }}</div>
-            <div class="text-xs opacity-90">Urgent</div>
+            <div class="text-2xl font-bold text-gray-900">{{ $metrics['urgent_count'] }}</div>
         </div>
 
-        {{-- Card 2: Cash & Runway (Top Right) --}}
+        {{-- Card 2: Cash & Runway --}}
         <div onclick="window.location.href='{{ mobile_route('financial.index') }}'"
-             class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white shadow-md active:scale-95 transition-transform cursor-pointer">
-            <div class="flex items-center justify-between mb-2">
-                <div class="bg-white/20 rounded-lg p-2">
-                    <i class="fas fa-wallet text-lg"></i>
+             class="bg-white border-2 border-gray-200 rounded-lg p-3 shadow-sm active:scale-95 transition-transform cursor-pointer">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-wallet text-green-600 text-sm"></i>
                 </div>
+                <div class="text-xs text-gray-600 font-medium">Cash Runway</div>
             </div>
-            <div class="text-2xl font-bold mb-1">{{ $metrics['runway_months'] }} bln</div>
-            <div class="text-xs opacity-90">Rp {{ number_format($cash_pulse['balance'] / 1000000, 1) }}M</div>
+            <div class="text-xl font-bold text-gray-900">{{ $metrics['runway_months'] }} bulan</div>
+            <div class="text-xs text-gray-500 mt-1">Rp {{ number_format($cash_pulse['balance'] / 1000000, 1) }}M</div>
         </div>
 
-        {{-- Card 3: Pending Approvals (Bottom Left) --}}
+        {{-- Card 3: Pending Approvals --}}
         <div onclick="window.location.href='{{ mobile_route('approvals.index') }}'"
-             class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-md active:scale-95 transition-transform cursor-pointer">
-            <div class="flex items-center justify-between mb-2">
-                <div class="bg-white/20 rounded-lg p-2">
-                    <i class="fas fa-file-signature text-lg"></i>
+             class="bg-white border-2 border-gray-200 rounded-lg p-3 shadow-sm active:scale-95 transition-transform cursor-pointer">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file-signature text-blue-600 text-sm"></i>
                 </div>
+                <div class="text-xs text-gray-600 font-medium">Approvals</div>
             </div>
-            <div class="text-3xl font-bold mb-1">{{ $metrics['approvals_count'] ?? 0 }}</div>
-            <div class="text-xs opacity-90">Approvals</div>
+            <div class="text-2xl font-bold text-gray-900">{{ $metrics['approvals_count'] ?? 0 }}</div>
         </div>
 
-        {{-- Card 4: Today's Tasks (Bottom Right) --}}
+        {{-- Card 4: Today's Tasks --}}
         <div onclick="window.location.href='{{ mobile_route('tasks.index') }}'"
-             class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-md active:scale-95 transition-transform cursor-pointer">
-            <div class="flex items-center justify-between mb-2">
-                <div class="bg-white/20 rounded-lg p-2">
-                    <i class="fas fa-tasks text-lg"></i>
+             class="bg-white border-2 border-gray-200 rounded-lg p-3 shadow-sm active:scale-95 transition-transform cursor-pointer">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-circle-check text-gray-700 text-sm"></i>
                 </div>
+                <div class="text-xs text-gray-600 font-medium">Tasks Today</div>
             </div>
-            <div class="text-3xl font-bold mb-1">{{ $metrics['tasks_today'] ?? 0 }}</div>
-            <div class="text-xs opacity-90">{{ $metrics['tasks_overdue'] ?? 0 }} overdue</div>
+            <div class="text-2xl font-bold text-gray-900">{{ $metrics['tasks_today'] ?? 0 }}</div>
+            @if(($metrics['tasks_overdue'] ?? 0) > 0)
+            <div class="text-xs text-red-600 mt-1 font-medium">{{ $metrics['tasks_overdue'] }} overdue</div>
+            @endif
         </div>
 
     </div>
 
     {{-- Critical Focus Section --}}
-    <div class="mb-6">
-        <div class="flex items-center justify-between mb-3">
-            <h2 class="text-lg font-bold text-gray-900">
-                <i class="fas fa-bolt text-red-500 mr-2"></i>
-                Perlu Tindakan Sekarang
+    <div class="mb-4">
+        <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm font-bold text-gray-900">
+                <i class="fas fa-bolt text-red-500 mr-1 text-xs"></i>
+                Perlu Tindakan
             </h2>
             @if(count($alerts) > 3)
-                <a href="{{ mobile_route('tasks.urgent') }}" class="text-sm text-blue-600 font-medium">
-                    + {{ count($alerts) - 3 }} lagi
+                <a href="{{ mobile_route('tasks.urgent') }}" class="text-xs text-[#0a66c2] font-medium">
+                    +{{ count($alerts) - 3 }} lagi
                 </a>
             @endif
         </div>
@@ -100,41 +104,32 @@
         @if(count($alerts) > 0)
             <div class="space-y-2">
                 @foreach($alerts->take(3) as $alert)
-                    <div class="bg-white rounded-xl shadow-sm overflow-hidden"
-                         x-data="{ isOpen: false }"
-                         @swipeleft="handleSwipeLeft('{{ $alert['id'] }}')"
-                         @swiperight="handleSwipeRight('{{ $alert['id'] }}')">
+                    <div class="bg-white border border-red-200 rounded-lg p-3 active:bg-gray-50 transition-colors cursor-pointer"
+                         onclick="window.location.href='{{ $alert['link'] ?? '#' }}'">
                         
-                        <div class="p-4 flex items-start gap-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
-                                        {{ $alert['type'] === 'project' ? 'bg-orange-100' : 'bg-red-100' }}">
-                                <i class="fas {{ $alert['type'] === 'project' ? 'fa-folder' : 'fa-tasks' }} 
-                                          {{ $alert['type'] === 'project' ? 'text-orange-600' : 'text-red-600' }}"></i>
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
+                                <i class="fas {{ $alert['type'] === 'project' ? 'fa-folder' : 'fa-circle-check' }} 
+                                          text-red-600 text-sm"></i>
                             </div>
                             
                             <div class="flex-1 min-w-0">
-                                <h3 class="font-semibold text-gray-900 truncate">{{ $alert['title'] }}</h3>
-                                <p class="text-sm text-gray-600 mt-1">{{ $alert['subtitle'] }}</p>
-                                <div class="flex items-center gap-2 mt-2">
-                                    <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">
-                                        <i class="fas fa-clock mr-1"></i>
-                                        {{ $alert['days_overdue'] }} hari terlambat
+                                <h3 class="font-medium text-gray-900 text-sm truncate">{{ $alert['title'] }}</h3>
+                                <p class="text-xs text-gray-600 mt-0.5">{{ $alert['subtitle'] }}</p>
+                                <div class="mt-1.5">
+                                    <span class="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded font-medium">
+                                        {{ $alert['days_overdue'] }} hari
                                     </span>
                                 </div>
                             </div>
-                            
-                            <button onclick="toggleOptions('{{ $alert['id'] }}')" 
-                                    class="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                <i class="fas fa-ellipsis-v text-gray-400"></i>
-                            </button>
                         </div>
                     </div>
                 @endforeach
             </div>
         @else
-            <div class="bg-green-50 rounded-xl p-6 text-center">
-                <i class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
-                <p class="text-sm text-green-700">Tidak ada alert kritis! 🎉</p>
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <i class="fas fa-check-circle text-2xl text-gray-400 mb-1"></i>
+                <p class="text-sm text-gray-600">Tidak ada alert kritis</p>
             </div>
         @endif
     </div>

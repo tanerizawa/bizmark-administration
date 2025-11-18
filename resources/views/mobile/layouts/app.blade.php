@@ -225,13 +225,13 @@
 
     {{-- Main Content --}}
     <main class="mobile-content">
-        <div class="px-4 py-6">
+        <div class="px-3 py-4">
             @yield('content')
         </div>
     </main>
 
     {{-- Bottom Navigation - LinkedIn Style (5 items with center FAB) --}}
-    <nav id="bottom-nav" class="mobile-bottom-nav">
+    <nav id="bottom-nav" class="mobile-bottom-nav transition-transform duration-300 ease-out">
         <div class="grid grid-cols-5 h-14">
             
             {{-- Home --}}
@@ -297,77 +297,77 @@
     {{-- Quick Add Bottom Sheet --}}
     <div id="quickAddSheet" class="fixed inset-0 bg-black/50 hidden z-50" onclick="hideQuickAdd()">
         <div class="bottom-sheet" onclick="event.stopPropagation()">
-            <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
+            <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-3"></div>
             
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Tambah Baru</h3>
+            <h3 class="text-base font-bold text-gray-900 mb-3">Tambah Baru</h3>
             
             <div class="space-y-2">
                 {{-- Input Uang Masuk --}}
                 <button onclick="showFinancialInput('income')" 
-                        class="block w-full p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors text-left">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-arrow-down text-green-600"></i>
+                        class="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-arrow-down text-gray-700 text-sm"></i>
                         </div>
-                        <div>
-                            <div class="font-medium text-gray-900">Input Uang Masuk</div>
-                            <div class="text-xs text-gray-600">Pembayaran, invoice, dll</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Uang Masuk</div>
+                            <div class="text-xs text-gray-500">Pembayaran, invoice</div>
                         </div>
                     </div>
                 </button>
                 
                 {{-- Input Uang Keluar --}}
                 <button onclick="showFinancialInput('expense')" 
-                        class="block w-full p-4 bg-red-50 rounded-xl hover:bg-red-100 transition-colors text-left">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-arrow-up text-red-600"></i>
+                        class="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-arrow-up text-gray-700 text-sm"></i>
                         </div>
-                        <div>
-                            <div class="font-medium text-gray-900">Input Uang Keluar</div>
-                            <div class="text-xs text-gray-600">Operasional, gaji, dll</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Uang Keluar</div>
+                            <div class="text-xs text-gray-500">Operasional, gaji</div>
                         </div>
                     </div>
                 </button>
                 
                 {{-- Quick Task --}}
                 <button onclick="showTaskInput()" 
-                        class="block w-full p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors text-left">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-circle-check text-blue-600"></i>
+                        class="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-circle-check text-gray-700 text-sm"></i>
                         </div>
-                        <div>
-                            <div class="font-medium text-gray-900">Quick Task</div>
-                            <div class="text-xs text-gray-600">Buat task cepat</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Task Baru</div>
+                            <div class="text-xs text-gray-500">Buat task cepat</div>
                         </div>
                     </div>
                 </button>
                 
                 {{-- Upload Dokumen --}}
                 <a href="{{ mobile_route('documents.upload') }}" 
-                   class="block p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-camera text-purple-600"></i>
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-camera text-gray-700 text-sm"></i>
                         </div>
-                        <div>
-                            <div class="font-medium text-gray-900">Upload Dokumen</div>
-                            <div class="text-xs text-gray-600">Ambil foto atau pilih file</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Upload Dokumen</div>
+                            <div class="text-xs text-gray-500">Foto atau file</div>
                         </div>
                     </div>
                 </a>
                 
                 {{-- Proyek Baru --}}
                 <a href="{{ mobile_route('projects.create') }}" 
-                   class="block p-4 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-folder-plus text-indigo-600"></i>
+                   class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-folder-plus text-gray-700 text-sm"></i>
                         </div>
-                        <div>
-                            <div class="font-medium text-gray-900">Proyek Baru</div>
-                            <div class="text-xs text-gray-600">Tambah proyek perizinan</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900 text-sm">Proyek Baru</div>
+                            <div class="text-xs text-gray-500">Tambah proyek</div>
                         </div>
                     </div>
                 </a>
