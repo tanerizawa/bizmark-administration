@@ -171,12 +171,11 @@ class DashboardController extends Controller
      */
     private function getApprovalsMetric()
     {
-        // Count pending expenses (semua pending, tidak filter by manager karena project tidak punya manager relationship)
-        $pendingExpenses = ProjectExpense::where('status', 'pending')->count();
+        // ProjectExpense tidak punya status column, skip
+        $pendingExpenses = 0;
             
         $pendingDocuments = Document::where('status', 'review')
-            ->where('reviewer_id', auth()->id())
-            ->count();
+            ->count(); // Semua documents review
             
         // Count draft invoices (semua draft)
         $pendingInvoices = Invoice::where('status', 'draft')->count();

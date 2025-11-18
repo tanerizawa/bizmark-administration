@@ -304,28 +304,8 @@ class ApprovalController extends Controller
     {
         $approvals = collect();
         
-        if ($type === 'all' || $type === 'expenses') {
-            $expenses = ProjectExpense::where('status', 'pending')
-                ->whereHas('project', function($query) {
-                    $query->where('manager_id', auth()->id());
-                })
-                ->with(['project', 'category'])
-                ->get()
-                ->map(function($expense) {
-                    return [
-                        'id' => $expense->id,
-                        'type' => 'expenses',
-                        'title' => $expense->description ?? 'Expense',
-                        'subtitle' => $expense->project->name ?? '-',
-                        'amount' => $expense->amount,
-                        'date' => $expense->expense_date,
-                        'icon' => 'wallet',
-                        'color' => 'blue',
-                        'url' => route('mobile.approvals.show', ['type' => 'expenses', 'id' => $expense->id])
-                    ];
-                });
-            $approvals = $approvals->merge($expenses);
-        }
+        // Skip expenses - ProjectExpense tidak punya status column
+        // if ($type === 'all' || $type === 'expenses') { ... }
         
         if ($type === 'all' || $type === 'documents') {
             $documents = Document::where('status', 'review')
@@ -439,16 +419,13 @@ class ApprovalController extends Controller
     {
         switch ($type) {
             case 'expenses':
-                return ProjectExpense::where('status', 'pending')
-                    ->whereHas('project', fn($q) => $q->where('manager_id', auth()->id()))
-                    ->count();
+                // ProjectExpense tidak punya status, return 0
+                return 0;
             case 'documents':
                 return Document::where('status', 'review')
-                    ->where('reviewer_id', auth()->id())
                     ->count();
             case 'invoices':
                 return Invoice::where('status', 'draft')
-                    ->whereHas('project', fn($q) => $q->where('manager_id', auth()->id()))
                     ->count();
             default:
                 return 0;
