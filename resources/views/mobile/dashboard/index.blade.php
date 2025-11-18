@@ -30,84 +30,57 @@
 @section('content')
 <div class="pb-20" x-data="dashboardMobile()">
     
-    {{-- Swipeable Metrics Cards --}}
-    <div class="relative mb-6">
-        <div class="overflow-x-auto snap-x snap-mandatory scrollbar-hide" 
-             x-ref="metricsCarousel"
-             @touchstart="handleTouchStart($event)"
-             @touchend="handleTouchEnd($event)">
-            <div class="flex gap-3 px-0">
-                
-                {{-- Card 1: Urgent Alerts --}}
-                <div class="flex-shrink-0 w-64 snap-start">
-                    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-4 text-white shadow-md"
-                         onclick="window.location.href='{{ mobile_route('tasks.urgent') }}'">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="bg-white/20 rounded-lg p-2">
-                                <i class="fas fa-exclamation-triangle text-xl"></i>
-                            </div>
-                            <span class="text-xs uppercase tracking-wide opacity-90">Urgent</span>
-                        </div>
-                        <div class="text-4xl font-bold mb-1">{{ $metrics['urgent_count'] }}</div>
-                        <div class="text-sm opacity-90">Perlu tindakan</div>
-                    </div>
-                </div>
-
-                {{-- Card 2: Cash & Runway --}}
-                <div class="flex-shrink-0 w-64 snap-start">
-                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white shadow-md"
-                         onclick="window.location.href='{{ mobile_route('financial.index') }}'">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="bg-white/20 rounded-lg p-2">
-                                <i class="fas fa-wallet text-xl"></i>
-                            </div>
-                            <span class="text-xs uppercase tracking-wide opacity-90">Runway</span>
-                        </div>
-                        <div class="text-3xl font-bold mb-1">{{ $metrics['runway_months'] }} bulan</div>
-                        <div class="text-sm opacity-90">Rp {{ number_format($cash_pulse['balance'] / 1000000, 1) }}M</div>
-                    </div>
-                </div>
-
-                {{-- Card 3: Pending Approvals --}}
-                <div class="flex-shrink-0 w-64 snap-start">
-                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-md"
-                         onclick="window.location.href='{{ mobile_route('approvals.index') }}'">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="bg-white/20 rounded-lg p-2">
-                                <i class="fas fa-file-signature text-xl"></i>
-                            </div>
-                            <span class="text-xs uppercase tracking-wide opacity-90">Approvals</span>
-                        </div>
-                        <div class="text-4xl font-bold mb-1">{{ $metrics['approvals_count'] ?? 0 }}</div>
-                        <div class="text-sm opacity-90">Perlu approval</div>
-                    </div>
-                </div>
-
-                {{-- Card 4: Today's Tasks --}}
-                <div class="flex-shrink-0 w-64 snap-start">
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-md"
-                         onclick="window.location.href='{{ mobile_route('tasks.index') }}'">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="bg-white/20 rounded-lg p-2">
-                                <i class="fas fa-tasks text-xl"></i>
-                            </div>
-                            <span class="text-xs uppercase tracking-wide opacity-90">Today</span>
-                        </div>
-                        <div class="text-4xl font-bold mb-1">{{ $metrics['tasks_today'] ?? 0 }}</div>
-                        <div class="text-sm opacity-90">{{ $metrics['tasks_overdue'] ?? 0 }} overdue</div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    {{-- Metrics Grid 2x2 - All Visible at Once --}}
+    <div class="grid grid-cols-2 gap-3 mb-6">
         
-        {{-- Pagination Dots --}}
-        <div class="flex justify-center gap-2 mt-4">
-            @for($i = 0; $i < 4; $i++)
-                <div class="w-2 h-2 rounded-full transition-all"
-                     :class="currentMetricCard === {{ $i }} ? 'bg-blue-500 w-6' : 'bg-gray-300'"></div>
-            @endfor
+        {{-- Card 1: Urgent Alerts (Top Left) --}}
+        <div onclick="window.location.href='{{ mobile_route('tasks.urgent') }}'"
+             class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-4 text-white shadow-md active:scale-95 transition-transform cursor-pointer">
+            <div class="flex items-center justify-between mb-2">
+                <div class="bg-white/20 rounded-lg p-2">
+                    <i class="fas fa-exclamation-triangle text-lg"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold mb-1">{{ $metrics['urgent_count'] }}</div>
+            <div class="text-xs opacity-90">Urgent</div>
         </div>
+
+        {{-- Card 2: Cash & Runway (Top Right) --}}
+        <div onclick="window.location.href='{{ mobile_route('financial.index') }}'"
+             class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white shadow-md active:scale-95 transition-transform cursor-pointer">
+            <div class="flex items-center justify-between mb-2">
+                <div class="bg-white/20 rounded-lg p-2">
+                    <i class="fas fa-wallet text-lg"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-bold mb-1">{{ $metrics['runway_months'] }} bln</div>
+            <div class="text-xs opacity-90">Rp {{ number_format($cash_pulse['balance'] / 1000000, 1) }}M</div>
+        </div>
+
+        {{-- Card 3: Pending Approvals (Bottom Left) --}}
+        <div onclick="window.location.href='{{ mobile_route('approvals.index') }}'"
+             class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-md active:scale-95 transition-transform cursor-pointer">
+            <div class="flex items-center justify-between mb-2">
+                <div class="bg-white/20 rounded-lg p-2">
+                    <i class="fas fa-file-signature text-lg"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold mb-1">{{ $metrics['approvals_count'] ?? 0 }}</div>
+            <div class="text-xs opacity-90">Approvals</div>
+        </div>
+
+        {{-- Card 4: Today's Tasks (Bottom Right) --}}
+        <div onclick="window.location.href='{{ mobile_route('tasks.index') }}'"
+             class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-md active:scale-95 transition-transform cursor-pointer">
+            <div class="flex items-center justify-between mb-2">
+                <div class="bg-white/20 rounded-lg p-2">
+                    <i class="fas fa-tasks text-lg"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold mb-1">{{ $metrics['tasks_today'] ?? 0 }}</div>
+            <div class="text-xs opacity-90">{{ $metrics['tasks_overdue'] ?? 0 }} overdue</div>
+        </div>
+
     </div>
 
     {{-- Critical Focus Section --}}
@@ -272,9 +245,6 @@
 <script>
 function dashboardMobile() {
     return {
-        currentMetricCard: 0,
-        touchStartX: 0,
-        touchEndX: 0,
         showBackToTop: false,
 
         init() {
@@ -284,59 +254,6 @@ function dashboardMobile() {
             // Scroll detection
             window.addEventListener('scroll', () => {
                 this.showBackToTop = window.scrollY > 300;
-            });
-
-            // Swipe detection for metrics carousel
-            this.$refs.metricsCarousel.addEventListener('scroll', () => {
-                const scrollLeft = this.$refs.metricsCarousel.scrollLeft;
-                const cardWidth = this.$refs.metricsCarousel.offsetWidth * 0.85;
-                this.currentMetricCard = Math.round(scrollLeft / cardWidth);
-            });
-        },
-
-        handleTouchStart(e) {
-            this.touchStartX = e.changedTouches[0].screenX;
-        },
-
-        handleTouchEnd(e) {
-            this.touchEndX = e.changedTouches[0].screenX;
-            this.handleSwipe();
-        },
-
-        handleSwipe() {
-            const swipeThreshold = 50;
-            const diff = this.touchStartX - this.touchEndX;
-
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    // Swipe left
-                    this.nextMetricCard();
-                } else {
-                    // Swipe right
-                    this.prevMetricCard();
-                }
-            }
-        },
-
-        nextMetricCard() {
-            if (this.currentMetricCard < 3) {
-                this.currentMetricCard++;
-                this.scrollToCard(this.currentMetricCard);
-            }
-        },
-
-        prevMetricCard() {
-            if (this.currentMetricCard > 0) {
-                this.currentMetricCard--;
-                this.scrollToCard(this.currentMetricCard);
-            }
-        },
-
-        scrollToCard(index) {
-            const cardWidth = this.$refs.metricsCarousel.offsetWidth * 0.85 + 16; // card + gap
-            this.$refs.metricsCarousel.scrollTo({
-                left: cardWidth * index,
-                behavior: 'smooth'
             });
         },
 
@@ -446,15 +363,4 @@ function toggleOptions(id) {
     console.log('Toggle options for:', id);
 }
 </script>
-
-{{-- Custom styles for scrollbar hide --}}
-<style>
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-</style>
 @endpush
