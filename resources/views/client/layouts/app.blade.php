@@ -10,8 +10,8 @@
     <title>@yield('title', 'Client Portal') - Bizmark.id</title>
     
     <!-- Favicons -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon.svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/pavicon.png') }}">
     
     <!-- External CSS - CDN Only -->
     <script src="https://cdn.tailwindcss.com"></script>

@@ -7,8 +7,8 @@
     <title>Login - Bizmark.id Portal Klien</title>
     
     <!-- Favicons -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/favicon.svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/pavicon.png') }}">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>

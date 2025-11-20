@@ -185,7 +185,7 @@
                                 @endforeach
                             </div>
                             <a href="{{ route('services.index') }}" class="btn bg-gray-100 hover:bg-gray-200 text-gray-700 w-full justify-center mt-4">
-                                Lihat Semua Layanan
+                                Lihat Layanan
                             </a>
                         </div>
                         @endif

@@ -34,8 +34,8 @@
     <meta name="twitter:image" content="https://bizmark.id/images/twitter-image.jpg">
     
     <!-- Favicons -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon.svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/pavicon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
     

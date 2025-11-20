@@ -125,7 +125,7 @@
                 <div class="flex gap-3 justify-center">
                     <a href="{{ route('services.index') }}" 
                        class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
-                        <i class="fas fa-th-large mr-2"></i>Lihat Semua Layanan
+                        <i class="fas fa-th-large mr-2"></i>Lihat Layanan
                     </a>
                     <a href="https://wa.me/{{ $metrics['contact']['whatsapp'] }}?text=Halo%20BizMark%2C%20saya%20ingin%20konsultasi%20layanan" 
                        class="bg-green-500 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-600 transition-all">
@@ -140,60 +140,4 @@
         </div>
         
     </div>
-</section>
-                    <h4 class="text-base font-bold text-gray-900 mb-2">
-                        PBG & SLF
-                    </h4>
-                    <p class="text-xs text-gray-600 mb-3">
-                        Izin mendirikan bangunan & sertifikat laik fungsi
-                    </p>
-                </div>
-            </article>
-        </div>
-        
-        <!-- Full Width List Articles -->
-        <article class="magazine-card bg-gradient-to-r from-orange-50 to-yellow-50">
-            <div class="p-6">
-                <div class="flex items-start gap-4 mb-4">
-                    <div class="bg-orange-100 p-4 rounded-full flex-shrink-0">
-                        <i class="fas fa-file-signature text-3xl text-orange-600"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="category-tag text-orange-600 mb-1">
-                            LEGALITAS
-                        </div>
-                        <h4 class="text-lg font-bold text-gray-900 mb-1">
-                            Pendirian PT, CV, Yayasan
-                        </h4>
-                        <p class="text-sm text-gray-600">
-                            Layanan pendirian badan usaha lengkap dengan akta notaris
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </article>
-        
-        <article class="magazine-card bg-gradient-to-r from-red-50 to-pink-50">
-            <div class="p-6">
-                <div class="flex items-start gap-4 mb-4">
-                    <div class="bg-red-100 p-4 rounded-full flex-shrink-0">
-                        <i class="fas fa-shield-alt text-3xl text-red-600"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="category-tag text-red-600 mb-1">
-                            PERIZINAN KHUSUS
-                        </div>
-                        <h4 class="text-lg font-bold text-gray-900 mb-1">
-                            IUJK, SIUP, TDP & Lainnya
-                        </h4>
-                        <p class="text-sm text-gray-600">
-                            Berbagai perizinan khusus sesuai bidang usaha Anda
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </article>
-        
-    </div>
-    
 </section>
