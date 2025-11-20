@@ -45,9 +45,9 @@
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); padding: 40px 32px; text-align: center;">
-                            <img src="https://bizmark.id/images/Logo.png" alt="Bizmark.ID - Konsultan Perizinan dan Lingkungan Terpercaya" style="height: 65px; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto;">
+                            <img src="https://bizmark.id/images/Logo.png" alt="Bizmark.ID - Konsultan Perizinan dan Lingkungan" style="height: 65px; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto;">
                             <p style="margin: 0; color: rgba(255, 255, 255, 0.95); font-size: 15px; font-weight: 500; letter-spacing: 0.3px;">
-                                Konsultan Perizinan & Lingkungan Terpercaya
+                                Konsultan Perizinan & Lingkungan
                             </p>
                         </td>
                     </tr>
@@ -240,7 +240,7 @@
                                     <tr>
                                         <td style="padding: 8px 0;">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 8px;"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="#25D366"/></svg>
-                                            <a href="https://wa.me/628387960285" style="color: #25D366; text-decoration: none; font-weight: 600; font-size: 14px;">+62 838-7960-285</a>
+                                            <a href="https://wa.me/6283879602855" style="color: #25D366; text-decoration: none; font-weight: 600; font-size: 14px;">+62 838-7960-2855</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -264,7 +264,7 @@
                                 <a href="https://www.linkedin.com/company/bizmark-id" style="display: inline-block; margin: 0 8px; text-decoration: none;">
                                     <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 32px; height: 32px;">
                                 </a>
-                                <a href="https://www.instagram.com/bizmark.id" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+                                <a href="#" style="display: inline-block; margin: 0 8px; text-decoration: none;">
                                     <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" style="width: 32px; height: 32px;">
                                 </a>
                                 <a href="https://bizmark.id" style="display: inline-block; margin: 0 8px; text-decoration: none;">
@@ -279,11 +279,11 @@
                             
                             <div style="border-top: 1px solid #D1D5DB; padding-top: 20px; margin-top: 20px;">
                                 <p style="margin: 0 0 8px; color: #111827; font-weight: 700; font-size: 14px;">
-                                    PT. Bizmark Indonesia
+                                    PT. Cangah Pajaratan Mandiri
                                 </p>
                                 <p style="margin: 0 0 12px; color: #6B7280; font-size: 12px; line-height: 1.6;">
-                                    Konsultan Perizinan & Lingkungan Terpercaya<br>
-                                    Jakarta, Indonesia
+                                    Konsultan Perizinan & Lingkungan<br>
+                                    Karawang, Indonesia
                                 </p>
                                 <p style="margin: 0; color: #9CA3AF; font-size: 11px;">
                                     © {{ date('Y') }} Bizmark.ID. All rights reserved.

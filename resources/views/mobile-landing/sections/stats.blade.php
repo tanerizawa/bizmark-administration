@@ -57,10 +57,10 @@
         
         <!-- Stat Card 4 -->
         <div class="magazine-card bg-white p-6">
-            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-bolt text-2xl text-orange-600"></i>
+            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-3">
+                <i class="fas fa-bolt text-2xl text-yellow-600"></i>
             </div>
-            <div class="text-4xl font-bold text-orange-600 mb-1">{{ $metrics['display']['process_time'] }}</div>
+            <div class="text-4xl font-bold text-yellow-600 mb-1">{{ $metrics['display']['process_time'] }}</div>
             <div class="text-sm text-gray-600 font-medium mb-2">Hari Proses</div>
             <div class="text-xs text-gray-500">
                 Rata-rata untuk OSS
@@ -69,10 +69,10 @@
         
         <!-- Stat Card 5 -->
         <div class="magazine-card bg-white p-6">
-            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-check-double text-2xl text-purple-600"></i>
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                <i class="fas fa-check-double text-2xl text-blue-600"></i>
             </div>
-            <div class="text-4xl font-bold text-purple-600 mb-1">{{ $metrics['display']['sla_rate'] }}</div>
+            <div class="text-4xl font-bold text-blue-600 mb-1">{{ $metrics['display']['sla_rate'] }}</div>
             <div class="text-sm text-gray-600 font-medium mb-2">SLA On-Time</div>
             <div class="text-xs text-gray-500">
                 Ketepatan waktu pengiriman

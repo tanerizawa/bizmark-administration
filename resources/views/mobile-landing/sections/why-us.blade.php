@@ -16,7 +16,7 @@
         
         <!-- Layout 1: Image Left (60/40) -->
         <div class="flex flex-col gap-6">
-            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-blue-500 to-indigo-600 h-64">
+            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#0077B5] to-[#005582] h-64">
                 <div class="absolute inset-0 flex items-center justify-center">
                     <i class="fas fa-users text-white text-7xl opacity-20"></i>
                 </div>
@@ -54,7 +54,7 @@
         
         <!-- Layout 2: Image Right (40/60) - Reversed -->
         <div class="flex flex-col-reverse gap-6">
-            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-emerald-500 to-teal-600 h-64">
+            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#F2CD49] to-[#D4AF37] h-64">
                 <div class="absolute inset-0 flex items-center justify-center">
                     <i class="fas fa-chart-line text-white text-7xl opacity-20"></i>
                 </div>
@@ -115,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="h-48 bg-gradient-to-br from-amber-500 to-red-600 relative overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-[#F2CD49] to-[#D4AF37] relative overflow-hidden">
                     <div class="absolute inset-0 flex items-center justify-center">
                         <i class="fas fa-rocket text-white text-6xl opacity-20"></i>
                     </div>
@@ -125,7 +125,7 @@
         
         <!-- Additional Feature (List Style) -->
         <div class="flex flex-col gap-6">
-            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-purple-500 to-pink-600 h-64">
+            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#0077B5] to-[#003d5c] h-64">
                 <div class="absolute inset-0 flex items-center justify-center">
                     <i class="fas fa-headset text-white text-7xl opacity-20"></i>
                 </div>
@@ -134,8 +134,8 @@
                 </div>
             </div>
             <div>
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-headset text-2xl text-purple-600"></i>
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fas fa-headset text-2xl text-blue-600"></i>
                 </div>
                 <h3 class="headline text-2xl text-gray-900 mb-2">
                     Dukungan Responsif

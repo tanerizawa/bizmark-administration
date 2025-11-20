@@ -25,9 +25,9 @@
                 <i class="fas fa-clock text-blue-600"></i>
                 <span class="text-sm font-semibold text-blue-900">{{ $metrics['display']['process_time'] }}</span>
             </div>
-            <div class="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-full">
-                <i class="fas fa-shield-alt text-purple-600"></i>
-                <span class="text-sm font-semibold text-purple-900">100% Legal</span>
+            <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full">
+                <i class="fas fa-shield-alt text-blue-600"></i>
+                <span class="text-sm font-semibold text-blue-900">100% Legal</span>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
     <!-- Timeline Steps -->
     <div class="relative space-y-6">
         <!-- Vertical Timeline Line -->
-        <div class="absolute left-[19px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200"></div>
+        <div class="absolute left-[19px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-300 via-yellow-200 to-blue-300"></div>
         
         @foreach($steps as $index => $step)
         <!-- Process Step Card -->
@@ -98,7 +98,7 @@
     </div>
     
     <!-- Trust Banner -->
-    <div class="mt-10 relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white text-center">
+    <div class="mt-10 relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0077B5] to-[#005582] p-6 text-white text-center">
         <div class="relative z-10">
             <div class="flex items-center justify-center gap-3 mb-3">
                 <i class="fas fa-shield-check text-3xl"></i>

@@ -3,7 +3,7 @@
 @endphp
 
 <!-- SOCIAL PROOF: Live Activity & Client Logos -->
-<section class="magazine-section bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 fade-in-up">
+<section class="magazine-section bg-gradient-to-br from-blue-50 to-white fade-in-up">
     
     <!-- Live Activity Counter -->
     <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
@@ -31,7 +31,7 @@
                 <div class="text-xs text-gray-600">Sektor Industri</div>
             </div>
             <div class="text-center">
-                <div class="text-3xl font-bold text-purple-600 mb-1">{{ $metrics['permits']['types_available'] }}+</div>
+                <div class="text-3xl font-bold text-yellow-600 mb-1">{{ $metrics['permits']['types_available'] }}+</div>
                 <div class="text-xs text-gray-600">Jenis Perizinan</div>
             </div>
         </div>
@@ -73,7 +73,7 @@
             </div>
             <div class="bg-white rounded-xl p-4 shadow-sm flex items-center justify-center h-20">
                 <div class="text-center">
-                    <i class="fas fa-broadcast-tower text-3xl text-purple-500 mb-1"></i>
+                    <i class="fas fa-broadcast-tower text-3xl text-yellow-500 mb-1"></i>
                     <p class="text-xs text-gray-700 font-semibold">Telekomunikasi</p>
                 </div>
             </div>
@@ -105,7 +105,7 @@
     <!-- Quick Success Story -->
     <div class="bg-white rounded-2xl shadow-lg p-6">
         <div class="flex items-start gap-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center flex-shrink-0">
                 <span class="text-white font-bold text-sm">AC</span>
             </div>
             <div class="flex-1">

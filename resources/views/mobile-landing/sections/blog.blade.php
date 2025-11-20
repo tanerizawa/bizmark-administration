@@ -34,7 +34,7 @@
                 #Compliance
             </a>
             <a href="{{ route('blog.category', 'regulasi') }}" 
-               class="text-xs font-semibold bg-purple-50 text-purple-700 px-4 py-2 rounded-full hover:bg-purple-100 transition-colors">
+               class="text-xs font-semibold bg-blue-50 text-blue-700 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
                 #Regulasi
             </a>
             <a href="{{ route('blog.index') }}" 
@@ -65,7 +65,7 @@
                 </div>
             </div>
             @else
-            <div class="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
+            <div class="relative h-48 overflow-hidden bg-gradient-to-br from-[#0077B5] to-[#005582]">
                 <div class="absolute inset-0 flex items-center justify-center">
                     <i class="fas fa-newspaper text-white text-6xl opacity-20"></i>
                 </div>

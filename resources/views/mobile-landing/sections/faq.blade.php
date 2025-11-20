@@ -14,7 +14,7 @@
     <div class="max-w-3xl mx-auto space-y-4" x-data="{ openFaq: 1 }">
         
         <!-- FAQ Item 1 (Featured/Important) -->
-        <details class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl overflow-hidden group" open>
+        <details class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl overflow-hidden group" open>
             <summary class="p-6 cursor-pointer flex items-center justify-between list-none">
                 <div class="flex items-center gap-4 flex-1">
                     <div class="bg-blue-100 group-open:bg-blue-600 p-3 rounded-full transition-colors">
