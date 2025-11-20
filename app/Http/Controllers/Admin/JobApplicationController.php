@@ -85,7 +85,8 @@ class JobApplicationController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $application = JobApplication::findOrFail($id);
+        $application = JobApplication::with('jobVacancy')->findOrFail($id);
+        $previousStatus = $application->status;
         
         $application->update([
             'status' => $validated['status'],
@@ -94,10 +95,28 @@ class JobApplicationController extends Controller
             'reviewed_by' => auth()->id(),
         ]);
 
-        // TODO: Send email notification to applicant about status change
-        // Mail::to($application->email)->send(new ApplicationStatusChanged($application));
+        // Send email notification to applicant about status change
+        if ($application->email) {
+            try {
+                \Mail::to($application->email)->send(
+                    new \App\Mail\JobApplicationStatusChanged(
+                        $application,
+                        $previousStatus,
+                        $validated['status'],
+                        auth()->user(),
+                        $validated['notes']
+                    )
+                );
+            } catch (\Exception $emailException) {
+                \Log::warning('Failed to send job application status change email', [
+                    'application_id' => $application->id,
+                    'applicant_email' => $application->email,
+                    'error' => $emailException->getMessage()
+                ]);
+            }
+        }
 
-        return back()->with('success', 'Status lamaran berhasil diperbarui!');
+        return back()->with('success', 'Status lamaran berhasil diperbarui dan notifikasi email telah dikirim ke pelamar!');
     }
 
     /**
