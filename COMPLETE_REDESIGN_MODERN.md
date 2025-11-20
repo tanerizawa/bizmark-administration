@@ -210,7 +210,7 @@ BEFORE:
 
 AFTER:
 - padding: 1rem 2rem
-- font-size: 18px (1.125rem)
+- font-size: 18px (1rem)
 - gradient background
 - shadow: 0 4px 14px rgba(primary, 0.25)
 - hover: lift + intense shadow

@@ -54,8 +54,8 @@ h2: 36px (2.25rem) - Desktop | 30px (1.875rem) - Mobile
 h3: 28px (1.75rem) - Desktop | 24px (1.5rem) - Mobile
 h4: 24px (1.5rem)
 h5: 20px (1.25rem)
-h6: 18px (1.125rem)
-body: 18px (1.125rem) - Desktop | 16px (1rem) - Mobile
+h6: 18px (1rem)
+body: 18px (1rem) - Desktop | 16px (1rem) - Mobile
 
 /* Line Heights */
 Headings: 1.2

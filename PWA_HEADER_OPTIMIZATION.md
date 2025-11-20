@@ -223,7 +223,7 @@ line-height: 1.4;
 /* Mobile Browser (< 1024px) */
 @media (max-width: 1023px) {
     .desktop-header h2 {
-        font-size: 1.125rem; /* Compact title */
+        font-size: 1rem; /* Compact title */
     }
     
     .desktop-header .badges {

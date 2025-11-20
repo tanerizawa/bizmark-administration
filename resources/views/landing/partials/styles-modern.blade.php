@@ -120,7 +120,7 @@ body {
         margin-bottom: 1rem;
         color: var(--gray-600);
         line-height: 1.7;
-        font-size: 1.125rem;
+        font-size: 1rem;
     }
     
     .text-lead {

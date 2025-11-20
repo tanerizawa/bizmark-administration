@@ -117,7 +117,7 @@ Memastikan semua halaman Client Management menggunakan styling yang konsisten de
 
 #### Section Headers:
 ```blade
-- Font size: 1.125rem
+- Font size: 1rem
 - Font weight: 600
 - Color: var(--dark-text-primary)
 - Border bottom: 1px solid var(--dark-separator)
@@ -149,7 +149,7 @@ Needs: Same styling as edit.blade.php
 
 ### Typography:
 - [x] H1 headings: 1.75rem, weight 600
-- [x] H5 section headers: 1.125rem, weight 600
+- [x] H5 section headers: 1rem, weight 600
 - [x] Body text: 0.95rem
 - [x] Small text: 0.875rem
 - [x] Labels: 0.75rem, uppercase, tertiary color
@@ -201,7 +201,7 @@ Needs: Same styling as edit.blade.php
 ### Section Header Pattern:
 ```blade
 <h5 class="text-dark-text-primary mb-4 pb-2" 
-    style="font-size: 1.125rem; 
+    style="font-size: 1rem; 
            font-weight: 600; 
            border-bottom: 1px solid var(--dark-separator);">
     <i class="fas fa-icon me-2" style="color: var(--apple-blue);"></i>
