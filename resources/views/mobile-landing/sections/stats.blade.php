@@ -7,8 +7,7 @@
     <!-- Section Title (Editorial Style) -->
     <div class="text-center mb-8">
         <h2 class="headline text-4xl text-gray-900 mb-3">
-            Mengapa <span class="text-gradient">{{ $metrics['display']['clients_total'] }} Perusahaan</span><br>
-            Memilih Kami
+            Melayani <span class="text-gradient">Berbagai Industri</span>
         </h2>
         <div class="w-16 h-1 bg-yellow-500 mx-auto"></div>
     </div>
@@ -30,12 +29,12 @@
         <!-- Stat Card 2 -->
         <div class="magazine-card bg-white p-4">
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-bullseye text-2xl text-green-600"></i>
+                <i class="fas fa-check-circle text-2xl text-green-600"></i>
             </div>
-            <div class="text-4xl font-bold text-green-600 mb-1">{{ $metrics['display']['satisfaction'] }}</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">Tingkat Kepuasan</div>
+            <div class="text-4xl font-bold text-green-600 mb-1">{{ $metrics['projects']['completed'] }}</div>
+            <div class="text-sm text-gray-600 font-medium mb-2">Project Selesai</div>
             <div class="text-xs text-gray-500">
-                Rating dari {{ $metrics['display']['clients_total'] }} klien kami
+                Di {{ $metrics['coverage']['provinces'] }} provinsi
             </div>
         </div>
         
@@ -43,8 +42,8 @@
         <div class="col-span-2 bg-gradient-to-r from-[#0077B5] to-[#005582] rounded-2xl p-4 text-white shadow-lg">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <div class="text-4xl font-bold mb-1">{{ $metrics['display']['permits_processed'] }}</div>
-                    <div class="text-sm font-medium opacity-90 mb-2">Izin Berhasil Diproses</div>
+                    <div class="text-4xl font-bold mb-1">{{ $metrics['permits']['types_available'] }}+</div>
+                    <div class="text-sm font-medium opacity-90 mb-2">Jenis Layanan Perizinan</div>
                     <div class="text-xs opacity-75">
                         OSS, AMDAL, PBG, SLF, dan lainnya
                     </div>
@@ -61,7 +60,7 @@
                 <i class="fas fa-bolt text-2xl text-yellow-600"></i>
             </div>
             <div class="text-4xl font-bold text-yellow-600 mb-1">{{ $metrics['display']['process_time'] }}</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">Hari Proses</div>
+            <div class="text-sm text-gray-600 font-medium mb-2">Waktu Proses</div>
             <div class="text-xs text-gray-500">
                 Rata-rata untuk OSS
             </div>
@@ -70,12 +69,12 @@
         <!-- Stat Card 5 -->
         <div class="magazine-card bg-white p-4">
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-check-double text-2xl text-blue-600"></i>
+                <i class="fas fa-desktop text-2xl text-blue-600"></i>
             </div>
-            <div class="text-4xl font-bold text-blue-600 mb-1">{{ $metrics['display']['sla_rate'] }}</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">SLA On-Time</div>
+            <div class="text-base font-bold text-blue-600 mb-1">Portal Digital</div>
+            <div class="text-sm text-gray-600 font-medium mb-2">Monitoring Real-Time</div>
             <div class="text-xs text-gray-500">
-                Ketepatan waktu pengiriman
+                Pantau progress 24/7
             </div>
         </div>
     </div>

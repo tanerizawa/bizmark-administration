@@ -16,7 +16,7 @@
                 <span class="text-sm font-bold">{{ $metrics['contact']['hours'] }}</span>
             </div>
             <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                Layanan <span class="text-gradient">Profesional</span>
+                Layanan <span class="text-gradient">Perizinan</span>
             </h3>
         </div>
         
@@ -51,7 +51,7 @@
     <!-- Trusted By Section -->
     <div class="text-center mb-6">
         <h3 class="text-xl font-bold text-gray-900 mb-2">
-            Dipercaya Oleh
+            Klien Kami
         </h3>
         <p class="text-sm text-gray-600 mb-6">
             {{ $metrics['display']['clients_total'] }} perusahaan dari {{ $metrics['clients']['industries'] }} sektor industri

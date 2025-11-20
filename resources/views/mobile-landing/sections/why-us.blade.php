@@ -3,11 +3,10 @@
     <!-- Section Title -->
     <div class="text-center mb-8">
         <h2 class="headline text-4xl text-gray-900 mb-3">
-            Mengapa Kami <span class="text-gradient">Berbeda</span>
+            Mengapa <span class="text-gradient">Bizmark.ID</span>
         </h2>
         <p class="text-gray-600 text-sm max-w-xl mx-auto leading-relaxed">
-            Lebih dari sekadar konsultan perizinan, kami mitra strategis
-            untuk pertumbuhan bisnis Anda.
+            Mitra perizinan yang memahami kebutuhan bisnis Anda
         </p>
     </div>
     
@@ -29,11 +28,11 @@
                     <i class="fas fa-user-tie text-2xl text-blue-600"></i>
                 </div>
                 <h3 class="headline text-2xl text-gray-900 mb-2">
-                    Tim Ahli Bersertifikat
+                    Tim Berpengalaman
                 </h3>
                 <p class="text-sm text-gray-600 leading-relaxed mb-3">
-                    Konsultan berpengalaman 10+ tahun dengan sertifikasi resmi 
-                    dari lembaga terkait. Kami memahami regulasi terbaru.
+                    Konsultan dengan pengalaman menangani berbagai sektor industri 
+                    dan memahami regulasi terbaru.
                 </p>
                 <ul class="space-y-2 text-sm text-gray-700">
                     <li class="flex items-center">
@@ -67,11 +66,11 @@
                     <i class="fas fa-search-plus text-2xl text-green-600"></i>
                 </div>
                 <h3 class="headline text-2xl text-gray-900 mb-2">
-                    Proses 100% Transparan
+                    Proses Transparan
                 </h3>
                 <p class="text-sm text-gray-600 leading-relaxed mb-3">
-                    Pantau perkembangan perizinan Anda secara waktu nyata melalui
-                    dasbor portal klien. Setiap tahapan disertai notifikasi resmi.
+                    Monitoring perkembangan perizinan Anda melalui
+                    portal digital dengan update berkala.
                 </p>
                 <ul class="space-y-2 text-sm text-gray-700">
                     <li class="flex items-center">
@@ -98,11 +97,11 @@
                         <i class="fas fa-bolt text-4xl text-white"></i>
                     </div>
                     <h3 class="headline text-3xl mb-3">
-                        Garansi Proses Cepat
+                        Komitmen Ketepatan Waktu
                     </h3>
                     <p class="text-sm opacity-90 leading-relaxed mb-4">
-                        Kami berkomitmen menyelesaikan perizinan sesuai jadwal yang dijanjikan.
-                        Jika terlambat, uang kembali 100%.
+                        Kami berkomitmen menyelesaikan perizinan sesuai timeline yang disepakati
+                        dengan komunikasi transparan di setiap tahapan.
                     </p>
                     <div class="grid grid-cols-2 gap-4 mt-4">
                         <div class="bg-white/10 backdrop-blur-md rounded-xl p-4">
@@ -110,8 +109,8 @@
                             <div class="text-xs opacity-75">Hari untuk OSS</div>
                         </div>
                         <div class="bg-white/10 backdrop-blur-md rounded-xl p-4">
-                            <div class="text-3xl font-bold">100%</div>
-                            <div class="text-xs opacity-75">Garansi Uang Kembali</div>
+                            <div class="text-3xl font-bold">24/7</div>
+                            <div class="text-xs opacity-75">Portal Monitoring</div>
                         </div>
                     </div>
                 </div>
@@ -138,24 +137,24 @@
                     <i class="fas fa-headset text-2xl text-blue-600"></i>
                 </div>
                 <h3 class="headline text-2xl text-gray-900 mb-2">
-                    Dukungan Responsif
+                    Tim Support Responsif
                 </h3>
                 <p class="text-sm text-gray-600 leading-relaxed mb-3">
-                    Tim dukungan pelanggan kami siap membantu melalui WhatsApp, email,
-                    atau telepon. Respons cepat tersedia untuk setiap pertanyaan Anda.
+                    Tim support siap membantu melalui WhatsApp, email,
+                    atau telepon untuk menjawab pertanyaan Anda.
                 </p>
                 <ul class="space-y-2 text-sm text-gray-700">
                     <li class="flex items-center">
                         <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                        Respons WhatsApp &lt; 2 Menit
+                        Respon cepat via WhatsApp
                     </li>
                     <li class="flex items-center">
                         <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                        Dukungan Email 24/7
+                        Portal support 24/7
                     </li>
                     <li class="flex items-center">
                         <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                        Konsultasi Tanpa Biaya
+                        Konsultasi awal gratis
                     </li>
                 </ul>
             </div>

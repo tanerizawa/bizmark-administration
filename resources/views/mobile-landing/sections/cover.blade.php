@@ -38,15 +38,14 @@
             
             <!-- Main Headline -->
             <h1 class="headline text-white text-4xl mb-3 leading-tight">
-                Solusi <span class="text-yellow-400">Perizinan</span><br>
-                untuk Bisnis<br>
-                Masa Depan
+                <span class="text-yellow-400">Perizinan Usaha</span><br>
+                yang Efisien
             </h1>
             
             <!-- Deck (Subtitle) -->
             <p class="deck text-white text-base mb-3 max-w-md leading-relaxed opacity-90">
-                Dari OSS hingga AMDAL, kami hadirkan layanan perizinan yang cepat,
-                transparan, dan terpercaya untuk pertumbuhan bisnis Anda.
+                Kelola seluruh kebutuhan perizinan dan legalitas perusahaan 
+                dari satu platform terintegrasi.
             </p>
             
             <!-- Quick Stats -->
@@ -69,8 +68,8 @@
             
             <!-- Byline -->
             <div class="flex items-center gap-2 text-white text-sm mb-4 opacity-75">
-                <i class="fas fa-award"></i>
-                <span>Dipercaya {{ $metrics['display']['clients_total'] }} Perusahaan di Indonesia</span>
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Melayani perusahaan di {{ $metrics['coverage']['provinces'] }} provinsi sejak {{ $metrics['experience']['since_year'] }}</span>
             </div>
             
             <!-- Primary CTA -->
@@ -102,12 +101,14 @@
             
             <!-- Trust Badges -->
             <div class="grid grid-cols-2 gap-2 mb-4 max-w-md mx-auto">
-                @foreach($metrics['trust_badges'] as $badge)
                 <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
-                    <i class="fas {{ $badge['icon'] }} text-{{ $badge['color'] }}-400 text-base"></i>
-                    <span class="text-white text-xs font-medium">{{ $badge['label'] }}</span>
+                    <i class="fas fa-check-circle text-green-400 text-base"></i>
+                    <span class="text-white text-xs font-medium">Terdaftar Resmi</span>
                 </div>
-                @endforeach
+                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
+                    <i class="fas fa-bolt text-blue-400 text-base"></i>
+                    <span class="text-white text-xs font-medium">Sistem Terintegrasi OSS</span>
+                </div>
             </div>
             
             <!-- Scroll Indicator -->

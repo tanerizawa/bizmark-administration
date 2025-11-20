@@ -11,8 +11,8 @@
                 </div>
             </div>
             <p class="text-xs text-gray-400 leading-relaxed max-w-md mx-auto mb-3">
-                Solusi perizinan usaha terpercaya untuk pertumbuhan bisnis Anda. 
-                Proses cepat, transparan, dan 100% legal.
+                Layanan perizinan usaha untuk pertumbuhan bisnis Anda. 
+                Proses yang efisien, transparan, dan legal.
             </p>
             
             <!-- Social Media -->

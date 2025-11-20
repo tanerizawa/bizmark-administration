@@ -73,7 +73,7 @@
             
             <!-- Social Proof -->
             <div class="text-center fade-in-up">
-                <p class="text-white/80 text-sm mb-4">Dipercaya oleh perusahaan ternama</p>
+                <p class="text-white/80 text-sm mb-4">Melayani berbagai perusahaan</p>
                 <div class="flex items-center justify-center gap-6 flex-wrap opacity-60 text-xs">
                     <div class="text-white font-semibold">PT Supra Primatama Nusantara (Biznet)</div>
                     <div class="text-white font-semibold">PT Asiacon Cipta Prima</div>

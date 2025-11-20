@@ -19,8 +19,8 @@
             <div class="relative z-10">
                 <!-- Quote Text -->
                 <blockquote class="headline text-2xl text-gray-800 leading-relaxed mb-6 italic">
-                    Pengurusan PBG untuk infrastruktur data center kami ditangani dengan sangat profesional dan efisien. 
-                    Prosesnya transparan dan selesai tepat waktu. Bizmark.ID adalah mitra terpercaya untuk perizinan.
+                    Tim Bizmark membantu kami mengurus PBG untuk data center di Tangerang. 
+                    Prosesnya jelas dan ada update rutin melalui WhatsApp.
                 </blockquote>
                 
                 <!-- Attribution -->
@@ -32,9 +32,6 @@
                         <div class="font-bold text-gray-900">Project Manager</div>
                         <div class="text-sm text-gray-600">PT Biznet Gio Nusantara</div>
                         <div class="text-xs text-blue-600 mt-1">PBG Infrastruktur Digital</div>
-                        <div class="text-xs text-yellow-500 mt-1">
-                            ⭐⭐⭐⭐⭐ 5.0
-                        </div>
                     </div>
                 </div>
             </div>
@@ -45,8 +42,8 @@
             <!-- PT Asiacon - UKL-UPL -->
             <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-green-500">
                 <blockquote class="text-base text-gray-700 leading-relaxed mb-4 italic">
-                    "UKL-UPL untuk pabrik paving block kami diurus dengan sangat detail dan teliti. 
-                    Tim Bizmark.ID membantu lengkapi semua persyaratan dengan cepat."
+                    "Pengurusan UKL-UPL untuk pabrik paving block di Cikande berjalan lancar. 
+                    Dokumen dilengkapi dengan baik dan prosesnya jelas."
                 </blockquote>
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
@@ -63,8 +60,8 @@
             <!-- PT Rindu Alam Sejahtera - B3 -->
             <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-blue-600">
                 <blockquote class="text-base text-gray-700 leading-relaxed mb-4 italic">
-                    "Konsultan inhouse untuk perizinan Limbah B3 sangat membantu operasional kami. 
-                    Profesional dan selalu update regulasi terbaru."
+                    "Konsultan inhouse untuk perizinan Limbah B3 membantu operasional kami 
+                    dengan update regulasi yang diperlukan."
                 </blockquote>
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#0077B5] to-[#005582] flex items-center justify-center">
@@ -144,12 +141,12 @@
             
             <div class="mt-6 flex items-center justify-center gap-4 text-gray-600 text-xs">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-star text-yellow-400"></i>
-                    <span>Rating 4.9/5.0</span>
+                    <i class="fas fa-building text-blue-500"></i>
+                    <span>{{ $metrics['projects']['completed'] }} Proyek Selesai</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>500+ Proyek Selesai</span>
+                    <i class="fas fa-map-marked-alt text-blue-500"></i>
+                    <span>{{ $metrics['coverage']['provinces'] }} Provinsi</span>
                 </div>
             </div>
         </div>
