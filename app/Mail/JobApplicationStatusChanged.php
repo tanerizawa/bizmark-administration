@@ -54,7 +54,8 @@ class JobApplicationStatusChanged extends Mailable
             $statusMessages[$this->newStatus] ?? 'Update Status'
         );
 
-        return $this->subject($subject)
+        return $this->from(config('mail.from.address'), config('mail.from.name'))
+                    ->subject($subject)
                     ->view('emails.job-application-status-changed')
                     ->with([
                         'application' => $this->application,
