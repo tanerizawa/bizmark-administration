@@ -15,10 +15,7 @@
                     <!-- Header with LinkedIn Blue Gradient -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); padding: 40px 30px; text-align: center;">
-                            <img src="https://bizmark.id/images/logo-white.png" alt="Bizmark.ID" style="height: 40px; margin-bottom: 12px;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
-                                Bizmark.ID
-                            </h1>
+                            <img src="https://bizmark.id/images/logo.svg" alt="Bizmark.ID" style="height: 50px; margin-bottom: 16px;">
                             <p style="margin: 8px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 14px;">
                                 Konsultan Perizinan Usaha Terpercaya
                             </p>
