@@ -15,6 +15,7 @@
                     <!-- Header with LinkedIn Blue Gradient -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); padding: 40px 30px; text-align: center;">
+                            <img src="https://bizmark.id/images/logo-white.png" alt="Bizmark.ID" style="height: 40px; margin-bottom: 12px;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
                                 Bizmark.ID
                             </h1>
@@ -212,17 +213,23 @@
                                 <table cellpadding="0" cellspacing="0" style="margin: 0;">
                                     <tr>
                                         <td style="padding: 4px 0;">
-                                            <span style="color: #6B7280; font-size: 14px;">📧 Email:</span>
-                                            <a href="mailto:info@bizmark.id" style="color: #0077B5; text-decoration: none; font-weight: 600; margin-left: 8px;">
-                                                info@bizmark.id
+                                            <span style="color: #6B7280; font-size: 14px;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#6B7280"/></svg>
+                                                Email:
+                                            </span>
+                                            <a href="mailto:cs@bizmark.id" style="color: #0077B5; text-decoration: none; font-weight: 600; margin-left: 8px;">
+                                                cs@bizmark.id
                                             </a>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 4px 0;">
-                                            <span style="color: #6B7280; font-size: 14px;">📱 WhatsApp:</span>
-                                            <a href="https://wa.me/6281234567890" style="color: #0077B5; text-decoration: none; font-weight: 600; margin-left: 8px;">
-                                                +62 812-3456-7890
+                                            <span style="color: #6B7280; font-size: 14px;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;"><path d="M16.5 3C13.6 3 11.2 5.3 11 8.2c0 .1-.1.2-.1.3h1.9c.1-1.5 1.4-2.8 3-2.8 1.7 0 3 1.3 3 3s-1.3 3-3 3c-.5 0-1-.1-1.4-.3l-.9 1.7c.7.3 1.5.5 2.3.5 2.8 0 5-2.2 5-5s-2.2-5-5-5zm-1 9h-2v2h2v-2zm-5.4 4.5c-.3-.1-.5-.3-.7-.5l-1.4 1.4c.4.5.9.8 1.5 1.1l.6-2zm-3.1-3.7c-.2-.3-.3-.5-.3-.8h-2c0 .6.2 1.2.5 1.7l1.8-1zm-.5-2.8h2c0-.3.1-.5.3-.8l-1.8-1c-.3.5-.5 1.1-.5 1.8zm2 4.5c.2.3.5.5.7.7l1.4-1.4c-.2-.2-.4-.4-.5-.7l-1.6.4z" fill="#25D366"/></svg>
+                                                WhatsApp:
+                                            </span>
+                                            <a href="https://wa.me/628387960285" style="color: #25D366; text-decoration: none; font-weight: 600; margin-left: 8px;">
+                                                +62 838-7960-285
                                             </a>
                                         </td>
                                     </tr>
