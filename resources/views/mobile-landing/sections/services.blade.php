@@ -17,8 +17,8 @@
             Layanan <span class="text-gradient">Unggulan</span> Kami
         </h2>
         <p class="text-gray-600 text-sm max-w-xl leading-relaxed">
-            Eksplorasi berbagai layanan perizinan yang kami tawarkan dengan 
-            jaminan proses cepat, transparan, dan 100% legal.
+            Berbagai layanan perizinan yang kami tawarkan dengan 
+            proses yang efisien dan transparan.
         </p>
         
         <!-- Quick Stats Bar -->

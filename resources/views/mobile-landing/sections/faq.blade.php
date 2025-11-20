@@ -111,22 +111,22 @@
                         04
                     </div>
                     <span class="font-semibold text-base text-gray-900">
-                        Apakah ada garansi jika proses terlambat?
+                        Bagaimana jika ada kendala dalam proses?
                     </span>
                 </div>
                 <i class="fas fa-chevron-down text-gray-400 transform group-open:rotate-180 transition-transform"></i>
             </summary>
             <div class="px-5 pb-5 pl-20">
                 <p class="text-sm text-gray-700 leading-relaxed mb-3">
-                    <strong>Ya, kami memberikan garansi 100% uang kembali</strong> jika proses pengurusan
-                    melebihi jadwal yang telah disepakati, dengan catatan keterlambatan disebabkan oleh
-                    kesalahan dari pihak kami.
+                    Kami akan segera mengidentifikasi kendala dan memberikan solusi alternatif. 
+                    Setiap kendala akan dikomunikasikan secara transparan kepada Anda dengan 
+                    timeline yang jelas untuk penyelesaiannya.
                 </p>
-                <div class="bg-green-50 border-2 border-green-200 rounded-xl p-3 mt-3">
+                <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-3 mt-3">
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-shield-check text-green-600 text-xl"></i>
-                        <span class="text-sm font-semibold text-green-800">
-                            Garansi Uang Kembali 100%
+                        <i class="fas fa-info-circle text-blue-600 text-xl"></i>
+                        <span class="text-sm font-semibold text-blue-800">
+                            Komunikasi Transparan
                         </span>
                     </div>
                 </div>

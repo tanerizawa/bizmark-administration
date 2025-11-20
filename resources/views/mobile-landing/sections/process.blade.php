@@ -27,7 +27,7 @@
             </div>
             <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full">
                 <i class="fas fa-shield-alt text-blue-600"></i>
-                <span class="text-sm font-semibold text-blue-900">100% Legal</span>
+                <span class="text-sm font-semibold text-blue-900">Proses Legal</span>
             </div>
         </div>
     </div>
@@ -102,10 +102,10 @@
         <div class="relative z-10">
             <div class="flex items-center justify-center gap-3 mb-3">
                 <i class="fas fa-shield-check text-3xl"></i>
-                <h3 class="text-xl font-bold">Proses 100% Terdokumentasi</h3>
+                <h3 class="text-xl font-bold">Dokumentasi Lengkap</h3>
             </div>
             <p class="text-sm opacity-90 mb-5">
-                Setiap tahap terekam dalam workspace digital Anda dengan timeline real-time
+                Setiap tahap terekam dalam portal digital dengan timeline yang jelas
             </p>
             <a href="https://wa.me/{{ $metrics['contact']['whatsapp'] }}?text=Halo%20BizMark%2C%20saya%20ingin%20tahu%20lebih%20detail%20tentang%20proses%20perizinan" 
                class="inline-block bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
