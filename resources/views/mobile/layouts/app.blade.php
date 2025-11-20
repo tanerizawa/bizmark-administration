@@ -28,8 +28,8 @@
     <link rel="manifest" href="/manifest.json">
     
     {{-- Icons --}}
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <link rel="apple-touch-icon" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" href="/images/pavicon.png">
+    <link rel="apple-touch-icon" href="/images/pavicon.png">
     
     <title>@yield('title', 'Dashboard') - Bizmark Admin</title>
     
