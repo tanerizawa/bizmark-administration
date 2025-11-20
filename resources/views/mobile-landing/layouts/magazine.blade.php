@@ -103,7 +103,7 @@
         
         /* Magazine Section */
         .magazine-section {
-            padding: var(--space-2xl) var(--space-md);
+            padding: var(--space-lg) var(--space-md);
             max-width: 1200px;
             margin: 0 auto;
         }

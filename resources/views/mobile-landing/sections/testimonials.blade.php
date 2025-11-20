@@ -1,7 +1,7 @@
 <!-- PULL QUOTES: Testimonials - Editorial Typography -->
 <section id="testimonials" class="magazine-section bg-white fade-in-up">
     <!-- Section Header -->
-    <div class="text-center mb-12">
+    <div class="text-center mb-8">
         <h2 class="headline text-4xl text-gray-900 mb-2">
             Apa Kata <span class="text-gradient">Mereka</span>
         </h2>
@@ -9,7 +9,7 @@
     </div>
     
     <!-- Pull Quote Cards -->
-    <div class="space-y-8 max-w-4xl mx-auto">
+    <div class="space-y-6 max-w-4xl mx-auto">
         
         <!-- Quote 1 (Large Editorial Style) - PT Biznet -->
         <div class="bg-gradient-to-br from-blue-50 to-white rounded-3xl p-8 shadow-lg relative">
@@ -41,9 +41,9 @@
         </div>
         
         <!-- Quote 2 & 3 (Grid Layout) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- PT Asiacon - UKL-UPL -->
-            <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-green-500">
+            <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-green-500">
                 <blockquote class="text-base text-gray-700 leading-relaxed mb-4 italic">
                     "UKL-UPL untuk pabrik paving block kami diurus dengan sangat detail dan teliti. 
                     Tim Bizmark.ID membantu lengkapi semua persyaratan dengan cepat."
@@ -61,7 +61,7 @@
             </div>
             
             <!-- PT Rindu Alam Sejahtera - B3 -->
-            <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-blue-600">
+            <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-blue-600">
                 <blockquote class="text-base text-gray-700 leading-relaxed mb-4 italic">
                     "Konsultan inhouse untuk perizinan Limbah B3 sangat membantu operasional kami. 
                     Profesional dan selalu update regulasi terbaru."
@@ -80,9 +80,9 @@
         </div>
         
         <!-- Quote 4 & 5 (Additional Real Clients) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- PT Megalisa Pratama Indonesia -->
-            <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-orange-500">
+            <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-orange-500">
                 <blockquote class="text-base text-gray-700 leading-relaxed mb-4 italic">
                     "Pengurusan izin untuk proyek perumahan kami sangat lancar. Semua dokumen dibantu lengkap dan proses cepat."
                 </blockquote>
@@ -99,7 +99,7 @@
             </div>
             
             <!-- PT Linggabuana Perkasa Karawang -->
-            <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-blue-500">
+            <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-blue-500">
                 <blockquote class="text-base text-gray-700 leading-relaxed mb-4 italic">
                     "Portal klien memudahkan monitoring perizinan untuk kantor pusat kami. Sangat efisien dan transparan."
                 </blockquote>
@@ -142,7 +142,7 @@
                 </a>
             </div>
             
-            <div class="mt-6 flex items-center justify-center gap-6 text-gray-600 text-xs">
+            <div class="mt-6 flex items-center justify-center gap-4 text-gray-600 text-xs">
                 <div class="flex items-center gap-2">
                     <i class="fas fa-star text-yellow-400"></i>
                     <span>Rating 4.9/5.0</span>

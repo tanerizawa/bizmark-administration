@@ -5,7 +5,7 @@
 <!-- STATS INFOGRAPHIC: Magazine-Style Data Visualization -->
 <section class="magazine-section bg-gradient-to-br from-blue-50 to-white fade-in-up">
     <!-- Section Title (Editorial Style) -->
-    <div class="text-center mb-12">
+    <div class="text-center mb-8">
         <h2 class="headline text-4xl text-gray-900 mb-3">
             Mengapa <span class="text-gradient">{{ $metrics['display']['clients_total'] }} Perusahaan</span><br>
             Memilih Kami
@@ -14,9 +14,9 @@
     </div>
     
     <!-- Stats Grid -->
-    <div class="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
+    <div class="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
         <!-- Stat Card 1 -->
-        <div class="magazine-card bg-white p-6">
+        <div class="magazine-card bg-white p-4">
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
                 <i class="fas fa-trophy text-2xl text-blue-600"></i>
             </div>
@@ -28,7 +28,7 @@
         </div>
         
         <!-- Stat Card 2 -->
-        <div class="magazine-card bg-white p-6">
+        <div class="magazine-card bg-white p-4">
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
                 <i class="fas fa-bullseye text-2xl text-green-600"></i>
             </div>
@@ -40,7 +40,7 @@
         </div>
         
         <!-- Stat Card 3 (Featured - Full Width) -->
-        <div class="col-span-2 bg-gradient-to-r from-[#0077B5] to-[#005582] rounded-2xl p-6 text-white shadow-lg">
+        <div class="col-span-2 bg-gradient-to-r from-[#0077B5] to-[#005582] rounded-2xl p-4 text-white shadow-lg">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
                     <div class="text-4xl font-bold mb-1">{{ $metrics['display']['permits_processed'] }}</div>
@@ -56,7 +56,7 @@
         </div>
         
         <!-- Stat Card 4 -->
-        <div class="magazine-card bg-white p-6">
+        <div class="magazine-card bg-white p-4">
             <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-3">
                 <i class="fas fa-bolt text-2xl text-yellow-600"></i>
             </div>
@@ -68,7 +68,7 @@
         </div>
         
         <!-- Stat Card 5 -->
-        <div class="magazine-card bg-white p-6">
+        <div class="magazine-card bg-white p-4">
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
                 <i class="fas fa-check-double text-2xl text-blue-600"></i>
             </div>
