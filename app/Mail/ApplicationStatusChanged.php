@@ -61,6 +61,7 @@ class ApplicationStatusChanged extends Mailable
         );
 
         return new Envelope(
+            from: config('mail.from.address'),
             subject: $subject,
         );
     }
