@@ -16,7 +16,7 @@
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); padding: 32px 30px; text-align: center;">
-                            <img src="https://bizmark.id/images/logo.svg" alt="Bizmark.ID" style="height: 50px; margin-bottom: 16px;">
+                            <img src="https://bizmark.id/images/Logo.png" alt="Bizmark.ID" style="height: 50px; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto;">
                             <p style="margin: 8px 0 0; color: rgba(255, 255, 255, 0.9); font-size: 14px;">
                                 Konsultan Perizinan & Lingkungan Terpercaya
                             </p>
