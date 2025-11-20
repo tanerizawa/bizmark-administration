@@ -65,6 +65,13 @@
                         <div class="flex-1 min-w-0 pr-3">
                             <h3 class="font-semibold text-gray-900 truncate" x-text="project.name"></h3>
                             <p class="text-sm text-gray-500 truncate mt-0.5" x-text="project.institution?.name || '-'"></p>
+                            <!-- Client Info -->
+                            <template x-if="project.client">
+                                <div class="flex items-center gap-1 mt-1">
+                                    <i class="fas fa-building text-[#0077b5] text-xs"></i>
+                                    <p class="text-xs text-[#0077b5] font-medium truncate" x-text="project.client.company_name"></p>
+                                </div>
+                            </template>
                         </div>
                         <span :class="getStatusColor(project.status?.name)" 
                               class="flex-shrink-0 px-2 py-1 text-xs font-medium rounded-full"
@@ -142,6 +149,14 @@ function projectsPage() {
             // Load quick stats for filter badges
             try {
                 const response = await fetch('/m/projects?stats=true');
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.warn('Stats endpoint returned non-JSON response');
+                    return;
+                }
+                
                 const data = await response.json();
                 this.stats = data.stats || {};
             } catch (error) {
@@ -156,7 +171,20 @@ function projectsPage() {
             this.loading = true;
             
             try {
-                const response = await fetch(`/m/projects?status=${status}`);
+                const response = await fetch(`/m/projects?status=${status}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.error('Filter endpoint returned non-JSON response');
+                    this.loading = false;
+                    return;
+                }
+                
                 const data = await response.json();
                 this.projects = data.projects || [];
                 this.hasMore = data.hasMore || false;

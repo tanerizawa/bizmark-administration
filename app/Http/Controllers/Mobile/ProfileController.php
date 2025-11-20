@@ -18,11 +18,11 @@ class ProfileController extends Controller
         $user = auth()->user();
         $user->load(['role']);
         
+        // Get user statistics
         $stats = [
-            'projects_managed' => $user->managedProjects()->count(),
             'tasks_completed' => $user->assignedTasks()->where('status', 'done')->count(),
-            'approvals_done' => $user->approvedExpenses()->count() + 
-                               $user->reviewedDocuments()->count(),
+            'tasks_pending' => $user->assignedTasks()->where('status', '!=', 'done')->count(),
+            'total_tasks' => $user->assignedTasks()->count(),
         ];
         
         return view('mobile.profile.show', compact('user', 'stats'));

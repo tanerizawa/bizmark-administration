@@ -124,16 +124,49 @@
 
         {{-- Body --}}
         <div class="px-6 py-6">
-            <div class="rounded-apple-xl p-6" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);">
-                @if($email->body_html)
-                    <div class="prose prose-invert max-w-none" style="color: var(--dark-text-primary);">
-                        {!! $email->body_html !!}
+            {{-- Toggle view buttons --}}
+            @if($email->body_html && $email->body_text)
+                <div class="flex gap-2 mb-4">
+                    <button type="button" onclick="showHtmlView()" id="btnHtml" class="px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white">
+                        <i class="fas fa-code mr-2"></i>HTML View
+                    </button>
+                    <button type="button" onclick="showTextView()" id="btnText" class="px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70">
+                        <i class="fas fa-align-left mr-2"></i>Text View
+                    </button>
+                </div>
+            @endif
+
+            {{-- HTML View --}}
+            @if($email->body_html)
+                <div id="htmlView" class="rounded-apple-xl p-6 overflow-auto" style="background: white; border: 1px solid rgba(255,255,255,0.06); max-height: 600px;">
+                    <div style="color: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
+                        {!! $email->clean_body_html !!}
                     </div>
-                @else
-                    <pre class="text-sm font-sans text-white whitespace-pre-wrap">{{ $email->body_text }}</pre>
-                @endif
-            </div>
+                </div>
+            @endif
+
+            {{-- Text View --}}
+            @if($email->body_text)
+                <div id="textView" class="rounded-apple-xl p-6" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); {{ $email->body_html ? 'display: none;' : '' }}">
+                    <div class="text-sm text-white" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; white-space: pre-wrap;">{{ $email->clean_body_text }}</div>
+                </div>
+            @endif
         </div>
+
+        <script>
+        function showHtmlView() {
+            document.getElementById('htmlView').style.display = 'block';
+            document.getElementById('textView').style.display = 'none';
+            document.getElementById('btnHtml').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white';
+            document.getElementById('btnText').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
+        }
+        function showTextView() {
+            document.getElementById('htmlView').style.display = 'none';
+            document.getElementById('textView').style.display = 'block';
+            document.getElementById('btnHtml').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
+            document.getElementById('btnText').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white';
+        }
+        </script>
 
         {{-- Attachments --}}
         @if($email->attachments && count($email->attachments) > 0)

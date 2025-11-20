@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\DB;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
 class Client extends Authenticatable implements MustVerifyEmail
@@ -49,6 +50,30 @@ class Client extends Authenticatable implements MustVerifyEmail
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    /**
+     * Boot the model and attach event listeners
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // When a client is soft deleted, set client_id to NULL in related permit_applications
+        static::deleting(function ($client) {
+            if (!$client->isForceDeleting()) {
+                // Soft delete - set client_id to NULL instead of cascading
+                \DB::table('permit_applications')
+                    ->where('client_id', $client->id)
+                    ->update(['client_id' => null]);
+                
+                // Optionally also handle projects if needed
+                // \DB::table('projects')
+                //     ->where('client_id', $client->id)
+                //     ->update(['client_id' => null]);
+            }
+            // If force deleting, let CASCADE handle it automatically
+        });
+    }
 
     /**
      * Get the email address for password reset.

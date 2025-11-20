@@ -8,6 +8,10 @@ use App\Http\Controllers\Mobile\ApprovalController;
 use App\Http\Controllers\Mobile\FinancialController;
 use App\Http\Controllers\Mobile\NotificationController;
 use App\Http\Controllers\Mobile\ProfileController;
+use App\Http\Controllers\Mobile\ClientController;
+use App\Http\Controllers\Mobile\DocumentController;
+use App\Http\Controllers\Mobile\ReportController;
+use App\Http\Controllers\Mobile\TeamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,17 +25,23 @@ use App\Http\Controllers\Mobile\ProfileController;
 */
 
 // Mobile welcome page (tidak perlu auth)
-Route::prefix('m')->middleware(['mobile'])->group(function () {
+Route::prefix('m')->group(function () {
     Route::get('/welcome', function() {
         if (auth()->check()) {
             return redirect()->route('mobile.dashboard');
         }
         return view('mobile.welcome');
     })->name('mobile.welcome');
+    
+    // Mobile Landing Page (Magazine Style)
+    Route::get('/landing', function() {
+        return view('mobile-landing.index');
+    })->name('mobile.landing');
 });
 
 // Protected mobile routes (perlu auth)
-Route::prefix('m')->middleware(['auth', 'mobile'])->name('mobile.')->group(function () {
+// DetectMobile middleware sudah global, tidak perlu ditambahkan lagi
+Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
     
     // Dashboard Mobile
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -41,6 +51,8 @@ Route::prefix('m')->middleware(['auth', 'mobile'])->name('mobile.')->group(funct
     Route::prefix('projects')->name('projects.')->group(function () {
         Route::get('/', [ProjectController::class, 'index'])->name('index');
         Route::get('/search', [ProjectController::class, 'search'])->name('search');
+        Route::get('/create', [ProjectController::class, 'createForm'])->name('create');
+        Route::post('/create', [ProjectController::class, 'quickStore'])->name('quick-store');
         Route::get('/{project}', [ProjectController::class, 'show'])->name('show');
         Route::post('/{project}/note', [ProjectController::class, 'addNote'])->name('note');
         Route::patch('/{project}/status', [ProjectController::class, 'updateStatus'])->name('status');
@@ -94,6 +106,46 @@ Route::prefix('m')->middleware(['auth', 'mobile'])->name('mobile.')->group(funct
         Route::patch('/update', [ProfileController::class, 'update'])->name('update');
         Route::post('/avatar', [ProfileController::class, 'uploadAvatar'])->name('avatar');
         Route::post('/preferences', [ProfileController::class, 'updatePreferences'])->name('preferences');
+    });
+    
+    // Settings
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/preferences', function() {
+            return view('mobile.settings.preferences');
+        })->name('preferences');
+        Route::get('/about', function() {
+            return view('mobile.settings.about');
+        })->name('about');
+    });
+    
+    // Clients
+    Route::prefix('clients')->name('clients.')->group(function () {
+        Route::get('/', [ClientController::class, 'index'])->name('index');
+        Route::get('/{client}', [ClientController::class, 'show'])->name('show');
+    });
+    
+    // Documents
+    Route::prefix('documents')->name('documents.')->group(function () {
+        Route::get('/', [DocumentController::class, 'index'])->name('index');
+        Route::get('/upload', [DocumentController::class, 'uploadForm'])->name('upload');
+        Route::post('/upload', [DocumentController::class, 'store'])->name('store');
+        Route::get('/{document}', [DocumentController::class, 'show'])->name('show');
+        Route::get('/{document}/download', [DocumentController::class, 'download'])->name('download');
+    });
+    
+    // Reports
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('/financial', [ReportController::class, 'financial'])->name('financial');
+        Route::get('/projects', [ReportController::class, 'projects'])->name('projects');
+        Route::get('/team', [ReportController::class, 'team'])->name('team');
+        Route::get('/clients', [ReportController::class, 'clients'])->name('clients');
+    });
+    
+    // Team
+    Route::prefix('team')->name('team.')->group(function () {
+        Route::get('/', [TeamController::class, 'index'])->name('index');
+        Route::get('/{user}', [TeamController::class, 'show'])->name('show');
     });
     
     // Quick Actions (untuk bottom sheet)

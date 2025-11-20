@@ -43,8 +43,8 @@ class DeadlineReminder extends Notification
         return (new WebPushMessage)
             ->title('⏰ Pengingat Deadline')
             ->body("{$this->application->application_number}: {$message}")
-            ->icon('/icons/icon-192x192.png')
-            ->badge('/icons/badge-72x72.png')
+            ->icon('/images/favicon.svg')
+            ->badge('/images/favicon.svg')
             ->data([
                 'url' => route('client.applications.show', $this->application->id),
                 'application_id' => $this->application->id,

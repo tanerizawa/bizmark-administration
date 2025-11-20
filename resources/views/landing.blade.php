@@ -462,9 +462,9 @@
                     <a href="#services" class="hover:text-blue-400 transition">Layanan</a>
                     <a href="#why-us" class="hover:text-blue-400 transition">Keunggulan</a>
                     <a href="#contact" class="hover:text-blue-400 transition">Kontak</a>
-                    <a href="{{ route('client.login') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition text-white">
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition text-white">
                         <i class="fas fa-sign-in-alt"></i>
-                        <span>Login / Registrasi</span>
+                        <span>Login</span>
                     </a>
                 </div>
                 
@@ -481,8 +481,8 @@
         <a href="#services" class="block py-2 hover:text-blue-400">Layanan</a>
         <a href="#why-us" class="block py-2 hover:text-blue-400">Keunggulan</a>
         <a href="#contact" class="block py-2 hover:text-blue-400">Kontak</a>
-        <a href="{{ route('client.login') }}" class="block py-3 mt-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-center text-white transition">
-            <i class="fas fa-sign-in-alt mr-2"></i>Login / Registrasi
+        <a href="{{ route('login') }}" class="block py-3 mt-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-center text-white transition">
+            <i class="fas fa-sign-in-alt mr-2"></i>Login
         </a>
     </div>
 
@@ -1111,9 +1111,9 @@
                         <li><a href="#why-us" class="hover:text-blue-400 transition">Keunggulan</a></li>
                         <li><a href="#faq" class="hover:text-blue-400 transition">FAQ</a></li>
                         <li><a href="#contact" class="hover:text-blue-400 transition">Kontak</a></li>
-                        <li><a href="{{ route('client.login') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+                        <li><a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition">
                             <i class="fas fa-sign-in-alt"></i>
-                            <span>Login / Registrasi</span>
+                            <span>Login</span>
                         </a></li>
                     </ul>
                 </div>
@@ -1404,6 +1404,48 @@
                     'event_category': 'PWA'
                 });
             }
+        });
+        
+        // Screen Width Detection with Auto-Redirect to Mobile
+        let lastScreenWidth = window.innerWidth;
+        const MOBILE_BREAKPOINT = 768;
+        
+        function updateScreenWidthDesktop() {
+            const width = window.innerWidth;
+            
+            // Send width to server
+            fetch('/api/set-screen-width', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ width: width })
+            }).catch(err => console.log('Screen width update failed:', err));
+            
+            // Check if crossed breakpoint threshold
+            const wasMobile = lastScreenWidth < MOBILE_BREAKPOINT;
+            const isMobile = width < MOBILE_BREAKPOINT;
+            
+            // If switched from desktop to mobile, redirect to mobile version
+            if (!wasMobile && isMobile) {
+                console.log('Switched to mobile view, redirecting...');
+                setTimeout(() => {
+                    window.location.href = '/m/landing';
+                }, 500);
+            }
+            
+            lastScreenWidth = width;
+        }
+        
+        // Update on load
+        updateScreenWidthDesktop();
+        
+        // Debounced resize handler (only redirect after user stops resizing)
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(updateScreenWidthDesktop, 1000); // Wait 1 second after resize stops
         });
         
         // Add slide up animation

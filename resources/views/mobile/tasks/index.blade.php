@@ -3,13 +3,24 @@
 @section('title', 'My Tasks')
 
 @section('header-actions')
-<a href="{{ mobile_route('tasks.create', fallback: '#') }}" class="text-[#0077b5] hover:text-[#004d6d] transition-colors">
-    <i class="fas fa-plus text-xl"></i>
-</a>
+<button 
+    onclick="window.openQuickAddTask && window.openQuickAddTask()"
+    class="text-white hover:bg-white/20 w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95">
+    <i class="fas fa-plus text-lg"></i>
+</button>
 @endsection
 
 @section('content')
-<div x-data="taskManager()" class="pb-20">
+<div id="taskContainer" x-data="taskManager()" x-init="
+    window.openQuickAddTask = () => { showQuickAdd = true; };
+    // Auto-open modal if query parameter present
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('openQuickAdd') === '1') {
+        showQuickAdd = true;
+        // Clean URL
+        window.history.replaceState({}, '', '{{ mobile_route("tasks.index") }}');
+    }
+" class="pb-20">
     {{-- Filter Tabs --}}
     <div class="sticky top-16 bg-white z-10 border-b border-gray-200 px-3 pt-2">
         <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
@@ -229,6 +240,141 @@
             Muat Lebih Banyak
         </button>
     </div>
+
+    {{-- Quick Add Task Modal --}}
+    <div 
+        x-show="showQuickAdd" 
+        x-cloak
+        @click.self="showQuickAdd = false"
+        class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center sm:justify-center"
+        style="display: none;">
+        
+        <div 
+            x-show="showQuickAdd"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0"
+            x-transition:enter-end="translate-y-0 sm:scale-100 sm:opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="translate-y-0 sm:scale-100 sm:opacity-100"
+            x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0"
+            class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto">
+            
+            {{-- Modal Header --}}
+            <div class="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between rounded-t-2xl">
+                <h3 class="text-lg font-semibold text-gray-900">Quick Add Task</h3>
+                <button 
+                    @click="showQuickAdd = false"
+                    class="text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            {{-- Modal Body --}}
+            <form @submit.prevent="submitQuickTask" class="p-4 space-y-4">
+                {{-- Task Title --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Judul Task <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        x-model="quickTask.title"
+                        type="text" 
+                        required
+                        placeholder="Misal: Review dokumen proposal"
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                </div>
+
+                {{-- Project Selection --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Project <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        x-model="quickTask.project_id"
+                        required
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                        <option value="">Pilih Project...</option>
+                        @foreach(\App\Models\Project::where('status_id', '!=', 8)->orderBy('name')->get() as $project)
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Due Date --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Deadline <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        x-model="quickTask.due_date"
+                        type="date" 
+                        required
+                        :min="new Date().toISOString().split('T')[0]"
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                </div>
+
+                {{-- Priority --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prioritas</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button 
+                            type="button"
+                            @click="quickTask.priority = 'low'"
+                            :class="quickTask.priority === 'low' ? 'bg-[#0077b5] text-white border-[#0077b5]' : 'bg-white text-gray-700 border-gray-300'"
+                            class="px-3 py-2 rounded-lg border font-medium text-sm transition-all active:scale-95">
+                            Low
+                        </button>
+                        <button 
+                            type="button"
+                            @click="quickTask.priority = 'medium'"
+                            :class="quickTask.priority === 'medium' ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-700 border-gray-300'"
+                            class="px-3 py-2 rounded-lg border font-medium text-sm transition-all active:scale-95">
+                            Medium
+                        </button>
+                        <button 
+                            type="button"
+                            @click="quickTask.priority = 'high'"
+                            :class="quickTask.priority === 'high' ? 'bg-red-500 text-white border-red-500' : 'bg-white text-gray-700 border-gray-300'"
+                            class="px-3 py-2 rounded-lg border font-medium text-sm transition-all active:scale-95">
+                            High
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Assign To --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Assign To</label>
+                    <select 
+                        x-model="quickTask.assigned_user_id"
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                        <option value="">Diri Sendiri</option>
+                        @foreach(\App\Models\User::where('is_active', true)->orderBy('name')->get() as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Submit Buttons --}}
+                <div class="flex gap-2 pt-2">
+                    <button 
+                        type="button"
+                        @click="showQuickAdd = false"
+                        class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all active:scale-95">
+                        Batal
+                    </button>
+                    <button 
+                        type="submit"
+                        :disabled="submitting"
+                        class="flex-1 px-4 py-2.5 bg-[#0077b5] hover:bg-[#005582] text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span x-show="!submitting">Buat Task</span>
+                        <span x-show="submitting">
+                            <i class="fas fa-spinner fa-spin"></i> Menyimpan...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -244,6 +390,15 @@ function taskManager() {
             week: 0,
             overdue: 0,
             all: 0
+        },
+        showQuickAdd: false,
+        submitting: false,
+        quickTask: {
+            title: '',
+            project_id: '',
+            due_date: '',
+            priority: 'medium',
+            assigned_user_id: ''
         },
 
         get filteredTasks() {
@@ -309,6 +464,90 @@ function taskManager() {
         async loadMore() {
             this.page++;
             await this.loadTasks();
+        },
+
+        async submitQuickTask() {
+            if (this.submitting) return;
+            
+            this.submitting = true;
+
+            try {
+                const response = await fetch('{{ route('mobile.quick.task') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(this.quickTask)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Reset form
+                    this.quickTask = {
+                        title: '',
+                        project_id: '',
+                        due_date: '',
+                        priority: 'medium',
+                        assigned_user_id: ''
+                    };
+                    
+                    // Close modal
+                    this.showQuickAdd = false;
+                    
+                    // Show toast
+                    this.showToast('Task berhasil dibuat!', 'success');
+                    
+                    // Reload tasks
+                    this.page = 1;
+                    await this.loadTasks();
+                    
+                    // Optional: redirect to task detail
+                    if (data.redirect) {
+                        setTimeout(() => {
+                            window.location.href = data.redirect;
+                        }, 1000);
+                    }
+                } else {
+                    this.showToast(data.message || 'Gagal membuat task', 'error');
+                }
+
+            } catch (error) {
+                console.error('Error creating task:', error);
+                this.showToast('Terjadi kesalahan jaringan', 'error');
+            } finally {
+                this.submitting = false;
+            }
+        },
+
+        showToast(message, type = 'info') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-20 left-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-gray-800'
+            } text-white`;
+            toast.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => toast.style.transform = 'translateY(-10px)', 10);
+            
+            // Remove after 3s
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
     }
 }

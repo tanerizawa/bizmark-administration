@@ -37,7 +37,7 @@ class TestNotification extends Notification
         return (new WebPushMessage)
             ->title('🔔 Test Notifikasi')
             ->body('Notifikasi push Anda berfungsi dengan baik! Sistem siap mengirimkan pembaruan penting.')
-            ->icon('/icons/icon-192x192.png')
+            ->icon('/images/favicon.svg')
             ->badge('/icons/badge-72x72.png')
             ->data([
                 'url' => route('client.dashboard'),

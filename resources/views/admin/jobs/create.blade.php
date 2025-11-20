@@ -107,6 +107,7 @@
                                 <option value="part-time">Part Time</option>
                                 <option value="contract">Kontrak</option>
                                 <option value="internship">Magang</option>
+                                <option value="remote">Remote</option>
                             </select>
                         </div>
 

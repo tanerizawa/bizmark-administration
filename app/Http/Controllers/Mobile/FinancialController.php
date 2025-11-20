@@ -140,16 +140,16 @@ class FinancialController extends Controller
         };
         
         // Income (Payments + Invoices paid)
-        $income = ProjectPayment::where('payment_date', '>=', $startDate)
+        $income = (float) ProjectPayment::where('payment_date', '>=', $startDate)
             ->sum('amount');
         
-        $invoicePaid = Invoice::where('status', 'paid')
+        $invoicePaid = (float) Invoice::where('status', 'paid')
             ->where('paid_at', '>=', $startDate)
             ->sum('total_amount');
         
         // Expenses
-        $expenses = ProjectExpense::where('expense_date', '>=', $startDate)
-            ->where('status', 'approved')
+        $expenses = (float) ProjectExpense::where('expense_date', '>=', $startDate)
+            ->where('is_reconciled', true)
             ->sum('amount');
         
         // Daily breakdown
@@ -207,10 +207,10 @@ class FinancialController extends Controller
             });
         
         $summary = [
-            'current' => $receivables->where('aging_bucket', 'current')->sum('amount'),
-            '1-30' => $receivables->where('aging_bucket', '1-30')->sum('amount'),
-            '31-60' => $receivables->where('aging_bucket', '31-60')->sum('amount'),
-            '60+' => $receivables->where('aging_bucket', '60+')->sum('amount'),
+            'current' => (float) $receivables->where('aging_bucket', 'current')->sum('amount'),
+            '1-30' => (float) $receivables->where('aging_bucket', '1-30')->sum('amount'),
+            '31-60' => (float) $receivables->where('aging_bucket', '31-60')->sum('amount'),
+            '60+' => (float) $receivables->where('aging_bucket', '60+')->sum('amount'),
         ];
         
         return view('mobile.financial.receivables', [
@@ -240,7 +240,7 @@ class FinancialController extends Controller
             'receivable' => ProjectExpense::where('is_receivable', true)
                 ->where('receivable_status', '!=', 'paid')->count(),
             'billable' => ProjectExpense::where('is_billable', true)->count(),
-            'thisMonth' => ProjectExpense::whereMonth('expense_date', now()->month)->sum('amount'),
+            'thisMonth' => (float) ProjectExpense::whereMonth('expense_date', now()->month)->sum('amount'),
         ];
         
         if ($request->expectsJson()) {
@@ -303,7 +303,7 @@ class FinancialController extends Controller
     private function getCashBalance()
     {
         return [
-            'total' => CashAccount::sum('current_balance'),
+            'total' => (float) CashAccount::sum('current_balance'),
             'accounts' => CashAccount::select('id', 'account_name as name', 'current_balance as balance')
                 ->orderBy('current_balance', 'desc')
                 ->get()
@@ -315,10 +315,10 @@ class FinancialController extends Controller
      */
     private function getRunway()
     {
-        $totalCash = CashAccount::sum('current_balance');
+        $totalCash = (float) CashAccount::sum('current_balance');
         
         // Monthly burn = total expenses in last 30 days (only reconciled ones)
-        $monthlyBurn = ProjectExpense::where('expense_date', '>=', now()->subDays(30))
+        $monthlyBurn = (float) ProjectExpense::where('expense_date', '>=', now()->subDays(30))
             ->where('is_reconciled', true)
             ->sum('amount');
         
@@ -339,17 +339,17 @@ class FinancialController extends Controller
     {
         $startOfMonth = now()->startOfMonth();
         
-        $income = ProjectPayment::where('payment_date', '>=', $startOfMonth)->sum('amount');
-        $expenses = ProjectExpense::where('expense_date', '>=', $startOfMonth)
+        $income = (float) ProjectPayment::where('payment_date', '>=', $startOfMonth)->sum('amount');
+        $expenses = (float) ProjectExpense::where('expense_date', '>=', $startOfMonth)
             ->where('is_reconciled', true)
             ->sum('amount');
         
-        $lastMonthIncome = ProjectPayment::whereBetween('payment_date', [
+        $lastMonthIncome = (float) ProjectPayment::whereBetween('payment_date', [
             now()->subMonth()->startOfMonth(),
             now()->subMonth()->endOfMonth()
         ])->sum('amount');
         
-        $lastMonthExpenses = ProjectExpense::whereBetween('expense_date', [
+        $lastMonthExpenses = (float) ProjectExpense::whereBetween('expense_date', [
             now()->subMonth()->startOfMonth(),
             now()->subMonth()->endOfMonth()
         ])->where('is_reconciled', true)->sum('amount');
@@ -380,7 +380,7 @@ class FinancialController extends Controller
                 return [
                     'id' => $invoice->id,
                     'invoice_number' => $invoice->invoice_number,
-                    'amount' => $invoice->total_amount,
+                    'amount' => (float) $invoice->total_amount,
                     'due_date' => $invoice->due_date,
                     'is_overdue' => $daysOverdue < 0,
                     'days' => abs($daysOverdue)
@@ -402,15 +402,16 @@ class FinancialController extends Controller
                 return [
                     'type' => 'income',
                     'date' => $p->payment_date,
-                    'description' => $p->description ?? $p->project->name ?? 'Payment',
-                    'amount' => $p->amount,
+                    'description' => $p->description ?? ($p->project ? $p->project->name : 'Payment'),
+                    'amount' => (float) $p->amount,
+                    'project_name' => $p->project ? $p->project->name : null,
                     'icon' => 'arrow-down',
                     'color' => 'green'
                 ];
             });
         
         $expenses = ProjectExpense::with('project')
-            ->where('status', 'approved')
+            ->where('is_reconciled', true)
             ->select('id', 'project_id', 'amount', 'expense_date', 'description')
             ->orderBy('expense_date', 'desc')
             ->take($limit)
@@ -419,8 +420,9 @@ class FinancialController extends Controller
                 return [
                     'type' => 'expense',
                     'date' => $e->expense_date,
-                    'description' => $e->description ?? $e->project->name ?? 'Expense',
-                    'amount' => $e->amount,
+                    'description' => $e->description ?? ($e->project ? $e->project->name : 'Expense'),
+                    'amount' => (float) $e->amount,
+                    'project_name' => $e->project ? $e->project->name : null,
                     'icon' => 'arrow-up',
                     'color' => 'red'
                 ];

@@ -18,7 +18,7 @@ class TaskController extends Controller
     {
         $filter = $request->get('filter', 'all'); // all, today, week, overdue
         
-        $query = Task::with(['project', 'assignee'])
+        $query = Task::with(['project', 'assignedUser'])
             ->select('id', 'title', 'description', 'status', 'due_date', 'project_id', 'assigned_user_id', 'priority');
         
         // Apply filters
@@ -80,7 +80,7 @@ class TaskController extends Controller
     public function myTasks(Request $request)
     {
         $tasks = Task::where('assigned_user_id', auth()->id())
-            ->with(['project', 'assignee'])
+            ->with(['project', 'assignedUser'])
             ->orderBy('due_date', 'asc')
             ->paginate(20);
         
@@ -152,7 +152,7 @@ class TaskController extends Controller
             'project_id' => $task->project_id,
             'project_name' => $task->project->name ?? null,
             'assigned_to_id' => $task->assigned_user_id,
-            'assigned_to_name' => $task->assignee->name ?? null,
+            'assigned_to_name' => $task->assignedUser->name ?? null,
         ];
     }
     
@@ -201,7 +201,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $task->load(['project.status', 'assignee', 'creator', 'comments.user']);
+        $task->load(['project.status', 'assignedUser']);
         
         $relatedTasks = Task::where('project_id', $task->project_id)
             ->where('id', '!=', $task->id)
@@ -309,8 +309,8 @@ class TaskController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'project_id' => 'required|exists:projects,id',
-            'due_date' => 'required|date|after:today',
-            'priority' => 'nullable|in:low,medium,high',
+            'due_date' => 'required|date|after_or_equal:today',
+            'priority' => 'nullable|in:low,medium,high,urgent',
             'assigned_user_id' => 'nullable|exists:users,id'
         ]);
         
@@ -320,14 +320,14 @@ class TaskController extends Controller
             'due_date' => $request->due_date,
             'priority' => $request->priority ?? 'medium',
             'assigned_user_id' => $request->assigned_user_id ?? auth()->id(),
-            'creator_id' => auth()->id(),
             'status' => 'todo'
         ]);
         
         return response()->json([
             'success' => true,
             'task' => $task,
-            'redirect' => route('mobile.tasks.show', $task->id)
+            'redirect' => route('mobile.tasks.show', $task->id),
+            'message' => 'Task berhasil dibuat'
         ], 201);
     }
 }

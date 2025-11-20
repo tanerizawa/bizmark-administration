@@ -44,11 +44,13 @@ class EmailInboxController extends Controller
         $emails = $query->with('emailAccount')->orderBy('received_at', 'desc')->paginate(25);
 
         $stats = [
-            'total' => EmailInbox::count(),
+            'total' => EmailInbox::whereNotIn('category', ['trash', 'spam'])->count(),
             'inbox' => EmailInbox::where('category', 'inbox')->count(),
             'sent' => EmailInbox::where('category', 'sent')->count(),
             'unread' => EmailInbox::where('category', 'inbox')->where('is_read', false)->count(),
-            'starred' => EmailInbox::where('is_starred', true)->count(),
+            'starred' => EmailInbox::where('is_starred', true)->whereNotIn('category', ['trash', 'spam'])->count(),
+            'trash' => EmailInbox::where('category', 'trash')->count(),
+            'spam' => EmailInbox::where('category', 'spam')->count(),
         ];
 
         return view('admin.email.inbox.index', compact('emails', 'stats', 'category'));
@@ -186,5 +188,14 @@ class EmailInboxController extends Controller
         $email->delete();
         return redirect()->route('admin.inbox.index')
             ->with('success', 'Email berhasil dihapus.');
+    }
+
+    public function emptyTrash()
+    {
+        $count = EmailInbox::where('category', 'trash')->count();
+        EmailInbox::where('category', 'trash')->delete();
+        
+        return redirect()->route('admin.inbox.index', ['category' => 'trash'])
+            ->with('success', "{$count} email berhasil dihapus permanen dari trash.");
     }
 }

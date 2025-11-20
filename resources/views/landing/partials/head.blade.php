@@ -67,7 +67,7 @@
 <!-- Favicons -->
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon-192.png">
-<meta name="theme-color" content="#1E40AF">
+<meta name="theme-color" content="#0077B5">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Bizmark.ID">
@@ -123,30 +123,54 @@
 }
 </script>
 
-<!-- Service Worker Registration - DISABLED -->
+<!-- Service Worker Registration - FORCE CLEANUP -->
 <script>
-// Service Worker DISABLED - causing dashboard CSS issues
-// Uncomment to re-enable PWA features
-/*
+// Force update to new cleanup service worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-                console.log('[SW] Registered successfully:', registration.scope);
-            })
-            .catch((error) => {
-                console.error('[SW] Registration failed:', error);
+        // First, unregister all existing service workers
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            const unregisterPromises = registrations.map(registration => {
+                console.log('[Landing] Unregistering old SW:', registration.scope);
+                return registration.unregister();
             });
-    });
-}
-*/
-
-// Instead, UNREGISTER any existing SW
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-            console.log('[Landing] Unregistering SW:', registration.scope);
-            registration.unregister();
+            
+            return Promise.all(unregisterPromises);
+        }).then(() => {
+            console.log('[Landing] All old service workers unregistered');
+            
+            // Register new cleanup service worker
+            return navigator.serviceWorker.register('/sw.js', {
+                updateViaCache: 'none', // Don't cache the service worker file
+                scope: '/'
+            });
+        }).then((registration) => {
+            console.log('[Landing] Cleanup service worker registered');
+            
+            // Force immediate activation
+            if (registration.waiting) {
+                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            
+            // Listen for controller change (new SW activated)
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('[Landing] New service worker activated, reloading...');
+                window.location.reload();
+            });
+        }).catch((error) => {
+            console.error('[Landing] Service worker error:', error);
+        });
+        
+        // Also clear all caches manually
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                return Promise.all(
+                    names.map(name => {
+                        console.log('[Landing] Deleting cache:', name);
+                        return caches.delete(name);
+                    })
+                );
+            });
         }
     });
 }

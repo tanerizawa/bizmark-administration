@@ -3,9 +3,11 @@
 @section('title', 'Notifikasi')
 
 @section('header-actions')
-<button @click="markAllAsRead" class="text-gray-600 hover:text-[#0077b5] transition-colors text-sm font-medium">
-    <i class="fas fa-check-double mr-1"></i>
-    Tandai Semua
+<button @click="markAllAsRead" 
+        :disabled="loading"
+        class="text-white hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all active:scale-95 text-sm font-medium flex items-center gap-1.5">
+    <i class="fas fa-check-double"></i>
+    <span class="hidden sm:inline">Tandai Semua</span>
 </button>
 @endsection
 

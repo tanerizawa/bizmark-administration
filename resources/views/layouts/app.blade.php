@@ -838,6 +838,21 @@
                                     <span class="ml-3">Email Settings</span>
                                 </div>
                             </a>
+                            
+                            <a href="{{ route('admin.email-accounts.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.email-accounts.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
+                                <div class="flex items-center">
+                                    <i class="fas fa-at w-5"></i>
+                                    <span class="ml-3">Email Accounts</span>
+                                </div>
+                                @php
+                                    $activeEmailAccounts = \App\Models\EmailAccount::where('is_active', true)->count();
+                                @endphp
+                                @if($activeEmailAccounts > 0)
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.email-accounts.*') ? 'bg-white text-apple-blue' : 'bg-white/20 text-white' }}">
+                                        {{ $activeEmailAccounts }}
+                                    </span>
+                                @endif
+                            </a>
                         </div>
                         
                         <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
@@ -964,6 +979,48 @@
     
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Screen Width Detection for Responsive Routing -->
+    <script>
+        (function() {
+            function updateScreenWidth() {
+                const width = window.innerWidth;
+                fetch('/api/set-screen-width', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ width: width })
+                }).catch(err => console.log('Screen width update failed:', err));
+            }
+            
+            // Update on load
+            updateScreenWidth();
+            
+            // Update on resize (debounced)
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    updateScreenWidth();
+                    // Auto-refresh if crossing mobile/desktop threshold
+                    const currentWidth = window.innerWidth;
+                    const wasMobile = sessionStorage.getItem('wasMobile') === 'true';
+                    const isMobileNow = currentWidth < 768;
+                    
+                    if (wasMobile !== isMobileNow) {
+                        sessionStorage.setItem('wasMobile', isMobileNow);
+                        // Refresh page to apply new layout
+                        setTimeout(() => window.location.reload(), 500);
+                    }
+                }, 500);
+            });
+            
+            // Store initial state
+            sessionStorage.setItem('wasMobile', (window.innerWidth < 768).toString());
+        })();
+    </script>
     
     @stack('scripts')
 </body>

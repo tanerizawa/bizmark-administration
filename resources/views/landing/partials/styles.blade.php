@@ -4,21 +4,21 @@
         theme: {
             extend: {
                 colors: {
-                    // Modern Professional Color Palette 2025
+                    // Modern Professional Color Palette 2025 - LinkedIn Official Blue
                     'primary': {
-                        DEFAULT: '#1E40AF',  // Deep Blue
-                        '50': '#EFF6FF',
-                        '100': '#DBEAFE',
-                        '200': '#BFDBFE',
-                        '300': '#93C5FD',
-                        '400': '#60A5FA',
-                        '500': '#3B82F6',
-                        '600': '#1E40AF',
-                        '700': '#1E3A8A',
-                        '800': '#1E3A8A',
-                        '900': '#1E3A8A',
-                        'dark': '#1E3A8A',
-                        'darker': '#172554',
+                        DEFAULT: '#0077B5',  // LinkedIn Official Blue
+                        '50': '#e7f5ff',
+                        '100': '#d0ebff',
+                        '200': '#b3dbff',
+                        '300': '#80c3ff',
+                        '400': '#4da4ff',
+                        '500': '#268aed',
+                        '600': '#0077B5',
+                        '700': '#005582',
+                        '800': '#004868',
+                        '900': '#003d5c',
+                        'dark': '#005582',
+                        'darker': '#003d5c',
                     },
                     'secondary': {
                         DEFAULT: '#F97316',  // Vibrant Orange
@@ -52,10 +52,10 @@
     }
     
     :root {
-        /* Modern Color System */
-        --primary: #1E40AF;
-        --primary-dark: #1E3A8A;
-        --primary-darker: #172554;
+        /* Modern Color System - LinkedIn Official Blue */
+        --primary: #0077B5;
+        --primary-dark: #005582;
+        --primary-darker: #003d5c;
         --secondary: #F97316;
         --secondary-dark: #EA580C;
         --accent: #10B981;
@@ -219,6 +219,34 @@
     }
 
     .nav-link:hover::after {
+        transform: scaleX(1);
+    }
+
+    /* Nav Link White - for LinkedIn blue navbar */
+    .nav-link-white {
+        position: relative;
+        color: rgba(255, 255, 255, 0.9);
+        transition: color 0.3s ease;
+    }
+
+    .nav-link-white::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 100%;
+        height: 2px;
+        background: #FBBF24;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-link-white:hover {
+        color: #FBBF24;
+    }
+
+    .nav-link-white:hover::after {
         transform: scaleX(1);
     }
     

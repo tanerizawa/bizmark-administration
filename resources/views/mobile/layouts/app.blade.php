@@ -18,23 +18,49 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     {{-- PWA Meta Tags --}}
-    <meta name="theme-color" content="#0077b5">
+    <meta name="theme-color" content="#0077B5">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Bizmark Admin">
     
     {{-- Manifest --}}
     <link rel="manifest" href="/manifest.json">
     
     {{-- Icons --}}
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="apple-touch-icon" href="/images/favicon.svg">
     
     <title>@yield('title', 'Dashboard') - Bizmark Admin</title>
     
     {{-- Tailwind CSS CDN (for development - use compiled in production) --}}
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Suppress Tailwind CDN warning in console (we know it's for development)
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bizmark': {
+                            DEFAULT: '#0077B5',
+                            dark: '#005582',
+                            light: '#E7F3F8'
+                        },
+                        'apple-blue': {
+                            DEFAULT: '#007AFF',
+                            dark: '#0051D5',
+                            light: '#E5F3FF'
+                        },
+                        'linkedin': {
+                            DEFAULT: '#0077b5',
+                            dark: '#004d6d',
+                            light: '#e7f3f8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     {{-- Alpine.js --}}
@@ -58,14 +84,14 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        /* Fixed Header with safe area - LinkedIn style */
+        /* Fixed Header with safe area - Bizmark Brand Color */
         .mobile-header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 50;
-            background: linear-gradient(135deg, #0077b5 0%, #004d6d 100%);
+            background: linear-gradient(135deg, rgb(0, 119, 181) 0%, rgb(0, 85, 130) 100%);
             height: calc(56px + env(safe-area-inset-top));
             padding-top: env(safe-area-inset-top);
             box-shadow: 0 2px 8px rgba(0, 119, 181, 0.15);
@@ -162,6 +188,42 @@
             25% { transform: translateX(-2px); }
             75% { transform: translateX(2px); }
         }
+        
+        /* Alpine.js x-cloak */
+        [x-cloak] {
+            display: none !important;
+        }
+        
+        /* Toast animations */
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+        
+        @keyframes fade-out {
+            from {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-in;
+        }
     </style>
     
     @stack('styles')
@@ -170,7 +232,7 @@
     
     {{-- Pull to Refresh Indicator --}}
     <div id="refreshIndicator" class="refresh-indicator">
-        <i class="fas fa-sync-alt" style="color: #0077b5;"></i>
+        <i class="fas fa-sync-alt" style="color: rgb(0, 119, 181);"></i>
     </div>
 
     {{-- Fixed Header --}}
@@ -389,7 +451,7 @@
                 </a>
                 
                 {{-- Preferences --}}
-                <a href="{{ mobile_route('profile.show') }}" 
+                <a href="{{ mobile_route('settings.preferences') }}" 
                    class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -404,7 +466,7 @@
                 </a>
                 
                 {{-- About --}}
-                <a href="#" onclick="alert('Bizmark Admin v2.5.0\n\nUntuk bantuan, hubungi support@bizmark.id'); return false;" 
+                <a href="{{ mobile_route('settings.about') }}" 
                    class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -670,8 +732,8 @@
         // Task Input Handler
         function showTaskInput() {
             hideQuickAdd();
-            // Redirect to quick task creation page
-            window.location.href = '{{ mobile_route("tasks.create") }}';
+            // Redirect to tasks page and trigger modal
+            window.location.href = '{{ mobile_route("tasks.index") }}?openQuickAdd=1';
         }
 
         // Menu Handler (replaces Profile)
@@ -880,6 +942,46 @@
             document.documentElement.classList.add('pwa-mode');
             console.log('🚀 Running in PWA mode');
         }
+        
+        // Screen Width Detection for Responsive Routing
+        (function() {
+            function updateScreenWidth() {
+                const width = window.innerWidth;
+                fetch('/api/set-screen-width', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ width: width })
+                }).catch(err => console.log('Screen width update failed:', err));
+            }
+            
+            // Update on load
+            updateScreenWidth();
+            
+            // Update on resize (debounced)
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    updateScreenWidth();
+                    // Auto-refresh if crossing mobile/desktop threshold
+                    const currentWidth = window.innerWidth;
+                    const wasMobile = sessionStorage.getItem('wasMobile') === 'true';
+                    const isMobileNow = currentWidth < 768;
+                    
+                    if (wasMobile !== isMobileNow) {
+                        sessionStorage.setItem('wasMobile', isMobileNow);
+                        // Refresh page to apply new layout
+                        setTimeout(() => window.location.reload(), 500);
+                    }
+                }, 500);
+            });
+            
+            // Store initial state
+            sessionStorage.setItem('wasMobile', (window.innerWidth < 768).toString());
+        })();
     </script>
 
     @stack('scripts')

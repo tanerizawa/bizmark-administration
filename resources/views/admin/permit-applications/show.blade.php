@@ -171,6 +171,7 @@
                     <h2 class="text-xl font-bold text-gray-900 mb-4">
                         <i class="fas fa-user mr-2 text-purple-600"></i>Informasi Client
                     </h2>
+                    @if($application->client)
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-sm font-medium text-gray-600">Nama Client</label>
@@ -189,6 +190,9 @@
                             <p class="text-gray-900">{{ ucfirst($application->client->client_type) }}</p>
                         </div>
                     </div>
+                    @else
+                    <p class="text-gray-500 italic">Data client tidak tersedia</p>
+                    @endif
                 </div>
 
                 <!-- Application Data -->
@@ -755,7 +759,7 @@
                             </p>
                         </div>
                         @endif
-                        @if($application->reviewed_by)
+                        @if($application->reviewedBy)
                             <div>
                                 <label class="text-gray-600">Direview oleh</label>
                                 <p class="text-gray-900">{{ $application->reviewedBy->name }}</p>

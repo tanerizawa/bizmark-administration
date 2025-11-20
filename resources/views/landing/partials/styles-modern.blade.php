@@ -8,13 +8,13 @@
             extend: {
                 colors: {
                     primary: {
-                        DEFAULT: '#1E40AF',
-                        50: '#EFF6FF',
-                        100: '#DBEAFE',
-                        600: '#1E40AF',
-                        700: '#1E3A8A',
-                        800: '#1E3A8A',
-                        900: '#172554',
+                        DEFAULT: '#0077B5',
+                        50: '#e7f5ff',
+                        100: '#d0ebff',
+                        600: '#0077B5',
+                        700: '#005582',
+                        800: '#004868',
+                        900: '#003d5c',
                     },
                     secondary: {
                         DEFAULT: '#F97316',
@@ -59,10 +59,10 @@
     }
     
     :root {
-        /* Premium Color Palette */
-        --primary: #1E40AF;
-        --primary-dark: #1E3A8A;
-        --primary-darker: #172554;
+        /* Premium Color Palette - LinkedIn Official Blue */
+        --primary: #0077B5;
+        --primary-dark: #005582;
+        --primary-darker: #003d5c;
         --secondary: #F97316;
         --secondary-dark: #EA580C;
         --accent: #10B981;
@@ -107,7 +107,7 @@ body {
         font-weight: 800;
         line-height: 1.2;
         color: var(--gray-900);
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         letter-spacing: -0.025em;
     }
     
@@ -117,7 +117,7 @@ body {
     h4 { font-size: 1.5rem; font-weight: 700; }    /* 24px */
     
     p {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         color: var(--gray-600);
         line-height: 1.7;
         font-size: 1.125rem;
@@ -171,16 +171,16 @@ body {
     }
     
 .section {
-    padding-block: clamp(64px, 14vw, 96px);
+    padding-block: clamp(40px, 8vw, 64px);
 }
 
 .section-sm {
-    padding-block: clamp(48px, 10vw, 72px);
+    padding-block: clamp(32px, 6vw, 52px);
 }
     
 @media (max-width: 768px) {
-    .section { padding-block: 52px; }
-    .section-sm { padding-block: 38px; }
+    .section { padding-block: 40px; }
+    .section-sm { padding-block: 32px; }
 }
     
     /* =================================
@@ -224,7 +224,7 @@ body {
     /* Use background-color so Tailwind gradient utilities (background-image) still apply */
     background-color: white;
     border-radius: 20px;
-    padding: 1.75rem;
+    padding: 1.5rem 1.5rem;
     box-shadow: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(17, 24, 39, 0.06);
@@ -232,8 +232,8 @@ body {
 
 .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 18px 30px -24px rgba(30, 64, 175, 0.35);
-    border-color: rgba(30, 64, 175, 0.12);
+    box-shadow: 0 18px 30px -24px rgba(0, 119, 181, 0.35);
+    border-color: rgba(0, 119, 181, 0.12);
     }
     
     /* Modern Buttons - Bold & Clear */
@@ -257,15 +257,15 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #1E40AF, #4338CA);
+    background: linear-gradient(135deg, #0077B5, #005582);
     color: white;
-    border: 1px solid rgba(30, 64, 175, 0.65);
-    box-shadow: 0 12px 28px -18px rgba(30, 64, 175, 0.8);
+    border: 1px solid rgba(0, 119, 181, 0.65);
+    box-shadow: 0 12px 28px -18px rgba(0, 119, 181, 0.8);
 }
 
 .btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 18px 32px -18px rgba(30, 64, 175, 0.9);
+    box-shadow: 0 18px 32px -18px rgba(0, 85, 130, 0.9);
 }
 
 .btn-secondary {
@@ -365,10 +365,10 @@ body {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: var(--icon-sheen, rgba(30, 64, 175, 0.1));
-        border: 1px solid var(--icon-border, rgba(30, 64, 175, 0.12));
+        background: var(--icon-sheen, rgba(0, 119, 181, 0.1));
+        border: 1px solid var(--icon-border, rgba(0, 119, 181, 0.12));
         color: var(--icon-color, var(--primary));
-        transition: transform 0.3s ease;
+        transition: all 0.3s ease;
     }
 
     .icon-ring i {
@@ -378,6 +378,10 @@ body {
 
     .icon-ring:hover {
         transform: translateY(-2px);
+        background: linear-gradient(135deg, #0077B5, #005582);
+        color: white;
+        border-color: #0077B5;
+        box-shadow: 0 8px 20px rgba(0, 119, 181, 0.3);
     }
 
     .client-logo-card {
@@ -444,8 +448,8 @@ body {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, var(--stat-accent, var(--primary)), #111827);
-        box-shadow: 0 10px 25px rgba(30, 64, 175, 0.25);
+        background: linear-gradient(135deg, #0077B5, #005582);
+        box-shadow: 0 10px 25px rgba(0, 119, 181, 0.25);
         position: relative;
         z-index: 1;
     }
@@ -541,14 +545,14 @@ body {
         width: 3.5rem;
         height: 3.5rem;
         border-radius: 9999px;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        background: linear-gradient(135deg, #0077B5, #005582);
         color: white;
         font-weight: 700;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-size: 1.25rem;
-        box-shadow: 0 10px 20px rgba(30, 64, 175, 0.3);
+        box-shadow: 0 10px 20px rgba(0, 119, 181, 0.3);
     }
 
     .testimonial-verified {
@@ -591,9 +595,9 @@ body {
     }
 
     .carousel-nav:hover {
-        background: var(--primary);
+        background: linear-gradient(135deg, #0077B5, #005582);
         color: white;
-        border-color: var(--primary);
+        border-color: #0077B5;
         transform: translateY(-50%) scale(1.05);
     }
 
@@ -685,26 +689,29 @@ body {
         position: fixed;
         top: 0;
         width: 100%;
-        background: rgba(255, 255, 255, 0.9);
+        background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         z-index: 1000;
-        transition: all 0.3s ease;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     
     .navbar.scrolled {
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: var(--shadow-soft);
+        background: linear-gradient(135deg, #005582 0%, #003d5c 100%);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.25);
     }
     
     /* Service Cards - Modern Grid */
 .service-card {
     position: relative;
     background: white;
-    border-radius: 22px;
-    padding: 2.25rem;
+    border-radius: 20px;
+    padding: 1.5rem;
     box-shadow: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
@@ -808,7 +815,7 @@ body {
         transform: translateX(100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
-        background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+        background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
         overflow-y: auto;
     }
     
@@ -920,7 +927,7 @@ body {
     }
     
     .fab-phone {
-        background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+        background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
     }
     
     .fab-back-to-top {

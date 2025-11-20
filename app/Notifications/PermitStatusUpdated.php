@@ -39,7 +39,7 @@ class PermitStatusUpdated extends Notification
         return (new WebPushMessage)
             ->title('📋 Status Izin Diperbarui')
             ->body("Izin {$this->application->application_number}: {$statusText}")
-            ->icon('/icons/icon-192x192.png')
+            ->icon('/images/favicon.svg')
             ->badge('/icons/badge-72x72.png')
             ->data([
                 'url' => route('client.applications.show', $this->application->id),

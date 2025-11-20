@@ -16,11 +16,11 @@
 
 <section id="about" class="section bg-white md:bg-[#F7F8FC]">
     <div class="container">
-        <div class="text-center mb-12" data-aos="fade-up">
+        <div class="text-center mb-8" data-aos="fade-up">
             <span class="section-label">
                 {{ $isIndonesian ? 'Mengapa Kami' : 'Why Us' }}
             </span>
-            <h2 class="section-title mb-6">
+            <h2 class="section-title mb-4">
                 {{ $isIndonesian ? 'Mengapa Memilih Bizmark.ID?' : 'Why Choose Bizmark.ID?' }}
             </h2>
             <p class="section-description max-w-3xl mx-auto">
@@ -28,7 +28,7 @@
             </p>
         </div>
         
-        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             @foreach($whyChoose as $index => $item)
                 <article class="card text-center" data-aos="zoom-in" data-aos-delay="{{ $index * 80 }}" style="--icon-color: {{ $item['color'] }}; --icon-sheen: {{ $colorRgba($item['color'], 0.15) }}; --icon-border: {{ $colorRgba($item['color'], 0.35) }};">
                     <div class="icon-ring mx-auto mb-4">

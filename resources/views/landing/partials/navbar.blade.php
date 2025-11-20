@@ -4,49 +4,53 @@
 @endphp
 
 <!-- Navigation -->
-<nav class="navbar" role="navigation" aria-label="Main navigation">
+<nav class="navbar bg-[#0077B5] shadow-md" role="navigation" aria-label="Main navigation">
     <div class="container-wide h-20 flex items-center justify-between">
         <a href="{{ $isLandingPage ? '#home' : $landingUrl . '#home' }}" 
-           class="flex flex-col leading-tight"
-           aria-label="Bizmark.ID Permit Suite - Go to homepage">
-            <span class="text-xs font-semibold uppercase tracking-[0.4em] text-slate-400">Bizmark.ID</span>
-            <span class="text-xl font-semibold text-slate-900">Permit Suite</span>
+           class="flex items-center gap-2"
+           aria-label="Bizmark.ID - Go to homepage">
+            <div class="flex items-center gap-1">
+                <i class="fas fa-building text-yellow-400 text-2xl"></i>
+                <span class="text-2xl font-bold text-white">
+                    Bizmark<span class="text-yellow-400">.ID</span>
+                </span>
+            </div>
         </a>
 
-        <div class="hidden lg:flex items-center gap-8 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400" role="menubar">
-            <a href="{{ $isLandingPage ? '#home' : $landingUrl . '#home' }}" class="nav-link" role="menuitem">Beranda</a>
-            <a href="{{ $isLandingPage ? '#services' : $landingUrl . '#services' }}" class="nav-link" role="menuitem">Layanan</a>
-            <a href="{{ $isLandingPage ? '#process' : $landingUrl . '#process' }}" class="nav-link" role="menuitem">Proses</a>
-            <a href="{{ route('blog.index') }}" class="nav-link" role="menuitem">Artikel</a>
-            <a href="{{ route('career.index') }}" class="nav-link" role="menuitem">Karir</a>
-            <a href="{{ $isLandingPage ? '#about' : $landingUrl . '#about' }}" class="nav-link" role="menuitem">Tentang</a>
+        <div class="hidden lg:flex items-center gap-6 text-xs font-semibold uppercase tracking-[0.35em] text-blue-100" role="menubar">
+            <a href="{{ $isLandingPage ? '#home' : $landingUrl . '#home' }}" class="nav-link-white" role="menuitem">Beranda</a>
+            <a href="{{ $isLandingPage ? '#services' : $landingUrl . '#services' }}" class="nav-link-white" role="menuitem">Layanan</a>
+            <a href="{{ $isLandingPage ? '#process' : $landingUrl . '#process' }}" class="nav-link-white" role="menuitem">Proses</a>
+            <a href="{{ route('blog.index') }}" class="nav-link-white" role="menuitem">Artikel</a>
+            <a href="{{ route('career.index') }}" class="nav-link-white" role="menuitem">Karir</a>
+            <a href="{{ $isLandingPage ? '#about' : $landingUrl . '#about' }}" class="nav-link-white" role="menuitem">Tentang</a>
         </div>
 
         <div class="hidden lg:flex items-center gap-4">
-            <div class="text-right text-xs uppercase tracking-[0.35em] text-slate-400">
+            <div class="text-right text-xs uppercase tracking-[0.35em] text-blue-100">
                 <span aria-label="Hotline telephone number">Hotline</span>
-                <p class="text-base font-semibold tracking-normal text-slate-900">
+                <p class="text-base font-semibold tracking-normal text-white">
                     <a href="tel:+6283879602855" 
-                       class="hover:text-blue-600 transition"
+                       class="hover:text-yellow-400 transition"
                        aria-label="Call us at +62 838 7960 2855">
                         +62 838 7960 2855
                     </a>
                 </p>
             </div>
             
-            <div class="h-8 w-px bg-gray-300"></div>
+            <div class="h-8 w-px bg-blue-400"></div>
             
-            <!-- Client Portal Button - Single Login/Register -->
-            <a href="{{ route('client.login') }}" 
-               class="flex items-center gap-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition shadow-sm"
-               aria-label="Login atau Registrasi Portal Klien">
+            <!-- Unified Login Button -->
+            <a href="{{ route('login') }}" 
+               class="flex items-center gap-2 text-sm font-medium bg-white hover:bg-yellow-400 text-[#0077B5] px-4 py-2.5 rounded-lg transition shadow-sm"
+               aria-label="Login Portal">
                 <i class="fas fa-sign-in-alt"></i>
-                <span>Login / Registrasi</span>
+                <span>Login</span>
             </a>
         </div>
 
         <div class="lg:hidden flex items-center">
-            <button class="text-gray-700 hover:text-blue-600 p-2 rounded-lg hover:bg-gray-100 transition" 
+            <button class="text-white hover:text-yellow-400 p-2 rounded-lg hover:bg-blue-700 transition" 
                     onclick="toggleMobileMenu()" 
                     id="mobile-menu-button"
                     aria-label="Open navigation menu" 

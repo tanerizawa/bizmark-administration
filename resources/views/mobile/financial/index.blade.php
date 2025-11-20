@@ -8,8 +8,8 @@
     {{-- Cash Balance Card --}}
     <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-2xl p-6 mb-4 text-white shadow-lg">
         <div class="text-sm opacity-90 mb-2">Saldo Kas</div>
-        <div class="text-3xl font-bold mb-1">Rp {{ number_format($cashBalance, 0, ',', '.') }}</div>
-        <div class="text-sm opacity-75">Runway: {{ $runway }} bulan</div>
+        <div class="text-3xl font-bold mb-1">Rp {{ number_format($cashBalance['total'] ?? 0, 0, ',', '.') }}</div>
+        <div class="text-sm opacity-75">Runway: {{ $runway['months'] ?? 0 }} bulan</div>
     </div>
 
     {{-- Monthly Stats --}}
@@ -35,14 +35,17 @@
                 <div class="text-xs text-gray-600 font-medium">Pengeluaran</div>
             </div>
             <div class="text-xl font-bold text-gray-900">
-                Rp {{ number_format($thisMonth['expense'] ?? 0, 0, ',', '.') }}
+                Rp {{ number_format($thisMonth['expenses'] ?? 0, 0, ',', '.') }}
             </div>
             <div class="text-xs text-gray-500 mt-1">Bulan ini</div>
         </div>
     </div>
 
     {{-- Pending Receivables --}}
-    @if($pendingReceivables > 0)
+    @if($pendingReceivables && $pendingReceivables->count() > 0)
+    @php
+        $totalPending = $pendingReceivables->sum('amount');
+    @endphp
     <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
         <div class="flex items-start gap-3">
             <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -51,9 +54,9 @@
             <div class="flex-1">
                 <div class="font-semibold text-gray-900 mb-1">Piutang Pending</div>
                 <div class="text-2xl font-bold text-amber-600 mb-1">
-                    Rp {{ number_format($pendingReceivables, 0, ',', '.') }}
+                    Rp {{ number_format($totalPending, 0, ',', '.') }}
                 </div>
-                <div class="text-sm text-gray-600">Menunggu pembayaran dari klien</div>
+                <div class="text-sm text-gray-600">{{ $pendingReceivables->count() }} invoice menunggu pembayaran</div>
             </div>
         </div>
     </div>
@@ -98,21 +101,21 @@
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-1">
-                            <div class="w-8 h-8 {{ $transaction->type === 'income' ? 'bg-green-50' : 'bg-red-50' }} rounded-lg flex items-center justify-center">
-                                <i class="fas {{ $transaction->type === 'income' ? 'fa-arrow-down text-green-600' : 'fa-arrow-up text-red-600' }} text-sm"></i>
+                            <div class="w-8 h-8 {{ $transaction['type'] === 'income' ? 'bg-green-50' : 'bg-red-50' }} rounded-lg flex items-center justify-center">
+                                <i class="fas {{ $transaction['type'] === 'income' ? 'fa-arrow-down text-green-600' : 'fa-arrow-up text-red-600' }} text-sm"></i>
                             </div>
                             <div>
-                                <div class="font-medium text-gray-900 text-sm">{{ $transaction->description }}</div>
-                                <div class="text-xs text-gray-500">{{ $transaction->date->format('d M Y') }}</div>
+                                <div class="font-medium text-gray-900 text-sm">{{ $transaction['description'] }}</div>
+                                <div class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($transaction['date'])->format('d M Y') }}</div>
                             </div>
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="font-bold {{ $transaction->type === 'income' ? 'text-green-600' : 'text-red-600' }}">
-                            {{ $transaction->type === 'income' ? '+' : '-' }}Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                        <div class="font-bold {{ $transaction['type'] === 'income' ? 'text-green-600' : 'text-red-600' }}">
+                            {{ $transaction['type'] === 'income' ? '+' : '-' }}Rp {{ number_format($transaction['amount'], 0, ',', '.') }}
                         </div>
-                        @if($transaction->project_name)
-                        <div class="text-xs text-gray-500 mt-0.5">{{ $transaction->project_name }}</div>
+                        @if($transaction['project_name'])
+                        <div class="text-xs text-gray-500 mt-0.5">{{ $transaction['project_name'] }}</div>
                         @endif
                     </div>
                 </div>

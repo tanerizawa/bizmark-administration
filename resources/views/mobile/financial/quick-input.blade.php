@@ -3,8 +3,8 @@
 @section('title', 'Input Keuangan')
 
 @section('header-actions')
-<button onclick="history.back()" class="text-gray-600 hover:text-gray-900 transition-colors">
-    <i class="fas fa-times text-xl"></i>
+<button onclick="history.back()" class="text-white hover:bg-white/20 w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95">
+    <i class="fas fa-times text-lg"></i>
 </button>
 @endsection
 
