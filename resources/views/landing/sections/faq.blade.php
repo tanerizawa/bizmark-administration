@@ -94,9 +94,9 @@
 
 <section id="faq" class="section bg-gray-50">
     <div class="container max-w-4xl">
-        <div class="text-center mb-12" data-aos="fade-up">
+        <div class="text-center mb-8" data-aos="fade-up">
             <span class="section-label">FAQ</span>
-            <h2 class="section-title mb-6">
+            <h2 class="section-title mb-4">
                 {{ $locale === 'id' ? 'Pertanyaan yang Sering Diajukan' : 'Frequently Asked Questions' }}
             </h2>
             <p class="section-description max-w-2xl mx-auto">

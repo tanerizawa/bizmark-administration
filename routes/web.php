@@ -31,16 +31,59 @@ Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 Route::get('/locale/{locale}', [LocaleController::class, 'setLocale'])->name('locale.set');
 
 // Legal Pages
-Route::get('/kebijakan-privasi', function() {
-    return view('legal.privacy');
+Route::get('/kebijakan-privasi', function(\Illuminate\Http\Request $request) {
+    $isMobile = $request->header('User-Agent') && 
+               (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+    $view = $isMobile ? 'legal.mobile-privacy' : 'legal.privacy';
+    return view($view);
 })->name('privacy.policy');
 
-Route::get('/syarat-ketentuan', function() {
-    return view('legal.terms');
+Route::get('/syarat-ketentuan', function(\Illuminate\Http\Request $request) {
+    $isMobile = $request->header('User-Agent') && 
+               (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+    $view = $isMobile ? 'legal.mobile-terms' : 'legal.terms';
+    return view($view);
 })->name('terms.conditions');
 
-// Landing Page (Public) - With Latest Articles
-Route::get('/', [PublicArticleController::class, 'landing'])->name('landing');
+// Landing Page (Public) - Auto-detect Mobile/Desktop
+Route::get('/', function(\Illuminate\Http\Request $request) {
+    // Get screen width from session (set by JS)
+    $screenWidth = session('screen_width', 0);
+    
+    // Detect mobile by screen width (priority)
+    $isMobileByScreen = $screenWidth > 0 && $screenWidth < 768;
+    
+    // Detect mobile by user agent (fallback)
+    $userAgent = $request->header('User-Agent');
+    $isMobileByUA = stripos($userAgent, 'Mobile') !== false || 
+                    stripos($userAgent, 'Android') !== false || 
+                    stripos($userAgent, 'iPhone') !== false ||
+                    stripos($userAgent, 'iPad') !== false;
+    
+    // Final decision
+    $isMobile = $isMobileByScreen || $isMobileByUA;
+    
+    // Override if screen width explicitly shows desktop
+    if ($screenWidth >= 768) {
+        $isMobile = false;
+    }
+    
+    // Check manual preference
+    if ($request->query('mobile') === '1') {
+        return redirect()->route('mobile.landing');
+    }
+    if ($request->query('desktop') === '1') {
+        return app(PublicArticleController::class)->landing($request);
+    }
+    
+    // Auto-redirect based on detection
+    if ($isMobile) {
+        return redirect()->route('mobile.landing');
+    }
+    
+    // Desktop version (existing landing page)
+    return app(PublicArticleController::class)->landing($request);
+})->name('landing');
 
 // Service Pages (Public)
 Route::get('/layanan', [ServiceController::class, 'index'])->name('services.index');
@@ -67,21 +110,35 @@ Route::post('/subscribe', [App\Http\Controllers\SubscriberController::class, 'su
 Route::get('/unsubscribe/{email}/{token}', [App\Http\Controllers\SubscriberController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 Route::get('/email/track/{tracking_id}', [App\Http\Controllers\SubscriberController::class, 'trackOpen'])->name('email.track');
 
-// Custom Authentication Routes (Hidden Login Path for Security)
-// Login routes with custom path '/hadez' instead of '/login'
-Route::get('/hadez', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/hadez', [App\Http\Controllers\Auth\LoginController::class, 'login']);
-Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+// Screen Width Detection API (for responsive mobile detection)
+Route::post('/api/set-screen-width', function(\Illuminate\Http\Request $request) {
+    $width = $request->input('width');
+    if ($width && is_numeric($width)) {
+        session(['screen_width' => (int)$width]);
+    }
+    return response()->json(['success' => true, 'width' => session('screen_width')]);
+})->name('api.screen-width');
 
-// Redirect /login to homepage to hide the real login path
-Route::get('/login', function () {
-    return redirect('/');
-});
+// ========================================
+// UNIFIED LOGIN SYSTEM
+// ========================================
+// Auto-detects Admin or Client based on credentials
+// Main login portal for all users
+Route::get('/login', [App\Http\Controllers\Auth\UnifiedLoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\UnifiedLoginController::class, 'login'])
+    ->middleware('throttle:5,1'); // 5 attempts per minute
+Route::post('/logout', [App\Http\Controllers\Auth\UnifiedLoginController::class, 'logout'])->name('logout');
+
+// Admin-only direct login (hidden path for internal use)
+// Can be used by admin staff who know this secret path
+Route::get('/hadez', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/hadez', [App\Http\Controllers\Auth\LoginController::class, 'login'])
+    ->middleware('throttle:3,1'); // Stricter rate limit for admin path
 
 // Protected Routes (require authentication)
 Route::middleware(['auth'])->group(function () {
-    // Dashboard - dengan mobile auto-redirect
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('mobile');
+    // Dashboard - desktop version (mobile auto-redirects handled in DetectMobile middleware)
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     Route::post('/dashboard/clear-cache', [DashboardController::class, 'clearCache'])->name('dashboard.clear-cache');
     Route::get('/home', function () {
@@ -131,6 +188,7 @@ Route::middleware(['auth'])->group(function () {
     // Read-only routes (auth required)
     Route::middleware('auth')->group(function () {
         Route::get('cash-accounts', [CashAccountController::class, 'index'])->name('cash-accounts.index');
+        Route::get('cash-accounts/create', [CashAccountController::class, 'create'])->name('cash-accounts.create');
         Route::get('cash-accounts/{cash_account}', [CashAccountController::class, 'show'])->name('cash-accounts.show');
     });
     
@@ -142,7 +200,6 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('expenses/{expense}', [ProjectExpenseController::class, 'destroy'])->name('expenses.destroy');
         
         // Cash accounts write operations
-        Route::get('cash-accounts/create', [CashAccountController::class, 'create'])->name('cash-accounts.create');
         Route::post('cash-accounts', [CashAccountController::class, 'store'])->name('cash-accounts.store');
         Route::get('cash-accounts/{cash_account}/edit', [CashAccountController::class, 'edit'])->name('cash-accounts.edit');
         Route::put('cash-accounts/{cash_account}', [CashAccountController::class, 'update'])->name('cash-accounts.update');
@@ -317,6 +374,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('inbox/{id}/star', [App\Http\Controllers\Admin\EmailInboxController::class, 'toggleStar'])->name('inbox.toggle-star');
         Route::post('inbox/{id}/trash', [App\Http\Controllers\Admin\EmailInboxController::class, 'moveToTrash'])->name('inbox.trash');
         Route::delete('inbox/{id}', [App\Http\Controllers\Admin\EmailInboxController::class, 'delete'])->name('inbox.delete');
+        Route::post('inbox/empty-trash', [App\Http\Controllers\Admin\EmailInboxController::class, 'emptyTrash'])->name('inbox.empty-trash');
         
         // Email Subscribers
         Route::resource('subscribers', App\Http\Controllers\Admin\EmailSubscriberController::class);
@@ -375,7 +433,10 @@ Route::middleware(['auth'])->group(function () {
 Route::prefix('client')->name('client.')->group(function () {
     // Guest routes (login, register, password reset)
     Route::middleware('guest:client')->group(function () {
-        Route::get('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'showLoginForm'])->name('login');
+        // Redirect old client login to unified login
+        Route::get('/login', fn() => redirect('/login'))->name('legacy.login');
+        
+        // Keep legacy POST for backwards compatibility (will be deprecated)
         Route::post('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'login'])
             ->middleware('throttle:5,1'); // Max 5 attempts per minute
         

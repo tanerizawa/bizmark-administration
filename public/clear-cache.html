@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Cache - Bizmark.ID</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        ul {
+            text-align: left;
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+            color: #666;
+        }
+        .icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🧹</div>
+        <h1>Clear Browser Cache</h1>
+        <p style="color: #666; margin-bottom: 20px;">
+            Membersihkan cache browser untuk menerapkan update terbaru
+        </p>
+        
+        <div id="status" class="status info">
+            Sedang membersihkan cache...
+        </div>
+        
+        <div id="actions" style="display: none;">
+            <p style="margin: 20px 0; color: #333;">Pilih tampilan yang Anda inginkan:</p>
+            <a href="/" class="btn btn-primary" onclick="sessionStorage.clear(); localStorage.clear();">
+                🖥️ Versi Desktop
+            </a>
+            <a href="/m/landing" class="btn btn-primary" onclick="sessionStorage.clear(); localStorage.clear();">
+                📱 Versi Mobile
+            </a>
+        </div>
+    </div>
+
+    <script>
+        async function clearAllCache() {
+            const statusEl = document.getElementById('status');
+            const actionsEl = document.getElementById('actions');
+            let messages = [];
+
+            try {
+                // 1. Clear Service Workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                    messages.push('✅ Service Worker dihapus');
+                }
+
+                // 2. Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (let name of cacheNames) {
+                        await caches.delete(name);
+                    }
+                    messages.push('✅ Cache storage dihapus');
+                }
+
+                // 3. Clear sessionStorage
+                sessionStorage.clear();
+                messages.push('✅ Session storage dihapus');
+
+                // 4. Clear localStorage
+                localStorage.clear();
+                messages.push('✅ Local storage dihapus');
+
+                // 5. Clear cookies (for same origin only)
+                const cookies = document.cookie.split(";");
+                for (let cookie of cookies) {
+                    const eqPos = cookie.indexOf("=");
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                }
+                messages.push('✅ Cookies dihapus');
+
+                // Success message
+                statusEl.className = 'status success';
+                statusEl.innerHTML = '<strong>✅ Cache berhasil dibersihkan!</strong><br><br>' + 
+                                    messages.join('<br>');
+                
+                // Show action buttons
+                actionsEl.style.display = 'block';
+
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.innerHTML = '❌ Error: ' + error.message;
+                console.error('Clear cache error:', error);
+            }
+        }
+
+        // Auto-run on page load
+        window.addEventListener('load', () => {
+            setTimeout(clearAllCache, 500);
+        });
+    </script>
+</body>
+</html>

@@ -8,6 +8,8 @@
     $categoryTabs = [
         'inbox' => ['label' => 'Inbox', 'icon' => 'inbox', 'count' => $stats['unread'] ?? 0, 'badge' => true],
         'sent' => ['label' => 'Sent', 'icon' => 'paper-plane'],
+        'trash' => ['label' => 'Trash', 'icon' => 'trash', 'count' => $stats['trash'] ?? 0],
+        'spam' => ['label' => 'Spam', 'icon' => 'ban', 'count' => $stats['spam'] ?? 0],
     ];
 @endphp
 
@@ -76,6 +78,8 @@
                     <i class="fas fa-{{ $tab['icon'] }} mr-2"></i>{{ $tab['label'] }}
                     @if(!empty($tab['badge']) && ($tab['count'] ?? 0) > 0)
                         <span>{{ $tab['count'] }}</span>
+                    @elseif(in_array($key, ['trash', 'spam']) && ($tab['count'] ?? 0) > 0)
+                        <span class="opacity-60">{{ $tab['count'] }}</span>
                     @endif
                 </a>
             @endforeach
@@ -93,7 +97,17 @@
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
                 <h2 class="text-lg font-semibold text-white">Cari email</h2>
             </div>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $emails->total() }} hasil ditemukan</p>
+            <div class="flex items-center gap-3">
+                <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $emails->total() }} hasil ditemukan</p>
+                @if($category === 'trash' && $emails->total() > 0)
+                    <form method="POST" action="{{ route('admin.inbox.empty-trash') }}" onsubmit="return confirm('Yakin ingin menghapus semua email di trash secara permanen?')">
+                        @csrf
+                        <button type="submit" class="text-xs px-3 py-1.5 rounded-apple font-semibold" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,1); border: 1px solid rgba(255,59,48,0.3);">
+                            <i class="fas fa-trash mr-1"></i>Kosongkan Trash
+                        </button>
+                    </form>
+                @endif
+            </div>
         </div>
         <form method="GET" action="{{ route('admin.inbox.index', ['category' => $category]) }}">
             <div class="flex flex-col gap-3 md:flex-row md:items-end">
@@ -188,10 +202,10 @@
                                 </span>
                             </div>
                             <h3 class="text-sm font-{{ !$email->is_read ? 'semibold' : 'normal' }} text-white mb-1 truncate">
-                                {{ $email->subject }}
+                                {{ $email->subject ?: '(No subject)' }}
                             </h3>
                             <p class="text-xs line-clamp-2" style="color: rgba(235,235,245,0.55);">
-                                {{ Str::limit(strip_tags($email->body_text ?? $email->body_html), 160) }}
+                                {{ Str::limit($email->preview, 120) }}
                             </p>
                             @if($email->emailAccount)
                                 <span class="inline-flex items-center px-2 py-1 text-xs rounded-apple" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.7);">

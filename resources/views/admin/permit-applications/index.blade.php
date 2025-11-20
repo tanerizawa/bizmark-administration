@@ -195,10 +195,14 @@
                                 </p>
                             </td>
                             <td class="px-6 py-4 align-top">
-                                <p class="text-sm font-semibold text-white">{{ $app->client->name }}</p>
-                                <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $app->client->email }}</p>
-                                @if(!empty($app->client->company_type))
-                                    <p class="text-xs mt-0.5" style="color: rgba(235,235,245,0.6);">{{ strtoupper($app->client->company_type) }}</p>
+                                @if($app->client)
+                                    <p class="text-sm font-semibold text-white">{{ $app->client->name }}</p>
+                                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $app->client->email }}</p>
+                                    @if(!empty($app->client->company_type))
+                                        <p class="text-xs mt-0.5" style="color: rgba(235,235,245,0.6);">{{ strtoupper($app->client->company_type) }}</p>
+                                    @endif
+                                @else
+                                    <p class="text-sm text-gray-400">-</p>
                                 @endif
                             </td>
                             <td class="px-6 py-4 align-top">

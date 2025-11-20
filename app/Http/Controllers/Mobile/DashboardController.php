@@ -199,10 +199,10 @@ class DashboardController extends Controller
      */
     private function getRunwayMetric()
     {
-        $totalCash = CashAccount::sum('current_balance');
+        $totalCash = (float) CashAccount::sum('current_balance');
         
         // Calculate monthly burn rate (last 30 days)
-        $monthlyExpenses = ProjectExpense::where('expense_date', '>=', now()->subDays(30))
+        $monthlyExpenses = (float) ProjectExpense::where('expense_date', '>=', now()->subDays(30))
             ->sum('amount');
             
         $monthlyBurn = $monthlyExpenses;
@@ -286,10 +286,10 @@ class DashboardController extends Controller
                 $query->where('is_active', true);
             })->count(),
             'teamMembers' => \App\Models\User::where('is_active', true)->count(),
-            'monthRevenue' => Invoice::whereMonth('created_at', now()->month)
+            'monthRevenue' => (float) Invoice::whereMonth('created_at', now()->month)
                 ->where('status', 'paid')
                 ->sum('total_amount'),
-            'monthExpenses' => ProjectExpense::whereMonth('expense_date', now()->month)
+            'monthExpenses' => (float) ProjectExpense::whereMonth('expense_date', now()->month)
                 ->sum('amount'),
         ];
     }

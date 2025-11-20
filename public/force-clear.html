@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Force Clear Service Worker - Bizmark.ID</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; padding: 40px; text-align: center;">
+    <h1>🧹 Clearing Service Worker...</h1>
+    <p id="status">Please wait...</p>
+    
+    <script>
+        const statusEl = document.getElementById('status');
+        
+        async function forceCleanup() {
+            try {
+                // 1. Unregister all service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        statusEl.innerHTML += '<br>✅ Unregistered: ' + registration.scope;
+                    }
+                }
+                
+                // 2. Clear all caches
+                if ('caches' in window) {
+                    const names = await caches.keys();
+                    for (let name of names) {
+                        await caches.delete(name);
+                        statusEl.innerHTML += '<br>✅ Deleted cache: ' + name;
+                    }
+                }
+                
+                // 3. Clear storage
+                sessionStorage.clear();
+                localStorage.clear();
+                statusEl.innerHTML += '<br>✅ Cleared storage';
+                
+                // 4. Success
+                statusEl.innerHTML += '<br><br><strong style="color: green;">✅ All cleaned!</strong>';
+                statusEl.innerHTML += '<br><br><a href="/" style="display: inline-block; padding: 15px 30px; background: #0077B5; color: white; text-decoration: none; border-radius: 8px; margin: 10px;">Go to Homepage</a>';
+                statusEl.innerHTML += '<br><a href="/m/landing" style="display: inline-block; padding: 15px 30px; background: #0077B5; color: white; text-decoration: none; border-radius: 8px; margin: 10px;">Go to Mobile</a>';
+                
+            } catch (error) {
+                statusEl.innerHTML = '❌ Error: ' + error.message;
+                console.error(error);
+            }
+        }
+        
+        // Auto-run
+        setTimeout(forceCleanup, 500);
+    </script>
+</body>
+</html>

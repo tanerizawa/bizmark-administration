@@ -6,7 +6,7 @@
   "start_url": "/?utm_source=pwa&utm_medium=homescreen&v=2.2.0",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0a66c2",
+  "theme_color": "#0077B5",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [

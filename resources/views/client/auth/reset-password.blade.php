@@ -154,7 +154,7 @@
                 <a href="{{ route('client.password.request') }}" class="block text-sm text-gray-600 hover:text-purple-600 font-medium">
                     <i class="fas fa-redo mr-2"></i>Kirim Ulang Link Reset
                 </a>
-                <a href="{{ route('client.login') }}" class="block text-sm text-gray-600 hover:text-purple-600">
+                <a href="{{ route('login') }}" class="block text-sm text-gray-600 hover:text-purple-600">
                     <i class="fas fa-arrow-left mr-2"></i>Kembali ke Login
                 </a>
             </div>

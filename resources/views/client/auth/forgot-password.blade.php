@@ -104,7 +104,7 @@
 
             <!-- Back to Login -->
             <div class="text-center space-y-2">
-                <a href="{{ route('client.login') }}" class="block text-sm text-gray-600 hover:text-purple-600 font-medium">
+                <a href="{{ route('login') }}" class="block text-sm text-gray-600 hover:text-purple-600 font-medium">
                     <i class="fas fa-arrow-left mr-2"></i>Kembali ke Halaman Login
                 </a>
                 <a href="https://wa.me/62838796028550" target="_blank" class="block text-sm text-gray-600 hover:text-purple-600">

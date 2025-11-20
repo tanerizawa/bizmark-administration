@@ -19,11 +19,24 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
+        // If requesting stats only
+        if ($request->has('stats')) {
+            $stats = [
+                'total' => Project::count(),
+                'active' => Project::whereHas('status', fn($q) => $q->where('is_active', true))->count(),
+                'overdue' => Project::where('deadline', '<', now())
+                    ->whereHas('status', fn($q) => $q->where('is_active', true))->count(),
+                'completed' => Project::whereHas('status', fn($q) => $q->where('is_active', false))->count(),
+            ];
+            
+            return response()->json(['stats' => $stats]);
+        }
+        
         $status = $request->get('status', 'active');
         $search = $request->get('q');
         
-        $query = Project::with(['status', 'institution'])
-            ->select('id', 'name', 'budget', 'deadline', 'status_id', 'institution_id', 'progress_percentage');
+        $query = Project::with(['status', 'institution', 'client'])
+            ->select('id', 'name', 'budget', 'deadline', 'status_id', 'institution_id', 'client_id', 'progress_percentage');
         
         // Filter by status
         if ($status === 'active') {
@@ -73,6 +86,7 @@ class ProjectController extends Controller
         $project->load([
             'status',
             'institution',
+            'client',
             'tasks' => fn($q) => $q->orderBy('due_date'),
             'documents' => fn($q) => $q->latest()->take(5),
             'expenses' => fn($q) => $q->latest()->take(10),
@@ -84,9 +98,9 @@ class ProjectController extends Controller
             'completedTasks' => $project->tasks->where('status', 'done')->count(),
             'overdueTasks' => $project->tasks->where('due_date', '<', now())
                 ->where('status', '!=', 'done')->count(),
-            'totalBudget' => $project->budget,
-            'totalSpent' => $project->expenses->sum('amount'),
-            'totalIncome' => $project->payments->sum('amount'),
+            'totalBudget' => (float) $project->budget,
+            'totalSpent' => (float) $project->expenses->sum('amount'),
+            'totalIncome' => (float) $project->payments->sum('amount'),
             'daysLeft' => now()->diffInDays($project->deadline, false),
         ];
         
@@ -109,7 +123,10 @@ class ProjectController extends Controller
             ->orWhereHas('institution', fn($q) => 
                 $q->where('name', 'ilike', "%{$query}%")
             )
-            ->with(['status', 'institution'])
+            ->orWhereHas('client', fn($q) =>
+                $q->where('company_name', 'ilike', "%{$query}%")
+            )
+            ->with(['status', 'institution', 'client'])
             ->take(10)
             ->get()
             ->map(fn($p) => [
@@ -118,6 +135,7 @@ class ProjectController extends Controller
                 'code' => $p->project_code,
                 'status' => $p->status->name ?? 'Unknown',
                 'institution' => $p->institution->name ?? '-',
+                'client' => $p->client->company_name ?? '-',
                 'url' => route('mobile.projects.show', $p->id)
             ]);
         
@@ -134,11 +152,16 @@ class ProjectController extends Controller
             'note' => 'required|string|max:500'
         ]);
         
-        // Add to project notes (assuming there's a notes field or relation)
-        $note = $project->notes()->create([
-            'content' => $request->note,
+        // Add note to project_logs table
+        $log = $project->logs()->create([
             'user_id' => auth()->id(),
-            'created_at' => now()
+            'action' => 'note_added',
+            'description' => $request->note,
+            'notes' => $request->note,
+            'old_values' => null,
+            'new_values' => ['note' => $request->note],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
         ]);
         
         // Clear cache
@@ -146,7 +169,7 @@ class ProjectController extends Controller
         
         return response()->json([
             'success' => true,
-            'note' => $note,
+            'note' => $log,
             'message' => 'Catatan berhasil ditambahkan'
         ]);
     }
@@ -162,18 +185,33 @@ class ProjectController extends Controller
         ]);
         
         $oldStatus = $project->status->name ?? 'Unknown';
+        $oldStatusId = $project->status_id;
+        
         $project->update(['status_id' => $request->status_id]);
         $newStatus = $project->fresh()->status->name ?? 'Unknown';
         
-        // Log activity
-        activity()
-            ->performedOn($project)
-            ->causedBy(auth()->user())
-            ->withProperties([
-                'old_status' => $oldStatus,
-                'new_status' => $newStatus
-            ])
-            ->log('status_changed');
+        // Log to project_logs
+        $project->logs()->create([
+            'user_id' => auth()->id(),
+            'action' => 'status_changed',
+            'description' => "Status diubah dari '{$oldStatus}' ke '{$newStatus}'",
+            'old_values' => ['status_id' => $oldStatusId, 'status_name' => $oldStatus],
+            'new_values' => ['status_id' => $request->status_id, 'status_name' => $newStatus],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+        
+        // Also log to activity if spatie/laravel-activitylog is installed
+        if (function_exists('activity')) {
+            activity()
+                ->performedOn($project)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus
+                ])
+                ->log('status_changed');
+        }
         
         return response()->json([
             'success' => true,
@@ -239,6 +277,71 @@ class ProjectController extends Controller
         });
         
         return response()->json(['timeline' => $timeline]);
+    }
+    
+    /**
+     * Show create project form
+     */
+    public function createForm()
+    {
+        $institutions = \App\Models\Institution::orderBy('name')->get();
+        $clients = \App\Models\Client::where('status', 'active')->orderBy('company_name')->get();
+        $statuses = ProjectStatus::where('is_active', true)->orderBy('name')->get();
+        
+        return view('mobile.projects.create', compact('institutions', 'clients', 'statuses'));
+    }
+    
+    /**
+     * Quick store project from create form
+     */
+    public function quickStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'client_id' => 'required|exists:clients,id',
+            'institution_id' => 'required|exists:institutions,id',
+            'deadline' => 'required|date|after_or_equal:today',
+            'budget' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string|max:1000'
+        ]);
+        
+        try {
+            $project = Project::create([
+                'name' => $request->name,
+                'client_id' => $request->client_id,
+                'institution_id' => $request->institution_id,
+                'deadline' => $request->deadline,
+                'budget' => $request->budget ?? 0,
+                'description' => $request->description,
+                'status_id' => ProjectStatus::where('is_active', true)->first()?->id ?? 1,
+                'start_date' => now(),
+                'progress_percentage' => 0
+            ]);
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Project berhasil dibuat',
+                    'project' => $project,
+                    'redirect' => route('mobile.projects.show', $project->id)
+                ], 201);
+            }
+            
+            return redirect()->route('mobile.projects.show', $project->id)
+                ->with('success', 'Project berhasil dibuat');
+                
+        } catch (\Exception $e) {
+            \Log::error('Project create error: ' . $e->getMessage());
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal membuat project: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Gagal membuat project')->withInput();
+        }
     }
     
     /**

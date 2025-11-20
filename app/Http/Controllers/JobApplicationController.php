@@ -13,7 +13,7 @@ class JobApplicationController extends Controller
     /**
      * Show application form for a specific vacancy (PUBLIC).
      */
-    public function create($vacancy_id)
+    public function create(Request $request, $vacancy_id)
     {
         $vacancy = JobVacancy::findOrFail($vacancy_id);
 
@@ -22,7 +22,13 @@ class JobApplicationController extends Controller
                 ->with('error', 'Maaf, lowongan ini sudah ditutup.');
         }
 
-        return view('career.apply', compact('vacancy'));
+        // Detect mobile
+        $isMobile = $request->header('User-Agent') && 
+                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+        
+        $view = $isMobile ? 'career.mobile-apply' : 'career.apply';
+        
+        return view($view, compact('vacancy'));
     }
 
     /**

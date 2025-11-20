@@ -6,18 +6,24 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $services = config('services_data');
         
-        return view('services.index', [
+        // Detect mobile
+        $isMobile = $request->header('User-Agent') && 
+                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+        
+        $view = $isMobile ? 'services.mobile-index' : 'services.index';
+        
+        return view($view, [
             'services' => $services,
             'title' => 'Layanan Kami - Bizmark.ID',
             'meta_description' => 'Layanan lengkap perizinan industri: Limbah B3, AMDAL, UKL-UPL, OSS NIB, PBG/SLF, Izin Operasional, Konsultan Lingkungan, dan Monitoring Digital'
         ]);
     }
 
-    public function show($slug)
+    public function show(Request $request, $slug)
     {
         $services = config('services_data');
         
@@ -31,7 +37,13 @@ class ServiceController extends Controller
         }, ARRAY_FILTER_USE_KEY);
         $relatedServices = array_slice($relatedServices, 0, 3);
         
-        return view('services.show', [
+        // Detect mobile
+        $isMobile = $request->header('User-Agent') && 
+                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+        
+        $view = $isMobile ? 'services.mobile-show' : 'services.show';
+        
+        return view($view, [
             'service' => $service,
             'relatedServices' => $relatedServices,
             'title' => $service['title'] . ' - Bizmark.ID',

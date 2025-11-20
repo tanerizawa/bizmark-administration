@@ -9,7 +9,13 @@
         <div class="flex items-start justify-between mb-3">
             <div class="flex-1 min-w-0 pr-3">
                 <h1 class="text-xl font-bold mb-1">{{ $project->name }}</h1>
-                <p class="text-white text-sm">{{ $project->institution->name ?? '-' }}</p>
+                <p class="text-white/90 text-sm">{{ $project->institution->name ?? '-' }}</p>
+                @if($project->client)
+                <div class="flex items-center gap-1.5 mt-1.5">
+                    <i class="fas fa-building text-white/80 text-xs"></i>
+                    <p class="text-white/80 text-sm font-medium">{{ $project->client->company_name }}</p>
+                </div>
+                @endif
             </div>
             <span class="flex-shrink-0 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
                 {{ $project->status->name ?? 'Unknown' }}
@@ -100,10 +106,26 @@
             <div class="bg-white rounded-lg border border-gray-200 p-4 mb-4">
                 <h3 class="font-semibold text-gray-900 mb-3">Informasi Project</h3>
                 <div class="space-y-2.5">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Manager</span>
-                        <span class="font-medium">{{ $project->manager->name ?? '-' }}</span>
+                    @if($project->client)
+                    <div class="flex justify-between text-sm pb-2.5 border-b border-gray-100">
+                        <span class="text-gray-600">Klien</span>
+                        <span class="font-medium text-[#0077b5]">{{ $project->client->company_name }}</span>
                     </div>
+                    @if($project->client->contact_person)
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Contact Person</span>
+                        <span class="font-medium">{{ $project->client->contact_person }}</span>
+                    </div>
+                    @endif
+                    @if($project->client->phone)
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Telepon</span>
+                        <a href="tel:{{ $project->client->phone }}" class="font-medium text-[#0077b5] hover:underline">
+                            {{ $project->client->phone }}
+                        </a>
+                    </div>
+                    @endif
+                    @endif
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Deadline</span>
                         <span class="font-medium">{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}</span>
@@ -370,6 +392,99 @@
             </div>
         </div>
     </div>
+
+    <!-- Add Note Modal -->
+    <div x-show="showAddNoteModal" 
+         x-cloak
+         @click.self="showAddNoteModal = false"
+         class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div @click.stop 
+             x-show="showAddNoteModal"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
+             x-transition:enter-end="translate-y-0 sm:scale-100 opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="translate-y-0 sm:scale-100 opacity-100"
+             x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
+             class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg">Add Note</h3>
+                <button @click="showAddNoteModal = false" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form @submit.prevent="submitNote" class="p-4">
+                <textarea 
+                    x-model="noteContent"
+                    placeholder="Tulis catatan..."
+                    rows="5"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent resize-none"
+                    required></textarea>
+                <div class="mt-4 flex gap-2">
+                    <button type="button" 
+                            @click="showAddNoteModal = false"
+                            class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            :disabled="submitting"
+                            class="flex-1 px-4 py-2.5 bg-[#0077b5] text-white rounded-lg font-medium hover:bg-[#006399] disabled:opacity-50">
+                        <span x-show="!submitting">Save Note</span>
+                        <span x-show="submitting"><i class="fas fa-spinner fa-spin mr-1"></i>Saving...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Status Modal -->
+    <div x-show="showStatusModal" 
+         x-cloak
+         @click.self="showStatusModal = false"
+         class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div @click.stop 
+             x-show="showStatusModal"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
+             x-transition:enter-end="translate-y-0 sm:scale-100 opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="translate-y-0 sm:scale-100 opacity-100"
+             x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
+             class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg">Update Status</h3>
+                <button @click="showStatusModal = false" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form @submit.prevent="submitStatus" class="p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Status Baru</label>
+                <select x-model="selectedStatusId" 
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent"
+                        required>
+                    <option value="">-- Pilih Status --</option>
+                    @foreach(\App\Models\ProjectStatus::all() as $status)
+                    <option value="{{ $status->id }}" {{ $project->status_id == $status->id ? 'selected' : '' }}>
+                        {{ $status->name }}
+                    </option>
+                    @endforeach
+                </select>
+                <div class="mt-4 flex gap-2">
+                    <button type="button" 
+                            @click="showStatusModal = false"
+                            class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            :disabled="submitting || !selectedStatusId"
+                            class="flex-1 px-4 py-2.5 bg-[#0077b5] text-white rounded-lg font-medium hover:bg-[#006399] disabled:opacity-50">
+                        <span x-show="!submitting">Update Status</span>
+                        <span x-show="submitting"><i class="fas fa-spinner fa-spin mr-1"></i>Updating...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -382,6 +497,9 @@ function projectDetail(projectId) {
         timelineLoaded: false,
         showAddNoteModal: false,
         showStatusModal: false,
+        noteContent: '',
+        selectedStatusId: '{{ $project->status_id }}',
+        submitting: false,
 
         init() {
             this.$watch('activeTab', (value) => {
@@ -389,6 +507,102 @@ function projectDetail(projectId) {
                     this.loadTimeline();
                 }
             });
+        },
+
+        async submitNote() {
+            if (!this.noteContent.trim()) return;
+            
+            this.submitting = true;
+            try {
+                const response = await fetch(`/m/projects/${projectId}/note`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        note: this.noteContent
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success message
+                    this.showToast('Catatan berhasil ditambahkan', 'success');
+                    this.noteContent = '';
+                    this.showAddNoteModal = false;
+                    
+                    // Reload timeline if active
+                    if (this.activeTab === 'timeline') {
+                        this.timelineLoaded = false;
+                        await this.loadTimeline();
+                    }
+                } else {
+                    this.showToast(data.message || 'Gagal menambahkan catatan', 'error');
+                }
+            } catch (error) {
+                console.error('Add note error:', error);
+                this.showToast('Terjadi kesalahan saat menambahkan catatan', 'error');
+            } finally {
+                this.submitting = false;
+            }
+        },
+
+        async submitStatus() {
+            if (!this.selectedStatusId) return;
+            
+            this.submitting = true;
+            try {
+                const response = await fetch(`/m/projects/${projectId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status_id: this.selectedStatusId
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.showToast(data.message || 'Status berhasil diupdate', 'success');
+                    this.showStatusModal = false;
+                    
+                    // Reload page to show new status
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    this.showToast(data.message || 'Gagal update status', 'error');
+                }
+            } catch (error) {
+                console.error('Update status error:', error);
+                this.showToast('Terjadi kesalahan saat update status', 'error');
+            } finally {
+                this.submitting = false;
+            }
+        },
+
+        showToast(message, type = 'success') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-20 left-1/2 -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in ${
+                type === 'success' ? 'bg-green-600' : 'bg-red-600'
+            } text-white font-medium`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('animate-fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         },
 
         async loadTimeline() {

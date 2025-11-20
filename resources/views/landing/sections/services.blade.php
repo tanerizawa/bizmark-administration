@@ -13,9 +13,9 @@
 @endphp
 
 <!-- Services Section -->
-<section id="services" class="py-24 lg:py-32 bg-slate-50">
-    <div class="container-wide space-y-14">
-        <div class="max-w-3xl text-center mx-auto space-y-5" data-aos="fade-up">
+<section id="services" class="py-12 lg:py-20 bg-slate-50">
+    <div class="container-wide space-y-8">
+        <div class="max-w-3xl text-center mx-auto space-y-4" data-aos="fade-up">
             <div class="pill pill-brand mx-auto justify-center">
                 Layanan Bizmark.ID
             </div>
@@ -30,7 +30,7 @@
         <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             @forelse ($services as $slug => $service)
                 @php
-                    $iconColor = $service['color'] ?? '#1E40AF';
+                    $iconColor = $service['color'] ?? '#0077B5';
                 @endphp
                 <article class="card h-full flex flex-col justify-between" data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}" style="--icon-color: {{ $iconColor }}; --icon-sheen: {{ $colorRgba($iconColor, 0.18) }}; --icon-border: {{ $colorRgba($iconColor, 0.35) }};">
                     <div class="space-y-4">
@@ -55,7 +55,7 @@
             @endforelse
         </div>
 
-        <div class="rounded-3xl border border-slate-200 bg-white px-8 py-6 flex flex-wrap items-center justify-between gap-6">
+        <div class="rounded-3xl border border-slate-200 bg-white px-6 py-5 flex flex-wrap items-center justify-between gap-5">
             <div>
                 <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Directory</p>
                 <p class="text-base font-semibold text-slate-900">Lihat daftar lengkap layanan beserta studi kasus.</p>

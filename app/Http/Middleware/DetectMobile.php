@@ -15,6 +15,18 @@ class DetectMobile
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Cek query parameter ?desktop=1 untuk force desktop mode
+        if ($request->query('desktop') === '1') {
+            session(['force_desktop' => true]);
+            session()->forget('prefer_mobile');
+        }
+        
+        // Cek query parameter ?mobile=1 untuk force mobile mode
+        if ($request->query('mobile') === '1') {
+            session()->forget('force_desktop');
+            session(['prefer_mobile' => true]);
+        }
+        
         // Cek jika user force desktop mode via session
         if (session('force_desktop')) {
             // Jika user akses mobile route tapi force desktop, redirect ke desktop
@@ -24,27 +36,39 @@ class DetectMobile
             return $next($request);
         }
         
-        // Detect mobile device
-        $isMobile = $this->isMobileDevice($request);
+        // PRIORITY: Check client-side screen width detection (lebih akurat)
+        $screenWidth = session('screen_width', 0);
+        $isMobileByScreen = $screenWidth > 0 && $screenWidth < 768;
+        
+        // Detect mobile device by user agent
+        $isMobileByUA = $this->isMobileDevice($request);
+        
+        // Final decision: Mobile if EITHER screen is small OR user agent is mobile
+        // BUT respect user preference if they manually chose
+        $isMobile = $isMobileByScreen || $isMobileByUA;
+        
+        // If screen width indicates desktop (>= 768px), override mobile detection
+        if ($screenWidth >= 768) {
+            $isMobile = false;
+        }
         
         // Share mobile detection ke semua views
         view()->share('isMobile', $isMobile);
         
+        // Skip redirect logic for public mobile landing page
+        if ($request->is('m/landing')) {
+            return $next($request);
+        }
+        
         // Jika mobile device akses desktop route (bukan /m/*), redirect ke mobile
-        if ($isMobile && !$request->is('m/*') && !$request->is('m') && $request->is('dashboard*')) {
+        // KECUALI jika ada prefer_mobile session (user manually switched)
+        if ($isMobile && !session('prefer_mobile') && !$request->is('m/*') && !$request->is('m') && $request->is('dashboard*')) {
             return redirect()->route('mobile.dashboard');
         }
         
-        // Jika desktop device akses mobile route, redirect ke desktop
-        // PENTING: Cek jika sudah ada header X-Redirect-Loop untuk prevent infinite loop
-        if (!$isMobile && ($request->is('m/*') || $request->is('m')) && !session('force_mobile')) {
-            // Cek apakah ini redirect dari dashboard
-            $referer = $request->header('referer');
-            if ($referer && str_contains($referer, '/dashboard')) {
-                // Sudah dari dashboard, jangan redirect lagi - infinite loop protection
-                session(['force_mobile' => true]); // Force mobile untuk sesi ini
-                return $next($request);
-            }
+        // Jika desktop device (screen >= 768) akses mobile route, redirect ke desktop
+        // KECUALI jika user manually prefer mobile OR accessing public mobile landing
+        if (!$isMobile && !session('prefer_mobile') && ($request->is('m/*') || $request->is('m')) && !$request->is('m/landing')) {
             return redirect('/dashboard');
         }
         
@@ -58,19 +82,48 @@ class DetectMobile
     {
         $userAgent = $request->header('User-Agent');
         
-        // Mobile patterns
+        // PRIORITY 1: Check mobile device patterns FIRST
+        // Android, iOS, dan mobile devices lainnya
         $mobilePatterns = [
-            'Mobile', 'Android', 'iPhone', 'iPad', 'iPod',
-            'BlackBerry', 'IEMobile', 'Opera Mini', 'Opera Mobi'
+            'Android', 'iPhone', 'iPad', 'iPod',
+            'BlackBerry', 'IEMobile', 'Opera Mini', 'Opera Mobi',
+            'Mobile Safari', 'Windows Phone', 'webOS', 'Mobile'
         ];
         
         foreach ($mobilePatterns as $pattern) {
             if (stripos($userAgent, $pattern) !== false) {
-                return true;
+                // Double check: Jika ada "Android" atau "iPhone", pasti mobile
+                if (stripos($userAgent, 'Android') !== false || 
+                    stripos($userAgent, 'iPhone') !== false ||
+                    stripos($userAgent, 'iPad') !== false) {
+                    return true;
+                }
+                // Untuk pattern lain, cek apakah ada "Mobile" keyword
+                if (stripos($userAgent, 'Mobile') !== false) {
+                    return true;
+                }
             }
         }
         
-        // Check screen width from previous visits (if available)
+        // PRIORITY 2: Check desktop patterns (to exclude false positives)
+        // HANYA jika tidak match mobile patterns di atas
+        $desktopPatterns = [
+            'Windows NT', 'Macintosh', 'X11; Linux x86_64', 'X11; Ubuntu'
+        ];
+        
+        foreach ($desktopPatterns as $pattern) {
+            if (stripos($userAgent, $pattern) !== false) {
+                // Jika ada Windows NT atau Macintosh TANPA "Mobile", pasti desktop
+                if ((stripos($userAgent, 'Windows NT') !== false || 
+                     stripos($userAgent, 'Macintosh') !== false) &&
+                    stripos($userAgent, 'Mobile') === false &&
+                    stripos($userAgent, 'Android') === false) {
+                    return false; // Desktop OS confirmed
+                }
+            }
+        }
+        
+        // PRIORITY 3: Check screen width from previous visits (if available)
         if (session('screen_width') && session('screen_width') < 768) {
             return true;
         }

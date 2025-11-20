@@ -10,19 +10,25 @@ class JobVacancyController extends Controller
     /**
      * Display a listing of open job vacancies (PUBLIC).
      */
-    public function index()
+    public function index(Request $request)
     {
         $vacancies = JobVacancy::open()
             ->orderBy('created_at', 'desc')
             ->paginate(12);
 
-        return view('career.index', compact('vacancies'));
+        // Detect mobile
+        $isMobile = $request->header('User-Agent') && 
+                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+        
+        $view = $isMobile ? 'career.mobile-index' : 'career.index';
+        
+        return view($view, compact('vacancies'));
     }
 
     /**
      * Display the specified vacancy (PUBLIC).
      */
-    public function show($slug)
+    public function show(Request $request, $slug)
     {
         $vacancy = JobVacancy::where('slug', $slug)->firstOrFail();
 
@@ -39,6 +45,12 @@ class JobVacancyController extends Controller
             ? json_decode($vacancy->benefits, true) 
             : $vacancy->benefits;
 
-        return view('career.show', compact('vacancy', 'responsibilities', 'qualifications', 'benefits'));
+        // Detect mobile
+        $isMobile = $request->header('User-Agent') && 
+                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+        
+        $view = $isMobile ? 'career.mobile-show' : 'career.show';
+        
+        return view($view, compact('vacancy', 'responsibilities', 'qualifications', 'benefits'));
     }
 }

@@ -61,13 +61,13 @@
             <!-- Divider -->
             <div class="border-t border-white/20 my-4"></div>
             
-            <!-- Client Portal Section -->
-            <a href="{{ route('client.login') }}" 
+            <!-- Unified Login -->
+            <a href="{{ route('login') }}" 
                class="text-white bg-blue-600 hover:bg-blue-700 transition px-4 py-3 rounded-lg font-medium" 
                onclick="toggleMobileMenu()"
-               aria-label="Login atau Registrasi Portal Klien">
+               aria-label="Login Portal">
                 <i class="fas fa-sign-in-alt w-6 inline-block" aria-hidden="true"></i>
-                <span>Login / Registrasi</span>
+                <span>Login</span>
             </a>
         
         <!-- CTA Contact Section -->

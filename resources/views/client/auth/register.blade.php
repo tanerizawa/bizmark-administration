@@ -13,7 +13,7 @@
     
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
         }
     </style>
 </head>
@@ -30,8 +30,8 @@
         <!-- Registration Card -->
         <div class="bg-white rounded-2xl shadow-2xl p-8">
             <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                    <i class="fas fa-user-plus text-purple-600 text-2xl"></i>
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <i class="fas fa-user-plus text-[#0077B5] text-2xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-800">Buat Akun Baru</h2>
                 <p class="text-gray-600 mt-2">Mulai monitoring proyek perizinan Anda</p>
@@ -66,7 +66,7 @@
                         value="{{ old('name') }}" 
                         required 
                         autofocus
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('name') border-red-500 @enderror"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077B5] focus:border-transparent @error('name') border-red-500 @enderror"
                         placeholder="John Doe"
                     >
                 </div>
@@ -81,7 +81,7 @@
                         id="company_name" 
                         name="company_name" 
                         value="{{ old('company_name') }}" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077B5] focus:border-transparent"
                         placeholder="PT. Contoh Indonesia"
                     >
                     <p class="text-xs text-gray-500 mt-1">Kosongkan jika pendaftaran pribadi</p>
@@ -98,7 +98,7 @@
                         name="email" 
                         value="{{ old('email') }}" 
                         required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('email') border-red-500 @enderror"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077B5] focus:border-transparent @error('email') border-red-500 @enderror"
                         placeholder="email@company.com"
                     >
                 </div>
@@ -113,7 +113,7 @@
                         id="phone" 
                         name="phone" 
                         value="{{ old('phone') }}" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077B5] focus:border-transparent"
                         placeholder="6283879602855"
                     >
                 </div>
@@ -130,7 +130,7 @@
                             name="password" 
                             required
                             minlength="8"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('password') border-red-500 @enderror"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077B5] focus:border-transparent @error('password') border-red-500 @enderror"
                             placeholder="Minimal 8 karakter"
                         >
                         <button 
@@ -156,7 +156,7 @@
                             name="password_confirmation" 
                             required
                             minlength="8"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077B5] focus:border-transparent"
                             placeholder="Ketik ulang password"
                         >
                         <button 
@@ -172,9 +172,9 @@
                 <!-- Terms & Conditions -->
                 <div class="mb-6">
                     <label class="flex items-start">
-                        <input type="checkbox" required class="mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                        <input type="checkbox" required class="mt-1 w-4 h-4 text-[#0077B5] border-gray-300 rounded focus:ring-[#0077B5]">
                         <span class="ml-2 text-sm text-gray-600">
-                            Saya setuju dengan <a href="#" class="text-purple-600 hover:underline">Syarat & Ketentuan</a> dan <a href="#" class="text-purple-600 hover:underline">Kebijakan Privasi</a>
+                            Saya setuju dengan <a href="#" class="text-[#0077B5] hover:underline">Syarat & Ketentuan</a> dan <a href="#" class="text-[#0077B5] hover:underline">Kebijakan Privasi</a>
                         </span>
                     </label>
                 </div>
@@ -182,7 +182,7 @@
                 <!-- Submit Button -->
                 <button 
                     type="submit" 
-                    class="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-purple-800 transition duration-300 shadow-lg"
+                    class="w-full bg-gradient-to-r from-[#0077B5] to-[#005582] text-white font-semibold py-3 px-6 rounded-lg hover:from-[#005582] hover:to-[#004466] transition duration-300 shadow-lg"
                 >
                     <i class="fas fa-user-plus mr-2"></i>Daftar Sekarang
                 </button>
@@ -200,7 +200,7 @@
 
             <!-- Login Link -->
             <div class="text-center">
-                <a href="{{ route('client.login') }}" class="text-purple-600 hover:text-purple-800 font-medium">
+                <a href="{{ route('login') }}" class="text-[#0077B5] hover:text-[#004466] font-medium">
                     <i class="fas fa-sign-in-alt mr-2"></i>Masuk ke Akun Anda
                 </a>
             </div>

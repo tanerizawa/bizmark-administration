@@ -1,5 +1,9 @@
+@php
+    $metrics = config('landing_metrics');
+@endphp
+
 {{-- Hero Section --}}
-<section id="home" class="relative overflow-hidden bg-gradient-to-b from-white via-white to-slate-50 pt-32 pb-28 lg:pt-40 lg:pb-32">
+<section id="home" class="relative overflow-hidden bg-gradient-to-b from-white via-white to-slate-50 pt-28 pb-24 lg:pt-36 lg:pb-28">
     <div class="absolute inset-0 pointer-events-none">
         <div class="absolute -top-24 right-6 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[75%] h-56 bg-gradient-to-t from-primary/5 via-white to-transparent"></div>
@@ -7,14 +11,14 @@
     </div>
 
     <div class="container-wide relative z-10">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-            <div class="space-y-8" data-aos="fade-up">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-5" data-aos="fade-up">
                 <span class="pill pill-brand">
                     Bizmark.ID
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                     Permit Bureau
                 </span>
-                <div class="space-y-6">
+                <div class="space-y-5">
                     <h1 class="text-4xl lg:text-[3.4rem] font-semibold leading-tight text-slate-900">
                         Arsip, regulasi, dan koordinasi perizinan berpadu dalam satu ekosistem.
                     </h1>
@@ -24,22 +28,22 @@
                 </div>
                 <div class="grid grid-cols-3 gap-6" role="list" aria-label="Ringkasan capaian Bizmark.ID">
                     <div class="metric-card" role="listitem">
-                        <p class="metric-value">138</p>
+                        <p class="metric-value">{{ $metrics['projects']['completed'] }}</p>
                         <p class="metric-label">Project</p>
                     </div>
                     <div class="metric-card" role="listitem">
-                        <p class="metric-value">96%</p>
+                        <p class="metric-value">{{ $metrics['display']['sla_rate'] }}</p>
                         <p class="metric-label">SLA Tepat</p>
                     </div>
                     <div class="metric-card" role="listitem">
-                        <p class="metric-value">18</p>
+                        <p class="metric-value">{{ $metrics['coverage']['provinces'] }}</p>
                         <p class="metric-label">Provinsi</p>
                     </div>
                 </div>
                 {{-- Primary & Secondary CTAs --}}
-                <div class="space-y-5">
+                <div class="space-y-4">
                     <div class="flex items-center gap-4 flex-wrap">
-                        <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID,%20saya%20ingin%20mendapatkan%20analisis%20perizinan"
+                        <a href="https://wa.me/{{ $metrics['contact']['whatsapp'] }}?text=Halo%20Bizmark.ID,%20saya%20ingin%20mendapatkan%20analisis%20perizinan"
                            class="btn btn-primary group"
                            data-cta="hero_whatsapp"
                            onclick="trackEvent('CTA', 'click', 'hero_whatsapp_primary')">
@@ -75,13 +79,13 @@
                                     C
                                 </div>
                             </div>
-                            <span class="font-medium text-slate-700">23+ klien aktif bulan ini</span>
+                            <span class="font-medium text-slate-700">{{ $metrics['projects']['active_this_month'] }}+ klien aktif bulan ini</span>
                         </div>
                         <span class="text-slate-300">•</span>
-                        <a href="tel:+6283879602855" 
+                        <a href="tel:{{ str_replace(' ', '', $metrics['contact']['phone']) }}" 
                            class="hover:text-primary transition font-medium"
                            onclick="trackEvent('Engagement', 'phone_click', 'hero_phone')">
-                            +62 838 7960 2855
+                            {{ $metrics['contact']['phone_display'] }}
                         </a>
                     </div>
                 </div>
@@ -110,7 +114,7 @@
                              height="560">
                     </picture>
                 </div>
-                <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] rounded-3xl bg-white shadow-xl border border-gray-100 px-8 py-6 flex flex-wrap gap-4 items-center justify-between">
+                <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] rounded-3xl bg-white shadow-xl border border-gray-100 px-6 py-5 flex flex-wrap gap-4 items-center justify-between">
                     <div>
                         <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Pipeline</p>
                         <p class="text-lg font-semibold text-slate-900">UKL-UPL • OSS • SLF</p>
@@ -129,25 +133,25 @@
 <section class="py-8 border-y border-slate-100 bg-white">
     <div class="container-wide">
         <div class="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-sm" data-aos="fade-up">
-            {{-- Certification Badge --}}
+            {{-- Years of Experience --}}
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                    <i class="fas fa-certificate text-white text-lg"></i>
+                    <i class="fas fa-briefcase text-white text-lg"></i>
                 </div>
                 <div>
-                    <p class="font-semibold text-slate-900">ISO 9001:2015</p>
-                    <p class="text-xs text-slate-500">Certified Quality</p>
+                    <p class="font-semibold text-slate-900">12+ Tahun</p>
+                    <p class="text-xs text-slate-500">Pengalaman Perizinan</p>
                 </div>
             </div>
             
-            {{-- Award Badge --}}
+            {{-- Multi-Sector Expertise --}}
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-                    <i class="fas fa-award text-white text-lg"></i>
+                    <i class="fas fa-industry text-white text-lg"></i>
                 </div>
                 <div>
-                    <p class="font-semibold text-slate-900">Top Rated 2024</p>
-                    <p class="text-xs text-slate-500">Client Excellence</p>
+                    <p class="font-semibold text-slate-900">15+ Sektor</p>
+                    <p class="text-xs text-slate-500">Industri Dilayani</p>
                 </div>
             </div>
             
@@ -157,7 +161,7 @@
                     <i class="fas fa-shield-check text-white text-lg"></i>
                 </div>
                 <div>
-                    <p class="font-semibold text-slate-900">96% SLA</p>
+                    <p class="font-semibold text-slate-900">{{ $metrics['display']['sla_rate'] }} SLA</p>
                     <p class="text-xs text-slate-500">On-Time Delivery</p>
                 </div>
             </div>
@@ -166,7 +170,7 @@
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-                        <i class="fas fa-users text-white text-lg"></i>
+                        <i class="fas fa-headset text-white text-lg"></i>
                     </div>
                     <span class="absolute -top-1 -right-1 flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -174,8 +178,8 @@
                     </span>
                 </div>
                 <div>
-                    <p class="font-semibold text-slate-900">23 Active Projects</p>
-                    <p class="text-xs text-slate-500">This Month</p>
+                    <p class="font-semibold text-slate-900">Support 24/7</p>
+                    <p class="text-xs text-slate-500">Fast Response</p>
                 </div>
             </div>
             
