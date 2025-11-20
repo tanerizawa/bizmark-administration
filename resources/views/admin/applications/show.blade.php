@@ -179,8 +179,18 @@
                     <h5 class="card-title mb-4 text-white">Status Lamaran</h5>
                     
                     <div class="mb-3 text-center">
-                        <span class="badge {{ $application->status_badge }} fs-6">
-                            {{ $application->status_label }}
+                        @php
+                            $statusConfig = [
+                                'pending' => ['badge' => 'bg-warning text-dark', 'icon' => 'fas fa-clock'],
+                                'reviewed' => ['badge' => 'bg-info', 'icon' => 'fas fa-eye'],
+                                'interview' => ['badge' => 'bg-purple', 'icon' => 'fas fa-users'],
+                                'accepted' => ['badge' => 'bg-success', 'icon' => 'fas fa-check-circle'],
+                                'rejected' => ['badge' => 'bg-danger', 'icon' => 'fas fa-times-circle'],
+                            ];
+                            $config = $statusConfig[$application->status] ?? ['badge' => 'bg-secondary', 'icon' => 'fas fa-question'];
+                        @endphp
+                        <span class="badge {{ $config['badge'] }} fs-6 px-4 py-2">
+                            <i class="{{ $config['icon'] }} me-2"></i>{{ $application->status_label }}
                         </span>
                     </div>
 
@@ -191,30 +201,31 @@
                         <div class="mb-3">
                             <label class="form-label text-white">Ubah Status</label>
                             <select name="status" class="form-select bg-dark text-white border-secondary" required>
-                                <option value="pending" {{ $application->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="reviewed" {{ $application->status === 'reviewed' ? 'selected' : '' }}>Direview</option>
-                                <option value="interview" {{ $application->status === 'interview' ? 'selected' : '' }}>Interview</option>
-                                <option value="accepted" {{ $application->status === 'accepted' ? 'selected' : '' }}>Diterima</option>
-                                <option value="rejected" {{ $application->status === 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                                <option value="pending" {{ $application->status === 'pending' ? 'selected' : '' }}>⏳ Pending</option>
+                                <option value="reviewed" {{ $application->status === 'reviewed' ? 'selected' : '' }}>👁️ Direview</option>
+                                <option value="interview" {{ $application->status === 'interview' ? 'selected' : '' }}>🤝 Interview</option>
+                                <option value="accepted" {{ $application->status === 'accepted' ? 'selected' : '' }}>✅ Diterima</option>
+                                <option value="rejected" {{ $application->status === 'rejected' ? 'selected' : '' }}>❌ Ditolak</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label text-white">Catatan</label>
-                            <textarea name="notes" rows="4" class="form-control bg-dark text-white border-secondary" placeholder="Catatan internal...">{{ $application->notes }}</textarea>
+                            <label class="form-label text-white">Catatan untuk Pelamar</label>
+                            <textarea name="notes" rows="4" class="form-control bg-dark text-white border-secondary" placeholder="Catatan akan dikirim ke pelamar via email...">{{ $application->notes }}</textarea>
+                            <small class="text-muted">Email notifikasi akan dikirim otomatis ke pelamar</small>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-save me-2"></i>Update Status
+                            <i class="fas fa-paper-plane me-2"></i>Update Status & Kirim Email
                         </button>
                     </form>
 
                     @if($application->reviewed_at)
                         <div class="mt-3 pt-3 border-top border-secondary">
                             <small class="text-muted">
-                                <div>Direview: {{ $application->reviewed_at->format('d M Y H:i') }}</div>
+                                <div><i class="fas fa-calendar me-2"></i>Direview: {{ $application->reviewed_at->format('d M Y H:i') }}</div>
                                 @if($application->reviewer)
-                                    <div>Oleh: {{ $application->reviewer->name }}</div>
+                                    <div><i class="fas fa-user me-2"></i>Oleh: {{ $application->reviewer->name }}</div>
                                 @endif
                             </small>
                         </div>
