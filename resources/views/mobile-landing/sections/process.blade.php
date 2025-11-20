@@ -33,7 +33,7 @@
     </div>
     
     <!-- Timeline Steps -->
-    <div class="relative space-y-6">
+    <div class="relative space-y-5">
         <!-- Vertical Timeline Line -->
         <div class="absolute left-[19px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-300 via-yellow-200 to-blue-300"></div>
         

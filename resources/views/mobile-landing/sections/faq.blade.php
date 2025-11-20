@@ -1,7 +1,7 @@
 <!-- FAQ: Magazine Accordion Style -->
 <section id="faq" class="magazine-section bg-white fade-in-up">
     <!-- Section Header -->
-    <div class="text-center mb-12">
+    <div class="text-center mb-8">
         <h2 class="headline text-4xl text-gray-900 mb-3">
             Pertanyaan <span class="text-gradient">yang Sering Diajukan</span>
         </h2>
@@ -171,7 +171,7 @@
     </div>
     
     <!-- Simple CTA After FAQ -->
-    <div class="mt-10 text-center bg-gray-50 rounded-2xl p-6">
+    <div class="mt-10 text-center bg-gray-50 rounded-2xl p-4">
         <p class="text-gray-700 mb-2 font-medium">Masih ada pertanyaan lainnya?</p>
         <p class="text-sm text-gray-600 mb-4">Buka bagian Kontak untuk menemukan nomor WhatsApp resmi serta detail lainnya.</p>
         <a href="#contact"

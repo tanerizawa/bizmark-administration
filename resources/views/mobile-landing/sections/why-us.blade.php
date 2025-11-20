@@ -1,7 +1,7 @@
 <!-- PHOTO ESSAY: Why Choose Us - Visual Storytelling -->
 <section id="why-us" class="magazine-section bg-gray-50 fade-in-up">
     <!-- Section Title -->
-    <div class="text-center mb-12">
+    <div class="text-center mb-8">
         <h2 class="headline text-4xl text-gray-900 mb-3">
             Mengapa Kami <span class="text-gradient">Berbeda</span>
         </h2>
@@ -12,11 +12,11 @@
     </div>
     
     <!-- Photo Essay Grid -->
-    <div class="space-y-8">
+    <div class="space-y-6">
         
         <!-- Layout 1: Image Left (60/40) -->
-        <div class="flex flex-col gap-6">
-            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#0077B5] to-[#005582] h-64">
+        <div class="flex flex-col gap-4">
+            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#0077B5] to-[#005582] h-56">
                 <div class="absolute inset-0 flex items-center justify-center">
                     <i class="fas fa-users text-white text-7xl opacity-20"></i>
                 </div>
@@ -53,8 +53,8 @@
         </div>
         
         <!-- Layout 2: Image Right (40/60) - Reversed -->
-        <div class="flex flex-col-reverse gap-6">
-            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#F2CD49] to-[#D4AF37] h-64">
+        <div class="flex flex-col-reverse gap-4">
+            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#F2CD49] to-[#D4AF37] h-56">
                 <div class="absolute inset-0 flex items-center justify-center">
                     <i class="fas fa-chart-line text-white text-7xl opacity-20"></i>
                 </div>
@@ -93,7 +93,7 @@
         <!-- Full Width Feature (Magazine Spread Style) -->
         <div class="bg-gradient-to-br from-[#0077B5] to-[#005582] rounded-3xl overflow-hidden shadow-xl">
             <div class="flex flex-col">
-                <div class="p-8 text-white">
+                <div class="p-6 text-white">
                     <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4">
                         <i class="fas fa-bolt text-4xl text-white"></i>
                     </div>
@@ -115,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="h-48 bg-gradient-to-br from-[#F2CD49] to-[#D4AF37] relative overflow-hidden">
+                <div class="h-40 bg-gradient-to-br from-[#F2CD49] to-[#D4AF37] relative overflow-hidden">
                     <div class="absolute inset-0 flex items-center justify-center">
                         <i class="fas fa-rocket text-white text-6xl opacity-20"></i>
                     </div>
@@ -124,8 +124,8 @@
         </div>
         
         <!-- Additional Feature (List Style) -->
-        <div class="flex flex-col gap-6">
-            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#0077B5] to-[#003d5c] h-64">
+        <div class="flex flex-col gap-4">
+            <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#0077B5] to-[#003d5c] h-56">
                 <div class="absolute inset-0 flex items-center justify-center">
                     <i class="fas fa-headset text-white text-7xl opacity-20"></i>
                 </div>

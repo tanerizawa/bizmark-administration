@@ -28,7 +28,7 @@
         </div>
         
         <!-- Cover Story Content -->
-        <div class="flex-1 flex flex-col justify-end p-6 pb-12">
+        <div class="flex-1 flex flex-col justify-end p-6 pb-8">
             <!-- Issue Tag -->
             <div class="mb-2">
                 <span class="category-tag bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs">
@@ -44,13 +44,13 @@
             </h1>
             
             <!-- Deck (Subtitle) -->
-            <p class="deck text-white text-base mb-4 max-w-md leading-relaxed opacity-90">
+            <p class="deck text-white text-base mb-3 max-w-md leading-relaxed opacity-90">
                 Dari OSS hingga AMDAL, kami hadirkan layanan perizinan yang cepat,
                 transparan, dan terpercaya untuk pertumbuhan bisnis Anda.
             </p>
             
             <!-- Quick Stats -->
-            <div class="flex items-center gap-4 text-white text-xs mb-4 opacity-90 flex-wrap">
+            <div class="flex items-center gap-3 text-white text-xs mb-3 opacity-90 flex-wrap">
                 <div class="flex items-center gap-1.5">
                     <i class="fas fa-building"></i>
                     <span><strong>{{ $metrics['projects']['completed'] }}</strong> Project Selesai</span>
@@ -68,13 +68,13 @@
             </div>
             
             <!-- Byline -->
-            <div class="flex items-center gap-2 text-white text-sm mb-6 opacity-75">
+            <div class="flex items-center gap-2 text-white text-sm mb-4 opacity-75">
                 <i class="fas fa-award"></i>
                 <span>Dipercaya {{ $metrics['display']['clients_total'] }} Perusahaan di Indonesia</span>
             </div>
             
             <!-- Primary CTA -->
-            <div class="space-y-3 mb-6">
+            <div class="space-y-3 mb-4">
                 <a href="https://wa.me/{{ $metrics['contact']['whatsapp'] }}?text=Halo%20Bizmark.ID,%20saya%20ingin%20konsultasi%20perizinan" 
                    class="block w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200"
                    onclick="trackEvent('CTA', 'click', 'hero_whatsapp_mobile')">
@@ -101,7 +101,7 @@
             </div>
             
             <!-- Trust Badges -->
-            <div class="grid grid-cols-2 gap-2 mb-6 max-w-md mx-auto">
+            <div class="grid grid-cols-2 gap-2 mb-4 max-w-md mx-auto">
                 @foreach($metrics['trust_badges'] as $badge)
                 <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
                     <i class="fas {{ $badge['icon'] }} text-{{ $badge['color'] }}-400 text-base"></i>
