@@ -141,7 +141,7 @@ class ApplicationManagementController extends Controller
      */
     public function startReview($id)
     {
-        $application = PermitApplication::findOrFail($id);
+        $application = PermitApplication::with('client')->findOrFail($id);
         
         // Only submitted applications can be reviewed
         if ($application->status !== 'submitted') {
@@ -150,6 +150,8 @@ class ApplicationManagementController extends Controller
         
         DB::beginTransaction();
         try {
+            $previousStatus = $application->status;
+            
             $application->update([
                 'status' => 'under_review',
                 'reviewed_by' => Auth::id(),
@@ -166,11 +168,31 @@ class ApplicationManagementController extends Controller
                 'notes' => 'Review dimulai oleh admin',
             ]);
             
+            // Send email notification to client
+            if ($application->client && $application->client->email) {
+                try {
+                    \Mail::to($application->client->email)->send(
+                        new \App\Mail\ApplicationStatusChanged(
+                            $application,
+                            $previousStatus,
+                            'under_review',
+                            Auth::user(),
+                            'Review dimulai oleh admin'
+                        )
+                    );
+                } catch (\Exception $emailException) {
+                    \Log::warning('Failed to send review start email', [
+                        'application_id' => $application->id,
+                        'error' => $emailException->getMessage()
+                    ]);
+                }
+            }
+            
             DB::commit();
             
             return redirect()
                 ->route('admin.permit-applications.show', $application->id)
-                ->with('success', 'Review dimulai. Silakan verifikasi dokumen dan buat quotation.');
+                ->with('success', 'Review dimulai. Notifikasi email telah dikirim ke client. Silakan verifikasi dokumen dan buat quotation.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal memulai review: ' . $e->getMessage());
@@ -187,7 +209,7 @@ class ApplicationManagementController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
         
-        $application = PermitApplication::findOrFail($id);
+        $application = PermitApplication::with('client')->findOrFail($id);
         $previousStatus = $application->status;
         
         DB::beginTransaction();
@@ -207,9 +229,31 @@ class ApplicationManagementController extends Controller
                 'notes' => $request->notes,
             ]);
             
+            // Send email notification to client
+            if ($application->client && $application->client->email) {
+                try {
+                    \Mail::to($application->client->email)->send(
+                        new \App\Mail\ApplicationStatusChanged(
+                            $application,
+                            $previousStatus,
+                            $request->status,
+                            Auth::user(),
+                            $request->notes
+                        )
+                    );
+                } catch (\Exception $emailException) {
+                    // Log email failure but don't fail the status update
+                    \Log::warning('Failed to send status change email', [
+                        'application_id' => $application->id,
+                        'client_email' => $application->client->email,
+                        'error' => $emailException->getMessage()
+                    ]);
+                }
+            }
+            
             DB::commit();
             
-            return back()->with('success', 'Status aplikasi berhasil diupdate');
+            return back()->with('success', 'Status aplikasi berhasil diupdate dan notifikasi email telah dikirim ke client');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal mengupdate status: ' . $e->getMessage());
@@ -308,7 +352,7 @@ class ApplicationManagementController extends Controller
             'notes' => 'required|string|max:1000',
         ]);
         
-        $application = PermitApplication::findOrFail($id);
+        $application = PermitApplication::with('client')->findOrFail($id);
         $previousStatus = $application->status;
         
         DB::beginTransaction();
@@ -328,11 +372,29 @@ class ApplicationManagementController extends Controller
                 'notes' => 'Dokumen tidak lengkap: ' . $request->notes,
             ]);
             
-            // TODO: Send email notification to client
+            // Send email notification to client
+            if ($application->client && $application->client->email) {
+                try {
+                    \Mail::to($application->client->email)->send(
+                        new \App\Mail\ApplicationStatusChanged(
+                            $application,
+                            $previousStatus,
+                            'document_incomplete',
+                            Auth::user(),
+                            $request->notes
+                        )
+                    );
+                } catch (\Exception $emailException) {
+                    \Log::warning('Failed to send document revision email', [
+                        'application_id' => $application->id,
+                        'error' => $emailException->getMessage()
+                    ]);
+                }
+            }
             
             DB::commit();
             
-            return back()->with('success', 'Client diminta untuk melengkapi dokumen');
+            return back()->with('success', 'Client diminta untuk melengkapi dokumen. Notifikasi email telah dikirim.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal request revision: ' . $e->getMessage());

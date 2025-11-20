@@ -129,7 +129,7 @@
         font-weight: 600;
     }
     h5 { 
-        font-size: 1.125rem;  /* 18px */
+        font-size: 1rem;  /* 18px */
         font-weight: 600;
     }
     h6 { 
@@ -145,7 +145,7 @@
     }
     
     .lead {
-        font-size: 1.125rem;  /* 18px */
+        font-size: 1rem;  /* 18px */
         line-height: 1.75;
         color: #374151;
         font-weight: 400;
@@ -166,7 +166,7 @@
         h1 { font-size: 3.5rem; }  /* 56px */
         h2 { font-size: 2.5rem; }  /* 40px */
         h3 { font-size: 1.875rem; } /* 30px */
-        p { font-size: 1.125rem; }  /* 18px */
+        p { font-size: 1rem; }  /* 18px */
     }
     
     @media (max-width: 768px) {

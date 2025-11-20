@@ -68,7 +68,7 @@
                         </div>
                         <div class="ms-3">
                             <p class="text-dark-text-secondary mb-1" style="font-size: 0.875rem;">Total Nilai</p>
-                            <h3 class="text-dark-text-primary mb-0" style="font-size: 1.125rem; font-weight: 600;">Rp {{ number_format($client->totalProjectValue ?? 0, 0, ',', '.') }}</h3>
+                            <h3 class="text-dark-text-primary mb-0" style="font-size: 1rem; font-weight: 600;">Rp {{ number_format($client->totalProjectValue ?? 0, 0, ',', '.') }}</h3>
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                         </div>
                         <div class="ms-3">
                             <p class="text-dark-text-secondary mb-1" style="font-size: 0.875rem;">Total Dibayar</p>
-                            <h3 class="text-dark-text-primary mb-0" style="font-size: 1.125rem; font-weight: 600;">Rp {{ number_format($client->totalPaid ?? 0, 0, ',', '.') }}</h3>
+                            <h3 class="text-dark-text-primary mb-0" style="font-size: 1rem; font-weight: 600;">Rp {{ number_format($client->totalPaid ?? 0, 0, ',', '.') }}</h3>
                         </div>
                     </div>
                 </div>

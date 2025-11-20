@@ -951,7 +951,7 @@
             <!-- Top Bar -->
             <header class="app-topbar" style="height: 4rem; min-height: 4rem; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; background-color: var(--dark-bg-elevated); border-bottom: 1px solid var(--dark-separator); flex-shrink: 0;">
                 <div>
-                    <h2 style="font-size: 1.125rem; font-weight: 600; color: var(--dark-text-primary); margin: 0;">@yield('page-title', 'Dashboard')</h2>
+                    <h2 style="font-size: 1rem; font-weight: 600; color: var(--dark-text-primary); margin: 0;">@yield('page-title', 'Dashboard')</h2>
                     <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin: 0;">{{ now()->format('l, d F Y') }}</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem;">

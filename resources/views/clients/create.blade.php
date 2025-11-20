@@ -25,7 +25,7 @@
 
                 <!-- Informasi Dasar -->
                 <div class="mb-6">
-                    <h5 class="text-dark-text-primary mb-4 pb-2" style="font-size: 1.125rem; font-weight: 600; border-bottom: 1px solid var(--dark-separator);">
+                    <h5 class="text-dark-text-primary mb-4 pb-2" style="font-size: 1rem; font-weight: 600; border-bottom: 1px solid var(--dark-separator);">
                         <i class="fas fa-info-circle me-2" style="color: var(--apple-blue);"></i>Informasi Dasar
                     </h5>
                     
