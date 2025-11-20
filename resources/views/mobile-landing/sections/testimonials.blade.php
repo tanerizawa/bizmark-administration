@@ -49,7 +49,7 @@
                     Tim Bizmark.ID membantu lengkapi semua persyaratan dengan cepat."
                 </blockquote>
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
                         <span class="text-white text-sm font-bold">AC</span>
                     </div>
                     <div>
@@ -61,19 +61,19 @@
             </div>
             
             <!-- PT Rindu Alam Sejahtera - B3 -->
-            <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-purple-500">
+            <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-blue-600">
                 <blockquote class="text-base text-gray-700 leading-relaxed mb-4 italic">
                     "Konsultan inhouse untuk perizinan Limbah B3 sangat membantu operasional kami. 
                     Profesional dan selalu update regulasi terbaru."
                 </blockquote>
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#0077B5] to-[#005582] flex items-center justify-center">
                         <span class="text-white text-sm font-bold">RAS</span>
                     </div>
                     <div>
                         <div class="font-semibold text-sm text-gray-900">HSE Manager</div>
                         <div class="text-xs text-gray-600">PT Rindu Alam Sejahtera</div>
-                        <div class="text-xs text-purple-600 mt-0.5">Perizinan Limbah B3</div>
+                        <div class="text-xs text-blue-600 mt-0.5">Perizinan Limbah B3</div>
                     </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                     "Portal klien memudahkan monitoring perizinan untuk kantor pusat kami. Sangat efisien dan transparan."
                 </blockquote>
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#0077B5] to-[#003d5c] flex items-center justify-center">
                         <span class="text-white text-sm font-bold">LPK</span>
                     </div>
                     <div>
@@ -120,7 +120,7 @@
     
     <!-- Conversion CTA: "Ajukan Seperti Mereka" -->
     <div class="mt-12 text-center">
-        <div class="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 rounded-3xl p-8 border-2 border-gray-100">
+        <div class="bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 rounded-3xl p-8 border-2 border-gray-100">
             <div class="mb-6">
                 <div class="flex items-center justify-center gap-2 mb-4">
                     <i class="fas fa-users text-3xl text-blue-600"></i>

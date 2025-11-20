@@ -20,7 +20,7 @@
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#1E40AF">
+    <meta name="theme-color" content="#0077B5">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/icons/icon-192x192.png') }}">
     
@@ -43,14 +43,18 @@
             --font-display: 'Playfair Display', serif;
             --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             
-            /* Colors */
-            --color-ink: #111827;
-            --color-paper: #FFFFFF;
-            --color-primary: #1E40AF;
-            --color-gold: #F59E0B;
-            --color-crimson: #DC2626;
-            --color-emerald: #059669;
-            --color-purple: #7C3AED;
+            /* LinkedIn Blue Palette + Gold Accent */
+            --color-ink: #111827;          /* Dark gray-black for text */
+            --color-paper: #FFFFFF;         /* Pure white */
+            --color-primary: #0077B5;       /* LinkedIn Blue - Primary */
+            --color-primary-dark: #005582;  /* LinkedIn Blue Dark */
+            --color-primary-darker: #003d5c; /* LinkedIn Blue Darker */
+            --color-primary-light: #0099E5; /* LinkedIn Blue Light */
+            --color-gold: #F2CD49;          /* Logo Gold/Yellow */
+            --color-gold-dark: #D4AF37;     /* Darker Gold */
+            --color-success: #10B981;       /* Green for WhatsApp/Success */
+            --color-muted: #6B7280;         /* Gray for muted text */
+            --color-border: #E5E7EB;        /* Light gray borders */
             
             /* Spacing */
             --space-xs: 8px;
@@ -65,6 +69,8 @@
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
             --shadow-lg: 0 10px 20px rgba(0,0,0,0.12);
+            --shadow-blue: 0 10px 25px rgba(0, 119, 181, 0.2);
+            --shadow-gold: 0 10px 25px rgba(242, 205, 73, 0.2);
         }
         
         /* Typography */
