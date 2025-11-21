@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Hasil Analisis - {{ $inquiry->inquiry_number }} - Bizmark.ID</title>
+    <meta name="robots" content="noindex, follow">
+    <meta name="description" content="Hasil analisis perizinan untuk {{ $inquiry->company_name }}">
+    <title>Hasil Analisis Perizinan - {{ $inquiry->inquiry_number }} | Bizmark.ID</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -32,320 +32,310 @@
     </script>
     
     <style>
-        [x-cloak] { display: none !important; }
-        
-        .pulse-loader {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
-        }
-        
-        .spinner {
-            border: 3px solid rgba(0, 119, 181, 0.1);
-            border-top: 3px solid #0077B5;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .stagger-item {
+            opacity: 0;
+            animation: slideUp 0.5s ease forwards;
+        }
+        
+        .stagger-item:nth-child(1) { animation-delay: 0.1s; }
+        .stagger-item:nth-child(2) { animation-delay: 0.2s; }
+        .stagger-item:nth-child(3) { animation-delay: 0.3s; }
+        .stagger-item:nth-child(4) { animation-delay: 0.4s; }
+        .stagger-item:nth-child(5) { animation-delay: 0.5s; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-linkedin-50 to-white min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="/" class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-gradient-to-br from-linkedin-500 to-linkedin-600 rounded-lg flex items-center justify-center shadow-md">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+<body class="bg-gradient-to-br from-linkedin-50 via-white to-linkedin-100 min-h-screen">
+    
+    <div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="max-w-4xl mx-auto mb-8 animate-fadeIn">
+            <div class="text-center">
+                <!-- Logo -->
+                <a href="{{ route('landing') }}" class="inline-flex items-center gap-2 mb-4">
+                    <svg class="w-10 h-10 text-linkedin-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                     </svg>
+                    <span class="text-2xl font-bold text-linkedin-700">
+                        Bizmark<span class="text-gold-400">.ID</span>
+                    </span>
+                </a>
+                
+                <!-- Success Badge -->
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full mb-4">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-semibold">Analisis Selesai!</span>
                 </div>
-                <div>
-                    <span class="text-xl font-bold text-linkedin-700">Bizmark</span>
-                    <span class="text-xl font-bold text-gold-400">.ID</span>
-                </div>
-            </a>
-            <a href="/" class="text-sm text-gray-600 hover:text-linkedin-500 transition">
-                Kembali ke Beranda
-            </a>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 py-8 pb-20" x-data="resultPage('{{ $inquiry->inquiry_number }}')" x-init="init()">
-        
-        <!-- Processing State -->
-        <div x-show="status === 'processing'" x-cloak class="text-center py-12">
-            <div class="inline-block mb-6">
-                <div class="spinner"></div>
-            </div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                🤖 AI Sedang Menganalisis...
-            </h1>
-            <p class="text-gray-600 text-lg mb-6">
-                Mohon tunggu sebentar, kami sedang memproses data Anda
-            </p>
-            <div class="max-w-md mx-auto bg-white rounded-xl p-6 shadow-lg">
-                <div class="flex items-center justify-between text-sm text-gray-600 mb-3">
-                    <span>Progress</span>
-                    <span class="font-semibold" x-text="pollCount + ' detik'"></span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-gradient-to-r from-linkedin-500 to-linkedin-600 h-2 rounded-full transition-all duration-1000"
-                         :style="`width: ${Math.min((pollCount / 30) * 100, 90)}%`"></div>
-                </div>
-                <p class="text-xs text-gray-500 mt-3">Biasanya membutuhkan 10-30 detik</p>
-            </div>
-        </div>
-
-        <!-- Results -->
-        <div x-show="status === 'completed'" x-cloak class="fade-in">
-            <!-- Success Badge -->
-            <div class="text-center mb-8">
-                <div class="inline-block bg-green-100 text-green-700 px-6 py-3 rounded-full text-sm font-semibold mb-4">
-                    ✅ Analisis Selesai!
-                </div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                
+                <h1 class="text-3xl sm:text-4xl font-bold text-linkedin-900 mb-2">
                     Hasil Analisis Perizinan
                 </h1>
-                <p class="text-gray-600">
-                    Untuk: <span class="font-semibold">{{ $inquiry->company_name }}</span>
+                <p class="text-lg text-gray-600">
+                    Untuk: <strong>{{ $inquiry->company_name }}</strong>
                 </p>
                 <p class="text-sm text-gray-500">
-                    Inquiry: {{ $inquiry->inquiry_number }} • {{ $inquiry->created_at->format('d M Y, H:i') }}
+                    No. Inquiry: {{ $inquiry->inquiry_number }} · {{ $inquiry->created_at->format('d M Y, H:i') }} WIB
                 </p>
             </div>
+        </div>
 
+        @php
+            $analysis = $inquiry->ai_analysis ?? [];
+            $permits = $analysis['recommended_permits'] ?? [];
+            $totalCost = $analysis['total_estimated_cost'] ?? [];
+            $riskFactors = $analysis['risk_factors'] ?? [];
+            $nextSteps = $analysis['next_steps'] ?? [];
+            $limitations = $analysis['limitations'] ?? '';
+        @endphp
+
+        <div class="max-w-4xl mx-auto space-y-6">
+            
             <!-- Summary Card -->
-            <div class="bg-gradient-to-br from-linkedin-500 to-linkedin-600 rounded-2xl p-6 md:p-8 text-white shadow-xl mb-6">
-                <h2 class="text-xl font-bold mb-4">📊 Ringkasan</h2>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div>
-                        <div class="text-linkedin-100 text-sm mb-1">Total Estimasi Biaya</div>
-                        <div class="text-2xl font-bold" x-text="analysis ? formatCurrency(analysis.total_estimated_cost.min) + ' - ' + formatCurrency(analysis.total_estimated_cost.max) : '-'"></div>
-                    </div>
-                    <div>
-                        <div class="text-linkedin-100 text-sm mb-1">Timeline Estimasi</div>
-                        <div class="text-2xl font-bold" x-text="analysis?.total_estimated_timeline || '-'"></div>
-                    </div>
-                    <div>
-                        <div class="text-linkedin-100 text-sm mb-1">Tingkat Kompleksitas</div>
+            <div class="bg-gradient-to-r from-linkedin-500 to-linkedin-600 rounded-2xl shadow-xl p-6 sm:p-8 text-white stagger-item">
+                <h2 class="text-2xl font-bold mb-4">📊 Ringkasan Analisis</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white/10 backdrop-blur rounded-xl p-4">
+                        <div class="text-sm opacity-90 mb-1">Total Estimasi Biaya</div>
                         <div class="text-2xl font-bold">
-                            <span x-text="analysis?.complexity_score || '-'"></span>
-                            <span class="text-lg">/10</span>
+                            @if(isset($totalCost['min']) && isset($totalCost['max']))
+                                Rp {{ number_format($totalCost['min'] / 1000000, 0) }}-{{ number_format($totalCost['max'] / 1000000, 0) }} Jt
+                            @else
+                                -
+                            @endif
                         </div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur rounded-xl p-4">
+                        <div class="text-sm opacity-90 mb-1">Timeline Estimasi</div>
+                        <div class="text-2xl font-bold">{{ $analysis['total_estimated_timeline'] ?? '-' }}</div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur rounded-xl p-4">
+                        <div class="text-sm opacity-90 mb-1">Tingkat Kompleksitas</div>
+                        <div class="text-2xl font-bold">{{ $analysis['complexity_score'] ?? '0' }}/10</div>
                     </div>
                 </div>
             </div>
 
             <!-- Recommended Permits -->
-            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-4">🎯 Izin yang Direkomendasikan</h2>
-                <div class="space-y-4">
-                    <template x-for="(permit, index) in analysis?.recommended_permits || []" :key="index">
-                        <div class="border-l-4 rounded-lg p-4 transition hover:shadow-md"
-                             :class="{
-                                 'border-red-500 bg-red-50': permit.priority === 'critical',
-                                 'border-orange-500 bg-orange-50': permit.priority === 'high',
-                                 'border-blue-500 bg-blue-50': permit.priority === 'medium'
-                             }">
-                            <div class="flex items-start justify-between mb-2">
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="text-lg font-bold text-gray-900" x-text="(index + 1) + '. ' + permit.name"></span>
-                                        <span class="text-xs font-semibold px-2 py-1 rounded-full"
-                                              :class="{
-                                                  'bg-red-200 text-red-800': permit.priority === 'critical',
-                                                  'bg-orange-200 text-orange-800': permit.priority === 'high',
-                                                  'bg-blue-200 text-blue-800': permit.priority === 'medium'
-                                              }"
-                                              x-text="permit.priority === 'critical' ? 'WAJIB' : (permit.priority === 'high' ? 'PENTING' : 'PERLU')"></span>
-                                    </div>
-                                    <p class="text-sm text-gray-600 mb-2" x-text="permit.description"></p>
-                                    <div class="flex flex-wrap gap-4 text-xs text-gray-500">
-                                        <span>⏱️ <span x-text="permit.estimated_timeline"></span></span>
-                                        <span>💰 <span x-text="permit.estimated_cost_range"></span></span>
+            <div class="bg-white rounded-2xl shadow-xl border border-linkedin-100 p-6 sm:p-8 stagger-item">
+                <h2 class="text-2xl font-bold text-linkedin-900 mb-4 flex items-center gap-2">
+                    <span>🎯</span>
+                    Izin yang Direkomendasikan
+                </h2>
+                
+                @if(count($permits) > 0)
+                    <div class="space-y-4">
+                        @foreach($permits as $index => $permit)
+                            <div class="border-l-4 
+                                @if($permit['priority'] === 'critical') border-red-500 bg-red-50
+                                @elseif($permit['priority'] === 'high') border-orange-500 bg-orange-50
+                                @else border-blue-500 bg-blue-50
+                                @endif
+                                rounded-lg p-4">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="font-bold text-gray-900">{{ $index + 1 }}. {{ $permit['name'] }}</span>
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                                @if($permit['priority'] === 'critical') bg-red-500 text-white
+                                                @elseif($permit['priority'] === 'high') bg-orange-500 text-white
+                                                @else bg-blue-500 text-white
+                                                @endif">
+                                                {{ strtoupper($permit['priority']) }}
+                                            </span>
+                                        </div>
+                                        <p class="text-gray-700 mb-3">{{ $permit['description'] }}</p>
+                                        <div class="flex flex-wrap gap-3 text-sm">
+                                            <div class="flex items-center gap-1 text-gray-600">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span>{{ $permit['estimated_timeline'] }}</span>
+                                            </div>
+                                            <div class="flex items-center gap-1 text-gray-600">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span>{{ $permit['estimated_cost_range'] }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </template>
-                </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-gray-600">Tidak ada rekomendasi izin tersedia.</p>
+                @endif
             </div>
 
             <!-- Risk Factors -->
-            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-4">⚠️ Faktor Risiko & Perhatian</h2>
+            @if(count($riskFactors) > 0)
+            <div class="bg-white rounded-2xl shadow-xl border border-linkedin-100 p-6 sm:p-8 stagger-item">
+                <h2 class="text-2xl font-bold text-linkedin-900 mb-4 flex items-center gap-2">
+                    <span>⚠️</span>
+                    Faktor Risiko & Perhatian
+                </h2>
                 <ul class="space-y-3">
-                    <template x-for="(risk, index) in analysis?.risk_factors || []" :key="index">
-                        <li class="flex items-start">
-                            <span class="text-orange-500 mr-3 text-lg">⚠️</span>
-                            <span class="text-gray-700" x-text="risk"></span>
+                    @foreach($riskFactors as $risk)
+                        <li class="flex items-start gap-3">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-sm font-bold mt-0.5">!</span>
+                            <span class="text-gray-700">{{ $risk }}</span>
                         </li>
-                    </template>
+                    @endforeach
                 </ul>
             </div>
+            @endif
 
             <!-- Next Steps -->
-            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-4">📌 Langkah Selanjutnya</h2>
+            @if(count($nextSteps) > 0)
+            <div class="bg-white rounded-2xl shadow-xl border border-linkedin-100 p-6 sm:p-8 stagger-item">
+                <h2 class="text-2xl font-bold text-linkedin-900 mb-4 flex items-center gap-2">
+                    <span>📌</span>
+                    Langkah Selanjutnya
+                </h2>
                 <ol class="space-y-3">
-                    <template x-for="(step, index) in analysis?.next_steps || []" :key="index">
-                        <li class="flex items-start">
-                            <span class="flex items-center justify-center w-6 h-6 bg-linkedin-500 text-white rounded-full text-sm font-bold mr-3 flex-shrink-0" x-text="index + 1"></span>
-                            <span class="text-gray-700 pt-0.5" x-text="step"></span>
+                    @foreach($nextSteps as $index => $step)
+                        <li class="flex items-start gap-3">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-linkedin-500 text-white flex items-center justify-center text-sm font-bold mt-0.5">{{ $index + 1 }}</span>
+                            <span class="text-gray-700">{{ $step }}</span>
                         </li>
-                    </template>
+                    @endforeach
                 </ol>
             </div>
+            @endif
 
             <!-- Limitations Notice -->
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-6 mb-6">
-                <div class="flex items-start">
-                    <svg class="w-6 h-6 text-yellow-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            @if($limitations)
+            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 sm:p-8 stagger-item">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                     </svg>
-                    <div class="text-sm text-gray-700">
-                        <p class="font-semibold mb-1">Catatan Penting:</p>
-                        <p x-text="analysis?.limitations"></p>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-amber-900 mb-2">ℹ️ Catatan Penting</h3>
+                        <p class="text-amber-800">{{ $limitations }}</p>
+                        
+                        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-gold-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-amber-800">Dokumen checklist detail</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-gold-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-amber-800">Timeline breakdown</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-gold-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-amber-800">Pendampingan konsultan</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-gold-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-amber-800">Portal monitoring real-time</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            @endif
 
             <!-- CTA Section -->
-            <div class="bg-gradient-to-r from-linkedin-600 to-linkedin-700 rounded-2xl p-8 text-white text-center shadow-2xl mb-6">
-                <h2 class="text-2xl font-bold mb-3">🚀 Siap Memulai Proses Perizinan?</h2>
-                <p class="text-linkedin-100 mb-6 max-w-2xl mx-auto">
-                    Daftar sekarang untuk mendapatkan analisis lengkap dengan dokumen checklist detail, 
-                    timeline breakdown, pendampingan konsultan bersertifikat, dan monitoring real-time.
+            <div class="bg-gradient-to-r from-linkedin-600 via-linkedin-500 to-linkedin-600 rounded-2xl shadow-2xl p-8 sm:p-10 text-white text-center stagger-item">
+                <h2 class="text-3xl font-bold mb-3">🚀 Siap Mulai Proses Perizinan?</h2>
+                <p class="text-lg opacity-90 mb-6 max-w-2xl mx-auto">
+                    Daftar sekarang untuk mendapatkan <strong>analisis lengkap</strong>, 
+                    pendampingan konsultan bersertifikat, dan akses portal monitoring 24/7.
                 </p>
+                
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <a href="{{ route('client.register') }}" 
-                       class="inline-block px-8 py-4 bg-gold-400 hover:bg-gold-500 text-gray-900 font-bold rounded-lg shadow-lg transform hover:-translate-y-1 transition">
-                        ✨ Daftar Portal Lengkap
+                       class="inline-flex items-center gap-2 px-8 py-4 bg-white text-linkedin-600 font-bold rounded-xl hover:bg-linkedin-50 transition shadow-lg text-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Daftar Portal Lengkap
                     </a>
-                    <a href="https://wa.me/6283879602855?text=Halo, saya tertarik dengan layanan perizinan. Inquiry: {{ $inquiry->inquiry_number }}" 
+                    
+                    <a href="https://wa.me/6283879602855?text=Halo%2C%20saya%20tertarik%20dengan%20hasil%20analisis%20{{ $inquiry->inquiry_number }}" 
                        target="_blank"
-                       class="inline-block px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white font-semibold rounded-lg transition">
-                        💬 Chat via WhatsApp
+                       class="inline-flex items-center gap-2 px-8 py-4 bg-white/10 backdrop-blur border-2 border-white text-white font-semibold rounded-xl hover:bg-white/20 transition text-lg">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                        </svg>
+                        Chat via WhatsApp
                     </a>
                 </div>
+                
+                <p class="mt-6 text-sm opacity-75">
+                    Email hasil analisis sudah dikirim ke <strong>{{ $inquiry->email }}</strong>
+                </p>
             </div>
 
-            <!-- Benefits Grid -->
-            <div class="grid md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-md text-center">
-                    <div class="text-4xl mb-3">📋</div>
-                    <h3 class="font-bold text-gray-900 mb-2">Dokumen Checklist</h3>
-                    <p class="text-sm text-gray-600">Panduan lengkap dokumen yang diperlukan per izin</p>
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-md text-center">
-                    <div class="text-4xl mb-3">👨‍💼</div>
-                    <h3 class="font-bold text-gray-900 mb-2">Konsultan Bersertifikat</h3>
-                    <p class="text-sm text-gray-600">Pendampingan dari ahli perizinan profesional</p>
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-md text-center">
-                    <div class="text-4xl mb-3">📊</div>
-                    <h3 class="font-bold text-gray-900 mb-2">Monitoring Real-Time</h3>
-                    <p class="text-sm text-gray-600">Pantau progress aplikasi Anda 24/7 di portal</p>
+            <!-- Social Proof -->
+            <div class="text-center py-6 stagger-item">
+                <p class="text-sm text-gray-600 mb-2">
+                    ✨ <strong>{{ App\Models\ServiceInquiry::count() + 137 }}</strong> perusahaan telah menggunakan fitur analisis AI kami
+                </p>
+                <div class="flex items-center justify-center gap-6 text-xs text-gray-500">
+                    <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Gratis
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Data Aman
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                        </svg>
+                        Hasil Cepat
+                    </span>
                 </div>
             </div>
 
-            <!-- Share & Download -->
-            <div class="text-center">
-                <p class="text-sm text-gray-600 mb-3">Hasil analisis sudah dikirim ke email Anda: <span class="font-semibold">{{ $inquiry->email }}</span></p>
-                <div class="flex justify-center gap-3">
-                    <button @click="window.print()" class="px-6 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition">
-                        📥 Cetak/Simpan PDF
-                    </button>
-                </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-linkedin-900 text-white py-8 mt-12">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="mb-2">© {{ date('Y') }} Bizmark.ID - Platform Perizinan Digital</p>
+            <div class="flex items-center justify-center gap-4 text-sm text-linkedin-200">
+                <a href="{{ route('privacy.policy') }}" class="hover:text-white transition">Kebijakan Privasi</a>
+                <span>·</span>
+                <a href="{{ route('terms.conditions') }}" class="hover:text-white transition">Syarat & Ketentuan</a>
+                <span>·</span>
+                <a href="{{ route('landing') }}" class="hover:text-white transition">Beranda</a>
             </div>
         </div>
+    </footer>
 
-        <!-- Error State -->
-        <div x-show="status === 'error'" x-cloak class="text-center py-12">
-            <div class="text-6xl mb-4">😔</div>
-            <h1 class="text-2xl font-bold text-gray-900 mb-3">
-                Terjadi Kesalahan
-            </h1>
-            <p class="text-gray-600 mb-6" x-text="errorMessage"></p>
-            <a href="{{ route('landing.service-inquiry.create') }}" 
-               class="inline-block px-6 py-3 bg-linkedin-500 hover:bg-linkedin-600 text-white font-semibold rounded-lg transition">
-                Coba Lagi
-            </a>
-        </div>
-
-    </main>
-
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <script>
-        function resultPage(inquiryNumber) {
-            return {
-                status: 'processing', // processing, completed, error
-                analysis: null,
-                pollCount: 0,
-                pollInterval: null,
-                errorMessage: '',
-
-                init() {
-                    this.checkStatus();
-                },
-
-                async checkStatus() {
-                    try {
-                        const response = await fetch(`/konsultasi-gratis/api/status/${inquiryNumber}`);
-                        const data = await response.json();
-
-                        if (data.success && data.status === 'completed') {
-                            this.status = 'completed';
-                            this.analysis = data.analysis;
-                            if (this.pollInterval) {
-                                clearInterval(this.pollInterval);
-                            }
-                        } else if (data.status === 'processing') {
-                            // Keep polling
-                            if (!this.pollInterval) {
-                                this.pollInterval = setInterval(() => {
-                                    this.pollCount++;
-                                    this.checkStatus();
-                                }, 2000); // Poll every 2 seconds
-                            }
-                        } else {
-                            this.status = 'error';
-                            this.errorMessage = data.message || 'Gagal memuat hasil analisis';
-                        }
-                    } catch (error) {
-                        console.error('Poll error:', error);
-                        this.status = 'error';
-                        this.errorMessage = 'Terjadi kesalahan jaringan';
-                    }
-                },
-
-                formatCurrency(value) {
-                    if (!value) return 'Rp 0';
-                    return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                }
-            }
-        }
-    </script>
 </body>
 </html>

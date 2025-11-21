@@ -6,209 +6,236 @@
     <title>Hasil Analisis Perizinan</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 20px 0;">
+    
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
-            <td align="center">
-                <!-- Main Container -->
-                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <td style="padding: 40px 20px;">
+                
+                <!-- Container -->
+                <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                     
                     <!-- Header -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); padding: 30px 40px; text-align: center;">
+                        <td style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); padding: 40px 30px; text-align: center;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
-                                ✅ Hasil Analisis Perizinan
+                                ✅ Analisis Selesai!
                             </h1>
-                            <p style="margin: 10px 0 0 0; color: #e7f3f8; font-size: 16px;">
-                                Powered by AI - Bizmark.ID
+                            <p style="margin: 10px 0 0; color: #e7f3f8; font-size: 16px;">
+                                Hasil analisis perizinan untuk {{ $inquiry->company_name }}
                             </p>
                         </td>
                     </tr>
-
-                    <!-- Greeting -->
+                    
+                    <!-- Body -->
                     <tr>
-                        <td style="padding: 30px 40px;">
-                            <p style="margin: 0 0 20px 0; font-size: 16px; color: #374151; line-height: 1.6;">
+                        <td style="padding: 40px 30px;">
+                            
+                            <!-- Greeting -->
+                            <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
                                 Halo <strong>{{ $inquiry->contact_person }}</strong>,
                             </p>
-                            <p style="margin: 0 0 20px 0; font-size: 16px; color: #374151; line-height: 1.6;">
-                                Terima kasih telah menggunakan layanan <strong>Analisis AI Perizinan Bizmark.ID</strong>! 
-                                Berikut hasil analisis untuk <strong>{{ $inquiry->company_name }}</strong>:
+                            
+                            <p style="margin: 0 0 20px; font-size: 16px; color: #374151; line-height: 1.6;">
+                                Terima kasih telah menggunakan Analisis AI Perizinan Bizmark.ID! 
+                                Berikut hasil analisis lengkap untuk usaha Anda:
                             </p>
-                        </td>
-                    </tr>
-
-                    <!-- Summary Box -->
-                    <tr>
-                        <td style="padding: 0 40px 30px 40px;">
-                            <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #e7f3f8 0%, #cce7f1 100%); border-radius: 8px; padding: 20px;">
+                            
+                            <!-- Summary Box -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 30px 0; background-color: #e7f3f8; border-radius: 12px; overflow: hidden;">
                                 <tr>
-                                    <td style="padding: 10px; text-align: center; border-right: 1px solid rgba(0, 119, 181, 0.2);">
-                                        <div style="font-size: 12px; color: #005582; font-weight: 600; margin-bottom: 5px;">ESTIMASI BIAYA</div>
-                                        <div style="font-size: 18px; font-weight: bold; color: #0077B5;">
-                                            Rp {{ number_format($analysis['total_estimated_cost']['min'] ?? 0, 0, ',', '.') }} - 
-                                            Rp {{ number_format($analysis['total_estimated_cost']['max'] ?? 0, 0, ',', '.') }}
-                                        </div>
+                                    <td style="padding: 20px;">
+                                        <h2 style="margin: 0 0 15px; font-size: 20px; color: #0077B5;">
+                                            📊 Ringkasan Analisis
+                                        </h2>
+                                        
+                                        @php
+                                            $totalCost = $analysis['total_estimated_cost'] ?? [];
+                                        @endphp
+                                        
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #374151; font-size: 14px;">
+                                                    <strong>Total Estimasi Biaya:</strong>
+                                                </td>
+                                                <td style="padding: 8px 0; color: #0077B5; font-size: 16px; font-weight: bold; text-align: right;">
+                                                    @if(isset($totalCost['min']) && isset($totalCost['max']))
+                                                        Rp {{ number_format($totalCost['min'] / 1000000, 0) }}-{{ number_format($totalCost['max'] / 1000000, 0) }} Jt
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #374151; font-size: 14px;">
+                                                    <strong>Timeline Estimasi:</strong>
+                                                </td>
+                                                <td style="padding: 8px 0; color: #0077B5; font-size: 16px; font-weight: bold; text-align: right;">
+                                                    {{ $analysis['total_estimated_timeline'] ?? '-' }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #374151; font-size: 14px;">
+                                                    <strong>Kompleksitas:</strong>
+                                                </td>
+                                                <td style="padding: 8px 0; color: #0077B5; font-size: 16px; font-weight: bold; text-align: right;">
+                                                    {{ $analysis['complexity_score'] ?? '0' }}/10
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
-                                    <td style="padding: 10px; text-align: center; border-right: 1px solid rgba(0, 119, 181, 0.2);">
-                                        <div style="font-size: 12px; color: #005582; font-weight: 600; margin-bottom: 5px;">TIMELINE</div>
-                                        <div style="font-size: 18px; font-weight: bold; color: #0077B5;">
-                                            {{ $analysis['total_estimated_timeline'] ?? '-' }}
+                                </tr>
+                            </table>
+                            
+                            <!-- Recommended Permits -->
+                            @php
+                                $permits = $analysis['recommended_permits'] ?? [];
+                            @endphp
+                            
+                            @if(count($permits) > 0)
+                            <h2 style="margin: 30px 0 15px; font-size: 20px; color: #0077B5;">
+                                🎯 Izin yang Direkomendasikan
+                            </h2>
+                            
+                            @foreach($permits as $index => $permit)
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 15px 0; background-color: #f9fafb; border-left: 4px solid 
+                                @if($permit['priority'] === 'critical') #ef4444
+                                @elseif($permit['priority'] === 'high') #f59e0b
+                                @else #3b82f6
+                                @endif
+                                ; border-radius: 8px; overflow: hidden;">
+                                <tr>
+                                    <td style="padding: 15px 20px;">
+                                        <div style="margin-bottom: 8px;">
+                                            <span style="font-weight: bold; color: #111827; font-size: 16px;">
+                                                {{ $index + 1 }}. {{ $permit['name'] }}
+                                            </span>
+                                            <span style="display: inline-block; padding: 2px 8px; margin-left: 8px; font-size: 11px; font-weight: bold; border-radius: 12px; color: #ffffff; background-color: 
+                                                @if($permit['priority'] === 'critical') #ef4444
+                                                @elseif($permit['priority'] === 'high') #f59e0b
+                                                @else #3b82f6
+                                                @endif
+                                                ;">
+                                                {{ strtoupper($permit['priority']) }}
+                                            </span>
                                         </div>
-                                    </td>
-                                    <td style="padding: 10px; text-align: center;">
-                                        <div style="font-size: 12px; color: #005582; font-weight: 600; margin-bottom: 5px;">KOMPLEKSITAS</div>
-                                        <div style="font-size: 18px; font-weight: bold; color: #0077B5;">
-                                            {{ $analysis['complexity_score'] ?? '-' }}/10
+                                        <p style="margin: 8px 0; color: #4b5563; font-size: 14px; line-height: 1.5;">
+                                            {{ $permit['description'] }}
+                                        </p>
+                                        <div style="margin-top: 10px; font-size: 13px; color: #6b7280;">
+                                            ⏱️ {{ $permit['estimated_timeline'] }} · 💰 {{ $permit['estimated_cost_range'] }}
                                         </div>
                                     </td>
                                 </tr>
                             </table>
-                        </td>
-                    </tr>
-
-                    <!-- Recommended Permits -->
-                    <tr>
-                        <td style="padding: 0 40px 20px 40px;">
-                            <h2 style="margin: 0 0 15px 0; font-size: 20px; color: #111827; font-weight: bold;">
-                                🎯 Izin yang Direkomendasikan
-                            </h2>
-                            @foreach($analysis['recommended_permits'] ?? [] as $index => $permit)
-                            <div style="margin-bottom: 15px; padding: 15px; border-left: 4px solid 
-                                @if($permit['priority'] === 'critical') #EF4444
-                                @elseif($permit['priority'] === 'high') #F97316
-                                @else #3B82F6
-                                @endif; 
-                                background-color: 
-                                @if($permit['priority'] === 'critical') #FEF2F2
-                                @elseif($permit['priority'] === 'high') #FFF7ED
-                                @else #EFF6FF
-                                @endif; 
-                                border-radius: 6px;">
-                                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                                    <strong style="font-size: 16px; color: #111827; flex: 1;">
-                                        {{ $index + 1 }}. {{ $permit['name'] }}
-                                    </strong>
-                                    <span style="font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 12px; 
-                                        @if($permit['priority'] === 'critical') background-color: #FEE2E2; color: #991B1B;
-                                        @elseif($permit['priority'] === 'high') background-color: #FFEDD5; color: #9A3412;
-                                        @else background-color: #DBEAFE; color: #1E40AF;
-                                        @endif">
-                                        @if($permit['priority'] === 'critical') WAJIB
-                                        @elseif($permit['priority'] === 'high') PENTING
-                                        @else PERLU
-                                        @endif
-                                    </span>
-                                </div>
-                                <p style="margin: 0 0 8px 0; font-size: 14px; color: #4B5563; line-height: 1.5;">
-                                    {{ $permit['description'] }}
-                                </p>
-                                <div style="font-size: 12px; color: #6B7280;">
-                                    ⏱️ {{ $permit['estimated_timeline'] }} • 💰 {{ $permit['estimated_cost_range'] }}
-                                </div>
-                            </div>
                             @endforeach
-                        </td>
-                    </tr>
-
-                    <!-- Risk Factors -->
-                    <tr>
-                        <td style="padding: 0 40px 20px 40px;">
-                            <h2 style="margin: 0 0 15px 0; font-size: 20px; color: #111827; font-weight: bold;">
-                                ⚠️ Faktor Risiko
+                            @endif
+                            
+                            <!-- Risk Factors -->
+                            @php
+                                $riskFactors = $analysis['risk_factors'] ?? [];
+                            @endphp
+                            
+                            @if(count($riskFactors) > 0)
+                            <h2 style="margin: 30px 0 15px; font-size: 20px; color: #0077B5;">
+                                ⚠️ Faktor Risiko & Perhatian
                             </h2>
-                            @foreach($analysis['risk_factors'] ?? [] as $risk)
-                            <div style="margin-bottom: 8px; padding-left: 20px; position: relative;">
-                                <span style="position: absolute; left: 0; color: #F97316;">⚠️</span>
-                                <span style="font-size: 14px; color: #374151; line-height: 1.6;">{{ $risk }}</span>
-                            </div>
-                            @endforeach
-                        </td>
-                    </tr>
-
-                    <!-- Next Steps -->
-                    <tr>
-                        <td style="padding: 0 40px 30px 40px;">
-                            <h2 style="margin: 0 0 15px 0; font-size: 20px; color: #111827; font-weight: bold;">
+                            <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
+                                @foreach($riskFactors as $risk)
+                                <li>{{ $risk }}</li>
+                                @endforeach
+                            </ul>
+                            @endif
+                            
+                            <!-- Next Steps -->
+                            @php
+                                $nextSteps = $analysis['next_steps'] ?? [];
+                            @endphp
+                            
+                            @if(count($nextSteps) > 0)
+                            <h2 style="margin: 30px 0 15px; font-size: 20px; color: #0077B5;">
                                 📌 Langkah Selanjutnya
                             </h2>
-                            @foreach($analysis['next_steps'] ?? [] as $index => $step)
-                            <div style="margin-bottom: 10px; display: flex; align-items-start;">
-                                <div style="width: 24px; height: 24px; background-color: #0077B5; color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">
-                                    {{ $index + 1 }}
-                                </div>
-                                <span style="font-size: 14px; color: #374151; line-height: 1.6; padding-top: 2px;">{{ $step }}</span>
-                            </div>
-                            @endforeach
-                        </td>
-                    </tr>
-
-                    <!-- Disclaimer -->
-                    <tr>
-                        <td style="padding: 0 40px 30px 40px;">
-                            <div style="background-color: #FEF3C7; border-left: 4px solid #F59E0B; padding: 15px; border-radius: 6px;">
-                                <p style="margin: 0; font-size: 13px; color: #78350F; line-height: 1.6;">
-                                    <strong>ℹ️ Catatan Penting:</strong><br>
-                                    {{ $analysis['limitations'] ?? 'Analisis ini bersifat umum. Untuk analisis detail, silakan daftar ke portal kami.' }}
-                                </p>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- CTA Button -->
-                    <tr>
-                        <td style="padding: 0 40px 30px 40px; text-align: center;">
-                            <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); border-radius: 8px; padding: 30px;">
+                            <ol style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
+                                @foreach($nextSteps as $step)
+                                <li style="margin-bottom: 8px;">{{ $step }}</li>
+                                @endforeach
+                            </ol>
+                            @endif
+                            
+                            <!-- CTA Button -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 40px 0 30px;">
                                 <tr>
                                     <td style="text-align: center;">
-                                        <h3 style="margin: 0 0 10px 0; font-size: 22px; color: #ffffff; font-weight: bold;">
-                                            🚀 Siap Memulai?
-                                        </h3>
-                                        <p style="margin: 0 0 20px 0; font-size: 14px; color: #e7f3f8; line-height: 1.6;">
-                                            Daftar sekarang untuk analisis lengkap, dokumen checklist detail,<br>
-                                            dan pendampingan konsultan bersertifikat!
-                                        </p>
-                                        <a href="{{ route('client.register') }}" style="display: inline-block; padding: 15px 40px; background-color: #F2CD49; color: #111827; font-weight: bold; font-size: 16px; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                                            ✨ Daftar Portal Lengkap
+                                        <a href="{{ $resultUrl }}" style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #0077B5 0%, #005582 100%); color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 119, 181, 0.3);">
+                                            📄 Lihat Analisis Lengkap
                                         </a>
                                     </td>
                                 </tr>
                             </table>
-                        </td>
-                    </tr>
-
-                    <!-- View Online -->
-                    <tr>
-                        <td style="padding: 0 40px 30px 40px; text-align: center;">
-                            <p style="margin: 0 0 10px 0; font-size: 14px; color: #6B7280;">
-                                Lihat hasil lengkap secara online:
+                            
+                            <!-- Upgrade Notice -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 30px 0; background-color: #fffbeb; border: 2px solid #fbbf24; border-radius: 12px; overflow: hidden;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <h3 style="margin: 0 0 10px; font-size: 18px; color: #92400e;">
+                                            💡 Upgrade ke Portal Lengkap
+                                        </h3>
+                                        <p style="margin: 0 0 15px; color: #78350f; font-size: 14px; line-height: 1.6;">
+                                            Dapatkan fitur premium dengan mendaftar ke portal kami:
+                                        </p>
+                                        <ul style="margin: 0; padding-left: 20px; color: #78350f; font-size: 14px; line-height: 1.8;">
+                                            <li>✅ Dokumen checklist detail per izin</li>
+                                            <li>✅ Timeline breakdown dengan milestone</li>
+                                            <li>✅ Pendampingan konsultan bersertifikat</li>
+                                            <li>✅ Portal monitoring real-time 24/7</li>
+                                            <li>✅ Update peraturan terbaru</li>
+                                        </ul>
+                                        <div style="margin-top: 15px; text-align: center;">
+                                            <a href="{{ route('client.register') }}" style="display: inline-block; padding: 12px 30px; background-color: #0077B5; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 8px;">
+                                                🚀 Daftar Sekarang
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Contact -->
+                            <p style="margin: 30px 0 10px; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                                Butuh bantuan lebih lanjut?
                             </p>
-                            <a href="{{ $resultUrl }}" style="color: #0077B5; font-size: 14px; text-decoration: underline;">
-                                {{ $resultUrl }}
-                            </a>
+                            <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                                📞 Hubungi kami via WhatsApp: 
+                                <a href="https://wa.me/6283879602855" style="color: #0077B5; text-decoration: none; font-weight: bold;">+62 838-7960-2855</a>
+                            </p>
+                            
                         </td>
                     </tr>
-
+                    
                     <!-- Footer -->
                     <tr>
-                        <td style="background-color: #F9FAFB; padding: 30px 40px; text-align: center; border-top: 1px solid #E5E7EB;">
-                            <p style="margin: 0 0 10px 0; font-size: 14px; color: #6B7280;">
-                                Butuh bantuan? Hubungi kami:
+                        <td style="background-color: #001820; padding: 30px; text-align: center;">
+                            <p style="margin: 0 0 10px; color: #cce7f1; font-size: 14px; font-weight: bold;">
+                                Bizmark<span style="color: #F2CD49;">.ID</span>
                             </p>
-                            <p style="margin: 0 0 15px 0;">
-                                <a href="https://wa.me/6283879602855" style="color: #0077B5; font-weight: 600; text-decoration: none; font-size: 14px;">
-                                    📱 WhatsApp: +62 838-7960-2855
-                                </a>
+                            <p style="margin: 0 0 15px; color: #99cfe3; font-size: 12px;">
+                                Platform Perizinan Digital
                             </p>
-                            <p style="margin: 0; font-size: 12px; color: #9CA3AF;">
-                                © {{ date('Y') }} Bizmark.ID - Platform Perizinan Digital<br>
-                                Email ini dikirim otomatis, mohon tidak membalas email ini.
+                            <p style="margin: 0; color: #99cfe3; font-size: 11px;">
+                                No. Inquiry: {{ $inquiry->inquiry_number }} · {{ $inquiry->created_at->format('d M Y') }}
                             </p>
+                            <div style="margin-top: 15px;">
+                                <a href="{{ route('privacy.policy') }}" style="color: #99cfe3; text-decoration: none; font-size: 11px; margin: 0 8px;">Kebijakan Privasi</a>
+                                <span style="color: #99cfe3;">·</span>
+                                <a href="{{ route('terms.conditions') }}" style="color: #99cfe3; text-decoration: none; font-size: 11px; margin: 0 8px;">Syarat & Ketentuan</a>
+                            </div>
                         </td>
                     </tr>
-
+                    
                 </table>
+                
             </td>
         </tr>
     </table>
+    
 </body>
 </html>
