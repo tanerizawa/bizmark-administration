@@ -65,22 +65,11 @@
         <div class="max-w-5xl mx-auto mb-6 animate-fadeIn">
             <div class="text-center">
                 <!-- Logo -->
-                <a href="{{ route('landing') }}" class="inline-flex items-center gap-2 mb-3">
-                    <svg class="w-8 h-8 text-linkedin-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                    </svg>
-                    <span class="text-xl font-bold text-linkedin-700">
-                        Bizmark<span class="text-gold-400">.ID</span>
-                    </span>
+                <a href="{{ route('landing') }}" class="inline-flex items-center justify-center mb-3">
+                    <img src="{{ asset('images/logo.svg') }}" alt="Bizmark.ID Logo" class="h-10">
                 </a>
                 
                 <!-- Success Badge -->
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-800 rounded-full mb-3">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="text-sm font-semibold">Analisis Selesai!</span>
-                </div>
                 
                 <h1 class="text-2xl sm:text-3xl font-bold text-linkedin-900 mb-1.5">
                     Hasil Analisis Perizinan
