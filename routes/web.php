@@ -198,6 +198,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('api/clients', [App\Http\Controllers\ClientController::class, 'apiIndex'])->name('api.clients');
     });
 
+    // Service Inquiry Management Routes (Lead Generation)
+    Route::middleware('permission:clients.view')->group(function () {
+        Route::get('admin/service-inquiries', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'index'])->name('admin.service-inquiries.index');
+        Route::get('admin/service-inquiries/export', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'export'])->name('admin.service-inquiries.export');
+        Route::get('admin/service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'show'])->name('admin.service-inquiries.show');
+        Route::patch('admin/service-inquiries/{serviceInquiry}/status', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updateStatus'])->name('admin.service-inquiries.update-status');
+        Route::patch('admin/service-inquiries/{serviceInquiry}/priority', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updatePriority'])->name('admin.service-inquiries.update-priority');
+        Route::post('admin/service-inquiries/{serviceInquiry}/note', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('admin.service-inquiries.add-note');
+        Route::post('admin/service-inquiries/{serviceInquiry}/convert', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'convertToProject'])->name('admin.service-inquiries.convert');
+        Route::delete('admin/service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'destroy'])->name('admin.service-inquiries.destroy');
+    });
+
     // Financial Management Routes (Phase 1)
     // Read-only routes (auth required)
     Route::middleware('auth')->group(function () {
