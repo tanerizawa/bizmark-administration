@@ -123,7 +123,7 @@
                 <h3 class="text-2xl font-bold mb-2">Mulai Kelola Perizinan Anda</h3>
                 <p class="text-sm mb-6 opacity-90">Akses portal digital untuk monitoring real-time</p>
                 <div class="flex gap-3 justify-center">
-                    <a href="{{ route('register') }}" 
+                    <a href="{{ route('client.register') }}" 
                        class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
                         <i class="fas fa-rocket mr-2"></i>Daftar Gratis
                     </a>

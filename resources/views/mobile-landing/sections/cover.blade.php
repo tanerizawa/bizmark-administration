@@ -68,7 +68,7 @@
             
             <!-- Primary CTA - PLATFORM FIRST -->
             <div class="space-y-3 mb-4">
-                <a href="{{ route('register') }}" 
+                <a href="{{ route('client.register') }}" 
                    class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200"
                    onclick="trackEvent('CTA', 'click', 'hero_register_mobile')">
                     <div class="flex items-center justify-center gap-3">

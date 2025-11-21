@@ -131,7 +131,7 @@
             </div>
             
             <div class="flex flex-col gap-3 justify-center">
-                <a href="{{ route('register') }}" 
+                <a href="{{ route('client.register') }}" 
                    class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#0077B5] to-[#005582] text-white font-bold px-8 py-4 rounded-full shadow-xl hover:shadow-2xl active:scale-95 transition-all">
                     <i class="fas fa-rocket text-xl"></i>
                     <span>Daftar Portal Gratis</span>
