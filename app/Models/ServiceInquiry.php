@@ -1,0 +1,161 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ServiceInquiry extends Model
+{
+    protected $fillable = [
+        'inquiry_number',
+        'email',
+        'company_name',
+        'company_type',
+        'phone',
+        'contact_person',
+        'position',
+        'kbli_code',
+        'kbli_description',
+        'business_activity',
+        'form_data',
+        'ai_analysis',
+        'ai_model_used',
+        'ai_processing_time',
+        'ai_tokens_used',
+        'analyzed_at',
+        'status',
+        'priority',
+        'source',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'client_id',
+        'converted_to_application_id',
+        'converted_at',
+        'ip_address',
+        'user_agent',
+        'session_id',
+        'last_contacted_at',
+        'contacted_by',
+        'admin_notes',
+    ];
+
+    protected $casts = [
+        'form_data' => 'array',
+        'ai_analysis' => 'array',
+        'analyzed_at' => 'datetime',
+        'converted_at' => 'datetime',
+        'last_contacted_at' => 'datetime',
+    ];
+
+    /**
+     * Generate unique inquiry number
+     */
+    public static function generateInquiryNumber(): string
+    {
+        $year = now()->year;
+        $lastInquiry = self::whereYear('created_at', $year)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $sequence = $lastInquiry ? (int) substr($lastInquiry->inquiry_number, -4) + 1 : 1;
+
+        return sprintf('INQ-%d-%04d', $year, $sequence);
+    }
+
+    /**
+     * Relationships
+     */
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function convertedToApplication(): BelongsTo
+    {
+        return $this->belongsTo(PermitApplication::class, 'converted_to_application_id');
+    }
+
+    public function contactedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'contacted_by');
+    }
+
+    /**
+     * Scopes
+     */
+    public function scopeNew($query)
+    {
+        return $query->where('status', 'new');
+    }
+
+    public function scopeProcessing($query)
+    {
+        return $query->where('status', 'processing');
+    }
+
+    public function scopeAnalyzed($query)
+    {
+        return $query->where('status', 'analyzed');
+    }
+
+    public function scopeContacted($query)
+    {
+        return $query->where('status', 'contacted');
+    }
+
+    public function scopeQualified($query)
+    {
+        return $query->where('status', 'qualified');
+    }
+
+    public function scopeConverted($query)
+    {
+        return $query->where('status', 'converted');
+    }
+
+    public function scopeHighPriority($query)
+    {
+        return $query->where('priority', 'high');
+    }
+
+    public function scopeRecent($query)
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Accessors
+     */
+    public function getEstimatedValueAttribute(): ?int
+    {
+        if (!$this->ai_analysis || !isset($this->ai_analysis['total_estimated_cost'])) {
+            return null;
+        }
+
+        $cost = $this->ai_analysis['total_estimated_cost'];
+        return isset($cost['min']) && isset($cost['max']) 
+            ? ($cost['min'] + $cost['max']) / 2 
+            : null;
+    }
+
+    public function getComplexityScoreAttribute(): ?float
+    {
+        return $this->ai_analysis['complexity_score'] ?? null;
+    }
+
+    /**
+     * Mutators
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($inquiry) {
+            if (!$inquiry->inquiry_number) {
+                $inquiry->inquiry_number = self::generateInquiryNumber();
+            }
+        });
+    }
+}

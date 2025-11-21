@@ -89,6 +89,20 @@ Route::get('/', function(\Illuminate\Http\Request $request) {
 Route::get('/layanan', [ServiceController::class, 'index'])->name('services.index');
 Route::get('/layanan/{slug}', [ServiceController::class, 'show'])->name('services.show');
 
+// Service Inquiry - Free AI Analysis (Landing Page Lead Generation)
+Route::prefix('konsultasi-gratis')->group(function() {
+    Route::get('/', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'create'])
+        ->name('landing.service-inquiry.create');
+    Route::post('/', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'store'])
+        ->name('landing.service-inquiry.store');
+    Route::get('/hasil/{inquiryNumber}', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'result'])
+        ->name('landing.service-inquiry.result');
+    Route::get('/api/status/{inquiryNumber}', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'show'])
+        ->name('landing.service-inquiry.show');
+    Route::post('/api/check-rate-limit', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'checkRateLimit'])
+        ->name('landing.service-inquiry.check-rate-limit');
+});
+
 // Public Blog Routes
 Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index');
 Route::get('/blog/category/{category}', [PublicArticleController::class, 'category'])->name('blog.category');
