@@ -141,13 +141,33 @@ JSON Structure:
             "name": "Nama Izin Lengkap",
             "priority": "critical|high|medium",
             "estimated_timeline": "X-Y hari",
-            "estimated_cost_range": "Rp X - Rp Y",
+            "government_fee": {
+                "min": 0,
+                "max": 500000,
+                "note": "Gratis untuk NIB/NPWP, berbayar untuk izin operasional"
+            },
+            "consultant_fee": {
+                "min": 1500000,
+                "max": 3000000,
+                "note": "Biaya konsultan BizMark untuk pendampingan"
+            },
+            "total_cost_range": "Rp 1,5 - 3,5 Juta",
             "description": "Penjelasan singkat 1-2 kalimat"
         }
     ],
     "total_estimated_cost": {
-        "min": 1000000,
-        "max": 5000000,
+        "government_fees": {
+            "min": 0,
+            "max": 2000000
+        },
+        "consultant_fees": {
+            "min": 5000000,
+            "max": 15000000
+        },
+        "grand_total": {
+            "min": 5000000,
+            "max": 17000000
+        },
         "currency": "IDR"
     },
     "total_estimated_timeline": "X-Y hari",
@@ -163,15 +183,46 @@ JSON Structure:
     "limitations": "Analisis ini bersifat umum. Untuk analisis detail dengan dokumen checklist lengkap, timeline breakdown, dan pendampingan konsultan bersertifikat, silakan daftar ke portal kami."
 }
 
+BIAYA GUIDELINES:
+1. **Government Fees** (Biaya Pemerintah):
+   - NIB, NPWP, TDP: Rp 0 (GRATIS)
+   - Izin Lingkungan (UKL-UPL): Rp 0 - 500rb
+   - SIUP, SIUJK: Rp 500rb - 2jt
+   - IMB/PBG: Rp 2jt - 10jt (tergantung luas bangunan)
+   - AMDAL: Rp 5jt - 50jt (tergantung skala)
+
+2. **Consultant Fees** (Biaya Konsultan BizMark):
+   - Base fee per permit:
+     * Foundational (NIB, NPWP): Rp 1,5jt - 2,5jt
+     * Operational (SIUP, SIUJK): Rp 3jt - 5jt
+     * Environmental (UKL-UPL): Rp 4jt - 8jt
+     * Construction (IMB): Rp 5jt - 15jt
+     * Complex (AMDAL): Rp 15jt - 50jt
+   
+   - Scale multipliers:
+     * Mikro (<10 karyawan): 1.0x
+     * Kecil (10-50): 1.5x
+     * Menengah (50-100): 2.0x
+     * Besar (>100): 2.5x
+   
+   - Location multipliers:
+     * Jakarta, Surabaya: 1.3x
+     * Kota besar lain: 1.1x
+     * Kota kecil/kabupaten: 1.0x
+
+3. **Total Cost = Government Fee + Consultant Fee**
+
 RULES:
 1. Recommend ONLY 3-5 most critical permits (prioritize by importance)
-2. Use realistic cost ranges based on actual consultant fees + government fees
-3. Timeline should be realistic (consider bureaucracy)
-4. Complexity score: 1-10 (10 = most complex)
-5. Risk factors: Focus on compliance risks, location issues, scale challenges
-6. Next steps: Practical, actionable items
-7. ALWAYS include limitations disclaimer
-8. OUTPUT MUST BE VALID JSON ONLY
+2. Separate government fees and consultant fees clearly
+3. Government fees should be realistic per regulation
+4. Consultant fees should reflect service complexity
+5. Timeline should be realistic (consider bureaucracy)
+6. Complexity score: 1-10 (10 = most complex)
+7. Risk factors: Focus on compliance risks, location issues, scale challenges
+8. Next steps: Practical, actionable items
+9. ALWAYS include limitations disclaimer
+10. OUTPUT MUST BE VALID JSON ONLY
 PROMPT;
     }
 
@@ -237,21 +288,69 @@ PROMPT;
                     'name' => 'Nomor Induk Berusaha (NIB)',
                     'priority' => 'critical',
                     'estimated_timeline' => '1-3 hari',
-                    'estimated_cost_range' => 'Rp 2.000.000 - Rp 5.000.000',
+                    'government_fee' => [
+                        'min' => 0,
+                        'max' => 0,
+                        'note' => 'Gratis (biaya pemerintah)'
+                    ],
+                    'consultant_fee' => [
+                        'min' => 1500000,
+                        'max' => 2500000,
+                        'note' => 'Biaya pendampingan konsultan'
+                    ],
+                    'total_cost_range' => 'Rp 1,5 - 2,5 Juta',
                     'description' => 'Izin dasar untuk memulai usaha di Indonesia, wajib untuk semua jenis usaha.'
+                ],
+                [
+                    'code' => 'NPWP_BADAN',
+                    'name' => 'NPWP Badan Usaha',
+                    'priority' => 'critical',
+                    'estimated_timeline' => '1-3 hari',
+                    'government_fee' => [
+                        'min' => 0,
+                        'max' => 0,
+                        'note' => 'Gratis (biaya pemerintah)'
+                    ],
+                    'consultant_fee' => [
+                        'min' => 1000000,
+                        'max' => 1500000,
+                        'note' => 'Biaya pendampingan konsultan'
+                    ],
+                    'total_cost_range' => 'Rp 1 - 1,5 Juta',
+                    'description' => 'Identitas wajib pajak untuk keperluan perpajakan perusahaan.'
                 ],
                 [
                     'code' => 'BUSINESS_LICENSE',
                     'name' => 'Izin Usaha Sesuai KBLI',
                     'priority' => 'high',
                     'estimated_timeline' => '7-14 hari',
-                    'estimated_cost_range' => 'Rp 5.000.000 - Rp 15.000.000',
+                    'government_fee' => [
+                        'min' => 500000,
+                        'max' => 2000000,
+                        'note' => 'Biaya resmi pemerintah'
+                    ],
+                    'consultant_fee' => [
+                        'min' => 3000000,
+                        'max' => 5000000,
+                        'note' => 'Biaya pendampingan konsultan'
+                    ],
+                    'total_cost_range' => 'Rp 3,5 - 7 Juta',
                     'description' => 'Izin operasional sesuai dengan jenis usaha Anda.'
                 ]
             ],
             'total_estimated_cost' => [
-                'min' => 7000000,
-                'max' => 20000000,
+                'government_fees' => [
+                    'min' => 500000,
+                    'max' => 2000000
+                ],
+                'consultant_fees' => [
+                    'min' => 5500000,
+                    'max' => 9000000
+                ],
+                'grand_total' => [
+                    'min' => 6000000,
+                    'max' => 11000000
+                ],
                 'currency' => 'IDR'
             ],
             'total_estimated_timeline' => '14-30 hari',

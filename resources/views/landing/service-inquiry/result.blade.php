@@ -107,12 +107,19 @@
             
             <!-- Summary Card -->
             <div class="bg-gradient-to-r from-linkedin-500 to-linkedin-600 rounded-2xl shadow-xl p-6 sm:p-8 text-white stagger-item">
-                <h2 class="text-2xl font-bold mb-4">📊 Ringkasan Analisis</h2>
+                <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Ringkasan Analisis
+                </h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white/10 backdrop-blur rounded-xl p-4">
                         <div class="text-sm opacity-90 mb-1">Total Estimasi Biaya</div>
                         <div class="text-2xl font-bold">
-                            @if(isset($totalCost['min']) && isset($totalCost['max']))
+                            @if(isset($totalCost['grand_total']))
+                                Rp {{ number_format($totalCost['grand_total']['min'] / 1000000, 1) }}-{{ number_format($totalCost['grand_total']['max'] / 1000000, 1) }} Jt
+                            @elseif(isset($totalCost['min']) && isset($totalCost['max']))
                                 Rp {{ number_format($totalCost['min'] / 1000000, 0) }}-{{ number_format($totalCost['max'] / 1000000, 0) }} Jt
                             @else
                                 -
@@ -132,8 +139,10 @@
 
             <!-- Recommended Permits -->
             <div class="bg-white rounded-2xl shadow-xl border border-linkedin-100 p-6 sm:p-8 stagger-item">
-                <h2 class="text-2xl font-bold text-linkedin-900 mb-4 flex items-center gap-2">
-                    <span>🎯</span>
+                <h2 class="text-2xl font-bold text-linkedin-900 mb-4 flex items-center gap-3">
+                    <svg class="w-8 h-8 text-linkedin-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
                     Izin yang Direkomendasikan
                 </h2>
                 
@@ -204,8 +213,10 @@
             <!-- Next Steps -->
             @if(count($nextSteps) > 0)
             <div class="bg-white rounded-2xl shadow-xl border border-linkedin-100 p-6 sm:p-8 stagger-item">
-                <h2 class="text-2xl font-bold text-linkedin-900 mb-4 flex items-center gap-2">
-                    <span>📌</span>
+                <h2 class="text-2xl font-bold text-linkedin-900 mb-4 flex items-center gap-3">
+                    <svg class="w-8 h-8 text-linkedin-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                     Langkah Selanjutnya
                 </h2>
                 <ol class="space-y-3">
@@ -263,7 +274,12 @@
 
             <!-- CTA Section -->
             <div class="bg-gradient-to-r from-linkedin-600 via-linkedin-500 to-linkedin-600 rounded-2xl shadow-2xl p-8 sm:p-10 text-white text-center stagger-item">
-                <h2 class="text-3xl font-bold mb-3">🚀 Siap Mulai Proses Perizinan?</h2>
+                <div class="flex items-center justify-center gap-3 mb-3">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <h2 class="text-3xl font-bold">Siap Mulai Proses Perizinan?</h2>
+                </div>
                 <p class="text-lg opacity-90 mb-6 max-w-2xl mx-auto">
                     Daftar sekarang untuk mendapatkan <strong>analisis lengkap</strong>, 
                     pendampingan konsultan bersertifikat, dan akses portal monitoring 24/7.
