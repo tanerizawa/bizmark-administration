@@ -68,6 +68,7 @@
             
             <!-- Primary CTA - PLATFORM FIRST -->
             <div class="space-y-3 mb-4">
+                <!-- Main CTA: Register -->
                 <a href="{{ route('client.register') }}" 
                    class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200"
                    onclick="trackEvent('CTA', 'click', 'hero_register_mobile')">
@@ -77,6 +78,19 @@
                         <i class="fas fa-arrow-right"></i>
                     </div>
                 </a>
+                
+                <!-- Secondary CTA: Free AI Analysis (NEW!) -->
+                <a href="{{ route('landing.service-inquiry.create') }}" 
+                   class="block w-full bg-gradient-to-r from-gold-400 to-yellow-500 text-gray-900 font-bold text-base py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200"
+                   onclick="trackEvent('CTA', 'click', 'hero_free_analysis_mobile')">
+                    <div class="flex items-center justify-center gap-2">
+                        <span>🤖</span>
+                        <span>Analisis AI Gratis</span>
+                        <span class="text-xs px-2 py-0.5 bg-red-500 text-white rounded-full">BARU!</span>
+                    </div>
+                </a>
+                
+                <!-- Tertiary CTAs -->
                 <div class="flex items-center gap-2">
                     <a href="{{ route('login') }}" 
                        class="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-white/20 active:scale-95 transition-all duration-200 text-center">
@@ -89,7 +103,7 @@
                     </a>
                 </div>
                 <p class="text-center text-white text-xs opacity-80">
-                    <i class="fas fa-info-circle mr-1"></i> Akses portal untuk monitoring real-time
+                    <i class="fas fa-info-circle mr-1"></i> Coba analisis AI gratis atau daftar untuk akses penuh
                 </p>
             </div>
             

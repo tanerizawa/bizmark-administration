@@ -119,19 +119,25 @@
         <!-- Call-to-Action Banner -->
         <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0077B5] to-[#005582] p-8 text-white text-center">
             <div class="relative z-10">
-                <i class="fas fa-rocket text-5xl mb-4 opacity-90"></i>
-                <h3 class="text-2xl font-bold mb-2">Mulai Kelola Perizinan Anda</h3>
-                <p class="text-sm mb-6 opacity-90">Akses portal digital untuk monitoring real-time</p>
-                <div class="flex gap-3 justify-center">
+                <i class="fas fa-robot text-5xl mb-4 opacity-90"></i>
+                <h3 class="text-2xl font-bold mb-2">Tidak Tahu Izin Apa yang Dibutuhkan?</h3>
+                <p class="text-sm mb-6 opacity-90">Coba <strong>Analisis AI Gratis</strong> kami dalam 30 detik!</p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="{{ route('landing.service-inquiry.create') }}" 
+                       class="bg-gradient-to-r from-gold-400 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:shadow-xl transition-all inline-flex items-center justify-center gap-2"
+                       onclick="trackEvent('CTA', 'click', 'services_free_analysis_mobile')">
+                        <span>🤖</span>
+                        <span>Analisis AI Gratis</span>
+                        <span class="text-xs px-2 py-0.5 bg-red-500 text-white rounded-full">BARU!</span>
+                    </a>
                     <a href="{{ route('client.register') }}" 
                        class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
-                        <i class="fas fa-rocket mr-2"></i>Daftar Gratis
-                    </a>
-                    <a href="{{ route('services.index') }}" 
-                       class="bg-blue-800 text-white font-semibold px-6 py-3 rounded-xl hover:bg-blue-900 transition-all">
-                        <i class="fas fa-th-large mr-2"></i>Lihat Layanan
+                        <i class="fas fa-rocket mr-2"></i>Daftar Portal
                     </a>
                 </div>
+                <p class="text-xs mt-4 opacity-75">
+                    ✨ Gratis · 🔒 Data Aman · ⚡ Hasil dalam 30 detik
+                </p>
             </div>
             
             <!-- Decorative Elements -->
