@@ -36,7 +36,8 @@ class ServiceInquiryRateLimiter
         $ipCount = Cache::get($ipKey, 0);
         
         if ($ipCount >= self::IP_LIMIT) {
-            $retryAfter = Cache::ttl($ipKey);
+            // Calculate TTL from end of day
+            $retryAfter = now()->endOfDay()->diffInSeconds(now());
             return [
                 'allowed' => false,
                 'reason' => 'ip_limit',
@@ -49,7 +50,9 @@ class ServiceInquiryRateLimiter
         // Check email cooldown (between requests)
         $cooldownKey = $this->getCooldownKey($email);
         if (Cache::has($cooldownKey)) {
-            $retryAfter = Cache::ttl($cooldownKey);
+            // Get stored cooldown end timestamp
+            $cooldownEnd = Cache::get($cooldownKey);
+            $retryAfter = max(0, $cooldownEnd - now()->timestamp);
             return [
                 'allowed' => false,
                 'reason' => 'cooldown',
@@ -83,9 +86,10 @@ class ServiceInquiryRateLimiter
         $ipCount = Cache::get($ipKey, 0);
         Cache::put($ipKey, $ipCount + 1, $endOfDay);
         
-        // Set cooldown (1 hour)
+        // Set cooldown (1 hour) - store end timestamp for TTL calculation
         $cooldownKey = $this->getCooldownKey($email);
-        Cache::put($cooldownKey, true, self::EMAIL_COOLDOWN);
+        $cooldownEnd = now()->addHour()->timestamp;
+        Cache::put($cooldownKey, $cooldownEnd, self::EMAIL_COOLDOWN);
     }
     
     /**
@@ -106,7 +110,7 @@ class ServiceInquiryRateLimiter
             'ip_remaining' => self::IP_LIMIT - Cache::get($ipKey, 0),
             'cooldown_active' => Cache::has($this->getCooldownKey($email)),
             'cooldown_expires_in' => Cache::has($this->getCooldownKey($email)) 
-                ? Cache::ttl($this->getCooldownKey($email)) 
+                ? max(0, Cache::get($this->getCooldownKey($email)) - now()->timestamp)
                 : 0
         ];
     }
