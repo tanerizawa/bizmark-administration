@@ -18,7 +18,7 @@
                     <tr>
                         <td style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); padding: 40px 30px; text-align: center;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
-                                ✅ Analisis Selesai!
+                                Analisis Selesai!
                             </h1>
                             <p style="margin: 10px 0 0; color: #e7f3f8; font-size: 16px;">
                                 Hasil analisis perizinan untuk {{ $inquiry->company_name }}
@@ -45,7 +45,7 @@
                                 <tr>
                                     <td style="padding: 20px;">
                                         <h2 style="margin: 0 0 15px; font-size: 20px; color: #0077B5;">
-                                            📊 Ringkasan Analisis
+                                            Ringkasan Analisis
                                         </h2>
                                         
                                         @php
@@ -93,7 +93,7 @@
                             
                             @if(count($permits) > 0)
                             <h2 style="margin: 30px 0 15px; font-size: 20px; color: #0077B5;">
-                                🎯 Izin yang Direkomendasikan
+                                Izin yang Direkomendasikan
                             </h2>
                             
                             @foreach($permits as $index => $permit)
@@ -122,7 +122,12 @@
                                             {{ $permit['description'] }}
                                         </p>
                                         <div style="margin-top: 10px; font-size: 13px; color: #6b7280;">
-                                            ⏱️ {{ $permit['estimated_timeline'] }} · 💰 {{ $permit['estimated_cost_range'] }}
+                                            <strong>Timeline:</strong> {{ $permit['estimated_timeline'] }} 
+                                            @if(isset($permit['total_cost_range']))
+                                            · <strong>Biaya:</strong> {{ $permit['total_cost_range'] }}
+                                            @elseif(isset($permit['estimated_cost_range']))
+                                            · <strong>Biaya:</strong> {{ $permit['estimated_cost_range'] }}
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -137,7 +142,7 @@
                             
                             @if(count($riskFactors) > 0)
                             <h2 style="margin: 30px 0 15px; font-size: 20px; color: #0077B5;">
-                                ⚠️ Faktor Risiko & Perhatian
+                                Faktor Risiko & Perhatian
                             </h2>
                             <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
                                 @foreach($riskFactors as $risk)
@@ -153,7 +158,7 @@
                             
                             @if(count($nextSteps) > 0)
                             <h2 style="margin: 30px 0 15px; font-size: 20px; color: #0077B5;">
-                                📌 Langkah Selanjutnya
+                                Langkah Selanjutnya
                             </h2>
                             <ol style="margin: 0; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
                                 @foreach($nextSteps as $step)
@@ -167,7 +172,7 @@
                                 <tr>
                                     <td style="text-align: center;">
                                         <a href="{{ $resultUrl }}" style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #0077B5 0%, #005582 100%); color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 119, 181, 0.3);">
-                                            📄 Lihat Analisis Lengkap
+                                            Lihat Analisis Lengkap »
                                         </a>
                                     </td>
                                 </tr>
@@ -178,21 +183,21 @@
                                 <tr>
                                     <td style="padding: 20px;">
                                         <h3 style="margin: 0 0 10px; font-size: 18px; color: #92400e;">
-                                            💡 Upgrade ke Portal Lengkap
+                                            Upgrade ke Portal Lengkap
                                         </h3>
                                         <p style="margin: 0 0 15px; color: #78350f; font-size: 14px; line-height: 1.6;">
                                             Dapatkan fitur premium dengan mendaftar ke portal kami:
                                         </p>
                                         <ul style="margin: 0; padding-left: 20px; color: #78350f; font-size: 14px; line-height: 1.8;">
-                                            <li>✅ Dokumen checklist detail per izin</li>
-                                            <li>✅ Timeline breakdown dengan milestone</li>
-                                            <li>✅ Pendampingan konsultan bersertifikat</li>
-                                            <li>✅ Portal monitoring real-time 24/7</li>
-                                            <li>✅ Update peraturan terbaru</li>
+                                            <li>Dokumen checklist detail per izin</li>
+                                            <li>Timeline breakdown dengan milestone</li>
+                                            <li>Pendampingan konsultan bersertifikat</li>
+                                            <li>Portal monitoring real-time 24/7</li>
+                                            <li>Update peraturan terbaru</li>
                                         </ul>
                                         <div style="margin-top: 15px; text-align: center;">
                                             <a href="{{ route('client.register') }}" style="display: inline-block; padding: 12px 30px; background-color: #0077B5; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: bold; border-radius: 8px;">
-                                                🚀 Daftar Sekarang
+                                                Daftar Sekarang »
                                             </a>
                                         </div>
                                     </td>
@@ -204,7 +209,7 @@
                                 Butuh bantuan lebih lanjut?
                             </p>
                             <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-                                📞 Hubungi kami via WhatsApp: 
+                                <strong>Hubungi kami via WhatsApp:</strong> 
                                 <a href="https://wa.me/6283879602855" style="color: #0077B5; text-decoration: none; font-weight: bold;">+62 838-7960-2855</a>
                             </p>
                             
