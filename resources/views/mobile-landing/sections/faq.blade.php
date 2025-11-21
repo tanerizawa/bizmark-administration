@@ -172,12 +172,12 @@
     
     <!-- Simple CTA After FAQ -->
     <div class="mt-10 text-center bg-gray-50 rounded-2xl p-4">
-        <p class="text-gray-700 mb-2 font-medium">Masih ada pertanyaan lainnya?</p>
-        <p class="text-sm text-gray-600 mb-4">Buka bagian Kontak untuk menemukan nomor WhatsApp resmi serta detail lainnya.</p>
-        <a href="#contact"
-           class="inline-flex items-center gap-2 bg-gray-900 text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-gray-800 active:scale-95 transition-all">
-            <i class="fas fa-arrow-down text-lg"></i>
-            <span>Lihat Bagian Kontak</span>
+        <p class="text-gray-700 mb-2 font-medium">Siap untuk memulai?</p>
+        <p class="text-sm text-gray-600 mb-4">Daftar sekarang untuk akses portal digital dan monitoring real-time.</p>
+        <a href="{{ route('register') }}"
+           class="inline-flex items-center gap-2 bg-gradient-to-r from-[#0077B5] to-[#005582] text-white font-bold px-8 py-3 rounded-full shadow-lg hover:shadow-xl active:scale-95 transition-all">
+            <i class="fas fa-rocket text-lg"></i>
+            <span>Daftar Portal</span>
         </a>
     </div>
 </section>

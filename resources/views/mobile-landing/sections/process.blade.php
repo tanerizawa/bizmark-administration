@@ -67,8 +67,8 @@
                 <!-- First step highlight -->
                 <div class="mt-3 pt-3 border-t border-gray-100">
                     <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="fas fa-gift text-blue-500"></i>
-                        <span class="font-semibold">Konsultasi Gratis - Tidak ada biaya di tahap ini</span>
+                        <i class="fas fa-desktop text-blue-500"></i>
+                        <span class="font-semibold">Akses Portal - Monitoring real-time sejak awal</span>
                     </div>
                 </div>
                 @endif
@@ -107,9 +107,9 @@
             <p class="text-sm opacity-90 mb-5">
                 Setiap tahap terekam dalam portal digital dengan timeline yang jelas
             </p>
-            <a href="https://wa.me/{{ $metrics['contact']['whatsapp'] }}?text=Halo%20BizMark%2C%20saya%20ingin%20tahu%20lebih%20detail%20tentang%20proses%20perizinan" 
+            <a href="{{ route('register') }}" 
                class="inline-block bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
-                <i class="fab fa-whatsapp mr-2"></i>Tanya Proses Detail
+                <i class="fas fa-rocket mr-2"></i>Daftar & Mulai
             </a>
         </div>
         

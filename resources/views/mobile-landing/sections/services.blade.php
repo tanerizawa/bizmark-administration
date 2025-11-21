@@ -119,17 +119,17 @@
         <!-- Call-to-Action Banner -->
         <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0077B5] to-[#005582] p-8 text-white text-center">
             <div class="relative z-10">
-                <i class="fas fa-headset text-5xl mb-4 opacity-90"></i>
-                <h3 class="text-2xl font-bold mb-2">Butuh Layanan Lain?</h3>
-                <p class="text-sm mb-6 opacity-90">Kami menyediakan {{ $metrics['permits']['types_available'] }}+ jenis layanan perizinan</p>
+                <i class="fas fa-rocket text-5xl mb-4 opacity-90"></i>
+                <h3 class="text-2xl font-bold mb-2">Mulai Kelola Perizinan Anda</h3>
+                <p class="text-sm mb-6 opacity-90">Akses portal digital untuk monitoring real-time</p>
                 <div class="flex gap-3 justify-center">
-                    <a href="{{ route('services.index') }}" 
+                    <a href="{{ route('register') }}" 
                        class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
-                        <i class="fas fa-th-large mr-2"></i>Lihat Layanan
+                        <i class="fas fa-rocket mr-2"></i>Daftar Gratis
                     </a>
-                    <a href="https://wa.me/{{ $metrics['contact']['whatsapp'] }}?text=Halo%20BizMark%2C%20saya%20ingin%20konsultasi%20layanan" 
-                       class="bg-green-500 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-600 transition-all">
-                        <i class="fab fa-whatsapp mr-2"></i>Konsultasi
+                    <a href="{{ route('services.index') }}" 
+                       class="bg-blue-800 text-white font-semibold px-6 py-3 rounded-xl hover:bg-blue-900 transition-all">
+                        <i class="fas fa-th-large mr-2"></i>Lihat Layanan
                     </a>
                 </div>
             </div>

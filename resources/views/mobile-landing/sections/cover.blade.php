@@ -44,70 +44,64 @@
             
             <!-- Deck (Subtitle) -->
             <p class="deck text-white text-base mb-3 max-w-md leading-relaxed opacity-90">
-                Kelola seluruh kebutuhan perizinan dan legalitas perusahaan 
-                dari satu platform terintegrasi.
+                Platform digital untuk mengelola perizinan dan legalitas perusahaan Anda.
             </p>
             
-            <!-- Quick Stats -->
+            <!-- Quick Stats - REMOVED unreliable numbers -->
             <div class="flex items-center gap-3 text-white text-xs mb-3 opacity-90 flex-wrap">
                 <div class="flex items-center gap-1.5">
-                    <i class="fas fa-building"></i>
-                    <span><strong>{{ $metrics['projects']['completed'] }}</strong> Project Selesai</span>
+                    <i class="fas fa-clock"></i>
+                    <span>Proses <strong>{{ $metrics['performance']['average_days_min'] }}-{{ $metrics['performance']['average_days_max'] }} Hari</strong></span>
                 </div>
                 <span class="text-white/40">•</span>
                 <div class="flex items-center gap-1.5">
-                    <i class="fas fa-check-circle"></i>
-                    <span><strong>{{ $metrics['display']['sla_rate'] }}</strong> SLA Tepat</span>
-                </div>
-                <span class="text-white/40">•</span>
-                <div class="flex items-center gap-1.5">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <span><strong>{{ $metrics['coverage']['provinces'] }}</strong> Provinsi</span>
+                    <i class="fas fa-desktop"></i>
+                    <span><strong>Portal 24/7</strong></span>
                 </div>
             </div>
             
             <!-- Byline -->
             <div class="flex items-center gap-2 text-white text-sm mb-4 opacity-75">
                 <i class="fas fa-map-marked-alt"></i>
-                <span>Melayani perusahaan di {{ $metrics['coverage']['provinces'] }} provinsi sejak {{ $metrics['experience']['since_year'] }}</span>
+                <span>Melayani perusahaan di berbagai kota sejak {{ $metrics['experience']['since_year'] }}</span>
             </div>
             
-            <!-- Primary CTA -->
+            <!-- Primary CTA - PLATFORM FIRST -->
             <div class="space-y-3 mb-4">
-                <a href="https://wa.me/{{ $metrics['contact']['whatsapp'] }}?text=Halo%20Bizmark.ID,%20saya%20ingin%20konsultasi%20perizinan" 
-                   class="block w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200"
-                   onclick="trackEvent('CTA', 'click', 'hero_whatsapp_mobile')">
+                <a href="{{ route('register') }}" 
+                   class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200"
+                   onclick="trackEvent('CTA', 'click', 'hero_register_mobile')">
                     <div class="flex items-center justify-center gap-3">
-                        <i class="fab fa-whatsapp text-2xl"></i>
-                        <span>Konsultasi Gratis</span>
+                        <i class="fas fa-rocket text-2xl"></i>
+                        <span>Daftar Sekarang</span>
                         <i class="fas fa-arrow-right"></i>
                     </div>
                 </a>
                 <div class="flex items-center gap-2">
+                    <a href="{{ route('login') }}" 
+                       class="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-white/20 active:scale-95 transition-all duration-200 text-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Masuk Portal
+                    </a>
                     <a href="#services" 
                        class="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-white/20 active:scale-95 transition-all duration-200 text-center"
                        onclick="trackEvent('CTA', 'click', 'hero_services_mobile')">
                         <i class="fas fa-list mr-2"></i>Lihat Layanan
                     </a>
-                    <a href="{{ route('login') }}" 
-                       class="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-white/20 active:scale-95 transition-all duration-200 text-center">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Masuk
-                    </a>
                 </div>
                 <p class="text-center text-white text-xs opacity-80">
-                    <i class="fas fa-phone mr-1"></i> {{ $metrics['contact']['phone_display'] }}
+                    <i class="fas fa-info-circle mr-1"></i> Akses portal untuk monitoring real-time
                 </p>
             </div>
             
-            <!-- Trust Badges -->
+            <!-- Trust Badges - PLATFORM CAPABILITIES -->
             <div class="grid grid-cols-2 gap-2 mb-4 max-w-md mx-auto">
                 <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
-                    <i class="fas fa-check-circle text-green-400 text-base"></i>
-                    <span class="text-white text-xs font-medium">Terdaftar Resmi</span>
+                    <i class="fas fa-desktop text-blue-400 text-base"></i>
+                    <span class="text-white text-xs font-medium">Portal Digital</span>
                 </div>
                 <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
-                    <i class="fas fa-bolt text-blue-400 text-base"></i>
-                    <span class="text-white text-xs font-medium">Sistem Terintegrasi OSS</span>
+                    <i class="fas fa-clock text-blue-400 text-base"></i>
+                    <span class="text-white text-xs font-medium">Monitoring Real-Time</span>
                 </div>
             </div>
             
