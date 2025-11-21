@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use OpenAI\Laravel\Facades\OpenAI;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class FreeAIAnalysisService
 {
@@ -12,6 +12,7 @@ class FreeAIAnalysisService
     private const MAX_TOKENS = 1000;
     private const TEMPERATURE = 0.7;
     private const CACHE_TTL = 7 * 24 * 60 * 60; // 7 days
+    private const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
     /**
      * Analyze business and recommend permits
@@ -36,9 +37,13 @@ class FreeAIAnalysisService
             // Build prompt
             $prompt = $this->buildPrompt($formData);
 
-            // Call OpenAI API
-            $response = OpenAI::chat()->create([
-                'model' => self::MODEL,
+            // Call OpenRouter API
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . config('services.openrouter.api_key'),
+                'HTTP-Referer' => config('app.url'),
+                'X-Title' => config('app.name'),
+            ])->timeout(60)->post(self::OPENROUTER_API_URL, [
+                'model' => 'openai/' . self::MODEL,
                 'messages' => [
                     [
                         'role' => 'system',
@@ -53,13 +58,23 @@ class FreeAIAnalysisService
                 'max_tokens' => self::MAX_TOKENS,
             ]);
 
+            if (!$response->successful()) {
+                throw new \Exception('OpenRouter API error: ' . $response->body());
+            }
+
+            $responseData = $response->json();
+
             // Parse response
-            $content = $response->choices[0]->message->content;
+            $content = $responseData['choices'][0]['message']['content'] ?? '';
+            if (empty($content)) {
+                throw new \Exception('Empty response from OpenRouter');
+            }
+
             $analysis = $this->parseResponse($content);
 
             // Add metadata
             $analysis['ai_model_used'] = self::MODEL;
-            $analysis['ai_tokens_used'] = $response->usage->totalTokens;
+            $analysis['ai_tokens_used'] = $responseData['usage']['total_tokens'] ?? 0;
             $analysis['ai_processing_time'] = (int) ((microtime(true) - $startTime) * 1000);
             $analysis['generated_at'] = now()->toIso8601String();
             $analysis['version'] = '1.0';
