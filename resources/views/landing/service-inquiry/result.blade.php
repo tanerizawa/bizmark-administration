@@ -66,7 +66,7 @@
             <div class="text-center">
                 <!-- Logo -->
                 <a href="{{ route('landing') }}" class="inline-flex items-center justify-center mb-3">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Bizmark.ID Logo" class="h-10">
+                    <img src="{{ asset('images/logo.svg') }}" alt="Bizmark.ID Logo" class="h-12 sm:h-14">
                 </a>
                 
                 <!-- Success Badge -->
