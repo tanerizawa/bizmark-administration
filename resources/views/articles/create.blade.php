@@ -44,7 +44,9 @@
                 <!-- Content -->
                 <div class="bg-dark-bg-secondary rounded-apple p-6">
                     <label for="content" class="block text-sm font-medium text-dark-text-primary mb-2">Konten Artikel *</label>
-                    <textarea name="content" id="content" class="w-full @error('content') border-apple-red @enderror">{{ old('content') }}</textarea>
+                    <div class="ckeditor-wrapper">
+                        <textarea name="content" id="content" class="w-full @error('content') border-apple-red @enderror">{{ old('content') }}</textarea>
+                    </div>
                     @error('content')
                     <p class="mt-1 text-sm text-apple-red">{{ $message }}</p>
                     @enderror
@@ -163,47 +165,212 @@
     </form>
 </div>
 
-<!-- TinyMCE -->
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<!-- CKEditor 5 -->
+<script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+<style>
+    /* CKEditor Dark Theme Customization */
+    .ckeditor-wrapper .ck-editor__editable {
+        min-height: 500px;
+        background-color: #1c1c1e !important;
+        color: #f5f5f7 !important;
+    }
+    
+    .ck.ck-editor__main > .ck-editor__editable {
+        background-color: #1c1c1e !important;
+        color: #f5f5f7 !important;
+        border-color: #38383a !important;
+    }
+    
+    .ck.ck-toolbar {
+        background-color: #2c2c2e !important;
+        border-color: #38383a !important;
+    }
+    
+    .ck.ck-button:not(.ck-disabled):hover,
+    .ck.ck-button:not(.ck-disabled):active {
+        background-color: #3a3a3c !important;
+    }
+    
+    .ck.ck-button.ck-on {
+        background-color: #0a84ff !important;
+        color: white !important;
+    }
+    
+    .ck.ck-dropdown__panel {
+        background-color: #2c2c2e !important;
+        border-color: #38383a !important;
+    }
+    
+    .ck.ck-list__item:hover {
+        background-color: #3a3a3c !important;
+    }
+    
+    .ck.ck-labeled-field-view > .ck-labeled-field-view__input-wrapper > .ck-input {
+        background-color: #1c1c1e !important;
+        color: #f5f5f7 !important;
+        border-color: #38383a !important;
+    }
+    
+    .ck-content h1, .ck-content h2, .ck-content h3, .ck-content h4, .ck-content h5, .ck-content h6 {
+        color: #f5f5f7 !important;
+    }
+    
+    .ck-content a {
+        color: #0a84ff !important;
+    }
+    
+    .ck-content blockquote {
+        border-left-color: #0a84ff !important;
+    }
+    
+    .ck-content code {
+        background-color: #2c2c2e !important;
+        color: #ff453a !important;
+    }
+    
+    .ck-content pre {
+        background-color: #2c2c2e !important;
+        color: #f5f5f7 !important;
+        border-color: #38383a !important;
+    }
+</style>
 <script>
-    // Initialize TinyMCE
-    tinymce.init({
-        selector: '#content',
-        height: 500,
-        menubar: false,
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-        ],
-        toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image link | code | help',
-        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-        skin: 'oxide-dark',
-        content_css: 'dark',
-        images_upload_handler: function (blobInfo, success, failure) {
-            const formData = new FormData();
-            formData.append('image', blobInfo.blob(), blobInfo.filename());
-            
-            fetch('{{ route("articles.upload-image") }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    success(result.url);
-                } else {
-                    failure('Upload failed');
-                }
-            })
-            .catch(() => {
-                failure('Upload failed');
-            });
+    // Custom Upload Adapter for CKEditor
+    class MyUploadAdapter {
+        constructor(loader) {
+            this.loader = loader;
         }
-    });
+
+        upload() {
+            return this.loader.file
+                .then(file => new Promise((resolve, reject) => {
+                    const data = new FormData();
+                    data.append('image', file);
+
+                    fetch('{{ route("articles.upload-image") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: data
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            resolve({
+                                default: result.url
+                            });
+                        } else {
+                            reject(result.message || 'Upload failed');
+                        }
+                    })
+                    .catch(error => {
+                        reject('Upload failed: ' + error);
+                    });
+                }));
+        }
+
+        abort() {
+            // Handle upload abort
+        }
+    }
+
+    function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new MyUploadAdapter(loader);
+        };
+    }
+
+    // Initialize CKEditor
+    let editorInstance;
+    ClassicEditor
+        .create(document.querySelector('#content'), {
+            extraPlugins: [MyCustomUploadAdapterPlugin],
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+                    'link', 'uploadImage', 'blockQuote', 'insertTable', '|',
+                    'alignment', '|',
+                    'bulletedList', 'numberedList', 'outdent', 'indent', '|',
+                    'code', 'codeBlock', '|',
+                    'horizontalLine', '|',
+                    'undo', 'redo', '|',
+                    'sourceEditing'
+                ],
+                shouldNotGroupWhenFull: true
+            },
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                    { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+                ]
+            },
+            fontSize: {
+                options: [
+                    'tiny', 'small', 'default', 'big', 'huge'
+                ]
+            },
+            image: {
+                toolbar: [
+                    'imageStyle:alignLeft',
+                    'imageStyle:alignCenter',
+                    'imageStyle:alignRight',
+                    '|',
+                    'imageStyle:full',
+                    'imageStyle:side',
+                    '|',
+                    'imageTextAlternative',
+                    'linkImage'
+                ],
+                styles: [
+                    'full',
+                    'side',
+                    'alignLeft',
+                    'alignCenter',
+                    'alignRight'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn', 'tableRow', 'mergeTableCells',
+                    'tableProperties', 'tableCellProperties'
+                ]
+            },
+            codeBlock: {
+                languages: [
+                    { language: 'php', label: 'PHP' },
+                    { language: 'javascript', label: 'JavaScript' },
+                    { language: 'html', label: 'HTML' },
+                    { language: 'css', label: 'CSS' },
+                    { language: 'python', label: 'Python' },
+                    { language: 'json', label: 'JSON' }
+                ]
+            },
+            link: {
+                decorators: {
+                    openInNewTab: {
+                        mode: 'manual',
+                        label: 'Open in a new tab',
+                        attributes: {
+                            target: '_blank',
+                            rel: 'noopener noreferrer'
+                        }
+                    }
+                }
+            }
+        })
+        .then(editor => {
+            editorInstance = editor;
+            console.log('CKEditor initialized successfully');
+        })
+        .catch(error => {
+            console.error('CKEditor initialization error:', error);
+        });
 
     // Featured Image Preview
     document.getElementById('featured_image').addEventListener('change', function(e) {
