@@ -235,7 +235,7 @@
 
         <!-- Footer -->
         <p class="text-center text-white/60 text-sm mt-8">
-            © {{ date('Y') }} Bizmark.id - Solusi Perizinan Terpercaya
+            © {{ date('Y') }} Bizmark.id - Layanan Perijinan
         </p>
     </div>
 
