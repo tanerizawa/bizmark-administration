@@ -26,7 +26,7 @@
             <div class="grid grid-cols-1 gap-6 mb-12 fade-in-up">
                 
                 <!-- Portal Registration (Primary) -->
-                <a href="{{ route('register') }}" 
+                <a href="{{ route('client.register') }}" 
                    class="touchable bg-white rounded-2xl p-6 hover:scale-105 transition-transform shadow-xl">
                     <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
                         <i class="fas fa-rocket text-3xl text-blue-600"></i>

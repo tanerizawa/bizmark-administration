@@ -107,7 +107,7 @@
             <p class="text-sm opacity-90 mb-5">
                 Setiap tahap terekam dalam portal digital dengan timeline yang jelas
             </p>
-            <a href="{{ route('register') }}" 
+            <a href="{{ route('client.register') }}" 
                class="inline-block bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
                 <i class="fas fa-rocket mr-2"></i>Daftar & Mulai
             </a>
