@@ -43,12 +43,13 @@
                 {{-- Primary & Secondary CTAs --}}
                 <div class="space-y-4">
                     <div class="flex items-center gap-4 flex-wrap">
-                        <a href="https://wa.me/{{ $metrics['contact']['whatsapp'] }}?text=Halo%20Bizmark.ID,%20saya%20ingin%20mendapatkan%20analisis%20perizinan"
-                           class="btn btn-primary group"
-                           data-cta="hero_whatsapp"
-                           onclick="trackEvent('CTA', 'click', 'hero_whatsapp_primary')">
-                            <i class="fab fa-whatsapp text-base"></i>
-                            <span>Konsultasi Gratis</span>
+                        <a href="{{ route('landing.service-inquiry.create') }}"
+                           class="btn btn-primary group relative"
+                           data-cta="hero_ai_analysis"
+                           onclick="trackEvent('CTA', 'click', 'hero_ai_analysis_primary')">
+                            <i class="fas fa-robot text-base"></i>
+                            <span>Analisis AI Gratis</span>
+                            <span class="absolute -top-2 -right-2 px-2 py-0.5 bg-yellow-400 text-[#0077B5] text-[10px] font-bold rounded-full shadow-lg animate-pulse">BARU</span>
                             <i class="fas fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </a>
                         <a href="#services"
