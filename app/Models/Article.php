@@ -152,6 +152,32 @@ class Article extends Model
     /**
      * Accessors
      */
+    public function getTagsAttribute($value)
+    {
+        if (is_null($value)) {
+            return [];
+        }
+        
+        if (is_array($value)) {
+            return $value;
+        }
+        
+        // Handle double-encoded JSON from PostgreSQL
+        if (is_string($value)) {
+            // First decode
+            $decoded = json_decode($value, true);
+            
+            // If still string, decode again (double-encoded)
+            if (is_string($decoded)) {
+                $decoded = json_decode($decoded, true);
+            }
+            
+            return is_array($decoded) ? $decoded : [];
+        }
+        
+        return [];
+    }
+
     public function getFormattedPublishedAtAttribute()
     {
         return $this->published_at ? $this->published_at->format('d F Y') : null;
