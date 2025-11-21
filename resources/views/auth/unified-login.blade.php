@@ -27,7 +27,8 @@
         }
         
         body {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            background: #f0eeeeff;
+            box-shadow: 0 2px 8px rgba(10, 102, 194, 0.3);
         }
         
         .login-card {
@@ -67,13 +68,9 @@
         <!-- Logo Header -->
         <div class="text-center mb-8">
             <a href="{{ route('landing') }}" class="inline-flex flex-col items-center group">
-                <img src="{{ asset('images/logo-bizmark.svg') }}" 
+                <img src="{{ asset('images/logo-blue.png') }}" 
                      alt="BizMark Indonesia" 
-                     class="h-16 w-16 mb-3 transition-transform group-hover:scale-105">
-                <div class="flex flex-col leading-tight">
-                    <span class="text-2xl font-bold text-gray-800">BizMark<span class="text-[#0a66c2]">.ID</span></span>
-                    <span class="text-sm text-gray-600 mt-1">Portal Login</span>
-                </div>
+                     class="transition-transform group-hover:scale-105">
             </a>
         </div>
 
@@ -184,16 +181,7 @@
                     </a>
                 </div>
 
-                <!-- Info Box -->
-                <div class="bg-[#0077B5]/10 border border-[#0077B5]/30 rounded-lg p-3 mt-4">
-                    <div class="flex items-start gap-2 text-xs text-[#005582]">
-                        <i class="fas fa-info-circle text-[#0077B5] mt-0.5"></i>
-                        <div>
-                            <p class="font-medium mb-1">Login Otomatis</p>
-                            <p>Sistem akan otomatis mendeteksi apakah Anda admin atau klien berdasarkan email Anda.</p>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Submit Button -->
                 <button 
@@ -243,7 +231,7 @@
 
         <!-- Footer -->
         <p class="text-center text-gray-500 text-xs mt-8">
-            © {{ date('Y') }} BizMark.ID - Solusi Manajemen Perizinan Terpercaya
+            © {{ date('Y') }} BizMark.ID - Sistem Perijinan Terpadu
         </p>
     </div>
     

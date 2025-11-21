@@ -13,8 +13,9 @@
     
     <style>
         body {
-            background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
-        }
+            background: #f0eeeeff;
+            box-shadow: 0 2px 8px rgba(10, 102, 194, 0.3);
+            }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -22,9 +23,10 @@
         <!-- Logo -->
         <div class="text-center mb-8">
             <a href="{{ route('landing') }}" class="inline-block">
-                <h1 class="text-4xl font-bold text-white">Bizmark<span class="text-yellow-300">.id</span></h1>
-            </a>
-            <p class="text-white/80 mt-2">Daftar Portal Klien</p>
+                <img src="{{ asset('images/logo-blue.png') }}" 
+                     alt="BizMark Indonesia" 
+                     class="transition-transform group-hover:scale-105">
+             </a>
         </div>
 
         <!-- Registration Card -->
@@ -208,10 +210,10 @@
 
         <!-- Benefits -->
         <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-6">
-            <h3 class="text-white font-semibold mb-3 flex items-center">
+            <h3 class="text-blue font-semibold mb-3 flex items-center">
                 <i class="fas fa-star mr-2"></i>Keuntungan Portal Klien
             </h3>
-            <ul class="text-white/80 text-sm space-y-2">
+            <ul class="text-blue/80 text-sm space-y-2">
                 <li class="flex items-start">
                     <i class="fas fa-check-circle mt-0.5 mr-2 flex-shrink-0"></i>
                     <span>Monitor progress proyek real-time 24/7</span>
