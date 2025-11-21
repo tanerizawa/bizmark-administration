@@ -165,8 +165,8 @@
     </form>
 </div>
 
-<!-- CKEditor 5 Superbuild (includes all plugins) -->
-<script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/super-build/ckeditor.js"></script>
+<!-- CKEditor 5 Custom Build via CDN -->
+<script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
 <style>
     /* CKEditor Dark Theme Customization */
     .ckeditor-wrapper .ck-editor__editable {
@@ -281,92 +281,40 @@
         };
     }
 
-    // Initialize CKEditor with Superbuild
+    // Initialize CKEditor Classic (simple, stable build)
     let editorInstance;
-    CKEDITOR.ClassicEditor
+    ClassicEditor
         .create(document.querySelector('#content'), {
             extraPlugins: [MyCustomUploadAdapterPlugin],
-            toolbar: {
-                items: [
-                    'heading', '|',
-                    'bold', 'italic', 'underline', 'strikethrough', '|',
-                    'fontSize', 'fontColor', 'fontBackgroundColor', '|',
-                    'link', 'uploadImage', 'blockQuote', 'insertTable', '|',
-                    'alignment', '|',
-                    'bulletedList', 'numberedList', 'outdent', 'indent', '|',
-                    'code', 'codeBlock', '|',
-                    'horizontalLine', '|',
-                    'undo', 'redo', '|',
-                    'sourceEditing'
-                ],
-                shouldNotGroupWhenFull: true
-            },
-            heading: {
-                options: [
-                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-                    { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
-                ]
-            },
-            fontSize: {
-                options: [
-                    'tiny', 'small', 'default', 'big', 'huge'
-                ]
-            },
+            toolbar: [
+                'heading', '|',
+                'bold', 'italic', '|',
+                'link', 'uploadImage', 'blockQuote', 'insertTable', '|',
+                'bulletedList', 'numberedList', '|',
+                'undo', 'redo'
+            ],
             image: {
                 toolbar: [
-                    'imageStyle:alignLeft',
-                    'imageStyle:alignCenter',
-                    'imageStyle:alignRight',
-                    '|',
-                    'imageStyle:full',
-                    'imageStyle:side',
-                    '|',
-                    'imageTextAlternative',
-                    'linkImage'
-                ],
-                styles: [
-                    'full',
-                    'side',
-                    'alignLeft',
-                    'alignCenter',
-                    'alignRight'
+                    'imageTextAlternative', 'linkImage'
                 ]
             },
             table: {
                 contentToolbar: [
-                    'tableColumn', 'tableRow', 'mergeTableCells',
-                    'tableProperties', 'tableCellProperties'
-                ]
-            },
-            codeBlock: {
-                languages: [
-                    { language: 'php', label: 'PHP' },
-                    { language: 'javascript', label: 'JavaScript' },
-                    { language: 'html', label: 'HTML' },
-                    { language: 'css', label: 'CSS' },
-                    { language: 'python', label: 'Python' },
-                    { language: 'json', label: 'JSON' }
+                    'tableColumn', 'tableRow', 'mergeTableCells'
                 ]
             },
             link: {
-                decorators: {
-                    openInNewTab: {
-                        mode: 'manual',
-                        label: 'Open in a new tab',
-                        attributes: {
-                            target: '_blank',
-                            rel: 'noopener noreferrer'
-                        }
-                    }
-                }
+                addTargetToExternalLinks: true
             }
         })
         .then(editor => {
             editorInstance = editor;
             console.log('CKEditor initialized successfully');
+            
+            // Sync editor content back to textarea on form submit
+            document.querySelector('form').addEventListener('submit', function(e) {
+                document.querySelector('#content').value = editorInstance.getData();
+            });
         })
         .catch(error => {
             console.error('CKEditor initialization error:', error);
