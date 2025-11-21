@@ -36,6 +36,14 @@
                 <i class="fas fa-briefcase w-6 inline-block" aria-hidden="true"></i>
                 <span>Layanan</span>
             </a>
+            <a href="{{ route('landing.service-inquiry.create') }}" 
+               class="text-white hover:text-blue-200 transition px-4 py-3 rounded-lg hover:bg-white/10 relative" 
+               onclick="toggleMobileMenu()"
+               aria-label="Free AI permit analysis">
+                <i class="fas fa-robot w-6 inline-block" aria-hidden="true"></i>
+                <span>Analisis AI</span>
+                <span class="ml-2 px-2 py-0.5 bg-yellow-400 text-[#0077B5] text-[10px] font-bold rounded-full">GRATIS</span>
+            </a>
             <a href="{{ $isLandingPage ? '#process' : $landingUrl . '#process' }}" 
                class="text-white hover:text-blue-200 transition px-4 py-3 rounded-lg hover:bg-white/10" 
                onclick="toggleMobileMenu()"
