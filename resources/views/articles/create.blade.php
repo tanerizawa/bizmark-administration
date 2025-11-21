@@ -165,8 +165,8 @@
     </form>
 </div>
 
-<!-- CKEditor 5 -->
-<script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+<!-- CKEditor 5 Superbuild (includes all plugins) -->
+<script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/super-build/ckeditor.js"></script>
 <style>
     /* CKEditor Dark Theme Customization */
     .ckeditor-wrapper .ck-editor__editable {
@@ -281,9 +281,9 @@
         };
     }
 
-    // Initialize CKEditor
+    // Initialize CKEditor with Superbuild
     let editorInstance;
-    ClassicEditor
+    CKEDITOR.ClassicEditor
         .create(document.querySelector('#content'), {
             extraPlugins: [MyCustomUploadAdapterPlugin],
             toolbar: {
