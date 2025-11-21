@@ -78,7 +78,7 @@
                                         </p>
 
                                         <div class="mt-auto">
-                                            <a href="{{ route('articles.show', $article->slug) }}" class="link-primary inline-flex items-center gap-2">
+                                            <a href="{{ route('blog.article', $article->slug) }}" class="link-primary inline-flex items-center gap-2">
                                                 {{ __('Baca Selengkapnya') }}
                                                 <i class="fas fa-arrow-right text-sm"></i>
                                             </a>
