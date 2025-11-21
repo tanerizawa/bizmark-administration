@@ -41,8 +41,8 @@
             <div class="flex items-start gap-3 text-sm">
                 <div class="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
                 <div class="flex-1">
-                    <p class="text-gray-700 font-medium">Konsultasi Gratis & Responsif</p>
-                    <p class="text-gray-500 text-xs">Tim kami siap membantu kebutuhan perizinan bisnis Anda</p>
+                    <p class="text-gray-700 font-medium">Portal Digital 24/7</p>
+                    <p class="text-gray-500 text-xs">Monitoring perizinan kapanpun dibutuhkan</p>
                 </div>
             </div>
         </div>

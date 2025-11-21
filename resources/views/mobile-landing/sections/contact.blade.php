@@ -14,36 +14,45 @@
             <!-- Headline -->
             <div class="text-center mb-12 fade-in-up">
                 <h2 class="headline text-5xl text-white mb-4 leading-tight">
-                    Mari Wujudkan <br>
-                    <span class="text-yellow-400">Bisnis Legal</span> Anda
+                    Mulai Kelola <br>
+                    <span class="text-yellow-400">Perizinan Anda</span>
                 </h2>
                 <p class="text-lg text-white/90 max-w-xl mx-auto">
-                    Konsultasi gratis untuk menentukan perizinan yang Anda butuhkan. Seluruh pesan singkat dan panggilan sementara dialihkan ke WhatsApp Bizmark.ID.
+                    Daftar sekarang untuk akses portal digital dan monitoring real-time.
                 </p>
             </div>
             
-            <!-- Contact Cards Grid -->
+            <!-- Contact Cards Grid - PLATFORM FIRST -->
             <div class="grid grid-cols-1 gap-6 mb-12 fade-in-up">
                 
-                <!-- WhatsApp Card (Primary) -->
-                <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20perizinan" 
+                <!-- Portal Registration (Primary) -->
+                <a href="{{ route('register') }}" 
                    class="touchable bg-white rounded-2xl p-6 hover:scale-105 transition-transform shadow-xl">
-                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
-                        <i class="fab fa-whatsapp text-3xl text-green-600"></i>
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-rocket text-3xl text-blue-600"></i>
                     </div>
-                    <h3 class="font-bold text-lg text-center text-gray-900 mb-2">WhatsApp</h3>
-                    <p class="text-sm text-gray-600 text-center mb-3">Chat & panggilan suara resmi Bizmark.ID</p>
+                    <h3 class="font-bold text-lg text-center text-gray-900 mb-2">Daftar Portal</h3>
+                    <p class="text-sm text-gray-600 text-center mb-3">Akses platform digital untuk monitoring perizinan</p>
                     <div class="text-center">
-                        <span class="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                            Aktif Setiap Hari
+                        <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                            Gratis • 24/7
                         </span>
                     </div>
-                    <p class="text-center text-sm font-mono text-gray-700 mt-3">
-                        +62 838-7960-2855
-                    </p>
-                    <p class="text-center text-xs text-gray-500 mt-2">
-                        Gunakan nomor ini untuk pesan singkat dan panggilan cepat.
-                    </p>
+                </a>
+                
+                <!-- WhatsApp Contact (Secondary - Hidden Number) -->
+                <a href="{{ $metrics['contact']['whatsapp_link'] ?? 'https://wa.me/6283879602855' }}?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20perizinan" 
+                   class="touchable bg-white/10 backdrop-blur-md border-2 border-white/30 rounded-2xl p-6 hover:bg-white/20 transition-all">
+                    <div class="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fab fa-whatsapp text-3xl text-white"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-center text-white mb-2">Chat via WhatsApp</h3>
+                    <p class="text-sm text-white/90 text-center mb-3">Untuk konsultasi awal</p>
+                    <div class="text-center">
+                        <span class="text-xs font-semibold text-white bg-white/20 px-3 py-1 rounded-full">
+                            Klik untuk chat
+                        </span>
+                    </div>
                 </a>
                 
             </div>

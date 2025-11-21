@@ -120,33 +120,33 @@
         <div class="bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 rounded-3xl p-8 border-2 border-gray-100">
             <div class="mb-6">
                 <div class="flex items-center justify-center gap-2 mb-4">
-                    <i class="fas fa-users text-3xl text-blue-600"></i>
+                    <i class="fas fa-rocket text-3xl text-blue-600"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                    Bergabung dengan 500+ Klien Puas
+                    Mulai Kelola Perizinan Anda
                 </h3>
                 <p class="text-gray-600 text-sm max-w-md mx-auto">
-                    Dapatkan pengalaman mudah dan cepat seperti mereka dalam mengurus izin usaha Anda
+                    Akses portal digital untuk monitoring dan manajemen perizinan secara real-time
                 </p>
             </div>
             
             <div class="flex flex-col gap-3 justify-center">
-                <a href="{{ route('login') }}" 
+                <a href="{{ route('register') }}" 
                    class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#0077B5] to-[#005582] text-white font-bold px-8 py-4 rounded-full shadow-xl hover:shadow-2xl active:scale-95 transition-all">
-                    <i class="fas fa-sign-in-alt text-xl"></i>
-                    <span>Daftar / Masuk Portal</span>
+                    <i class="fas fa-rocket text-xl"></i>
+                    <span>Daftar Portal Gratis</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
             
             <div class="mt-6 flex items-center justify-center gap-4 text-gray-600 text-xs">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-building text-blue-500"></i>
-                    <span>{{ $metrics['projects']['completed'] }} Proyek Selesai</span>
+                    <i class="fas fa-clock text-blue-500"></i>
+                    <span>Proses {{ $metrics['performance']['average_days_min'] }}-{{ $metrics['performance']['average_days_max'] }} Hari</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-map-marked-alt text-blue-500"></i>
-                    <span>{{ $metrics['coverage']['provinces'] }} Provinsi</span>
+                    <i class="fas fa-desktop text-blue-500"></i>
+                    <span>Portal 24/7</span>
                 </div>
             </div>
         </div>

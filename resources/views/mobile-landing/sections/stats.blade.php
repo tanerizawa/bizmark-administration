@@ -12,7 +12,7 @@
         <div class="w-16 h-1 bg-yellow-500 mx-auto"></div>
     </div>
     
-    <!-- Stats Grid -->
+    <!-- Stats Grid - FOKUS KAPABILITAS PLATFORM -->
     <div class="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
         <!-- Stat Card 1 -->
         <div class="magazine-card bg-white p-4">
@@ -29,12 +29,12 @@
         <!-- Stat Card 2 -->
         <div class="magazine-card bg-white p-4">
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-check-circle text-2xl text-green-600"></i>
+                <i class="fas fa-industry text-2xl text-green-600"></i>
             </div>
-            <div class="text-4xl font-bold text-green-600 mb-1">{{ $metrics['projects']['completed'] }}</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">Project Selesai</div>
+            <div class="text-4xl font-bold text-green-600 mb-1">{{ $metrics['clients']['industries'] }}+</div>
+            <div class="text-sm text-gray-600 font-medium mb-2">Sektor Industri</div>
             <div class="text-xs text-gray-500">
-                Di {{ $metrics['coverage']['provinces'] }} provinsi
+                Manufaktur, properti, F&B, dan lainnya
             </div>
         </div>
         
@@ -71,10 +71,10 @@
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
                 <i class="fas fa-desktop text-2xl text-blue-600"></i>
             </div>
-            <div class="text-base font-bold text-blue-600 mb-1">Portal Digital</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">Monitoring Real-Time</div>
+            <div class="text-base font-bold text-blue-600 mb-1">{{ $metrics['display']['platform_uptime'] }}</div>
+            <div class="text-sm text-gray-600 font-medium mb-2">Portal Aktif</div>
             <div class="text-xs text-gray-500">
-                Pantau progress 24/7
+                Monitoring real-time kapanpun
             </div>
         </div>
     </div>
