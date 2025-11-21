@@ -323,6 +323,14 @@
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(updateScreenWidth, 1000); // Wait 1 second after resize stops
         });
+        
+        // Suppress Cloudflare Insights errors (optional analytics)
+        window.addEventListener('error', function(e) {
+            if (e.filename && e.filename.includes('cloudflareinsights.com')) {
+                e.preventDefault();
+                console.log('Cloudflare Insights blocked or unavailable (optional analytics)');
+            }
+        }, true);
     </script>
     
     @stack('scripts')
