@@ -20,10 +20,6 @@
         <div class="hidden lg:flex items-center gap-6 text-xs font-semibold uppercase tracking-[0.35em] text-blue-100" role="menubar">
             <a href="{{ $isLandingPage ? '#home' : $landingUrl . '#home' }}" class="nav-link-white" role="menuitem">Beranda</a>
             <a href="{{ $isLandingPage ? '#services' : $landingUrl . '#services' }}" class="nav-link-white" role="menuitem">Layanan</a>
-            <a href="{{ route('landing.service-inquiry.create') }}" class="nav-link-white relative group" role="menuitem">
-                Analisis AI
-                <span class="absolute -top-1 -right-8 px-2 py-0.5 bg-yellow-400 text-[#0077B5] text-[10px] font-bold rounded-full shadow-lg">GRATIS</span>
-            </a>
             <a href="{{ $isLandingPage ? '#process' : $landingUrl . '#process' }}" class="nav-link-white" role="menuitem">Proses</a>
             <a href="{{ route('blog.index') }}" class="nav-link-white" role="menuitem">Artikel</a>
             <a href="{{ route('career.index') }}" class="nav-link-white" role="menuitem">Karir</a>
