@@ -40,11 +40,11 @@ class SecurityHeaders
             
             $csp = [
                 "default-src 'self'",
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net" . $viteDevServer,
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com" . $viteDevServer,
                 "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net" . $viteDevServer,
                 "img-src 'self' data: https: blob:",
                 "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
-                "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://wa.me https://cdn.jsdelivr.net" . $viteDevServer,
+                "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://wa.me https://cdn.jsdelivr.net https://cloudflareinsights.com" . $viteDevServer,
                 "frame-src 'self' https://www.youtube.com",
                 "object-src 'none'",
                 "base-uri 'self'",
