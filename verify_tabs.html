@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tab Test</title>
+    <style>
+        .tab-pane { animation: fadeIn 0.2s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <h1>Testing Inline Styles</h1>
+    
+    <div id="content-jobs" style="display: block;">
+        <p>Jobs content should be VISIBLE</p>
+    </div>
+    
+    <div id="content-applications" style="display: none;">
+        <p>Applications content should be HIDDEN</p>
+    </div>
+    
+    <script>
+        console.log('Jobs visible?', document.getElementById('content-jobs').offsetHeight > 0);
+        console.log('Apps visible?', document.getElementById('content-applications').offsetHeight > 0);
+    </script>
+</body>
+</html>

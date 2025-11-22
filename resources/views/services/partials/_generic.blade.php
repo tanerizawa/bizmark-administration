@@ -12,11 +12,11 @@
     </p>
     
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="https://wa.me/6281382605030?text=Halo,%20saya%20ingin%20tahu%20lebih%20lanjut%20tentang%20{{ urlencode($service['title']) }}" target="_blank" class="btn btn-primary px-8 py-3">
+        <a href="https://wa.me/6283879602855?text=Halo,%20saya%20ingin%20tahu%20lebih%20lanjut%20tentang%20{{ urlencode($service['title']) }}" target="_blank" class="btn btn-primary px-8 py-3">
             <i class="fab fa-whatsapp mr-2"></i>
             Konsultasi via WhatsApp
         </a>
-        <a href="tel:+6281382605030" class="btn bg-white border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary px-8 py-3">
+        <a href="tel:+6283879602855" class="btn bg-white border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary px-8 py-3">
             <i class="fas fa-phone mr-2"></i>
             Telepon Kami
         </a>
@@ -57,21 +57,21 @@
 
 <!-- Quick Contact -->
 <div class="grid md:grid-cols-3 gap-4" data-aos="fade-up">
-    <a href="https://wa.me/6281382605030" target="_blank" class="card hover:shadow-lg transition text-center group">
+    <a href="https://wa.me/6283879602855" target="_blank" class="card hover:shadow-lg transition text-center group">
         <i class="fab fa-whatsapp text-4xl text-green-600 mb-3 group-hover:scale-110 transition-transform"></i>
         <h4 class="font-bold text-gray-900 mb-1">WhatsApp</h4>
         <p class="text-sm text-gray-600">Chat langsung dengan tim</p>
     </a>
     
-    <a href="tel:+6281382605030" class="card hover:shadow-lg transition text-center group">
+    <a href="tel:+6283879602855" class="card hover:shadow-lg transition text-center group">
         <i class="fas fa-phone text-4xl text-blue-600 mb-3 group-hover:scale-110 transition-transform"></i>
         <h4 class="font-bold text-gray-900 mb-1">Telepon</h4>
         <p class="text-sm text-gray-600">+62 813-8260-5030</p>
     </a>
     
-    <a href="mailto:headoffice.cpm@gmail.com" class="card hover:shadow-lg transition text-center group">
+    <a href="mailto:cs@bizmark.id" class="card hover:shadow-lg transition text-center group">
         <i class="fas fa-envelope text-4xl text-red-600 mb-3 group-hover:scale-110 transition-transform"></i>
         <h4 class="font-bold text-gray-900 mb-1">Email</h4>
-        <p class="text-sm text-gray-600">headoffice.cpm@gmail.com</p>
+        <p class="text-sm text-gray-600">cs@bizmark.id</p>
     </a>
 </div>

@@ -10,9 +10,8 @@
     $topSectors = $bySector->sortByDesc('count')->take(5);
 @endphp
 
-<div class="max-w-7xl mx-auto space-y-10">
     {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
@@ -29,8 +28,8 @@
                     </p>
                 </div>
                 <div class="space-y-2.5 text-sm" style="color: rgba(235,235,245,0.65);">
-                    <p><i class="fas fa-database mr-2"></i>Last sync: {{ now()->format('d M Y, H:i') }}</p>
-                    <p><i class="fas fa-shield-alt mr-2"></i>Admin Access Only</p>
+                    <p><i class="fas fa-database mr-2"></i>Sinkronisasi terakhir: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
+                    <p><i class="fas fa-shield-alt mr-2"></i>Akses Khusus Admin</p>
                     <div class="flex gap-3 flex-wrap">
                         <button onclick="showImportModal()" class="btn-primary-sm">
                             <i class="fas fa-upload mr-2"></i>Import CSV
@@ -54,14 +53,14 @@
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sektor A-U</p>
                 </div>
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(191,90,242,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Top Sektor</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">{{ $topSectors->first()->sector ?? 'N/A' }}</h2>
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Sektor Teratas</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">{{ $topSectors->first()->sector ?? 'T/A' }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $topSectors->first()->count ?? 0 }} klasifikasi</p>
                 </div>
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,149,0,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Data Ready</p>
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Status Data</p>
                     <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">{{ $totalKbli > 0 ? '✓' : '✗' }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $totalKbli > 0 ? 'Siap digunakan' : 'Import data' }}</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $totalKbli > 0 ? 'Siap digunakan' : 'Perlu impor' }}</p>
                 </div>
             </div>
         </div>
@@ -69,27 +68,27 @@
 
     {{-- Alerts --}}
     @if(session('success'))
-        <div class="alert alert-success flex items-center gap-3">
+        <div class="alert alert-success flex items-center gap-3 mb-5">
             <i class="fas fa-check-circle text-lg"></i>
             <span>{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger flex items-center gap-3">
+        <div class="alert alert-danger flex items-center gap-3 mb-5">
             <i class="fas fa-exclamation-circle text-lg"></i>
             <span>{{ session('error') }}</span>
         </div>
     @endif
 
     {{-- Quick Actions & Stats --}}
-    <section class="space-y-3 md:space-y-4">
+    <section class="space-y-3 md:space-y-4 mb-5">
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Data Management</p>
-                <h2 class="text-2xl font-semibold text-white">Import & Export Tools</h2>
+                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Pengelolaan Data</p>
+                <h2 class="text-2xl font-semibold text-white">Alat Impor dan Ekspor</h2>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Kelola database KBLI dengan fitur import CSV, export data, dan template standar.
+                    Kelola basis data KBLI dengan fitur impor CSV, ekspor data, dan templat standar.
                 </p>
             </div>
         </div>
@@ -100,14 +99,14 @@
                     <div class="w-12 h-12 rounded-apple flex items-center justify-center" style="background: rgba(10,132,255,0.15);">
                         <i class="fas fa-upload text-xl" style="color: rgba(10,132,255,0.9);"></i>
                     </div>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Primary</span>
+                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Utama</span>
                 </div>
-                <h3 class="text-lg font-semibold text-white">Import Data KBLI</h3>
+                <h3 class="text-lg font-semibold text-white">Impor Data KBLI</h3>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Upload file CSV dengan format standar untuk menambah atau memperbarui data KBLI. Mendukung update massal.
+                    Unggah berkas CSV dengan format standar untuk menambah atau memperbarui data KBLI. Mendukung pembaruan massal.
                 </p>
                 <button onclick="showImportModal()" class="w-full btn-primary-sm">
-                    <i class="fas fa-upload mr-2"></i>Import CSV
+                    <i class="fas fa-upload mr-2"></i>Impor CSV
                 </button>
             </div>
 
@@ -116,14 +115,14 @@
                     <div class="w-12 h-12 rounded-apple flex items-center justify-center" style="background: rgba(52,199,89,0.15);">
                         <i class="fas fa-file-csv text-xl" style="color: rgba(52,199,89,0.9);"></i>
                     </div>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(52,199,89,0.18); color: rgba(52,199,89,0.9);">Export</span>
+                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(52,199,89,0.18); color: rgba(52,199,89,0.9);">Ekspor</span>
                 </div>
-                <h3 class="text-lg font-semibold text-white">Download Template</h3>
+                <h3 class="text-lg font-semibold text-white">Unduh Templat</h3>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Download template CSV dengan format dan contoh data yang sudah sesuai standar untuk memudahkan import.
+                    Unduh templat CSV dengan format dan contoh data yang sudah sesuai standar untuk memudahkan impor.
                 </p>
                 <a href="{{ route('admin.settings.kbli.template') }}" class="w-full btn-secondary-sm block text-center">
-                    <i class="fas fa-download mr-2"></i>Download Template
+                    <i class="fas fa-download mr-2"></i>Unduh Templat
                 </a>
             </div>
 
@@ -146,7 +145,7 @@
     </section>
 
     {{-- Sector Distribution --}}
-    <section class="card-elevated rounded-apple-xl p-6 space-y-4">
+    <section class="card-elevated rounded-apple-xl p-6 space-y-4 mb-5">
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Distribusi</p>
@@ -200,7 +199,7 @@
         @else
             <div class="text-center py-8">
                 <i class="fas fa-database text-4xl mb-3" style="color: rgba(235,235,245,0.3);"></i>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada data KBLI. Silakan import data CSV terlebih dahulu.</p>
+                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada data KBLI. Silakan impor berkas CSV terlebih dahulu.</p>
             </div>
         @endif
     </section>
@@ -210,12 +209,12 @@
     <section class="card-elevated rounded-apple-xl p-6 space-y-4">
         <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
-                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Preview</p>
-                <h2 class="text-xl font-semibold text-white">Sample Data KBLI</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Menampilkan beberapa klasifikasi dari database untuk referensi.</p>
+                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Pratinjau</p>
+                <h2 class="text-xl font-semibold text-white">Contoh Data KBLI</h2>
+                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Menampilkan beberapa klasifikasi dari basis data untuk referensi.</p>
             </div>
             <a href="{{ route('admin.settings.kbli.export') }}" class="btn-secondary-sm">
-                <i class="fas fa-download mr-2"></i>Export Semua
+                <i class="fas fa-download mr-2"></i>Ekspor Semua
             </a>
         </div>
 
@@ -248,18 +247,17 @@
                 </tbody>
             </table>
         </div>
-        <p class="text-xs text-center" style="color: rgba(235,235,245,0.5);">Menampilkan 10 dari {{ number_format($totalKbli) }} klasifikasi. Export untuk melihat semua data.</p>
+        <p class="text-xs text-center" style="color: rgba(235,235,245,0.5);">Menampilkan 10 dari {{ number_format($totalKbli) }} klasifikasi. Ekspor untuk melihat semua data.</p>
     </section>
     @endif
-</div>
 
 {{-- Import Modal --}}
 <div id="importModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="card-elevated rounded-apple-xl max-w-2xl w-full p-6 space-y-5" style="background: var(--dark-bg-elevated);">
         <div class="flex items-center justify-between">
             <div>
-                <h3 class="text-xl font-semibold text-white">Import Data KBLI</h3>
-                <p class="text-sm mt-1" style="color: rgba(235,235,245,0.65);">Upload file CSV dengan format standar</p>
+                <h3 class="text-xl font-semibold text-white">Impor Data KBLI</h3>
+                <p class="text-sm mt-1" style="color: rgba(235,235,245,0.65);">Unggah berkas CSV dengan format standar</p>
             </div>
             <button onclick="closeImportModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-apple">
                 <i class="fas fa-times" style="color: rgba(235,235,245,0.7);"></i>
@@ -299,7 +297,7 @@
 
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit" class="btn-primary flex-1">
-                    <i class="fas fa-upload mr-2"></i>Import Data
+                    <i class="fas fa-upload mr-2"></i>Impor Data
                 </button>
                 <button type="button" onclick="closeImportModal()" class="btn-secondary-sm px-6">
                     Batal
@@ -314,7 +312,7 @@
 62020,Aktivitas Konsultasi Komputer,J,Konsultan IT</pre>
             <p class="text-xs mt-2" style="color: rgba(235,235,245,0.6);">
                 <i class="fas fa-info-circle mr-1"></i>
-                Download template untuk panduan lengkap format CSV.
+                Unduh templat untuk panduan lengkap format CSV.
             </p>
         </div>
     </div>

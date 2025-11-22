@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow">
     <meta name="description" content="Dapatkan analisis AI gratis untuk kebutuhan perizinan usaha Anda. Cepat, akurat, dan tanpa biaya.">
-    <title>Analisis Perizinan Gratis dengan AI | Bizmark.ID</title>
+    <title>Analisis Perizinan | Bizmark.ID</title>
     
     <!-- LinkedIn Blue Color Palette -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -90,11 +90,11 @@
                 
                 <!-- Title -->
                 <h1 class="text-3xl sm:text-4xl font-bold text-linkedin-900 mb-3">
-                    🤖 Analisis Perizinan <span class="text-linkedin-500">Gratis</span>
+                    Analisis Perizinan
                 </h1>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Dapatkan rekomendasi izin usaha yang Anda butuhkan dengan teknologi AI dalam <strong>30 detik</strong>. 
-                    Gratis, cepat, dan akurat!
+                    Dapatkan rekomendasi izin usaha yang Anda butuhkan dari database kami dalam <strong>30 detik</strong>. 
+                    Gratis, cepat, dan handal!
                 </p>
                 
                 <!-- Progress Bar -->

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tab Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 p-8">
+    <div class="mb-4">
+        <button onclick="switchTab('tab1')" class="px-4 py-2 bg-blue-500 text-white rounded">Tab 1</button>
+        <button onclick="switchTab('tab2')" class="px-4 py-2 bg-blue-500 text-white rounded">Tab 2</button>
+    </div>
+    
+    <div id="content-tab1" class="tab-content bg-white p-4 rounded">
+        <h2>Tab 1 Content</h2>
+        <p>This should be visible by default</p>
+        <table class="w-full">
+            <tr><td>Data 1</td></tr>
+            <tr><td>Data 2</td></tr>
+        </table>
+    </div>
+    
+    <div id="content-tab2" class="tab-content hidden bg-white p-4 rounded">
+        <h2>Tab 2 Content</h2>
+        <p>This is hidden initially</p>
+    </div>
+    
+    <script>
+    function switchTab(tabName) {
+        console.log('Switching to:', tabName);
+        document.querySelectorAll('.tab-content').forEach(el => {
+            el.classList.add('hidden');
+        });
+        document.getElementById('content-' + tabName).classList.remove('hidden');
+    }
+    </script>
+</body>
+</html>

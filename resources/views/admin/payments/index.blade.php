@@ -26,38 +26,38 @@
     ];
 @endphp
 
-<div class="max-w-7xl mx-auto space-y-10">
+@section('content')
     {{-- Hero --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div class="space-y-3 max-w-3xl">
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Payment Ops</p>
-                <h1 class="text-2xl md:text-3xl font-bold text-white">Verifikasi pembayaran manual Bizmark.id</h1>
+                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Operasional Pembayaran</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-white">Verifikasi Pembayaran Manual</h1>
                 <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
-                    Pantau antrean pembayaran manual, cek bukti transfer, dan verifikasi hanya dengan satu layar ala mission control.
+                    Pantau antrean pembayaran manual, tinjau bukti transfer, dan verifikasi transaksi dalam satu tampilan terpadu.
                 </p>
                 <div class="text-xs flex flex-wrap gap-3" style="color: rgba(235,235,245,0.6);">
-                    <span><i class="fas fa-database mr-2"></i>{{ $queueCount }} transaksi menunggu tindakan</span>
+                    <span><i class="fas fa-database mr-2"></i>{{ $queueCount }} transaksi menunggu</span>
                     <span><i class="fas fa-hourglass-half mr-2"></i>Antrean tertua {{ $oldestAge }}</span>
                 </div>
             </div>
             <div class="space-y-3">
                 <a href="{{ route('admin.permit-applications.index') }}" class="btn-secondary-sm">
-                    <i class="fas fa-list-check mr-2"></i>Lihat aplikasi terkait
+                    <i class="fas fa-list-check mr-2"></i>Lihat Permohonan Terkait
                 </a>
                 <a href="{{ route('admin.payments.index') }}" class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
-                    Panduan SOP verifikasi →
+                    Panduan verifikasi →
                 </a>
             </div>
         </div>
     </section>
 
     {{-- Stats --}}
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Menunggu Review</p>
             <p class="text-3xl font-bold" style="color:#FFFFFF;">{{ $queueCount }}</p>
@@ -81,7 +81,7 @@
     </section>
 
     {{-- Filter & search --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4 mb-5">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex flex-wrap gap-2">
                 @foreach($statusFilters as $filter)
@@ -94,8 +94,8 @@
                 @endforeach
             </div>
             <div class="w-full md:w-72">
-                <label for="paymentSearch" class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari transaksi</label>
-                <input type="text" id="paymentSearch" placeholder="Nomor pembayaran, client, aplikasi..." class="w-full px-4 py-2.5 rounded-apple text-sm text-white placeholder-gray-500"
+                <label for="paymentSearch" class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari Transaksi</label>
+                <input type="text" id="paymentSearch" placeholder="Nomor pembayaran, klien, permohonan..." class="w-full px-4 py-2.5 rounded-apple text-sm text-white placeholder-gray-500"
                        style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
             </div>
         </div>
@@ -108,11 +108,11 @@
                 <table class="min-w-full">
                     <thead style="background: rgba(28,28,30,0.45);">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Payment</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Client</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aplikasi</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Amount</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Channel</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Pembayaran</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Klien</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Permohonan</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Jumlah</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Metode</th>
                             <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
                             <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
                         </tr>
@@ -148,10 +148,10 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <p class="text-sm font-semibold" style="color:#FFFFFF;">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
-                                    <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $payment->payment_type === 'down_payment' ? 'Down payment' : 'Pelunasan' }}</p>
+                                    <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $payment->payment_type === 'down_payment' ? 'Uang Muka' : 'Pelunasan' }}</p>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ strtoupper($payment->bank_name ?? 'Manual Transfer') }}</p>
+                                    <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ strtoupper($payment->bank_name ?? 'Transfer Manual') }}</p>
                                     <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $payment->gateway_provider ?? 'Manual' }}</p>
                                 </td>
                                 <td class="px-6 py-4">
@@ -183,7 +183,6 @@
             </div>
         @endif
     </section>
-</div>
 
 <style>
 .status-chip {

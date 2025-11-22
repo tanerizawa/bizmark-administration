@@ -50,16 +50,20 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: var(--dark-bg);
             color: var(--dark-text-primary);
-            min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow-x: hidden !important;
+            overflow: hidden;
         }
         
 
@@ -480,113 +484,193 @@
         }
 
         .app-sidebar {
-            background-color: var(--dark-bg-secondary) !important;
-            border-right: 1px solid var(--dark-separator) !important;
-            height: 100vh !important;
-            position: sticky !important;
-            top: 0 !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            z-index: 10 !important;
-            grid-column: 1 !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 256px;
+            height: 100vh;
+            background-color: var(--dark-bg-secondary);
+            border-right: 1px solid var(--dark-separator);
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
         }
 
-        .app-sidebar .sidebar-inner {
-            height: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
+        .sidebar-header {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--dark-separator);
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 1rem;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: var(--dark-separator);
+            border-radius: 10px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-text-tertiary);
+        }
+
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--dark-separator);
+            flex-shrink: 0;
+        }
+
+        .app-shell {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--dark-bg);
         }
 
         .app-main {
-            display: flex !important;
-            flex-direction: column !important;
-            min-width: 0 !important;
-            width: 100% !important;
-            min-height: 100vh !important;
-            background-color: var(--dark-bg) !important;
-            grid-column: 2 !important;
+            position: absolute;
+            left: 256px;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--dark-bg);
+            overflow: hidden;
         }
 
         .app-topbar {
-            height: 4rem !important;
-            min-height: 4rem !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            padding: 0 1.5rem !important;
-            background-color: var(--dark-bg-elevated) !important;
-            border-bottom: 1px solid var(--dark-separator) !important;
-            flex-shrink: 0 !important;
+            height: 4rem;
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            background-color: var(--dark-bg-elevated);
+            border-bottom: 1px solid var(--dark-separator);
+            flex-shrink: 0;
         }
 
         .app-content {
-            flex: 1 1 auto !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
             padding: 1.5rem;
             background-color: var(--dark-bg);
+            height: 100%;
+        }
+
+        .app-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .app-content::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        .app-content::-webkit-scrollbar-thumb {
+            background: var(--dark-separator);
+            border-radius: 10px;
+        }
+
+        .app-content::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-text-tertiary);
         }
         
-        /* Content Container Fallback - Tailwind classes replacement */
-        .app-content > div[class*="max-w"],
-        .app-content > div:first-child {
-            max-width: 80rem !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+        /* Navigation Links */
+        .nav-section {
+            margin-bottom: 1.5rem;
         }
-        
-        .app-content > div[class*="space-y"] {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 2.5rem !important;
+
+        .nav-section-title {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--dark-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
         }
-        
-        /* Essential Layout Fix Only */
-        .app-content > div:first-child {
-            max-width: 80rem;
-            margin: 0 auto;
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
-        
-        /* Navigation Links Critical Fallback - Prevent Layout Breaking */
-        .app-sidebar nav > div {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 0.25rem !important;
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark-text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
         }
-        
-        .app-sidebar nav a {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            padding: 0.5rem 0.75rem !important;
-            border-radius: 10px !important;
-            font-size: 0.875rem !important;
-            font-weight: 500 !important;
-            transition: all 0.3s ease !important;
-            text-decoration: none !important;
+
+        .nav-link:hover {
+            background-color: var(--dark-bg-tertiary);
+            color: var(--dark-text-primary);
         }
-        
-        .app-sidebar nav a > div {
-            display: flex !important;
-            align-items: center !important;
+
+        .nav-link.active {
+            background-color: var(--apple-blue);
+            color: #FFFFFF;
         }
-        
-        .app-sidebar nav a i {
-            width: 1.25rem !important;
-            text-align: center !important;
+
+        .nav-link-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
-        
-        .app-sidebar nav a span {
-            margin-left: 0.75rem !important;
+
+        .nav-link i {
+            width: 1.25rem;
+            text-align: center;
+            font-size: 0.875rem;
         }
-        
-        .app-sidebar nav a span[class*="px-2"],
-        .app-sidebar nav a > span:last-child {
-            margin-left: 0 !important;
-            padding: 0.125rem 0.5rem !important;
-            font-size: 0.75rem !important;
-            font-weight: 600 !important;
-            border-radius: 9999px !important;
+
+        .nav-badge {
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+        }
+
+        .nav-link.active .nav-badge {
+            background-color: #FFFFFF;
+            color: var(--apple-blue);
+        }
+
+        .nav-link:not(.active) .nav-badge {
+            background-color: var(--dark-bg-tertiary);
+            color: var(--dark-text-secondary);
+        }
+
+        .nav-link:not(.active) .nav-badge.badge-alert {
+            background-color: #EF4444;
+            color: #FFFFFF;
+        }
+
+        .nav-link:not(.active) .nav-badge.badge-warning {
+            background-color: #F59E0B;
+            color: #FFFFFF;
         }
     </style>
     
@@ -610,346 +694,207 @@
             'permit_templates' => \App\Models\PermitTemplate::count(),
         ]);
     @endphp
-    <div class="app-shell" style="display: grid !important; grid-template-columns: 256px 1fr !important; min-height: 100vh !important; width: 100% !important; overflow: hidden !important; background-color: var(--dark-bg) !important;">
-        <!-- Sidebar -->
-        <aside class="app-sidebar" style="background-color: var(--dark-bg-secondary) !important; border-right: 1px solid var(--dark-separator) !important; height: 100% !important; position: relative !important; z-index: 10 !important;">
-            <div class="sidebar-inner" style="height: 100%; display: flex; flex-direction: column;">
-                <!-- Logo -->
-                <div style="padding: 1rem; border-bottom: 1px solid var(--dark-separator);">
-                    <h1 style="font-size: 1.25rem; font-weight: 700; color: var(--dark-text-primary);">
-                        <i class="fas fa-shield-alt" style="color: var(--apple-blue); margin-right: 0.5rem;"></i>
-                        Bizmark.ID
-                    </h1>
-                    <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin-top: 0.25rem;">Permit Management System</p>
-                </div>
+    <div class="app-shell">
+        <!-- Fixed Sidebar -->
+        <aside class="app-sidebar">
+            <!-- Logo Header -->
+            <div class="sidebar-header">
+                <h1 style="font-size: 1.25rem; font-weight: 700; color: var(--dark-text-primary); margin: 0; display: flex; align-items: center;">
+                    <i class="fas fa-shield-alt" style="color: var(--apple-blue); margin-right: 0.5rem;"></i>
+                    Bizmark.ID
+                </h1>
+                <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin: 0.25rem 0 0 0;">Admin Portal</p>
+            </div>
 
-                <!-- Navigation -->
-                <nav style="flex: 1 1 auto; padding: 1rem; overflow-y: auto;">
-                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                        <a href="{{ route('dashboard') }}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.875rem; font-weight: 500; transition: all 0.3s; {{ request()->routeIs('dashboard') ? 'background: var(--apple-blue); color: #FFFFFF;' : 'color: var(--dark-text-secondary);' }}">
-                            <div style="display: flex; align-items: center;">
-                                <i class="fas fa-home" style="width: 1.25rem;"></i>
-                                <span style="margin-left: 0.75rem;">Dashboard</span>
+            <!-- Scrollable Navigation -->
+            <nav class="sidebar-nav">
+                <!-- Main Navigation -->
+                <div class="nav-section">
+                    <div class="nav-links">
+                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-home"></i>
+                                <span>Dashboard</span>
                             </div>
                         </a>
                         
-                        <a href="{{ route('projects.index') }}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.875rem; font-weight: 500; transition: all 0.3s; {{ request()->routeIs('projects.*') ? 'background: var(--apple-blue); color: #FFFFFF;' : 'color: var(--dark-text-secondary);' }}">
-                            <div style="display: flex; align-items: center;">
-                                <i class="fas fa-project-diagram" style="width: 1.25rem;"></i>
-                                <span style="margin-left: 0.75rem;">Proyek</span>
+                        <a href="{{ route('projects.index') }}" class="nav-link {{ request()->routeIs('projects.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Proyek</span>
                             </div>
                             @if(isset($navCounts['projects']) && $navCounts['projects'] > 0)
-                                <span style="padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; {{ request()->routeIs('projects.*') ? 'background: #FFFFFF; color: var(--apple-blue);' : 'background: var(--dark-bg-tertiary); color: var(--dark-text-secondary);' }}">
-                                    {{ $navCounts['projects'] }}
-                                </span>
+                                <span class="nav-badge">{{ $navCounts['projects'] }}</span>
                             @endif
                         </a>
                         
-                        <a href="{{ route('tasks.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('tasks.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                            <div class="flex items-center">
-                                <i class="fas fa-tasks w-5"></i>
-                                <span class="ml-3">Tugas</span>
+                        <a href="{{ route('tasks.index') }}" class="nav-link {{ request()->routeIs('tasks.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-tasks"></i>
+                                <span>Tugas</span>
                             </div>
                             @if(isset($navCounts['pending_tasks']) && $navCounts['pending_tasks'] > 0)
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('tasks.*') ? 'bg-white text-apple-blue' : 'bg-apple-orange text-white' }}">
-                                    {{ $navCounts['pending_tasks'] }}
-                                </span>
+                                <span class="nav-badge badge-alert">{{ $navCounts['pending_tasks'] }}</span>
                             @endif
                         </a>
                         
-                        <a href="{{ route('documents.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('documents.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                            <div class="flex items-center">
-                                <i class="fas fa-file-alt w-5"></i>
-                                <span class="ml-3">Dokumen</span>
+                        <a href="{{ route('documents.index') }}" class="nav-link {{ request()->routeIs('documents.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Dokumen</span>
                             </div>
                             @if(isset($navCounts['documents']) && $navCounts['documents'] > 0)
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('documents.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
-                                    {{ $navCounts['documents'] }}
-                                </span>
+                                <span class="nav-badge">{{ $navCounts['documents'] }}</span>
                             @endif
                         </a>
                         
-                        <a href="{{ route('institutions.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('institutions.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                            <div class="flex items-center">
-                                <i class="fas fa-building w-5"></i>
-                                <span class="ml-3">Instansi</span>
+                        <a href="{{ route('institutions.index') }}" class="nav-link {{ request()->routeIs('institutions.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-building"></i>
+                                <span>Instansi</span>
                             </div>
                             @if(isset($navCounts['institutions']) && $navCounts['institutions'] > 0)
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('institutions.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
-                                    {{ $navCounts['institutions'] }}
-                                </span>
+                                <span class="nav-badge">{{ $navCounts['institutions'] }}</span>
                             @endif
                         </a>
                         
-                        <a href="{{ route('clients.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('clients.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                            <div class="flex items-center">
-                                <i class="fas fa-users w-5"></i>
-                                <span class="ml-3">Klien</span>
+                        <a href="{{ route('clients.index') }}" class="nav-link {{ request()->routeIs('clients.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-users"></i>
+                                <span>Klien</span>
                             </div>
                             @if(isset($navCounts['clients']) && $navCounts['clients'] > 0)
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('clients.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
-                                    {{ $navCounts['clients'] }}
-                                </span>
+                                <span class="nav-badge">{{ $navCounts['clients'] }}</span>
                             @endif
                         </a>
                         
-                        <a href="{{ route('settings.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('settings.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                            <div class="flex items-center">
-                                <i class="fas fa-cog w-5"></i>
-                                <span class="ml-3">Pengaturan</span>
+                        <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-cog"></i>
+                                <span>Pengaturan</span>
                             </div>
                         </a>
-                        
-                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
-                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Permit Management</p>
-                            
-                            <a href="{{ route('admin.permit-dashboard') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.permit-dashboard') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-chart-pie w-5"></i>
-                                    <span class="ml-3">Dashboard Permit</span>
-                                </div>
-                            </a>
-                            
-                            <a href="{{ route('admin.permit-applications.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.permit-applications.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-file-signature w-5"></i>
-                                    <span class="ml-3">Permohonan Izin</span>
-                                </div>
-                                @php
-                                    $submittedCount = \App\Models\PermitApplication::where('status', 'submitted')->count();
-                                    $underReviewCount = \App\Models\PermitApplication::where('status', 'under_review')->count();
-                                    $totalPending = $submittedCount + $underReviewCount;
-                                    
-                                    // Count unread client notes
-                                    $unreadClientNotes = \App\Models\ApplicationNote::where('author_type', 'client')
-                                        ->where('is_read', false)
-                                        ->count();
-                                @endphp
-                                @if($totalPending > 0 || $unreadClientNotes > 0)
-                                    <div class="flex items-center gap-1">
-                                        @if($totalPending > 0)
-                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.permit-applications.*') ? 'bg-white text-apple-blue' : 'bg-yellow-500 text-white' }}">
-                                                {{ $totalPending }}
-                                            </span>
-                                        @endif
-                                        @if($unreadClientNotes > 0)
-                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.permit-applications.*') ? 'bg-white text-apple-blue' : 'bg-blue-500 text-white' }}" title="Pesan baru dari klien">
-                                                <i class="fas fa-comment text-[10px]"></i> {{ $unreadClientNotes }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                @endif
-                            </a>
-                            
-                            <a href="{{ route('permit-types.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('permit-types.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-certificate w-5"></i>
-                                    <span class="ml-3">Jenis Izin</span>
-                                </div>
-                            </a>
-                            
-                            <a href="{{ route('admin.payments.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.payments.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-money-check-alt w-5"></i>
-                                    <span class="ml-3">Verifikasi Pembayaran</span>
-                                </div>
-                                @php
-                                    $pendingPayments = \App\Models\Payment::where('payment_method', 'manual')->where('status', 'processing')->count();
-                                @endphp
-                                @if($pendingPayments > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.payments.*') ? 'bg-white text-apple-blue' : 'bg-green-500 text-white' }}">
-                                        {{ $pendingPayments }}
-                                    </span>
-                                @endif
-                            </a>
-                        </div>
-                        
-                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
-                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Recruitment</p>
-                            
-                            <a href="{{ route('admin.jobs.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.jobs.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-briefcase w-5"></i>
-                                    <span class="ml-3">Lowongan Kerja</span>
-                                </div>
-                            </a>
-                            
-                            <a href="{{ route('admin.applications.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.applications.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-user-tie w-5"></i>
-                                    <span class="ml-3">Lamaran Masuk</span>
-                                </div>
-                                @php
-                                    $pendingJobApps = \App\Models\JobApplication::where('status', 'pending')->count();
-                                @endphp
-                                @if($pendingJobApps > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.applications.*') ? 'bg-white text-apple-blue' : 'bg-red-500 text-white' }}">
-                                        {{ $pendingJobApps }}
-                                    </span>
-                                @endif
-                            </a>
-                        </div>
-                        
-                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
-                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Email Management</p>
-                            
-                            <a href="{{ route('admin.inbox.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.inbox.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-inbox w-5"></i>
-                                    <span class="ml-3">Inbox</span>
-                                </div>
-                                @php
-                                    $unreadCount = \App\Models\EmailInbox::where('category', 'inbox')->where('is_read', false)->count();
-                                @endphp
-                                @if($unreadCount > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.inbox.*') ? 'bg-white text-apple-blue' : 'bg-red-500 text-white' }}">
-                                        {{ $unreadCount }}
-                                    </span>
-                                @endif
-                            </a>
-                            
-                            <a href="{{ route('admin.campaigns.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.campaigns.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-paper-plane w-5"></i>
-                                    <span class="ml-3">Campaigns</span>
-                                </div>
-                            </a>
-                            
-                            <a href="{{ route('admin.subscribers.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.subscribers.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-users w-5"></i>
-                                    <span class="ml-3">Subscribers</span>
-                                </div>
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.subscribers.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
-                                    {{ \App\Models\EmailSubscriber::where('status', 'active')->count() }}
-                                </span>
-                            </a>
-                            
-                            <a href="{{ route('admin.templates.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.templates.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-file-alt w-5"></i>
-                                    <span class="ml-3">Templates</span>
-                                </div>
-                            </a>
-                            
-                            <a href="{{ route('admin.email.settings.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.email.settings.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-cog w-5"></i>
-                                    <span class="ml-3">Email Settings</span>
-                                </div>
-                            </a>
-                            
-                            <a href="{{ route('admin.email-accounts.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.email-accounts.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-at w-5"></i>
-                                    <span class="ml-3">Email Accounts</span>
-                                </div>
-                                @php
-                                    $activeEmailAccounts = \App\Models\EmailAccount::where('is_active', true)->count();
-                                @endphp
-                                @if($activeEmailAccounts > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.email-accounts.*') ? 'bg-white text-apple-blue' : 'bg-white/20 text-white' }}">
-                                        {{ $activeEmailAccounts }}
-                                    </span>
-                                @endif
-                            </a>
-                        </div>
-                        
-                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
-                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Master Data</p>
-                            
-                            <a href="{{ route('permit-types.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('permit-types.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-certificate w-5"></i>
-                                    <span class="ml-3">Jenis Izin</span>
-                                </div>
-                                @if(isset($navCounts['permit_types']) && $navCounts['permit_types'] > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('permit-types.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
-                                        {{ $navCounts['permit_types'] }}
-                                    </span>
-                                @endif
-                            </a>
-                            
-                            <a href="{{ route('permit-templates.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('permit-templates.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-clipboard-list w-5"></i>
-                                    <span class="ml-3">Template Izin</span>
-                                </div>
-                                @if(isset($navCounts['permit_templates']) && $navCounts['permit_templates'] > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('permit-templates.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
-                                        {{ $navCounts['permit_templates'] }}
-                                    </span>
-                                @endif
-                            </a>
-                            
-                            <a href="{{ route('cash-accounts.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('cash-accounts.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-wallet w-5"></i>
-                                    <span class="ml-3">Akun Kas</span>
-                                </div>
-                            </a>
-                            
-                            <a href="{{ route('admin.settings.kbli.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('admin.settings.kbli.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-industry w-5"></i>
-                                    <span class="ml-3">Data KBLI</span>
-                                </div>
-                                @php
-                                    $kbliCount = \App\Models\Kbli::count();
-                                @endphp
-                                @if($kbliCount > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ request()->routeIs('admin.settings.kbli.*') ? 'bg-white text-apple-blue' : 'bg-dark-bg-tertiary text-dark-text-secondary' }}">
-                                        {{ $kbliCount }}
-                                    </span>
-                                @endif
-                            </a>
-                            
-                            <a href="{{ route('reconciliations.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('reconciliations.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-sync-alt w-5"></i>
-                                    <span class="ml-3">Rekonsiliasi Bank</span>
-                                </div>
-                            </a>
-                        </div>
-                        
-                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--dark-separator);">
-                            <p class="px-3 text-xs font-semibold text-dark-text-tertiary uppercase tracking-wider mb-2">Konten & Media</p>
-                            
-                            <a href="{{ route('articles.index') }}" class="flex items-center justify-between px-3 py-2 rounded-apple text-sm font-medium transition-apple {{ request()->routeIs('articles.*') ? 'bg-apple-blue text-white' : 'text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary' }}">
-                                <div class="flex items-center">
-                                    <i class="fas fa-newspaper w-5"></i>
-                                    <span class="ml-3">Artikel & Berita</span>
-                                </div>
-                            </a>
-                        </div>
                     </div>
-                </nav>
+                </div>
 
-                <!-- User Info -->
-                <div class="p-4" style="border-top: 1px solid var(--dark-separator);">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-apple-blue flex items-center justify-center text-white font-semibold">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                        </div>
-                        <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-dark-text-primary">{{ Auth::user()->name }}</p>
-                            <p class="text-xs text-dark-text-secondary">{{ Auth::user()->email }}</p>
-                        </div>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-dark-text-secondary hover:text-apple-red transition-apple">
-                                <i class="fas fa-sign-out-alt"></i>
-                            </button>
-                        </form>
+                <!-- Permit Management -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Perizinan</div>
+                    <div class="nav-links">
+                        <a href="{{ route('admin.permits.index') }}" class="nav-link {{ request()->routeIs('admin.permits.*') || request()->routeIs('admin.permit-dashboard') || request()->routeIs('admin.permit-applications.*') || request()->routeIs('permit-types.*') || request()->routeIs('admin.payments.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-file-certificate"></i>
+                                <span>Kelola Perizinan</span>
+                            </div>
+                            @php
+                                $submittedCount = \App\Models\PermitApplication::where('status', 'submitted')->count();
+                                $underReviewCount = \App\Models\PermitApplication::where('status', 'under_review')->count();
+                                $unreadClientNotes = \App\Models\ApplicationNote::where('author_type', 'client')->where('is_read', false)->count();
+                                $pendingPayments = \App\Models\Payment::where('payment_method', 'manual')->where('status', 'processing')->count();
+                                $totalNotifications = $submittedCount + $underReviewCount + $unreadClientNotes + $pendingPayments;
+                            @endphp
+                            @if($totalNotifications > 0)
+                                <span class="nav-badge badge-alert">{{ $totalNotifications }}</span>
+                            @endif
+                        </a>
                     </div>
+                </div>
+
+                <!-- Recruitment -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Rekrutmen</div>
+                    <div class="nav-links">
+                        <a href="{{ route('admin.recruitment.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.*') || request()->routeIs('admin.jobs.*') || request()->routeIs('admin.applications.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-user-tie"></i>
+                                <span>Kelola Rekrutmen</span>
+                            </div>
+                            @php
+                                $pendingJobApps = \App\Models\JobApplication::where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingJobApps > 0)
+                                <span class="nav-badge badge-alert">{{ $pendingJobApps }}</span>
+                            @endif
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Email Management -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Email</div>
+                    <div class="nav-links">
+                        <a href="{{ route('admin.email-management.index') }}" class="nav-link {{ request()->routeIs('admin.email-management.*') || request()->routeIs('admin.inbox.*') || request()->routeIs('admin.campaigns.*') || request()->routeIs('admin.subscribers.*') || request()->routeIs('admin.templates.*') || request()->routeIs('admin.email.settings.*') || request()->routeIs('admin.email-accounts.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-envelope"></i>
+                                <span>Kelola Email</span>
+                            </div>
+                            @php
+                                $unreadCount = \App\Models\EmailInbox::where('category', 'inbox')->where('is_read', false)->count();
+                            @endphp
+                            @if($unreadCount > 0)
+                                <span class="nav-badge badge-alert">{{ $unreadCount }}</span>
+                            @endif
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Master Data -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Data Master</div>
+                    <div class="nav-links">
+                        <a href="{{ route('admin.master-data.index') }}" class="nav-link {{ request()->routeIs('admin.master-data.*') || request()->routeIs('cash-accounts.*') || request()->routeIs('admin.settings.kbli.*') || request()->routeIs('reconciliations.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-database"></i>
+                                <span>Master Data</span>
+                            </div>
+                            @php
+                                $pendingReconciliations = \App\Models\BankReconciliation::where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingReconciliations > 0)
+                                <span class="nav-badge badge-warning">{{ $pendingReconciliations }}</span>
+                            @endif
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Content & Media -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Konten</div>
+                    <div class="nav-links">
+                        <a href="{{ route('articles.index') }}" class="nav-link {{ request()->routeIs('articles.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-newspaper"></i>
+                                <span>Artikel & Berita</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- User Info Footer -->
+            <div class="sidebar-footer">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--apple-blue); display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: 600; font-size: 0.875rem; flex-shrink: 0;">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <p style="font-size: 0.875rem; font-weight: 500; color: var(--dark-text-primary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ Auth::user()->name }}</p>
+                        <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ Auth::user()->email }}</p>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                        @csrf
+                        <button type="submit" style="padding: 0.5rem; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <div class="app-main" style="display: flex !important; flex-direction: column !important; min-width: 0 !important; overflow: hidden !important; background-color: var(--dark-bg) !important; grid-column: 2 !important;">
+        <!-- Main Content Area -->
+        <div class="app-main">
             <!-- Top Bar -->
-            <header class="app-topbar" style="height: 4rem; min-height: 4rem; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; background-color: var(--dark-bg-elevated); border-bottom: 1px solid var(--dark-separator); flex-shrink: 0;">
+            <header class="app-topbar">
                 <div>
                     <h2 style="font-size: 1rem; font-weight: 600; color: var(--dark-text-primary); margin: 0;">@yield('page-title', 'Dashboard')</h2>
                     <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin: 0;">{{ now()->format('l, d F Y') }}</p>
@@ -959,13 +904,13 @@
                         <i class="fas fa-bell"></i>
                     </button>
                     <button style="padding: 0.5rem; border-radius: 10px; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer;">
-                        <i class="fas fa-cog"></i>
+                        <i class="fas fa-search"></i>
                     </button>
                 </div>
             </header>
 
-            <!-- Content Area -->
-            <main class="app-content" style="flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding: 1.5rem; background-color: var(--dark-bg);">
+            <!-- Scrollable Content -->
+            <main class="app-content">
                 @yield('content')
             </main>
         </div>

@@ -122,7 +122,7 @@
                     <i class="fas fa-newspaper mr-2"></i>
                     Baca Artikel
                 </a>
-                <a href="https://wa.me/6281382605030" target="_blank" class="btn-secondary">
+                <a href="https://wa.me/6283879602855" target="_blank" class="btn-secondary">
                     <i class="fab fa-whatsapp mr-2"></i>
                     Hubungi Kami
                 </a>

@@ -1,19 +1,25 @@
 @extends('layouts.app')
 
-@section('title', 'Settings')
+@section('title', 'Pengaturan')
 
 @section('content')
 <div class="container-fluid px-4 py-4">
-    <!-- Header -->
-    <div class="mb-4">
-        <h1 class="text-2xl font-bold" style="color: #FFFFFF;">
-            <i class="fas fa-cog mr-2" style="color: rgba(235, 235, 245, 0.4);"></i>
-            Settings
-        </h1>
-        <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
-            Manage application settings, users, and permissions
-        </p>
-    </div>
+    {{-- Hero Section --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-orange opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-red opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+        </div>
+        <div class="relative space-y-2.5 max-w-3xl">
+            <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Konfigurasi Sistem</p>
+            <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                Pengaturan Aplikasi
+            </h1>
+            <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                Kelola konfigurasi bisnis, pengguna, keamanan, dan preferensi sistem secara terpusat.
+            </p>
+        </div>
+    </section>
 
     @if(session('success'))
         <div class="mb-4 p-3 rounded-apple" style="background: rgba(52, 199, 89, 0.1); border-left: 3px solid rgba(52, 199, 89, 1);">
@@ -40,27 +46,27 @@
             <div class="flex space-x-1 p-2 overflow-x-auto" role="tablist">
                 <a href="{{ route('settings.index', ['tab' => 'general']) }}" 
                    class="tab-button {{ $activeTab === 'general' ? 'active' : '' }} px-4 py-2 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
-                    <i class="fas fa-building mr-2"></i>General
+                    <i class="fas fa-building mr-2"></i>Umum
                 </a>
                 <a href="{{ route('settings.index', ['tab' => 'users']) }}" 
                    class="tab-button {{ $activeTab === 'users' ? 'active' : '' }} px-4 py-2 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
-                    <i class="fas fa-users mr-2"></i>Users
+                    <i class="fas fa-users mr-2"></i>Pengguna
                 </a>
                 <a href="{{ route('settings.index', ['tab' => 'roles']) }}" 
                    class="tab-button {{ $activeTab === 'roles' ? 'active' : '' }} px-4 py-2 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
-                    <i class="fas fa-user-shield mr-2"></i>Roles & Permissions
+                    <i class="fas fa-user-shield mr-2"></i>Peran & Akses
                 </a>
                 <a href="{{ route('settings.index', ['tab' => 'financial']) }}" 
                    class="tab-button {{ $activeTab === 'financial' ? 'active' : '' }} px-4 py-2 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
-                    <i class="fas fa-wallet mr-2"></i>Financial
+                    <i class="fas fa-wallet mr-2"></i>Keuangan
                 </a>
                 <a href="{{ route('settings.index', ['tab' => 'project']) }}" 
                    class="tab-button {{ $activeTab === 'project' ? 'active' : '' }} px-4 py-2 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
-                    <i class="fas fa-project-diagram mr-2"></i>Project
+                    <i class="fas fa-project-diagram mr-2"></i>Proyek
                 </a>
                 <a href="{{ route('settings.index', ['tab' => 'security']) }}" 
                    class="tab-button {{ $activeTab === 'security' ? 'active' : '' }} px-4 py-2 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
-                    <i class="fas fa-shield-alt mr-2"></i>Security
+                    <i class="fas fa-shield-alt mr-2"></i>Keamanan
                 </a>
             </div>
         </div>

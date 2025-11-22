@@ -524,7 +524,7 @@
             "areaServed": "ID"
         }],
         "sameAs": [
-            "https://wa.me/6281382605030"
+            "https://wa.me/6283879602855"
         ]
     }
     </script>
@@ -779,7 +779,7 @@
     <!-- Floating Action Buttons Group -->
     <div class="fab-group">
         <!-- WhatsApp (Primary) -->
-        <a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
+        <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
            target="_blank"
            rel="noopener"
            class="fab fab-whatsapp" 
@@ -788,7 +788,7 @@
         </a>
         
         <!-- Phone -->
-        <a href="tel:+6281382605030" 
+        <a href="tel:+6283879602855" 
            class="fab fab-phone" 
            title="Telepon Kami">
             <i class="fas fa-phone"></i>
@@ -804,7 +804,7 @@
     </div>
     
     <!-- WhatsApp Chat Widget -->
-    <a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20berkonsultasi" 
+    <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20berkonsultasi" 
        target="_blank"
        class="fixed bottom-6 right-6 z-[998] group"
        aria-label="Chat with us on WhatsApp">

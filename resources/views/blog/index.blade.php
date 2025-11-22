@@ -136,7 +136,7 @@
                 <p class="text-gray-300 mb-6">
                     Konsultasikan kebutuhan perizinan industri Anda dengan tim ahli kami sekarang juga.
                 </p>
-                <a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi" 
+                <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi" 
                    target="_blank"
                    class="btn-primary inline-flex items-center">
                     <i class="fab fa-whatsapp mr-2"></i>

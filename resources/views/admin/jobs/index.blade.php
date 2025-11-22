@@ -23,25 +23,25 @@
     ];
 @endphp
 
-<div class="max-w-7xl mx-auto space-y-10">
+@section('content')
     {{-- Hero --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div class="space-y-3 max-w-3xl">
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Talent Hub</p>
-                <h1 class="text-2xl md:text-3xl font-bold" style="color:#FFFFFF;">Manajemen Lowongan Bizmark.id</h1>
+                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Talenta</p>
+                <h1 class="text-2xl md:text-3xl font-bold" style="color:#FFFFFF;">Katalog Lowongan Kerja</h1>
                 <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
-                    Monitor pipeline rekrutmen, status publikasi, serta performa pelamar dengan gaya mission control.
+                    Kelola lowongan kerja, pantau status publikasi, dan lacak performa pelamar dalam satu platform terpadu.
                 </p>
                 <div class="flex flex-wrap gap-3 text-xs" style="color: rgba(235,235,245,0.6);">
                     <span><i class="fas fa-briefcase mr-2"></i>{{ $openCount }} lowongan aktif</span>
                     <span><i class="fas fa-users mr-2"></i>{{ $totalApplicants }} pelamar tercatat</span>
                     @if($latestUpdate)
-                        <span><i class="fas fa-clock mr-2"></i>Update terakhir {{ $latestUpdate->updated_at->diffForHumans() }}</span>
+                        <span><i class="fas fa-clock mr-2"></i>Diperbarui {{ $latestUpdate->updated_at->diffForHumans() }}</span>
                     @endif
                 </div>
             </div>
@@ -58,14 +58,14 @@
 
     {{-- Flash messages --}}
     @if(session('success'))
-        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3 mb-5" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
             <i class="fas fa-check-circle"></i>
             <span class="text-sm">{{ session('success') }}</span>
         </div>
     @endif
 
     {{-- Stats --}}
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
         <div class="card-elevated rounded-apple-lg p-4">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Lowongan Aktif</p>
             <p class="text-3xl font-bold text-white">{{ $openCount }}</p>
@@ -89,18 +89,18 @@
     </section>
 
     {{-- Filters --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4 mb-5">
         <div class="flex items-center justify-between flex-wrap gap-3">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-                <h2 class="text-lg font-semibold text-white">Susun daftar lowongan</h2>
+                <h2 class="text-lg font-semibold text-white">Susun Daftar Lowongan</h2>
             </div>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $vacancies->total() }} hasil ditemukan</p>
         </div>
         <form method="GET" action="{{ route('admin.jobs.index') }}">
             <div class="flex flex-col gap-3 md:flex-row md:items-end">
                 <div class="flex-1">
-                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari</label>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Pencarian</label>
                     <div class="flex">
                         <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
                             <i class="fas fa-search"></i>
@@ -114,17 +114,17 @@
                     <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Status</label>
                     <select name="status" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
                             style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                        <option value="">Semua status</option>
+                        <option value="">Semua Status</option>
                         <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>Aktif</option>
                         <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
                         <option value="closed" {{ request('status') === 'closed' ? 'selected' : '' }}>Ditutup</option>
                     </select>
                 </div>
                 <div class="flex-1">
-                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Tipe kerja</label>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Tipe Kerja</label>
                     <select name="employment_type" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
                             style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                        <option value="">Semua tipe</option>
+                        <option value="">Semua Tipe</option>
                         @foreach($employmentOptions as $type)
                             <option value="{{ $type }}" {{ request('employment_type') === $type ? 'selected' : '' }}>
                                 {{ ucfirst(str_replace('-', ' ', $type)) }}
@@ -136,7 +136,7 @@
                     <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Lokasi</label>
                     <select name="location" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
                             style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                        <option value="">Semua lokasi</option>
+                        <option value="">Semua Lokasi</option>
                         @foreach($locationOptions as $location)
                             <option value="{{ $location }}" {{ request('location') === $location ? 'selected' : '' }}>
                                 {{ $location }}

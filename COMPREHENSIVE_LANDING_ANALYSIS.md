@@ -94,7 +94,7 @@ Setelah melakukan analisis mendalam dari header sampai footer, ditemukan **12 ma
                 <!-- Right Side -->
                 <div class="flex items-center gap-4 border-l pl-6">
                     <button class="search-btn"><i class="fa fa-search"></i></button>
-                    <a href="tel:+6281382605030" class="phone-btn">
+                    <a href="tel:+6283879602855" class="phone-btn">
                         <i class="fa fa-phone"></i> 0813-8260-5030
                     </a>
                     <a href="/hadez" class="login-btn">Login</a>
@@ -739,7 +739,7 @@ Setelah melakukan analisis mendalam dari header sampai footer, ditemukan **12 ma
                             <a href="https://youtube.com/@bizmarkid" target="_blank" rel="noopener">
                                 <i class="fab fa-youtube"></i>
                             </a>
-                            <a href="https://wa.me/6281382605030" target="_blank" rel="noopener">
+                            <a href="https://wa.me/6283879602855" target="_blank" rel="noopener">
                                 <i class="fab fa-whatsapp"></i>
                             </a>
                         </div>
@@ -824,7 +824,7 @@ Setelah melakukan analisis mendalam dari header sampai footer, ditemukan **12 ma
                 <div class="contact-info">
                     <div class="contact-item">
                         <i class="fas fa-phone text-apple-blue"></i>
-                        <a href="tel:+6281382605030">+62 813 8260 5030</a>
+                        <a href="tel:+6283879602855">+62 838 7960 2855</a>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-envelope text-apple-blue"></i>

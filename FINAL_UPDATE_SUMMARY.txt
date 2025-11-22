@@ -66,12 +66,12 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 11. ✅ WhatsApp Floating Button
-    • Number: +62 813 8260 5030 ✅ ACTUAL
-    • Link: https://wa.me/6281382605030
+    • Number: +62 838 7960 2855 ✅ ACTUAL
+    • Link: https://wa.me/6283879602855
 
 12. ✅ Contact Section - Phone & Email
-    • Phone: +62 813 8260 5030 ✅
-    • WhatsApp: +62 813 8260 5030 ✅
+    • Phone: +62 838 7960 2855 ✅
+    • WhatsApp: +62 838 7960 2855 ✅
     • Email: headoffice.tck@gmail.com ✅ (Primary, secure)
     • Email: info@bizmark.id (Secondary)
 
@@ -80,10 +80,10 @@
     • Twitter: twitter.com/bizmark_id ✅
     • Instagram: instagram.com/bizmark.id ✅
     • LinkedIn: linkedin.com/company/bizmark-id ✅
-    • WhatsApp: wa.me/6281382605030 ✅
+    • WhatsApp: wa.me/6283879602855 ✅
 
 14. ✅ Footer - Contact Info
-    • Phone: +62 813 8260 5030 ✅
+    • Phone: +62 838 7960 2855 ✅
     • Email: headoffice.tck@gmail.com ✅
     • All links clickable (tel:, mailto:, wa.me)
 
@@ -124,7 +124,7 @@ CONTACT INFO:              Placeholder → Real ✅
    Jawa Barat 41314, Indonesia
 
 📞 PHONE & WHATSAPP:
-   +62 813 8260 5030 ✅
+   +62 838 7960 2855 ✅
    (Click-to-call & WhatsApp enabled)
 
 📧 EMAIL:
@@ -164,10 +164,10 @@ CONTACT INFO:              Placeholder → Real ✅
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 CONTACT INFO CONSISTENCY:
-  ✅ WhatsApp button: 6281382605030
-  ✅ Contact section: 6281382605030
-  ✅ Footer: 6281382605030
-  ✅ Structured data: 6281382605030
+  ✅ WhatsApp button: 6283879602855
+  ✅ Contact section: 6283879602855
+  ✅ Footer: 6283879602855
+  ✅ Structured data: 6283879602855
   ✅ All consistent across 15 locations
 
 EMAIL CONSISTENCY:
@@ -184,8 +184,8 @@ SOCIAL MEDIA LINKS:
   ✅ All active with target="_blank" rel="noopener"
 
 CLICK-TO-ACTION FUNCTIONALITY:
-  ✅ Phone links: tel:+6281382605030
-  ✅ WhatsApp links: wa.me/6281382605030
+  ✅ Phone links: tel:+6283879602855
+  ✅ WhatsApp links: wa.me/6283879602855
   ✅ Email links: mailto:headoffice.tck@gmail.com
   ✅ All properly formatted for mobile
 

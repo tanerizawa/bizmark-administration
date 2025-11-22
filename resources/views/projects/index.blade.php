@@ -4,72 +4,66 @@
 @section('page-title', 'Manajemen Proyek')
 
 @section('content')
-    <!-- Header Actions -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
-        <p class="text-sm" style="color: rgba(235, 235, 245, 0.65);">
-            Pantau proyek perizinan dan progres legal dalam satu workspace.
-        </p>
-        <a href="{{ route('projects.create') }}" 
-           class="btn-primary px-4 py-2 text-white rounded-apple text-sm font-semibold">
-            <i class="fas fa-plus mr-2"></i>
-            Tambah Proyek
-        </a>
-    </div>
-
-    <!-- Summary Statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-5">
-        <!-- Total Projects -->
-        <div class="card-elevated rounded-apple-lg p-3.5 md:p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs uppercase tracking-wide" style="color: rgba(235, 235, 245, 0.55);">Total Proyek</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $totalProjects }}</div>
+    {{-- Hero Section --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+        </div>
+        <div class="relative space-y-5 md:space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div class="space-y-2.5 max-w-3xl">
+                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Proyek</p>
+                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                        Pantau dan Kelola Semua Proyek Perizinan
+                    </h1>
+                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                        Kelola proyek perizinan dari awal hingga selesai dengan visibilitas penuh terhadap status, tenggat, dan kemajuan setiap proyek.
+                    </p>
                 </div>
-                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(0, 122, 255, 0.15);">
-                    <i class="fas fa-project-diagram text-lg" style="color: rgba(0, 122, 255, 1);"></i>
+                <div class="space-y-2.5">
+                    <a href="{{ route('projects.create') }}" 
+                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
+                       style="background: rgba(10,132,255,0.25); color: rgba(235,235,245,0.9);">
+                        <i class="fas fa-plus mr-2"></i>
+                        Tambah Proyek
+                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Summary Statistics -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <!-- Total Projects -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Proyek</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $totalProjects }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua proyek</p>
+                </div>
+
+                <!-- In Progress -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Sedang Berjalan</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">{{ $inProgressProjects }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Aktif dikerjakan</p>
+                </div>
+
+                <!-- Completed -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Selesai</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $completedProjects }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Proyek tuntas</p>
+                </div>
+
+                <!-- Overdue -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,59,48,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Terlambat</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,59,48,1);">{{ $overdueProjects }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu perhatian</p>
                 </div>
             </div>
         </div>
-
-        <!-- In Progress -->
-        <div class="card-elevated rounded-apple-lg p-3.5 md:p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs uppercase tracking-wide" style="color: rgba(235, 235, 245, 0.55);">Sedang Berjalan</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $inProgressProjects }}</div>
-                </div>
-                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(255, 159, 10, 0.15);">
-                    <i class="fas fa-spinner text-lg" style="color: rgba(255, 159, 10, 1);"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Completed -->
-        <div class="card-elevated rounded-apple-lg p-3.5 md:p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs uppercase tracking-wide" style="color: rgba(235, 235, 245, 0.55);">Selesai</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $completedProjects }}</div>
-                </div>
-                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(52, 199, 89, 0.15);">
-                    <i class="fas fa-check-circle text-lg" style="color: rgba(52, 199, 89, 1);"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Overdue -->
-        <div class="card-elevated rounded-apple-lg p-3.5 md:p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs uppercase tracking-wide" style="color: rgba(235, 235, 245, 0.55);">Terlambat</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $overdueProjects }}</div>
-                </div>
-                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: rgba(255, 59, 48, 0.15);">
-                    <i class="fas fa-exclamation-triangle text-lg" style="color: rgba(255, 59, 48, 1);"></i>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
     <!-- Search and Filter Card -->
     <div class="card-elevated rounded-apple-lg mb-5 overflow-hidden">

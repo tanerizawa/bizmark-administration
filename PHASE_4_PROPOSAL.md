@@ -151,7 +151,7 @@ function trackEvent(category, action, label) {
         "availableLanguage": ["Indonesian", "English"]
     },
     "sameAs": [
-        "https://wa.me/6281382605030"
+        "https://wa.me/6283879602855"
     ]
 }
 </script>

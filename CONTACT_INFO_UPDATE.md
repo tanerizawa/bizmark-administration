@@ -11,17 +11,17 @@
 ### 1. ✅ WhatsApp Floating Button
 **Updated:**
 - Old: `+62 812 3456 7890` (placeholder)
-- **New: `+62 813 8260 5030`** ✅ ACTUAL NUMBER
+- **New: `+62 838 7960 2855`** ✅ ACTUAL NUMBER
 
 **Location:** Line ~1147
 ```html
-https://wa.me/6281382605030
+https://wa.me/6283879602855
 ```
 
 ### 2. ✅ Contact Section - Phone & Email
 **Updated:**
-- **Phone:** `+62 813 8260 5030` (main number)
-- **WhatsApp:** `+62 813 8260 5030` (same number with WhatsApp link)
+- **Phone:** `+62 838 7960 2855` (main number)
+- **WhatsApp:** `+62 838 7960 2855` (same number with WhatsApp link)
 - **Email Primary:** `headoffice.tck@gmail.com` ✅ GMAIL (more secure)
 - **Email Secondary:** `cs@bizmark.id`
 
@@ -33,14 +33,14 @@ https://wa.me/6281382605030
 - **Twitter:** `https://twitter.com/bizmark_id` ✅
 - **Instagram:** `https://instagram.com/bizmark.id` ✅
 - **LinkedIn:** `https://linkedin.com/company/bizmark-id` ✅
-- **WhatsApp:** `https://wa.me/6281382605030` ✅
+- **WhatsApp:** `https://wa.me/6283879602855` ✅
 
 **Location:** Lines ~982-998
 
 ### 4. ✅ Footer Section - Contact Info
 **Updated:**
-- **Phone:** `+62 813 8260 5030` with clickable tel: link
-- **WhatsApp:** `+62 813 8260 5030` with wa.me link
+- **Phone:** `+62 838 7960 2855` with clickable tel: link
+- **WhatsApp:** `+62 838 7960 2855` with wa.me link
 - **Email:** `headoffice.tck@gmail.com` (primary)
 - **Email:** `cs@bizmark.id` (secondary)
 
@@ -83,8 +83,8 @@ https://wa.me/6281382605030
 - **Address:** Jl. Permata Sari Indah No.2, Palumbonsari, Kec. Karawang Timur, Karawang, Jawa Barat 41314
 
 ### 📞 Contact Numbers
-- **Main Phone:** +62 813 8260 5030 ✅
-- **WhatsApp:** +62 813 8260 5030 ✅ (Same number)
+- **Main Phone:** +62 838 7960 2855 ✅
+- **WhatsApp:** +62 838 7960 2855 ✅ (Same number)
 
 ### 📧 Email Addresses
 - **Primary (Gmail):** headoffice.tck@gmail.com ✅ (More secure)
@@ -96,7 +96,7 @@ All handles: **@bizmark.id**
 - **Twitter:** https://twitter.com/bizmark_id ✅
 - **Instagram:** https://instagram.com/bizmark.id ✅
 - **LinkedIn:** https://linkedin.com/company/bizmark-id ✅
-- **WhatsApp:** https://wa.me/6281382605030 ✅
+- **WhatsApp:** https://wa.me/6283879602855 ✅
 
 ### ⏰ Operating Hours
 - **Monday - Friday:** 08:00 - 17:00 WIB
@@ -128,8 +128,8 @@ All handles: **@bizmark.id**
 - [x] All links active and correct ✅
 
 ### Click-to-Action Links
-- [x] Phone links (tel:+6281382605030) ✅
-- [x] WhatsApp links (wa.me/6281382605030) ✅
+- [x] Phone links (tel:+6283879602855) ✅
+- [x] WhatsApp links (wa.me/6283879602855) ✅
 - [x] Email links (mailto:headoffice.tck@gmail.com) ✅
 - [x] Social media links (target="_blank" rel="noopener") ✅
 
@@ -155,8 +155,8 @@ All handles: **@bizmark.id**
 ## 📱 MOBILE OPTIMIZATION
 
 All contact methods optimized for mobile:
-- ✅ Click-to-call: `tel:+6281382605030`
-- ✅ WhatsApp direct: `https://wa.me/6281382605030`
+- ✅ Click-to-call: `tel:+6283879602855`
+- ✅ WhatsApp direct: `https://wa.me/6283879602855`
 - ✅ Email click: `mailto:headoffice.tck@gmail.com`
 - ✅ Social media apps: Open in native apps on mobile
 
@@ -256,7 +256,7 @@ All contact methods optimized for mobile:
 ║     Karawang, Jawa Barat 41314                         ║
 ║                                                          ║
 ║  📞 PHONE & WHATSAPP:                                   ║
-║     +62 813 8260 5030                                   ║
+║     +62 838 7960 2855                                   ║
 ║                                                          ║
 ║  📧 EMAIL:                                              ║
 ║     headoffice.tck@gmail.com (Primary)                 ║

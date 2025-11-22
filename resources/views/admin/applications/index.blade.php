@@ -29,130 +29,129 @@
     $lastReview = JobApplication::whereNotNull('reviewed_at')->latest('reviewed_at')->first();
 @endphp
 
-<div class="max-w-7xl mx-auto space-y-10">
-    {{-- Hero --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
-        </div>
-        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div class="space-y-3 max-w-3xl">
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Talent Ops</p>
-                <h1 class="text-2xl md:text-3xl font-bold text-white">Lamaran masuk Bizmark.id</h1>
-                <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
-                    Pantau funnel kandidat, status review, dan tindak lanjuti interview dalam satu layar seperti mission control.
-                </p>
-                <div class="text-xs flex flex-wrap gap-3" style="color: rgba(235,235,245,0.6);">
-                    <span><i class="fas fa-users mr-2"></i>{{ $totalApplications }} lamaran tersimpan</span>
-                    <span><i class="fas fa-calendar-plus mr-2"></i>{{ $todayApplications }} masuk hari ini</span>
-                    @if($lastReview)
-                        <span><i class="fas fa-user-check mr-2"></i>Review terakhir {{ $lastReview->reviewed_at->diffForHumans() }}</span>
-                    @endif
-                </div>
-            </div>
-            <div class="flex flex-col items-start gap-3">
-                <a href="{{ route('admin.jobs.index') }}" class="btn-secondary-sm">
-                    <i class="fas fa-briefcase mr-2"></i>Kelola Lowongan
-                </a>
-                <a href="{{ route('admin.jobs.create') }}" class="btn-primary-sm">
-                    <i class="fas fa-plus mr-2"></i>Tambah Lowongan
-                </a>
+{{-- Hero --}}
+<section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+        <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+    </div>
+    <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div class="space-y-3 max-w-3xl">
+            <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Talenta</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-white">Daftar Lamaran Kerja</h1>
+            <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
+                Kelola proses rekrutmen kandidat dari tahap peninjauan hingga keputusan penerimaan secara terpusat.
+            </p>
+            <div class="text-xs flex flex-wrap gap-3" style="color: rgba(235,235,245,0.6);">
+                <span><i class="fas fa-users mr-2"></i>{{ $totalApplications }} lamaran tersimpan</span>
+                <span><i class="fas fa-calendar-plus mr-2"></i>{{ $todayApplications }} masuk hari ini</span>
+                @if($lastReview)
+                    <span><i class="fas fa-user-check mr-2"></i>Ditinjau {{ $lastReview->reviewed_at->diffForHumans() }}</span>
+                @endif
             </div>
         </div>
-    </section>
-
-    {{-- Flash messages --}}
-    @if(session('success'))
-        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
-            <i class="fas fa-check-circle"></i>
-            <span class="text-sm">{{ session('success') }}</span>
-        </div>
-    @endif
-
-    {{-- Stats --}}
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Lamaran</p>
-            <p class="text-3xl font-bold text-white">{{ $totalApplications }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $todayApplications }} dari hari ini</p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Di Pipeline Interview</p>
-            <p class="text-3xl font-bold text-white">{{ $interviewPipeline }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Review + Interview</p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Pending</p>
-            <p class="text-3xl font-bold text-white">{{ $statusCounts['pending'] ?? 0 }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Menunggu review awal</p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditolak</p>
-            <p class="text-3xl font-bold text-white">{{ $statusCounts['rejected'] ?? 0 }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akan dihubungi ulang</p>
-        </div>
-    </section>
-
-    {{-- Status pills --}}
-    <section class="card-elevated rounded-apple-xl p-4">
-        <div class="flex flex-wrap gap-2">
-            <a href="{{ route('admin.applications.index') }}"
-               class="status-pill {{ !request('status') ? 'active' : '' }}">
-                Semua <span>{{ $totalApplications }}</span>
+        <div class="flex flex-col items-start gap-3">
+            <a href="{{ route('admin.jobs.index') }}" class="btn-secondary-sm">
+                <i class="fas fa-briefcase mr-2"></i>Kelola Lowongan
             </a>
-            @foreach($statusLabels as $status => $label)
-                <a href="{{ route('admin.applications.index', ['status' => $status]) }}"
-                   class="status-pill {{ request('status') === $status ? 'active' : '' }}">
-                    {{ $label }} <span>{{ $statusCounts[$status] ?? 0 }}</span>
-                </a>
-            @endforeach
+            <a href="{{ route('admin.jobs.create') }}" class="btn-primary-sm">
+                <i class="fas fa-plus mr-2"></i>Tambah Lowongan
+            </a>
         </div>
-    </section>
+    </div>
+</section>
 
-    {{-- Filters --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-3">
-            <div>
-                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-                <h2 class="text-lg font-semibold text-white">Temukan kandidat terbaik</h2>
-            </div>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $applications->total() }} lamaran sesuai filter</p>
+{{-- Flash messages --}}
+@if(session('success'))
+    <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3 mb-5" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+        <i class="fas fa-check-circle"></i>
+        <span class="text-sm">{{ session('success') }}</span>
+    </div>
+@endif
+
+{{-- Stats --}}
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+    <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+        <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Lamaran</p>
+        <p class="text-3xl font-bold text-white">{{ $totalApplications }}</p>
+        <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $todayApplications }} hari ini</p>
+    </div>
+    <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+        <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Proses Wawancara</p>
+        <p class="text-3xl font-bold text-white">{{ $interviewPipeline }}</p>
+        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Ditinjau + wawancara</p>
+    </div>
+    <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+        <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Menunggu</p>
+        <p class="text-3xl font-bold text-white">{{ $statusCounts['pending'] ?? 0 }}</p>
+        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu peninjauan</p>
+    </div>
+    <div class="card-elevated rounded-apple-lg p-4 space-y-1">
+        <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditolak</p>
+        <p class="text-3xl font-bold text-white">{{ $statusCounts['rejected'] ?? 0 }}</p>
+        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akan dihubungi ulang</p>
+    </div>
+</section>
+
+{{-- Status pills --}}
+<section class="card-elevated rounded-apple-xl p-4 mb-5">
+    <div class="flex flex-wrap gap-2">
+        <a href="{{ route('admin.applications.index') }}"
+           class="status-pill {{ !request('status') ? 'active' : '' }}">
+            Semua <span>{{ $totalApplications }}</span>
+        </a>
+        @foreach($statusLabels as $status => $label)
+            <a href="{{ route('admin.applications.index', ['status' => $status]) }}"
+               class="status-pill {{ request('status') === $status ? 'active' : '' }}">
+                {{ $label }} <span>{{ $statusCounts[$status] ?? 0 }}</span>
+            </a>
+        @endforeach
+    </div>
+</section>
+
+{{-- Filters --}}
+<section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4 mb-5">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+            <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
+            <h2 class="text-lg font-semibold text-white">Temukan Kandidat</h2>
         </div>
-        <form method="GET" action="{{ route('admin.applications.index') }}" class="flex flex-col gap-3 md:flex-row md:items-end">
-            <div class="flex-1">
-                <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari kandidat</label>
-                <div class="flex">
-                    <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
-                        <i class="fas fa-search"></i>
-                    </span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama atau email"
-                           class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500"
-                           style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-left: none;">
-                </div>
+        <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $applications->total() }} lamaran ditemukan</p>
+    </div>
+    <form method="GET" action="{{ route('admin.applications.index') }}" class="flex flex-col gap-3 md:flex-row md:items-end">
+        <div class="flex-1">
+            <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Pencarian</label>
+            <div class="flex">
+                <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama atau email"
+                       class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500"
+                       style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-left: none;">
             </div>
-            <div class="flex-1">
-                <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Lowongan</label>
-                <select name="job_vacancy_id" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
-                        style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                    <option value="">Semua lowongan</option>
-                    @foreach($vacancies as $vacancy)
-                        <option value="{{ $vacancy->id }}" {{ request('job_vacancy_id') == $vacancy->id ? 'selected' : '' }}>
-                            {{ $vacancy->title }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="flex gap-3">
-                <button type="submit" class="btn-primary-sm">
-                    <i class="fas fa-search mr-2"></i>Filter
-                </button>
-                <a href="{{ route('admin.applications.index') }}" class="btn-secondary-sm text-center">
-                    Reset
-                </a>
-            </div>
-        </form>
-    </section>
+        </div>
+        <div class="flex-1">
+            <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Lowongan</label>
+            <select name="job_vacancy_id" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
+                    style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                <option value="">Semua Lowongan</option>
+                @foreach($vacancies as $vacancy)
+                    <option value="{{ $vacancy->id }}" {{ request('job_vacancy_id') == $vacancy->id ? 'selected' : '' }}>
+                        {{ $vacancy->title }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="flex gap-3">
+            <button type="submit" class="btn-primary-sm">
+                <i class="fas fa-search mr-2"></i>Terapkan
+            </button>
+            <a href="{{ route('admin.applications.index') }}" class="btn-secondary-sm text-center">
+                Reset
+            </a>
+        </div>
+    </form>
+</section>
 
     {{-- Applications table --}}
     <section class="card-elevated rounded-apple-xl overflow-hidden">
@@ -230,7 +229,6 @@
             </div>
         @endif
     </section>
-</div>
 
 <style>
 .status-pill {

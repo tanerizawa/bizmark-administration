@@ -4,84 +4,72 @@
 @section('page-title', 'Manajemen Institusi')
 
 @section('content')
-    <!-- Header Actions -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
-        <div>
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Kelola data institusi mitra dan klien</p>
+    {{-- Hero Section --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
-        <div class="flex items-center space-x-3">
-            <button class="px-4 py-2 rounded-apple text-sm font-medium transition-apple" style="background-color: #2C2C2E; color: rgba(235, 235, 245, 0.6); border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);" onmouseover="this.style.backgroundColor='#3A3A3C'; this.style.color='#FFFFFF'" onmouseout="this.style.backgroundColor='#2C2C2E'; this.style.color='rgba(235, 235, 245, 0.6)'">
-                <i class="fas fa-filter mr-2"></i>
-                Filter
-            </button>
-            <a href="{{ route('institutions.create') }}" 
-               class="btn-primary px-4 py-2 text-white rounded-apple text-sm font-medium">
-                <i class="fas fa-plus mr-2"></i>
-                Tambah Institusi
-            </a>
-        </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <!-- Total -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Total Institusi</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $institutions->total() }}</div>
+        <div class="relative space-y-5 md:space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div class="space-y-2.5 max-w-3xl">
+                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Institusi</p>
+                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                        Database Institusi Penerbit Izin
+                    </h1>
+                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                        Kelola data lengkap institusi pemerintah, BUMN, dan swasta yang menjadi mitra dalam proses perizinan.
+                    </p>
                 </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(0, 122, 255, 0.15);">
-                    <i class="fas fa-building text-xl" style="color: rgba(0, 122, 255, 1);"></i>
+                <div class="space-y-2.5">
+                    <a href="{{ route('institutions.create') }}" 
+                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
+                       style="background: rgba(10,132,255,0.25); color: rgba(235,235,245,0.9);">
+                        <i class="fas fa-plus mr-2"></i>
+                        Tambah Institusi
+                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Pemerintah -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Pemerintah</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <!-- Total -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Institusi</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $institutions->total() }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Lembaga terdaftar</p>
+                </div>
+
+                <!-- Pemerintah -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,59,48,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Pemerintah</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,59,48,1);">
                         {{ $institutions->where('type', 'Pemerintah')->count() }}
-                    </div>
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Instansi negara</p>
                 </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(255, 59, 48, 0.15);">
-                    <i class="fas fa-landmark text-xl" style="color: rgba(255, 59, 48, 1);"></i>
-                </div>
-            </div>
-        </div>
 
-        <!-- BUMN -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">BUMN</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">
+                <!-- BUMN -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,149,0,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">BUMN</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,149,0,1);">
                         {{ $institutions->where('type', 'BUMN')->count() }}
-                    </div>
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perusahaan negara</p>
                 </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(255, 149, 0, 0.15);">
-                    <i class="fas fa-city text-xl" style="color: rgba(255, 149, 0, 1);"></i>
-                </div>
-            </div>
-        </div>
 
-        <!-- Swasta -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Swasta</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">
+                <!-- Swasta -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Swasta</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">
                         {{ $institutions->where('type', 'Swasta')->count() }}
-                    </div>
-                </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(52, 199, 89, 0.15);">
-                    <i class="fas fa-briefcase text-xl" style="color: rgba(52, 199, 89, 1);"></i>
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sektor privat</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Search and Filter Card -->
     <div class="card-elevated rounded-apple-lg mb-4 overflow-hidden">
