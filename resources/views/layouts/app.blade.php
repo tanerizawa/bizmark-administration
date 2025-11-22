@@ -63,6 +63,12 @@
             color: var(--dark-text-primary);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        /* Only lock overflow for authenticated layout */
+        body.authenticated {
             overflow: hidden;
         }
         
@@ -476,11 +482,11 @@
 
         /* Layout Structure */
         .app-shell {
-            display: grid !important;
-            grid-template-columns: 256px 1fr !important;
-            min-height: 100vh !important;
-            width: 100% !important;
-            background-color: var(--dark-bg) !important;
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--dark-bg);
         }
 
         .app-sidebar {
@@ -530,14 +536,6 @@
             padding: 1rem;
             border-top: 1px solid var(--dark-separator);
             flex-shrink: 0;
-        }
-
-        .app-shell {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            background-color: var(--dark-bg);
         }
 
         .app-main {
@@ -672,28 +670,35 @@
             background-color: #F59E0B;
             color: #FFFFFF;
         }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .app-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 50;
+            }
+
+            .app-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .app-main {
+                left: 0;
+            }
+
+            .app-topbar {
+                padding: 0 1rem;
+            }
+        }
     </style>
     
     @stack('styles')
 </head>
-<body>
+<body class="@auth authenticated @endauth">
     @auth
     <!-- Main Layout with Sidebar -->
-    @php
-        $navCounts = Cache::get('bizmark-perizinan-cache-nav_counts', [
-            'projects' => \App\Models\Project::count(),
-            'active_projects' => \App\Models\Project::whereHas('status', function($q) {
-                $q->whereIn('code', ['KONTRAK', 'PENGUMPULAN_DOK', 'PROSES_DLH', 'PROSES_BPN', 'PROSES_OSS', 'PROSES_NOTARIS', 'MENUNGGU_PERSETUJUAN']);
-            })->count(),
-            'tasks' => \App\Models\Task::count(),
-            'pending_tasks' => \App\Models\Task::where('status', 'pending')->count(),
-            'documents' => \App\Models\Document::count(),
-            'institutions' => \App\Models\Institution::count(),
-            'clients' => \App\Models\Client::count(),
-            'permit_types' => \App\Models\PermitType::count(),
-            'permit_templates' => \App\Models\PermitTemplate::count(),
-        ]);
-    @endphp
+    {{-- Navigation data ($navCounts, $permitNotifications, $otherNotifications) provided by NavigationComposer --}}
     <div class="app-shell">
         <!-- Fixed Sidebar -->
         <aside class="app-sidebar">
@@ -785,15 +790,8 @@
                                 <i class="fas fa-briefcase"></i>
                                 <span>Kelola Perizinan</span>
                             </div>
-                            @php
-                                $submittedCount = \App\Models\PermitApplication::where('status', 'submitted')->count();
-                                $underReviewCount = \App\Models\PermitApplication::where('status', 'under_review')->count();
-                                $unreadClientNotes = \App\Models\ApplicationNote::where('author_type', 'client')->where('is_read', false)->count();
-                                $pendingPayments = \App\Models\Payment::where('payment_method', 'manual')->where('status', 'processing')->count();
-                                $totalNotifications = $submittedCount + $underReviewCount + $unreadClientNotes + $pendingPayments;
-                            @endphp
-                            @if($totalNotifications > 0)
-                                <span class="nav-badge badge-alert">{{ $totalNotifications }}</span>
+                            @if($permitNotifications['total'] > 0)
+                                <span class="nav-badge badge-alert">{{ $permitNotifications['total'] }}</span>
                             @endif
                         </a>
                     </div>
@@ -804,11 +802,8 @@
                                 <i class="fas fa-user-tie"></i>
                                 <span>Kelola Rekrutmen</span>
                             </div>
-                            @php
-                                $pendingJobApps = \App\Models\JobApplication::where('status', 'pending')->count();
-                            @endphp
-                            @if($pendingJobApps > 0)
-                                <span class="nav-badge badge-alert">{{ $pendingJobApps }}</span>
+                            @if($otherNotifications['pending_job_apps'] > 0)
+                                <span class="nav-badge badge-alert">{{ $otherNotifications['pending_job_apps'] }}</span>
                             @endif
                         </a>
                     </div>
@@ -820,11 +815,8 @@
                                 <i class="fas fa-envelope"></i>
                                 <span>Kelola Email</span>
                             </div>
-                            @php
-                                $unreadCount = \App\Models\EmailInbox::where('category', 'inbox')->where('is_read', false)->count();
-                            @endphp
-                            @if($unreadCount > 0)
-                                <span class="nav-badge badge-alert">{{ $unreadCount }}</span>
+                            @if($otherNotifications['unread_emails'] > 0)
+                                <span class="nav-badge badge-alert">{{ $otherNotifications['unread_emails'] }}</span>
                             @endif
                         </a>
                     </div>
@@ -837,11 +829,8 @@
                                 <i class="fas fa-database"></i>
                                 <span>Master Data</span>
                             </div>
-                            @php
-                                $pendingReconciliations = \App\Models\BankReconciliation::where('status', 'pending')->count();
-                            @endphp
-                            @if($pendingReconciliations > 0)
-                                <span class="nav-badge badge-warning">{{ $pendingReconciliations }}</span>
+                            @if($otherNotifications['pending_reconciliations'] > 0)
+                                <span class="nav-badge badge-warning">{{ $otherNotifications['pending_reconciliations'] }}</span>
                             @endif
                         </a>
                     </div>
@@ -863,16 +852,18 @@
             <!-- User Info Footer -->
             <div class="sidebar-footer">
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <div style="width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--apple-blue); display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: 600; font-size: 0.875rem; flex-shrink: 0;">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <p style="font-size: 0.875rem; font-weight: 500; color: var(--dark-text-primary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ Auth::user()->name }}</p>
-                        <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ Auth::user()->email }}</p>
-                    </div>
+                    <a href="{{ route('admin.profile.edit') }}" style="display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; text-decoration: none; border-radius: 10px; padding: 0.25rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='var(--dark-bg-tertiary)'" onmouseout="this.style.backgroundColor='transparent'">
+                        <div style="width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--apple-blue); display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: 600; font-size: 0.875rem; flex-shrink: 0;">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <p style="font-size: 0.875rem; font-weight: 500; color: var(--dark-text-primary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ Auth::user()->name }}</p>
+                            <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ Auth::user()->email }}</p>
+                        </div>
+                    </a>
                     <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                         @csrf
-                        <button type="submit" style="padding: 0.5rem; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                        <button type="submit" style="padding: 0.5rem; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='var(--dark-text-secondary)'" title="Logout">
                             <i class="fas fa-sign-out-alt"></i>
                         </button>
                     </form>
@@ -889,14 +880,54 @@
                     <p style="font-size: 0.75rem; color: var(--dark-text-secondary); margin: 0;">{{ now()->format('l, d F Y') }}</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <button style="padding: 0.5rem; border-radius: 10px; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer;">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <button style="padding: 0.5rem; border-radius: 10px; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer;">
+                    <!-- Notifications Button -->
+                    <div style="position: relative;">
+                        <a href="{{ route('admin.notifications') }}" 
+                           style="position: relative; padding: 0.5rem; border-radius: 10px; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;"
+                           onmouseover="this.style.backgroundColor='var(--dark-bg-tertiary)'" 
+                           onmouseout="this.style.backgroundColor='transparent'"
+                           title="Notifikasi">
+                            <i class="fas fa-bell"></i>
+                            @if(($permitNotifications['total'] ?? 0) + ($otherNotifications['unread_emails'] ?? 0) > 0)
+                                <span style="position: absolute; top: 0.25rem; right: 0.25rem; width: 0.5rem; height: 0.5rem; background: var(--apple-red); border-radius: 50%; border: 2px solid var(--dark-bg-elevated);"></span>
+                            @endif
+                        </a>
+                    </div>
+
+                    <!-- Search Button (Toggle) -->
+                    <button onclick="toggleSearch()" 
+                            style="padding: 0.5rem; border-radius: 10px; color: var(--dark-text-secondary); background: transparent; border: none; cursor: pointer; transition: all 0.2s;"
+                            onmouseover="this.style.backgroundColor='var(--dark-bg-tertiary)'" 
+                            onmouseout="this.style.backgroundColor='transparent'"
+                            title="Pencarian">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
             </header>
+
+            <!-- Global Search Overlay (Hidden by default) -->
+            <div id="searchOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; backdrop-filter: blur(8px);" onclick="toggleSearch()">
+                <div style="max-width: 600px; margin: 6rem auto; padding: 0 1.5rem;">
+                    <div style="background: var(--dark-bg-elevated); border-radius: 16px; padding: 1.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.6);" onclick="event.stopPropagation()">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <i class="fas fa-search" style="color: var(--dark-text-tertiary);"></i>
+                            <input type="text" 
+                                   id="globalSearchInput"
+                                   placeholder="Cari proyek, dokumen, klien..." 
+                                   style="flex: 1; background: transparent; border: none; outline: none; color: var(--dark-text-primary); font-size: 1.25rem;"
+                                   autofocus>
+                            <button onclick="toggleSearch()" style="padding: 0.5rem; color: var(--dark-text-tertiary); background: transparent; border: none; cursor: pointer;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="searchResults" style="max-height: 400px; overflow-y: auto;">
+                            <p style="text-align: center; color: var(--dark-text-tertiary); padding: 2rem;">
+                                Mulai ketik untuk mencari...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Scrollable Content -->
             <main class="app-content">
@@ -954,6 +985,136 @@
             // Store initial state
             sessionStorage.setItem('wasMobile', (window.innerWidth < 768).toString());
         })();
+
+        // Global Search Toggle
+        function toggleSearch() {
+            const overlay = document.getElementById('searchOverlay');
+            const input = document.getElementById('globalSearchInput');
+            
+            if (overlay.style.display === 'none') {
+                overlay.style.display = 'block';
+                setTimeout(() => input.focus(), 100);
+            } else {
+                overlay.style.display = 'none';
+                input.value = '';
+                document.getElementById('searchResults').innerHTML = '<p style="text-align: center; color: var(--dark-text-tertiary); padding: 2rem;">Mulai ketik untuk mencari...</p>';
+            }
+        }
+
+        // Keyboard shortcut: Ctrl+K or Cmd+K to open search
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                toggleSearch();
+            }
+            // ESC to close
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('searchOverlay');
+                if (overlay && overlay.style.display !== 'none') {
+                    toggleSearch();
+                }
+            }
+        });
+
+        // Simple Search Implementation (can be enhanced with AJAX)
+        @auth
+        let searchTimeout;
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('globalSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    clearTimeout(searchTimeout);
+                    const query = e.target.value.trim();
+                    
+                    if (query.length < 2) {
+                        document.getElementById('searchResults').innerHTML = '<p style="text-align: center; color: var(--dark-text-tertiary); padding: 2rem;">Mulai ketik untuk mencari...</p>';
+                        return;
+                    }
+                    
+                    searchTimeout = setTimeout(() => {
+                        // Show loading
+                        document.getElementById('searchResults').innerHTML = '<p style="text-align: center; color: var(--dark-text-tertiary); padding: 2rem;"><i class="fas fa-spinner fa-spin mr-2"></i>Mencari...</p>';
+                        
+                        // Fetch search results from API
+                        fetch(`{{ route('admin.search') }}?q=${encodeURIComponent(query)}`, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            displaySearchResults(data);
+                        })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                            document.getElementById('searchResults').innerHTML = '<p style="text-align: center; color: var(--apple-red); padding: 2rem;">Terjadi kesalahan saat mencari</p>';
+                        });
+                    }, 300);
+                });
+            }
+        });
+
+        // Display search results
+        function displaySearchResults(data) {
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (data.total === 0) {
+                resultsContainer.innerHTML = `
+                    <div style="padding: 2rem; text-align: center;">
+                        <i class="fas fa-search" style="font-size: 2rem; color: var(--dark-text-tertiary); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--dark-text-secondary);">Tidak ada hasil untuk "${data.query}"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<div style="padding: 0.5rem;">`;
+            html += `<p style="color: var(--dark-text-tertiary); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 1rem; padding: 0 0.5rem;">${data.total} hasil ditemukan</p>`;
+
+            // Helper function to render result item
+            const renderItem = (item) => `
+                <a href="${item.url}" 
+                   style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border-radius: 10px; text-decoration: none; color: var(--dark-text-primary); transition: all 0.2s; margin-bottom: 0.5rem;"
+                   onmouseover="this.style.backgroundColor='var(--dark-bg-tertiary)'" 
+                   onmouseout="this.style.backgroundColor='transparent'">
+                    <div style="width: 2.5rem; height: 2.5rem; border-radius: 8px; background: var(--${item.color}); display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas ${item.icon}"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 500; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.title}</div>
+                        <div style="font-size: 0.75rem; color: var(--dark-text-tertiary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.subtitle}</div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--dark-text-tertiary); padding: 0.25rem 0.5rem; background: var(--dark-bg-tertiary); border-radius: 6px;">${item.type}</div>
+                </a>
+            `;
+
+            // Render each category
+            const categories = [
+                { key: 'projects', label: 'Proyek' },
+                { key: 'tasks', label: 'Task' },
+                { key: 'documents', label: 'Dokumen' },
+                { key: 'clients', label: 'Klien' },
+                { key: 'institutions', label: 'Instansi' },
+                { key: 'permits', label: 'Perizinan' }
+            ];
+
+            categories.forEach(category => {
+                const items = data.results[category.key];
+                if (items && items.length > 0) {
+                    html += `<div style="margin-bottom: 1.5rem;">`;
+                    html += `<p style="color: var(--dark-text-tertiary); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.5rem; padding: 0 0.5rem;">${category.label}</p>`;
+                    items.forEach(item => {
+                        html += renderItem(item);
+                    });
+                    html += `</div>`;
+                }
+            });
+
+            html += `</div>`;
+            resultsContainer.innerHTML = html;
+        }
+        @endauth
     </script>
     
     @stack('scripts')

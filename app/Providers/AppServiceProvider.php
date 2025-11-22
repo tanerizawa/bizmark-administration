@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\URL;
-use App\View\Composers\NavCountComposer;
+use App\View\Composers\NavigationComposer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
         
-        // Share navigation counts to layout
-        View::composer('layouts.app', NavCountComposer::class);
+        // Share navigation counts to layout (with caching)
+        View::composer('layouts.app', NavigationComposer::class);
         
         // Share mobile layout data
         View::composer('mobile.layouts.app', \App\Http\View\Composers\MobileLayoutComposer::class);
@@ -39,5 +39,10 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\Document::observe(\App\Observers\NavCountObserver::class);
         \App\Models\Institution::observe(\App\Observers\NavCountObserver::class);
         \App\Models\CashAccount::observe(\App\Observers\NavCountObserver::class);
+
+        // Register notification observers for real-time notifications
+        \App\Models\Task::observe(\App\Observers\TaskObserver::class);
+        \App\Models\Document::observe(\App\Observers\DocumentObserver::class);
+        \App\Models\PermitApplication::observe(\App\Observers\PermitApplicationObserver::class);
     }
 }

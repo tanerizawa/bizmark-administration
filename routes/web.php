@@ -161,6 +161,19 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('dashboard');
     })->name('home');
 
+    // Admin Profile Routes
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password');
+        Route::get('/notifications', [App\Http\Controllers\Admin\ProfileController::class, 'notifications'])->name('notifications');
+        Route::get('/notifications/{id}/read', [App\Http\Controllers\Admin\ProfileController::class, 'markAsRead'])->name('notifications.read');
+        Route::post('/notifications/read-all', [App\Http\Controllers\Admin\ProfileController::class, 'markAllAsRead'])->name('notifications.read-all');
+        
+        // Global Search
+        Route::get('/search', [App\Http\Controllers\Admin\SearchController::class, 'search'])->name('search');
+    });
+
     // Export Routes
     Route::middleware('permission:projects.view')->group(function () {
         Route::get('export/projects', [ExportController::class, 'exportProjects'])->name('export.projects');
