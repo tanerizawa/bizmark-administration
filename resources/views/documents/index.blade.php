@@ -4,95 +4,80 @@
 @section('page-title', 'Manajemen Dokumen')
 
 @section('content')
-    <!-- Header Actions -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
-        <div>
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Kelola semua dokumen perizinan dan berkas proyek</p>
+    {{-- Hero Section --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
-        <div class="flex items-center space-x-3">
-            <button type="button" class="px-4 py-2 rounded-apple text-sm font-medium transition-apple" 
-                    style="background-color: #2C2C2E; color: rgba(235, 235, 245, 0.6); border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);" 
-                    onmouseover="this.style.backgroundColor='#3A3A3C'; this.style.color='#FFFFFF'" 
-                    onmouseout="this.style.backgroundColor='#2C2C2E'; this.style.color='rgba(235, 235, 245, 0.6)'">
-                <i class="fas fa-filter mr-2"></i>
-                Filter
-            </button>
-            <a href="{{ route('documents.create') }}" 
-               class="btn-primary px-4 py-2 text-white rounded-apple text-sm font-medium">
-                <i class="fas fa-upload mr-2"></i>
-                Upload Dokumen
-            </a>
-        </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        @php
-            $totalDocs = $documents->total();
-            $totalSize = $documents->sum('file_size');
-            $perizinanCount = $documents->where('category', 'perizinan')->count();
-            $confidentialCount = $documents->where('is_confidential', true)->count();
-            
-            // Format file size
-            $formattedSize = $totalSize >= 1073741824 ? 
-                number_format($totalSize / 1073741824, 2) . ' GB' : 
-                ($totalSize >= 1048576 ? 
-                    number_format($totalSize / 1048576, 2) . ' MB' : 
-                    number_format($totalSize / 1024, 2) . ' KB');
-        @endphp
-
-        <!-- Total Dokumen -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Total Dokumen</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $totalDocs }}</div>
+        <div class="relative space-y-5 md:space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div class="space-y-2.5 max-w-3xl">
+                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Dokumen</p>
+                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                        Arsip Digital Dokumen Perizinan
+                    </h1>
+                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                        Simpan, kelola, dan akses semua dokumen perizinan secara terpusat dengan sistem keamanan dan versioning yang terstruktur.
+                    </p>
                 </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(0, 122, 255, 0.15);">
-                    <i class="fas fa-file-alt text-xl" style="color: rgba(0, 122, 255, 1);"></i>
+                <div class="space-y-2.5">
+                    <a href="{{ route('documents.create') }}" 
+                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
+                       style="background: rgba(10,132,255,0.25); color: rgba(235,235,245,0.9);">
+                        <i class="fas fa-upload mr-2"></i>
+                        Upload Dokumen
+                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                @php
+                    $totalDocs = $documents->total();
+                    $totalSize = $documents->sum('file_size');
+                    $perizinanCount = $documents->where('category', 'perizinan')->count();
+                    $confidentialCount = $documents->where('is_confidential', true)->count();
+                    
+                    // Format file size
+                    $formattedSize = $totalSize >= 1073741824 ? 
+                        number_format($totalSize / 1073741824, 2) . ' GB' : 
+                        ($totalSize >= 1048576 ? 
+                            number_format($totalSize / 1048576, 2) . ' MB' : 
+                            number_format($totalSize / 1024, 2) . ' KB');
+                @endphp
+
+                <!-- Total Dokumen -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Dokumen</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $totalDocs }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Berkas tersimpan</p>
+                </div>
+
+                <!-- Total Size -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(175,82,222,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Total Ukuran</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(175,82,222,1);">{{ $formattedSize }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Kapasitas terpakai</p>
+                </div>
+
+                <!-- Perizinan -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Perizinan</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">{{ $perizinanCount }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Dokumen izin</p>
+                </div>
+
+                <!-- Confidential -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,59,48,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Rahasia</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,59,48,1);">{{ $confidentialCount }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akses terbatas</p>
                 </div>
             </div>
         </div>
-
-        <!-- Total Size -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Total Size</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $formattedSize }}</div>
-                </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(175, 82, 222, 0.15);">
-                    <i class="fas fa-database text-xl" style="color: rgba(175, 82, 222, 1);"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Perizinan -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Perizinan</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $perizinanCount }}</div>
-                </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(255, 159, 10, 0.15);">
-                    <i class="fas fa-file-contract text-xl" style="color: rgba(255, 159, 10, 1);"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Confidential -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Confidential</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $confidentialCount }}</div>
-                </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(255, 59, 48, 0.15);">
-                    <i class="fas fa-lock text-xl" style="color: rgba(255, 59, 48, 1);"></i>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
     <!-- Search and Filter Card -->
     <div class="card-elevated rounded-apple-lg mb-4 overflow-hidden">
@@ -199,10 +184,10 @@
                     <tr>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Dokumen</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Kategori</th>
-                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tipe File</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tipe Berkas</th>
                         <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Ukuran</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Proyek</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Upload Info</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Info Unggahan</th>
                         <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
@@ -254,7 +239,7 @@
                                                 {{ $document->title }}
                                             </div>
                                             @if($document->is_confidential)
-                                                <i class="fas fa-lock text-xs ml-2" style="color: rgba(255, 59, 48, 1);" title="Confidential"></i>
+                                                <i class="fas fa-lock text-xs ml-2" style="color: rgba(255, 59, 48, 1);" title="Rahasia"></i>
                                             @endif
                                             @if($document->version > 1)
                                                 <span class="text-xs ml-2 px-2 py-0.5 rounded-full" style="background-color: rgba(0, 122, 255, 0.15); color: rgba(0, 122, 255, 1);">
@@ -267,7 +252,7 @@
                                         </div>
                                         @if($document->download_count > 0)
                                             <div class="text-xs text-dark-text-secondary mt-0.5">
-                                                <i class="fas fa-download mr-1"></i>{{ $document->download_count }} downloads
+                                                <i class="fas fa-download mr-1"></i>{{ $document->download_count }} unduhan
                                             </div>
                                         @endif
                                     </div>
@@ -343,7 +328,7 @@
                                        style="color: #34C759; background-color: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3);" 
                                        onmouseover="this.style.backgroundColor='#34C759'; this.style.color='#FFFFFF'" 
                                        onmouseout="this.style.backgroundColor='rgba(52, 199, 89, 0.1)'; this.style.color='#34C759'"
-                                       title="Download">
+                                       title="Unduh">
                                         <i class="fas fa-download text-sm"></i>
                                     </a>
                                     <a href="{{ route('documents.show', $document) }}" 
@@ -351,7 +336,7 @@
                                        style="color: #0A84FF; background-color: rgba(10, 132, 255, 0.1); border: 1px solid rgba(10, 132, 255, 0.3);" 
                                        onmouseover="this.style.backgroundColor='#0A84FF'; this.style.color='#FFFFFF'" 
                                        onmouseout="this.style.backgroundColor='rgba(10, 132, 255, 0.1)'; this.style.color='#0A84FF'"
-                                       title="View">
+                                       title="Lihat">
                                         <i class="fas fa-eye text-sm"></i>
                                     </a>
                                     <a href="{{ route('documents.edit', $document) }}" 
@@ -359,7 +344,7 @@
                                        style="color: #FF9F0A; background-color: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.3);" 
                                        onmouseover="this.style.backgroundColor='#FF9F0A'; this.style.color='#FFFFFF'" 
                                        onmouseout="this.style.backgroundColor='rgba(255, 159, 10, 0.1)'; this.style.color='#FF9F0A'"
-                                       title="Edit">
+                                       title="Ubah">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
                                 </div>

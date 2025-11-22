@@ -29,9 +29,9 @@
 
 @endphp
 
-<div class="max-w-7xl mx-auto space-y-10">
+@section('content')
     {{-- Hero / overview --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
@@ -39,49 +39,49 @@
         <div class="relative space-y-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Permit Application Desk</p>
+                    <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Permohonan</p>
                     <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Semua permohonan izin ala mission control Bizmark.id
+                        Database Lengkap Permohonan Izin
                     </h1>
                     <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Pantau intake baru, tindak lanjuti dokumen kurang, dan ikuti progres proyek tanpa meninggalkan satu layar.
+                        Pantau permohonan baru, tindak lanjuti dokumen yang belum lengkap, dan lacak progres setiap pengajuan dalam satu tampilan.
                     </p>
                 </div>
                 <div class="text-sm space-y-2.5" style="color: rgba(235,235,245,0.65);">
-                    <p><i class="fas fa-database mr-2"></i>{{ $totalApplications }} total aplikasi tersimpan</p>
-                    <p><i class="fas fa-percentage mr-2"></i>Completion rate {{ $completionRate }}%</p>
+                    <p><i class="fas fa-database mr-2"></i>{{ $totalApplications }} total permohonan</p>
+                    <p><i class="fas fa-percentage mr-2"></i>Tingkat penyelesaian {{ $completionRate }}%</p>
                     <a href="{{ route('admin.permit-dashboard') }}" class="btn-secondary-sm">
-                        <i class="fas fa-chart-network mr-2"></i>Kembali ke dashboard
+                        <i class="fas fa-chart-network mr-2"></i>Kembali ke Dashboard
                     </a>
                 </div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div class="rounded-apple-lg p-4" style="background: rgba(255,59,48,0.08);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.8);">Review Backlog</p>
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.8);">Antrian Tinjauan</p>
                     <h2 class="text-2xl font-bold text-white mt-1.5">{{ $reviewBacklog }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Submitted &amp; review queue</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Menunggu verifikasi</p>
                 </div>
                 <div class="rounded-apple-lg p-4" style="background: rgba(191,90,242,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Butuh Quotation</p>
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Butuh Penawaran</p>
                     <h2 class="text-2xl font-bold text-white mt-1.5">{{ $quoted }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Menunggu follow-up sales</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Menunggu tindak lanjut</p>
                 </div>
                 <div class="rounded-apple-lg p-4" style="background: rgba(10,132,255,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Dalam Proses</p>
                     <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(10,132,255,1);">{{ $inProgress }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $activePipeline }} aplikasi aktif</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $activePipeline }} permohonan aktif</p>
                 </div>
                 <div class="rounded-apple-lg p-4" style="background: rgba(52,199,89,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Selesai</p>
                     <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $completed }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Completion rate {{ $completionRate }}%</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Tingkat penyelesaian {{ $completionRate }}%</p>
                 </div>
             </div>
         </div>
     </section>
 
     @if(session('success') || session('error'))
-        <div class="space-y-3">
+        <div class="space-y-3 mb-5">
             @if(session('success'))
                 <div class="rounded-apple-lg p-4" style="background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.3);">
                     <p class="text-sm font-medium" style="color: rgba(52,199,89,1);">{{ session('success') }}</p>
@@ -96,12 +96,12 @@
     @endif
 
     {{-- Search --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-5">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-5 mb-5">
         <div class="flex items-center justify-between flex-wrap gap-3">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Pencarian</p>
-                <h2 class="text-xl font-semibold text-white">Cari permohonan</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Karena data masih ramping, cukup gunakan pencarian dan status sederhana.</p>
+                <h2 class="text-xl font-semibold text-white">Cari Permohonan</h2>
+                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Filter berdasarkan nomor permohonan, nama klien, atau status pengajuan.</p>
             </div>
             <div class="flex items-center gap-2 text-xs" style="color: rgba(235,235,245,0.6);">
                 <i class="fas fa-info-circle"></i>
@@ -113,13 +113,13 @@
             <input type="hidden" name="sort_order" value="{{ request('sort_order', 'desc') }}">
             <div class="flex flex-col md:flex-row md:items-end md:gap-4 gap-3">
                 <div class="flex-1">
-                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Masukkan nomor aplikasi atau nama client</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Masukkan nomor aplikasi atau nama client"
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Nomor permohonan atau nama klien</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Masukkan nomor permohonan atau nama klien"
                            class="w-full px-4 py-2.5 rounded-apple text-sm text-white placeholder-gray-500"
                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
                 </div>
                 <div class="w-full md:w-60">
-                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Status opsional</label>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Filter status</label>
                     <select name="status" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
                             style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
                         <option value="">Semua Status</option>
@@ -130,7 +130,7 @@
                 </div>
                 <div class="flex gap-3 w-full md:w-auto">
                     <button type="submit" class="btn-primary-sm flex-1 md:flex-none">
-                        <i class="fas fa-search mr-2"></i>Terapkan Filter
+                        <i class="fas fa-search mr-2"></i>Terapkan
                     </button>
                     <a href="{{ route('admin.permit-applications.index') }}" class="btn-secondary-sm flex-1 md:flex-none text-center">
                         <i class="fas fa-redo mr-2"></i>Reset
@@ -276,5 +276,4 @@
             </div>
         @endif
     </section>
-</div>
 @endsection

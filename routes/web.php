@@ -22,6 +22,8 @@ use App\Http\Controllers\PublicArticleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\Admin\PermitManagementController;
+use App\Http\Controllers\Admin\RecruitmentController;
 
 // SEO Routes
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -211,6 +213,11 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Financial Management Routes (Phase 1)
+    // Master Data Hub (Unified Tab Interface)
+    Route::middleware('auth')->group(function () {
+        Route::get('admin/master-data', [App\Http\Controllers\Admin\MasterDataController::class, 'index'])->name('admin.master-data.index');
+    });
+    
     // Read-only routes (auth required)
     Route::middleware('auth')->group(function () {
         Route::get('cash-accounts', [CashAccountController::class, 'index'])->name('cash-accounts.index');
@@ -382,6 +389,9 @@ Route::middleware(['auth'])->group(function () {
     
     // Email Management Routes
     Route::prefix('admin')->name('admin.')->middleware('permission:email.manage')->group(function () {
+        // Email Management Hub (Unified Tab Interface)
+        Route::get('email-management', [App\Http\Controllers\Admin\EmailManagementController::class, 'index'])->name('email-management.index');
+        
         // Email Campaigns
         Route::resource('campaigns', App\Http\Controllers\Admin\EmailCampaignController::class);
         Route::get('campaigns/{id}/send', [App\Http\Controllers\Admin\EmailCampaignController::class, 'send'])->name('campaigns.send');
@@ -596,9 +606,18 @@ Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('a
 
 // Admin: Permit Application Management (Phase 3)
 Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function () {
-    // Permit Dashboard
-    Route::get('permit-dashboard', [App\Http\Controllers\Admin\PermitDashboardController::class, 'index'])
-        ->name('permit-dashboard');
+    // Unified Permit Management Interface (New Tabbed Interface)
+    Route::get('permits', [App\Http\Controllers\Admin\PermitManagementController::class, 'index'])
+        ->name('permits.index');
+    
+    // Backward-compatible redirects to new tabbed interface
+    Route::get('permit-dashboard', function() {
+        return redirect()->route('admin.permits.index', ['tab' => 'dashboard']);
+    })->name('permit-dashboard');
+    
+    // Unified Recruitment Management Interface (Tabbed Interface)
+    Route::get('recruitment', [RecruitmentController::class, 'index'])
+        ->name('recruitment.index');
     
     // Permit Application List & Detail
     Route::get('permit-applications', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'index'])

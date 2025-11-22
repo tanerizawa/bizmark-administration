@@ -346,12 +346,12 @@ is_spa=1,
 <!-- Add to layout.blade.php -->
 <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-40 lg:hidden shadow-lg">
     <div class="flex gap-3">
-        <a href="https://wa.me/6281382605030" 
+        <a href="https://wa.me/6283879602855" 
            class="flex-1 bg-green-600 text-white text-center py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
             <i class="fab fa-whatsapp"></i>
             WhatsApp
         </a>
-        <a href="tel:+6281382605030" 
+        <a href="tel:+6283879602855" 
            class="flex-1 bg-blue-600 text-white text-center py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
             <i class="fas fa-phone"></i>
             Telepon

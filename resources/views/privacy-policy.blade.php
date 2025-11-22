@@ -159,7 +159,7 @@
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">💬 WhatsApp</p>
-                            <a href="https://wa.me/6281382605030" target="_blank" class="text-apple-blue hover:underline">+62 813-8260-5030</a>
+                            <a href="https://wa.me/6283879602855" target="_blank" class="text-apple-blue hover:underline">+62 813-8260-5030</a>
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">🌐 Website</p>
@@ -312,7 +312,7 @@
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">💬 WhatsApp</p>
-                            <a href="https://wa.me/6281382605030" target="_blank" class="text-apple-blue hover:underline">+62 813-8260-5030</a>
+                            <a href="https://wa.me/6283879602855" target="_blank" class="text-apple-blue hover:underline">+62 813-8260-5030</a>
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">🌐 Website</p>

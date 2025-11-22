@@ -19,13 +19,13 @@
     
     <!-- Floating Action Buttons -->
     <div class="fab-group">
-        <a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
+        <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
            target="_blank" 
            class="fab fab-whatsapp"
            title="Chat WhatsApp">
             <i class="fab fa-whatsapp"></i>
         </a>
-        <a href="tel:+6281382605030" 
+        <a href="tel:+6283879602855" 
            class="fab fab-phone"
            title="Telepon Kami">
             <i class="fas fa-phone-alt"></i>

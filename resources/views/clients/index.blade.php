@@ -4,19 +4,72 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-3 sm:space-y-0">
-        <div>
-            <h1 class="text-2xl font-semibold text-dark-text-primary mb-1">
-                Daftar Klien
-            </h1>
-            <p class="text-sm text-dark-text-secondary">Kelola data klien dan tracking proyek</p>
+    {{-- Hero Section --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-purple opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-orange opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
-        <a href="{{ route('clients.create') }}" class="btn-primary px-4 py-2 text-white rounded-apple text-sm font-medium inline-flex items-center">
-            <i class="fas fa-plus mr-2"></i>
-            Tambah Klien
-        </a>
-    </div>
+        <div class="relative space-y-5 md:space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div class="space-y-2.5 max-w-3xl">
+                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Klien</p>
+                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                        Database Klien Aktif
+                    </h1>
+                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                        Kelola hubungan klien, tracking proyek, dan riwayat kerja sama dalam satu platform.
+                    </p>
+                </div>
+                <div class="space-y-2.5">
+                    <a href="{{ route('clients.create') }}" 
+                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
+                       style="background: rgba(175,82,222,0.25); color: rgba(235,235,245,0.9);">
+                        <i class="fas fa-plus mr-2"></i>
+                        Tambah Klien
+                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <!-- Total Klien -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Klien</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $clients->total() }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akun terdaftar</p>
+                </div>
+
+                <!-- Aktif -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Aktif</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">
+                        {{ $clients->where('status', 'active')->count() }}
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Klien berjalan</p>
+                </div>
+
+                <!-- Perusahaan -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(175,82,222,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Perusahaan</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(175,82,222,1);">
+                        {{ $clients->where('client_type', 'company')->count() }}
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Badan usaha</p>
+                </div>
+
+                <!-- Potensial -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Potensial</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">
+                        {{ $clients->where('status', 'potential')->count() }}
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Prospek baru</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Alert Messages -->
     @if(session('success'))
@@ -82,12 +135,34 @@
                         <option value="government" {{ request('client_type') == 'government' ? 'selected' : '' }}>Pemerintah</option>
                     </select>
                 </div>
-                <div class="md:col-span-4">
-                    <button type="submit" class="btn-primary px-4 py-2 text-white rounded-apple text-sm font-medium inline-flex items-center">
-                        <i class="fas fa-search mr-2"></i>Filter
-                    </button>
-                </div>
             </form>
+            <script>
+            // Auto submit form on filter change
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.querySelector('form[action="{{ route('clients.index') }}"]');
+                if (!form) return;
+                
+                const searchInput = form.querySelector('input[name="search"]');
+                
+                // Auto-submit for select dropdowns
+                form.querySelectorAll('select[name]').forEach(function(el) {
+                    el.addEventListener('change', function() {
+                        form.submit();
+                    });
+                });
+                
+                // Submit search on Enter key only
+                if (searchInput) {
+                    searchInput.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            form.submit();
+                        }
+                    });
+                }
+            });
+            </script>
         </div>
     </div>
 

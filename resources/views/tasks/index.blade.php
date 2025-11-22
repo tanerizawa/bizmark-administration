@@ -4,90 +4,75 @@
 @section('page-title', 'Manajemen Tugas')
 
 @section('content')
-    <!-- Header Actions -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
-        <div>
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Kelola dan pantau semua tugas dalam proyek</p>
+    {{-- Hero Section --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
-        <div class="flex items-center space-x-3">
-            <button type="button" class="px-4 py-2 rounded-apple text-sm font-medium transition-apple" 
-                    style="background-color: #2C2C2E; color: rgba(235, 235, 245, 0.6); border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);" 
-                    onmouseover="this.style.backgroundColor='#3A3A3C'; this.style.color='#FFFFFF'" 
-                    onmouseout="this.style.backgroundColor='#2C2C2E'; this.style.color='rgba(235, 235, 245, 0.6)'">
-                <i class="fas fa-filter mr-2"></i>
-                Filter
-            </button>
-            <a href="{{ route('tasks.create') }}" 
-               class="btn-primary px-4 py-2 text-white rounded-apple text-sm font-medium">
-                <i class="fas fa-plus mr-2"></i>
-                Tambah Tugas
-            </a>
-        </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        @php
-            $totalTasks = $tasks->total();
-            $pendingCount = $tasks->whereIn('status', ['todo', 'in_progress'])->count();
-            $completedCount = $tasks->where('status', 'done')->count();
-            $overdueCount = $tasks->filter(function($task) {
-                return $task->isOverdue() && $task->status !== 'done';
-            })->count();
-        @endphp
-
-        <!-- Total Tugas -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Total Tugas</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $totalTasks }}</div>
+        <div class="relative space-y-5 md:space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div class="space-y-2.5 max-w-3xl">
+                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Tugas</p>
+                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                        Kelola dan Lacak Semua Tugas Proyek
+                    </h1>
+                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                        Organisir tugas dengan prioritas yang jelas, tetapkan penanggung jawab, dan pantau kemajuan setiap aktivitas dalam proyek Anda.
+                    </p>
                 </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(0, 122, 255, 0.15);">
-                    <i class="fas fa-tasks text-xl" style="color: rgba(0, 122, 255, 1);"></i>
+                <div class="space-y-2.5">
+                    <a href="{{ route('tasks.create') }}" 
+                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
+                       style="background: rgba(10,132,255,0.25); color: rgba(235,235,245,0.9);">
+                        <i class="fas fa-plus mr-2"></i>
+                        Tambah Tugas
+                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                @php
+                    $totalTasks = $tasks->total();
+                    $pendingCount = $tasks->whereIn('status', ['todo', 'in_progress'])->count();
+                    $completedCount = $tasks->where('status', 'done')->count();
+                    $overdueCount = $tasks->filter(function($task) {
+                        return $task->isOverdue() && $task->status !== 'done';
+                    })->count();
+                @endphp
+
+                <!-- Total Tugas -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Tugas</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $totalTasks }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua tugas</p>
+                </div>
+
+                <!-- Pending -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Dalam Proses</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">{{ $pendingCount }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sedang dikerjakan</p>
+                </div>
+
+                <!-- Selesai -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Selesai</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $completedCount }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tugas tuntas</p>
+                </div>
+
+                <!-- Terlambat -->
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,59,48,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Terlambat</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,59,48,1);">{{ $overdueCount }}</h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu perhatian</p>
                 </div>
             </div>
         </div>
-
-        <!-- Pending -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Pending</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $pendingCount }}</div>
-                </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(255, 159, 10, 0.15);">
-                    <i class="fas fa-spinner text-xl" style="color: rgba(255, 159, 10, 1);"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Selesai -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Selesai</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $completedCount }}</div>
-                </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(52, 199, 89, 0.15);">
-                    <i class="fas fa-check-circle text-xl" style="color: rgba(52, 199, 89, 1);"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Terlambat -->
-        <div class="card-elevated rounded-apple-lg p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Terlambat</div>
-                    <div class="text-2xl font-bold mt-1" style="color: #FFFFFF;">{{ $overdueCount }}</div>
-                </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(255, 59, 48, 0.15);">
-                    <i class="fas fa-exclamation-triangle text-xl" style="color: rgba(255, 59, 48, 1);"></i>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
     <!-- Search and Filter Card -->
     <div class="card-elevated rounded-apple-lg mb-4 overflow-hidden">
@@ -115,10 +100,10 @@
                         <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Status</label>
                         <select name="status" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
                             <option value="">Semua Status</option>
-                            <option value="todo" {{ request('status') == 'todo' ? 'selected' : '' }}>To Do</option>
-                            <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                            <option value="done" {{ request('status') == 'done' ? 'selected' : '' }}>Done</option>
-                            <option value="blocked" {{ request('status') == 'blocked' ? 'selected' : '' }}>Blocked</option>
+                            <option value="todo" {{ request('status') == 'todo' ? 'selected' : '' }}>Belum Dikerjakan</option>
+                            <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>Sedang Dikerjakan</option>
+                            <option value="done" {{ request('status') == 'done' ? 'selected' : '' }}>Selesai</option>
+                            <option value="blocked" {{ request('status') == 'blocked' ? 'selected' : '' }}>Terblokir</option>
                         </select>
                     </div>
 
@@ -127,10 +112,10 @@
                         <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Prioritas</label>
                         <select name="priority" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
                             <option value="">Semua Prioritas</option>
-                            <option value="urgent" {{ request('priority') == 'urgent' ? 'selected' : '' }}>Urgent</option>
-                            <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
+                            <option value="urgent" {{ request('priority') == 'urgent' ? 'selected' : '' }}>Mendesak</option>
+                            <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>Tinggi</option>
                             <option value="normal" {{ request('priority') == 'normal' ? 'selected' : '' }}>Normal</option>
-                            <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
+                            <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Rendah</option>
                         </select>
                     </div>
 
@@ -189,9 +174,9 @@
                         <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tugas</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Status</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Prioritas</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Assigned To</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Deadline</th>
-                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Progress</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Ditugaskan Kepada</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tenggat</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Kemajuan</th>
                         <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
@@ -200,19 +185,19 @@
                         @php
                             // Status configuration
                             $statusConfig = [
-                                'todo' => ['label' => 'To Do', 'icon' => 'fa-circle', 'color' => 'rgba(255, 159, 10, 1)', 'bg' => 'rgba(255, 159, 10, 0.15)'],
-                                'in_progress' => ['label' => 'In Progress', 'icon' => 'fa-spinner', 'color' => 'rgba(0, 122, 255, 1)', 'bg' => 'rgba(0, 122, 255, 0.15)'],
-                                'done' => ['label' => 'Done', 'icon' => 'fa-check-circle', 'color' => 'rgba(52, 199, 89, 1)', 'bg' => 'rgba(52, 199, 89, 0.15)'],
-                                'blocked' => ['label' => 'Blocked', 'icon' => 'fa-ban', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.15)'],
+                                'todo' => ['label' => 'Belum Dikerjakan', 'icon' => 'fa-circle', 'color' => 'rgba(255, 159, 10, 1)', 'bg' => 'rgba(255, 159, 10, 0.15)'],
+                                'in_progress' => ['label' => 'Sedang Dikerjakan', 'icon' => 'fa-spinner', 'color' => 'rgba(0, 122, 255, 1)', 'bg' => 'rgba(0, 122, 255, 0.15)'],
+                                'done' => ['label' => 'Selesai', 'icon' => 'fa-check-circle', 'color' => 'rgba(52, 199, 89, 1)', 'bg' => 'rgba(52, 199, 89, 0.15)'],
+                                'blocked' => ['label' => 'Terblokir', 'icon' => 'fa-ban', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.15)'],
                             ];
                             $status = $statusConfig[$task->status] ?? $statusConfig['todo'];
 
                             // Priority configuration
                             $priorityConfig = [
-                                'urgent' => ['label' => 'Urgent', 'icon' => 'fa-exclamation-circle', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.15)'],
-                                'high' => ['label' => 'High', 'icon' => 'fa-arrow-up', 'color' => 'rgba(255, 149, 0, 1)', 'bg' => 'rgba(255, 149, 0, 0.15)'],
+                                'urgent' => ['label' => 'Mendesak', 'icon' => 'fa-exclamation-circle', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.15)'],
+                                'high' => ['label' => 'Tinggi', 'icon' => 'fa-arrow-up', 'color' => 'rgba(255, 149, 0, 1)', 'bg' => 'rgba(255, 149, 0, 0.15)'],
                                 'normal' => ['label' => 'Normal', 'icon' => 'fa-minus', 'color' => 'rgba(0, 122, 255, 1)', 'bg' => 'rgba(0, 122, 255, 0.15)'],
-                                'low' => ['label' => 'Low', 'icon' => 'fa-arrow-down', 'color' => 'rgba(142, 142, 147, 1)', 'bg' => 'rgba(142, 142, 147, 0.15)'],
+                                'low' => ['label' => 'Rendah', 'icon' => 'fa-arrow-down', 'color' => 'rgba(142, 142, 147, 1)', 'bg' => 'rgba(142, 142, 147, 0.15)'],
                             ];
                             $priority = $priorityConfig[$task->priority] ?? $priorityConfig['normal'];
 
@@ -274,7 +259,7 @@
                                         <span class="text-sm text-dark-text-primary">{{ $task->assignedUser->name }}</span>
                                     </div>
                                 @else
-                                    <span class="text-sm text-dark-text-secondary">Unassigned</span>
+                                    <span class="text-sm text-dark-text-secondary">Belum Ditugaskan</span>
                                 @endif
                             </td>
 

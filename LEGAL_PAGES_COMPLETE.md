@@ -293,14 +293,14 @@ php artisan route:clear    ✅ Route cache cleared
 ## 📞 Contact Information Included
 
 ### Email
-- headoffice.cpm@gmail.com
+- cs@bizmark.id
 
 ### Phone
-- +62 813 8260 5030
+- +62 838 7960 2855
 
 ### WhatsApp
-- +62 813 8260 5030
-- Direct link: https://wa.me/6281382605030
+- +62 838 7960 2855
+- Direct link: https://wa.me/6283879602855
 
 ### Address
 - PT Cangah Pajaratan Mandiri

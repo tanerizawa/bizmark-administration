@@ -347,7 +347,7 @@ public function boot(): void {
     "contactType": "customer service",
     "availableLanguage": ["Indonesian", "English"]
   }],
-  "sameAs": ["https://wa.me/6281382605030"],
+  "sameAs": ["https://wa.me/6283879602855"],
   "foundingDate": "2010",
   "numberOfEmployees": {"@type": "QuantitativeValue", "value": "50+"}
 }

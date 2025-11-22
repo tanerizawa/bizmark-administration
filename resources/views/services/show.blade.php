@@ -45,12 +45,12 @@
                     
                     <!-- Quick Actions -->
                     <div class="flex flex-wrap gap-3">
-                        <a href="https://wa.me/6281382605030?text=Halo,%20saya%20tertarik%20dengan%20layanan%20{{ urlencode($service['title']) }}" target="_blank" class="btn btn-primary">
+                        <a href="https://wa.me/6283879602855?text=Halo,%20saya%20tertarik%20dengan%20layanan%20{{ urlencode($service['title']) }}" target="_blank" class="btn btn-primary">
                             <i class="fab fa-whatsapp mr-2"></i>
                             Konsultasi Gratis
                         </a>
                         @if(!in_array($service['slug'], ['perizinan-lb3', 'amdal']))
-                            <a href="tel:+6281382605030" class="btn bg-white border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary">
+                            <a href="tel:+6283879602855" class="btn bg-white border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary">
                                 <i class="fas fa-phone mr-2"></i>
                                 Telepon Kami
                             </a>
@@ -98,7 +98,7 @@
                                 </div>
                                 <div class="mt-4 flex items-center text-sm text-gray-600">
                                     <i class="fab fa-whatsapp text-lg mr-2" style="color: {{ $service['color'] }};"></i>
-                                    <a href="https://wa.me/6281382605030?text=Halo,%20saya%20ingin%20membahas%20perizinan%20Limbah%20B3" target="_blank" class="text-primary hover:underline">
+                                    <a href="https://wa.me/6283879602855?text=Halo,%20saya%20ingin%20membahas%20perizinan%20Limbah%20B3" target="_blank" class="text-primary hover:underline">
                                         Diskusi teknis via WhatsApp
                                     </a>
                                 </div>
@@ -121,7 +121,7 @@
                                 </div>
                                 <div class="mt-4 flex items-center text-sm text-gray-600">
                                     <i class="fab fa-whatsapp text-lg mr-2" style="color: {{ $service['color'] }};"></i>
-                                    <a href="https://wa.me/6281382605030?text=Halo,%20saya%20ingin%20membahas%20penyusunan%20AMDAL" target="_blank" class="text-primary hover:underline">
+                                    <a href="https://wa.me/6283879602855?text=Halo,%20saya%20ingin%20membahas%20penyusunan%20AMDAL" target="_blank" class="text-primary hover:underline">
                                         Konsultasi tahapan AMDAL
                                     </a>
                                 </div>
@@ -136,25 +136,25 @@
                                     Tim kami siap membantu Anda 24/7
                                 </p>
                                 <div class="space-y-3 mb-6">
-                                    <a href="https://wa.me/6281382605030" target="_blank" class="flex items-center text-white hover:text-white/80 transition">
+                                    <a href="https://wa.me/6283879602855" target="_blank" class="flex items-center text-white hover:text-white/80 transition">
                                         <i class="fab fa-whatsapp text-xl mr-3"></i>
                                         <div>
                                             <div class="text-xs text-white/70">WhatsApp</div>
                                             <div class="font-semibold">+62 813-8260-5030</div>
                                         </div>
                                     </a>
-                                    <a href="tel:+6281382605030" class="flex items-center text-white hover:text-white/80 transition">
+                                    <a href="tel:+6283879602855" class="flex items-center text-white hover:text-white/80 transition">
                                         <i class="fas fa-phone text-xl mr-3"></i>
                                         <div>
                                             <div class="text-xs text-white/70">Telepon</div>
                                             <div class="font-semibold">+62 813-8260-5030</div>
                                         </div>
                                     </a>
-                                    <a href="mailto:headoffice.cpm@gmail.com" class="flex items-center text-white hover:text-white/80 transition">
+                                    <a href="mailto:cs@bizmark.id" class="flex items-center text-white hover:text-white/80 transition">
                                         <i class="fas fa-envelope text-xl mr-3"></i>
                                         <div>
                                             <div class="text-xs text-white/70">Email</div>
-                                            <div class="font-semibold text-sm">headoffice.cpm@gmail.com</div>
+                                            <div class="font-semibold text-sm">cs@bizmark.id</div>
                                         </div>
                                     </a>
                                 </div>
@@ -252,7 +252,7 @@
                     Hubungi kami sekarang untuk konsultasi gratis dan penawaran terbaik
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="https://wa.me/6281382605030?text=Halo,%20saya%20ingin%20konsultasi%20tentang%20{{ urlencode($service['title']) }}" target="_blank" class="btn bg-secondary hover:bg-secondary-dark px-8 py-4 text-lg">
+                    <a href="https://wa.me/6283879602855?text=Halo,%20saya%20ingin%20konsultasi%20tentang%20{{ urlencode($service['title']) }}" target="_blank" class="btn bg-secondary hover:bg-secondary-dark px-8 py-4 text-lg">
                         <i class="fab fa-whatsapp mr-2"></i>
                         Konsultasi Sekarang
                     </a>

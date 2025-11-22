@@ -155,7 +155,7 @@ $testimonials = [
 **Cara Update:**
 ```blade
 // Line 97:
-<a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID,%20saya%20ingin%20konsultasi%20tentang%20legalitas%20bisnis"
+<a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID,%20saya%20ingin%20konsultasi%20tentang%20legalitas%20bisnis"
 ```
 
 ---

@@ -175,7 +175,7 @@
             </p>
             
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi" 
+                <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi" 
                    target="_blank"
                    class="px-8 py-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition shadow-soft inline-flex items-center">
                     <i class="fab fa-whatsapp mr-2 text-xl"></i>

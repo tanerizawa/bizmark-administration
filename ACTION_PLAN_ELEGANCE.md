@@ -111,7 +111,7 @@
                         : 'Consult your industrial permit needs with our expert team. Free and no commitment.' }}
                 </p>
                 <div class="flex flex-wrap gap-3">
-                    <a href="https://wa.me/6281382605030" class="btn-primary">
+                    <a href="https://wa.me/6283879602855" class="btn-primary">
                         <i class="fab fa-whatsapp mr-2"></i>
                         {{ app()->getLocale() == 'id' ? 'Konsultasi Gratis' : 'Free Consultation' }}
                     </a>

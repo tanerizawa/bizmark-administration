@@ -26,9 +26,9 @@
     $monthlyShare = $totalApplications > 0 ? round(($applicationsThisMonth / $totalApplications) * 100) : 0;
 @endphp
 
-<div class="max-w-7xl mx-auto space-y-10">
+@section('content')
     {{-- Hero borrowed from mission-control dashboard --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
@@ -36,17 +36,17 @@
         <div class="relative space-y-5 md:space-y-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Permit Mission Control</p>
+                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Pusat Kendali Perizinan</p>
                     <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Selaraskan tim izin, quotation, hingga revenue dengan gaya {{ config('app.name') }} Dashboard.
+                        Kendali Penuh Alur Perizinan dan Pendapatan
                     </h1>
                     <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Monitor alert penting, lengkapi dokumen, dan percepat konversi proyek tanpa membuka banyak tab.
+                        Pantau permohonan masuk, kelola penawaran, verifikasi pembayaran, dan lacak konversi proyek dalam satu tampilan terpadu.
                     </p>
                 </div>
                 <div class="space-y-2.5 text-sm" style="color: rgba(235,235,245,0.65);">
-                    <p><i class="fas fa-clock mr-2"></i>Last sync: {{ now()->format('d M Y, H:i') }}</p>
-                    <p><i class="fas fa-user-shield mr-2"></i>Visibility: Ops &amp; Finance lead</p>
+                    <p><i class="fas fa-clock mr-2"></i>Diperbarui: {{ now()->format('d M Y, H:i') }}</p>
+                    <p><i class="fas fa-user-shield mr-2"></i>Akses: Tim Operasional &amp; Keuangan</p>
                     <div class="flex gap-3 flex-wrap">
                         <a href="{{ route('admin.permit-applications.index') }}" class="btn-primary-sm">
                             <i class="fas fa-list mr-2"></i>Semua Permohonan
@@ -84,13 +84,13 @@
     </section>
 
     {{-- Critical focus cards --}}
-    <section class="space-y-3 md:space-y-4">
+    <section class="space-y-3 md:space-y-4 mb-6">
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
                 <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Prioritas 01</p>
-                <h2 class="text-2xl font-semibold text-white">Critical Focus – Permit Ops</h2>
+                <h2 class="text-2xl font-semibold text-white">Fokus Kritis – Operasional Perizinan</h2>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Menggabungkan backlog review, kesiapan quotation, dan cash pulse supaya tim langsung tahu apa yang harus dilakukan.
+                    Integrasi antrian tinjauan, kesiapan penawaran, dan arus kas untuk memberikan arahan kerja yang jelas kepada tim.
                 </p>
             </div>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.85);">
@@ -101,45 +101,45 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
             <div class="card-elevated rounded-apple-lg p-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Review Backlog</h3>
+                    <h3 class="text-lg font-semibold text-white">Antrian Tinjauan</h3>
                     <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(255,149,0,0.18); color: rgba(255,149,0,0.9);">{{ $reviewRatio }}%</span>
                 </div>
                 <p class="text-3xl font-bold text-white">{{ $pendingApplications }}</p>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Aplikasi menunggu verifikasi admin, prioritaskan yang sudah submitted &amp; under review.
+                    Permohonan menunggu verifikasi admin. Prioritaskan yang telah diajukan dan sedang ditinjau.
                 </p>
                 <div class="flex items-center justify-between text-xs" style="color: rgba(235,235,245,0.6);">
-                    <span>Last 30d intake</span>
-                    <span>{{ $applicationsThisMonth }} ({{ $monthlyShare }}% share)</span>
+                    <span>Masuk 30 hari terakhir</span>
+                    <span>{{ $applicationsThisMonth }} ({{ $monthlyShare }}% porsi)</span>
                 </div>
             </div>
 
             <div class="card-elevated rounded-apple-lg p-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Quotation Pipeline</h3>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Ops</span>
+                    <h3 class="text-lg font-semibold text-white">Jalur Penawaran</h3>
+                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Operasional</span>
                 </div>
                 <p class="text-3xl font-bold text-white">{{ $needQuotation }}</p>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Permohonan tanpa quotation. Percepat agar revenue tak tertahan.
+                    Permohonan tanpa penawaran harga. Percepat proses agar pendapatan tidak tertahan.
                 </p>
                 <div class="flex items-center justify-between text-xs" style="color: rgba(235,235,245,0.6);">
-                    <span>Potential conversion</span>
-                    <span>{{ $conversionRate }}% rate saat ini</span>
+                    <span>Potensi konversi</span>
+                    <span>{{ $conversionRate }}% tingkat saat ini</span>
                 </div>
             </div>
 
             <div class="card-elevated rounded-apple-lg p-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Finance Watch</h3>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(191,90,242,0.18); color: rgba(191,90,242,0.9);">Live</span>
+                    <h3 class="text-lg font-semibold text-white">Pantauan Keuangan</h3>
+                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(191,90,242,0.18); color: rgba(191,90,242,0.9);">Aktif</span>
                 </div>
                 <p class="text-3xl font-bold text-white">{{ $pendingPayments }}</p>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Pembayaran butuh verifikasi. Total revenue terkonfirmasi Rp {{ number_format($totalRevenue, 0, ',', '.') }}.
+                    Pembayaran menunggu verifikasi. Total pendapatan terkonfirmasi Rp {{ number_format($totalRevenue, 0, ',', '.') }}.
                 </p>
                 <div class="flex items-center justify-between text-xs" style="color: rgba(235,235,245,0.6);">
-                    <span>Revenue bulan ini</span>
+                    <span>Pendapatan bulan ini</span>
                     <span>Rp {{ number_format($revenueThisMonth ?? 0, 0, ',', '.') }}</span>
                 </div>
             </div>
@@ -147,11 +147,11 @@
     </section>
 
     {{-- Pipeline & Revenue --}}
-    <section class="space-y-3 md:space-y-4">
+    <section class="space-y-3 md:space-y-4 mb-6">
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
                 <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Prioritas 02</p>
-                <h2 class="text-2xl font-semibold text-white">Pipeline &amp; Revenue Pulse</h2>
+                <h2 class="text-2xl font-semibold text-white">Denyut Jalur &amp; Pendapatan</h2>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">Distribusi status, kinerja pemasukan, serta progres intake bulan berjalan.</p>
             </div>
         </div>
@@ -185,12 +185,12 @@
             <div class="space-y-3">
                 <div class="card-elevated rounded-apple-lg p-5 space-y-3">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Revenue Pulse</h3>
-                        <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,0.9);">Finance</span>
+                        <h3 class="text-lg font-semibold text-white">Denyut Pendapatan</h3>
+                        <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,0.9);">Keuangan</span>
                     </div>
                     <div class="space-y-2 text-sm" style="color: rgba(235,235,245,0.75);">
                         <div class="flex items-center justify-between">
-                            <span>Total revenue</span>
+                            <span>Total pendapatan</span>
                             <span class="text-base font-semibold text-white">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex items-center justify-between">
@@ -198,7 +198,7 @@
                             <span class="text-base font-semibold text-white">Rp {{ number_format($revenueThisMonth ?? 0, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span>Pending verification</span>
+                            <span>Menunggu verifikasi</span>
                             <span class="text-base font-semibold text-white">{{ $pendingPayments }} transaksi</span>
                         </div>
                     </div>
@@ -206,8 +206,8 @@
 
                 <div class="card-elevated rounded-apple-lg p-5 space-y-3">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Intake Snapshot</h3>
-                        <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(52,199,89,0.18); color: rgba(52,199,89,0.9);">Ops</span>
+                        <h3 class="text-lg font-semibold text-white">Snapshot Intake</h3>
+                        <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(52,199,89,0.18); color: rgba(52,199,89,0.9);">Operasional</span>
                     </div>
                     <ul class="space-y-2 text-sm" style="color: rgba(235,235,245,0.75);">
                         <li class="flex items-center justify-between">
@@ -233,8 +233,8 @@
         <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Aktivitas</p>
-                <h2 class="text-xl font-semibold text-white">Ops feed &amp; status update</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Log perubahan status terbaru lengkap dengan catatan tim.</p>
+                <h2 class="text-xl font-semibold text-white">Log Operasional &amp; Pembaruan Status</h2>
+                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Riwayat perubahan status terbaru lengkap dengan catatan tim.</p>
             </div>
             <a href="{{ route('admin.permit-applications.index') }}" class="btn-secondary-sm">Lihat semua</a>
         </div>
@@ -270,5 +270,4 @@
             <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada aktivitas terbaru.</p>
         @endif
     </section>
-</div>
 @endsection

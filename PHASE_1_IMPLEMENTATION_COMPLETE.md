@@ -101,7 +101,7 @@ Mobile responsive breakpoints
   * Instagram: https://instagram.com/bizmark.id
   * LinkedIn: https://linkedin.com/company/bizmarkid
   * YouTube: https://youtube.com/@bizmarkid
-  * WhatsApp: https://wa.me/6281382605030
+  * WhatsApp: https://wa.me/6283879602855
 - ✅ Hover effects (scale animation)
 
 **Column 2 - Layanan LENGKAP (8 Services):**
@@ -128,7 +128,7 @@ Mobile responsive breakpoints
 
 **Column 4 - Kontak & Legal:**
 - ✅ Contact details dengan icons:
-  * Phone: +62 813 8260 5030 (clickable tel: link)
+  * Phone: +62 838 7960 2855 (clickable tel: link)
   * Email: headoffice.tck@gmail.com (clickable mailto:)
   * Address: Karawang, Jawa Barat
   * Working hours: Senin - Jumat, 08:00 - 17:00
@@ -190,12 +190,12 @@ Mobile responsive breakpoints
   * Green gradient (#25D366 → #128C7E)
   * Pulse animation (2s infinite)
   * Primary size (60px desktop, 50px mobile)
-  * Target: https://wa.me/6281382605030
+  * Target: https://wa.me/6283879602855
 
 - ✅ **Phone Button**:
   * Blue gradient (#007AFF → #0051D5)
   * Secondary size
-  * Target: tel:+6281382605030
+  * Target: tel:+6283879602855
 
 - ✅ **Back-to-Top Button** (NEW!):
   * Glassmorphism effect

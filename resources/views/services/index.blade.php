@@ -134,11 +134,11 @@
                 Konsultasikan kebutuhan perizinan Anda dengan tim ahli kami. Gratis dan tanpa kewajiban.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://wa.me/6281382605030" target="_blank" class="btn bg-white text-primary hover:bg-gray-100 px-8 py-4 text-lg">
+                <a href="https://wa.me/6283879602855" target="_blank" class="btn bg-white text-primary hover:bg-gray-100 px-8 py-4 text-lg">
                     <i class="fab fa-whatsapp mr-2"></i>
                     Konsultasi via WhatsApp
                 </a>
-                <a href="tel:+6281382605030" class="btn bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 text-lg">
+                <a href="tel:+6283879602855" class="btn bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 text-lg">
                     <i class="fas fa-phone mr-2"></i>
                     Telepon Kami
                 </a>

@@ -293,7 +293,7 @@ location.reload();
 
 **HTML Structure:**
 ```html
-<a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20berkonsultasi" 
+<a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20berkonsultasi" 
    target="_blank"
    class="fixed bottom-6 right-6 z-[998] group">
     <div class="flex items-center gap-3 bg-[#25D366] text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-[0_0_30px_rgba(37,211,102,0.5)] transition-all duration-300 hover:scale-105">
@@ -495,7 +495,7 @@ function acceptCookies() {
 **Customizing WhatsApp Message:**
 ```html
 <!-- Change pre-filled text -->
-<a href="https://wa.me/6281382605030?text=Your%20custom%20message%20here">
+<a href="https://wa.me/6283879602855?text=Your%20custom%20message%20here">
 ```
 
 **Changing Position:**
@@ -568,7 +568,7 @@ function acceptCookies() {
 # .env additions (optional)
 APP_LOCALE=id
 APP_FALLBACK_LOCALE=id
-WHATSAPP_NUMBER=6281382605030
+WHATSAPP_NUMBER=6283879602855
 ```
 
 ### Cache Commands:

@@ -48,7 +48,7 @@
                            data-cta="hero_ai_analysis"
                            onclick="trackEvent('CTA', 'click', 'hero_ai_analysis_primary')">
                             <i class="fas fa-robot text-base"></i>
-                            <span>Analisis AI Gratis</span>
+                            <span>Analisis Izin Anda</span>
                             <span class="absolute -top-2 -right-2 px-2 py-0.5 bg-yellow-400 text-[#0077B5] text-[10px] font-bold rounded-full shadow-lg animate-pulse">BARU</span>
                             <i class="fas fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </a>

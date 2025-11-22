@@ -642,7 +642,7 @@
         <!-- CTA Button -->
         <div class="text-center mt-12" data-aos="fade-up">
             <p class="text-gray-400 mb-4">Masih punya pertanyaan lain?</p>
-            <a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20punya%20pertanyaan%20tentang%20perizinan" 
+            <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20punya%20pertanyaan%20tentang%20perizinan" 
                target="_blank"
                class="btn-primary inline-flex items-center">
                 <i class="fab fa-whatsapp mr-2"></i>
@@ -664,13 +664,13 @@
             </p>
             
             <div class="flex flex-wrap justify-center gap-4 mb-8">
-                <a href="https://wa.me/6281382605030?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
+                <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
                    target="_blank"
                    class="btn-primary inline-flex items-center">
                     <i class="fab fa-whatsapp mr-2"></i>
                     Chat via WhatsApp
                 </a>
-                <a href="tel:+6281382605030" class="btn-secondary inline-flex items-center">
+                <a href="tel:+6283879602855" class="btn-secondary inline-flex items-center">
                     <i class="fas fa-phone mr-2"></i>
                     Telepon Kami
                 </a>
@@ -738,7 +738,7 @@
                             <a href="https://youtube.com/@bizmarkid" target="_blank" rel="noopener" class="w-10 h-10 bg-red-600/20 hover:bg-red-600/30 rounded-full flex items-center justify-center transition group" title="YouTube">
                                 <i class="fab fa-youtube group-hover:scale-110 transition-transform"></i>
                             </a>
-                            <a href="https://wa.me/6281382605030" target="_blank" rel="noopener" class="w-10 h-10 bg-apple-green/20 hover:bg-apple-green/30 rounded-full flex items-center justify-center transition group" title="WhatsApp">
+                            <a href="https://wa.me/6283879602855" target="_blank" rel="noopener" class="w-10 h-10 bg-apple-green/20 hover:bg-apple-green/30 rounded-full flex items-center justify-center transition group" title="WhatsApp">
                                 <i class="fab fa-whatsapp group-hover:scale-110 transition-transform"></i>
                             </a>
                         </div>
@@ -814,8 +814,8 @@
                         <li class="flex items-start">
                             <i class="fas fa-phone text-apple-blue mr-3 mt-1"></i>
                             <div>
-                                <a href="tel:+6281382605030" class="hover:text-apple-blue transition">
-                                    +62 813 8260 5030
+                                <a href="tel:+6283879602855" class="hover:text-apple-blue transition">
+                                    +62 838 7960 2855
                                 </a>
                                 <p class="text-xs text-gray-500">Senin - Jumat, 08:00 - 17:00</p>
                             </div>

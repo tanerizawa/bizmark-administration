@@ -396,7 +396,7 @@ curl -I http://localhost/this-does-not-exist
 - [ ] Click opens WhatsApp Web in new tab
 - [ ] Pre-filled message correct:
       "Halo Bizmark.ID, saya ingin berkonsultasi"
-- [ ] Phone number correct: +6281382605030
+- [ ] Phone number correct: +6283879602855
 - [ ] target="_blank" works
 - [ ] No console errors
 

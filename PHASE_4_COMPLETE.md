@@ -176,7 +176,7 @@ function trackEvent(category, action, label) {
   "description": "...",
   "address": { "addressCountry": "ID", "addressRegion": "West Java" },
   "contactPoint": { "telephone": "+62-813-8260-5030", "availableLanguage": ["Indonesian", "English"] },
-  "sameAs": ["https://wa.me/6281382605030"],
+  "sameAs": ["https://wa.me/6283879602855"],
   "foundingDate": "2010",
   "numberOfEmployees": { "value": "50+" }
 }

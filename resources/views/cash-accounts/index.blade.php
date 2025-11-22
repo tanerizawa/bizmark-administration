@@ -4,9 +4,8 @@
 @section('page-title', 'Manajemen Keuangan')
 
 @section('content')
-<div style="max-width: 80rem; margin: 0 auto; padding: 0;">
-    {{-- Hero Section Dashboard-Style --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden" style="margin-bottom: 2.5rem;">
+    {{-- Hero Section --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
@@ -14,17 +13,17 @@
         <div class="relative space-y-5 md:space-y-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Financial Control Center</p>
+                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Pusat Kendali Keuangan</p>
                     <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Kelola Kas & Rekening dengan Insight Real-Time
+                        Kelola Kas dan Rekening dengan Wawasan Waktu Nyata
                     </h1>
                     <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Monitor arus kas, piutang, dan tren finansial dalam satu dashboard komprehensif sesuai PSAK.
+                        Pantau arus kas, piutang, dan tren finansial dalam satu dasbor komprehensif sesuai PSAK.
                     </p>
                 </div>
                 <div class="space-y-2.5 text-sm" style="color: rgba(235,235,245,0.65);">
-                    <p><i class="fas fa-sync-alt mr-2"></i>Last sync: {{ now()->format('d M Y, H:i') }}</p>
-                    <p><i class="fas fa-shield-alt mr-2"></i>Finance Team Access</p>
+                    <p><i class="fas fa-sync-alt mr-2"></i>Sinkronisasi terakhir: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
+                    <p><i class="fas fa-shield-alt mr-2"></i>Akses Tim Keuangan</p>
                     <div class="flex gap-3 flex-wrap">
                         <a href="{{ route('cash-accounts.create') }}" class="btn-primary-sm">
                             <i class="fas fa-plus mr-2"></i>Tambah Akun
@@ -43,9 +42,9 @@
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Bank + Kas Tunai</p>
                 </div>
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,149,0,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Piutang Outstanding</p>
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Piutang Belum Dibayar</p>
                     <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Invoice + Kasbon</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Faktur dan Kasbon</p>
                 </div>
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Kas Masuk Periode</p>
@@ -53,7 +52,7 @@
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $startDate->isoFormat('MMM YYYY') }}</p>
                 </div>
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.12)' }};">
-                    <p class="text-xs uppercase tracking-widest" style="color: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">Net Arus Kas</p>
+                    <p class="text-xs uppercase tracking-widest" style="color: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">Arus Kas Bersih</p>
                     <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">{{ $financialSummary['net_cash_flow'] >= 0 ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $financialSummary['net_cash_flow'] >= 0 ? 'Surplus' : 'Defisit' }}</p>
                 </div>
@@ -63,21 +62,21 @@
 
     {{-- Alerts --}}
     @if(session('success'))
-        <div class="alert alert-success flex items-center gap-3">
+        <div class="alert alert-success flex items-center gap-3 mb-5">
             <i class="fas fa-check-circle text-lg"></i>
             <span>{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger flex items-center gap-3">
+        <div class="alert alert-danger flex items-center gap-3 mb-5">
             <i class="fas fa-exclamation-circle text-lg"></i>
             <span>{{ session('error') }}</span>
         </div>
     @endif
 
     {{-- Period Filter & Insights --}}
-    <section class="space-y-3 md:space-y-4">
+    <section class="space-y-3 md:space-y-4 mb-5">
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
                 <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Periode Aktif</p>
@@ -106,14 +105,14 @@
 
             <div class="card-elevated rounded-apple-lg p-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Trend Arus Kas</h3>
+                    <h3 class="text-lg font-semibold text-white">Arus Kas Bersih</h3>
                     <span class="text-xs px-3 py-1 rounded-full" style="background: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.18)' : 'rgba(255,59,48,0.18)' }}; color: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">
                         {{ $financialSummary['is_positive_trend'] ? 'Positif' : 'Negatif' }}
                     </span>
                 </div>
                 <p class="text-3xl font-bold text-white">{{ $financialSummary['is_positive_trend'] ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Perubahan dibanding bulan lalu {{ $financialSummary['is_positive_trend'] ? 'meningkat' : 'menurun' }}.
+                    Perubahan dibandingkan bulan lalu {{ $financialSummary['is_positive_trend'] ? 'meningkat' : 'menurun' }}.
                 </p>
             </div>
 
@@ -140,7 +139,7 @@
                 </button>
                 <button onclick="switchTab('accounts')" id="tab-accounts"
                         class="tab-button px-4 py-2.5 rounded-apple text-sm font-medium transition-apple">
-                    <i class="fas fa-university mr-2"></i>Rekening Bank & Kas
+                    <i class="fas fa-university mr-2"></i>Rekening dan Kas
                 </button>
                 <button onclick="switchTab('transactions')" id="tab-transactions"
                         class="tab-button px-4 py-2.5 rounded-apple text-sm font-medium transition-apple">
@@ -166,7 +165,6 @@
             </div>
         </div>
     </section>
-</div>
 
 {{-- Period Filter Modal --}}
 <div id="periodModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -286,7 +284,7 @@
                         <a href="{{ route('cash-accounts.index', ['filter_type' => 'month', 'month' => $period['month'], 'year' => $period['year']]) }}"
                            class="text-xs px-3 py-1.5 rounded-apple transition-apple"
                            style="background: rgba(10,132,255,0.1); color: rgba(10,132,255,0.9); border: 1px solid rgba(10,132,255,0.2);">
-                            {{ \Carbon\Carbon::create($period['year'], $period['month'], 1)->isoFormat('MMM YYYY') }}
+                            {{ \Carbon\Carbon::create($period['year'], $period['month'], 1)->locale('id')->isoFormat('MMM YYYY') }}
                         </a>
                     @endforeach
                 </div>

@@ -23,23 +23,23 @@
     ];
 @endphp
 
-<div class="max-w-7xl mx-auto space-y-10">
+@section('content')
     {{-- Hero --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
         </div>
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div class="space-y-3">
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Permit Taxonomy</p>
-                <h1 class="text-2xl md:text-3xl font-bold" style="color:#FFFFFF;">Daftar Jenis Izin Bizmark.id</h1>
+                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Taksonomi Perizinan</p>
+                <h1 class="text-2xl md:text-3xl font-bold" style="color:#FFFFFF;">Katalog Jenis Izin</h1>
                 <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
-                    Kurasi seluruh jenis izin, kategorinya, serta institusi penanggung jawab dalam satu layar yang enak dibaca.
+                    Kelola seluruh jenis izin, kategori, dan institusi penanggung jawab dalam satu tampilan terpadu.
                 </p>
                 <div class="flex flex-wrap gap-3 text-xs" style="color: rgba(235,235,245,0.6);">
                     <span><i class="fas fa-database mr-2"></i>{{ $totalPermitTypes }} jenis izin tercatat</span>
-                    <span><i class="fas fa-clock mr-2"></i>Terakhir diperbarui {{ now()->format('d M Y, H:i') }}</span>
+                    <span><i class="fas fa-clock mr-2"></i>Diperbarui {{ now()->format('d M Y, H:i') }}</span>
                 </div>
             </div>
             <div class="flex flex-col items-start gap-3">
@@ -55,7 +55,7 @@
 
     {{-- Flash messages --}}
     @if(session('success') || session('error'))
-        <div class="space-y-3">
+        <div class="space-y-3 mb-5">
             @if(session('success'))
                 <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
                     <i class="fas fa-check-circle"></i>
@@ -72,7 +72,7 @@
     @endif
 
     {{-- Stats --}}
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Total Jenis Izin</p>
             <p class="text-3xl font-bold" style="color:#FFFFFF;">{{ $totalPermitTypes }}</p>
@@ -98,18 +98,18 @@
     </section>
 
     {{-- Filters --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-6">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-6 mb-5">
         <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-                <h2 class="text-lg font-semibold text-white">Susun daftar sesuai kebutuhan</h2>
+                <h2 class="text-lg font-semibold text-white">Susun Daftar Sesuai Kebutuhan</h2>
             </div>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $permitTypes->total() }} hasil sesuai filter aktif</p>
+            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $permitTypes->total() }} hasil ditemukan</p>
         </div>
         <form method="GET" action="{{ route('permit-types.index') }}" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 <div>
-                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Cari</label>
+                    <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Pencarian</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama, kode, deskripsi"
                            class="w-full px-4 py-2.5 rounded-apple text-sm text-white placeholder-gray-500"
                            style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
@@ -118,7 +118,7 @@
                     <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Kategori</label>
                     <select name="category" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
                             style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                        <option value="">Semua kategori</option>
+                        <option value="">Semua Kategori</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
                                 {{ ucfirst($cat) }}
@@ -130,7 +130,7 @@
                     <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Institusi</label>
                     <select name="institution" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
                             style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                        <option value="">Semua institusi</option>
+                        <option value="">Semua Institusi</option>
                         @foreach($institutions as $inst)
                             <option value="{{ $inst->id }}" {{ request('institution') == $inst->id ? 'selected' : '' }}>
                                 {{ $inst->name }}
@@ -142,9 +142,9 @@
                     <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Status</label>
                     <select name="status" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
                             style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                        <option value="">Semua status</option>
+                        <option value="">Semua Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                     </select>
                 </div>
             </div>
@@ -323,7 +323,6 @@
             </div>
         @endif
     </section>
-</div>
 
 <script>
 function toggleDescription(id) {
