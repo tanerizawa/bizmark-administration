@@ -46,7 +46,7 @@
                 </form>
 
                 {{-- Filter by Cash Account --}}
-                @if($cashAccounts->isNotEmpty())
+                @if($cashAccountsList->isNotEmpty())
                     <form method="GET" action="{{ route('admin.master-data.index') }}">
                         <input type="hidden" name="tab" value="reconciliations">
                         @if(request('search'))
@@ -59,7 +59,7 @@
                                 onchange="this.form.submit()"
                                 class="input-apple text-sm">
                             <option value="">Semua Akun</option>
-                            @foreach($cashAccounts as $account)
+                            @foreach($cashAccountsList as $account)
                                 <option value="{{ $account->id }}" {{ request('cash_account_id') == $account->id ? 'selected' : '' }}>
                                     {{ $account->bank_name }} - {{ $account->account_number }}
                                 </option>

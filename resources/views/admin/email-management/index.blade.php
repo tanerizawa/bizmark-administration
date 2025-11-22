@@ -128,58 +128,34 @@
 
         <div class="p-6">
             <!-- Tab 1: Inbox -->
-            @if($activeTab === 'inbox')
-                <div id="content-inbox" class="tab-content">
-                    @include('admin.email-management.tabs.inbox')
-                </div>
-            @else
-                <div id="content-inbox" class="tab-content hidden"></div>
-            @endif
+            <div id="content-inbox" class="tab-content {{ $activeTab !== 'inbox' ? 'hidden' : '' }}">
+                @include('admin.email-management.tabs.inbox')
+            </div>
 
             <!-- Tab 2: Campaigns -->
-            @if($activeTab === 'campaigns')
-                <div id="content-campaigns" class="tab-content">
-                    @include('admin.email-management.tabs.campaigns')
-                </div>
-            @else
-                <div id="content-campaigns" class="tab-content hidden"></div>
-            @endif
+            <div id="content-campaigns" class="tab-content {{ $activeTab !== 'campaigns' ? 'hidden' : '' }}">
+                @include('admin.email-management.tabs.campaigns')
+            </div>
 
             <!-- Tab 3: Subscribers -->
-            @if($activeTab === 'subscribers')
-                <div id="content-subscribers" class="tab-content">
-                    @include('admin.email-management.tabs.subscribers')
-                </div>
-            @else
-                <div id="content-subscribers" class="tab-content hidden"></div>
-            @endif
+            <div id="content-subscribers" class="tab-content {{ $activeTab !== 'subscribers' ? 'hidden' : '' }}">
+                @include('admin.email-management.tabs.subscribers')
+            </div>
 
             <!-- Tab 4: Templates -->
-            @if($activeTab === 'templates')
-                <div id="content-templates" class="tab-content">
-                    @include('admin.email-management.tabs.templates')
-                </div>
-            @else
-                <div id="content-templates" class="tab-content hidden"></div>
-            @endif
+            <div id="content-templates" class="tab-content {{ $activeTab !== 'templates' ? 'hidden' : '' }}">
+                @include('admin.email-management.tabs.templates')
+            </div>
 
             <!-- Tab 5: Settings -->
-            @if($activeTab === 'settings')
-                <div id="content-settings" class="tab-content">
-                    @include('admin.email-management.tabs.settings')
-                </div>
-            @else
-                <div id="content-settings" class="tab-content hidden"></div>
-            @endif
+            <div id="content-settings" class="tab-content {{ $activeTab !== 'settings' ? 'hidden' : '' }}">
+                @include('admin.email-management.tabs.settings')
+            </div>
 
             <!-- Tab 6: Accounts -->
-            @if($activeTab === 'accounts')
-                <div id="content-accounts" class="tab-content">
-                    @include('admin.email-management.tabs.accounts')
-                </div>
-            @else
-                <div id="content-accounts" class="tab-content hidden"></div>
-            @endif
+            <div id="content-accounts" class="tab-content {{ $activeTab !== 'accounts' ? 'hidden' : '' }}">
+                @include('admin.email-management.tabs.accounts')
+            </div>
         </div>
     </section>
 @endsection

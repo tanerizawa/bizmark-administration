@@ -778,12 +778,11 @@
                 </div>
 
                 <!-- Permit Management -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Perizinan</div>
+                    <div class="nav-section-title">Human Resource</div>
                     <div class="nav-links">
                         <a href="{{ route('admin.permits.index') }}" class="nav-link {{ request()->routeIs('admin.permits.*') || request()->routeIs('admin.permit-dashboard') || request()->routeIs('admin.permit-applications.*') || request()->routeIs('permit-types.*') || request()->routeIs('admin.payments.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
-                                <i class="fas fa-file-certificate"></i>
+                                <i class="fas fa-briefcase"></i>
                                 <span>Kelola Perizinan</span>
                             </div>
                             @php
@@ -798,11 +797,7 @@
                             @endif
                         </a>
                     </div>
-                </div>
-
                 <!-- Recruitment -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Rekrutmen</div>
                     <div class="nav-links">
                         <a href="{{ route('admin.recruitment.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.*') || request()->routeIs('admin.jobs.*') || request()->routeIs('admin.applications.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
@@ -817,11 +812,8 @@
                             @endif
                         </a>
                     </div>
-                </div>
 
                 <!-- Email Management -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Email</div>
                     <div class="nav-links">
                         <a href="{{ route('admin.email-management.index') }}" class="nav-link {{ request()->routeIs('admin.email-management.*') || request()->routeIs('admin.inbox.*') || request()->routeIs('admin.campaigns.*') || request()->routeIs('admin.subscribers.*') || request()->routeIs('admin.templates.*') || request()->routeIs('admin.email.settings.*') || request()->routeIs('admin.email-accounts.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
@@ -836,11 +828,9 @@
                             @endif
                         </a>
                     </div>
-                </div>
+    
 
                 <!-- Master Data -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Data Master</div>
                     <div class="nav-links">
                         <a href="{{ route('admin.master-data.index') }}" class="nav-link {{ request()->routeIs('admin.master-data.*') || request()->routeIs('cash-accounts.*') || request()->routeIs('admin.settings.kbli.*') || request()->routeIs('reconciliations.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
@@ -855,8 +845,7 @@
                             @endif
                         </a>
                     </div>
-                </div>
-
+        
                 <!-- Content & Media -->
                 <div class="nav-section">
                     <div class="nav-section-title">Konten</div>

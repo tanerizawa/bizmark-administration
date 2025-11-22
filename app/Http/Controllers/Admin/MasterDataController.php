@@ -7,24 +7,24 @@ use App\Models\CashAccount;
 use App\Models\Kbli;
 use App\Models\BankReconciliation;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class MasterDataController extends Controller
 {
     public function index(Request $request)
     {
         $activeTab = $request->get('tab', 'cash-accounts');
+        $allowedTabs = ['cash-accounts', 'kbli', 'reconciliations'];
+        if (!in_array($activeTab, $allowedTabs, true)) {
+            $activeTab = 'cash-accounts';
+        }
         
         // Get notifications/counts
         $notifications = $this->getNotifications();
         
-        // Get data based on active tab
-        $data = match($activeTab) {
-            'cash-accounts' => $this->getCashAccountsData($request),
-            'kbli' => $this->getKbliData($request),
-            'reconciliations' => $this->getReconciliationsData($request),
-            default => $this->getCashAccountsData($request)
-        };
+        // Preload all tab data so switching never requires a refresh
+        $cashAccountsData = $this->getCashAccountsData($request);
+        $kbliData = $this->getKbliData($request);
+        $reconciliationsData = $this->getReconciliationsData($request);
         
         // Get summary statistics
         $totalCashAccounts = CashAccount::count();
@@ -36,16 +36,21 @@ class MasterDataController extends Controller
         $pendingReconciliations = BankReconciliation::where('status', 'pending')->count();
         $totalBalance = CashAccount::where('is_active', true)->sum('current_balance');
         
-        return view('admin.master-data.index', array_merge($data, [
-            'activeTab' => $activeTab,
-            'notifications' => $notifications,
-            'totalCashAccounts' => $totalCashAccounts,
-            'totalKbli' => $totalKbli,
-            'totalReconciliations' => $totalReconciliations,
-            'activeCashAccounts' => $activeCashAccounts,
-            'pendingReconciliations' => $pendingReconciliations,
-            'totalBalance' => $totalBalance,
-        ]));
+        return view('admin.master-data.index', array_merge(
+            $cashAccountsData,
+            $kbliData,
+            $reconciliationsData,
+            [
+                'activeTab' => $activeTab,
+                'notifications' => $notifications,
+                'totalCashAccounts' => $totalCashAccounts,
+                'totalKbli' => $totalKbli,
+                'totalReconciliations' => $totalReconciliations,
+                'activeCashAccounts' => $activeCashAccounts,
+                'pendingReconciliations' => $pendingReconciliations,
+                'totalBalance' => $totalBalance,
+            ]
+        ));
     }
     
     private function getNotifications()
@@ -77,7 +82,8 @@ class MasterDataController extends Controller
             });
         }
         
-        $cashAccounts = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $cashAccounts = $query->paginate(20, ['*'], 'cash_accounts_page')->withQueryString();
         
         return compact('cashAccounts');
     }
@@ -99,7 +105,8 @@ class MasterDataController extends Controller
             });
         }
         
-        $kbliData = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $kbliData = $query->paginate(20, ['*'], 'kbli_page')->withQueryString();
         
         // Get categories (first character of code - A to U)
         $categories = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U'];
@@ -130,9 +137,10 @@ class MasterDataController extends Controller
             });
         }
         
-        $reconciliations = $query->paginate(20)->withQueryString();
-        $cashAccounts = CashAccount::where('is_active', true)->get();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $reconciliations = $query->paginate(20, ['*'], 'reconciliations_page')->withQueryString();
+        $cashAccountsList = CashAccount::where('is_active', true)->get();
         
-        return compact('reconciliations', 'cashAccounts');
+        return compact('reconciliations', 'cashAccountsList');
     }
 }

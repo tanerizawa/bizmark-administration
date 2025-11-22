@@ -122,9 +122,7 @@
         <div class="flex-1">
             <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Pencarian</label>
             <div class="flex">
-                <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
-                    <i class="fas fa-search"></i>
-                </span>
+
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama atau email"
                        class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500"
                        style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-left: none;">
@@ -144,7 +142,7 @@
         </div>
         <div class="flex gap-3">
             <button type="submit" class="btn-primary-sm">
-                <i class="fas fa-search mr-2"></i>Terapkan
+                <i class="fas fa-search mr-2"></i>
             </button>
             <a href="{{ route('admin.applications.index') }}" class="btn-secondary-sm text-center">
                 Reset
@@ -209,7 +207,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('admin.applications.show', $application->id) }}" class="btn-primary-sm">
-                                        <i class="fas fa-eye mr-2"></i>Detail
+                                        <i class="fas fa-eye mr-2"></i>
                                     </a>
                                 </td>
                             </tr>

@@ -99,40 +99,24 @@
 
         <div class="p-6">
             <!-- Tab 1: Dashboard -->
-            @if($activeTab === 'dashboard')
-                <div id="content-dashboard" class="tab-content">
-                    @include('admin.permits.tabs.dashboard')
-                </div>
-            @else
-                <div id="content-dashboard" class="tab-content hidden"></div>
-            @endif
+            <div id="content-dashboard" class="tab-content {{ $activeTab !== 'dashboard' ? 'hidden' : '' }}">
+                @include('admin.permits.tabs.dashboard')
+            </div>
 
             <!-- Tab 2: Applications -->
-            @if($activeTab === 'applications')
-                <div id="content-applications" class="tab-content">
-                    @include('admin.permits.tabs.applications')
-                </div>
-            @else
-                <div id="content-applications" class="tab-content hidden"></div>
-            @endif
+            <div id="content-applications" class="tab-content {{ $activeTab !== 'applications' ? 'hidden' : '' }}">
+                @include('admin.permits.tabs.applications')
+            </div>
 
             <!-- Tab 3: Permit Types -->
-            @if($activeTab === 'types')
-                <div id="content-types" class="tab-content">
-                    @include('admin.permits.tabs.types')
-                </div>
-            @else
-                <div id="content-types" class="tab-content hidden"></div>
-            @endif
+            <div id="content-types" class="tab-content {{ $activeTab !== 'types' ? 'hidden' : '' }}">
+                @include('admin.permits.tabs.types')
+            </div>
 
             <!-- Tab 4: Payments -->
-            @if($activeTab === 'payments')
-                <div id="content-payments" class="tab-content">
-                    @include('admin.permits.tabs.payments')
-                </div>
-            @else
-                <div id="content-payments" class="tab-content hidden"></div>
-            @endif
+            <div id="content-payments" class="tab-content {{ $activeTab !== 'payments' ? 'hidden' : '' }}">
+                @include('admin.permits.tabs.payments')
+            </div>
         </div>
     </section>
 @endsection
