@@ -159,7 +159,7 @@
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('admin.applications.show', $application->id) }}" class="btn-secondary-sm">
-                                        <i class="fas fa-eye mr-1"></i>Detail
+                                        <i class="fas fa-eye mr-1"></i>
                                     </a>
                                 </div>
                             </td>

@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\JobVacancy;
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class RecruitmentController extends Controller
 {
@@ -17,6 +15,9 @@ class RecruitmentController extends Controller
     public function index(Request $request)
     {
         $activeTab = $request->get('tab', 'jobs');
+        if (!in_array($activeTab, ['jobs', 'applications'])) {
+            $activeTab = 'jobs';
+        }
         
         // Get notification counts for badges
         $notifications = $this->getNotificationCounts();
@@ -25,40 +26,22 @@ class RecruitmentController extends Controller
         $totalJobs = JobVacancy::count();
         $activeJobs = JobVacancy::where('status', 'open')->count();
         $totalApplications = JobApplication::count();
-        
-        // Load data based on active tab
-        $data = match($activeTab) {
-            'jobs' => $this->getJobsData($request),
-            'applications' => $this->getApplicationsData($request),
-            default => $this->getJobsData($request)
-        };
-        
-        // Provide empty defaults for inactive tabs
-        $emptyPaginator = new LengthAwarePaginator([], 0, 20);
-        
-        $defaults = [
-            'jobs' => clone $emptyPaginator,
-            'applications' => clone $emptyPaginator,
-            'statuses' => [],
-            'jobStatuses' => [],
-            'employmentTypes' => [],
-            'jobsForFilter' => collect([]),
-            'pendingCount' => 0,
-            'interviewCount' => 0,
-            'offeredCount' => 0,
-            'hiredCount' => 0,
-            'activeCount' => 0,
-            'draftCount' => 0,
-            'closedCount' => 0,
-        ];
-        
-        return view('admin.recruitment.index', array_merge($defaults, $data, [
-            'activeTab' => $activeTab,
-            'notifications' => $notifications,
-            'totalJobs' => $totalJobs,
-            'activeJobs' => $activeJobs,
-            'totalApplications' => $totalApplications,
-        ]));
+
+        // Always preload both tabs so switching does not require a refresh
+        $jobsData = $this->getJobsData($request);
+        $applicationsData = $this->getApplicationsData($request);
+
+        return view('admin.recruitment.index', array_merge(
+            $jobsData,
+            $applicationsData,
+            [
+                'activeTab' => $activeTab,
+                'notifications' => $notifications,
+                'totalJobs' => $totalJobs,
+                'activeJobs' => $activeJobs,
+                'totalApplications' => $totalApplications,
+            ]
+        ));
     }
     
     /**
@@ -99,7 +82,8 @@ class RecruitmentController extends Controller
             });
         }
         
-        $jobs = $query->paginate(20)->withQueryString();
+        // Separate pagination parameter to avoid conflicts with applications tab
+        $jobs = $query->paginate(20, ['*'], 'jobs_page')->withQueryString();
         
         $jobStatuses = ['open', 'closed', 'draft'];
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
@@ -145,7 +129,8 @@ class RecruitmentController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
         
-        $applications = $query->paginate(20)->withQueryString();
+        // Separate pagination parameter to avoid conflicts with jobs tab
+        $applications = $query->paginate(20, ['*'], 'applications_page')->withQueryString();
         
         $statuses = ['pending', 'reviewed', 'interview', 'accepted', 'rejected'];
         $jobsForFilter = JobVacancy::where('status', 'open')->get();
@@ -159,4 +144,3 @@ class RecruitmentController extends Controller
         return compact('applications', 'statuses', 'jobsForFilter', 'pendingCount', 'interviewCount', 'offeredCount', 'hiredCount');
     }
 }
-

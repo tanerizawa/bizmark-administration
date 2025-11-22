@@ -10,7 +10,6 @@ use App\Models\Project;
 use App\Models\ApplicationNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class PermitManagementController extends Controller
 {
@@ -20,6 +19,10 @@ class PermitManagementController extends Controller
     public function index(Request $request)
     {
         $activeTab = $request->get('tab', 'dashboard');
+        $allowedTabs = ['dashboard', 'applications', 'types', 'payments'];
+        if (!in_array($activeTab, $allowedTabs, true)) {
+            $activeTab = 'dashboard';
+        }
         
         // Get notification counts for badges
         $notifications = $this->getNotificationCounts();
@@ -27,45 +30,25 @@ class PermitManagementController extends Controller
         // Get summary stats (always needed for hero section)
         $totalApplications = PermitApplication::count();
         $activeProjects = Project::whereIn('status_id', [1, 2, 3])->count();
-        
-        // Load data based on active tab
-        $data = match($activeTab) {
-            'dashboard' => $this->getDashboardData(),
-            'applications' => $this->getApplicationsData($request),
-            'types' => $this->getTypesData($request),
-            'payments' => $this->getPaymentsData($request),
-            default => $this->getDashboardData()
-        };
-        
-        // Provide empty defaults for inactive tabs to prevent undefined variable errors
-        $emptyPaginator = new LengthAwarePaginator([], 0, 20);
-        
-        $defaults = [
-            'applications' => clone $emptyPaginator,
-            'permitTypes' => clone $emptyPaginator,
-            'statuses' => [],
-            'totalTypes' => 0,
-            'activeTypes' => 0,
-            'totalPayments' => 0,
-            'pendingPayments' => 0,
-            'verifiedPayments' => 0,
-            'totalAmount' => 0,
-            'payments' => clone $emptyPaginator,
-            'pendingApplications' => 0,
-            'needQuotation' => 0,
-            'applicationsThisMonth' => 0,
-            'applicationsByStatus' => collect(),
-            'recentApplications' => collect(),
-            'upcomingPayments' => collect(),
-            'avgPrice' => 0,
-        ];
-        
-        return view('admin.permits.index', array_merge($defaults, $data, [
-            'activeTab' => $activeTab,
-            'notifications' => $notifications,
-            'totalApplications' => $totalApplications,
-            'activeProjects' => $activeProjects
-        ]));
+
+        // Preload all tab data so switching tabs never requires a refresh
+        $dashboardData = $this->getDashboardData();
+        $applicationsData = $this->getApplicationsData($request);
+        $typesData = $this->getTypesData($request);
+        $paymentsData = $this->getPaymentsData($request);
+
+        return view('admin.permits.index', array_merge(
+            $dashboardData,
+            $applicationsData,
+            $typesData,
+            $paymentsData,
+            [
+                'activeTab' => $activeTab,
+                'notifications' => $notifications,
+                'totalApplications' => $totalApplications,
+                'activeProjects' => $activeProjects
+            ]
+        ));
     }
     
     /**
@@ -172,7 +155,8 @@ class PermitManagementController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
         
-        $applications = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $applications = $query->paginate(20, ['*'], 'applications_page')->withQueryString();
         
         $permitTypes = PermitType::where('is_active', true)->get();
         $statuses = ['submitted', 'under_review', 'quoted', 'payment_verified', 'in_progress', 'completed', 'cancelled'];
@@ -196,7 +180,8 @@ class PermitManagementController extends Controller
             $query->where('is_active', $request->is_active);
         }
         
-        $permitTypes = $query->latest()->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $permitTypes = $query->latest()->paginate(20, ['*'], 'types_page')->withQueryString();
         
         $totalTypes = PermitType::count();
         $activeTypes = PermitType::where('is_active', true)->count();
@@ -245,7 +230,8 @@ class PermitManagementController extends Controller
             $query->whereDate('payment_date', '<=', $request->date_to);
         }
         
-        $payments = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $payments = $query->paginate(20, ['*'], 'payments_page')->withQueryString();
         
         $totalPayments = Payment::count();
         $pendingPayments = Payment::where('status', 'processing')->count();

@@ -17,20 +17,21 @@ class EmailManagementController extends Controller
     public function index(Request $request)
     {
         $activeTab = $request->get('tab', 'inbox');
+        $allowedTabs = ['inbox', 'campaigns', 'subscribers', 'templates', 'settings', 'accounts'];
+        if (!in_array($activeTab, $allowedTabs, true)) {
+            $activeTab = 'inbox';
+        }
         
         // Get notifications/counts
         $notifications = $this->getNotifications();
         
-        // Get data based on active tab
-        $data = match($activeTab) {
-            'inbox' => $this->getInboxData($request),
-            'campaigns' => $this->getCampaignsData($request),
-            'subscribers' => $this->getSubscribersData($request),
-            'templates' => $this->getTemplatesData($request),
-            'settings' => $this->getSettingsData($request),
-            'accounts' => $this->getAccountsData($request),
-            default => $this->getInboxData($request)
-        };
+        // Preload all tab data so switching never needs a refresh
+        $inboxData = $this->getInboxData($request);
+        $campaignsData = $this->getCampaignsData($request);
+        $subscribersData = $this->getSubscribersData($request);
+        $templatesData = $this->getTemplatesData($request);
+        $settingsData = $this->getSettingsData($request);
+        $accountsData = $this->getAccountsData($request);
         
         // Get summary statistics
         $totalEmails = EmailInbox::count();
@@ -40,16 +41,24 @@ class EmailManagementController extends Controller
         $totalTemplates = EmailTemplate::count();
         $totalAccounts = EmailAccount::where('is_active', true)->count();
         
-        return view('admin.email-management.index', array_merge($data, [
-            'activeTab' => $activeTab,
-            'notifications' => $notifications,
-            'totalEmails' => $totalEmails,
-            'unreadEmails' => $unreadEmails,
-            'totalCampaigns' => $totalCampaigns,
-            'totalSubscribers' => $totalSubscribers,
-            'totalTemplates' => $totalTemplates,
-            'totalAccounts' => $totalAccounts,
-        ]));
+        return view('admin.email-management.index', array_merge(
+            $inboxData,
+            $campaignsData,
+            $subscribersData,
+            $templatesData,
+            $settingsData,
+            $accountsData,
+            [
+                'activeTab' => $activeTab,
+                'notifications' => $notifications,
+                'totalEmails' => $totalEmails,
+                'unreadEmails' => $unreadEmails,
+                'totalCampaigns' => $totalCampaigns,
+                'totalSubscribers' => $totalSubscribers,
+                'totalTemplates' => $totalTemplates,
+                'totalAccounts' => $totalAccounts,
+            ]
+        ));
     }
     
     private function getNotifications()
@@ -83,7 +92,8 @@ class EmailManagementController extends Controller
             });
         }
         
-        $emails = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $emails = $query->paginate(20, ['*'], 'inbox_page')->withQueryString();
         $folders = ['inbox', 'sent', 'starred', 'trash'];
         
         return compact('emails', 'folders');
@@ -105,7 +115,8 @@ class EmailManagementController extends Controller
             });
         }
         
-        $campaigns = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $campaigns = $query->paginate(20, ['*'], 'campaigns_page')->withQueryString();
         $statuses = ['draft', 'scheduled', 'sending', 'sent', 'cancelled'];
         
         return compact('campaigns', 'statuses');
@@ -127,7 +138,8 @@ class EmailManagementController extends Controller
             });
         }
         
-        $subscribers = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $subscribers = $query->paginate(20, ['*'], 'subscribers_page')->withQueryString();
         $statuses = ['active', 'pending', 'unsubscribed', 'bounced'];
         
         return compact('subscribers', 'statuses');
@@ -149,7 +161,8 @@ class EmailManagementController extends Controller
             });
         }
         
-        $templates = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $templates = $query->paginate(20, ['*'], 'templates_page')->withQueryString();
         $categories = ['transactional', 'marketing', 'notification', 'system'];
         
         return compact('templates', 'categories');
@@ -180,7 +193,7 @@ class EmailManagementController extends Controller
         $emptyPaginator = new LengthAwarePaginator([], 0, 20);
         
         return [
-            'settings' => (object) $settings,
+            'settings' => $settings,
             'settingsPaginator' => $emptyPaginator,
         ];
     }
@@ -209,7 +222,8 @@ class EmailManagementController extends Controller
             });
         }
         
-        $accounts = $query->paginate(20)->withQueryString();
+        // Dedicated pagination parameter prevents clashes with other tabs
+        $accounts = $query->paginate(20, ['*'], 'accounts_page')->withQueryString();
         
         return compact('accounts');
     }

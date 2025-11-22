@@ -90,31 +90,19 @@
 
         <div class="p-6">
             <!-- Tab 1: Cash Accounts -->
-            @if($activeTab === 'cash-accounts')
-                <div id="content-cash-accounts" class="tab-content">
-                    @include('admin.master-data.tabs.cash-accounts')
-                </div>
-            @else
-                <div id="content-cash-accounts" class="tab-content hidden"></div>
-            @endif
+            <div id="content-cash-accounts" class="tab-content {{ $activeTab !== 'cash-accounts' ? 'hidden' : '' }}">
+                @include('admin.master-data.tabs.cash-accounts')
+            </div>
 
             <!-- Tab 2: KBLI -->
-            @if($activeTab === 'kbli')
-                <div id="content-kbli" class="tab-content">
-                    @include('admin.master-data.tabs.kbli')
-                </div>
-            @else
-                <div id="content-kbli" class="tab-content hidden"></div>
-            @endif
+            <div id="content-kbli" class="tab-content {{ $activeTab !== 'kbli' ? 'hidden' : '' }}">
+                @include('admin.master-data.tabs.kbli')
+            </div>
 
             <!-- Tab 3: Reconciliations -->
-            @if($activeTab === 'reconciliations')
-                <div id="content-reconciliations" class="tab-content">
-                    @include('admin.master-data.tabs.reconciliations')
-                </div>
-            @else
-                <div id="content-reconciliations" class="tab-content hidden"></div>
-            @endif
+            <div id="content-reconciliations" class="tab-content {{ $activeTab !== 'reconciliations' ? 'hidden' : '' }}">
+                @include('admin.master-data.tabs.reconciliations')
+            </div>
         </div>
     </section>
 @endsection
@@ -179,4 +167,3 @@ window.addEventListener('popstate', function() {
 });
 </script>
 @endpush
-
