@@ -12,12 +12,12 @@ http://localhost (atau domain production)
 - [ ] Logo dan branding muncul dengan benar
 - [ ] Hero section menampilkan "Konsultan Perizinan Limbah B3 & AMDAL"
 - [ ] Tidak ada teks "Spesialis Industri Manufaktur Karawang" di H1
-- [ ] About section menampilkan "PT Timur Cakrawala Konsultan"
+- [ ] About section menampilkan "PT CANGAH PAJARATAN MANDIRI"
 - [ ] Services section menampilkan 3 layanan: LB3, AMDAL, Perizinan Industri
 - [ ] FAQ section menampilkan 6 pertanyaan tentang LB3/AMDAL
 - [ ] Testimonials section menampilkan 3 klien industri (PT Industri Kimia, CV Pengelola LB3, PT Automotive)
 - [ ] Contact section menampilkan alamat Karawang
-- [ ] Footer menampilkan "PT Timur Cakrawala Konsultan (Bizmark.ID)"
+- [ ] Footer menampilkan "PT CANGAH PAJARATAN MANDIRI (Bizmark.ID)"
 - [ ] WhatsApp button muncul di kanan bawah (hijau, pulse animation)
 
 ### 🔗 Functionality Check
@@ -44,8 +44,8 @@ http://localhost (atau domain production)
 ```bash
 # View source (Ctrl+U) dan check:
 ```
-- [ ] Title tag: "Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang | PT Timur Cakrawala Konsultan"
-- [ ] Meta description contains "PT Timur Cakrawala Konsultan" dan "Karawang"
+- [ ] Title tag: "Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang | PT CANGAH PAJARATAN MANDIRI"
+- [ ] Meta description contains "PT CANGAH PAJARATAN MANDIRI" dan "Karawang"
 - [ ] Meta keywords contains "limbah b3", "karawang", "amdal"
 - [ ] Structured data JSON-LD present (search for "@type": "ProfessionalService")
 - [ ] Open Graph tags present (og:title, og:description, og:image)
@@ -66,11 +66,11 @@ http://localhost (atau domain production)
 - [ ] "Limbah B3" atau "LB3" muncul 20+ kali
 - [ ] "AMDAL" muncul 15+ kali
 - [ ] "Karawang" muncul 15+ kali
-- [ ] "PT Timur Cakrawala Konsultan" muncul 5+ kali
+- [ ] "PT CANGAH PAJARATAN MANDIRI" muncul 5+ kali
 - [ ] "Manufaktur" atau "Industri" muncul 10+ kali
 
 #### Business Info Accuracy
-- [ ] Company name: PT Timur Cakrawala Konsultan ✅
+- [ ] Company name: PT CANGAH PAJARATAN MANDIRI ✅
 - [ ] Brand: Bizmark.ID ✅
 - [ ] Address: Jl. Permata Sari Indah No.2, Karawang Timur, Jawa Barat 41314 ✅
 - [ ] Phone: +62 267 123 4567 ✅

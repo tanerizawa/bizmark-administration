@@ -253,7 +253,7 @@ Action: Record as expense in system
 
 #### Standard Reconciliation Report
 ```
-PT TIMUR CAKRAWALA KONSULTAN
+PT CANGAH PAJARATAN MANDIRI
 BANK RECONCILIATION STATEMENT
 Bank BTN - Account #1234567890
 Period: September 1-30, 2025
@@ -533,7 +533,7 @@ ALTER TABLE payment_schedules ADD COLUMN (
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ 📊 LAPORAN REKONSILIASI BANK                          │
-│ PT TIMUR CAKRAWALA KONSULTAN                          │
+│ PT CANGAH PAJARATAN MANDIRI                          │
 │ Bank BTN - Rekening 1234567890                        │
 │ Period September 1-30, 2025                            │
 │                                                         │

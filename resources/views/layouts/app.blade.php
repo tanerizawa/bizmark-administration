@@ -79,6 +79,16 @@
             color: var(--dark-text-primary);
         }
         
+        /* Remove default underline from all links */
+        a {
+            text-decoration: none;
+        }
+        
+        /* Only show underline on hover for links with hover:underline class */
+        a.hover\:underline:hover {
+            text-decoration: underline;
+        }
+        
         small, .text-muted {
             color: var(--dark-text-secondary) !important;
         }
@@ -785,7 +795,7 @@
                 <!-- Permit Management -->
                     <div class="nav-section-title">Human Resource</div>
                     <div class="nav-links">
-                        <a href="{{ route('admin.permits.index') }}" class="nav-link {{ request()->routeIs('admin.permits.*') || request()->routeIs('admin.permit-dashboard') || request()->routeIs('admin.permit-applications.*') || request()->routeIs('permit-types.*') || request()->routeIs('admin.payments.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.permits.index') }}" class="nav-link {{ request()->routeIs('admin.permits.*') || request()->routeIs('admin.permit-dashboard') || request()->routeIs('admin.permit-applications.*') || request()->routeIs('permit-types.*') || request()->routeIs('admin.payments.*') || request()->routeIs('admin.master-data.*') || request()->routeIs('admin.settings.kbli.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
                                 <i class="fas fa-briefcase"></i>
                                 <span>Kelola Perizinan</span>
@@ -796,15 +806,51 @@
                         </a>
                     </div>
                 <!-- Recruitment -->
+                    <div class="nav-section-title">Recruitment</div>
                     <div class="nav-links">
-                        <a href="{{ route('admin.recruitment.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.*') || request()->routeIs('admin.jobs.*') || request()->routeIs('admin.applications.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.recruitment.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.index') ? 'active' : '' }}">
                             <div class="nav-link-content">
-                                <i class="fas fa-user-tie"></i>
-                                <span>Kelola Rekrutmen</span>
+                                <i class="fas fa-chart-line"></i>
+                                <span>Dashboard</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.jobs.index') }}" class="nav-link {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Job Vacancies</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.applications.index') }}" class="nav-link {{ request()->routeIs('admin.applications.*') && !request()->routeIs('admin.applications.show') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-users"></i>
+                                <span>Applications</span>
                             </div>
                             @if($otherNotifications['pending_job_apps'] > 0)
                                 <span class="nav-badge badge-alert">{{ $otherNotifications['pending_job_apps'] }}</span>
                             @endif
+                        </a>
+                        
+                        <a href="{{ route('admin.recruitment.pipeline.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.pipeline.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-stream"></i>
+                                <span>Pipeline</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.recruitment.interviews.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.interviews.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Interviews</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.recruitment.tests.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.tests.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>Tests</span>
+                            </div>
                         </a>
                     </div>
 
@@ -822,18 +868,21 @@
                     </div>
     
 
-                <!-- Master Data -->
+                <!-- Financial Management -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Keuangan</div>
                     <div class="nav-links">
-                        <a href="{{ route('admin.master-data.index') }}" class="nav-link {{ request()->routeIs('admin.master-data.*') || request()->routeIs('cash-accounts.*') || request()->routeIs('admin.settings.kbli.*') || request()->routeIs('reconciliations.*') ? 'active' : '' }}">
+                        <a href="{{ route('cash-accounts.index') }}" class="nav-link {{ request()->routeIs('cash-accounts.*') || request()->routeIs('reconciliations.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
-                                <i class="fas fa-database"></i>
-                                <span>Master Data</span>
+                                <i class="fas fa-wallet"></i>
+                                <span>Akun Kas & Bank</span>
                             </div>
                             @if($otherNotifications['pending_reconciliations'] > 0)
                                 <span class="nav-badge badge-warning">{{ $otherNotifications['pending_reconciliations'] }}</span>
                             @endif
                         </a>
                     </div>
+                </div>
         
                 <!-- Content & Media -->
                 <div class="nav-section">
@@ -944,6 +993,9 @@
     
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Currency Formatter & Terbilang -->
+    <script src="{{ asset('js/currency-terbilang.js') }}"></script>
     
     <!-- Screen Width Detection for Responsive Routing -->
     <script>
@@ -1116,6 +1168,9 @@
         }
         @endauth
     </script>
+    
+    <!-- Currency Helper - MUST load before other scripts -->
+    <script src="{{ asset('js/currency-helper.js') }}"></script>
     
     @stack('scripts')
 </body>

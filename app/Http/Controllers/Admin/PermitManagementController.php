@@ -8,6 +8,7 @@ use App\Models\PermitType;
 use App\Models\Payment;
 use App\Models\Project;
 use App\Models\ApplicationNote;
+use App\Models\Kbli;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +20,7 @@ class PermitManagementController extends Controller
     public function index(Request $request)
     {
         $activeTab = $request->get('tab', 'dashboard');
-        $allowedTabs = ['dashboard', 'applications', 'types', 'payments'];
+        $allowedTabs = ['dashboard', 'applications', 'types', 'kbli', 'payments'];
         if (!in_array($activeTab, $allowedTabs, true)) {
             $activeTab = 'dashboard';
         }
@@ -35,12 +36,14 @@ class PermitManagementController extends Controller
         $dashboardData = $this->getDashboardData();
         $applicationsData = $this->getApplicationsData($request);
         $typesData = $this->getTypesData($request);
+        $kbliData = $this->getKbliData($request);
         $paymentsData = $this->getPaymentsData($request);
 
         return view('admin.permits.index', array_merge(
             $dashboardData,
             $applicationsData,
             $typesData,
+            $kbliData,
             $paymentsData,
             [
                 'activeTab' => $activeTab,
@@ -189,6 +192,35 @@ class PermitManagementController extends Controller
         $avgPrice = PermitType::avg('estimated_cost_min') ?: 0;
         
         return compact('permitTypes', 'totalTypes', 'activeTypes', 'totalApplications', 'avgPrice');
+    }
+    
+    /**
+     * Get KBLI tab data
+     */
+    private function getKbliData(Request $request)
+    {
+        $query = Kbli::orderBy('code');
+        
+        if ($request->filled('category')) {
+            $query->where('code', 'like', $request->category . '%');
+        }
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('sector', 'like', "%{$search}%");
+            });
+        }
+        
+        // Dedicated pagination parameter
+        $kbliData = $query->paginate(20, ['*'], 'kbli_page')->withQueryString();
+        
+        // Get categories (first character of code - A to U)
+        $categories = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U'];
+        
+        return compact('kbliData', 'categories');
     }
     
     /**

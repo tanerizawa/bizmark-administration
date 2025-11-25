@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Format System - Test Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+            color: #ebebf5;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: rgba(235, 235, 245, 0.6);
+            margin-bottom: 40px;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .test-section h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .icon {
+            font-size: 24px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .test-case {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .test-case label {
+            display: block;
+            font-size: 14px;
+            color: rgba(235, 235, 245, 0.7);
+            margin-bottom: 8px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #ebebf5;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        .result {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(52, 199, 89, 0.1);
+            border-left: 3px solid #34C759;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .result.error {
+            background: rgba(255, 59, 48, 0.1);
+            border-left-color: #FF3B30;
+        }
+        
+        .result-label {
+            color: rgba(235, 235, 245, 0.6);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .result-value {
+            font-weight: 600;
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 16px;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .test-results {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .test-result-item {
+            padding: 8px 12px;
+            margin: 4px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-result-item.pass {
+            background: rgba(52, 199, 89, 0.1);
+        }
+        
+        .test-result-item.fail {
+            background: rgba(255, 59, 48, 0.1);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge.success {
+            background: #34C759;
+            color: white;
+        }
+        
+        .badge.error {
+            background: #FF3B30;
+            color: white;
+        }
+        
+        .summary {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .summary-label {
+            color: rgba(235, 235, 245, 0.6);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Currency Format System - Test Suite</h1>
+        <p class="subtitle">Format: 1,234.56 (comma = ribuan, period = desimal)</p>
+
+        <!-- Test 1: Interactive Input -->
+        <div class="test-section">
+            <h2><span class="icon">⌨️</span> Test 1: Interactive Currency Input</h2>
+            <p style="color: rgba(235, 235, 245, 0.6); margin-bottom: 20px;">
+                Type angka untuk melihat real-time formatting
+            </p>
+            
+            <div class="test-grid">
+                <div class="test-case">
+                    <label>Test Input 1</label>
+                    <input type="text" id="test1_display" placeholder="0.00">
+                    <input type="hidden" id="test1_hidden">
+                    <div class="result">
+                        <div class="result-label">Display Value:</div>
+                        <div class="result-value" id="test1_display_val">-</div>
+                        <div class="result-label" style="margin-top: 8px;">Hidden Value (to server):</div>
+                        <div class="result-value" id="test1_hidden_val">-</div>
+                    </div>
+                </div>
+
+                <div class="test-case">
+                    <label>Test Input 2</label>
+                    <input type="text" id="test2_display" placeholder="0.00">
+                    <input type="hidden" id="test2_hidden">
+                    <div class="result">
+                        <div class="result-label">Display Value:</div>
+                        <div class="result-value" id="test2_display_val">-</div>
+                        <div class="result-label" style="margin-top: 8px;">Hidden Value (to server):</div>
+                        <div class="result-value" id="test2_hidden_val">-</div>
+                    </div>
+                </div>
+
+                <div class="test-case">
+                    <label>Test Input 3 (Max Value Test)</label>
+                    <input type="text" id="test3_display" placeholder="0.00">
+                    <input type="hidden" id="test3_hidden">
+                    <div class="result">
+                        <div class="result-label">Display Value:</div>
+                        <div class="result-value" id="test3_display_val">-</div>
+                        <div class="result-label" style="margin-top: 8px;">Hidden Value (to server):</div>
+                        <div class="result-value" id="test3_hidden_val">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test 2: Format Function -->
+        <div class="test-section">
+            <h2><span class="icon">🎨</span> Test 2: Format Function</h2>
+            <button onclick="runFormatTests()">Run Format Tests</button>
+            <div class="test-results" id="formatTestResults"></div>
+        </div>
+
+        <!-- Test 3: Parse Function -->
+        <div class="test-section">
+            <h2><span class="icon">🔍</span> Test 3: Parse Function</h2>
+            <button onclick="runParseTests()">Run Parse Tests</button>
+            <div class="test-results" id="parseTestResults"></div>
+        </div>
+
+        <!-- Test 4: Validation -->
+        <div class="test-section">
+            <h2><span class="icon">✅</span> Test 4: Validation Function</h2>
+            <button onclick="runValidationTests()">Run Validation Tests</button>
+            <div class="test-results" id="validationTestResults"></div>
+        </div>
+
+        <!-- Test 5: Form Submit -->
+        <div class="test-section">
+            <h2><span class="icon">📝</span> Test 5: Form Submit Validation</h2>
+            <form id="testForm" onsubmit="return testFormSubmit(event)">
+                <div class="test-grid">
+                    <div class="test-case">
+                        <label>Amount (Required)</label>
+                        <input type="text" id="form_amount_display" placeholder="0.00">
+                        <input type="hidden" name="amount" id="form_amount">
+                    </div>
+                    <div class="test-case">
+                        <label>Budget (Optional)</label>
+                        <input type="text" id="form_budget_display" placeholder="0.00">
+                        <input type="hidden" name="budget" id="form_budget">
+                    </div>
+                </div>
+                <button type="submit">Test Submit</button>
+            </form>
+            <div class="test-results" id="formTestResults"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="test-section">
+            <h2><span class="icon">📊</span> Test Summary</h2>
+            <div class="summary">
+                <div class="summary-card">
+                    <div class="summary-value" style="color: #34C759;" id="passCount">0</div>
+                    <div class="summary-label">Tests Passed</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color: #FF3B30;" id="failCount">0</div>
+                    <div class="summary-label">Tests Failed</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color: #007AFF;" id="totalCount">0</div>
+                    <div class="summary-label">Total Tests</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Currency Helper -->
+    <script src="../public/js/currency-helper.js"></script>
+
+    <script>
+        let totalTests = 0;
+        let passedTests = 0;
+        let failedTests = 0;
+
+        // Setup interactive inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test 1 inputs
+            CurrencyHelper.setupInput('test1_display', 'test1_hidden', {
+                onUpdate: (value, formatted) => {
+                    document.getElementById('test1_display_val').textContent = formatted;
+                    document.getElementById('test1_hidden_val').textContent = value.toFixed(2);
+                }
+            });
+
+            CurrencyHelper.setupInput('test2_display', 'test2_hidden', {
+                onUpdate: (value, formatted) => {
+                    document.getElementById('test2_display_val').textContent = formatted;
+                    document.getElementById('test2_hidden_val').textContent = value.toFixed(2);
+                }
+            });
+
+            CurrencyHelper.setupInput('test3_display', 'test3_hidden', {
+                maxValue: 10000,
+                onUpdate: (value, formatted) => {
+                    document.getElementById('test3_display_val').textContent = formatted;
+                    document.getElementById('test3_hidden_val').textContent = value.toFixed(2);
+                }
+            });
+
+            // Form inputs
+            CurrencyHelper.setupInput('form_amount_display', 'form_amount');
+            CurrencyHelper.setupInput('form_budget_display', 'form_budget');
+        });
+
+        function updateSummary() {
+            document.getElementById('passCount').textContent = passedTests;
+            document.getElementById('failCount').textContent = failedTests;
+            document.getElementById('totalCount').textContent = totalTests;
+        }
+
+        function addTestResult(container, description, expected, actual, passed) {
+            totalTests++;
+            if (passed) passedTests++;
+            else failedTests++;
+            
+            const div = document.createElement('div');
+            div.className = `test-result-item ${passed ? 'pass' : 'fail'}`;
+            div.innerHTML = `
+                <span class="badge ${passed ? 'success' : 'error'}">${passed ? '✓' : '✗'}</span>
+                <span>${description}</span>
+                <span style="margin-left: auto; font-family: monospace; font-size: 12px;">
+                    Expected: ${expected} | Got: ${actual}
+                </span>
+            `;
+            document.getElementById(container).appendChild(div);
+            updateSummary();
+        }
+
+        function runFormatTests() {
+            document.getElementById('formatTestResults').innerHTML = '<h3>Running tests...</h3>';
+            
+            const tests = [
+                { input: 1234.56, expected: '1,234.56' },
+                { input: 0, expected: '0.00' },
+                { input: 42485447.23, expected: '42,485,447.23' },
+                { input: 100, expected: '100.00' },
+                { input: 1234567.89, expected: '1,234,567.89' }
+            ];
+
+            tests.forEach(test => {
+                const result = CurrencyHelper.format(test.input);
+                const passed = result === test.expected;
+                addTestResult('formatTestResults', 
+                    `Format ${test.input}`, 
+                    test.expected, 
+                    result, 
+                    passed
+                );
+            });
+        }
+
+        function runParseTests() {
+            document.getElementById('parseTestResults').innerHTML = '<h3>Running tests...</h3>';
+            
+            const tests = [
+                { input: '1,234.56', expected: 1234.56 },
+                { input: '1.234,56', expected: 1234.56 },
+                { input: '42,485,447.23', expected: 42485447.23 },
+                { input: 'Rp 1,234.56', expected: 1234.56 },
+                { input: '100', expected: 100 }
+            ];
+
+            tests.forEach(test => {
+                const result = CurrencyHelper.parse(test.input);
+                const passed = Math.abs(result - test.expected) < 0.01;
+                addTestResult('parseTestResults', 
+                    `Parse "${test.input}"`, 
+                    test.expected, 
+                    result, 
+                    passed
+                );
+            });
+        }
+
+        function runValidationTests() {
+            document.getElementById('validationTestResults').innerHTML = '<h3>Running tests...</h3>';
+            
+            // Test 1: Zero should fail
+            let validation = CurrencyHelper.validate(0, { allowZero: false });
+            addTestResult('validationTestResults', 
+                'Reject zero', 
+                'invalid', 
+                validation.valid ? 'valid' : 'invalid', 
+                !validation.valid
+            );
+
+            // Test 2: Negative should fail (default)
+            validation = CurrencyHelper.validate(-100);
+            addTestResult('validationTestResults', 
+                'Reject negative', 
+                'invalid', 
+                validation.valid ? 'valid' : 'invalid', 
+                !validation.valid
+            );
+
+            // Test 3: Valid positive
+            validation = CurrencyHelper.validate(100);
+            addTestResult('validationTestResults', 
+                'Accept valid positive', 
+                'valid', 
+                validation.valid ? 'valid' : 'invalid', 
+                validation.valid
+            );
+
+            // Test 4: Min validation
+            validation = CurrencyHelper.validate(50, { min: 100 });
+            addTestResult('validationTestResults', 
+                'Reject below minimum', 
+                'invalid', 
+                validation.valid ? 'valid' : 'invalid', 
+                !validation.valid
+            );
+
+            // Test 5: Max validation
+            validation = CurrencyHelper.validate(1000, { max: 500 });
+            addTestResult('validationTestResults', 
+                'Reject above maximum', 
+                'invalid', 
+                validation.valid ? 'valid' : 'invalid', 
+                !validation.valid
+            );
+        }
+
+        function testFormSubmit(event) {
+            event.preventDefault();
+            
+            document.getElementById('formTestResults').innerHTML = '<h3>Running form validation...</h3>';
+            
+            const validation = CurrencyHelper.validateForm(event.target, [
+                {
+                    displayId: 'form_amount_display',
+                    hiddenId: 'form_amount',
+                    fieldName: 'Amount',
+                    required: true,
+                    validate: { min: 0.01, allowZero: false }
+                },
+                {
+                    displayId: 'form_budget_display',
+                    hiddenId: 'form_budget',
+                    fieldName: 'Budget',
+                    required: false
+                }
+            ]);
+
+            if (validation.valid) {
+                addTestResult('formTestResults', 
+                    'Form validation passed', 
+                    'valid', 
+                    'valid', 
+                    true
+                );
+                
+                // Show submitted values
+                const amountValue = document.getElementById('form_amount').value;
+                const budgetValue = document.getElementById('form_budget').value;
+                
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result';
+                resultDiv.innerHTML = `
+                    <strong>Form would submit with:</strong><br>
+                    Amount: ${amountValue}<br>
+                    Budget: ${budgetValue || '(empty)'}
+                `;
+                document.getElementById('formTestResults').appendChild(resultDiv);
+            } else {
+                validation.errors.forEach(error => {
+                    addTestResult('formTestResults', 
+                        error, 
+                        'valid', 
+                        'invalid', 
+                        false
+                    );
+                });
+            }
+
+            return false;
+        }
+    </script>
+</body>
+</html>

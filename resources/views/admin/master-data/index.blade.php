@@ -4,8 +4,9 @@
 @section('page-title', 'Master Data')
 
 @section('content')
+<div class="master-shell space-y-5">
     {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden section-card">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-purple opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
@@ -15,10 +16,10 @@
                 <div class="space-y-2.5 max-w-3xl">
                     <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Pusat Data Master</p>
                     <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Master Data Management
+                        Klasifikasi Baku Lapangan Usaha Indonesia (KBLI)
                     </h1>
                     <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Kelola akun kas, data KBLI, dan rekonsiliasi bank dalam satu platform terpadu.
+                        Kelola data KBLI untuk keperluan perizinan dan klasifikasi bidang usaha.
                     </p>
                 </div>
                 <div class="space-y-2.5 text-sm" style="color: rgba(235,235,245,0.65);">
@@ -28,110 +29,133 @@
             </div>
 
             <!-- Summary Statistics -->
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Akun Kas</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">
-                        {{ number_format($totalCashAccounts) }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">
-                        <span class="text-apple-green font-medium">{{ number_format($activeCashAccounts) }} aktif</span>
-                    </p>
-                </div>
-
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(175,82,222,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Data KBLI</p>
                     <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">
                         {{ number_format($totalKbli) }}
                     </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Klasifikasi usaha</p>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Klasifikasi usaha tersedia</p>
                 </div>
 
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Rekonsiliasi</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: {{ $pendingReconciliations > 0 ? 'rgba(255,159,10,1)' : '#FFFFFF' }};">
-                        {{ number_format($totalReconciliations) }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">
-                        @if($pendingReconciliations > 0)
-                            <span class="text-apple-orange font-medium">{{ number_format($pendingReconciliations) }} menunggu</span>
-                        @else
-                            <span class="text-apple-green font-medium">Semua selesai</span>
-                        @endif
-                    </p>
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Akses Cepat Keuangan</p>
+                    <div class="mt-1.5">
+                        <a href="{{ route('cash-accounts.index') }}" class="inline-flex items-center text-sm font-medium text-apple-blue hover:text-apple-blue-dark transition-colors">
+                            <i class="fas fa-wallet mr-2"></i>Buka Akun Kas & Bank
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <p class="text-xs mt-1" style="color: rgba(235,235,245,0.6);">Manajemen keuangan dipindah ke menu terpisah</p>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- Tab Navigation --}}
-    <section class="card-elevated rounded-apple-xl overflow-hidden mb-5">
+    {{-- Tab Navigation - KBLI Only --}}
+    <section class="card-elevated rounded-apple-xl overflow-hidden section-card">
         <div class="border-b" style="border-color: var(--dark-separator);">
             <div class="flex space-x-1 p-2 overflow-x-auto" role="tablist">
-                <button onclick="switchTab('cash-accounts')" id="tab-cash-accounts" 
-                        class="tab-button {{ $activeTab == 'cash-accounts' ? 'active' : '' }} px-4 py-2.5 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
-                    <i class="fas fa-wallet mr-2"></i>Akun Kas
-                </button>
                 <button onclick="switchTab('kbli')" id="tab-kbli"
-                        class="tab-button {{ $activeTab == 'kbli' ? 'active' : '' }} px-4 py-2.5 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
+                        class="tab-button active text-sm transition-apple whitespace-nowrap">
                     <i class="fas fa-file-invoice mr-2"></i>Data KBLI
-                </button>
-                <button onclick="switchTab('reconciliations')" id="tab-reconciliations"
-                        class="tab-button {{ $activeTab == 'reconciliations' ? 'active' : '' }} px-4 py-2.5 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
-                    <i class="fas fa-balance-scale mr-2"></i>Rekonsiliasi Bank
-                    @if($pendingReconciliations > 0)
-                        <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full {{ $activeTab == 'reconciliations' ? 'bg-white text-apple-blue' : 'bg-orange-500 text-white' }}">
-                            {{ $pendingReconciliations }}
-                        </span>
-                    @endif
                 </button>
             </div>
         </div>
 
         <div class="p-6">
-            <!-- Tab 1: Cash Accounts -->
-            <div id="content-cash-accounts" class="tab-content {{ $activeTab !== 'cash-accounts' ? 'hidden' : '' }}">
-                @include('admin.master-data.tabs.cash-accounts')
-            </div>
-
-            <!-- Tab 2: KBLI -->
-            <div id="content-kbli" class="tab-content {{ $activeTab !== 'kbli' ? 'hidden' : '' }}">
+            <!-- Tab: KBLI -->
+            <div id="content-kbli" class="tab-content">
                 @include('admin.master-data.tabs.kbli')
-            </div>
-
-            <!-- Tab 3: Reconciliations -->
-            <div id="content-reconciliations" class="tab-content {{ $activeTab !== 'reconciliations' ? 'hidden' : '' }}">
-                @include('admin.master-data.tabs.reconciliations')
             </div>
         </div>
     </section>
+</div>
 @endsection
 
 @push('styles')
 <style>
-    .tab-button {
-        color: rgba(235, 235, 245, 0.6);
-        background-color: transparent;
+    .master-shell {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        letter-spacing: -0.01em;
     }
 
-    .tab-button:hover {
+    .master-shell .section-card {
+        border: 1px solid var(--dark-separator);
+    }
+
+    .master-shell .tab-button {
+        color: rgba(235, 235, 245, 0.6);
+        background-color: transparent;
+        padding: 0.55rem 0.85rem;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-weight: 600;
+        min-height: 42px;
+    }
+
+    .master-shell .tab-button:hover {
         color: rgba(235, 235, 245, 0.9);
         background-color: rgba(255, 255, 255, 0.05);
     }
 
-    .tab-button.active {
+    .master-shell .tab-button.active {
         color: #FFFFFF;
-        background-color: rgba(0, 122, 255, 0.15);
+        background-color: rgba(0, 122, 255, 0.14);
         border: 1px solid rgba(0, 122, 255, 0.3);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
     }
 
-    .tab-content {
-        animation: fadeIn 0.3s ease-in;
+    .master-shell .tab-content {
+        animation: fadeIn 0.25s ease-in;
     }
     
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: 0; transform: translateY(6px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+
+    .master-shell .card-apple {
+        border: 1px solid var(--dark-separator);
+        border-radius: 14px;
+        background: var(--dark-bg-elevated);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    }
+
+    .master-shell h1, .master-shell h2, .master-shell h3 {
+        letter-spacing: -0.015em;
+    }
+
+    .master-shell h1 {
+        font-size: 1.75rem;
+    }
+
+    .master-shell h2 {
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    .master-shell h3 {
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .master-shell .btn-apple-primary,
+    .master-shell .btn-apple-secondary,
+    .master-shell .btn-apple,
+    .master-shell .btn-icon-apple {
+        border-radius: 10px;
+    }
+
+    .master-shell .btn-apple-primary,
+    .master-shell .btn-apple-secondary,
+    .master-shell .btn-apple {
+        padding: 0.55rem 0.95rem;
+        font-size: 0.92rem;
+    }
+
+    .master-shell .btn-icon-apple {
+        padding: 0.4rem;
     }
 </style>
 @endpush

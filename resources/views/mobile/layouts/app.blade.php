@@ -75,6 +75,16 @@
             -moz-osx-font-smoothing: grayscale;
         }
         
+        /* Remove default underline from all links */
+        a {
+            text-decoration: none;
+        }
+        
+        /* Only show underline on hover for links with hover:underline class */
+        a.hover\:underline:hover {
+            text-decoration: underline;
+        }
+        
         body {
             margin: 0;
             padding: 0;

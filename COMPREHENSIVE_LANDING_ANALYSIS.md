@@ -687,7 +687,7 @@ Setelah melakukan analisis mendalam dari header sampai footer, ditemukan **12 ma
 
 **4. Copyright Text Terlalu Simple:**
 ```html
-<p>&copy; 2025 PT Timur Cakrawala Konsultan (Bizmark.ID). All rights reserved.</p>
+<p>&copy; 2025 PT CANGAH PAJARATAN MANDIRI (Bizmark.ID). All rights reserved.</p>
 ```
 **Missing:** Link ke legal pages, NPWP, izin usaha, dll
 
@@ -708,7 +708,7 @@ Setelah melakukan analisis mendalam dari header sampai footer, ditemukan **12 ma
                     </div>
                     
                     <p class="company-desc">
-                        PT Timur Cakrawala Konsultan - Spesialis perizinan 
+                        PT CANGAH PAJARATAN MANDIRI - Spesialis perizinan 
                         industri dengan sistem monitoring digital. Melayani 
                         500+ perusahaan di seluruh Indonesia sejak 2015.
                     </p>
@@ -838,7 +838,7 @@ Setelah melakukan analisis mendalam dari header sampai footer, ditemukan **12 ma
                 
                 <!-- Center: Copyright -->
                 <div class="copyright text-center">
-                    <p>&copy; 2025 <strong>PT Timur Cakrawala Konsultan</strong></p>
+                    <p>&copy; 2025 <strong>PT CANGAH PAJARATAN MANDIRI</strong></p>
                     <p class="text-xs">
                         NPWP: XX.XXX.XXX.X-XXX.XXX | 
                         SIUP: XXXX/SIUP/XXX/2015

@@ -16,9 +16,9 @@
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": "{{ $article->title }}",
-    "description": "{{ $article->excerpt }}",
-    "image": "{{ asset('storage/' . $article->image) }}",
-    "datePublished": "{{ $article->created_at->toIso8601String() }}",
+    "description": "{{ $article->meta_description ?? $article->excerpt ?? Str::limit(strip_tags($article->content), 160) }}",
+    "image": "{{ $article->featured_image ? asset('storage/' . $article->featured_image) : asset('images/default-article.jpg') }}",
+    "datePublished": "{{ ($article->published_at ?? $article->created_at)->toIso8601String() }}",
     "dateModified": "{{ $article->updated_at->toIso8601String() }}",
     "author": {
         "@type": "Organization",

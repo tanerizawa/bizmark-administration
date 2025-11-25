@@ -36,14 +36,14 @@ class SecurityHeaders
         // Only set if not already present to avoid duplicates
         if (!$response->headers->has('Content-Security-Policy')) {
             // Allow Vite dev server in local/development environment
-            $viteDevServer = app()->environment('local') ? ' http://localhost:5173 http://[::1]:5173 ws://localhost:5173 ws://[::1]:5173' : '';
+            $viteDevServer = app()->environment('local') ? ' http://localhost:5173 ws://localhost:5173' : '';
             
             $csp = [
                 "default-src 'self'",
                 "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://cdn.ckeditor.com" . $viteDevServer,
                 "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.ckeditor.com" . $viteDevServer,
                 "img-src 'self' data: https: blob:",
-                "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.ckeditor.com",
+                "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.ckeditor.com",
                 "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://wa.me https://cdn.jsdelivr.net https://cloudflareinsights.com https://cdn.ckeditor.com" . $viteDevServer,
                 "frame-src 'self' https://www.youtube.com",
                 "object-src 'none'",

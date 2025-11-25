@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Services\EmailMimeParser;
 
 class EmailInbox extends Model
 {
@@ -269,37 +270,17 @@ class EmailInbox extends Model
             return null;
         }
 
-        $text = $this->body_text;
+        $parser = new EmailMimeParser();
         
-        // Remove MIME part boundaries and headers
-        $text = preg_replace('/^--[0-9a-f]+.*\r?\n/m', '', $text);
-        $text = preg_replace('/^Content-Type:.*\r?\n/mi', '', $text);
-        $text = preg_replace('/^Content-Transfer-Encoding:.*\r?\n/mi', '', $text);
-        $text = preg_replace('/^Content-Disposition:.*\r?\n/mi', '', $text);
-        $text = preg_replace('/^charset=.*\r?\n/mi', '', $text);
+        // Try to extract text part from MIME
+        $cleanText = $parser->extractTextPart($this->body_text);
         
-        // Remove HTML that's encoded as quoted-printable (like =3D, =C2=A0, etc)
-        // Find and remove large blocks of encoded HTML (signature blocks)
-        $text = preg_replace('/<div[^>]*dir=3D[^>]*>.*?<\/div>/s', '', $text);
-        $text = preg_replace('/=3D[0-9A-F]{2,}/', '', $text);
-        $text = preg_replace('/=[A-F0-9]{2}/', '', $text);
+        // If extraction failed, try basic decoding
+        if (!$cleanText) {
+            $cleanText = $parser->stripMimeBoundaries($this->body_text);
+        }
         
-        // Remove forwarded message markers (Gmail style)
-        $text = preg_replace('/\*_\*{2,}_{2,}\*{2,}_\*{2,}.*\*/', '', $text);
-        
-        // Remove encoded HTML tags that slipped through
-        $text = preg_replace('/<[^>]+>/', '', $text);
-        
-        // Clean up quoted-printable artifacts
-        $text = str_replace('=', '', $text);
-        
-        // Remove extra blank lines
-        $text = preg_replace('/\n{3,}/', "\n\n", $text);
-        
-        // Clean up whitespace
-        $text = preg_replace('/[ \t]+/', ' ', $text);
-        
-        return trim($text);
+        return trim($cleanText);
     }
 
     /**
@@ -307,34 +288,22 @@ class EmailInbox extends Model
      */
     public function getPreviewAttribute()
     {
-        $text = $this->clean_body_text ?? strip_tags($this->clean_body_html ?? '');
+        $parser = new EmailMimeParser();
+        
+        // Try to get clean text first
+        $text = $this->clean_body_text;
+        
+        // Fallback to HTML if no text
+        if (!$text && $this->clean_body_html) {
+            $text = strip_tags($this->clean_body_html);
+        }
         
         if (!$text) {
             return '';
         }
         
-        // Split by common signature separators
-        $parts = preg_split('/(\-{2,10}\s*(Forwarded message|Original message)|^\s*--\s*$|Best regards|Regards|Terima kasih|Salam)/mi', $text, 2);
-        
-        // Take the first part (before signature)
-        $mainContent = trim($parts[0] ?? '');
-        
-        // If main content is too short (likely just greeting), use more
-        if (strlen($mainContent) < 20 && isset($parts[1])) {
-            $mainContent = trim($text);
-        }
-        
-        // Remove signature pattern with asterisks and underscores
-        $mainContent = preg_replace('/^\s*\*.*\*\s*$/m', '', $mainContent);
-        
-        // Remove email signature blocks (Name, Title, Phone, Address)
-        $mainContent = preg_replace('/(Property and Industrial Permit Consultant|Mobile Phone|Address\s*:)[^\n]*\n?/i', '', $mainContent);
-        
-        // Remove extra whitespace
-        $mainContent = preg_replace('/\n{2,}/', ' ', $mainContent);
-        $mainContent = preg_replace('/\s+/', ' ', $mainContent);
-        
-        return trim($mainContent);
+        // Use parser to extract preview
+        return $parser->extractPreview($text, 150);
     }
 
     /**
@@ -346,22 +315,29 @@ class EmailInbox extends Model
             return null;
         }
 
-        $html = $this->body_html;
+        $parser = new EmailMimeParser();
         
-        // Remove MIME headers if present
-        $html = preg_replace('/^Content-Type:.*\r?\n/mi', '', $html);
-        $html = preg_replace('/^Content-Transfer-Encoding:.*\r?\n/mi', '', $html);
+        // Try to extract HTML part from MIME
+        $cleanHtml = $parser->extractHtmlPart($this->body_html);
         
-        // Decode common HTML entities that might have been double-encoded
-        $html = str_replace('&amp;', '&', $html);
-        $html = str_replace('&quot;', '"', $html);
-        $html = str_replace('&lt;', '<', $html);
-        $html = str_replace('&gt;', '>', $html);
+        // If extraction failed, try basic decoding
+        if (!$cleanHtml) {
+            $cleanHtml = $parser->stripMimeBoundaries($this->body_html);
+            $cleanHtml = $parser->decodeQuotedPrintable($cleanHtml);
+        }
         
-        // Clean up quoted-printable remnants
-        $html = preg_replace('/=\r?\n/', '', $html);
+        // Sanitize for safe display
+        $cleanHtml = $parser->sanitizeHtml($cleanHtml);
         
-        return trim($html);
+        return trim($cleanHtml);
+    }
+
+    /**
+     * Get raw body (for debugging)
+     */
+    public function getRawBodyAttribute()
+    {
+        return $this->body_html ?? $this->body_text ?? '';
     }
 
     /**

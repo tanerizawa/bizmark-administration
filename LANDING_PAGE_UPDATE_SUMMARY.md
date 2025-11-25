@@ -11,7 +11,7 @@
 ## 🏢 INFORMASI BISNIS
 
 ### Identitas Perusahaan
-- **Nama Legal:** PT Timur Cakrawala Konsultan
+- **Nama Legal:** PT CANGAH PAJARATAN MANDIRI
 - **Brand:** Bizmark.ID
 - **Spesialisasi:** Perizinan Limbah B3 (LB3), AMDAL, UKL-UPL untuk Industri Manufaktur
 
@@ -39,12 +39,12 @@
 
 **Title Tag:**
 ```html
-Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang | PT Timur Cakrawala Konsultan
+Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang | PT CANGAH PAJARATAN MANDIRI
 ```
 
 **Meta Description:**
 ```
-PT Timur Cakrawala Konsultan (Bizmark.ID) - Spesialis perizinan Limbah B3, AMDAL, UKL-UPL untuk industri manufaktur di Karawang, Purwakarta, Subang, Bekasi dan seluruh Indonesia. Konsultan berpengalaman dengan track record terpercaya.
+PT CANGAH PAJARATAN MANDIRI (Bizmark.ID) - Spesialis perizinan Limbah B3, AMDAL, UKL-UPL untuk industri manufaktur di Karawang, Purwakarta, Subang, Bekasi dan seluruh Indonesia. Konsultan berpengalaman dengan track record terpercaya.
 ```
 
 **Keywords (Optimized):**
@@ -65,7 +65,7 @@ PT Timur Cakrawala Konsultan (Bizmark.ID) - Spesialis perizinan Limbah B3, AMDAL
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   "name": "Bizmark.ID",
-  "legalName": "PT Timur Cakrawala Konsultan",
+  "legalName": "PT CANGAH PAJARATAN MANDIRI",
   "address": {
     "streetAddress": "Jl. Permata Sari Indah No.2, Palumbonsari",
     "addressLocality": "Karawang Timur",
@@ -90,7 +90,7 @@ PT Timur Cakrawala Konsultan (Bizmark.ID) - Spesialis perizinan Limbah B3, AMDAL
 **Changes:**
 - ❌ Removed: "Spesialis Industri Manufaktur Karawang" (per user request)
 - ✅ H1 Updated: "Konsultan Perizinan **Limbah B3 & AMDAL**"
-- ✅ Description: Menekankan PT Timur Cakrawala Konsultan, LB3, dan area Karawang
+- ✅ Description: Menekankan PT CANGAH PAJARATAN MANDIRI, LB3, dan area Karawang
 - ✅ CTA: Tetap fokus pada konsultasi gratis
 
 **Final H1:**
@@ -104,7 +104,7 @@ Konsultan Perizinan Limbah B3 & AMDAL
 **Status:** SELESAI - MAJOR REWRITE
 
 **Changes:**
-- ✅ Title: "Tentang PT Timur Cakrawala Konsultan"
+- ✅ Title: "Tentang PT CANGAH PAJARATAN MANDIRI"
 - ✅ Profil Perusahaan: Dijelaskan sebagai spesialis LB3 & AMDAL
 - ✅ Keahlian Kami (4 points):
   1. Perizinan Limbah B3 - TPS, pengangkutan, pelaporan
@@ -168,7 +168,7 @@ Konsultan Perizinan Limbah B3 & AMDAL
 3. **Dokumen apa saja yang diperlukan untuk perizinan Limbah B3?**
    - 8 dokumen utama: NIB, AMDAL, profil limbah, manifest, SOP, denah TPS, kerjasama pengangkut
 
-4. **Apakah PT Timur Cakrawala Konsultan melayani di luar wilayah Karawang?**
+4. **Apakah PT CANGAH PAJARATAN MANDIRI melayani di luar wilayah Karawang?**
    - Ya, seluruh Indonesia
    - Fokus: Karawang, Purwakarta, Subang, Bekasi
    - Dekat KIIC, Suryacipta, Indotaisei
@@ -179,7 +179,7 @@ Konsultan Perizinan Limbah B3 & AMDAL
    - Konsultasi awal GRATIS
    - Tidak ada biaya tersembunyi
 
-6. **Apa keunggulan PT Timur Cakrawala Konsultan dibanding konsultan lainnya?**
+6. **Apa keunggulan PT CANGAH PAJARATAN MANDIRI dibanding konsultan lainnya?**
    - 6 keunggulan: Spesialisasi LB3, lokasi strategis, tim bersertifikat, jaringan kuat, pendampingan lengkap, track record 98%
 
 ---
@@ -224,12 +224,12 @@ Konsultan Perizinan Limbah B3 & AMDAL
 **Status:** SELESAI
 
 **Updated Elements:**
-- ✅ **Company Description:** "PT Timur Cakrawala Konsultan - Spesialis perizinan Limbah B3, AMDAL, dan UKL-UPL untuk industri manufaktur di Karawang"
+- ✅ **Company Description:** "PT CANGAH PAJARATAN MANDIRI - Spesialis perizinan Limbah B3, AMDAL, dan UKL-UPL untuk industri manufaktur di Karawang"
 - ✅ **Location Badge:** "Karawang, Jawa Barat"
 - ✅ **Service List:** Updated to prioritize LB3, AMDAL, Izin Lingkungan
 - ✅ **Contact Info:** Alamat Karawang, telepon area 0267
 - ✅ **Area Layanan:** "Karawang, Purwakarta, Subang, Bekasi, Jakarta, Bandung, Cikarang, dan seluruh Indonesia"
-- ✅ **Copyright:** "© 2025 PT Timur Cakrawala Konsultan (Bizmark.ID) - Konsultan Perizinan Limbah B3 & AMDAL. Made with ❤️ in Karawang"
+- ✅ **Copyright:** "© 2025 PT CANGAH PAJARATAN MANDIRI (Bizmark.ID) - Konsultan Perizinan Limbah B3 & AMDAL. Made with ❤️ in Karawang"
 
 ---
 
@@ -237,7 +237,7 @@ Konsultan Perizinan Limbah B3 & AMDAL
 **Status:** SELESAI
 
 **Updated:**
-- ✅ Message Template: "Halo PT Timur Cakrawala Konsultan, saya ingin konsultasi tentang perizinan Limbah B3 / AMDAL"
+- ✅ Message Template: "Halo PT CANGAH PAJARATAN MANDIRI, saya ingin konsultasi tentang perizinan Limbah B3 / AMDAL"
 - ✅ Number: +62 812 3456 7890 (ready to be replaced with actual number)
 
 ---
@@ -368,7 +368,7 @@ Konsultan Perizinan Limbah B3 & AMDAL
 ## 🔍 LOCAL SEO STRATEGY
 
 ### Google My Business (Recommended Next Steps)
-1. 📌 Claim/Create GMB listing for PT Timur Cakrawala Konsultan
+1. 📌 Claim/Create GMB listing for PT CANGAH PAJARATAN MANDIRI
 2. 📌 Add exact address: Jl. Permata Sari Indah No.2, Karawang
 3. 📌 Add phone: +62 267 123 4567
 4. 📌 Add business hours: Mon-Fri 08:00-17:00, Sat 08:00-13:00

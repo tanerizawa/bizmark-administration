@@ -2,9 +2,9 @@
 
 ## ✅ Error Fixed!
 
-**Problem**: Views menggunakan `@extends('layouts.admin')` tapi layout sebenarnya bernama `layouts.app`
+**Problem**: Views menggunakan `@extends('layouts.app')` tapi layout sebenarnya bernama `layouts.app`
 
-**Solution**: Replaced all `@extends('layouts.admin')` dengan `@extends('layouts.app')` di:
+**Solution**: Replaced all `@extends('layouts.app')` dengan `@extends('layouts.app')` di:
 - `/resources/views/admin/email/inbox/index.blade.php`
 - `/resources/views/admin/email/campaigns/index.blade.php`  
 - `/resources/views/admin/email/subscribers/index.blade.php`

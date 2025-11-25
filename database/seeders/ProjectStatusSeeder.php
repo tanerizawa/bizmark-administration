@@ -83,6 +83,14 @@ class ProjectStatusSeeder extends Seeder
                 'description' => 'Surat Keputusan izin telah terbit',
                 'color' => '#22C55E',
                 'sort_order' => 9,
+                'is_final' => false,
+            ],
+            [
+                'name' => 'Selesai',
+                'code' => 'SELESAI',
+                'description' => 'Proyek selesai dan diserahkan ke client',
+                'color' => '#10B981',
+                'sort_order' => 10,
                 'is_final' => true,
             ],
             [
@@ -90,7 +98,7 @@ class ProjectStatusSeeder extends Seeder
                 'code' => 'DIBATALKAN',
                 'description' => 'Proyek dibatalkan',
                 'color' => '#EF4444',
-                'sort_order' => 10,
+                'sort_order' => 11,
                 'is_final' => true,
             ],
             [
@@ -98,7 +106,7 @@ class ProjectStatusSeeder extends Seeder
                 'code' => 'DITUNDA',
                 'description' => 'Proyek ditunda sementara',
                 'color' => '#6B7280',
-                'sort_order' => 11,
+                'sort_order' => 12,
                 'is_final' => false,
             ]
         ];

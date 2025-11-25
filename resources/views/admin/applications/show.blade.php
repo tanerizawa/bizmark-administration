@@ -3,349 +3,387 @@
 @section('title', 'Detail Lamaran - ' . $application->full_name)
 
 @section('content')
-<div class="container-fluid">
-    <div class="mb-4">
-        <a href="{{ route('admin.applications.index') }}" class="btn btn-sm btn-outline-secondary mb-3">
-            <i class="fas fa-arrow-left me-2"></i>Kembali ke Daftar
-        </a>
-        <h1 class="h3 mb-1">Detail Lamaran</h1>
-        <p class="text-muted">{{ $application->jobVacancy->title ?? 'N/A' }}</p>
-    </div>
+<div class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+    {{-- Header --}}
+    <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <nav class="text-xs mb-2 flex items-center gap-2" style="color: rgba(235,235,245,0.6);">
+                <a href="{{ route('admin.recruitment.index') }}" class="hover:text-apple-blue transition-colors">Rekrutmen</a>
+                <i class="fas fa-chevron-right text-[10px]"></i>
+                <a href="{{ route('admin.applications.index') }}" class="hover:text-apple-blue transition-colors">Applications</a>
+                <i class="fas fa-chevron-right text-[10px]"></i>
+                <span style="color: rgba(235,235,245,0.9);">Detail Lamaran</span>
+            </nav>
+            <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">{{ $application->full_name }}</h1>
+            <p class="text-sm" style="color: rgba(235,235,245,0.65);">
+                <i class="fas fa-briefcase mr-2"></i>{{ $application->jobVacancy->title ?? 'N/A' }}
+            </p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.applications.index') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i>Kembali
+            </a>
+            <a href="{{ route('admin.recruitment.pipeline.show', $application->id) }}" class="btn-primary">
+                <i class="fas fa-stream mr-2"></i>Pipeline
+            </a>
+        </div>
+    </section>
 
+    {{-- Alert Messages --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="rounded-apple-lg p-4" style="background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.3);">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-check-circle text-lg" style="color: rgba(52,199,89,1);"></i>
+                <p class="text-white">{{ session('success') }}</p>
+            </div>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="rounded-apple-lg p-4" style="background: rgba(255,59,48,0.15); border: 1px solid rgba(255,59,48,0.3);">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-exclamation-circle text-lg" style="color: rgba(255,59,48,1);"></i>
+                <p class="text-white">{{ session('error') }}</p>
+            </div>
         </div>
     @endif
 
-    <div class="row">
-        <!-- Main Content -->
-        <div class="col-lg-8">
-            <!-- Personal Information -->
-            <div class="card bg-dark border-dark shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-4 text-white">Data Pribadi</h5>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-user me-1"></i>Nama Lengkap
-                            </label>
-                            <div class="fw-semibold text-white">{{ $application->full_name }}</div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-envelope me-1"></i>Email
-                            </label>
-                            <div>
-                                <a href="mailto:{{ $application->email }}" class="text-decoration-none text-info">
-                                    {{ $application->email }}
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-phone me-1"></i>Nomor Telepon
-                            </label>
-                            <div>
-                                <a href="tel:{{ $application->phone }}" class="text-decoration-none text-info">
-                                    {{ $application->phone }}
-                                </a>
-                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $application->phone) }}" 
-                                   class="btn btn-sm btn-success ms-2" target="_blank">
-                                    <i class="fab fa-whatsapp me-1"></i> WhatsApp
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-calendar-alt me-1"></i>Tanggal Lahir
-                            </label>
-                            <div class="text-white">{{ $application->birth_date ? $application->birth_date->format('d M Y') : '-' }}</div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-venus-mars me-1"></i>Jenis Kelamin
-                            </label>
-                            <div class="text-white">{{ $application->gender ?? '-' }}</div>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-map-marker-alt me-1"></i>Alamat
-                            </label>
-                            <div class="text-white">{{ $application->address ?? '-' }}</div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- Main Content --}}
+        <div class="lg:col-span-2 space-y-6">
+            {{-- Personal Information --}}
+            <section class="card-elevated rounded-apple-xl p-5 md:p-6">
+                <h2 class="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                    <i class="fas fa-user" style="color: rgba(10,132,255,1);"></i>
+                    Data Pribadi
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-user mr-1"></i>Nama Lengkap
+                        </p>
+                        <p class="text-white font-semibold">{{ $application->full_name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-envelope mr-1"></i>Email
+                        </p>
+                        <a href="mailto:{{ $application->email }}" class="text-apple-blue hover:underline">
+                            {{ $application->email }}
+                        </a>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-phone mr-1"></i>Nomor Telepon
+                        </p>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <a href="tel:{{ $application->phone }}" class="text-apple-blue hover:underline">
+                                {{ $application->phone }}
+                            </a>
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $application->phone) }}" 
+                               class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all"
+                               style="background: rgba(37,211,102,0.2); color: rgba(37,211,102,1);"
+                               target="_blank">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Education -->
-            <div class="card bg-dark border-dark shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-4 text-white">
-                        <i class="fas fa-graduation-cap me-2"></i>Pendidikan
-                    </h5>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-layer-group me-1"></i>Jenjang
-                            </label>
-                            <div class="fw-semibold text-white">{{ $application->education_level }}</div>
-                        </div>
-                        <div class="col-md-5 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-book me-1"></i>Jurusan
-                            </label>
-                            <div class="fw-semibold text-white">{{ $application->major }}</div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-star me-1"></i>IPK
-                            </label>
-                            <div class="text-white">{{ $application->gpa ? number_format($application->gpa, 2) : '-' }}</div>
-                        </div>
-                        <div class="col-md-8 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-university me-1"></i>Institusi
-                            </label>
-                            <div class="text-white">{{ $application->institution }}</div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="text-muted small">
-                                <i class="fas fa-calendar-check me-1"></i>Tahun Lulus
-                            </label>
-                            <div class="text-white">{{ $application->graduation_year ?? '-' }}</div>
-                        </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-calendar-alt mr-1"></i>Tanggal Lahir
+                        </p>
+                        <p class="text-white">{{ $application->birth_date ? $application->birth_date->format('d M Y') : '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-venus-mars mr-1"></i>Jenis Kelamin
+                        </p>
+                        <p class="text-white">{{ $application->gender ?? '-' }}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-map-marker-alt mr-1"></i>Alamat
+                        </p>
+                        <p class="text-white">{{ $application->address ?? '-' }}</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Experience -->
-            <div class="card bg-dark border-dark shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-4 text-white">
-                        <i class="fas fa-briefcase me-2"></i>Pengalaman & Keahlian
-                    </h5>
-                    
-                    @if($application->has_experience_ukl_upl)
-                        <div class="alert alert-success bg-success bg-opacity-25 border-success text-white mb-3">
-                            <i class="fas fa-badge-check me-2"></i>
-                            <strong>Memiliki pengalaman UKL-UPL/Kajian Teknis</strong>
+            {{-- Education --}}
+            <section class="card-elevated rounded-apple-xl p-5 md:p-6">
+                <h2 class="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                    <i class="fas fa-graduation-cap" style="color: rgba(255,149,0,1);"></i>
+                    Pendidikan
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-layer-group mr-1"></i>Jenjang
+                        </p>
+                        <p class="text-white font-semibold">{{ $application->education_level }}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-book mr-1"></i>Jurusan
+                        </p>
+                        <p class="text-white font-semibold">{{ $application->major }}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-university mr-1"></i>Institusi
+                        </p>
+                        <p class="text-white">{{ $application->institution }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-star mr-1"></i>IPK
+                        </p>
+                        <p class="text-white">{{ $application->gpa ? number_format($application->gpa, 2) : '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-calendar-check mr-1"></i>Tahun Lulus
+                        </p>
+                        <p class="text-white">{{ $application->graduation_year ?? '-' }}</p>
+                    </div>
+                </div>
+            </section>
+
+            {{-- Experience & Skills --}}
+            <section class="card-elevated rounded-apple-xl p-5 md:p-6">
+                <h2 class="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                    <i class="fas fa-briefcase" style="color: rgba(175,82,222,1);"></i>
+                    Pengalaman & Keahlian
+                </h2>
+                
+                @if($application->has_experience_ukl_upl)
+                    <div class="rounded-apple-lg p-3 mb-4" style="background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.3);">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-badge-check" style="color: rgba(52,199,89,1);"></i>
+                            <span class="text-white font-semibold">Memiliki pengalaman UKL-UPL/Kajian Teknis</span>
                         </div>
-                    @endif
+                    </div>
+                @endif
 
-                    @if($application->work_experience && count($application->work_experience) > 0)
-                        <h6 class="mb-3 text-white">
-                            <i class="fas fa-history me-2"></i>Riwayat Pekerjaan
-                        </h6>
-                        @foreach($application->work_experience as $exp)
-                            <div class="mb-3 pb-3 border-bottom border-secondary">
-                                <div class="fw-semibold text-white">{{ $exp['position'] ?? 'N/A' }}</div>
-                                <div class="text-muted">{{ $exp['company'] ?? 'N/A' }}</div>
-                                <div class="text-muted small">{{ $exp['duration'] ?? 'N/A' }}</div>
-                                @if(!empty($exp['responsibilities']))
-                                    <div class="mt-2 text-white">{{ $exp['responsibilities'] }}</div>
-                                @endif
-                            </div>
-                        @endforeach
-                    @else
-                        <p class="text-muted">Belum ada pengalaman kerja tercatat.</p>
-                    @endif
+                @if($application->work_experience && count($application->work_experience) > 0)
+                    <div class="mb-5">
+                        <h3 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                            <i class="fas fa-history" style="color: rgba(10,132,255,1);"></i>
+                            Riwayat Pekerjaan
+                        </h3>
+                        <div class="space-y-4">
+                            @foreach($application->work_experience as $exp)
+                                <div class="p-4 rounded-apple-lg" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                    <p class="text-white font-semibold mb-1">{{ $exp['position'] ?? 'N/A' }}</p>
+                                    <p class="text-sm mb-1" style="color: rgba(235,235,245,0.7);">{{ $exp['company'] ?? 'N/A' }}</p>
+                                    <p class="text-xs mb-2" style="color: rgba(235,235,245,0.5);">{{ $exp['duration'] ?? 'N/A' }}</p>
+                                    @if(!empty($exp['responsibilities']))
+                                        <p class="text-sm text-white mt-2">{{ $exp['responsibilities'] }}</p>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <p class="text-sm mb-5" style="color: rgba(235,235,245,0.6);">Belum ada pengalaman kerja tercatat.</p>
+                @endif
 
-                    @if($application->skills && count($application->skills) > 0)
-                        <h6 class="mt-4 mb-3 text-white">
-                            <i class="fas fa-tools me-2"></i>Keahlian
-                        </h6>
-                        <div class="d-flex flex-wrap gap-2">
+                @if($application->skills && count($application->skills) > 0)
+                    <div>
+                        <h3 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                            <i class="fas fa-tools" style="color: rgba(255,149,0,1);"></i>
+                            Keahlian
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
                             @foreach($application->skills as $skill)
-                                <span class="badge bg-primary">
-                                    <i class="fas fa-check-circle me-1"></i>{{ $skill }}
+                                <span class="px-3 py-1.5 rounded-full text-xs font-semibold" style="background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);">
+                                    <i class="fas fa-check-circle mr-1"></i>{{ $skill }}
                                 </span>
                             @endforeach
                         </div>
-                    @endif
+                    </div>
+                @endif
 
-                    @if($application->expected_salary || $application->available_from)
-                        <h6 class="mt-4 mb-3 text-white">
-                            <i class="fas fa-info-circle me-2"></i>Informasi Tambahan
-                        </h6>
-                        <div class="row">
+                @if($application->expected_salary || $application->available_from)
+                    <div class="mt-5 pt-5" style="border-top: 1px solid rgba(58,58,60,0.6);">
+                        <h3 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                            <i class="fas fa-info-circle" style="color: rgba(255,214,10,1);"></i>
+                            Informasi Tambahan
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @if($application->expected_salary)
-                                <div class="col-md-6 mb-2">
-                                    <label class="text-muted small">
-                                        <i class="fas fa-money-bill-wave me-1"></i>Ekspektasi Gaji
-                                    </label>
-                                    <div class="text-white">Rp {{ number_format($application->expected_salary, 0, ',', '.') }}</div>
+                                <div>
+                                    <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                                        <i class="fas fa-money-bill-wave mr-1"></i>Ekspektasi Gaji
+                                    </p>
+                                    <p class="text-white font-semibold">Rp {{ number_format($application->expected_salary, 0, ',', '.') }}</p>
                                 </div>
                             @endif
                             @if($application->available_from)
-                                <div class="col-md-6 mb-2">
-                                    <label class="text-muted small">
-                                        <i class="fas fa-calendar-day me-1"></i>Bisa Mulai Kerja
-                                    </label>
-                                    <div class="text-white">{{ $application->available_from->format('d M Y') }}</div>
+                                <div>
+                                    <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                                        <i class="fas fa-calendar-day mr-1"></i>Bisa Mulai Kerja
+                                    </p>
+                                    <p class="text-white font-semibold">{{ $application->available_from->format('d M Y') }}</p>
                                 </div>
                             @endif
                         </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Cover Letter -->
-            @if($application->cover_letter)
-                <div class="card bg-dark border-dark shadow-sm mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3 text-white">
-                            <i class="fas fa-file-alt me-2"></i>Surat Lamaran
-                        </h5>
-                        <p class="mb-0 text-white">{{ $application->cover_letter }}</p>
                     </div>
-                </div>
+                @endif
+            </section>
+
+            {{-- Cover Letter --}}
+            @if($application->cover_letter)
+                <section class="card-elevated rounded-apple-xl p-5 md:p-6">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-file-alt" style="color: rgba(52,199,89,1);"></i>
+                        Surat Lamaran
+                    </h2>
+                    <p class="text-white leading-relaxed">{{ $application->cover_letter }}</p>
+                </section>
             @endif
         </div>
 
-        <!-- Sidebar -->
-        <div class="col-lg-4">
-            <!-- Status Card -->
-            <div class="card bg-dark border-dark shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-4 text-white">Status Lamaran</h5>
-                    
-                    <div class="mb-3 text-center">
-                        @php
-                            $statusConfig = [
-                                'pending' => ['badge' => 'bg-warning text-dark', 'icon' => 'fas fa-clock'],
-                                'reviewed' => ['badge' => 'bg-info', 'icon' => 'fas fa-eye'],
-                                'interview' => ['badge' => 'bg-purple', 'icon' => 'fas fa-users'],
-                                'accepted' => ['badge' => 'bg-success', 'icon' => 'fas fa-check-circle'],
-                                'rejected' => ['badge' => 'bg-danger', 'icon' => 'fas fa-times-circle'],
-                            ];
-                            $config = $statusConfig[$application->status] ?? ['badge' => 'bg-secondary', 'icon' => 'fas fa-question'];
-                        @endphp
-                        <span class="badge {{ $config['badge'] }} fs-6 px-4 py-2">
-                            <i class="{{ $config['icon'] }} me-2"></i>{{ $application->status_label }}
-                        </span>
+        {{-- Sidebar --}}
+        <div class="space-y-6">
+            {{-- Status Card --}}
+            <section class="card-elevated rounded-apple-xl p-5">
+                <h3 class="text-base font-semibold text-white mb-4">Status Lamaran</h3>
+                
+                <div class="text-center mb-4">
+                    @php
+                        $statusConfig = [
+                            'pending' => ['bg' => 'rgba(255,214,10,0.2)', 'color' => 'rgba(255,214,10,1)', 'icon' => 'fas fa-clock'],
+                            'reviewed' => ['bg' => 'rgba(10,132,255,0.2)', 'color' => 'rgba(10,132,255,1)', 'icon' => 'fas fa-eye'],
+                            'interview' => ['bg' => 'rgba(175,82,222,0.2)', 'color' => 'rgba(175,82,222,1)', 'icon' => 'fas fa-users'],
+                            'accepted' => ['bg' => 'rgba(52,199,89,0.2)', 'color' => 'rgba(52,199,89,1)', 'icon' => 'fas fa-check-circle'],
+                            'rejected' => ['bg' => 'rgba(255,59,48,0.2)', 'color' => 'rgba(255,59,48,1)', 'icon' => 'fas fa-times-circle'],
+                        ];
+                        $config = $statusConfig[$application->status] ?? ['bg' => 'rgba(142,142,147,0.25)', 'color' => 'rgba(142,142,147,1)', 'icon' => 'fas fa-question'];
+                    @endphp
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style="background: {{ $config['bg'] }}; color: {{ $config['color'] }};">
+                        <i class="{{ $config['icon'] }}"></i>{{ ucfirst($application->status) }}
+                    </span>
+                </div>
+
+                <form action="{{ route('admin.applications.update-status', $application->id) }}" method="POST" class="space-y-4">
+                    @csrf
+                    @method('PATCH')
+
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-2">Ubah Status</label>
+                        <select name="status" class="form-control bg-dark-secondary border-dark-border text-white focus:border-apple-blue focus:ring-apple-blue" required>
+                            <option value="pending" {{ $application->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="reviewed" {{ $application->status === 'reviewed' ? 'selected' : '' }}>Direview</option>
+                            <option value="interview" {{ $application->status === 'interview' ? 'selected' : '' }}>Interview</option>
+                            <option value="accepted" {{ $application->status === 'accepted' ? 'selected' : '' }}>Diterima</option>
+                            <option value="rejected" {{ $application->status === 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                        </select>
                     </div>
 
-                    <form action="{{ route('admin.applications.update-status', $application->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-2">
+                            <i class="fas fa-comment-alt mr-1"></i>Catatan
+                        </label>
+                        <textarea name="notes" rows="4" class="form-control w-full bg-dark-secondary border-dark-border text-white focus:border-apple-blue focus:ring-apple-blue text-sm" placeholder="Catatan akan dikirim ke pelamar via email...">{{ $application->notes }}</textarea>
+                        <p class="text-xs mt-1" style="color: rgba(235,235,245,0.5);">
+                            <i class="fas fa-envelope mr-1"></i>Email notifikasi otomatis terkirim
+                        </p>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label text-white">Ubah Status</label>
-                            <select name="status" class="form-select bg-dark text-white border-secondary" required>
-                                <option value="pending" {{ $application->status === 'pending' ? 'selected' : '' }}>Pending - Menunggu Review</option>
-                                <option value="reviewed" {{ $application->status === 'reviewed' ? 'selected' : '' }}>Direview - Sedang Ditinjau</option>
-                                <option value="interview" {{ $application->status === 'interview' ? 'selected' : '' }}>Interview - Undangan Wawancara</option>
-                                <option value="accepted" {{ $application->status === 'accepted' ? 'selected' : '' }}>Diterima - Lamaran Disetujui</option>
-                                <option value="rejected" {{ $application->status === 'rejected' ? 'selected' : '' }}>Ditolak - Tidak Dilanjutkan</option>
-                            </select>
-                        </div>
+                    <button type="submit" class="btn-primary w-full">
+                        <i class="fas fa-paper-plane mr-2"></i>Update & Kirim Email
+                    </button>
+                </form>
 
-                        <div class="mb-3">
-                            <label class="form-label text-white">
-                                <i class="fas fa-comment-alt me-2"></i>Catatan untuk Pelamar
-                            </label>
-                            <textarea name="notes" rows="4" class="form-control bg-dark text-white border-secondary" placeholder="Catatan akan dikirim ke pelamar via email...">{{ $application->notes }}</textarea>
-                            <small class="text-muted">
-                                <i class="fas fa-envelope me-1"></i>Email notifikasi akan dikirim otomatis ke pelamar
-                            </small>
-                        </div>
+                @if($application->reviewed_at)
+                    <div class="mt-4 pt-4" style="border-top: 1px solid rgba(58,58,60,0.6);">
+                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">
+                            <i class="fas fa-calendar mr-1"></i>Direview: {{ $application->reviewed_at->format('d M Y H:i') }}
+                        </p>
+                        @if($application->reviewer)
+                            <p class="text-xs mt-1" style="color: rgba(235,235,245,0.5);">
+                                <i class="fas fa-user mr-1"></i>Oleh: {{ $application->reviewer->name }}
+                            </p>
+                        @endif
+                    </div>
+                @endif
+            </section>
 
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-paper-plane me-2"></i>Update Status & Kirim Email
-                        </button>
-                    </form>
-
-                    @if($application->reviewed_at)
-                        <div class="mt-3 pt-3 border-top border-secondary">
-                            <small class="text-muted">
-                                <div><i class="fas fa-calendar me-2"></i>Direview: {{ $application->reviewed_at->format('d M Y H:i') }}</div>
-                                @if($application->reviewer)
-                                    <div><i class="fas fa-user me-2"></i>Oleh: {{ $application->reviewer->name }}</div>
-                                @endif
-                            </small>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Documents -->
-            <div class="card bg-dark border-dark shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-4 text-white">
-                        <i class="fas fa-folder-open me-2"></i>Dokumen
-                    </h5>
-                    
+            {{-- Documents --}}
+            <section class="card-elevated rounded-apple-xl p-5">
+                <h3 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-folder-open" style="color: rgba(255,149,0,1);"></i>
+                    Dokumen
+                </h3>
+                
+                <div class="space-y-2">
                     @if($application->cv_path)
                         <a href="{{ route('admin.applications.download-cv', $application->id) }}" 
-                           class="btn btn-outline-primary w-100 mb-2">
-                            <i class="fas fa-file-pdf me-2"></i>Download CV
+                           class="btn-primary w-full">
+                            <i class="fas fa-file-pdf mr-2"></i>Download CV
                         </a>
                     @else
-                        <div class="alert alert-warning bg-warning bg-opacity-25 border-warning text-dark mb-2">
-                            <i class="fas fa-exclamation-triangle me-2"></i>CV tidak tersedia
+                        <div class="rounded-apple-lg p-3 text-center" style="background: rgba(255,214,10,0.15); border: 1px solid rgba(255,214,10,0.3);">
+                            <p class="text-xs" style="color: rgba(255,214,10,1);">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>CV tidak tersedia
+                            </p>
                         </div>
                     @endif
 
                     @if($application->portfolio_path)
                         <a href="{{ route('admin.applications.download-portfolio', $application->id) }}" 
-                           class="btn btn-outline-secondary w-100">
-                            <i class="fas fa-folder me-2"></i>Download Portfolio
+                           class="btn-secondary w-full">
+                            <i class="fas fa-folder mr-2"></i>Download Portfolio
                         </a>
                     @endif
                 </div>
-            </div>
+            </section>
 
-            <!-- Job Info -->
-            <div class="card bg-dark border-dark shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-3 text-white">
-                        <i class="fas fa-briefcase me-2"></i>Info Lowongan
-                    </h5>
-                    <div class="mb-2">
-                        <label class="text-muted small">
-                            <i class="fas fa-tag me-1"></i>Posisi
-                        </label>
-                        <div class="fw-semibold text-white">{{ $application->jobVacancy->title ?? 'N/A' }}</div>
+            {{-- Job Info --}}
+            <section class="card-elevated rounded-apple-xl p-5">
+                <h3 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-briefcase" style="color: rgba(10,132,255,1);"></i>
+                    Info Lowongan
+                </h3>
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-tag mr-1"></i>Posisi
+                        </p>
+                        <p class="text-white font-semibold">{{ $application->jobVacancy->title ?? 'N/A' }}</p>
                     </div>
-                    <div class="mb-2">
-                        <label class="text-muted small">
-                            <i class="fas fa-clock me-1"></i>Tanggal Lamar
-                        </label>
-                        <div class="text-white">{{ $application->created_at->format('d M Y H:i') }}</div>
+                    <div>
+                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">
+                            <i class="fas fa-clock mr-1"></i>Tanggal Lamar
+                        </p>
+                        <p class="text-white">{{ $application->created_at->format('d M Y H:i') }}</p>
                     </div>
-                    <a href="{{ route('career.show', $application->jobVacancy->slug) }}" 
-                       class="btn btn-sm btn-outline-secondary w-100 mt-2" target="_blank">
-                        <i class="fas fa-external-link-alt me-2"></i>Lihat Lowongan
-                    </a>
+                    @if($application->jobVacancy)
+                        <a href="{{ route('career.show', $application->jobVacancy->slug) }}" 
+                           class="btn-secondary w-full text-center" target="_blank">
+                            <i class="fas fa-external-link-alt mr-2"></i>Lihat Lowongan
+                        </a>
+                    @endif
                 </div>
-            </div>
+            </section>
 
-            <!-- Actions -->
-            <div class="card bg-dark border-dark shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-3 text-white">
-                        <i class="fas fa-cog me-2"></i>Aksi
-                    </h5>
-                    <form action="{{ route('admin.applications.destroy', $application->id) }}" 
-                          method="POST" 
-                          onsubmit="return confirm('Yakin ingin menghapus lamaran ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-outline-danger w-100">
-                            <i class="fas fa-trash-alt me-2"></i>Hapus Lamaran
-                        </button>
-                    </form>
-                </div>
-            </div>
+            {{-- Actions --}}
+            <section class="card-elevated rounded-apple-xl p-5">
+                <h3 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-cog" style="color: rgba(142,142,147,1);"></i>
+                    Aksi
+                </h3>
+                <form action="{{ route('admin.applications.destroy', $application->id) }}" 
+                      method="POST" 
+                      onsubmit="return confirm('Yakin ingin menghapus lamaran ini? Data test, interview, dan file CV/Portfolio akan terhapus.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-secondary w-full" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,1); border-color: rgba(255,59,48,0.3);">
+                        <i class="fas fa-trash-alt mr-2"></i>Hapus Lamaran
+                    </button>
+                </form>
+            </section>
         </div>
     </div>
 </div>

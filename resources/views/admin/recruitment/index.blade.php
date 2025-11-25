@@ -2,42 +2,14 @@
 
 @section('title', 'Rekrutmen')
 
-@push('styles')
-<style>
-    .tab-button {
-        color: rgba(235, 235, 245, 0.6);
-        background-color: transparent;
-    }
-
-    .tab-button:hover {
-        color: rgba(235, 235, 245, 0.9);
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .tab-button.active {
-        color: #FFFFFF;
-        background-color: rgba(0, 122, 255, 0.15);
-        border: 1px solid rgba(0, 122, 255, 0.3);
-    }
-
-    .tab-content {
-        animation: fadeIn 0.3s ease-in;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
-@endpush
-
 @section('content')
 @php
     $pendingCount = $notifications['applications'] ?? 0;
 @endphp
 
+<div class="recruitment-shell max-w-7xl mx-auto space-y-5">
 {{-- Hero Section --}}
-<section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+<section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
     <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
         <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
@@ -58,6 +30,9 @@
             </div>
         </div>
         <div class="flex flex-col items-start gap-3">
+            <a href="{{ route('admin.recruitment.pipeline.index') }}" class="btn-secondary">
+                <i class="fas fa-stream mr-2"></i>Pipeline Kandidat
+            </a>
             <a href="{{ route('admin.jobs.create') }}" class="btn-primary">
                 <i class="fas fa-plus mr-2"></i>Tambah Lowongan
             </a>
@@ -66,7 +41,7 @@
 </section>
 
 {{-- Stats --}}
-<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Lowongan</p>
         <p class="text-3xl font-bold text-white">{{ $totalJobs }}</p>
@@ -89,16 +64,34 @@
     </div>
 </section>
 
+{{-- Quick Actions --}}
+<section class="mb-5">
+    <a href="{{ route('admin.recruitment.pipeline.index') }}" class="card-elevated rounded-apple-xl p-5 block hover:scale-[1.01] transition-transform">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-apple-blue to-apple-purple flex items-center justify-center">
+                    <i class="fas fa-stream text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-1">Pipeline Rekrutmen</h3>
+                    <p class="text-sm" style="color: rgba(235,235,245,0.7);">Pantau pergerakan kandidat di setiap tahap proses rekrutmen</p>
+                </div>
+            </div>
+            <i class="fas fa-chevron-right text-apple-blue"></i>
+        </div>
+    </a>
+</section>
+
 {{-- Tab Navigation --}}
-<section class="card-elevated rounded-apple-xl overflow-hidden mb-5">
+<section class="card-elevated rounded-apple-xl overflow-hidden">
     <div class="border-b" style="border-color: var(--dark-separator);">
         <div class="flex space-x-1 p-2 overflow-x-auto" role="tablist">
             <button onclick="switchTab('jobs')" id="tab-jobs" 
-                    class="tab-button {{ $activeTab == 'jobs' ? 'active' : '' }} px-4 py-2.5 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
+                    class="tab-button {{ $activeTab == 'jobs' ? 'active' : '' }} text-sm transition-apple whitespace-nowrap">
                 <i class="fas fa-briefcase mr-2"></i>Lowongan Kerja
             </button>
             <button onclick="switchTab('applications')" id="tab-applications"
-                    class="tab-button {{ $activeTab == 'applications' ? 'active' : '' }} px-4 py-2.5 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
+                    class="tab-button {{ $activeTab == 'applications' ? 'active' : '' }} text-sm transition-apple whitespace-nowrap">
                 <i class="fas fa-user-tie mr-2"></i>Lamaran Masuk
                 @if($pendingCount > 0)
                     <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full {{ $activeTab == 'applications' ? 'bg-white text-apple-blue' : 'bg-yellow-500 text-white' }}">
@@ -121,73 +114,67 @@
         </div>
     </div>
 </section>
+</div>
+
+@push('styles')
+<style>
+    .recruitment-shell .tab-button {
+        color: rgba(235, 235, 245, 0.6);
+        background-color: transparent;
+        padding: 0.55rem 0.85rem;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-weight: 600;
+        min-height: 42px;
+    }
+
+    .recruitment-shell .tab-button:hover {
+        color: rgba(235, 235, 245, 0.9);
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .recruitment-shell .tab-button.active {
+        color: #FFFFFF;
+        background-color: rgba(0, 122, 255, 0.15);
+        border: 1px solid rgba(0, 122, 255, 0.3);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .recruitment-shell .tab-content {
+        animation: fadeIn 0.25s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>
-console.log('=== RECRUITMENT TAB SCRIPT LOADED ===');
-
 function switchTab(tabName) {
-    console.log('switchTab called:', tabName);
-    
-    // Update URL without reload
     const url = new URL(window.location);
     url.searchParams.set('tab', tabName);
     window.history.pushState({}, '', url);
     
-    // Hide all tabs
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-        console.log('  Hidden:', content.id);
-    });
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+    document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
     
-    // Remove active from all buttons
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active');
-    });
-    
-    // Show selected tab
     const targetContent = document.getElementById('content-' + tabName);
     const targetButton = document.getElementById('tab-' + tabName);
-    
-    if (targetContent) {
-        targetContent.classList.remove('hidden');
-        console.log('  Shown:', targetContent.id);
-        console.log('  Has content:', targetContent.children.length, 'children');
-        console.log('  Visible height:', targetContent.offsetHeight, 'px');
-    } else {
-        console.error('  Content not found for:', tabName);
-    }
-    
-    if (targetButton) {
-        targetButton.classList.add('active');
-    } else {
-        console.error('  Button not found for:', tabName);
-    }
+    targetContent?.classList.remove('hidden');
+    targetButton?.classList.add('active');
 }
 
-// Handle browser back/forward
 window.addEventListener('popstate', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab') || 'jobs';
-    console.log('Popstate event, switching to:', tab);
+    const tab = new URLSearchParams(window.location.search).get('tab') || 'jobs';
     switchTab(tab);
 });
 
-// Verify initial state on page load
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== DOM LOADED - INITIAL STATE ===');
-    
-    // Check all tab contents
-    document.querySelectorAll('.tab-content').forEach(content => {
-        const hasHidden = content.classList.contains('hidden');
-        const height = content.offsetHeight;
-        console.log('Tab:', content.id);
-        console.log('  - Has hidden class:', hasHidden);
-        console.log('  - Height:', height, 'px');
-        console.log('  - Children count:', content.children.length);
-    });
-    
-    console.log('=== READY ===');
+    const initialTab = new URLSearchParams(window.location.search).get('tab') || 'jobs';
+    switchTab(initialTab);
 });
 </script>
 @endpush

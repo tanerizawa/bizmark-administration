@@ -170,7 +170,7 @@ function trackEvent(category, action, label) {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Bizmark.ID",
-  "legalName": "PT Timur Cakrawala Konsultan",
+  "legalName": "PT CANGAH PAJARATAN MANDIRI",
   "url": "...",
   "logo": "...",
   "description": "...",
@@ -598,7 +598,7 @@ php artisan view:clear
 ## Credits
 
 **Developed by:** GitHub Copilot (AI Pair Programmer)  
-**Client:** PT Timur Cakrawala Konsultan (Bizmark.ID)  
+**Client:** PT CANGAH PAJARATAN MANDIRI (Bizmark.ID)  
 **Project:** Landing Page Enhancement - Phase 4  
 **Date:** January 11, 2025  
 

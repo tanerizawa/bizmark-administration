@@ -1,8 +1,8 @@
 <!-- Tasks Tab Content -->
-<div class="card-elevated rounded-apple-lg p-6 tasks-tab-no-hover">
-    <div class="flex items-center justify-between mb-6">
+<div class="page-card space-y-4 tasks-tab-no-hover">
+    <div class="flex items-center justify-between">
         <div>
-            <h3 class="text-lg font-semibold" style="color: #FFFFFF;">
+            <h3 class="card-title text-white">
                 <i class="fas fa-tasks mr-2 text-apple-blue-dark"></i>Task & Kegiatan Proyek
             </h3>
             <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
@@ -11,40 +11,40 @@
         </div>
         
         <button onclick="event.stopPropagation(); showAddTaskModal()" 
-                class="px-4 py-2 rounded-lg transition-colors" 
-                style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
+                class="btn-primary-sm" 
+                style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
             <i class="fas fa-plus mr-2"></i>Tambah Task
         </button>
     </div>
 
     @if($project->tasks->count() > 0)
         <!-- Statistics -->
-        <div class="grid grid-cols-5 gap-4 mb-6">
-            <div class="p-4 rounded-lg" style="background: rgba(58, 58, 60, 0.3);">
-                <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.6);">Total Task</p>
-                <p class="text-2xl font-bold" style="color: #FFFFFF;">{{ $project->tasks->count() }}</p>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+            <div class="data-block">
+                <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.65);">Total Task</p>
+                <p class="text-lg font-semibold" style="color: #FFFFFF;">{{ $project->tasks->count() }}</p>
             </div>
-            <div class="p-4 rounded-lg" style="background: rgba(52, 199, 89, 0.1);">
-                <p class="text-xs mb-1" style="color: rgba(52, 199, 89, 0.8);">Selesai</p>
-                <p class="text-2xl font-bold" style="color: rgba(52, 199, 89, 1);">
+            <div class="data-block" style="background: rgba(52, 199, 89, 0.08); border-color: rgba(52, 199, 89, 0.2);">
+                <p class="text-xs mb-1" style="color: rgba(52, 199, 89, 0.85);">Selesai</p>
+                <p class="text-lg font-semibold" style="color: rgba(52, 199, 89, 1);">
                     {{ $project->tasks->where('status', 'done')->count() }}
                 </p>
             </div>
-            <div class="p-4 rounded-lg" style="background: rgba(10, 132, 255, 0.1);">
-                <p class="text-xs mb-1" style="color: rgba(10, 132, 255, 0.8);">Dalam Proses</p>
-                <p class="text-2xl font-bold" style="color: rgba(10, 132, 255, 1);">
+            <div class="data-block" style="background: rgba(10, 132, 255, 0.08); border-color: rgba(10, 132, 255, 0.2);">
+                <p class="text-xs mb-1" style="color: rgba(10, 132, 255, 0.85);">Dalam Proses</p>
+                <p class="text-lg font-semibold" style="color: rgba(10, 132, 255, 1);">
                     {{ $project->tasks->where('status', 'in_progress')->count() }}
                 </p>
             </div>
-            <div class="p-4 rounded-lg" style="background: rgba(255, 59, 48, 0.1);">
-                <p class="text-xs mb-1" style="color: rgba(255, 59, 48, 0.8);">Terblokir</p>
-                <p class="text-2xl font-bold" style="color: rgba(255, 59, 48, 1);">
+            <div class="data-block" style="background: rgba(255, 59, 48, 0.08); border-color: rgba(255, 59, 48, 0.2);">
+                <p class="text-xs mb-1" style="color: rgba(255, 59, 48, 0.85);">Terblokir</p>
+                <p class="text-lg font-semibold" style="color: rgba(255, 59, 48, 1);">
                     {{ $project->tasks->where('status', 'blocked')->count() }}
                 </p>
             </div>
-            <div class="p-4 rounded-lg" style="background: rgba(255, 149, 0, 0.1);">
-                <p class="text-xs mb-1" style="color: rgba(255, 149, 0, 0.8);">Terlambat</p>
-                <p class="text-2xl font-bold" style="color: rgba(255, 149, 0, 1);">
+            <div class="data-block" style="background: rgba(255, 149, 0, 0.08); border-color: rgba(255, 149, 0, 0.2);">
+                <p class="text-xs mb-1" style="color: rgba(255, 149, 0, 0.85);">Terlambat</p>
+                <p class="text-lg font-semibold" style="color: rgba(255, 149, 0, 1);">
                     {{ $project->tasks->filter->isOverdue()->count() }}
                 </p>
             </div>
@@ -74,8 +74,7 @@
                      data-estimated-hours="{{ $task->estimated_hours ?? '' }}">
                     
                     <!-- Task Card -->
-                    <div class="task-card p-4 rounded-lg" 
-                         style="background: rgba(58, 58, 60, 0.5); transition: all 0.2s ease;">
+            <div class="data-block task-card" style="transition: all 0.2s ease;">
                         
                         <div class="flex items-start gap-4">
                             <!-- Drag Handle -->

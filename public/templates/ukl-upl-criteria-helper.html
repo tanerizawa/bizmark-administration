@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UKL/UPL Test - Criteria Helper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.6);
+            font-size: 1.1em;
+        }
+        
+        .info-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 10px;
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .criteria-section {
+            margin: 40px 0;
+        }
+        
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 25px;
+            border-radius: 15px 15px 0 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .category-points {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .criteria-list {
+            background: rgba(255,255,255,0.05);
+            border-radius: 0 0 15px 15px;
+            overflow: hidden;
+        }
+        
+        .criteria-item {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .criteria-item:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .criteria-item:last-child {
+            border-bottom: none;
+        }
+        
+        .criteria-content {
+            flex: 1;
+        }
+        
+        .criteria-number {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .criteria-desc {
+            color: rgba(255,255,255,0.9);
+            font-size: 1em;
+        }
+        
+        .criteria-points {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-left: 20px;
+            white-space: nowrap;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .actions {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .btn-large {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transform: translateY(200px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-weight: bold;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .json-output {
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #00ff00;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .json-output.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .criteria-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .criteria-points {
+                margin: 10px 0 0 0;
+            }
+            
+            .copy-btn {
+                margin: 10px 0 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌱 UKL/UPL Document Editing Test</h1>
+            <p class="subtitle">Criteria Builder Helper - Copy & Paste ke Admin Panel</p>
+        </header>
+
+        <div class="info-box">
+            <h3>📋 Cara Penggunaan</h3>
+            <ol style="margin-left: 20px; color: rgba(255,255,255,0.8);">
+                <li>Buka Admin Panel: <code style="background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 5px;">/admin/recruitment/tests/create</code></li>
+                <li>Pilih Test Type: <strong>"Document Editing"</strong></li>
+                <li>Klik tombol "Copy" di setiap kategori di bawah</li>
+                <li>Paste data ke form (atau gunakan tombol "Copy All 22 Criteria")</li>
+                <li>Upload template file UKL/UPL Anda</li>
+                <li>Submit untuk create test</li>
+            </ol>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">22</div>
+                <div class="stat-label">Total Kriteria</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">100</div>
+                <div class="stat-label">Total Poin</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">120</div>
+                <div class="stat-label">Menit Durasi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">70%</div>
+                <div class="stat-label">Passing Score</div>
+            </div>
+        </div>
+
+        <!-- Category 1: Formatting & Layout -->
+        <div class="criteria-section">
+            <div class="category-header">
+                <span>1️⃣ Formatting & Layout</span>
+                <span class="category-points">25 Poin</span>
+            </div>
+            <div class="criteria-list">
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">1</span>
+                        <span class="criteria-desc">Font consistency (Times New Roman 12pt body, Arial 14-16pt heading)</span>
+                    </div>
+                    <span class="criteria-points">5 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Formatting & Layout', 'Font consistency (Times New Roman 12pt body, Arial 14-16pt heading)', 5, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">2</span>
+                        <span class="criteria-desc">Heading hierarchy (H1 untuk BAB, H2 untuk sub-bab, H3 untuk sub-sub-bab)</span>
+                    </div>
+                    <span class="criteria-points">5 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Formatting & Layout', 'Heading hierarchy (H1 untuk BAB, H2 untuk sub-bab, H3 untuk sub-sub-bab)', 5, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">3</span>
+                        <span class="criteria-desc">Spacing & Margin (Line spacing 1.5, margin 3-3-3-2 cm)</span>
+                    </div>
+                    <span class="criteria-points">5 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Formatting & Layout', 'Spacing & Margin (Line spacing 1.5, margin 3-3-3-2 cm)', 5, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">4</span>
+                        <span class="criteria-desc">Page numbering (Romawi untuk bagian awal, angka untuk isi)</span>
+                    </div>
+                    <span class="criteria-points">5 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Formatting & Layout', 'Page numbering (Romawi untuk bagian awal, angka untuk isi)', 5, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">5</span>
+                        <span class="criteria-desc">Header/Footer consistency dengan judul dokumen</span>
+                    </div>
+                    <span class="criteria-points">5 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Formatting & Layout', 'Header/Footer consistency dengan judul dokumen', 5, 'Technical')">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 2: Penomoran & Struktur -->
+        <div class="criteria-section">
+            <div class="category-header">
+                <span>2️⃣ Penomoran & Struktur</span>
+                <span class="category-points">25 Poin</span>
+            </div>
+            <div class="criteria-list">
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">6</span>
+                        <span class="criteria-desc">Penomoran BAB (Format: BAB I, BAB II - uppercase Romawi)</span>
+                    </div>
+                    <span class="criteria-points">7 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Penomoran & Struktur', 'Penomoran BAB (Format: BAB I, BAB II - uppercase Romawi)', 7, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">7</span>
+                        <span class="criteria-desc">Penomoran sub-bab (Format: 1.1, 1.1.1, 1.1.1.1 maksimal 4 level)</span>
+                    </div>
+                    <span class="criteria-points">6 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Penomoran & Struktur', 'Penomoran sub-bab (Format: 1.1, 1.1.1, 1.1.1.1 maksimal 4 level)', 6, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">8</span>
+                        <span class="criteria-desc">Penomoran tabel (Format: Tabel 3.1 - BAB.urutan)</span>
+                    </div>
+                    <span class="criteria-points">5 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Penomoran & Struktur', 'Penomoran tabel (Format: Tabel 3.1 - BAB.urutan)', 5, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">9</span>
+                        <span class="criteria-desc">Penomoran gambar (Format: Gambar 2.3 - BAB.urutan)</span>
+                    </div>
+                    <span class="criteria-points">4 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Penomoran & Struktur', 'Penomoran gambar (Format: Gambar 2.3 - BAB.urutan)', 4, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">10</span>
+                        <span class="criteria-desc">Daftar isi accuracy (Semua heading + page number benar)</span>
+                    </div>
+                    <span class="criteria-points">3 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Penomoran & Struktur', 'Daftar isi accuracy (Semua heading + page number benar)', 3, 'Technical')">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 3: Content Completion -->
+        <div class="criteria-section">
+            <div class="category-header">
+                <span>3️⃣ Content Completion</span>
+                <span class="category-points">30 Poin</span>
+            </div>
+            <div class="criteria-list">
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">11</span>
+                        <span class="criteria-desc">Rumus perhitungan lingkungan (TSS, BOD, COD, Beban Pencemaran)</span>
+                    </div>
+                    <span class="criteria-points">8 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Content Completion', 'Rumus perhitungan lingkungan (TSS, BOD, COD, Beban Pencemaran)', 8, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">12</span>
+                        <span class="criteria-desc">Lengkapi data tabel kualitas air, udara, kebisingan</span>
+                    </div>
+                    <span class="criteria-points">8 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Content Completion', 'Lengkapi data tabel kualitas air, udara, kebisingan', 8, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">13</span>
+                        <span class="criteria-desc">Parameter standar baku mutu (PP, Perda)</span>
+                    </div>
+                    <span class="criteria-points">6 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Content Completion', 'Parameter standar baku mutu (PP, Perda)', 6, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">14</span>
+                        <span class="criteria-desc">Metodologi sampling (Metode pengambilan sampel)</span>
+                    </div>
+                    <span class="criteria-points">5 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Content Completion', 'Metodologi sampling (Metode pengambilan sampel)', 5, 'Technical')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">15</span>
+                        <span class="criteria-desc">Dummy data relevan untuk jenis kegiatan</span>
+                    </div>
+                    <span class="criteria-points">3 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Content Completion', 'Dummy data relevan untuk jenis kegiatan', 3, 'Technical')">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 4: Technical Review -->
+        <div class="criteria-section">
+            <div class="category-header">
+                <span>4️⃣ Technical Review & Comments</span>
+                <span class="category-points">15 Poin</span>
+            </div>
+            <div class="criteria-list">
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">16</span>
+                        <span class="criteria-desc">Identifikasi minimal 5 kesalahan teknis (gunakan Comment di Word)</span>
+                    </div>
+                    <span class="criteria-points">5 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Technical Review', 'Identifikasi minimal 5 kesalahan teknis (gunakan Comment di Word)', 5, 'Analysis')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">17</span>
+                        <span class="criteria-desc">Berikan saran perbaikan konstruktif</span>
+                    </div>
+                    <span class="criteria-points">4 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Technical Review', 'Berikan saran perbaikan konstruktif', 4, 'Analysis')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">18</span>
+                        <span class="criteria-desc">Compliance check - Tandai bagian tidak sesuai regulasi</span>
+                    </div>
+                    <span class="criteria-points">3 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Technical Review', 'Compliance check - Tandai bagian tidak sesuai regulasi', 3, 'Analysis')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">19</span>
+                        <span class="criteria-desc">Flag critical issues yang dapat menggagalkan persetujuan</span>
+                    </div>
+                    <span class="criteria-points">3 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Technical Review', 'Flag critical issues yang dapat menggagalkan persetujuan', 3, 'Analysis')">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 5: Overall Quality -->
+        <div class="criteria-section">
+            <div class="category-header">
+                <span>5️⃣ Overall Quality</span>
+                <span class="category-points">5 Poin</span>
+            </div>
+            <div class="criteria-list">
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">20</span>
+                        <span class="criteria-desc">Profesionalisme dokumen (layak diserahkan ke KLHK/Dinas LH)</span>
+                    </div>
+                    <span class="criteria-points">2 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Overall Quality', 'Profesionalisme dokumen (layak diserahkan ke KLHK/Dinas LH)', 2, 'Quality')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">21</span>
+                        <span class="criteria-desc">Readability - Mudah dibaca dan dipahami</span>
+                    </div>
+                    <span class="criteria-points">2 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Overall Quality', 'Readability - Mudah dibaca dan dipahami', 2, 'Quality')">Copy</button>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-content">
+                        <span class="criteria-number">22</span>
+                        <span class="criteria-desc">Completeness - Tidak ada bagian yang masih kosong</span>
+                    </div>
+                    <span class="criteria-points">1 poin</span>
+                    <button class="copy-btn" onclick="copyCriteria('Overall Quality', 'Completeness - Tidak ada bagian yang masih kosong', 1, 'Quality')">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-large" onclick="copyAllCriteria()">📋 Copy All 22 Criteria (JSON)</button>
+            <a href="../TEMPLATE_DOCUMENT_EDITING_UKL_UPL.md" class="btn-large" style="margin-left: 20px;">📖 View Full Documentation</a>
+        </div>
+
+        <div id="jsonOutput" class="json-output"></div>
+    </div>
+
+    <div id="toast" class="toast">✅ Copied to clipboard!</div>
+
+    <script>
+        let allCriteria = [];
+
+        function copyCriteria(category, description, points, type) {
+            const data = {
+                category: category,
+                description: description,
+                points: points,
+                type: type
+            };
+
+            const text = `Category: ${category}\nDescription: ${description}\nPoints: ${points}\nType: ${type}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ Criteria copied!');
+                
+                // Change button appearance
+                event.target.classList.add('copied');
+                event.target.textContent = '✓ Copied';
+                
+                setTimeout(() => {
+                    event.target.classList.remove('copied');
+                    event.target.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        function copyAllCriteria() {
+            const criteria = [
+                // Formatting & Layout
+                { category: 'Formatting & Layout', description: 'Font consistency (Times New Roman 12pt body, Arial 14-16pt heading)', points: 5, type: 'Technical' },
+                { category: 'Formatting & Layout', description: 'Heading hierarchy (H1 untuk BAB, H2 untuk sub-bab, H3 untuk sub-sub-bab)', points: 5, type: 'Technical' },
+                { category: 'Formatting & Layout', description: 'Spacing & Margin (Line spacing 1.5, margin 3-3-3-2 cm)', points: 5, type: 'Technical' },
+                { category: 'Formatting & Layout', description: 'Page numbering (Romawi untuk bagian awal, angka untuk isi)', points: 5, type: 'Technical' },
+                { category: 'Formatting & Layout', description: 'Header/Footer consistency dengan judul dokumen', points: 5, type: 'Technical' },
+                
+                // Penomoran & Struktur
+                { category: 'Penomoran & Struktur', description: 'Penomoran BAB (Format: BAB I, BAB II - uppercase Romawi)', points: 7, type: 'Technical' },
+                { category: 'Penomoran & Struktur', description: 'Penomoran sub-bab (Format: 1.1, 1.1.1, 1.1.1.1 maksimal 4 level)', points: 6, type: 'Technical' },
+                { category: 'Penomoran & Struktur', description: 'Penomoran tabel (Format: Tabel 3.1 - BAB.urutan)', points: 5, type: 'Technical' },
+                { category: 'Penomoran & Struktur', description: 'Penomoran gambar (Format: Gambar 2.3 - BAB.urutan)', points: 4, type: 'Technical' },
+                { category: 'Penomoran & Struktur', description: 'Daftar isi accuracy (Semua heading + page number benar)', points: 3, type: 'Technical' },
+                
+                // Content Completion
+                { category: 'Content Completion', description: 'Rumus perhitungan lingkungan (TSS, BOD, COD, Beban Pencemaran)', points: 8, type: 'Technical' },
+                { category: 'Content Completion', description: 'Lengkapi data tabel kualitas air, udara, kebisingan', points: 8, type: 'Technical' },
+                { category: 'Content Completion', description: 'Parameter standar baku mutu (PP, Perda)', points: 6, type: 'Technical' },
+                { category: 'Content Completion', description: 'Metodologi sampling (Metode pengambilan sampel)', points: 5, type: 'Technical' },
+                { category: 'Content Completion', description: 'Dummy data relevan untuk jenis kegiatan', points: 3, type: 'Technical' },
+                
+                // Technical Review
+                { category: 'Technical Review', description: 'Identifikasi minimal 5 kesalahan teknis (gunakan Comment di Word)', points: 5, type: 'Analysis' },
+                { category: 'Technical Review', description: 'Berikan saran perbaikan konstruktif', points: 4, type: 'Analysis' },
+                { category: 'Technical Review', description: 'Compliance check - Tandai bagian tidak sesuai regulasi', points: 3, type: 'Analysis' },
+                { category: 'Technical Review', description: 'Flag critical issues yang dapat menggagalkan persetujuan', points: 3, type: 'Analysis' },
+                
+                // Overall Quality
+                { category: 'Overall Quality', description: 'Profesionalisme dokumen (layak diserahkan ke KLHK/Dinas LH)', points: 2, type: 'Quality' },
+                { category: 'Overall Quality', description: 'Readability - Mudah dibaca dan dipahami', points: 2, type: 'Quality' },
+                { category: 'Overall Quality', description: 'Completeness - Tidak ada bagian yang masih kosong', points: 1, type: 'Quality' }
+            ];
+
+            const jsonString = JSON.stringify(criteria, null, 2);
+            
+            navigator.clipboard.writeText(jsonString).then(() => {
+                showToast('✅ All 22 criteria copied as JSON!');
+                
+                // Show JSON output
+                const output = document.getElementById('jsonOutput');
+                output.textContent = jsonString;
+                output.classList.add('show');
+                
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    output.classList.remove('show');
+                }, 10000);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

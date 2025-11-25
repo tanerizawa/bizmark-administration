@@ -46,11 +46,14 @@ class ProjectPayment extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    // Events - Auto-update project totals
+    // Events - Auto-update project totals and cash account balance
     protected static function booted()
     {
         static::created(function ($payment) {
-            $payment->project->updatePaymentReceived();
+            // Only update project if it exists
+            if ($payment->project) {
+                $payment->project->updatePaymentReceived();
+            }
             
             // Update invoice payment if linked
             if ($payment->invoice_id) {
@@ -60,12 +63,16 @@ class ProjectPayment extends Model
                 }
             }
             
-            // Update cash account balance
+            // AUTO-RECALCULATE cash account balance
             if ($payment->bank_account_id) {
                 $account = CashAccount::find($payment->bank_account_id);
                 if ($account) {
-                    $account->current_balance += $payment->amount;
-                    $account->save();
+                    $account->recalculateBalance(
+                        changeType: 'income',
+                        referenceId: $payment->id,
+                        referenceType: 'ProjectPayment',
+                        description: "Payment received: {$payment->description}"
+                    );
                 }
             }
         });
@@ -75,7 +82,10 @@ class ProjectPayment extends Model
             $oldBankAccountId = $payment->getOriginal('bank_account_id');
             $oldInvoiceId = $payment->getOriginal('invoice_id');
             
-            $payment->project->updatePaymentReceived();
+            // Only update project if it exists
+            if ($payment->project) {
+                $payment->project->updatePaymentReceived();
+            }
             
             // Revert old invoice payment
             if ($oldInvoiceId && $oldInvoiceId != $payment->invoice_id) {
@@ -107,27 +117,38 @@ class ProjectPayment extends Model
                 }
             }
             
-            // Revert old account balance
-            if ($oldBankAccountId) {
+            // RECALCULATE old account balance (if changed)
+            if ($oldBankAccountId && $oldBankAccountId != $payment->bank_account_id) {
                 $oldAccount = CashAccount::find($oldBankAccountId);
                 if ($oldAccount) {
-                    $oldAccount->current_balance -= $oldAmount;
-                    $oldAccount->save();
+                    $oldAccount->recalculateBalance(
+                        changeType: 'income',
+                        referenceId: $payment->id,
+                        referenceType: 'ProjectPayment',
+                        description: "Payment moved to different account"
+                    );
                 }
             }
             
-            // Update new account balance
+            // RECALCULATE new account balance
             if ($payment->bank_account_id) {
                 $newAccount = CashAccount::find($payment->bank_account_id);
                 if ($newAccount) {
-                    $newAccount->current_balance += $payment->amount;
-                    $newAccount->save();
+                    $newAccount->recalculateBalance(
+                        changeType: 'income',
+                        referenceId: $payment->id,
+                        referenceType: 'ProjectPayment',
+                        description: "Payment updated: {$payment->description}"
+                    );
                 }
             }
         });
 
         static::deleted(function ($payment) {
-            $payment->project->updatePaymentReceived();
+            // Only update project if it exists
+            if ($payment->project) {
+                $payment->project->updatePaymentReceived();
+            }
             
             // Revert invoice payment
             if ($payment->invoice_id) {
@@ -144,12 +165,16 @@ class ProjectPayment extends Model
                 }
             }
             
-            // Revert cash account balance
+            // RECALCULATE cash account balance after deletion
             if ($payment->bank_account_id) {
                 $account = CashAccount::find($payment->bank_account_id);
                 if ($account) {
-                    $account->current_balance -= $payment->amount;
-                    $account->save();
+                    $account->recalculateBalance(
+                        changeType: 'income',
+                        referenceId: $payment->id,
+                        referenceType: 'ProjectPayment',
+                        description: "Payment deleted"
+                    );
                 }
             }
         });

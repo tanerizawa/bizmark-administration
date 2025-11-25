@@ -9,6 +9,7 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\ProjectPaymentController;
 use App\Http\Controllers\ProjectExpenseController;
 use App\Http\Controllers\CashAccountController;
+use App\Http\Controllers\GeneralTransactionController;
 use App\Http\Controllers\BankReconciliationController;
 use App\Http\Controllers\PermitTypeController;
 use App\Http\Controllers\PermitTemplateController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\PublicArticleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\PermitManagementController;
 use App\Http\Controllers\Admin\RecruitmentController;
 
@@ -46,6 +48,10 @@ Route::get('/syarat-ketentuan', function(\Illuminate\Http\Request $request) {
     $view = $isMobile ? 'legal.mobile-terms' : 'legal.terms';
     return view($view);
 })->name('terms.conditions');
+
+// Contact Page
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
 // Landing Page (Public) - Auto-detect Mobile/Desktop
 Route::get('/', function(\Illuminate\Http\Request $request) {
@@ -226,9 +232,12 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Financial Management Routes (Phase 1)
-    // Master Data Hub (Unified Tab Interface)
+    // Master Data Hub - DEPRECATED: Now integrated into Permits page
     Route::middleware('auth')->group(function () {
-        Route::get('admin/master-data', [App\Http\Controllers\Admin\MasterDataController::class, 'index'])->name('admin.master-data.index');
+        // Redirect to Permits page with KBLI tab
+        Route::get('admin/master-data', function() {
+            return redirect()->route('admin.permits.index', ['tab' => 'kbli']);
+        })->name('admin.master-data.index');
     });
     
     // Read-only routes (auth required)
@@ -251,6 +260,21 @@ Route::middleware(['auth'])->group(function () {
         Route::put('cash-accounts/{cash_account}', [CashAccountController::class, 'update'])->name('cash-accounts.update');
         Route::patch('cash-accounts/{cash_account}', [CashAccountController::class, 'update']);
         Route::delete('cash-accounts/{cash_account}', [CashAccountController::class, 'destroy'])->name('cash-accounts.destroy');
+
+        // General Transaction Routes (Phase 2 - Non-Project Income/Expense)
+        Route::prefix('general-transactions')->name('general-transactions.')->group(function () {
+            // General Income
+            Route::post('income', [GeneralTransactionController::class, 'storeIncome'])->name('income.store');
+            Route::get('income/{id}', [GeneralTransactionController::class, 'getIncome'])->name('income.show');
+            Route::put('income/{id}', [GeneralTransactionController::class, 'updateIncome'])->name('income.update');
+            Route::delete('income/{id}', [GeneralTransactionController::class, 'destroyIncome'])->name('income.destroy');
+            
+            // General Expense
+            Route::post('expense', [GeneralTransactionController::class, 'storeExpense'])->name('expense.store');
+            Route::get('expense/{id}', [GeneralTransactionController::class, 'getExpense'])->name('expense.show');
+            Route::put('expense/{id}', [GeneralTransactionController::class, 'updateExpense'])->name('expense.update');
+            Route::delete('expense/{id}', [GeneralTransactionController::class, 'destroyExpense'])->name('expense.destroy');
+        });
 
         // Bank Reconciliation Routes (Phase 1B)
         Route::resource('reconciliations', BankReconciliationController::class);
@@ -308,6 +332,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('invoices/{invoice}/payment', [FinancialController::class, 'recordPayment'])->name('invoices.record-payment');
         Route::delete('invoices/{invoice}', [FinancialController::class, 'destroyInvoice'])->name('invoices.destroy');
         Route::post('projects/{project}/direct-income', [FinancialController::class, 'storeDirectIncome'])->name('projects.direct-income.store');
+        Route::get('projects/{project}/direct-income/{payment}', [FinancialController::class, 'editDirectIncome'])->name('projects.direct-income.edit');
+        Route::patch('projects/{project}/direct-income/{payment}', [FinancialController::class, 'updateDirectIncome'])->name('projects.direct-income.update');
+        Route::delete('projects/{project}/direct-income/{payment}', [FinancialController::class, 'destroyDirectIncome'])->name('projects.direct-income.destroy');
         Route::post('projects/{project}/payment-schedules', [FinancialController::class, 'storePaymentSchedule'])->name('projects.payment-schedules.store');
         Route::patch('payment-schedules/{schedule}/paid', [FinancialController::class, 'markSchedulePaid'])->name('payment-schedules.mark-paid');
         Route::delete('payment-schedules/{schedule}', [FinancialController::class, 'destroySchedule'])->name('payment-schedules.destroy');
@@ -390,6 +417,12 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('permission:recruitment.view')->group(function () {
         // Job Vacancy Management
         Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class);
+        
+        // Tab Views for Job Detail Hub
+        Route::get('jobs/{id}/applications', [App\Http\Controllers\Admin\JobVacancyController::class, 'applications'])->name('jobs.applications');
+        Route::get('jobs/{id}/pipeline', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'jobPipeline'])->name('jobs.pipeline');
+        Route::get('jobs/{id}/tests', [App\Http\Controllers\Admin\JobVacancyController::class, 'tests'])->name('jobs.tests');
+        Route::get('jobs/{id}/interviews', [App\Http\Controllers\Admin\InterviewScheduleController::class, 'jobInterviews'])->name('jobs.interviews');
         
         // Job Application Management
         Route::get('applications', [App\Http\Controllers\Admin\JobApplicationController::class, 'index'])->name('applications.index');
@@ -743,4 +776,92 @@ Route::prefix('api/kbli')->group(function () {
     Route::get('/', [App\Http\Controllers\Api\KbliController::class, 'index'])->name('api.kbli.index');
     Route::get('/search', [App\Http\Controllers\Api\KbliController::class, 'search'])->name('api.kbli.search');
     Route::get('/{code}', [App\Http\Controllers\Api\KbliController::class, 'show'])->name('api.kbli.show');
+});
+
+// ============================================================================
+// RECRUITMENT SYSTEM ROUTES
+// ============================================================================
+
+// Admin: Recruitment Management
+Route::prefix('admin/recruitment')->name('admin.recruitment.')->middleware(['auth:web', 'permission:recruitment.manage'])->group(function () {
+    
+    // Interview Scheduling (Calendar-based)
+    Route::resource('interviews', App\Http\Controllers\Admin\InterviewScheduleController::class);
+    Route::get('interviews/{interview}/feedback', [App\Http\Controllers\Admin\InterviewScheduleController::class, 'feedback'])
+        ->name('interviews.feedback');
+    Route::post('interviews/{interview}/feedback', [App\Http\Controllers\Admin\InterviewScheduleController::class, 'storeFeedback'])
+        ->name('interviews.feedback.store');
+    
+    // Test Management
+    Route::resource('tests', App\Http\Controllers\Admin\TestManagementController::class);
+    Route::post('tests/assign', [App\Http\Controllers\Admin\TestManagementController::class, 'assign'])
+        ->name('tests.assign');
+    Route::post('tests/{test}/assign', [App\Http\Controllers\Admin\TestManagementController::class, 'assign'])
+        ->name('tests.assign.legacy'); // Keep for backward compatibility
+    Route::get('tests/sessions/{session}/results', [App\Http\Controllers\Admin\TestManagementController::class, 'sessionResults'])
+        ->name('tests.sessions.results');
+    Route::delete('tests/sessions/{session}/cancel', [App\Http\Controllers\Admin\TestManagementController::class, 'cancelSession'])
+        ->name('tests.sessions.cancel');
+    
+    // Manual Evaluation Routes (Essay/Rating Questions)
+    Route::get('tests/sessions/{session}/evaluate-manual', [App\Http\Controllers\Admin\TestManagementController::class, 'showEvaluationForm'])
+        ->name('tests.sessions.evaluate-manual');
+    Route::post('tests/sessions/{session}/evaluate-manual', [App\Http\Controllers\Admin\TestManagementController::class, 'submitEvaluation'])
+        ->name('tests.sessions.submit-evaluation-manual');
+    
+    // Document Editing Test Routes
+    Route::post('tests/{test}/upload-template', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'uploadTemplate'])
+        ->name('tests.upload-template');
+    Route::get('tests/{test}/download-template', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'downloadTemplateForHR'])
+        ->name('tests.download-template');
+    Route::get('tests/sessions/{session}/evaluate', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'showEvaluationForm'])
+        ->name('tests.sessions.evaluate');
+    Route::post('tests/sessions/{session}/evaluate', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'submitEvaluation'])
+        ->name('tests.sessions.submit-evaluation');
+    Route::get('tests/sessions/{session}/download-submission', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'downloadSubmission'])
+        ->name('tests.sessions.download-submission');
+    
+    // Recruitment Pipeline Dashboard
+    Route::get('pipeline', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'index'])
+        ->name('pipeline.index');
+    Route::get('pipeline/{application}', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'show'])
+        ->name('pipeline.show');
+    Route::post('pipeline/{application}/initialize', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'initializeStages'])
+        ->name('pipeline.initialize');
+    Route::patch('pipeline/stages/{stage}', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'updateStage'])
+        ->name('pipeline.stages.update');
+});
+
+// Candidate: Interview Portal (ID-based access, no auth required)
+Route::prefix('candidate')->name('candidate.')->group(function () {
+    
+    // Interview Access
+    Route::get('interview/{interview}', [App\Http\Controllers\Candidate\InterviewController::class, 'show'])
+        ->name('interview.show');
+    Route::post('interview/{interview}/reschedule', [App\Http\Controllers\Candidate\InterviewController::class, 'requestReschedule'])
+        ->name('interview.reschedule');
+    Route::get('interview/{interview}/join', [App\Http\Controllers\Candidate\InterviewController::class, 'join'])
+        ->name('interview.join');
+    
+    // Test Portal
+    Route::get('test/{token}', [App\Http\Controllers\Candidate\TestController::class, 'show'])
+        ->name('test.show');
+    Route::post('test/{token}/start', [App\Http\Controllers\Candidate\TestController::class, 'start'])
+        ->name('test.start');
+    Route::post('test/{token}/answer', [App\Http\Controllers\Candidate\TestController::class, 'submitAnswer'])
+        ->name('test.answer');
+    Route::post('test/{token}/complete', [App\Http\Controllers\Candidate\TestController::class, 'complete'])
+        ->name('test.complete');
+    
+    // Document Editing Test - Candidate Routes
+    Route::get('test/{token}/download-template', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'downloadTemplate'])
+        ->name('test.download-template');
+    Route::post('test/{token}/submit-document', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'submitDocument'])
+        ->name('test.submit-document');
+    
+    // AJAX endpoints for test interface
+    Route::post('test/{token}/track-tab', [App\Http\Controllers\Candidate\TestController::class, 'trackTabSwitch'])
+        ->name('test.track-tab');
+    Route::get('test/{token}/time', [App\Http\Controllers\Candidate\TestController::class, 'getRemainingTime'])
+        ->name('test.time');
 });

@@ -1,10 +1,10 @@
 <div class="card-apple">
     {{-- Header with Search and Actions --}}
-    <div class="p-6 border-b" style="border-color: var(--dark-separator);">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h2 class="text-xl font-semibold text-dark-text-primary">Akun Kas</h2>
+    <div class="p-4 md:p-5 border-b" style="border-color: var(--dark-separator);">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
+            <h2 class="text-lg font-semibold text-dark-text-primary">Akun Kas</h2>
             
-            <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex flex-col sm:flex-row gap-2.5 md:gap-3">
                 {{-- Search Form --}}
                 <form method="GET" action="{{ route('admin.master-data.index') }}" class="flex-1 sm:w-64">
                     <input type="hidden" name="tab" value="cash-accounts">
@@ -50,7 +50,7 @@
     {{-- Cash Accounts List --}}
     <div class="divide-y" style="border-color: var(--dark-separator);">
         @forelse($cashAccounts as $account)
-            <div class="p-6 hover-apple">
+            <div class="p-4 md:p-5 hover-apple">
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
@@ -68,7 +68,7 @@
                             @endif
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 text-sm">
                             <div class="flex items-center text-dark-text-secondary">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>

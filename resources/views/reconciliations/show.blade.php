@@ -32,7 +32,7 @@
         <!-- Report Header -->
         <div class="text-center mb-8 pb-6" style="border-bottom: 2px solid rgba(235, 235, 245, 0.1);">
             <h1 class="text-2xl font-bold mb-2" style="color: rgba(235, 235, 245, 0.9);">
-                PT TIMUR CAKRAWALA KONSULTAN
+                PT CANGAH PAJARATAN MANDIRI
             </h1>
             <h2 class="text-xl font-semibold mb-1" style="color: rgba(235, 235, 245, 0.8);">
                 LAPORAN REKONSILIASI BANK
@@ -361,7 +361,7 @@
         <!-- Footer -->
         <div class="mt-8 pt-4 text-center text-xs" style="border-top: 1px solid rgba(235, 235, 245, 0.1); color: rgba(235, 235, 245, 0.5);">
             <p>Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB</p>
-            <p class="mt-1">PT Timur Cakrawala Konsultan - Bizmark.ID</p>
+            <p class="mt-1">PT CANGAH PAJARATAN MANDIRI - Bizmark.ID</p>
         </div>
     </div>
 </div>

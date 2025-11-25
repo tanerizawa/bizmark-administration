@@ -155,6 +155,20 @@ class JobApplicationController extends Controller
     public function destroy($id)
     {
         $application = JobApplication::findOrFail($id);
+        
+        $candidateName = $application->full_name;
+
+        // Delete related test sessions (with answers)
+        $testSessions = $application->testSessions()->get();
+        foreach ($testSessions as $session) {
+            // Delete test answers first
+            $session->testAnswers()->delete();
+            // Delete test session (force delete to bypass soft delete)
+            $session->forceDelete();
+        }
+
+        // Delete related interview schedules
+        $application->interviewSchedules()->delete();
 
         // Delete uploaded files
         if ($application->cv_path) {
@@ -164,12 +178,15 @@ class JobApplicationController extends Controller
             Storage::disk('public')->delete($application->portfolio_path);
         }
 
-        // Decrement applications count
-        $application->jobVacancy->decrement('applications_count');
+        // Decrement applications count if job vacancy exists
+        if ($application->jobVacancy) {
+            $application->jobVacancy->decrement('applications_count');
+        }
 
+        // Delete application
         $application->delete();
 
         return redirect()->route('admin.applications.index')
-            ->with('success', 'Lamaran berhasil dihapus!');
+            ->with('success', "Kandidat {$candidateName} dan semua data terkait berhasil dihapus!");
     }
 }

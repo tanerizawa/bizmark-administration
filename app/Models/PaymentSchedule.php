@@ -17,6 +17,7 @@ class PaymentSchedule extends Model
         'status',
         'payment_method',
         'reference_number',
+        'cash_account_id', // ✅ NEW: Added cash_account_id
         'notes',
     ];
 
@@ -43,19 +44,49 @@ class PaymentSchedule extends Model
     }
 
     /**
-     * Mark payment as paid.
+     * Get the cash account that received the payment.
      */
-    public function markAsPaid(string $paymentMethod = null, string $referenceNumber = null): void
+    public function cashAccount(): BelongsTo
+    {
+        return $this->belongsTo(CashAccount::class);
+    }
+
+    /**
+     * Mark payment as paid.
+     * 
+     * @param string|null $paymentMethod
+     * @param string|null $referenceNumber
+     * @param int|null $cashAccountId - NEW: Cash account that received payment
+     */
+    public function markAsPaid(
+        string $paymentMethod = null, 
+        string $referenceNumber = null,
+        ?int $cashAccountId = null
+    ): void
     {
         $this->status = 'paid';
         $this->paid_date = now();
         $this->payment_method = $paymentMethod;
         $this->reference_number = $referenceNumber;
+        $this->cash_account_id = $cashAccountId; // ✅ NEW: Set cash account
         $this->save();
 
         // Update invoice if linked
         if ($this->invoice_id) {
             $this->invoice->recordPayment($this->amount);
+        }
+        
+        // ✅ NEW: Auto-recalculate cash account balance
+        if ($cashAccountId) {
+            $cashAccount = \App\Models\CashAccount::find($cashAccountId);
+            if ($cashAccount) {
+                $cashAccount->recalculateBalance(
+                    changeType: 'income',
+                    referenceId: $this->id,
+                    referenceType: 'PaymentSchedule',
+                    description: "Invoice payment: {$this->description}"
+                );
+            }
         }
     }
 

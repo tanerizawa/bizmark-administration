@@ -1,12 +1,12 @@
-{{-- Riwayat Transaksi (Timeline View) --}}
+{{-- Riwayat Transaksi Proyek (Project-Related Transactions Only) --}}
 <div>
     <div class="mb-3">
         <h3 class="text-base font-semibold" style="color: #FFFFFF;">
-            <i class="fas fa-history mr-2" style="color: rgba(235, 235, 245, 0.4);"></i>
-            Riwayat Transaksi
+            <i class="fas fa-project-diagram mr-2" style="color: rgba(235, 235, 245, 0.4);"></i>
+            Riwayat Transaksi Proyek
         </h3>
         <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.5);">
-            Transaksi dari semua akun dalam periode yang dipilih
+            Transaksi yang terkait dengan proyek dalam periode yang dipilih
         </p>
     </div>
 

@@ -199,7 +199,22 @@
                             </td>
                             <td class="px-4 py-2.5 whitespace-nowrap">
                                 @if($project->deadline)
-                                    <div class="text-sm" style="color: {{ $project->deadline->isPast() ? '#FF453A' : '#FFFFFF' }};">
+                                    @php
+                                        // Fix: Check if project is completed first
+                                        if ($project->completed_at) {
+                                            $completionStatus = $project->getCompletionStatus();
+                                            $deadlineColor = match($completionStatus) {
+                                                'early' => '#5AC8FA',      // Blue (completed early)
+                                                'on-time' => '#34C759',    // Green (on-time)
+                                                'late' => '#FF9F0A',       // Orange (late)
+                                                default => '#FFFFFF'
+                                            };
+                                        } else {
+                                            // Ongoing project - check if overdue
+                                            $deadlineColor = $project->deadline->isPast() ? '#FF453A' : '#FFFFFF';
+                                        }
+                                    @endphp
+                                    <div class="text-sm" style="color: {{ $deadlineColor }};">
                                         {{ $project->deadline->format('d M Y') }}
                                     </div>
                                 @else

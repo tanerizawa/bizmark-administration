@@ -830,33 +830,112 @@ function submitSchedule(event) {
 }
 
 function markSchedulePaid(scheduleId) {
-    const method = prompt('Enter payment method:');
-    if (!method) return;
+    // Create modal with form for cash account selection
+    const cashAccounts = {!! json_encode(\App\Models\CashAccount::active()->get(['id', 'account_name', 'account_type', 'current_balance'])) !!};
     
-    const reference = prompt('Enter reference number (optional):');
+    if (cashAccounts.length === 0) {
+        alert('No active cash accounts found. Please create a cash account first.');
+        return;
+    }
     
-    fetch(`/payment-schedules/${scheduleId}/paid`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({
-            payment_method: method,
-            reference_number: reference
-        })
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            location.reload();
-        } else {
-            alert(result.message || 'Failed to mark as paid');
+    // Create modal HTML
+    const modalHTML = `
+        <div id="paymentModal" class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center" style="display: flex;">
+            <div class="card-elevated rounded-apple-lg p-6 m-4 max-w-md w-full">
+                <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">
+                    <i class="fas fa-check-circle mr-2" style="color: rgba(52, 199, 89, 1);"></i>
+                    Mark Payment as Paid
+                </h3>
+                <form id="markPaidForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                            Cash Account <span class="text-red-500">*</span>
+                        </label>
+                        <select id="cash_account_id" required class="form-control-apple w-full">
+                            <option value="">Select cash account...</option>
+                            ${cashAccounts.map(acc => `
+                                <option value="${acc.id}">
+                                    ${acc.account_name} (${acc.account_type}) - Rp ${new Intl.NumberFormat('id-ID').format(acc.current_balance)}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                            Payment Method <span class="text-red-500">*</span>
+                        </label>
+                        <select id="payment_method" required class="form-control-apple w-full">
+                            <option value="">Select method...</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="cash">Cash</option>
+                            <option value="check">Check</option>
+                            <option value="e_wallet">E-Wallet</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                            Reference Number
+                        </label>
+                        <input type="text" id="reference_number" class="form-control-apple w-full" placeholder="Optional">
+                    </div>
+                    <div class="flex justify-end space-x-2 pt-2">
+                        <button type="button" onclick="document.getElementById('paymentModal').remove()" 
+                                class="px-4 py-2 rounded-lg font-medium transition-colors"
+                                style="background: rgba(255, 255, 255, 0.1); color: rgba(235, 235, 245, 0.6);">
+                            Cancel
+                        </button>
+                        <button type="submit" 
+                                class="px-4 py-2 rounded-lg font-medium transition-colors"
+                                style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
+                            <i class="fas fa-check mr-2"></i>Mark as Paid
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    // Append modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Handle form submission
+    document.getElementById('markPaidForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const cashAccountId = document.getElementById('cash_account_id').value;
+        const paymentMethod = document.getElementById('payment_method').value;
+        const referenceNumber = document.getElementById('reference_number').value;
+        
+        if (!cashAccountId || !paymentMethod) {
+            alert('Please fill in all required fields');
+            return;
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred');
+        
+        fetch(`/payment-schedules/${scheduleId}/paid`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                cash_account_id: cashAccountId,
+                payment_method: paymentMethod,
+                reference_number: referenceNumber
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                location.reload();
+            } else {
+                alert(result.message || 'Failed to mark as paid');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred');
+        });
     });
 }
 
@@ -1528,7 +1607,7 @@ function formatNumber(num) {
 <div id="directIncomeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center" style="z-index: 9999;">
     <div class="rounded-apple-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" style="background: rgba(28, 28, 30, 0.98);">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold" style="color: #FFFFFF;">
+            <h2 id="directIncomeModalTitle" class="text-2xl font-bold" style="color: #FFFFFF;">
                 <i class="fas fa-hand-holding-usd mr-2" style="color: rgba(52, 199, 89, 1);"></i>Catat Pemasukan Langsung
             </h2>
             <button onclick="window.closeDirectIncomeModal()" type="button" class="text-2xl" style="color: rgba(235, 235, 245, 0.6);">
@@ -1544,12 +1623,14 @@ function formatNumber(num) {
         </div>
 
         <form id="directIncomeForm" onsubmit="window.submitDirectIncome(event); return false;">
+            <input type="hidden" id="directIncomeId" name="payment_id" value="">
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
                         Tanggal Terima<span class="text-red-500">*</span>
                     </label>
-                    <input type="date" name="payment_date" required
+                    <input type="date" id="directIncomeDate" name="payment_date" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            value="{{ date('Y-m-d') }}">
                 </div>
@@ -1558,10 +1639,24 @@ function formatNumber(num) {
                     <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
                         Jumlah (Rp)<span class="text-red-500">*</span>
                     </label>
-                    <input type="number" name="amount" step="0.01" min="0.01" required
+                    <input type="text" id="directIncomeAmount" name="amount" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
-                           placeholder="5000000">
+                           placeholder="1.000.000"
+                           oninput="formatCurrency(this); updateTerbilang(this.value)">
+                    <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                        Format otomatis dengan pemisah ribuan
+                    </p>
                 </div>
+            </div>
+
+            <!-- Terbilang Display -->
+            <div id="directIncomeTerbilang" class="mb-4 px-3 py-2 rounded-lg hidden" style="background: rgba(52, 199, 89, 0.1); border-left: 3px solid rgba(52, 199, 89, 1);">
+                <p class="text-xs font-medium" style="color: rgba(52, 199, 89, 1);">
+                    <i class="fas fa-check-circle mr-1"></i>Terbilang:
+                </p>
+                <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.8);" id="directIncomeTerbilangText">
+                    -
+                </p>
             </div>
 
             <div class="mb-4">
@@ -1574,6 +1669,7 @@ function formatNumber(num) {
                     <option value="">-- Pilih Metode --</option>
                     @foreach($activePaymentMethods as $method)
                     <option value="{{ $method->id }}" 
+                            data-code="{{ $method->code }}"
                             data-requires-account="{{ $method->requires_cash_account ? 'true' : 'false' }}">
                         {{ $method->name }}
                     </option>
@@ -1595,7 +1691,7 @@ function formatNumber(num) {
                 <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
                     Keterangan/Deskripsi<span class="text-red-500">*</span>
                 </label>
-                <textarea name="description" required rows="3"
+                <textarea id="directIncomeDescription" name="description" required rows="3"
                           class="input-dark w-full px-4 py-2.5 rounded-lg"
                           placeholder="Contoh: Uang muka proyek, Pembayaran langsung dari klien, dll."></textarea>
             </div>
@@ -1604,7 +1700,7 @@ function formatNumber(num) {
                 <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
                     Referensi/Nomor Bukti (Opsional)
                 </label>
-                <input type="text" name="reference"
+                <input type="text" id="directIncomeReference" name="reference"
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        placeholder="Nomor transfer, nomor kwitansi, dll.">
             </div>
@@ -1615,7 +1711,7 @@ function formatNumber(num) {
                         style="background: rgba(142, 142, 147, 0.3); color: rgba(235, 235, 245, 0.8);">
                     Batal
                 </button>
-                <button type="submit"
+                <button type="submit" id="directIncomeSubmitBtn"
                         class="px-4 py-2.5 rounded-lg font-medium transition-colors"
                         style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
                     <i class="fas fa-save mr-2"></i>Simpan Pemasukan
@@ -1627,28 +1723,42 @@ function formatNumber(num) {
 
 <script>
 // Direct Income Modal Functions
-window.openDirectIncomeModal = function() {
-    console.log('Opening direct income modal...');
+window.openDirectIncomeModal = function(paymentId = null) {
+    console.log('Opening direct income modal...', paymentId ? 'Edit mode' : 'Create mode');
     const modal = document.getElementById('directIncomeModal');
     if (!modal) {
         console.error('Modal not found!');
         return;
     }
     
+    // Reset form first
+    const form = document.getElementById('directIncomeForm');
+    if (form) form.reset();
+    
+    // Clear payment ID
+    document.getElementById('directIncomeId').value = '';
+    
+    // Hide cash account container by default
+    const container = document.getElementById('directIncomeCashAccountContainer');
+    if (container) container.style.display = 'none';
+    
+    if (paymentId) {
+        // Edit mode: Load payment data
+        document.getElementById('directIncomeModalTitle').innerHTML = '<i class="fas fa-edit mr-2" style="color: rgba(52, 199, 89, 1);"></i>Edit Pemasukan Langsung';
+        document.getElementById('directIncomeSubmitBtn').innerHTML = '<i class="fas fa-save mr-2"></i>Update Pemasukan';
+        window.loadDirectIncomeData(paymentId);
+    } else {
+        // Create mode
+        document.getElementById('directIncomeModalTitle').innerHTML = '<i class="fas fa-hand-holding-usd mr-2" style="color: rgba(52, 199, 89, 1);"></i>Catat Pemasukan Langsung';
+        document.getElementById('directIncomeSubmitBtn').innerHTML = '<i class="fas fa-save mr-2"></i>Simpan Pemasukan';
+        // Set today's date
+        document.getElementById('directIncomeDate').value = new Date().toISOString().split('T')[0];
+    }
+    
     // Force show modal
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     modal.style.display = 'flex';
-    
-    console.log('Modal display:', window.getComputedStyle(modal).display);
-    console.log('Modal z-index:', window.getComputedStyle(modal).zIndex);
-    
-    // Reset form
-    const form = document.getElementById('directIncomeForm');
-    if (form) form.reset();
-    
-    const container = document.getElementById('directIncomeCashAccountContainer');
-    if (container) container.style.display = 'none';
 }
 
 window.closeDirectIncomeModal = function() {
@@ -1657,6 +1767,64 @@ window.closeDirectIncomeModal = function() {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
         modal.style.display = 'none';
+    }
+    // Reset form
+    const form = document.getElementById('directIncomeForm');
+    if (form) form.reset();
+    document.getElementById('directIncomeId').value = '';
+}
+
+window.loadDirectIncomeData = async function(paymentId) {
+    const projectId = {{ $project->id }};
+    
+    try {
+        const response = await fetch(`/projects/${projectId}/direct-income/${paymentId}`, {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch payment data');
+
+        const result = await response.json();
+        
+        if (result.success && result.payment) {
+            const payment = result.payment;
+            
+            // Populate form
+            document.getElementById('directIncomeId').value = payment.id;
+            document.getElementById('directIncomeDate').value = payment.payment_date;
+            document.getElementById('directIncomeAmount').value = payment.amount;
+            document.getElementById('directIncomeDescription').value = payment.description || '';
+            document.getElementById('directIncomeReference').value = payment.reference_number || '';
+            
+            // Set payment method - need to find the option by code
+            const paymentMethodSelect = document.getElementById('directIncomePaymentMethod');
+            const options = paymentMethodSelect.options;
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].getAttribute('data-code') === payment.payment_method) {
+                    paymentMethodSelect.selectedIndex = i;
+                    break;
+                }
+            }
+            
+            // Trigger change to show/hide cash account
+            window.handleDirectIncomePaymentMethodChange();
+            
+            // Set cash account after accounts are loaded
+            if (payment.cash_account_id) {
+                setTimeout(() => {
+                    document.getElementById('directIncomeCashAccount').value = payment.cash_account_id;
+                }, 500);
+            }
+        } else {
+            alert('Gagal memuat data pemasukan');
+        }
+    } catch (error) {
+        console.error('Error loading payment data:', error);
+        alert('Terjadi kesalahan saat memuat data pemasukan');
     }
 }
 
@@ -1692,14 +1860,24 @@ window.fetchCashAccountsForDirectIncome = async function() {
 
         const accounts = await response.json();
         const select = document.getElementById('directIncomeCashAccount');
+        const currentValue = select.value; // Preserve current selection
+        
         select.innerHTML = '<option value="">-- Pilih Rekening/Kas --</option>';
 
         accounts.forEach(account => {
             const option = document.createElement('option');
             option.value = account.id;
-            option.textContent = `${account.name} (${account.account_number || 'N/A'}) - Saldo: Rp ${formatNumber(account.balance)}`;
+            const accountName = account.account_name || account.name || 'Unknown';
+            const accountNumber = account.account_number || (account.bank_name ? `${account.account_type} - ${account.bank_name}` : 'N/A');
+            const balance = account.current_balance || account.balance || 0;
+            option.textContent = `${accountName} (${accountNumber}) - Saldo: Rp ${formatNumber(balance)}`;
             select.appendChild(option);
         });
+        
+        // Restore selection if exists
+        if (currentValue) {
+            select.value = currentValue;
+        }
     } catch (error) {
         console.error('Error fetching cash accounts:', error);
         alert('Gagal memuat daftar rekening/kas');
@@ -1712,10 +1890,21 @@ window.submitDirectIncome = async function(event) {
     const form = event.target;
     const formData = new FormData(form);
     const projectId = {{ $project->id }};
+    const paymentId = document.getElementById('directIncomeId').value;
+    
+    const isEdit = !!paymentId;
+    const url = isEdit 
+        ? `/projects/${projectId}/direct-income/${paymentId}` 
+        : `/projects/${projectId}/direct-income`;
+    
+    // Add _method for PATCH if editing
+    if (isEdit) {
+        formData.append('_method', 'PATCH');
+    }
 
     try {
-        const response = await fetch(`/projects/${projectId}/direct-income`, {
-            method: 'POST',
+        const response = await fetch(url, {
+            method: 'POST', // Always POST, Laravel handles _method
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'Accept': 'application/json'
@@ -1727,15 +1916,15 @@ window.submitDirectIncome = async function(event) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            alert(result.message || 'Pemasukan berhasil dicatat!');
+            showNotification(result.message || (isEdit ? 'Pemasukan berhasil diperbarui!' : 'Pemasukan berhasil dicatat!'), 'success');
             window.closeDirectIncomeModal();
-            location.reload();
+            setTimeout(() => location.reload(), 1000);
         } else {
-            alert(result.message || 'Gagal mencatat pemasukan');
+            showNotification(result.message || 'Gagal menyimpan pemasukan', 'error');
         }
     } catch (error) {
         console.error('Error submitting direct income:', error);
-        alert('Terjadi kesalahan saat mencatat pemasukan');
+        showNotification('Terjadi kesalahan saat menyimpan pemasukan', 'error');
     }
 }
 </script>

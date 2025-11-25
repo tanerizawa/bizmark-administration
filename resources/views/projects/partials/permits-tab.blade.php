@@ -1,11 +1,11 @@
 <!-- Permits Tab Content -->
-<div class="card-elevated rounded-apple-lg p-4 permits-tab-no-hover">
-    <div class="flex items-center justify-between mb-4">
+<div class="page-card space-y-4 permits-tab-no-hover">
+    <div class="flex items-center justify-between">
         <div>
-            <h3 class="text-base font-semibold" style="color: #FFFFFF;">
+            <h3 class="card-title text-white">
                 <i class="fas fa-certificate mr-2 text-apple-blue-dark"></i>Izin & Prasyarat Proyek
             </h3>
-            <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">
+            <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
                 Kelola izin dan dependensi yang diperlukan proyek
             </p>
         </div>
@@ -13,19 +13,19 @@
         @if($project->permits->count() === 0)
             <div class="flex gap-2">
                 <button onclick="event.stopPropagation(); showTemplateModal()" 
-                        class="px-4 py-2 rounded-lg transition-colors" 
-                        style="background: rgba(255, 149, 0, 0.2); color: rgba(255, 149, 0, 1);">
+                        class="btn-secondary-sm" 
+                        style="background: rgba(255, 149, 0, 0.2); color: rgba(255, 149, 0, 1); border-color: transparent;">
                     <i class="fas fa-layer-group mr-2"></i>Gunakan Template
                 </button>
                 <button onclick="event.stopPropagation(); showAddPermitModal()" 
-                        class="px-4 py-2 rounded-lg transition-colors" 
+                        class="btn-primary-sm" 
                         style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
                     <i class="fas fa-plus mr-2"></i>Tambah Izin Manual
                 </button>
             </div>
         @else
             <button onclick="event.stopPropagation(); showAddPermitModal()" 
-                    class="px-4 py-2 rounded-lg transition-colors" 
+                    class="btn-secondary-sm" 
                     style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
                 <i class="fas fa-plus mr-2"></i>Tambah Izin
             </button>
@@ -66,21 +66,21 @@
                 $goalStatusColor = $goalStatusColors[$statusLower] ?? 'rgba(142, 142, 147, 1)';
                 $goalStatusLabel = $goalStatusLabels[$statusLower] ?? $goalPermit->status;
             @endphp
-            <div class="mb-3 p-3 rounded-lg" style="background: rgba(10, 132, 255, 0.1); border: 2px solid rgba(10, 132, 255, 0.3);">
+            <div class="data-block" style="border-color: rgba(10,132,255,0.2); background: rgba(10,132,255,0.05);">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-xs font-semibold mb-1" style="color: rgba(10, 132, 255, 1);">
+                        <p class="text-[11px] font-semibold mb-1" style="color: rgba(10, 132, 255, 1); letter-spacing: 0.08em;">
                             <i class="fas fa-flag mr-1"></i>IZIN TUJUAN
                         </p>
-                        <p class="text-base font-bold" style="color: #FFFFFF;">
+                        <p class="text-sm font-semibold" style="color: #FFFFFF;">
                             {{ $goalPermit->permitType->name }}
                         </p>
-                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.6);">
+                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.7);">
                             {{ $goalPermit->institutionName }}
                         </p>
                     </div>
                     <div class="text-right">
-                        <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full" 
+                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full" 
                               style="background: {{ $goalStatusColor }}20; color: {{ $goalStatusColor }};">
                             {{ $goalStatusLabel }}
                         </span>
@@ -91,28 +91,28 @@
 
         <!-- Statistics -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-            <div class="p-3 rounded-lg" style="background: rgba(58, 58, 60, 0.3);">
-                <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.6);">Total Izin</p>
-                <p class="text-xl font-bold" style="color: #FFFFFF;">{{ $statistics['total'] ?? 0 }}</p>
+            <div class="data-block">
+                <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.65);">Total Izin</p>
+                <p class="text-lg font-semibold" style="color: #FFFFFF;">{{ $statistics['total'] ?? 0 }}</p>
             </div>
-            <div class="p-3 rounded-lg" style="background: rgba(52, 199, 89, 0.1);">
-                <p class="text-xs mb-1" style="color: rgba(52, 199, 89, 0.8);">Selesai</p>
-                <p class="text-xl font-bold" style="color: rgba(52, 199, 89, 1);">
+            <div class="data-block" style="background: rgba(52, 199, 89, 0.08); border-color: rgba(52, 199, 89, 0.2);">
+                <p class="text-xs mb-1" style="color: rgba(52, 199, 89, 0.85);">Selesai</p>
+                <p class="text-lg font-semibold" style="color: rgba(52, 199, 89, 1);">
                     {{ $statistics['completed'] ?? 0 }}
                 </p>
-                <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
+                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
                     {{ $statistics['completion_rate'] ?? 0 }}%
                 </p>
             </div>
-            <div class="p-3 rounded-lg" style="background: rgba(255, 149, 0, 0.1);">
-                <p class="text-xs mb-1" style="color: rgba(255, 149, 0, 0.8);">Dalam Proses</p>
-                <p class="text-xl font-bold" style="color: rgba(255, 149, 0, 1);">
+            <div class="data-block" style="background: rgba(255, 149, 0, 0.08); border-color: rgba(255, 149, 0, 0.2);">
+                <p class="text-xs mb-1" style="color: rgba(255, 149, 0, 0.85);">Dalam Proses</p>
+                <p class="text-lg font-semibold" style="color: rgba(255, 149, 0, 1);">
                     {{ $statistics['in_progress'] ?? 0 }}
                 </p>
             </div>
-            <div class="p-3 rounded-lg" style="background: rgba(142, 142, 147, 0.1);">
-                <p class="text-xs mb-1" style="color: rgba(142, 142, 147, 0.8);">Belum Dimulai</p>
-                <p class="text-xl font-bold" style="color: rgba(142, 142, 147, 1);">
+            <div class="data-block" style="background: rgba(142, 142, 147, 0.08); border-color: rgba(142, 142, 147, 0.2);">
+                <p class="text-xs mb-1" style="color: rgba(142, 142, 147, 0.85);">Belum Dimulai</p>
+                <p class="text-lg font-semibold" style="color: rgba(142, 142, 147, 1);">
                     {{ $statistics['not_started'] ?? 0 }}
                 </p>
             </div>
@@ -2144,4 +2144,3 @@ function getStatusLabel(status) {
 
 </script>
 @endpush
-
