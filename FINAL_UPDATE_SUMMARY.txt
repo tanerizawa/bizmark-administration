@@ -2,7 +2,7 @@
 ║                                                                            ║
 ║          🎉 LANDING PAGE UPDATE - 100% COMPLETE 🎉                        ║
 ║                                                                            ║
-║              PT Timur Cakrawala Konsultan (Bizmark.ID)                    ║
+║              PT CANGAH PAJARATAN MANDIRI (Bizmark.ID)                    ║
 ║          Spesialis Perizinan Limbah B3, AMDAL & UKL-UPL                   ║
 ║                                                                            ║
 ╚════════════════════════════════════════════════════════════════════════════╝
@@ -31,7 +31,7 @@
    • Removed: "Spesialis Industri Manufaktur Karawang"
 
 4. ✅ About Section (MAJOR REWRITE)
-   • Focus: PT Timur Cakrawala Konsultan
+   • Focus: PT CANGAH PAJARATAN MANDIRI
    • Expertise: LB3, AMDAL, Manufacturing, Industrial Zones
 
 5. ✅ Services Section (COMPLETE REWRITE)
@@ -53,7 +53,7 @@
    • PT Automotive Manufacturing (Bekasi)
 
 9. ✅ Footer Section
-   • Company: PT Timur Cakrawala Konsultan
+   • Company: PT CANGAH PAJARATAN MANDIRI
    • Area: Karawang focus
 
 10. ✅ WhatsApp Button
@@ -115,7 +115,7 @@ CONTACT INFO:              Placeholder → Real ✅
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🏢 COMPANY:
-   Legal Name:  PT Timur Cakrawala Konsultan
+   Legal Name:  PT CANGAH PAJARATAN MANDIRI
    Brand Name:  Bizmark.ID
 
 📍 ADDRESS:
@@ -283,7 +283,7 @@ No local SEO                    →  Strong local SEO ✅
 
 🎉 SELAMAT! Landing page transformation 100% SELESAI!
 
-Landing page PT Timur Cakrawala Konsultan sekarang:
+Landing page PT CANGAH PAJARATAN MANDIRI sekarang:
   ✅ SEO-optimized untuk keywords Limbah B3 & AMDAL
   ✅ Local SEO untuk Karawang area
   ✅ Contact info lengkap dan aktual
@@ -295,7 +295,7 @@ Landing page PT Timur Cakrawala Konsultan sekarang:
 
 Generated: October 10, 2025
 By: GitHub Copilot AI Assistant
-Project: Bizmark.ID - PT Timur Cakrawala Konsultan
+Project: Bizmark.ID - PT CANGAH PAJARATAN MANDIRI
 Status: ✅ COMPLETE & PRODUCTION READY
 
 🏆 100% COMPLETE 🏆

@@ -161,4 +161,89 @@ class JobVacancyController extends Controller
         return redirect()->route('admin.jobs.index')
             ->with('success', 'Lowongan pekerjaan berhasil dihapus!');
     }
+
+    /**
+     * Display applications for a specific job (Tab View).
+     */
+    public function applications($id)
+    {
+        $vacancy = JobVacancy::withCount('applications')->findOrFail($id);
+        
+        // Get all applications for this job with filters
+        $query = $vacancy->applications()
+            ->with('jobVacancy')
+            ->orderBy('created_at', 'desc');
+
+        // Apply status filter if provided
+        if (request('status')) {
+            $query->where('status', request('status'));
+        }
+
+        // Apply search filter if provided
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        $applications = $query->paginate(20);
+
+        return view('admin.jobs.applications', compact('vacancy', 'applications'));
+    }
+
+    /**
+     * Display tests for a specific job (Tab View).
+     */
+    public function tests($id)
+    {
+        $vacancy = JobVacancy::withCount('applications')->findOrFail($id);
+        
+        // Get all test sessions for this job
+        $query = \App\Models\TestSession::whereHas('jobApplication', function($q) use ($id) {
+            $q->where('job_vacancy_id', $id);
+        })->with(['jobApplication', 'testTemplate']);
+
+        // Apply status filter if provided
+        if (request('status')) {
+            $query->where('status', request('status'));
+        }
+
+        $testSessions = $query->latest()->paginate(20);
+
+        // Calculate statistics
+        $allSessions = \App\Models\TestSession::whereHas('jobApplication', function($q) use ($id) {
+            $q->where('job_vacancy_id', $id);
+        });
+
+        $stats = [
+            'total' => $allSessions->count(),
+            'in_progress' => (clone $allSessions)->where('status', 'in-progress')->count(),
+            'completed' => (clone $allSessions)->where('status', 'completed')->count(),
+            'pass_rate' => 0,
+        ];
+
+        if ($stats['completed'] > 0) {
+            $passed = (clone $allSessions)->where('status', 'completed')->where('passed', true)->count();
+            $stats['pass_rate'] = round(($passed / $stats['completed']) * 100, 1);
+        }
+
+        // Get candidates who haven't been assigned tests yet
+        $candidates = $vacancy->applications()
+            ->whereDoesntHave('testSessions')
+            ->orWhereHas('testSessions', function($q) {
+                $q->whereIn('status', ['expired', 'cancelled']);
+            })
+            ->orderBy('full_name')
+            ->get();
+
+        // Get active test templates
+        $testTemplates = \App\Models\TestTemplate::where('is_active', true)
+            ->orderBy('title')
+            ->get();
+
+        return view('admin.jobs.tests', compact('vacancy', 'testSessions', 'stats', 'candidates', 'testTemplates'));
+    }
 }

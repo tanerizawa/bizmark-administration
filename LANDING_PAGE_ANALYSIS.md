@@ -1,5 +1,5 @@
 # Landing Page Analysis & Redesign Plan
-## PT Timur Cakrawala Konsultan (Bizmark.ID)
+## PT CANGAH PAJARATAN MANDIRI (Bizmark.ID)
 
 **Date:** October 10, 2025  
 **Analyst:** AI Development Team  

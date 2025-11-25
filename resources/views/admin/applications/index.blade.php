@@ -183,7 +183,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <p class="text-sm font-semibold text-white">{{ $application->jobVacancy->title ?? '-' }}</p>
+                                    <p class="text-sm font-semibold text-white">{{ $application?->jobVacancy?->title ?? 'Position Deleted' ?? '-' }}</p>
                                     @if($application->has_experience_ukl_upl)
                                         <span class="inline-flex px-2 py-0.5 text-[10px] rounded-apple" style="background: rgba(52,199,89,0.18); color: rgba(52,199,89,1);">
                                             UKL-UPL Exp
@@ -206,9 +206,28 @@
                                     <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ $application->created_at->format('d M Y H:i') }}</p>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('admin.applications.show', $application->id) }}" class="btn-primary-sm">
-                                        <i class="fas fa-eye mr-2"></i>
-                                    </a>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ route('admin.applications.show', $application->id) }}" 
+                                           class="btn-primary-sm"
+                                           title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form action="{{ route('admin.applications.destroy', $application->id) }}" 
+                                              method="POST" 
+                                              class="inline"
+                                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus kandidat {{ $application->full_name }}? Data test, interview, dan file CV/Portfolio akan terhapus.')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
+                                                    style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,1);"
+                                                    onmouseover="this.style.background='rgba(255,59,48,0.25)'"
+                                                    onmouseout="this.style.background='rgba(255,59,48,0.15)'"
+                                                    title="Delete Application">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

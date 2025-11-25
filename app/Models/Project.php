@@ -20,6 +20,9 @@ class Project extends Model
         'institution_id',
         'start_date',
         'deadline',
+        'actual_completion_date', // Tanggal aktual penyelesaian proyek
+        'completed_at', // Tanggal aktual selesai (legacy)
+        'completion_notes', // Catatan saat selesai
         'progress_percentage',
         'budget',
         'actual_cost',
@@ -37,6 +40,8 @@ class Project extends Model
     protected $casts = [
         'start_date' => 'date',
         'deadline' => 'date',
+        'actual_completion_date' => 'date', // Cast sebagai date
+        'completed_at' => 'datetime', // Cast sebagai datetime (legacy)
         'budget' => 'decimal:2',
         'actual_cost' => 'decimal:2',
         'progress_percentage' => 'integer',
@@ -206,6 +211,128 @@ class Project extends Model
     public function getFormattedNetProfitAttribute(): string
     {
         return 'Rp ' . number_format($this->net_profit, 0, ',', '.');
+    }
+
+    /**
+     * Calculate progress from task completion rate
+     * Returns percentage (0-100)
+     */
+    public function calculateProgressFromTasks(): int
+    {
+        $totalTasks = $this->tasks()->count();
+        
+        if ($totalTasks === 0) {
+            return $this->progress_percentage ?? 0;
+        }
+        
+        $completedTasks = $this->tasks()
+            ->whereIn('status', ['done', 'completed', 'selesai', 'DONE', 'COMPLETED', 'SELESAI'])
+            ->count();
+        
+        return round(($completedTasks / $totalTasks) * 100);
+    }
+
+    /**
+     * Sync progress with task completion
+     * Updates the progress_percentage field
+     */
+    public function syncProgressWithTasks(): bool
+    {
+        $calculatedProgress = $this->calculateProgressFromTasks();
+        
+        // Only update if there are tasks
+        if ($this->tasks()->count() > 0) {
+            $this->progress_percentage = $calculatedProgress;
+            return $this->save();
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check if project is completed
+     */
+    public function isCompleted(): bool
+    {
+        return $this->progress_percentage >= 100 || 
+               ($this->status && $this->status->is_final);
+    }
+
+    /**
+     * Check if project is active (not cancelled, not completed)
+     */
+    public function isActive(): bool
+    {
+        if (!$this->status) {
+            return true;
+        }
+        
+        return !$this->status->is_final && 
+               !in_array($this->status->code, ['CANCELLED', 'DIBATALKAN']);
+    }
+
+    /**
+     * Check if project completed on time
+     * Returns: 'on-time', 'late', 'early', or null if not completed
+     */
+    public function getCompletionStatus(): ?string
+    {
+        if (!$this->completed_at || !$this->deadline) {
+            return null;
+        }
+        
+        $completedDate = $this->completed_at->startOfDay();
+        $deadlineDate = $this->deadline->startOfDay();
+        
+        if ($completedDate->equalTo($deadlineDate)) {
+            return 'on-time';
+        } elseif ($completedDate->lessThan($deadlineDate)) {
+            return 'early';
+        } else {
+            return 'late';
+        }
+    }
+
+    /**
+     * Get days difference between completion and deadline
+     * Positive = late, Negative = early, 0 = on-time
+     */
+    public function getDaysOffSchedule(): ?int
+    {
+        if (!$this->completed_at || !$this->deadline) {
+            return null;
+        }
+        
+        return $this->completed_at->startOfDay()->diffInDays($this->deadline->startOfDay(), false);
+    }
+
+    /**
+     * Get formatted completion status message
+     */
+    public function getCompletionStatusMessage(): ?string
+    {
+        $status = $this->getCompletionStatus();
+        $days = abs($this->getDaysOffSchedule() ?? 0);
+        
+        return match($status) {
+            'on-time' => 'Selesai tepat waktu! ⏰',
+            'early' => "Selesai lebih cepat {$days} hari! ⚡",
+            'late' => "Terlambat {$days} hari ⚠️",
+            default => null
+        };
+    }
+
+    /**
+     * Get completion status color
+     */
+    public function getCompletionStatusColor(): ?string
+    {
+        return match($this->getCompletionStatus()) {
+            'on-time' => '#10B981', // Green
+            'early' => '#3B82F6',   // Blue
+            'late' => '#EF4444',    // Red
+            default => null
+        };
     }
 
 

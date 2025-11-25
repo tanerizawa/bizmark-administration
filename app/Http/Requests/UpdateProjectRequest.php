@@ -29,6 +29,8 @@ class UpdateProjectRequest extends FormRequest
             'client_id' => 'required|exists:clients,id',
             'start_date' => 'required|date',
             'deadline' => 'nullable|date|after_or_equal:start_date',
+            'completed_at' => 'nullable|date',
+            'completion_notes' => 'nullable|string',
             'progress_percentage' => 'nullable|integer|min:0|max:100',
             'budget' => 'nullable|numeric|min:0',
             'contract_value' => 'nullable|numeric|min:0',

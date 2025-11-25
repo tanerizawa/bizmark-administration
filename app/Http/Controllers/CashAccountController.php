@@ -6,6 +6,7 @@ use App\Models\CashAccount;
 use App\Models\ProjectPayment;
 use App\Models\ProjectExpense;
 use App\Models\Invoice;
+use App\Models\BankReconciliation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -17,15 +18,32 @@ class CashAccountController extends Controller
         try {
             // Get filter parameters
             $filterType = $request->input('filter_type', 'month'); // month, quarter, year, custom
-            $selectedMonth = $request->input('month', Carbon::now()->month);
-            $selectedYear = $request->input('year', Carbon::now()->year);
+            
+            // Auto-detect month with data if not explicitly set
+            $hasFilterInput = $request->has('month') || $request->has('year') || $request->has('start_date');
+            if (!$hasFilterInput) {
+                // Find most recent month with transactions
+                $latestTransactionDate = $this->getLatestTransactionDate();
+                if ($latestTransactionDate) {
+                    $selectedMonth = $latestTransactionDate->month;
+                    $selectedYear = $latestTransactionDate->year;
+                } else {
+                    // No transactions, use current month
+                    $selectedMonth = Carbon::now()->month;
+                    $selectedYear = Carbon::now()->year;
+                }
+            } else {
+                $selectedMonth = $request->input('month', Carbon::now()->month);
+                $selectedYear = $request->input('year', Carbon::now()->year);
+            }
+            
             $startDateInput = $request->input('start_date');
             $endDateInput = $request->input('end_date');
         
         // Create date range based on filter type
         switch ($filterType) {
             case 'quarter':
-                $quarter = $request->input('quarter', ceil(Carbon::now()->month / 3));
+                $quarter = $request->input('quarter', ceil($selectedMonth / 3));
                 $startMonth = ($quarter - 1) * 3 + 1;
                 $startDate = Carbon::create($selectedYear, $startMonth, 1)->startOfMonth();
                 $endDate = Carbon::create($selectedYear, $startMonth + 2, 1)->endOfMonth();
@@ -64,17 +82,36 @@ class CashAccountController extends Controller
         $cashFlowStatement = $this->getCashFlowStatement($startDate, $endDate);
         $recentTransactions = $this->getRecentTransactions(50, $startDate, $endDate); // Increased from 15 to 50
         
+        // Get reconciliations data
+        $reconciliations = BankReconciliation::with(['cashAccount'])
+            ->latest()
+            ->paginate(20, ['*'], 'reconciliations_page')
+            ->withQueryString();
+        $cashAccountsList = CashAccount::where('is_active', true)->get();
+        $pendingReconciliations = BankReconciliation::where('status', 'pending')->count();
+        
+        // Get general (non-project) transactions
+        $generalTransactions = $this->getGeneralTransactions($startDate, $endDate);
+        
+        // Get expense categories for dropdown
+        $expenseCategories = ProjectExpense::categoriesByGroup();
+        
             return view('cash-accounts.index', compact(
                 'accounts',
                 'financialSummary',
                 'cashFlowStatement',
                 'recentTransactions',
+                'generalTransactions',
                 'availablePeriods',
                 'selectedMonth',
                 'selectedYear',
                 'filterType',
                 'startDate',
-                'endDate'
+                'endDate',
+                'reconciliations',
+                'cashAccountsList',
+                'pendingReconciliations',
+                'expenseCategories'
             ));
         } catch (\Exception $e) {
             \Log::error('CashAccountController@index error: ' . $e->getMessage());
@@ -553,21 +590,15 @@ class CashAccountController extends Controller
     /**
      * Get comprehensive account mutations (all transactions)
      * 
-     * NOTE: Invoice payments (payment_schedules) tidak bisa di-filter per cash account
-     * karena tabel payment_schedules tidak memiliki kolom cash_account_id.
-     * Semua invoice payments akan ditampilkan untuk semua akun.
-     * 
-     * TODO: Tambahkan kolom cash_account_id ke payment_schedules untuk filtering yang lebih akurat
+     * ✅ FIXED: Now filters invoice payments by cash_account_id
+     * Column cash_account_id added to payment_schedules table
      */
     private function getAccountMutations(CashAccount $cashAccount, $startDate, $endDate, $transactionType = 'all')
     {
         $mutations = collect();
         
-        // WARNING: payment_schedules tidak memiliki cash_account_id FK
-        // Semua invoice payments ditampilkan tanpa filter akun
-        // Ini bisa menyebabkan transaksi dari akun lain muncul di sini
-        
         // Get invoice payments from payment_schedules (status = paid)
+        // ✅ NOW FILTERED by cash_account_id
         if ($transactionType === 'all' || $transactionType === 'income') {
             $invoicePayments = DB::table('payment_schedules')
                 ->join('invoices', 'payment_schedules.invoice_id', '=', 'invoices.id')
@@ -575,6 +606,12 @@ class CashAccountController extends Controller
                 ->where('payment_schedules.status', 'paid')
                 ->whereNotNull('payment_schedules.paid_date')
                 ->whereBetween('payment_schedules.paid_date', [$startDate, $endDate])
+                // ✅ FILTER by cash account
+                ->where(function($query) use ($cashAccount) {
+                    $query->where('payment_schedules.cash_account_id', $cashAccount->id)
+                          // Include NULL for backward compatibility (old data)
+                          ->orWhereNull('payment_schedules.cash_account_id');
+                })
                 ->select(
                     'payment_schedules.paid_date as date',
                     'payment_schedules.amount',
@@ -713,6 +750,77 @@ class CashAccountController extends Controller
         return redirect()->route('cash-accounts.index')
             ->with('success', 'Akun kas berhasil diperbarui');
     }
+    
+    /**
+     * Get General (Non-Project) Transactions
+     * These are company operational income/expenses not tied to specific projects
+     */
+    private function getGeneralTransactions($startDate = null, $endDate = null)
+    {
+        // General Income (project_id IS NULL)
+        $generalIncomeQuery = ProjectPayment::with(['bankAccount', 'createdBy'])
+            ->whereNull('project_id')
+            ->whereNull('invoice_id') // Not invoice-related
+            ->orderBy('payment_date', 'desc');
+        
+        if ($startDate && $endDate) {
+            $generalIncomeQuery->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+        
+        $generalIncome = $generalIncomeQuery->get();
+        
+        // General Expenses (project_id IS NULL)
+        $generalExpensesQuery = ProjectExpense::with(['bankAccount', 'createdBy'])
+            ->whereNull('project_id')
+            ->orderBy('expense_date', 'desc');
+        
+        if ($startDate && $endDate) {
+            $generalExpensesQuery->whereBetween('expense_date', [$startDate, $endDate]);
+        }
+        
+        $generalExpenses = $generalExpensesQuery->get();
+        
+        return [
+            'income' => $generalIncome,
+            'expenses' => $generalExpenses,
+        ];
+    }
+    
+    /**
+     * Get the most recent date that has transactions
+     * Used for auto-detecting default period when no filter is set
+     */
+    private function getLatestTransactionDate()
+    {
+        $latestPayment = ProjectPayment::whereNull('invoice_id')
+            ->orderBy('payment_date', 'desc')
+            ->first();
+        
+        $latestInvoicePayment = DB::table('payment_schedules')
+            ->where('status', 'paid')
+            ->whereNotNull('paid_date')
+            ->orderBy('paid_date', 'desc')
+            ->first();
+        
+        $latestExpense = ProjectExpense::orderBy('expense_date', 'desc')->first();
+        
+        $dates = collect();
+        if ($latestPayment) {
+            $dates->push(Carbon::parse($latestPayment->payment_date));
+        }
+        if ($latestInvoicePayment) {
+            $dates->push(Carbon::parse($latestInvoicePayment->paid_date));
+        }
+        if ($latestExpense) {
+            $dates->push(Carbon::parse($latestExpense->expense_date));
+        }
+        
+        if ($dates->isEmpty()) {
+            return null;
+        }
+        
+        return $dates->max(); // Most recent date
+    }
 
     public function destroy(CashAccount $cashAccount)
     {
@@ -736,7 +844,7 @@ class CashAccountController extends Controller
         $accounts = CashAccount::active()
             ->orderBy('account_type')
             ->orderBy('account_name')
-            ->get(['id', 'account_name', 'account_type', 'bank_name', 'current_balance', 'is_active']);
+            ->get(['id', 'account_name', 'account_type', 'account_number', 'bank_name', 'current_balance', 'is_active']);
         
         return response()->json($accounts);
     }

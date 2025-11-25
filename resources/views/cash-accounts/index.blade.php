@@ -4,8 +4,9 @@
 @section('page-title', 'Manajemen Keuangan')
 
 @section('content')
+<div class="cash-shell space-y-5">
     {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
             <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
@@ -13,12 +14,12 @@
         <div class="relative space-y-5 md:space-y-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Pusat Kendali Keuangan</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Kelola Kas dan Rekening dengan Wawasan Waktu Nyata
+                    <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.55);">Kendali Keuangan Terintegrasi</p>
+                    <h1 class="text-base md:text-lg font-semibold" style="color: #FFFFFF;">
+                        Kendali Kas & Rekening Terpadu
                     </h1>
-                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Pantau arus kas, piutang, dan tren finansial dalam satu dasbor komprehensif sesuai PSAK.
+                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.72);">
+                        Pantau arus kas, piutang, dan tren finansial secara ringkas dalam satu panel.
                     </p>
                 </div>
                 <div class="space-y-2.5 text-sm" style="color: rgba(235,235,245,0.65);">
@@ -36,24 +37,24 @@
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
+                <div class="rounded-apple-lg p-3 md:p-3.5" style="background: rgba(10,132,255,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Aset Likuid</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['liquid_assets'] / 1000000, 1) }}M</h2>
+                    <h2 class="text-base font-semibold mt-1.5" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['liquid_assets'] / 1000000, 1) }}M</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Bank + Kas Tunai</p>
                 </div>
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,149,0,0.12);">
+                <div class="rounded-apple-lg p-3 md:p-3.5" style="background: rgba(255,149,0,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Piutang Belum Dibayar</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</h2>
+                    <h2 class="text-base font-semibold mt-1.5" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Faktur dan Kasbon</p>
                 </div>
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
+                <div class="rounded-apple-lg p-3 md:p-3.5" style="background: rgba(52,199,89,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Kas Masuk Periode</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">Rp {{ number_format($financialSummary['cash_inflow_this_month'] / 1000000, 1) }}M</h2>
+                    <h2 class="text-base font-semibold mt-1.5" style="color: rgba(52,199,89,1);">Rp {{ number_format($financialSummary['cash_inflow_this_month'] / 1000000, 1) }}M</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $startDate->isoFormat('MMM YYYY') }}</p>
                 </div>
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.12)' }};">
+                <div class="rounded-apple-lg p-3 md:p-3.5" style="background: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.12)' }};">
                     <p class="text-xs uppercase tracking-widest" style="color: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">Arus Kas Bersih</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">{{ $financialSummary['net_cash_flow'] >= 0 ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</h2>
+                    <h2 class="text-base font-semibold mt-1.5" style="color:#FFFFFF;">{{ $financialSummary['net_cash_flow'] >= 0 ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $financialSummary['net_cash_flow'] >= 0 ? 'Surplus' : 'Defisit' }}</p>
                 </div>
             </div>
@@ -76,12 +77,12 @@
     @endif
 
     {{-- Period Filter & Insights --}}
-    <section class="space-y-3 md:space-y-4 mb-5">
+    <section class="space-y-3 md:space-y-4">
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Periode Aktif</p>
-                <h2 class="text-2xl font-semibold text-white">{{ $startDate->isoFormat('D MMM Y') }} - {{ $endDate->isoFormat('D MMM Y') }}</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">
+                <p class="text-xs uppercase tracking-[0.25em]" style="color: rgba(235,235,245,0.55);">Periode Aktif</p>
+                <h2 class="text-base font-semibold text-white">{{ $startDate->isoFormat('D MMM Y') }} - {{ $endDate->isoFormat('D MMM Y') }}</h2>
+                <p class="text-sm" style="color: rgba(235,235,245,0.62);">
                     @php $daysDiff = $startDate->diffInDays($endDate) + 1; @endphp
                     Menampilkan data {{ $daysDiff }} hari dengan {{ count($recentTransactions) }} transaksi tercatat.
                 </p>
@@ -92,38 +93,38 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
-            <div class="card-elevated rounded-apple-lg p-4 space-y-3">
+            <div class="card-elevated rounded-apple-lg p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Kas Keluar</h3>
+                    <h3 class="text-sm font-semibold text-white">Kas Keluar</h3>
                     <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(255,59,48,0.18); color: rgba(255,59,48,0.9);">Expense</span>
                 </div>
-                <p class="text-3xl font-bold text-white">Rp {{ number_format($financialSummary['cash_outflow_this_month'] / 1000000, 1) }}M</p>
+                <p class="text-xl font-semibold text-white">Rp {{ number_format($financialSummary['cash_outflow_this_month'] / 1000000, 1) }}M</p>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Pengeluaran periode berjalan untuk operasional dan proyek.
+                    Pengeluaran periode berjalan untuk operasional dan proyek
                 </p>
             </div>
 
-            <div class="card-elevated rounded-apple-lg p-4 space-y-3">
+            <div class="card-elevated rounded-apple-lg p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Arus Kas Bersih</h3>
+                    <h3 class="text-sm font-semibold text-white">Arus Kas Bersih</h3>
                     <span class="text-xs px-3 py-1 rounded-full" style="background: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.18)' : 'rgba(255,59,48,0.18)' }}; color: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">
                         {{ $financialSummary['is_positive_trend'] ? 'Positif' : 'Negatif' }}
                     </span>
                 </div>
-                <p class="text-3xl font-bold text-white">{{ $financialSummary['is_positive_trend'] ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
+                <p class="text-xl font-semibold text-white">{{ $financialSummary['is_positive_trend'] ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Perubahan dibandingkan bulan lalu {{ $financialSummary['is_positive_trend'] ? 'meningkat' : 'menurun' }}.
+                    Perbandingan dengan bulan lalu
                 </p>
             </div>
 
-            <div class="card-elevated rounded-apple-lg p-4 space-y-3">
+            <div class="card-elevated rounded-apple-lg p-3.5 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Rekening Aktif</h3>
+                    <h3 class="text-sm font-semibold text-white">Rekening Aktif</h3>
                     <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Live</span>
                 </div>
-                <p class="text-3xl font-bold text-white">{{ $accounts->count() }}</p>
+                <p class="text-lg font-semibold text-white">{{ $accounts->count() }}</p>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Bank & kas terdaftar dalam sistem akuntansi.
+                    Rekening dan kas tercatat di sistem
                 </p>
             </div>
         </div>
@@ -132,23 +133,44 @@
     {{-- Tab Navigation --}}
     <section class="card-elevated rounded-apple-xl overflow-hidden">
         <div class="border-b" style="border-color: var(--dark-separator);">
-            <div class="flex space-x-1 p-2" role="tablist">
+            <div class="flex space-x-1 p-2 overflow-x-auto" role="tablist">
                 <button onclick="switchTab('cash-flow')" id="tab-cash-flow" 
-                        class="tab-button active px-4 py-2.5 rounded-apple text-sm font-medium transition-apple">
+                        class="tab-button active text-sm transition-apple whitespace-nowrap">
                     <i class="fas fa-chart-line mr-2"></i>Laporan Arus Kas
                 </button>
                 <button onclick="switchTab('accounts')" id="tab-accounts"
-                        class="tab-button px-4 py-2.5 rounded-apple text-sm font-medium transition-apple">
+                        class="tab-button text-sm transition-apple whitespace-nowrap">
                     <i class="fas fa-university mr-2"></i>Rekening dan Kas
                 </button>
+                <button onclick="switchTab('general')" id="tab-general"
+                        class="tab-button text-sm transition-apple whitespace-nowrap">
+                    <i class="fas fa-briefcase mr-2"></i>Keuangan Umum
+                    @php
+                        $generalCount = ($generalTransactions['income']->count() + $generalTransactions['expenses']->count());
+                    @endphp
+                    @if($generalCount > 0)
+                        <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500 text-white">
+                            {{ $generalCount }}
+                        </span>
+                    @endif
+                </button>
+                <button onclick="switchTab('reconciliations')" id="tab-reconciliations"
+                        class="tab-button text-sm transition-apple whitespace-nowrap">
+                    <i class="fas fa-balance-scale mr-2"></i>Rekonsiliasi Bank
+                    @if(isset($pendingReconciliations) && $pendingReconciliations > 0)
+                        <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-orange-500 text-white">
+                            {{ $pendingReconciliations }}
+                        </span>
+                    @endif
+                </button>
                 <button onclick="switchTab('transactions')" id="tab-transactions"
-                        class="tab-button px-4 py-2.5 rounded-apple text-sm font-medium transition-apple">
-                    <i class="fas fa-history mr-2"></i>Riwayat Transaksi
+                        class="tab-button text-sm transition-apple whitespace-nowrap">
+                    <i class="fas fa-project-diagram mr-2"></i>Transaksi Proyek
                 </button>
             </div>
         </div>
 
-        <div class="p-6">
+        <div class="p-5">
             <!-- Tab 1: Cash Flow Statement -->
             <div id="content-cash-flow" class="tab-content">
                 @include('cash-accounts.tabs.cash-flow', ['cashFlowStatement' => $cashFlowStatement])
@@ -159,7 +181,17 @@
                 @include('cash-accounts.tabs.accounts', ['accounts' => $accounts])
             </div>
 
-            <!-- Tab 3: Transactions Timeline -->
+            <!-- Tab 3: General Transactions (NEW) -->
+            <div id="content-general" class="tab-content hidden">
+                @include('cash-accounts.tabs.general-transactions', ['generalTransactions' => $generalTransactions])
+            </div>
+
+            <!-- Tab 4: Bank Reconciliations -->
+            <div id="content-reconciliations" class="tab-content hidden">
+                @include('admin.master-data.tabs.reconciliations')
+            </div>
+
+            <!-- Tab 5: Project Transactions Timeline (renamed) -->
             <div id="content-transactions" class="tab-content hidden">
                 @include('cash-accounts.tabs.transactions', ['recentTransactions' => $recentTransactions])
             </div>
@@ -168,10 +200,10 @@
 
 {{-- Period Filter Modal --}}
 <div id="periodModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="card-elevated rounded-apple-xl max-w-3xl w-full p-6 space-y-5" style="background: var(--dark-bg-elevated);">
+    <div class="card-elevated rounded-apple-xl max-w-3xl w-full p-4 space-y-4" style="background: var(--dark-bg-elevated);">
         <div class="flex items-center justify-between">
             <div>
-                <h3 class="text-xl font-semibold text-white">Filter Periode Laporan</h3>
+                <h3 class="text-base font-semibold text-white">Filter Periode Laporan</h3>
                 <p class="text-sm mt-1" style="color: rgba(235,235,245,0.65);">Pilih rentang waktu untuk analisis finansial</p>
             </div>
             <button onclick="closePeriodModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-apple">
@@ -295,42 +327,54 @@
                 <button type="submit" class="btn-primary flex-1">
                     <i class="fas fa-filter mr-2"></i>Terapkan Filter
                 </button>
-                <button type="button" onclick="closePeriodModal()" class="btn-secondary-sm px-6">
+                <button type="button" onclick="closePeriodModal()" class="btn-secondary-sm">
                     Batal
                 </button>
             </div>
         </form>
     </div>
 </div>
+</div>
 
 <style>
-.tab-button {
-    color: rgba(235, 235, 245, 0.6);
-    background-color: transparent;
+.cash-shell {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    letter-spacing: -0.01em;
 }
 
-.tab-button:hover {
+.cash-shell .tab-button {
+    color: rgba(235, 235, 245, 0.6);
+    background-color: transparent;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-weight: 600;
+    min-height: 42px;
+}
+
+.cash-shell .tab-button:hover {
     color: rgba(235, 235, 245, 0.9);
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-.tab-button.active {
+.cash-shell .tab-button.active {
     color: #FFFFFF;
     background-color: rgba(0, 122, 255, 0.15);
     border: 1px solid rgba(0, 122, 255, 0.3);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
 }
 
-.tab-content {
-    animation: fadeIn 0.3s ease-in;
+.cash-shell .tab-content {
+    animation: fadeIn 0.25s ease-in;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.filter-type-btn {
-    padding: 0.75rem 1rem;
+.cash-shell .filter-type-btn {
+    padding: 0.7rem 0.95rem;
     border-radius: 10px;
     font-size: 0.875rem;
     font-weight: 600;
@@ -340,13 +384,13 @@
     color: rgba(235, 235, 245, 0.7);
 }
 
-.filter-type-btn:hover {
+.cash-shell .filter-type-btn:hover {
     background-color: var(--dark-bg-secondary);
     border-color: var(--apple-blue);
     color: rgba(235, 235, 245, 0.9);
 }
 
-.filter-type-btn.active {
+.cash-shell .filter-type-btn.active {
     background-color: rgba(0, 122, 255, 0.15);
     border-color: var(--apple-blue);
     color: #FFFFFF;

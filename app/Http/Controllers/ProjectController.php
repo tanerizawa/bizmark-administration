@@ -91,8 +91,10 @@ class ProjectController extends Controller
             $q->whereIn('code', ['COMPLETED', 'CLOSED']);
         })->count();
         
-        // Overdue: Projects past deadline and not completed/cancelled/on hold
+        // Overdue: Projects past deadline, not completed, and not finished before deadline
+        // Fix: Exclude projects that have completed_at set (even if status not yet updated)
         $overdueProjects = Project::where('deadline', '<', now())
+            ->whereNull('completed_at')  // Not completed
             ->whereHas('status', function($q) {
                 $q->whereNotIn('code', ['COMPLETED', 'CLOSED', 'CANCELLED', 'ON_HOLD']);
             })->count();
@@ -203,6 +205,25 @@ class ProjectController extends Controller
         $receivableOutstanding = $project->expenses()
             ->where('is_receivable', true)
             ->whereIn('receivable_status', ['pending', 'partial'])
+            ->sum('amount');
+        
+        $profitMargin = $totalReceived - $totalExpenses;
+
+        // Get direct income payments (payments without invoice) - for Direct Income section
+        $directIncomes = $project->payments()
+            ->whereNull('invoice_id')
+            ->with(['bankAccount', 'createdBy'])
+            ->orderBy('payment_date', 'desc')
+            ->get();
+        
+        $totalDirectIncome = $directIncomes->sum('amount');
+        
+        $budgetRemaining = $totalBudget - $totalInvoiced;
+        
+        // Calculate outstanding receivables (kasbon yang belum lunas)
+        $receivableOutstanding = $project->expenses()
+            ->where('is_receivable', true)
+            ->whereIn('receivable_status', ['pending', 'partial'])
             ->get()
             ->sum(function ($expense) {
                 $remaining = ($expense->amount ?? 0) - ($expense->receivable_paid_amount ?? 0);
@@ -239,7 +260,9 @@ class ProjectController extends Controller
             'budgetRemaining',
             'receivableOutstanding',
             'profitMargin',
-            'monthlyData'
+            'monthlyData',
+            'directIncomes',
+            'totalDirectIncome'
         ));
     }
 
@@ -274,6 +297,11 @@ class ProjectController extends Controller
                 $validated['client_address'] = $client->address;
                 $validated['client_company'] = $client->company_name;
             }
+        }
+        
+        // Sync completed_at to actual_completion_date for consistency
+        if (isset($validated['completed_at'])) {
+            $validated['actual_completion_date'] = $validated['completed_at'];
         }
         
         $project->update($validated);

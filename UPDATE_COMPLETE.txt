@@ -2,7 +2,7 @@
 ║                                                                              ║
 ║           🎉 LANDING PAGE SEO UPDATE - SELESAI 100% 🎉                      ║
 ║                                                                              ║
-║              PT Timur Cakrawala Konsultan (Bizmark.ID)                      ║
+║              PT CANGAH PAJARATAN MANDIRI (Bizmark.ID)                      ║
 ║           Spesialis Perizinan Limbah B3, AMDAL & UKL-UPL                    ║
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -18,13 +18,13 @@
 
 1. ✅ META TAGS & SEO HEADERS
    └─ Title: "Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang | PT Timur..."
-   └─ Description: Optimized dengan PT Timur Cakrawala Konsultan & Karawang
+   └─ Description: Optimized dengan PT CANGAH PAJARATAN MANDIRI & Karawang
    └─ Keywords: 50+ keywords (limbah b3, karawang, amdal, ukl-upl)
    └─ OG Tags: Facebook & Twitter Cards updated
 
 2. ✅ STRUCTURED DATA (JSON-LD)
    └─ Local Business Schema: Alamat Karawang, geo coordinates
-   └─ Organization Schema: PT Timur Cakrawala Konsultan
+   └─ Organization Schema: PT CANGAH PAJARATAN MANDIRI
    └─ FAQ Schema: 6 LB3-specific questions
    └─ Rich Snippets: Ready for Google SERP
 
@@ -35,7 +35,7 @@
    └─ CTA: "Konsultasi Gratis" button
 
 4. ✅ ABOUT SECTION - MAJOR REWRITE
-   └─ Title: "Tentang PT Timur Cakrawala Konsultan"
+   └─ Title: "Tentang PT CANGAH PAJARATAN MANDIRI"
    └─ Profile: Spesialis LB3 & AMDAL untuk industri manufaktur
    └─ Expertise: 4 key areas (LB3, AMDAL, Manufacturing, Industrial Zones)
    └─ Location: Strategic location in Karawang near KIIC
@@ -67,7 +67,7 @@
    └─ PT Automotive Manufacturing (Bekasi) ⭐⭐⭐⭐⭐
 
 9. ✅ FOOTER SECTION
-   └─ Company: "PT Timur Cakrawala Konsultan (Bizmark.ID)"
+   └─ Company: "PT CANGAH PAJARATAN MANDIRI (Bizmark.ID)"
    └─ Services: Updated with LB3, AMDAL, Izin Lingkungan priority
    └─ Contact: Karawang address & updated phone
    └─ Area Layanan: Karawang, Purwakarta, Subang, Bekasi + nationwide
@@ -186,7 +186,7 @@ LONG-TERM (6-12 Months):
 📞 BUSINESS CONTACT INFO:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  Company:   PT Timur Cakrawala Konsultan
+  Company:   PT CANGAH PAJARATAN MANDIRI
   Brand:     Bizmark.ID
   Address:   Jl. Permata Sari Indah No.2, Palumbonsari
              Kec. Karawang Timur, Karawang, Jawa Barat 41314
@@ -247,7 +247,7 @@ LONG-TERM (6-12 Months):
 
 Generated: October 10, 2025
 By: GitHub Copilot AI Assistant
-Project: Bizmark.ID - PT Timur Cakrawala Konsultan
+Project: Bizmark.ID - PT CANGAH PAJARATAN MANDIRI
 
 🏆 100% COMPLETE 🏆
 

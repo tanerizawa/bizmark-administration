@@ -137,7 +137,7 @@ return [
     // Footer
     'footer' => [
         'tagline' => 'Trusted Industrial Permits',
-        'description' => 'PT Timur Cakrawala Konsultan is your trusted partner in industrial permit processing. With over 10 years of experience, we are committed to providing fast, transparent, and professional permit solutions.',
+        'description' => 'PT CANGAH PAJARATAN MANDIRI is your trusted partner in industrial permit processing. With over 10 years of experience, we are committed to providing fast, transparent, and professional permit solutions.',
         'newsletter_title' => 'Newsletter',
         'newsletter_desc' => 'Get latest updates about permits and regulations',
         'newsletter_placeholder' => 'Your Email',
@@ -159,7 +159,7 @@ return [
         'privacy' => 'Privacy Policy',
         'terms' => 'Terms & Conditions',
         'sitemap' => 'Sitemap',
-        'copyright' => '© 2025 PT Timur Cakrawala Konsultan (Bizmark.ID). All rights reserved.',
+        'copyright' => '© 2025 PT CANGAH PAJARATAN MANDIRI (Bizmark.ID). All rights reserved.',
         'made_with' => 'Made with',
         'in_indonesia' => 'in Indonesia',
         'verified_company' => 'Verified Company',

@@ -3,7 +3,7 @@
 <!-- Budget Overview Cards - Compact with Full Numbers -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-2.5 mb-3">
     <!-- Total Budget -->
-    <div class="card-elevated rounded-apple-lg p-3">
+    <div class="data-block">
         <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Nilai Kontrak</span>
             <i class="fas fa-wallet text-xs text-apple-blue-dark"></i>
@@ -15,7 +15,7 @@
     </div>
 
     <!-- Total Received -->
-    <div class="card-elevated rounded-apple-lg p-3">
+    <div class="data-block">
         <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Diterima</span>
             <i class="fas fa-hand-holding-usd text-xs" style="color: rgba(52, 199, 89, 1);"></i>
@@ -29,7 +29,7 @@
     </div>
 
     <!-- Total Expenses -->
-    <div class="card-elevated rounded-apple-lg p-3">
+    <div class="data-block">
         <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Pengeluaran</span>
             <i class="fas fa-shopping-cart text-xs" style="color: rgba(255, 59, 48, 1);"></i>
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Profit Margin -->
-    <div class="card-elevated rounded-apple-lg p-3">
+    <div class="data-block">
         <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Profit</span>
             <i class="fas fa-chart-line text-xs" style="color: rgba(0, 122, 255, 1);"></i>
@@ -59,7 +59,7 @@
 
 <!-- Secondary Metrics - Compact -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 mb-3">
-    <div class="card-elevated rounded-apple-lg p-3">
+    <div class="data-block">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs mb-0.5" style="color: rgba(235, 235, 245, 0.6);">Total Invoice</p>
@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <div class="card-elevated rounded-apple-lg p-3">
+    <div class="data-block">
         <div class="flex items-center justify-between">
             <div class="flex-1">
                 <p class="text-xs mb-0.5" style="color: rgba(235, 235, 245, 0.6);">Kasbon Belum Lunas</p>
@@ -90,7 +90,7 @@
 </div>
 
 <!-- Financial Chart - Compact -->
-<div class="card-elevated rounded-apple-lg p-3 mb-3">
+<div class="page-card space-y-2 mb-3">
     <div class="flex items-center justify-between mb-2">
         <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
             <i class="fas fa-chart-bar mr-2 text-apple-blue-dark"></i>Pemasukan vs Pengeluaran (6 Bulan)
@@ -102,24 +102,16 @@
 </div>
 
 <!-- Invoices Section - Compact -->
-<div class="card-elevated rounded-apple-lg p-3 mb-3">
+<div class="page-card space-y-2 mb-3">
     <div class="flex justify-between items-center mb-2">
         <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
             <i class="fas fa-file-invoice mr-2 text-apple-blue-dark"></i>Daftar Invoice
         </h3>
-        <div class="flex gap-2">
-            <button onclick="openDirectIncomeModal()" 
-                    class="text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors" 
-                    style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;"
-                    title="Catat pemasukan tanpa invoice">
-                <i class="fas fa-hand-holding-usd mr-1"></i>Pemasukan Langsung
-            </button>
-            <button onclick="openInvoiceModal()" 
-                    class="text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors" 
-                    style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
-                <i class="fas fa-plus mr-1"></i>Tambah Invoice
-            </button>
-        </div>
+        <button onclick="openInvoiceModal()" 
+                class="btn-primary-sm" 
+                style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
+            <i class="fas fa-plus mr-1"></i>Tambah Invoice
+        </button>
     </div>
 
     @if($project->invoices && $project->invoices->count() > 0)
@@ -213,8 +205,130 @@
     @endif
 </div>
 
+<!-- Direct Income Section - Pemasukan Langsung (Non-Invoice) -->
+<div class="page-card space-y-2 mb-3">
+    <div class="flex justify-between items-center mb-2">
+        <div class="flex items-center gap-2">
+            <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
+                <i class="fas fa-hand-holding-usd mr-2" style="color: rgba(52, 199, 89, 1);"></i>Pemasukan Langsung
+            </h3>
+            @if($totalDirectIncome > 0)
+            <span class="text-xs px-2 py-1 rounded-lg font-semibold" style="background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 1);">
+                Total: Rp {{ number_format($totalDirectIncome, 0, ',', '.') }}
+            </span>
+            @endif
+        </div>
+        <button onclick="openDirectIncomeModal()" 
+                class="btn-primary-sm" 
+                style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF; border-color: transparent;">
+            <i class="fas fa-plus mr-1"></i>Tambah Pemasukan
+        </button>
+    </div>
+
+    <div class="text-xs mb-2 px-3 py-2 rounded-lg" style="background: rgba(52, 199, 89, 0.1); border-left: 3px solid rgba(52, 199, 89, 1); color: rgba(235, 235, 245, 0.8);">
+        <i class="fas fa-info-circle mr-1" style="color: rgba(52, 199, 89, 1);"></i>
+        <strong>Pemasukan Langsung</strong> adalah pembayaran yang diterima tanpa invoice formal (contoh: uang muka, donasi, hibah, atau pembayaran cash langsung).
+    </div>
+
+    @if($directIncomes && $directIncomes->count() > 0)
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr style="border-bottom: 1px solid rgba(58, 58, 60, 0.8);">
+                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Tanggal</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Deskripsi</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Metode Pembayaran</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Rekening/Kas</th>
+                    <th class="text-right py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Jumlah</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Dicatat Oleh</th>
+                    <th class="text-center py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($directIncomes as $income)
+                <tr style="border-bottom: 1px solid rgba(58, 58, 60, 0.4);">
+                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                        {{ \Carbon\Carbon::parse($income->payment_date)->format('d M Y') }}
+                    </td>
+                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                        {{ $income->description }}
+                        @if($income->reference_number)
+                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.5);">
+                            Ref: {{ $income->reference_number }}
+                        </p>
+                        @endif
+                    </td>
+                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                        @php
+                            $methodLabels = [
+                                'bank_transfer' => 'Transfer Bank',
+                                'cash' => 'Kas Tunai',
+                                'check' => 'Cek',
+                                'giro' => 'Giro',
+                                'other' => 'Lainnya'
+                            ];
+                            $methodLabel = $methodLabels[$income->payment_method] ?? ucfirst($income->payment_method);
+                        @endphp
+                        <span class="inline-flex items-center">
+                            <i class="fas fa-{{ $income->payment_method === 'cash' ? 'money-bill-wave' : ($income->payment_method === 'bank_transfer' ? 'university' : 'credit-card') }} mr-1.5" 
+                               style="color: rgba(235, 235, 245, 0.4);"></i>
+                            {{ $methodLabel }}
+                        </span>
+                    </td>
+                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                        @if($income->bankAccount)
+                            {{ $income->bankAccount->account_name }}
+                            @if($income->bankAccount->account_number)
+                            <span class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
+                                ({{ $income->bankAccount->account_number }})
+                            </span>
+                            @endif
+                        @else
+                            <span style="color: rgba(235, 235, 245, 0.5);">-</span>
+                        @endif
+                    </td>
+                    <td class="py-1.5 px-2 text-xs text-right font-bold" style="color: rgba(52, 199, 89, 1);">
+                        Rp {{ number_format($income->amount, 0, ',', '.') }}
+                    </td>
+                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.7);">
+                        {{ $income->createdBy ? $income->createdBy->name : '-' }}
+                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.4);">
+                            {{ $income->created_at->format('d M Y H:i') }}
+                        </p>
+                    </td>
+                    <td class="py-1.5 px-2 text-center">
+                        <div class="flex items-center justify-center space-x-2">
+                            <button onclick="editDirectIncome({{ $income->id }})" 
+                                    class="text-xs hover:opacity-75" style="color: rgba(0, 122, 255, 1);" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteDirectIncome({{ $income->id }})" 
+                                    class="text-xs hover:opacity-75" style="color: rgba(255, 59, 48, 1);" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @else
+    <div class="text-center py-8">
+        <i class="fas fa-hand-holding-usd text-3xl mb-2" style="color: rgba(52, 199, 89, 0.3);"></i>
+        <p class="text-sm mb-1" style="color: rgba(235, 235, 245, 0.6);">Belum ada pemasukan langsung</p>
+        <p class="text-xs mb-3" style="color: rgba(235, 235, 245, 0.4);">Catat pemasukan yang tidak terkait dengan invoice</p>
+        <button onclick="openDirectIncomeModal()" 
+                class="text-xs px-4 py-2 rounded-lg font-medium transition-colors" 
+                style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
+            <i class="fas fa-plus mr-1"></i>Tambah Pemasukan Pertama
+        </button>
+    </div>
+    @endif
+</div>
+
 <!-- Unified Expenses Section with Smart Filters -->
-<div class="card-elevated rounded-apple-lg p-3">
+<div class="page-card space-y-2">
     <div class="flex justify-between items-center mb-2">
         <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
             <i class="fas fa-receipt mr-2 text-apple-blue-dark"></i>Pengeluaran & Kasbon
@@ -568,4 +682,39 @@ function filterExpenses(type) {
         }
     });
 }
+
+// Direct Income Functions
+function editDirectIncome(id) {
+    // Open modal in edit mode
+    window.openDirectIncomeModal(id);
+}
+
+function deleteDirectIncome(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus pemasukan ini?')) {
+        return;
+    }
+    
+    fetch(`/projects/{{ $project->id }}/direct-income/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Pemasukan berhasil dihapus', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showNotification(data.message || 'Gagal menghapus pemasukan', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Terjadi kesalahan saat menghapus pemasukan', 'error');
+    });
+}
+
 </script>

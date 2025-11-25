@@ -137,7 +137,7 @@ return [
     // Footer
     'footer' => [
         'tagline' => 'Perizinan Industri Terpercaya',
-        'description' => 'PT Timur Cakrawala Konsultan adalah mitra terpercaya Anda dalam pengurusan perizinan industri. Dengan pengalaman lebih dari 10 tahun, kami berkomitmen memberikan solusi perizinan yang cepat, transparan, dan profesional.',
+        'description' => 'PT CANGAH PAJARATAN MANDIRI adalah mitra terpercaya Anda dalam pengurusan perizinan industri. Dengan pengalaman lebih dari 10 tahun, kami berkomitmen memberikan solusi perizinan yang cepat, transparan, dan profesional.',
         'newsletter_title' => 'Newsletter',
         'newsletter_desc' => 'Dapatkan update terbaru seputar perizinan dan regulasi',
         'newsletter_placeholder' => 'Email Anda',
@@ -159,7 +159,7 @@ return [
         'privacy' => 'Kebijakan Privasi',
         'terms' => 'Syarat & Ketentuan',
         'sitemap' => 'Sitemap',
-        'copyright' => '© 2025 PT Timur Cakrawala Konsultan (Bizmark.ID). Semua hak dilindungi.',
+        'copyright' => '© 2025 PT CANGAH PAJARATAN MANDIRI (Bizmark.ID). Semua hak dilindungi.',
         'made_with' => 'Dibuat dengan',
         'in_indonesia' => 'di Indonesia',
         'verified_company' => 'Verified Company',

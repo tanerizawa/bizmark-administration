@@ -85,6 +85,10 @@
                         class="tab-button {{ $activeTab == 'types' ? 'active' : '' }} px-4 py-2.5 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
                     <i class="fas fa-certificate mr-2"></i>Jenis Izin
                 </button>
+                <button onclick="switchTab('kbli')" id="tab-kbli"
+                        class="tab-button {{ $activeTab == 'kbli' ? 'active' : '' }} px-4 py-2.5 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
+                    <i class="fas fa-file-invoice mr-2"></i>Data KBLI
+                </button>
                 <button onclick="switchTab('payments')" id="tab-payments"
                         class="tab-button {{ $activeTab == 'payments' ? 'active' : '' }} px-4 py-2.5 rounded-apple text-sm font-medium transition-apple whitespace-nowrap">
                     <i class="fas fa-money-check-alt mr-2"></i>Pembayaran
@@ -113,7 +117,12 @@
                 @include('admin.permits.tabs.types')
             </div>
 
-            <!-- Tab 4: Payments -->
+            <!-- Tab 4: KBLI Data -->
+            <div id="content-kbli" class="tab-content {{ $activeTab !== 'kbli' ? 'hidden' : '' }}">
+                @include('admin.master-data.tabs.kbli')
+            </div>
+
+            <!-- Tab 5: Payments -->
             <div id="content-payments" class="tab-content {{ $activeTab !== 'payments' ? 'hidden' : '' }}">
                 @include('admin.permits.tabs.payments')
             </div>

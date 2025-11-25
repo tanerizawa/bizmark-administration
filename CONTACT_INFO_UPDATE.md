@@ -78,7 +78,7 @@ https://wa.me/6283879602855
 ## 📊 SUMMARY OF CONTACT INFORMATION
 
 ### 🏢 Company Details
-- **Legal Name:** PT Timur Cakrawala Konsultan
+- **Legal Name:** PT CANGAH PAJARATAN MANDIRI
 - **Brand Name:** Bizmark.ID
 - **Address:** Jl. Permata Sari Indah No.2, Palumbonsari, Kec. Karawang Timur, Karawang, Jawa Barat 41314
 
@@ -243,7 +243,7 @@ All contact methods optimized for mobile:
 ```
 ╔══════════════════════════════════════════════════════════╗
 ║                                                          ║
-║           PT TIMUR CAKRAWALA KONSULTAN                  ║
+║           PT CANGAH PAJARATAN MANDIRI                  ║
 ║                   (BIZMARK.ID)                          ║
 ║                                                          ║
 ║  Spesialis Perizinan Limbah B3, AMDAL & UKL-UPL        ║

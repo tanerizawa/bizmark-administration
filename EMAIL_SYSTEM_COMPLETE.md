@@ -272,7 +272,7 @@ Navigate to: **Admin → Email Management → Email Settings**
 ## 🐛 Issues Fixed
 
 ### Issue #1: Layout Reference Error
-**Problem:** Views referencing non-existent `layouts.admin`
+**Problem:** Views referencing non-existent `layouts.app`
 **Solution:** Changed to `layouts.app`
 **Status:** ✅ Fixed
 

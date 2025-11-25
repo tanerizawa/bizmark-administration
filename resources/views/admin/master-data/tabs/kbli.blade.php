@@ -1,10 +1,10 @@
 <div class="card-apple">
     {{-- Header with Search and Filters --}}
-    <div class="p-6 border-b" style="border-color: var(--dark-separator);">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h2 class="text-xl font-semibold text-dark-text-primary">Data KBLI</h2>
+    <div class="p-4 md:p-5 border-b" style="border-color: var(--dark-separator);">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4 mb-4">
+            <h2 class="text-lg font-semibold text-dark-text-primary">Data KBLI</h2>
             
-            <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex flex-col sm:flex-row gap-2.5 md:gap-3">
                 {{-- Search Form --}}
                 <form method="GET" action="{{ route('admin.master-data.index') }}" class="flex-1 sm:w-64">
                     <input type="hidden" name="tab" value="kbli">

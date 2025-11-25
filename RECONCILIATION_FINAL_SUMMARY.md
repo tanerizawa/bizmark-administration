@@ -157,7 +157,7 @@ Dari analisis sampai UI, semua component sudah siap digunakan.
 #### 4. show.blade.php (400 lines) ✅ **NEW!**
 **Features:**
 - **Professional report layout:**
-  - Company header (PT Timur Cakrawala Konsultan)
+  - Company header (PT CANGAH PAJARATAN MANDIRI)
   - Report title
   - Bank & account details
   - Period display

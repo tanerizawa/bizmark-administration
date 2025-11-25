@@ -24,6 +24,7 @@
             <a href="{{ route('blog.index') }}" class="nav-link-white" role="menuitem">Artikel</a>
             <a href="{{ route('career.index') }}" class="nav-link-white" role="menuitem">Karir</a>
             <a href="{{ $isLandingPage ? '#about' : $landingUrl . '#about' }}" class="nav-link-white" role="menuitem">Tentang</a>
+            <a href="{{ route('contact.index') }}" class="nav-link-white" role="menuitem">Kontak</a>
         </div>
 
         <div class="hidden lg:flex items-center gap-4">

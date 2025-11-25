@@ -65,6 +65,48 @@ class JobApplication extends Model
     }
 
     /**
+     * Get all interview schedules for this application.
+     */
+    public function interviewSchedules()
+    {
+        return $this->hasMany(InterviewSchedule::class);
+    }
+
+    /**
+     * Get all test sessions for this application.
+     */
+    public function testSessions()
+    {
+        return $this->hasMany(TestSession::class);
+    }
+
+    /**
+     * Get all technical test submissions for this application.
+     */
+    public function technicalTestSubmissions()
+    {
+        return $this->hasMany(TechnicalTestSubmission::class);
+    }
+
+    /**
+     * Get all recruitment stages for this application.
+     */
+    public function recruitmentStages()
+    {
+        return $this->hasMany(RecruitmentStage::class)->orderBy('stage_order');
+    }
+
+    /**
+     * Get current active stage.
+     */
+    public function currentStage()
+    {
+        return $this->recruitmentStages()
+                    ->where('status', 'in-progress')
+                    ->first();
+    }
+
+    /**
      * Get status badge color.
      */
     public function getStatusBadgeAttribute()
@@ -92,6 +134,104 @@ class JobApplication extends Model
             'rejected' => 'Ditolak',
             default => $this->status,
         };
+    }
+
+    /**
+     * Get current recruitment stage (alternative name for clarity).
+     */
+    public function getCurrentStage(): ?RecruitmentStage
+    {
+        return $this->currentStage();
+    }
+
+    /**
+     * Calculate overall recruitment progress (0-100).
+     */
+    public function getOverallProgress(): float
+    {
+        $totalStages = $this->recruitmentStages()->count();
+        
+        if ($totalStages === 0) {
+            return 0;
+        }
+
+        $completedStages = $this->recruitmentStages()
+                                ->whereIn('status', ['passed', 'failed'])
+                                ->count();
+
+        return round(($completedStages / $totalStages) * 100, 2);
+    }
+
+    /**
+     * Check if application has passed a specific stage.
+     */
+    public function hasPassedStage(string $stageName): bool
+    {
+        return $this->recruitmentStages()
+                    ->where('stage_name', $stageName)
+                    ->where('status', 'passed')
+                    ->exists();
+    }
+
+    /**
+     * Get next stage to be started.
+     */
+    public function getNextStage(): ?RecruitmentStage
+    {
+        return $this->recruitmentStages()
+                    ->where('status', 'not-started')
+                    ->orderBy('stage_order')
+                    ->first();
+    }
+
+    /**
+     * Get all completed stages.
+     */
+    public function completedStages()
+    {
+        return $this->recruitmentStages()
+                    ->whereIn('status', ['passed', 'failed']);
+    }
+
+    /**
+     * Check if application is still in recruitment pipeline.
+     */
+    public function isInPipeline(): bool
+    {
+        return $this->recruitmentStages()
+                    ->whereIn('status', ['not-started', 'in-progress'])
+                    ->exists();
+    }
+
+    /**
+     * Get upcoming interviews.
+     */
+    public function upcomingInterviews()
+    {
+        return $this->interviewSchedules()
+                    ->where('scheduled_at', '>=', now())
+                    ->where('status', 'scheduled')
+                    ->orderBy('scheduled_at');
+    }
+
+    /**
+     * Get active test sessions.
+     */
+    public function activeTestSessions()
+    {
+        return $this->testSessions()
+                    ->where('status', 'started')
+                    ->where('expires_at', '>', now());
+    }
+
+    /**
+     * Get pending technical tests.
+     */
+    public function pendingTechnicalTests()
+    {
+        return $this->technicalTestSubmissions()
+                    ->where('status', 'submitted')
+                    ->whereNull('review_score');
     }
 
     /**

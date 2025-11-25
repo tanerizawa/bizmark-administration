@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Verification - Document Editing Type</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 40px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .status.success {
+            background: rgba(52, 211, 153, 0.1);
+            border: 2px solid #34d399;
+        }
+        .status.warning {
+            background: rgba(251, 191, 36, 0.1);
+            border: 2px solid #fbbf24;
+        }
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        .icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        .code {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            cursor: pointer;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Document Editing Test - Verification</h1>
+        
+        <div class="status success">
+            <h2>🎉 Template Berhasil Dibuat!</h2>
+            <p>Document Editing test type sudah terdaftar dan berfungsi dengan baik.</p>
+        </div>
+
+        <h3>📋 Checklist Verifikasi</h3>
+        
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <div>
+                <strong>Database Template</strong><br>
+                Template ID #4 created dengan test_type: "document-editing"
+            </div>
+        </div>
+
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <div>
+                <strong>Form Dropdown</strong><br>
+                Option "Document Editing" ada di /admin/recruitment/tests/create (line 85)
+            </div>
+        </div>
+
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <div>
+                <strong>JavaScript Toggle</strong><br>
+                Section document editing akan muncul ketika type dipilih (line 417)
+            </div>
+        </div>
+
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <div>
+                <strong>Controller Logic</strong><br>
+                TestManagementController memiliki conditional logic untuk document-editing
+            </div>
+        </div>
+
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <div>
+                <strong>Routes Registered</strong><br>
+                7 routes untuk document editing sudah terdaftar
+            </div>
+        </div>
+
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <div>
+                <strong>Evaluation Criteria</strong><br>
+                22 kriteria penilaian (100 poin total) sudah dikonfigurasi
+            </div>
+        </div>
+
+        <div class="status warning">
+            <h2>⚠️ Status: INACTIVE</h2>
+            <p>Template masih inactive karena belum upload dokumen Word (.docx)</p>
+            <p><strong>Next Step:</strong> Upload file UKL_UPL_Template_Broken.docx</p>
+        </div>
+
+        <h3>🔍 Cara Verifikasi di Browser</h3>
+        
+        <ol style="color: rgba(255,255,255,0.8);">
+            <li>
+                <strong>Buka halaman create test:</strong>
+                <div class="code">https://bizmark.id/admin/recruitment/tests/create</div>
+            </li>
+            <li>
+                <strong>Scroll ke dropdown "Tipe Tes"</strong>
+            </li>
+            <li>
+                <strong>Pilih "Document Editing"</strong><br>
+                Section "Document Editing" akan muncul di bawah
+            </li>
+            <li>
+                <strong>Verify section yang muncul:</strong>
+                <ul>
+                    <li>Template File upload field</li>
+                    <li>Kriteria Penilaian section</li>
+                    <li>Tombol "Tambah Kriteria"</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>🔗 Quick Access</h3>
+        
+        <a href="https://bizmark.id/admin/recruitment/tests/create" class="btn" target="_blank">
+            📝 Create New Test
+        </a>
+        
+        <a href="https://bizmark.id/admin/recruitment/tests/4" class="btn" target="_blank">
+            👁️ View Template #4
+        </a>
+        
+        <a href="https://bizmark.id/admin/recruitment/tests/4/edit" class="btn" target="_blank">
+            ✏️ Edit Template #4
+        </a>
+        
+        <a href="https://bizmark.id/admin/recruitment/tests" class="btn" target="_blank">
+            📋 All Tests
+        </a>
+
+        <h3>🗄️ Database Verification</h3>
+        
+        <div class="code">
+# Check template exists
+php artisan tinker --execute="App\Models\TestTemplate::find(4)"
+
+# Check all test types
+php artisan tinker --execute="App\Models\TestTemplate::pluck('test_type', 'id')"
+
+# Check if document-editing is in database
+php artisan tinker --execute="App\Models\TestTemplate::where('test_type', 'document-editing')->count()"
+        </div>
+
+        <h3>💡 Troubleshooting</h3>
+        
+        <div class="status warning">
+            <h4>Jika "Document Editing" tidak muncul di dropdown:</h4>
+            <ol style="color: rgba(255,255,255,0.8);">
+                <li>Clear browser cache (Ctrl + Shift + Delete)</li>
+                <li>Hard reload (Ctrl + Shift + R)</li>
+                <li>Check browser console untuk errors (F12)</li>
+                <li>Verify file: resources/views/admin/recruitment/tests/create.blade.php line 85</li>
+                <li>Clear Laravel cache:
+                    <div class="code">php artisan view:clear && php artisan route:clear && php artisan config:clear</div>
+                </li>
+            </ol>
+        </div>
+
+        <h3>📊 Current Status Summary</h3>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <thead>
+                <tr style="background: rgba(102, 126, 234, 0.2);">
+                    <th style="padding: 10px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">Component</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">Status</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Database Migration</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1); color: #34d399;">✅ DONE</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Constraint dropped, VARCHAR(50)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Template Created</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1); color: #34d399;">✅ DONE</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">ID: 4, 22 criteria, 100 points</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Form Dropdown</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1); color: #34d399;">✅ READY</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Option exists at line 85</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">JavaScript Logic</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1); color: #34d399;">✅ READY</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Toggle section working</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Controllers</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1); color: #34d399;">✅ READY</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Both controllers configured</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Routes</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1); color: #34d399;">✅ READY</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">7 new routes registered</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Template File</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1); color: #fbbf24;">⏳ PENDING</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Waiting for upload</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Template Status</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1); color: #fbbf24;">⏳ INACTIVE</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Will activate after upload</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="status success">
+            <h3>🎯 Kesimpulan</h3>
+            <p><strong>Document Editing TIDAK HILANG!</strong></p>
+            <p>Semua komponen sudah terpasang dengan benar. Template ada di database (ID: 4) dengan test_type "document-editing".</p>
+            <p>Untuk mengaktifkan template, upload dokumen Word melalui salah satu cara:</p>
+            <ul style="color: rgba(255,255,255,0.8);">
+                <li>Script: <code>php update_ukl_upl_template.php</code></li>
+                <li>Admin Panel: Edit template #4</li>
+                <li>Tinker: Update template_file_path manually</li>
+            </ul>
+        </div>
+
+        <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); text-align: center;">
+            <p>Document Editing Test - UKL/UPL Environmental Specialist</p>
+            <p>Created: 2025-11-23 | Template ID: 4 | Status: INACTIVE</p>
+        </footer>
+    </div>
+</body>
+</html>

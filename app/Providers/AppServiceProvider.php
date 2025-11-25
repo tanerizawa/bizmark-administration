@@ -44,5 +44,8 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\Task::observe(\App\Observers\TaskObserver::class);
         \App\Models\Document::observe(\App\Observers\DocumentObserver::class);
         \App\Models\PermitApplication::observe(\App\Observers\PermitApplicationObserver::class);
+        
+        // Register ProjectObserver for auto-status and progress logic
+        \App\Models\Project::observe(\App\Observers\ProjectObserver::class);
     }
 }

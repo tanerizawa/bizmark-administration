@@ -8,14 +8,14 @@
     <!-- Primary Meta Tags -->
     @php
         $defaultTitle = app()->getLocale() == 'id' 
-            ? 'Bizmark.ID - Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang | PT Timur Cakrawala Konsultan' 
+            ? 'Bizmark.ID - Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang | PT CANGAH PAJARATAN MANDIRI' 
             : 'Bizmark.ID - Environmental Permit Consultant | B3 Waste, AMDAL, UKL-UPL Karawang';
         $defaultMetaTitle = app()->getLocale() == 'id' 
             ? 'Bizmark.ID - Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang' 
             : 'Bizmark.ID - Environmental Permit Consultant Karawang';
         $defaultDescription = app()->getLocale() == 'id' 
-            ? 'PT Timur Cakrawala Konsultan (Bizmark.ID) - Spesialis perizinan Limbah B3, AMDAL, UKL-UPL untuk industri manufaktur. Proses cepat, transparan, dan terpercaya.' 
-            : 'PT Timur Cakrawala Konsultan (Bizmark.ID) - Environmental permit specialist for B3 Waste, AMDAL, UKL-UPL in manufacturing industry. Fast process, transparent and trusted.';
+            ? 'PT CANGAH PAJARATAN MANDIRI (Bizmark.ID) - Spesialis perizinan Limbah B3, AMDAL, UKL-UPL untuk industri manufaktur. Proses cepat, transparan, dan terpercaya.' 
+            : 'PT CANGAH PAJARATAN MANDIRI (Bizmark.ID) - Environmental permit specialist for B3 Waste, AMDAL, UKL-UPL in manufacturing industry. Fast process, transparent and trusted.';
         $defaultKeywords = app()->getLocale() == 'id' 
             ? 'konsultan perizinan karawang, jasa perizinan lb3, limbah b3, amdal karawang, ukl upl karawang, perizinan industri manufaktur, konsultan lingkungan' 
             : 'environmental consultant karawang, b3 waste permit, hazardous waste, amdal karawang, environmental permit, manufacturing industry permit';
@@ -26,7 +26,7 @@
     <meta name="keywords" content="@yield('meta_keywords', $defaultKeywords)">
     <meta name="robots" content="index, follow">
     <meta name="language" content="{{ app()->getLocale() }}">
-    <meta name="author" content="PT Timur Cakrawala Konsultan (Bizmark.ID)">
+    <meta name="author" content="PT CANGAH PAJARATAN MANDIRI (Bizmark.ID)">
     <link rel="canonical" href="{{ url()->current() }}">
     
     <!-- Alternate Languages (Hreflang) -->
@@ -506,7 +506,7 @@
         "@@context": "https://schema.org",
         "@type": "Organization",
         "name": "Bizmark.ID",
-        "legalName": "PT Timur Cakrawala Konsultan",
+        "legalName": "PT CANGAH PAJARATAN MANDIRI",
         "url": "{{ url('/') }}",
         "logo": "{{ asset('images/logo.png') }}",
         "description": "{{ __('landing.schema_description') }}",

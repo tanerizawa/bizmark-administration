@@ -50,12 +50,26 @@
                 <i class="fas fa-newspaper w-6 inline-block" aria-hidden="true"></i>
                 <span>Artikel</span>
             </a>
+            <a href="{{ route('career.index') }}" 
+               class="text-white hover:text-blue-200 transition px-4 py-3 rounded-lg hover:bg-white/10" 
+               onclick="toggleMobileMenu()"
+               aria-label="View career opportunities">
+                <i class="fas fa-briefcase w-6 inline-block" aria-hidden="true"></i>
+                <span>Karir</span>
+            </a>
             <a href="{{ $isLandingPage ? '#about' : $landingUrl . '#about' }}" 
                class="text-white hover:text-blue-200 transition px-4 py-3 rounded-lg hover:bg-white/10" 
                onclick="toggleMobileMenu()"
                aria-label="Learn about us">
                 <i class="fas fa-info-circle w-6 inline-block" aria-hidden="true"></i>
                 <span>Tentang</span>
+            </a>
+            <a href="{{ route('contact.index') }}" 
+               class="text-white hover:text-blue-200 transition px-4 py-3 rounded-lg hover:bg-white/10" 
+               onclick="toggleMobileMenu()"
+               aria-label="Contact us">
+                <i class="fas fa-envelope w-6 inline-block" aria-hidden="true"></i>
+                <span>Kontak</span>
             </a>
             
             <!-- Divider -->

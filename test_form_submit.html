@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Form Submit with Currency Input</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1c1c1e;
+            color: #ebebf5;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .input-group {
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ebebf5;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: rgba(0, 122, 255, 1);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        .result {
+            margin-top: 8px;
+            padding: 12px;
+            background: rgba(52, 199, 89, 0.1);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(0, 122, 255, 1) 0%, rgba(10, 132, 255, 1) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .form-data {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(52, 199, 89, 0.1);
+            border-radius: 12px;
+            display: none;
+        }
+        .form-data.show {
+            display: block;
+        }
+        .form-data h3 {
+            margin-top: 0;
+            color: #34c759;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Form Submit</h1>
+    <p style="color: rgba(235, 235, 245, 0.6); font-size: 14px;">Test validasi dan submit form dengan currency input</p>
+
+    <form id="testForm">
+        <div class="input-group">
+            <label>Saldo Awal Bank *</label>
+            <input type="text" id="opening_balance_display" placeholder="0.00">
+            <input type="hidden" name="opening_balance_bank" id="opening_balance_bank">
+            <div class="result">
+                Hidden Value: <span id="opening_raw">0</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Saldo Akhir Bank *</label>
+            <input type="text" id="closing_balance_display" placeholder="0.00">
+            <input type="hidden" name="closing_balance_bank" id="closing_balance_bank">
+            <div class="result">
+                Hidden Value: <span id="closing_raw">0</span>
+            </div>
+        </div>
+
+        <button type="submit">Submit Form</button>
+    </form>
+
+    <div class="form-data" id="formData">
+        <h3>Form Data yang akan dikirim:</h3>
+        <pre id="formDataDisplay"></pre>
+    </div>
+
+    <script>
+        // Currency formatting functions
+        function formatCurrency(value) {
+            let numStr = value.replace(/[^\d.]/g, '');
+            const parts = numStr.split('.');
+            if (parts.length > 2) {
+                numStr = parts[0] + '.' + parts.slice(1).join('');
+            }
+            if (parts.length === 2 && parts[1].length > 2) {
+                numStr = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+            const num = parseFloat(numStr);
+            if (isNaN(num)) return '';
+            return num.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function parseCurrency(formattedValue) {
+            return parseFloat(formattedValue.replace(/,/g, '')) || 0;
+        }
+
+        // Setup currency input
+        function setupCurrencyInput(displayInputId, hiddenInputId, rawDisplayId) {
+            const displayInput = document.getElementById(displayInputId);
+            const hiddenInput = document.getElementById(hiddenInputId);
+            const rawDisplay = document.getElementById(rawDisplayId);
+            
+            displayInput.addEventListener('input', function(e) {
+                let value = e.target.value;
+                let rawValue = value.replace(/,/g, '');
+                let cursorPos = e.target.selectionStart;
+                let commasBefore = (value.substring(0, cursorPos).match(/,/g) || []).length;
+                
+                let formatted = formatCurrency(rawValue);
+                e.target.value = formatted;
+                
+                let parsedValue = parseCurrency(formatted);
+                hiddenInput.value = parsedValue;
+                rawDisplay.textContent = parsedValue;
+                
+                let commasAfter = (formatted.substring(0, cursorPos).match(/,/g) || []).length;
+                let newCursorPos = cursorPos + (commasAfter - commasBefore);
+                e.target.setSelectionRange(newCursorPos, newCursorPos);
+            });
+            
+            displayInput.addEventListener('blur', function(e) {
+                if (e.target.value) {
+                    e.target.value = formatCurrency(e.target.value);
+                    hiddenInput.value = parseCurrency(e.target.value);
+                    rawDisplay.textContent = hiddenInput.value;
+                }
+            });
+        }
+
+        // Initialize
+        setupCurrencyInput('opening_balance_display', 'opening_balance_bank', 'opening_raw');
+        setupCurrencyInput('closing_balance_display', 'closing_balance_bank', 'closing_raw');
+
+        // Form submit handler
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const openingDisplay = document.getElementById('opening_balance_display');
+            const openingHidden = document.getElementById('opening_balance_bank');
+            const closingDisplay = document.getElementById('closing_balance_display');
+            const closingHidden = document.getElementById('closing_balance_bank');
+            
+            // Update hidden inputs
+            if (openingDisplay.value) {
+                openingHidden.value = parseCurrency(openingDisplay.value);
+            }
+            if (closingDisplay.value) {
+                closingHidden.value = parseCurrency(closingDisplay.value);
+            }
+            
+            // Validate
+            if (!openingHidden.value || openingHidden.value === '0') {
+                alert('❌ Saldo Awal Bank harus diisi dengan benar');
+                openingDisplay.focus();
+                return false;
+            }
+            
+            if (!closingHidden.value || closingHidden.value === '0') {
+                alert('❌ Saldo Akhir Bank harus diisi dengan benar');
+                closingDisplay.focus();
+                return false;
+            }
+            
+            // Show form data
+            const formData = {
+                opening_balance_display: openingDisplay.value,
+                opening_balance_bank: openingHidden.value,
+                closing_balance_display: closingDisplay.value,
+                closing_balance_bank: closingHidden.value
+            };
+            
+            document.getElementById('formDataDisplay').textContent = JSON.stringify(formData, null, 2);
+            document.getElementById('formData').classList.add('show');
+            
+            console.log('✅ Form valid! Data:', formData);
+            alert('✅ Form valid! Check console and display below.');
+            
+            return false; // Prevent actual submit for testing
+        });
+    </script>
+</body>
+</html>

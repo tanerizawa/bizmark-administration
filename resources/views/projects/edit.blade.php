@@ -149,6 +149,40 @@
                 </div>
 
                 <div>
+                    <label for="completed_at" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        Tanggal Selesai Aktual
+                        <span class="text-xs" style="color: rgba(235, 235, 245, 0.5);">(opsional)</span>
+                    </label>
+                    <input type="date" id="completed_at" name="completed_at" 
+                           value="{{ old('completed_at', $project->completed_at ? $project->completed_at->format('Y-m-d') : ($project->actual_completion_date ? $project->actual_completion_date->format('Y-m-d') : '')) }}"
+                           class="input-dark w-full px-3 py-2 rounded-md @error('completed_at') ring-2 ring-apple-red @enderror">
+                    @error('completed_at')
+                    <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
+                    @enderror
+                    
+                    @if(($project->completed_at || $project->actual_completion_date) && $project->deadline)
+                        @php
+                            $completedDate = $project->completed_at ?? $project->actual_completion_date;
+                            $status = $project->getCompletionStatus();
+                            $statusColors = [
+                                'on-time' => 'rgba(52, 199, 89, 1)',
+                                'early' => 'rgba(10, 132, 255, 1)',
+                                'late' => 'rgba(255, 59, 48, 1)'
+                            ];
+                            $statusIcons = [
+                                'on-time' => 'fa-check-circle',
+                                'early' => 'fa-bolt',
+                                'late' => 'fa-exclamation-triangle'
+                            ];
+                        @endphp
+                        <p class="mt-2 text-xs flex items-center gap-1" style="color: {{ $statusColors[$status] ?? 'rgba(235,235,245,0.6)' }}">
+                            <i class="fas {{ $statusIcons[$status] ?? 'fa-info-circle' }}"></i>
+                            {{ $project->getCompletionStatusMessage() }}
+                        </p>
+                    @endif
+                </div>
+
+                <div>
                     <label for="progress_percentage" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
                         Progress (%)
                     </label>
@@ -160,6 +194,22 @@
                     @enderror
                 </div>
             </div>
+            
+            <!-- Completion Notes -->
+            @if($project->completed_at || old('completed_at'))
+            <div class="mt-6">
+                <label for="completion_notes" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    Catatan Penyelesaian
+                    <span class="text-xs" style="color: rgba(235, 235, 245, 0.5);">(opsional - muncul saat ada tanggal selesai)</span>
+                </label>
+                <textarea id="completion_notes" name="completion_notes" rows="3"
+                          class="input-dark w-full px-3 py-2 rounded-md @error('completion_notes') ring-2 ring-apple-red @enderror"
+                          placeholder="Contoh: Semua dokumen izin sudah diterbitkan. Client puas dengan hasil pekerjaan.">{{ old('completion_notes', $project->completion_notes) }}</textarea>
+                @error('completion_notes')
+                <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
+                @enderror
+            </div>
+            @endif
         </div>
 
         <!-- Financial Information -->

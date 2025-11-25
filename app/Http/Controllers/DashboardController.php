@@ -282,9 +282,10 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $now = Carbon::now();
 
-        // Overdue projects
+        // Overdue projects - Fix: Exclude completed projects
         $overdueProjects = Project::with(['status', 'institution'])
             ->where('deadline', '<', $today)
+            ->whereNull('completed_at')  // Not completed
             ->whereDoesntHave('status', function($query) {
                 $query->where('name', 'Selesai');
             })
@@ -309,8 +310,10 @@ class DashboardController extends Controller
         // Due today (projects + tasks)
         $dueToday = collect();
         
+        // Projects due today - Fix: Exclude already completed
         $projectsDueToday = Project::with(['status', 'institution'])
             ->whereDate('deadline', $today)
+            ->whereNull('completed_at')  // Not completed
             ->whereDoesntHave('status', function($query) {
                 $query->where('name', 'Selesai');
             })
@@ -374,7 +377,15 @@ class DashboardController extends Controller
             $monthlyBurnRate = $monthsWithExpenses > 0 ? $totalExpenses / $monthsWithExpenses : 0;
 
             // Calculate runway (months)
-            $runway = $monthlyBurnRate > 0 ? $currentBalance / $monthlyBurnRate : 999;
+            // Fix: Cap runway at 99 months max for display (999 is unrealistic)
+            if ($monthlyBurnRate > 0) {
+                $runway = $currentBalance / $monthlyBurnRate;
+                // Cap at 99 months for more realistic display
+                $runway = min($runway, 99);
+            } else {
+                // No burn rate = infinite runway, but display as 99+ for UI
+                $runway = 99;
+            }
 
             // Overdue invoices total
             $overdueInvoices = Invoice::where('status', 'overdue')
@@ -785,7 +796,9 @@ class DashboardController extends Controller
             })->filter();
 
         // Get projects with milestones/deadlines in next 30 days
+        // Fix: Exclude completed projects
         $projects = Project::whereBetween('deadline', [$today, $endOfMonth])
+            ->whereNull('completed_at')  // Not completed
             ->orderBy('deadline', 'asc')
             ->get()
             ->map(function ($project) {

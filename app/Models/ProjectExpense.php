@@ -70,9 +70,10 @@ class ProjectExpense extends Model
     {
         return self::categoryDefinitions()
             ->groupBy(fn ($category) => $category->group ?? 'Lainnya')
-            ->map(function ($items) {
+            ->map(function ($items, $groupName) {
                 return $items->map(function ($category) {
                     return [
+                        'value' => $category->slug,  // Added: slug for option value
                         'label' => $category->name,
                         'icon' => $category->icon,
                         'group' => $category->group,
@@ -98,7 +99,7 @@ class ProjectExpense extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    // Events - Auto-update project totals
+    // Events - Auto-update project totals and cash account balance
     protected static function booted()
     {
         static::created(function ($expense) {
@@ -106,12 +107,16 @@ class ProjectExpense extends Model
                 $expense->project->updateTotalExpenses();
             }
             
-            // Update cash account balance
+            // AUTO-RECALCULATE cash account balance
             if ($expense->bank_account_id) {
                 $account = CashAccount::find($expense->bank_account_id);
                 if ($account) {
-                    $account->current_balance -= $expense->amount;
-                    $account->save();
+                    $account->recalculateBalance(
+                        changeType: 'expense',
+                        referenceId: $expense->id,
+                        referenceType: 'ProjectExpense',
+                        description: "Expense: {$expense->description}"
+                    );
                 }
             }
         });
@@ -124,21 +129,29 @@ class ProjectExpense extends Model
                 $expense->project->updateTotalExpenses();
             }
             
-            // Revert old account balance
-            if ($oldBankAccountId) {
+            // RECALCULATE old account balance (if changed)
+            if ($oldBankAccountId && $oldBankAccountId != $expense->bank_account_id) {
                 $oldAccount = CashAccount::find($oldBankAccountId);
                 if ($oldAccount) {
-                    $oldAccount->current_balance += $oldAmount;
-                    $oldAccount->save();
+                    $oldAccount->recalculateBalance(
+                        changeType: 'expense',
+                        referenceId: $expense->id,
+                        referenceType: 'ProjectExpense',
+                        description: "Expense moved to different account"
+                    );
                 }
             }
             
-            // Update new account balance
+            // RECALCULATE new account balance
             if ($expense->bank_account_id) {
                 $newAccount = CashAccount::find($expense->bank_account_id);
                 if ($newAccount) {
-                    $newAccount->current_balance -= $expense->amount;
-                    $newAccount->save();
+                    $newAccount->recalculateBalance(
+                        changeType: 'expense',
+                        referenceId: $expense->id,
+                        referenceType: 'ProjectExpense',
+                        description: "Expense updated: {$expense->description}"
+                    );
                 }
             }
         });
@@ -148,12 +161,16 @@ class ProjectExpense extends Model
                 $expense->project->updateTotalExpenses();
             }
             
-            // Revert cash account balance
+            // RECALCULATE cash account balance after deletion
             if ($expense->bank_account_id) {
                 $account = CashAccount::find($expense->bank_account_id);
                 if ($account) {
-                    $account->current_balance += $expense->amount;
-                    $account->save();
+                    $account->recalculateBalance(
+                        changeType: 'expense',
+                        referenceId: $expense->id,
+                        referenceType: 'ProjectExpense',
+                        description: "Expense deleted"
+                    );
                 }
             }
         });

@@ -60,14 +60,22 @@ class BankReconciliationController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::info("=== RECONCILIATION STORE STARTED ===", [
+            'user_id' => auth()->id(),
+            'request_data' => $request->except(['bank_statement', '_token']),
+            'has_file' => $request->hasFile('bank_statement'),
+        ]);
+
         $validated = $request->validate([
             'cash_account_id' => 'required|exists:cash_accounts,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'opening_balance_bank' => 'required|numeric',
-            'closing_balance_bank' => 'required|numeric',
-            'bank_statement' => 'required|file|mimes:csv,xlsx,xls|max:5120', // 5MB max
+            'opening_balance_bank' => 'required|numeric|min:0',
+            'closing_balance_bank' => 'required|numeric|min:0',
+            'bank_statement' => 'required|file|mimetypes:text/plain,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/csv,text/comma-separated-values|max:5120',
         ]);
+
+        \Log::info("Validation passed", ['validated' => $validated]);
 
         try {
             DB::beginTransaction();
@@ -75,43 +83,122 @@ class BankReconciliationController extends Controller
             $cashAccount = CashAccount::findOrFail($request->cash_account_id);
 
             // Get opening balance from books (system balance at start date)
-            $openingBalanceBook = $this->getSystemBalance($cashAccount->id, $request->start_date);
-            $closingBalanceBook = $this->getSystemBalance($cashAccount->id, $request->end_date);
+            // Use day before start_date to get accurate opening balance
+            $startDate = \Carbon\Carbon::parse($request->start_date);
+            $endDate = \Carbon\Carbon::parse($request->end_date);
+            
+            $openingBalanceBook = $this->getSystemBalance(
+                $cashAccount->id, 
+                $startDate->copy()->subDay()->toDateString()
+            );
+            
+            $closingBalanceBook = $this->getSystemBalance(
+                $cashAccount->id, 
+                $endDate->toDateString()
+            );
+
+            \Log::info("Reconciliation balances calculated", [
+                'account_id' => $cashAccount->id,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'opening_balance_book' => $openingBalanceBook,
+                'closing_balance_book' => $closingBalanceBook,
+                'opening_balance_bank' => $request->opening_balance_bank,
+                'closing_balance_bank' => $request->closing_balance_bank,
+            ]);
 
             // Store bank statement file
             $file = $request->file('bank_statement');
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('bank-statements', $filename, 'public');
 
-            // Create reconciliation
-            $reconciliation = BankReconciliation::create([
+            \Log::info("File uploaded", ['path' => $path, 'filename' => $filename]);
+
+            // Prepare data array for create
+            $reconciliationData = [
                 'cash_account_id' => $request->cash_account_id,
                 'reconciliation_date' => now()->toDateString(),
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'opening_balance_book' => $openingBalanceBook,
+                
+                // Balances (required)
+                'opening_balance_book' => $openingBalanceBook ?? 0,
                 'opening_balance_bank' => $request->opening_balance_bank,
-                'closing_balance_book' => $closingBalanceBook,
+                'closing_balance_book' => $closingBalanceBook ?? 0,
                 'closing_balance_bank' => $request->closing_balance_bank,
+                
+                // Adjustments (with defaults, but set explicitly)
+                'total_deposits_in_transit' => 0,
+                'total_outstanding_checks' => 0,
+                'total_bank_charges' => 0,
+                'total_bank_credits' => 0,
+                
+                // Results (required)
                 'adjusted_bank_balance' => $request->closing_balance_bank,
-                'adjusted_book_balance' => $closingBalanceBook,
-                'difference' => $closingBalanceBook - $request->closing_balance_bank,
+                'adjusted_book_balance' => $closingBalanceBook ?? 0,
+                'difference' => ($closingBalanceBook ?? 0) - $request->closing_balance_bank,
+                
+                // Status & metadata
                 'status' => 'in_progress',
                 'bank_statement_file' => $path,
-                'bank_statement_format' => $file->getClientOriginalExtension(),
+                'bank_statement_format' => $this->detectBankFormat($file),
                 'reconciled_by' => auth()->id(),
+            ];
+
+            \Log::info("About to create reconciliation with data:", [
+                'field_count' => count($reconciliationData),
+                'has_opening_balance_book' => isset($reconciliationData['opening_balance_book']),
+                'has_closing_balance_book' => isset($reconciliationData['closing_balance_book']),
+                'opening_balance_book_value' => $reconciliationData['opening_balance_book'] ?? 'NOT SET',
+                'closing_balance_book_value' => $reconciliationData['closing_balance_book'] ?? 'NOT SET',
             ]);
 
-            // Import bank statement
-            $this->importBankStatement($reconciliation, $file);
+            // Create reconciliation with all required fields
+            $reconciliation = BankReconciliation::create($reconciliationData);
+
+            \Log::info("Reconciliation #{$reconciliation->id} created successfully");
+
+            // Import bank statement with error handling
+            try {
+                $importedCount = $this->importBankStatement($reconciliation, $file);
+                \Log::info("Reconciliation #{$reconciliation->id}: Imported {$importedCount} entries");
+                
+                if ($importedCount === 0) {
+                    DB::rollBack();
+                    Storage::disk('public')->delete($path);
+                    return back()
+                        ->withInput()
+                        ->with('error', 'Tidak ada transaksi valid yang dapat diimport dari file. Periksa format CSV Anda.');
+                }
+            } catch (\Exception $importError) {
+                DB::rollBack();
+                Storage::disk('public')->delete($path);
+                \Log::error("Import failed for reconciliation #{$reconciliation->id}: " . $importError->getMessage());
+                \Log::error($importError->getTraceAsString());
+                return back()
+                    ->withInput()
+                    ->with('error', 'Gagal mengimport file: ' . $importError->getMessage());
+            }
 
             DB::commit();
 
             return redirect()
                 ->route('reconciliations.match', $reconciliation)
-                ->with('success', 'Rekonsiliasi berhasil dimulai. Silakan cocokkan transaksi.');
+                ->with('success', 'Rekonsiliasi berhasil dimulai. ' . $importedCount . ' transaksi berhasil diimport.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error("Validation failed in reconciliation store", [
+                'errors' => $e->errors(),
+                'request_data' => $request->except(['bank_statement', '_token']),
+            ]);
+            throw $e; // Re-throw to show validation errors to user
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error("Reconciliation creation failed: " . $e->getMessage(), [
+                'exception_class' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            \Log::error($e->getTraceAsString());
             return back()
                 ->withInput()
                 ->with('error', 'Error: ' . $e->getMessage());
@@ -325,6 +412,9 @@ class BankReconciliationController extends Controller
     /**
      * Get system balance at a specific date.
      */
+    /**
+     * Get system balance at specific date.
+     */
     private function getSystemBalance($accountId, $date)
     {
         $account = CashAccount::findOrFail($accountId);
@@ -341,6 +431,41 @@ class BankReconciliationController extends Controller
             ->sum('amount');
 
         return $initialBalance + $totalIncome - $totalExpense;
+    }
+
+    /**
+     * Detect bank CSV format.
+     */
+    private function detectBankFormat($file)
+    {
+        try {
+            $handle = fopen($file->getRealPath(), 'r');
+            $firstLine = fgets($handle);
+            fclose($handle);
+            
+            // BCA format has "Account No." in first line
+            if (stripos($firstLine, 'Account No') !== false) {
+                return 'BCA';
+            }
+            
+            // Check for other bank formats
+            if (stripos($firstLine, 'Mandiri') !== false) {
+                return 'Mandiri';
+            }
+            
+            if (stripos($firstLine, 'BNI') !== false) {
+                return 'BNI';
+            }
+            
+            if (stripos($firstLine, 'BRI') !== false) {
+                return 'BRI';
+            }
+            
+            // Default to extension-based format
+            return strtoupper($file->getClientOriginalExtension());
+        } catch (\Exception $e) {
+            return 'Unknown';
+        }
     }
 
     /**
@@ -361,34 +486,269 @@ class BankReconciliationController extends Controller
 
     /**
      * Import CSV bank statement.
+     * 
+     * Supports multiple bank formats:
+     * 1. BTN Format: Date, Description, Debit, Credit, Balance, Reference
+     * 2. BCA Format: Date, Description, Branch, Amount, DB/CR, Balance
      */
     private function importCSV(BankReconciliation $reconciliation, $file)
     {
         $handle = fopen($file->getRealPath(), 'r');
-        $header = fgetcsv($handle); // Skip header row
         
+        // Read first line to detect format
+        $firstLine = fgets($handle);
+        rewind($handle);
+        
+        // Detect BCA format (has "Account No." header)
+        $isBCAFormat = stripos($firstLine, 'Account No') !== false;
+        
+        if ($isBCAFormat) {
+            return $this->importBCAFormat($reconciliation, $handle);
+        } else {
+            return $this->importStandardFormat($reconciliation, $handle);
+        }
+    }
+    
+    /**
+     * Import BCA CSV format.
+     * 
+     * Format BCA:
+     * Header: Account No.,=,'1091806504
+     *         Name,=,ODANG RODIANA
+     *         Currency,=,IDR
+     *         (blank line)
+     *         Date,Description,Branch,Amount,,Balance
+     * Data:   '07/09,KARTU DEBIT IDM...,'0998,511400.00,DB,897447.23
+     * Footer: Starting Balance,=,1408847.23
+     *         Credit,=,3800000.00
+     *         Debet,=,5030400.00
+     *         Ending Balance,=,178447.23
+     */
+    private function importBCAFormat(BankReconciliation $reconciliation, $handle)
+    {
         $entries = [];
-        while (($row = fgetcsv($handle)) !== false) {
-            // Assuming BTN format: Date, Description, Debit, Credit, Balance, Reference
-            // Adjust column indexes based on actual bank format
-            if (count($row) >= 5) {
-                $entries[] = [
-                    'reconciliation_id' => $reconciliation->id,
-                    'transaction_date' => $this->parseDate($row[0] ?? ''),
-                    'description' => $row[1] ?? '',
-                    'debit_amount' => $this->parseAmount($row[2] ?? '0'),
-                    'credit_amount' => $this->parseAmount($row[3] ?? '0'),
-                    'running_balance' => $this->parseAmount($row[4] ?? '0'),
-                    'reference_number' => $row[5] ?? null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
+        $rowNumber = 0;
+        $inDataSection = false;
+        $currentYear = date('Y'); // Use current year for DD/MM dates
+        
+        \Log::info("Detected BCA CSV format for reconciliation #{$reconciliation->id}");
+        
+        while (($line = fgets($handle)) !== false) {
+            $rowNumber++;
+            
+            // Parse CSV line manually to handle BCA format properly
+            $row = str_getcsv($line);
+            
+            // Skip empty rows
+            if (empty(array_filter($row))) {
+                continue;
+            }
+            
+            // Detect header section (skip)
+            if (stripos($row[0], 'Account No') !== false || 
+                stripos($row[0], 'Name') !== false || 
+                stripos($row[0], 'Currency') !== false) {
+                \Log::info("Row {$rowNumber}: Header row - {$row[0]}");
+                continue;
+            }
+            
+            // Detect data header (Date,Description,Branch,Amount,,Balance)
+            if (stripos($row[0], 'Date') !== false && 
+                stripos($line, 'Description') !== false && 
+                stripos($line, 'Balance') !== false) {
+                $inDataSection = true;
+                \Log::info("Row {$rowNumber}: Data section header detected");
+                continue;
+            }
+            
+            // Detect footer section (stop processing)
+            if (stripos($row[0], 'Starting Balance') !== false || 
+                stripos($row[0], 'Credit') !== false || 
+                stripos($row[0], 'Debet') !== false || 
+                stripos($row[0], 'Ending Balance') !== false) {
+                \Log::info("Row {$rowNumber}: Footer detected - {$row[0]}");
+                break; // Stop processing at footer
+            }
+            
+            // Process data rows
+            if ($inDataSection && count($row) >= 6) {
+                try {
+                    // BCA Format columns:
+                    // [0] = Date ('07/09)
+                    // [1] = Description
+                    // [2] = Branch ('0998)
+                    // [3] = Amount (511400.00)
+                    // [4] = DB/CR indicator
+                    // [5] = Balance (897447.23)
+                    
+                    $dateStr = trim($row[0]);
+                    $description = trim($row[1]);
+                    $branch = trim($row[2]);
+                    $amount = $this->parseAmount($row[3]);
+                    $dbCrIndicator = strtoupper(trim($row[4]));
+                    $runningBalance = $this->parseAmount($row[5]);
+                    
+                    // Parse date - BCA uses 'DD/MM format
+                    // Remove leading quote if present
+                    $dateStr = ltrim($dateStr, "'");
+                    
+                    // Parse DD/MM and add current year
+                    if (preg_match('/^(\d{1,2})\/(\d{1,2})$/', $dateStr, $matches)) {
+                        $day = str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+                        $month = str_pad($matches[2], 2, '0', STR_PAD_LEFT);
+                        
+                        // If month > current month, assume previous year
+                        $transactionDate = "{$currentYear}-{$month}-{$day}";
+                        $transMonth = (int)$month;
+                        $currentMonth = (int)date('m');
+                        
+                        if ($transMonth > $currentMonth) {
+                            $transactionDate = ($currentYear - 1) . "-{$month}-{$day}";
+                        }
+                    } else {
+                        $transactionDate = $this->parseDate($dateStr);
+                    }
+                    
+                    // Skip if amount is zero
+                    if ($amount == 0) {
+                        \Log::info("Skipping row {$rowNumber}: Zero amount");
+                        continue;
+                    }
+                    
+                    // Determine debit or credit based on indicator
+                    $debitAmount = 0;
+                    $creditAmount = 0;
+                    
+                    if ($dbCrIndicator === 'DB' || $dbCrIndicator === 'DEBIT') {
+                        $debitAmount = $amount;
+                    } elseif ($dbCrIndicator === 'CR' || $dbCrIndicator === 'CREDIT') {
+                        $creditAmount = $amount;
+                    } else {
+                        // Default: if no indicator, check description
+                        if (stripos($description, 'TRANSFER') !== false || 
+                            stripos($description, 'TRSF') !== false ||
+                            stripos($description, 'BI-FAST CR') !== false ||
+                            stripos($description, 'SWITCHING CR') !== false) {
+                            $creditAmount = $amount;
+                        } else {
+                            $debitAmount = $amount;
+                        }
+                    }
+                    
+                    // Add branch to description for reference
+                    $fullDescription = $description;
+                    if (!empty($branch) && $branch !== "'") {
+                        $branchClean = ltrim($branch, "'");
+                        if (!empty($branchClean)) {
+                            $fullDescription .= " [Branch: {$branchClean}]";
+                        }
+                    }
+                    
+                    $entries[] = [
+                        'reconciliation_id' => $reconciliation->id,
+                        'transaction_date' => $transactionDate,
+                        'description' => substr($fullDescription, 0, 500),
+                        'debit_amount' => $debitAmount,
+                        'credit_amount' => $creditAmount,
+                        'running_balance' => $runningBalance,
+                        'reference_number' => null, // BCA doesn't provide reference in this format
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                    
+                    \Log::info("BCA Row {$rowNumber} parsed: Date={$transactionDate}, Debit={$debitAmount}, Credit={$creditAmount}, Balance={$runningBalance}");
+                    
+                } catch (\Exception $e) {
+                    \Log::error("Error parsing BCA row {$rowNumber}: " . $e->getMessage());
+                    \Log::error("Row data: " . json_encode($row));
+                    continue;
+                }
             }
         }
         fclose($handle);
 
         if (!empty($entries)) {
-            BankStatementEntry::insert($entries);
+            $chunks = array_chunk($entries, 100);
+            foreach ($chunks as $chunk) {
+                BankStatementEntry::insert($chunk);
+            }
+            \Log::info("Successfully imported " . count($entries) . " BCA entries for reconciliation #{$reconciliation->id}");
+        } else {
+            \Log::warning("No valid BCA entries found in CSV file for reconciliation #{$reconciliation->id}");
+        }
+
+        return count($entries);
+    }
+    
+    /**
+     * Import standard BTN/Generic CSV format.
+     */
+    private function importStandardFormat(BankReconciliation $reconciliation, $handle)
+    {
+        // Read and skip header row
+        $header = fgetcsv($handle);
+        
+        $entries = [];
+        $rowNumber = 1;
+        
+        while (($row = fgetcsv($handle)) !== false) {
+            $rowNumber++;
+            
+            // Skip empty rows
+            if (empty(array_filter($row))) {
+                continue;
+            }
+            
+            try {
+                // Assuming BTN format: Date, Description, Debit, Credit, Balance, Reference
+                if (count($row) >= 5) {
+                    $transactionDate = $this->parseDate($row[0] ?? '');
+                    $description = trim($row[1] ?? 'Unknown Transaction');
+                    $debitAmount = $this->parseAmount($row[2] ?? '0');
+                    $creditAmount = $this->parseAmount($row[3] ?? '0');
+                    $runningBalance = $this->parseAmount($row[4] ?? '0');
+                    $referenceNumber = isset($row[5]) ? trim($row[5]) : null;
+                    
+                    // Skip if all amounts are zero
+                    if ($debitAmount == 0 && $creditAmount == 0 && $runningBalance == 0) {
+                        \Log::info("Skipping row {$rowNumber}: All amounts are zero");
+                        continue;
+                    }
+                    
+                    // Validate amounts
+                    if ($debitAmount < 0 || $creditAmount < 0) {
+                        \Log::warning("Row {$rowNumber}: Negative amount detected. Taking absolute values.");
+                        $debitAmount = abs($debitAmount);
+                        $creditAmount = abs($creditAmount);
+                    }
+                    
+                    $entries[] = [
+                        'reconciliation_id' => $reconciliation->id,
+                        'transaction_date' => $transactionDate,
+                        'description' => substr($description, 0, 500),
+                        'debit_amount' => $debitAmount,
+                        'credit_amount' => $creditAmount,
+                        'running_balance' => $runningBalance,
+                        'reference_number' => $referenceNumber ? substr($referenceNumber, 0, 100) : null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                    
+                    \Log::info("Row {$rowNumber} parsed: Date={$transactionDate}, Debit={$debitAmount}, Credit={$creditAmount}");
+                }
+            } catch (\Exception $e) {
+                \Log::error("Error parsing row {$rowNumber}: " . $e->getMessage());
+                continue;
+            }
+        }
+        fclose($handle);
+
+        if (!empty($entries)) {
+            $chunks = array_chunk($entries, 100);
+            foreach ($chunks as $chunk) {
+                BankStatementEntry::insert($chunk);
+            }
+            \Log::info("Successfully imported " . count($entries) . " standard entries for reconciliation #{$reconciliation->id}");
         }
 
         return count($entries);
@@ -417,13 +777,83 @@ class BankReconciliationController extends Controller
     }
 
     /**
-     * Parse amount from string (remove currency symbols, dots, commas).
+     * Parse amount from string (handle Indonesian format: 1.234.567,89).
      */
     private function parseAmount($amountString)
     {
-        $cleaned = preg_replace('/[^0-9,.-]/', '', $amountString);
-        $cleaned = str_replace(',', '.', $cleaned);
-        return floatval($cleaned);
+        // Remove all whitespace
+        $cleaned = trim($amountString);
+        
+        // Handle empty or invalid input
+        if (empty($cleaned) || $cleaned === '-' || $cleaned === '0') {
+            return 0;
+        }
+        
+        // Check for scientific notation BEFORE any other processing
+        if (stripos($cleaned, 'E') !== false || stripos($cleaned, 'e') !== false) {
+            $value = floatval($cleaned);
+            // Scientific notation values are usually too large - return 0
+            \Log::warning("Scientific notation detected: {$amountString} = {$value}. Setting to 0 to prevent overflow.");
+            return 0;
+        }
+        
+        // Remove currency symbols and other non-numeric characters except dots, commas, and minus
+        $cleaned = preg_replace('/[^0-9,.-]/', '', $cleaned);
+        
+        // Detect format: Indonesian (1.234.567,89) vs International (1,234,567.89)
+        // Count dots and commas to determine format
+        $dotCount = substr_count($cleaned, '.');
+        $commaCount = substr_count($cleaned, ',');
+        
+        if ($dotCount > 0 && $commaCount > 0) {
+            // Both present - determine which is decimal separator
+            $lastDotPos = strrpos($cleaned, '.');
+            $lastCommaPos = strrpos($cleaned, ',');
+            
+            if ($lastCommaPos > $lastDotPos) {
+                // Indonesian format: 1.234.567,89
+                $cleaned = str_replace('.', '', $cleaned); // Remove thousand separator
+                $cleaned = str_replace(',', '.', $cleaned); // Convert decimal separator
+            } else {
+                // International format: 1,234,567.89
+                $cleaned = str_replace(',', '', $cleaned); // Remove thousand separator
+            }
+        } elseif ($commaCount > 0) {
+            // Only comma present
+            if ($commaCount > 1) {
+                // Multiple commas = thousand separators (1,234,567)
+                $cleaned = str_replace(',', '', $cleaned);
+            } else {
+                // Single comma - check position to determine if decimal or thousand
+                $parts = explode(',', $cleaned);
+                if (isset($parts[1]) && strlen($parts[1]) <= 2) {
+                    // Likely decimal: 1234,89
+                    $cleaned = str_replace(',', '.', $cleaned);
+                } else {
+                    // Likely thousand: 1,234
+                    $cleaned = str_replace(',', '', $cleaned);
+                }
+            }
+        } elseif ($dotCount > 1) {
+            // Multiple dots = Indonesian thousand separator (1.234.567)
+            $cleaned = str_replace('.', '', $cleaned);
+        }
+        // Single dot with no comma = decimal point (123.45) - leave as is
+        
+        // Convert to float
+        $value = floatval($cleaned);
+        
+        // Validate range for PostgreSQL NUMERIC(15,2)
+        // Maximum absolute value: 9,999,999,999,999.99 (10^13 - 0.01)
+        $maxValue = 9999999999999.99;
+        
+        if (abs($value) > $maxValue) {
+            // Log warning and return 0 to prevent database error
+            \Log::warning("Amount value too large: {$amountString} (parsed as {$value}). Setting to 0.");
+            return 0;
+        }
+        
+        return $value;
     }
 
     /**

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Underline Fix</title>
+    <style>
+        body {
+            padding: 2rem;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1C1C1E;
+            color: #FFFFFF;
+        }
+        
+        /* BEFORE: Browser default (all links underlined) */
+        .before a {
+            color: #007AFF;
+        }
+        
+        /* AFTER: Our fix (no default underline) */
+        .after a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+        
+        .after a.hover\:underline:hover {
+            text-decoration: underline;
+        }
+        
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: rgba(28, 28, 30, 0.9);
+            border: 1px solid rgba(84, 84, 88, 0.35);
+            border-radius: 12px;
+        }
+        
+        h2 {
+            color: #0A84FF;
+            margin-top: 0;
+        }
+        
+        .result {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test: Underline Fix</h1>
+    
+    <div class="test-section before">
+        <h2>❌ BEFORE (Browser Default)</h2>
+        <div class="result">
+            <p>Normal text with <a href="#">inline link</a> in paragraph.</p>
+            <p><a href="#">Standalone link</a></p>
+            <p><a href="#">Email: test@example.com</a></p>
+            <p><a href="#">Phone: +62 813-8260-5030</a></p>
+            <p>Button: <a href="#" style="padding: 0.5rem 1rem; background: #0A84FF; border-radius: 8px; display: inline-block;">Click me</a></p>
+        </div>
+        <p style="color: #FF453A; font-size: 0.875rem;">⚠️ Problem: All links have underline by default!</p>
+    </div>
+    
+    <div class="test-section after">
+        <h2>✅ AFTER (Our Fix)</h2>
+        <div class="result">
+            <p>Normal text with <a href="#">inline link</a> in paragraph.</p>
+            <p><a href="#">Standalone link</a></p>
+            <p><a href="#">Email: test@example.com</a></p>
+            <p><a href="#">Phone: +62 813-8260-5030</a></p>
+            <p>Button: <a href="#" style="padding: 0.5rem 1rem; background: #0A84FF; border-radius: 8px; display: inline-block;">Click me</a></p>
+            <p>With hover class: <a href="#" class="hover:underline">Hover me to see underline</a></p>
+        </div>
+        <p style="color: #34C759; font-size: 0.875rem;">✅ Fixed: No underline by default. Hover "hover:underline" link to test!</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>📝 Summary</h2>
+        <ul style="line-height: 1.8;">
+            <li><strong>Root Cause:</strong> CSS rule <code>h1, h2, ..., a { color: var(--dark-text-primary); }</code> didn't include <code>text-decoration</code></li>
+            <li><strong>Browser Default:</strong> Links have <code>text-decoration: underline</code></li>
+            <li><strong>Fix Applied:</strong> Added global <code>a { text-decoration: none; }</code></li>
+            <li><strong>Preserved Behavior:</strong> <code>a.hover\:underline:hover</code> still works for intentional underlines</li>
+            <li><strong>Files Fixed:</strong>
+                <ul>
+                    <li>resources/views/layouts/app.blade.php (Admin)</li>
+                    <li>resources/views/client/layouts/app.blade.php (Client Portal)</li>
+                    <li>resources/views/mobile/layouts/app.blade.php (Mobile)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

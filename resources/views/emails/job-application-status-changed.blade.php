@@ -44,9 +44,9 @@
                     
                     <!-- Header -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%); padding: 40px 32px; text-align: center;">
-                            <img src="https://bizmark.id/images/Logo.png" alt="Bizmark.ID - Konsultan Perizinan dan Lingkungan" style="height: 65px; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto;">
-                            <p style="margin: 0; color: rgba(255, 255, 255, 0.95); font-size: 15px; font-weight: 500; letter-spacing: 0.3px;">
+                        <td style="background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%); padding: 40px 32px; text-align: center; border-bottom: 3px solid #E2E8F0;">
+                            <img src="{{ asset('images/logo.png') }}" alt="Bizmark.ID - Konsultan Perizinan dan Lingkungan" style="height: 30px; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto;">
+                            <p style="margin: 0; color: #334155; font-size: 15px; font-weight: 600; letter-spacing: 0.3px;">
                                 Konsultan Perizinan & Lingkungan
                             </p>
                         </td>

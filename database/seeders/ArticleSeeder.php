@@ -45,8 +45,8 @@ class ArticleSeeder extends Seeder
                     <li>Permen LHK No. 6 Tahun 2021 tentang Tata Cara dan Persyaratan Pengelolaan Limbah B3</li>
                 </ul>
                 
-                <h2>Layanan PT Timur Cakrawala Konsultan</h2>
-                <p>PT Timur Cakrawala Konsultan siap membantu perusahaan Anda dalam pengurusan dokumen LB3, mulai dari konsultasi, penyusunan dokumen, hingga pendampingan proses perizinan.</p>',
+                <h2>Layanan PT CANGAH PAJARATAN MANDIRI</h2>
+                <p>PT CANGAH PAJARATAN MANDIRI siap membantu perusahaan Anda dalam pengurusan dokumen LB3, mulai dari konsultasi, penyusunan dokumen, hingga pendampingan proses perizinan.</p>',
                 'category' => 'tips',
                 'tags' => ['lb3', 'limbah b3', 'perizinan', 'lingkungan'],
                 'status' => 'published',
@@ -128,7 +128,7 @@ class ArticleSeeder extends Seeder
                 </ul>
                 
                 <h2>Solusi yang Kami Berikan</h2>
-                <p>Tim PT Timur Cakrawala Konsultan melakukan pendekatan komprehensif:</p>
+                <p>Tim PT CANGAH PAJARATAN MANDIRI melakukan pendekatan komprehensif:</p>
                 <ol>
                     <li>Survey lapangan dan analisis jenis limbah</li>
                     <li>Penyusunan dokumen teknis dan administratif</li>
@@ -146,14 +146,14 @@ class ArticleSeeder extends Seeder
                 'is_featured' => true,
                 'author_id' => $user->id,
                 'meta_title' => 'Studi Kasus Pengurusan Izin LB3 Industri Manufaktur Karawang',
-                'meta_description' => 'Studi kasus sukses pengurusan izin LB3 untuk industri manufaktur di Karawang oleh PT Timur Cakrawala Konsultan.',
+                'meta_description' => 'Studi kasus sukses pengurusan izin LB3 untuk industri manufaktur di Karawang oleh PT CANGAH PAJARATAN MANDIRI.',
                 'meta_keywords' => 'studi kasus, lb3, karawang, industri manufaktur, perizinan',
             ],
             [
-                'title' => 'PT Timur Cakrawala Konsultan Raih Penghargaan Best Environmental Consultant 2024',
-                'excerpt' => 'Kami dengan bangga mengumumkan bahwa PT Timur Cakrawala Konsultan telah meraih penghargaan sebagai Best Environmental Consultant 2024.',
+                'title' => 'PT CANGAH PAJARATAN MANDIRI Raih Penghargaan Best Environmental Consultant 2024',
+                'excerpt' => 'Kami dengan bangga mengumumkan bahwa PT CANGAH PAJARATAN MANDIRI telah meraih penghargaan sebagai Best Environmental Consultant 2024.',
                 'content' => '<h2>Penghargaan Bergengsi</h2>
-                <p>PT Timur Cakrawala Konsultan dengan bangga mengumumkan telah meraih penghargaan sebagai Best Environmental Consultant 2024 dari Asosiasi Konsultan Lingkungan Indonesia.</p>
+                <p>PT CANGAH PAJARATAN MANDIRI dengan bangga mengumumkan telah meraih penghargaan sebagai Best Environmental Consultant 2024 dari Asosiasi Konsultan Lingkungan Indonesia.</p>
                 
                 <h2>Kriteria Penilaian</h2>
                 <p>Penghargaan ini diberikan berdasarkan beberapa kriteria:</p>
@@ -176,8 +176,8 @@ class ArticleSeeder extends Seeder
                 'published_at' => Carbon::now()->subDay(),
                 'is_featured' => false,
                 'author_id' => $user->id,
-                'meta_title' => 'PT Timur Cakrawala Konsultan Raih Best Environmental Consultant 2024',
-                'meta_description' => 'PT Timur Cakrawala Konsultan meraih penghargaan Best Environmental Consultant 2024 dari Asosiasi Konsultan Lingkungan Indonesia.',
+                'meta_title' => 'PT CANGAH PAJARATAN MANDIRI Raih Best Environmental Consultant 2024',
+                'meta_description' => 'PT CANGAH PAJARATAN MANDIRI meraih penghargaan Best Environmental Consultant 2024 dari Asosiasi Konsultan Lingkungan Indonesia.',
                 'meta_keywords' => 'penghargaan, konsultan lingkungan, berita, achievement',
             ],
         ];

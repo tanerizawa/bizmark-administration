@@ -331,7 +331,7 @@ public function boot(): void {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Bizmark.ID",
-  "legalName": "PT Timur Cakrawala Konsultan",
+  "legalName": "PT CANGAH PAJARATAN MANDIRI",
   "url": "{{ url('/') }}",
   "logo": "{{ asset('images/logo.png') }}",
   "description": "...", (bilingual)

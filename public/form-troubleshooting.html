@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Troubleshooting Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .issue {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .fix {
+            background: rgba(52, 211, 153, 0.1);
+            border-left: 4px solid #34d399;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .code {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .step {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .warning {
+            background: rgba(251, 191, 36, 0.1);
+            border-left: 4px solid #fbbf24;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        ul {
+            color: rgba(255,255,255,0.8);
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Document Editing Form - Troubleshooting</h1>
+        
+        <div class="issue">
+            <h2>❌ Masalah Yang Ditemukan</h2>
+            <ol>
+                <li><strong>Template file required</strong> - Form meminta file upload wajib, tapi seharusnya optional</li>
+                <li><strong>Type validation mismatch</strong> - Dropdown menggunakan "checkbox/rating/numeric" tapi validation menolak</li>
+            </ol>
+        </div>
+
+        <div class="fix">
+            <h2>✅ Fixes Applied</h2>
+            <ol>
+                <li><strong>Template file sekarang optional</strong> - Bisa dibuat template tanpa upload file dulu</li>
+                <li><strong>Type options updated</strong> - Dropdown sekarang include: Technical, Analysis, Quality</li>
+            </ol>
+        </div>
+
+        <h2>📝 Cara Buat Template Manual (Step-by-Step)</h2>
+
+        <div class="step">
+            <h3>Step 1: Buka Form Create</h3>
+            <p>Navigate ke: <code>https://bizmark.id/admin/recruitment/tests/create</code></p>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Isi Form Dasar</h3>
+            <ul>
+                <li><strong>Test Title:</strong> "Document Editing Test - UKL/UPL Specialist"</li>
+                <li><strong>Test Type:</strong> Pilih "Document Editing" dari dropdown</li>
+                <li><strong>Duration:</strong> 120 (menit)</li>
+                <li><strong>Passing Score:</strong> 70 (%)</li>
+                <li><strong>Instructions:</strong> Copy dari dokumentasi atau tulis manual</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Tambah Kriteria Penilaian</h3>
+            <p>Klik tombol <strong>"Tambah Kriteria"</strong> minimal 1 kali (atau 22 kali untuk UKL/UPL lengkap)</p>
+            
+            <h4>Contoh Kriteria #1:</h4>
+            <div class="code">
+Category: Formatting & Layout
+Description: Font consistency (Times New Roman 12pt body, Arial 14-16pt heading)
+Points: 5
+Type: Technical
+            </div>
+
+            <h4>Contoh Kriteria #2:</h4>
+            <div class="code">
+Category: Content Completion
+Description: Lengkapi data tabel kualitas air, udara, kebisingan
+Points: 8
+Type: Technical
+            </div>
+
+            <h4>Contoh Kriteria #3:</h4>
+            <div class="code">
+Category: Technical Review
+Description: Identifikasi minimal 5 kesalahan teknis
+Points: 5
+Type: Analysis
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Template File (Optional)</h3>
+            <p><strong>SKIP DULU!</strong> File bisa diupload nanti via Edit.</p>
+            <p>Atau kalau sudah ada file, upload sekarang (max 10MB, format .doc atau .docx)</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 5: Status</h3>
+            <ul>
+                <li>Jika <strong>belum ada file</strong>: Uncheck "Template Aktif"</li>
+                <li>Jika <strong>sudah upload file</strong>: Check "Template Aktif"</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Step 6: Submit</h3>
+            <p>Klik tombol <strong>"Create Test"</strong></p>
+            <p>Jika sukses, akan redirect ke halaman detail template.</p>
+        </div>
+
+        <h2>🐛 Common Errors & Solutions</h2>
+
+        <div class="warning">
+            <h3>Error: "The template file field is required"</h3>
+            <p><strong>Cause:</strong> Validation masih mewajibkan file</p>
+            <p><strong>Solution:</strong> Sudah difix! Clear cache:</p>
+            <div class="code">php artisan route:clear && php artisan view:clear</div>
+        </div>
+
+        <div class="warning">
+            <h3>Error: "The selected evaluation_criteria.0.type is invalid"</h3>
+            <p><strong>Cause:</strong> Type value tidak sesuai dengan validation rules</p>
+            <p><strong>Solution:</strong> Sudah difix! Gunakan: Technical, Analysis, atau Quality</p>
+        </div>
+
+        <div class="warning">
+            <h3>Error: "The evaluation criteria field is required"</h3>
+            <p><strong>Cause:</strong> Belum ada kriteria yang ditambahkan</p>
+            <p><strong>Solution:</strong> Klik "Tambah Kriteria" minimal 1 kali dan isi semua field</p>
+        </div>
+
+        <div class="warning">
+            <h3>Form tidak submit/tidak response</h3>
+            <p><strong>Possible causes:</strong></p>
+            <ul>
+                <li>JavaScript error - Check console (F12)</li>
+                <li>CSRF token expired - Reload halaman</li>
+                <li>File terlalu besar (>10MB)</li>
+                <li>Network timeout</li>
+            </ul>
+            <p><strong>Solutions:</strong></p>
+            <ol>
+                <li>Buka Developer Console (F12) → Tab Console</li>
+                <li>Cari error messages berwarna merah</li>
+                <li>Hard reload: Ctrl + Shift + R</li>
+                <li>Try again</li>
+            </ol>
+        </div>
+
+        <h2>🔍 Verifikasi Form Ready</h2>
+
+        <div class="code">
+# 1. Clear all caches
+php artisan optimize:clear
+
+# 2. Check routes
+php artisan route:list --name=tests.store
+
+# 3. Test validation
+php artisan tinker
+$request = new Illuminate\Http\Request([
+    'test_type' => 'document-editing',
+    'title' => 'Test',
+    'duration_minutes' => 120,
+    'passing_score' => 70,
+    'evaluation_criteria' => [
+        ['category' => 'Test', 'description' => 'Test', 'points' => 5, 'type' => 'Technical']
+    ]
+]);
+# Should not throw validation error
+        </div>
+
+        <h2>📊 Validation Rules (Updated)</h2>
+
+        <table style="width: 100%; border-collapse: collapse; color: rgba(255,255,255,0.9);">
+            <thead>
+                <tr style="background: rgba(102, 126, 234, 0.2);">
+                    <th style="padding: 10px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">Field</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">Rule</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">title</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, max:255</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Wajib diisi</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">test_type</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, in:document-editing,...</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Pilih dari dropdown</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">duration_minutes</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, integer, 5-480</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">5 menit s/d 8 jam</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">passing_score</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, numeric, 0-100</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Persentase</td>
+                </tr>
+                <tr style="background: rgba(52, 211, 153, 0.1);">
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">template_file</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);"><strong>nullable</strong>, file, .doc/.docx, max:10MB</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">✅ OPTIONAL</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">evaluation_criteria</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, array, min:1</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Minimal 1 kriteria</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">criteria.*.category</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, string</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Kategori kriteria</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">criteria.*.description</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, string</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Deskripsi detail</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">criteria.*.points</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, numeric, min:0</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">Bisa desimal (e.g., 2.5)</td>
+                </tr>
+                <tr style="background: rgba(52, 211, 153, 0.1);">
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">criteria.*.type</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">required, in:<strong>Technical,Analysis,Quality</strong>,checkbox,rating,numeric</td>
+                    <td style="padding: 10px; border: 1px solid rgba(255,255,255,0.1);">✅ UPDATED</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>🚀 Quick Test</h2>
+
+        <a href="https://bizmark.id/admin/recruitment/tests/create" class="btn" target="_blank">
+            📝 Open Create Form
+        </a>
+
+        <a href="https://bizmark.id/templates/ukl-upl-criteria-helper.html" class="btn" target="_blank">
+            📋 Criteria Helper
+        </a>
+
+        <h2>✅ Checklist Before Submit</h2>
+
+        <ul>
+            <li>✅ Test Type: "Document Editing" dipilih</li>
+            <li>✅ Title diisi</li>
+            <li>✅ Duration diisi (angka 5-480)</li>
+            <li>✅ Passing Score diisi (angka 0-100)</li>
+            <li>✅ Minimal 1 kriteria ditambahkan</li>
+            <li>✅ Semua field kriteria diisi (category, description, points, type)</li>
+            <li>✅ Type kriteria menggunakan: Technical/Analysis/Quality</li>
+            <li>⚠️ Template file optional (bisa skip)</li>
+        </ul>
+
+        <div class="fix">
+            <h3>✨ Ready to Test!</h3>
+            <p>Semua fixes sudah applied. Silakan coba buat template manual lagi.</p>
+            <p>Jika masih ada error, buka Developer Console (F12) dan screenshot error message-nya.</p>
+        </div>
+
+        <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; color: rgba(255,255,255,0.5);">
+            <p>Document Editing Form Fixed - 2025-11-23</p>
+        </footer>
+    </div>
+</body>
+</html>
