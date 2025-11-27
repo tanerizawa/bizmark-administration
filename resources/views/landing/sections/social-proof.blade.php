@@ -2,6 +2,11 @@
     $clientList = config('landing.clients', []);
     $testimonials = collect(config('landing.testimonials', []));
     $metrics = config('landing_metrics');
+    $industryCount = data_get($metrics, 'clients.industries', 6);
+    $coverageLabel = trim((string) data_get($metrics, 'coverage.cities', ''));
+    if ($coverageLabel === '' || \Illuminate\Support\Str::lower($coverageLabel) === 'berbagai') {
+        $coverageLabel = 'berbagai kota';
+    }
 @endphp
 
 {{-- Social Proof Section: Clients + Testimonials --}}
@@ -18,7 +23,7 @@
                     Dipercaya perusahaan manufaktur, infrastruktur, dan energi.
                 </h2>
                 <p class="text-lg text-gray-600">
-                    {{ $metrics['display']['clients_total'] }} organisasi menyerahkan audit izin, AMDAL, dan pengelolaan legalitasnya kepada tim Bizmark.ID untuk menjaga tata kelola tetap rapi.
+                    Perusahaan dari {{ $industryCount }} sektor industri di {{ $coverageLabel }} mempercayakan audit izin, AMDAL, dan pengelolaan legalitasnya kepada tim Bizmark.ID untuk menjaga tata kelola tetap rapi.
                 </p>
             </div>
 

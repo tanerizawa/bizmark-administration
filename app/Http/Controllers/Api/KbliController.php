@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\KbliService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class KbliController extends Controller
 {
@@ -86,6 +88,49 @@ class KbliController extends Controller
             'data' => array_values($data),
             'count' => count($data)
         ]);
+    }
+    
+    /**
+     * Get most popular KBLI codes (by usage)
+     * GET /api/kbli/popular?limit={limit}
+     */
+    public function popular(Request $request)
+    {
+        $validated = $request->validate([
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        $limit = $validated['limit'] ?? 10;
+
+        try {
+            // Cache for 1 hour
+            $popular = Cache::remember("kbli_popular_{$limit}", 3600, function () use ($limit) {
+                return \App\Models\Kbli::getPopular($limit)
+                    ->map(function ($kbli) {
+                        return [
+                            'code' => $kbli->code,
+                            'description' => $kbli->description,
+                            'category' => $kbli->category,
+                            'usage_count' => $kbli->usage_count,
+                            'complexity_level' => $kbli->complexity_level,
+                        ];
+                    })
+                    ->toArray();
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => array_values($popular),
+                'count' => count($popular),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('KBLI popular error', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve popular KBLI codes',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], 500);
+        }
     }
 }
 

@@ -471,6 +471,7 @@
                                 <i class="fas fa-money-bill"></i>
                             </button>
                             @endif
+                            @if($expense && $expense->id)
                             <button onclick="editExpense({{ $expense->id }})" 
                                     class="text-xs px-2 py-1 rounded hover:opacity-75" 
                                     style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);"
@@ -483,6 +484,7 @@
                                     title="Hapus">
                                 <i class="fas fa-trash"></i>
                             </button>
+                            @endif
                         </div>
                     </td>
                 </tr>

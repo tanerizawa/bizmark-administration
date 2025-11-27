@@ -77,42 +77,135 @@
             background: linear-gradient(to right, #3b82f6, #8b5cf6);
         }
     </style>
-</head>
-<body class="bg-gray-50" x-data="{ 
-    currentStep: 1, 
-    totalSteps: 4,
-    formData: {
-        work_experiences: [],
-        skills: []
-    },
-    addWorkExperience() {
-        this.formData.work_experiences.push({
-            company: '',
-            position: '',
-            duration: '',
-            responsibilities: ''
-        });
-    },
-    removeWorkExperience(index) {
-        this.formData.work_experiences.splice(index, 1);
-    },
-    addSkill(event) {
-        if (event.key === 'Enter' && event.target.value.trim()) {
-            event.preventDefault();
-            this.formData.skills.push(event.target.value.trim());
-            event.target.value = '';
+    
+    <script>
+        // Global validation function for final submit
+        function validateAllSteps(event) {
+            const form = event.target;
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            let missingFields = [];
+            
+            requiredFields.forEach(field => {
+                if (!field.value || field.value.trim() === '') {
+                    isValid = false;
+                    const label = field.parentElement.querySelector('label')?.textContent.replace('*', '').trim() || field.name;
+                    missingFields.push(label);
+                }
+            });
+            
+            if (!isValid) {
+                event.preventDefault();
+                alert('❌ Formulir belum lengkap!\n\nField yang masih kosong:\n- ' + missingFields.join('\n- ') + '\n\nSilakan lengkapi semua field yang wajib diisi.');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mengirim lamaran...';
+            }
+            
+            return true;
         }
-    },
-    removeSkill(index) {
-        this.formData.skills.splice(index, 1);
-    },
-    nextStep() {
-        if (this.currentStep < this.totalSteps) this.currentStep++;
-    },
-    prevStep() {
-        if (this.currentStep > 1) this.currentStep--;
-    }
-}">
+    </script>
+    
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('applicationForm', () => ({
+                currentStep: 1,
+                totalSteps: 4,
+                formData: {
+                    work_experiences: [],
+                    skills: []
+                },
+                addWorkExperience() {
+                    this.formData.work_experiences.push({
+                        company: '',
+                        position: '',
+                        duration: '',
+                        responsibilities: ''
+                    });
+                },
+                removeWorkExperience(index) {
+                    this.formData.work_experiences.splice(index, 1);
+                },
+                addSkill(event) {
+                    if (event.key === 'Enter' && event.target.value.trim()) {
+                        event.preventDefault();
+                        this.formData.skills.push(event.target.value.trim());
+                        event.target.value = '';
+                    }
+                },
+                removeSkill(index) {
+                    this.formData.skills.splice(index, 1);
+                },
+                validateStep() {
+                    const stepNum = this.currentStep;
+                    const allSteps = document.querySelectorAll('[x-show]');
+                    let stepContainer = null;
+                    
+                    allSteps.forEach(step => {
+                        const showAttr = step.getAttribute('x-show');
+                        if (showAttr && showAttr.includes('currentStep === ' + stepNum)) {
+                            stepContainer = step;
+                        }
+                    });
+                    
+                    if (!stepContainer) return true;
+                    
+                    const requiredFields = stepContainer.querySelectorAll('[required]');
+                    let isValid = true;
+                    let firstInvalidField = null;
+                    
+                    requiredFields.forEach(field => {
+                        field.classList.remove('border-red-500', 'border-2');
+                        const errorMsg = field.parentElement.querySelector('.validation-error');
+                        if (errorMsg) errorMsg.remove();
+                        
+                        const isEmpty = !field.value || field.value.trim() === '';
+                        
+                        if (isEmpty) {
+                            isValid = false;
+                            if (!firstInvalidField) firstInvalidField = field;
+                            
+                            field.classList.add('border-red-500', 'border-2');
+                            
+                            const labelElement = field.parentElement.querySelector('label');
+                            const fieldLabel = labelElement ? labelElement.textContent.replace('*', '').trim() : 'Field ini';
+                            const errorDiv = document.createElement('p');
+                            errorDiv.className = 'validation-error text-red-500 text-xs mt-1 flex items-center animate-pulse';
+                            errorDiv.innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i>' + fieldLabel + ' wajib diisi';
+                            field.parentElement.appendChild(errorDiv);
+                        }
+                    });
+                    
+                    if (!isValid && firstInvalidField) {
+                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalidField.focus();
+                        alert('⚠️ Mohon lengkapi semua field yang wajib diisi sebelum melanjutkan.');
+                    }
+                    
+                    return isValid;
+                },
+                nextStep() {
+                    if (this.validateStep() && this.currentStep < this.totalSteps) {
+                        this.currentStep++;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                },
+                prevStep() {
+                    if (this.currentStep > 1) {
+                        this.currentStep--;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                }
+            }))
+        });
+    </script>
+</head>
+<body class="bg-gray-50" x-data="applicationForm()">
     <!-- Header -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
@@ -179,6 +272,28 @@
                 </div>
             </div>
 
+            <!-- Validation Errors -->
+            @if($errors->any())
+                <div class="bg-red-50 border-l-4 border-red-500 text-red-800 px-6 py-4 rounded-lg mb-6 shadow-lg animate-pulse">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-2xl mr-3 mt-0.5 text-red-600"></i>
+                        <div class="flex-1">
+                            <p class="font-bold text-lg">⚠️ Form Belum Lengkap</p>
+                            @if($errors->has('form'))
+                                <p class="text-sm mt-2 leading-relaxed">{{ $errors->first('form') }}</p>
+                            @else
+                                <ul class="list-disc list-inside text-sm mt-2 space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                            <p class="text-xs mt-3 text-red-600 font-semibold">💡 Tip: Pastikan semua field bertanda (*) telah diisi dengan lengkap</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             @if(session('error'))
                 <div class="bg-red-50 border-l-4 border-red-500 text-red-800 px-6 py-4 rounded-lg mb-6 flex items-start shadow-md">
                     <i class="fas fa-exclamation-circle text-xl mr-3 mt-0.5"></i>
@@ -234,7 +349,8 @@
             </div>
 
             <!-- Form -->
-            <form action="{{ route('career.apply.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('career.apply.store') }}" method="POST" enctype="multipart/form-data" 
+                  onsubmit="return validateAllSteps(event)">
                 @csrf
                 <input type="hidden" name="job_vacancy_id" value="{{ $vacancy->id }}">
                 <input type="hidden" name="work_experience" x-model="JSON.stringify(formData.work_experiences)">

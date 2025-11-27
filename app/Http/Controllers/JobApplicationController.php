@@ -120,17 +120,47 @@ class JobApplicationController extends Controller
             return redirect()->route('career.show', $vacancy->slug)
                 ->with('success', 'Lamaran Anda berhasil dikirim! Kami akan menghubungi Anda segera.');
 
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Log database error with context
+            \Log::error('Job Application Database Error', [
+                'email' => $request->email ?? 'unknown',
+                'vacancy_id' => $request->job_vacancy_id,
+                'error' => $e->getMessage(),
+                'sql' => $e->getSql() ?? null,
+            ]);
+            
+            // Check for specific database constraint errors
+            if (str_contains($e->getMessage(), 'not-null constraint') || str_contains($e->getMessage(), 'NOT NULL')) {
+                return back()->withInput()->withErrors([
+                    'form' => 'Mohon lengkapi semua field yang wajib diisi. Pastikan Anda telah mengisi: Nama Lengkap, Email, Telepon, Jenjang Pendidikan, Jurusan, dan Institusi.'
+                ])->with('error', 'Form belum lengkap. Silakan periksa kembali semua field.');
+            }
+            
+            return back()->withInput()->withErrors([
+                'form' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi tim kami jika masalah berlanjut.'
+            ]);
+            
         } catch (\Exception $e) {
-            // If error, provide Google Form fallback
+            // Log general error
+            \Log::error('Job Application Error', [
+                'email' => $request->email ?? 'unknown',
+                'vacancy_id' => $request->job_vacancy_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            // If Google Form fallback exists, suggest it
             $vacancy = JobVacancy::find($request->job_vacancy_id);
             
             if ($vacancy && $vacancy->google_form_url) {
-                return redirect($vacancy->google_form_url)
-                    ->with('info', 'Terjadi kesalahan. Silakan lengkapi lamaran melalui Google Form.');
+                return back()->withInput()->withErrors([
+                    'form' => 'Terjadi kendala teknis. Anda dapat melanjutkan pendaftaran melalui Google Form sebagai alternatif.'
+                ])->with('info', 'Link Google Form: ' . $vacancy->google_form_url);
             }
 
-            return back()->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->withInput()->withErrors([
+                'form' => 'Terjadi kesalahan tidak terduga. Silakan coba lagi dalam beberapa saat atau hubungi tim rekrutmen kami.'
+            ])->with('error', 'Gagal mengirim lamaran. Silakan coba lagi.');
         }
     }
 }

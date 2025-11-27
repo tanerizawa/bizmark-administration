@@ -42,13 +42,24 @@
                         </button>
                     </form>
                     <hr class="border-white/10 my-1">
-                    <form action="{{ route('admin.inbox.trash', $email->id) }}" method="POST" onsubmit="return confirm('Pindahkan email ini ke trash?');">
-                        @csrf
-                        <button type="submit"
-                                class="w-full px-4 py-2 text-left text-xs font-semibold text-red-400 hover:bg-white/5 transition-colors">
-                            <i class="fas fa-trash mr-2"></i> Trash
-                        </button>
-                    </form>
+                    @if($email->category === 'trash')
+                        <form action="{{ route('admin.inbox.delete', $email->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus email ini secara PERMANEN? Tindakan ini tidak dapat dibatalkan!');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="w-full px-4 py-2 text-left text-xs font-semibold text-red-400 hover:bg-white/5 transition-colors">
+                                <i class="fas fa-times-circle mr-2"></i> Hapus Permanen
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('admin.inbox.trash', $email->id) }}" method="POST" onsubmit="return confirm('Pindahkan email ini ke trash?');">
+                            @csrf
+                            <button type="submit"
+                                    class="w-full px-4 py-2 text-left text-xs font-semibold text-red-400 hover:bg-white/5 transition-colors">
+                                <i class="fas fa-trash mr-2"></i> Pindahkan ke Trash
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>

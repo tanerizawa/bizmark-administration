@@ -117,8 +117,8 @@
                 </div>
                 <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] rounded-3xl bg-white shadow-xl border border-gray-100 px-6 py-5 flex flex-wrap gap-4 items-center justify-between">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Pipeline</p>
-                        <p class="text-lg font-semibold text-slate-900">UKL-UPL • OSS • SLF</p>
+                        <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Izin Utama</p>
+                        <p class="text-lg font-semibold text-slate-900">AMDAL • UKL-UPL • OSS</p>
                     </div>
                     <div class="text-right">
                         <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Progress</p>
@@ -140,7 +140,7 @@
                     <i class="fas fa-briefcase text-white text-lg"></i>
                 </div>
                 <div>
-                    <p class="font-semibold text-slate-900">12+ Tahun</p>
+                    <p class="font-semibold text-slate-900">15+ Tahun</p>
                     <p class="text-xs text-slate-500">Pengalaman Perizinan</p>
                 </div>
             </div>

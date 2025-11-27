@@ -121,7 +121,7 @@ return [
         'provinces' => null,              // Changed to "berbagai kota"
         'cities' => 'Berbagai Kota',      // Humble, not defensive
         'permits_processed' => null,      // Inflated number removed
-        'experience_years' => '10+ Tahun',
+        'experience_years' => '10+',
         'process_time' => '1-3 Hari',
         'satisfaction' => null,           // Unverifiable
         'legal_compliance' => null,       // Too defensive ("100%")

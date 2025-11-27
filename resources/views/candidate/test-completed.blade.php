@@ -134,11 +134,32 @@
                     <div class="flex items-start gap-3">
                         <i class="bi bi-hourglass-split text-blue-600 text-3xl"></i>
                         <div>
-                            <h3 class="text-blue-900 font-semibold text-lg mb-1">Jawaban Sedang Diproses</h3>
+                            <h3 class="text-blue-900 font-semibold text-lg mb-1">
+                                @if($testSession->testTemplate->test_type === 'document-editing')
+                                    Dokumen Sedang Dievaluasi
+                                @else
+                                    Jawaban Sedang Diproses
+                                @endif
+                            </h3>
                             <p class="text-blue-700 text-sm leading-relaxed">
-                                Tes Anda berisi soal essay yang memerlukan penilaian manual oleh tim HR kami. 
-                                Hasil akan diinformasikan melalui email dalam 2-3 hari kerja.
+                                @if($testSession->testTemplate->test_type === 'document-editing')
+                                    Dokumen hasil editing Anda sedang dievaluasi oleh tim HR berdasarkan kriteria penilaian yang telah ditentukan. 
+                                    Hasil akan diinformasikan melalui email dalam 2-3 hari kerja.
+                                @else
+                                    Tes Anda berisi soal essay atau subjektif yang memerlukan penilaian manual oleh tim HR kami. 
+                                    Hasil akan diinformasikan melalui email dalam 2-3 hari kerja.
+                                @endif
                             </p>
+                            
+                            @if($testSession->testTemplate->test_type === 'document-editing' && $testSession->submission_file_path)
+                            <div class="mt-3 bg-white border border-blue-200 rounded-lg p-3">
+                                <p class="text-xs text-gray-600 mb-1">Dokumen yang Anda upload:</p>
+                                <div class="flex items-center gap-2">
+                                    <i class="bi bi-file-earmark-text text-blue-600"></i>
+                                    <span class="text-sm font-medium text-gray-900">{{ basename($testSession->submission_file_path) }}</span>
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -149,20 +170,32 @@
                     <div class="bg-gray-50 rounded-xl p-4 text-center">
                         <i class="bi bi-list-check text-gray-400 text-2xl mb-2"></i>
                         <p class="text-2xl font-bold text-gray-900">
-                            {{ $testSession->testAnswers->count() }} / {{ $testSession->testTemplate->total_questions ?? 0 }}
+                            @if($testSession->testTemplate->test_type === 'document-editing')
+                                1 / 1
+                            @else
+                                {{ $testSession->testAnswers->count() }} / {{ is_array($testSession->testTemplate->questions_data) ? count($testSession->testTemplate->questions_data) : 0 }}
+                            @endif
                         </p>
-                        <p class="text-sm text-gray-600">Soal Dijawab</p>
+                        <p class="text-sm text-gray-600">
+                            @if($testSession->testTemplate->test_type === 'document-editing')
+                                Dokumen Diunggah
+                            @else
+                                Soal Dijawab
+                            @endif
+                        </p>
                     </div>
                     <div class="bg-gray-50 rounded-xl p-4 text-center">
                         <i class="bi bi-clock text-gray-400 text-2xl mb-2"></i>
                         <p class="text-2xl font-bold text-gray-900">
-                            @if($testSession->started_at && $testSession->completed_at)
-                                {{ $testSession->started_at->diffInMinutes($testSession->completed_at) }}
-                            @elseif($testSession->time_taken_minutes)
-                                {{ $testSession->time_taken_minutes }}
-                            @else
-                                {{ $testSession->testTemplate->duration_minutes }}
-                            @endif
+                            @php
+                                $minutesUsed = 0;
+                                if ($testSession->started_at && $testSession->completed_at) {
+                                    $minutesUsed = round($testSession->started_at->diffInMinutes($testSession->completed_at));
+                                } elseif ($testSession->time_taken_minutes) {
+                                    $minutesUsed = round($testSession->time_taken_minutes);
+                                }
+                            @endphp
+                            {{ $minutesUsed }}
                         </p>
                         <p class="text-sm text-gray-600">Menit Digunakan</p>
                     </div>

@@ -1,9 +1,10 @@
 @php
     $metrics = config('landing_metrics');
+    $trustBadges = $metrics['trust_badges'] ?? [];
 @endphp
 
 <!-- COVER PAGE: Magazine-Style Hero -->
-<section class="magazine-cover relative h-screen overflow-hidden">
+<section class="magazine-cover relative min-h-screen overflow-hidden">
     <!-- Parallax Background -->
     <div class="parallax-bg absolute inset-0 -top-12 -bottom-12">
         <!-- Gradient Background (no image needed) -->
@@ -22,7 +23,7 @@
                 <i class="fas fa-building text-yellow-400"></i>
                 <span>Bizmark<span class="text-yellow-400">.ID</span></span>
             </div>
-            <button onclick="toggleMobileMenu()" class="text-white text-2xl">
+            <button type="button" data-menu-toggle onclick="toggleMobileMenu()" class="text-white text-2xl" aria-controls="mobileMenu" aria-expanded="false">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
@@ -56,7 +57,7 @@
                 <span class="text-white/40">•</span>
                 <div class="flex items-center gap-1.5">
                     <i class="fas fa-desktop"></i>
-                    <span><strong>Portal 24/7</strong></span>
+                    <span><strong>{{ $metrics['contact']['hours'] ?? 'Portal 24/7' }}</strong></span>
                 </div>
             </div>
             
@@ -69,24 +70,12 @@
             <!-- Primary CTA - PLATFORM FIRST -->
             <div class="space-y-3 mb-4">
                 <!-- Main CTA: Register -->
-                <a href="{{ route('client.register') }}" 
-                   class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200"
-                   onclick="trackEvent('CTA', 'click', 'hero_register_mobile')">
-                    <div class="flex items-center justify-center gap-3">
-                        <i class="fas fa-rocket text-2xl"></i>
-                        <span>Daftar Sekarang</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
-                </a>
-                
-                <!-- Secondary CTA: Free AI Analysis (NEW!) -->
                 <a href="{{ route('landing.service-inquiry.create') }}" 
-                   class="block w-full bg-gradient-to-r from-gold-400 to-yellow-500 text-gray-900 font-bold text-base py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200"
-                   onclick="trackEvent('CTA', 'click', 'hero_free_analysis_mobile')">
-                    <div class="flex items-center justify-center gap-2">
-                        <span>🤖</span>
-                        <span>Analisis AI Gratis</span>
-                        <span class="text-xs px-2 py-0.5 bg-red-500 text-white rounded-full">BARU!</span>
+                   class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200"
+                   onclick="trackEvent('CTA', 'click', 'hero_analysis_mobile')">
+                    <div class="flex items-center justify-center gap-3">
+                        <span>Analisis Usaha Anda</span>
+                        <i class="fas fa-chart-line"></i>
                     </div>
                 </a>
                 
@@ -94,7 +83,7 @@
                 <div class="flex items-center gap-2">
                     <a href="{{ route('login') }}" 
                        class="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-white/20 active:scale-95 transition-all duration-200 text-center">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Masuk Portal
+                        <i class="fas fa-sign-in-alt mr-2"></i>Masuk / Daftar
                     </a>
                     <a href="#services" 
                        class="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-white/20 active:scale-95 transition-all duration-200 text-center"
@@ -103,21 +92,30 @@
                     </a>
                 </div>
                 <p class="text-center text-white text-xs opacity-80">
-                    <i class="fas fa-info-circle mr-1"></i> Coba analisis AI gratis atau daftar untuk akses penuh
+                    <i class="fas fa-info-circle mr-1"></i> Mulai analisis usaha atau eksplor layanan kami kapan saja
                 </p>
+                <div class="flex items-center justify-center gap-2 text-white text-xs opacity-80">
+                    <i class="fas fa-phone-volume"></i>
+                    <a href="{{ $metrics['contact']['whatsapp_link'] ?? '#' }}" target="_blank" rel="noopener" class="underline underline-offset-2">
+                        {{ $metrics['contact']['phone_display'] ?? 'Hubungi Kami' }}
+                    </a>
+                </div>
             </div>
             
             <!-- Trust Badges - PLATFORM CAPABILITIES -->
-            <div class="grid grid-cols-2 gap-2 mb-4 max-w-md mx-auto">
-                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
-                    <i class="fas fa-desktop text-blue-400 text-base"></i>
-                    <span class="text-white text-xs font-medium">Portal Digital</span>
+            @if(!empty($trustBadges))
+                <div class="grid grid-cols-2 gap-2 mb-4 max-w-md mx-auto w-full">
+                    @foreach($trustBadges as $badge)
+                        @php
+                            $color = $badge['color'] === 'yellow' ? 'text-yellow-300' : 'text-blue-400';
+                        @endphp
+                        <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
+                            <i class="fas {{ $badge['icon'] ?? 'fa-check-circle' }} {{ $color }} text-base"></i>
+                            <span class="text-white text-xs font-medium">{{ $badge['label'] ?? '' }}</span>
+                        </div>
+                    @endforeach
                 </div>
-                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
-                    <i class="fas fa-clock text-blue-400 text-base"></i>
-                    <span class="text-white text-xs font-medium">Monitoring Real-Time</span>
-                </div>
-            </div>
+            @endif
             
             <!-- Scroll Indicator -->
             <div class="scroll-indicator flex flex-col items-center text-white opacity-60 animate-bounce">
@@ -129,12 +127,12 @@
 </section>
 
 <!-- Mobile Menu (Hidden by default) -->
-<div id="mobileMenu" class="fixed inset-0 z-50 bg-gray-900 transform translate-x-full transition-transform duration-300">
+<div id="mobileMenu" class="fixed inset-0 z-50 bg-gray-900 transform translate-x-full transition-transform duration-300" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="flex flex-col h-full">
         <!-- Menu Header -->
         <div class="flex items-center justify-between p-6 border-b border-gray-800">
             <span class="text-white font-bold text-xl">Menu Utama</span>
-            <button onclick="toggleMobileMenu()" class="text-white text-2xl">
+            <button type="button" data-menu-toggle onclick="toggleMobileMenu()" class="text-white text-2xl" aria-controls="mobileMenu" aria-expanded="false">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -188,6 +186,10 @@
 <script>
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
-    menu.classList.toggle('translate-x-full');
+    const toggles = document.querySelectorAll('[data-menu-toggle]');
+    const isHidden = menu.classList.toggle('translate-x-full');
+    menu.setAttribute('aria-hidden', isHidden ? 'true' : 'false');
+    document.body.classList.toggle('overflow-hidden', !isHidden);
+    toggles.forEach(button => button.setAttribute('aria-expanded', isHidden ? 'false' : 'true'));
 }
 </script>
