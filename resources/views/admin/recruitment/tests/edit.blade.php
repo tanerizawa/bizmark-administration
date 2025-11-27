@@ -340,6 +340,76 @@
                         </p>
                     </div>
 
+                    {{-- Reference Attachments --}}
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
+                                Lampiran Referensi (Opsional)
+                            </label>
+                            <button type="button" id="addAttachment" class="btn-secondary-sm">
+                                <i class="fas fa-paperclip mr-1"></i>Tambah Lampiran
+                            </button>
+                        </div>
+                        
+                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">
+                            Tambahkan dokumen referensi yang akan membantu kandidat menyelesaikan tes (panduan, data, contoh format, dll)
+                        </p>
+                        
+                        <div id="attachmentsContainer" class="space-y-3">
+                            @if($test->reference_attachments && count($test->reference_attachments) > 0)
+                                @foreach($test->reference_attachments as $index => $attachment)
+                                    <div class="card-nested p-3 space-y-2">
+                                        <div class="flex justify-between items-start">
+                                            <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
+                                                LAMPIRAN #<span class="attachment-number">{{ $index + 1 }}</span>
+                                            </p>
+                                            <button type="button" class="remove-attachment text-apple-red hover:text-red-400 text-xs">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <input type="text" name="reference_attachments[{{ $index }}][name]" 
+                                               value="{{ $attachment['name'] }}"
+                                               placeholder="Nama file (e.g., Panduan Penyusunan UKL-UPL)" 
+                                               class="w-full text-sm" required>
+                                        
+                                        <textarea name="reference_attachments[{{ $index }}][description]" 
+                                                  placeholder="Deskripsi singkat tentang file ini" 
+                                                  class="w-full text-sm" rows="2" required>{{ $attachment['description'] }}</textarea>
+                                        
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <input type="text" name="reference_attachments[{{ $index }}][file_url]" 
+                                                   value="{{ $attachment['file_url'] }}"
+                                                   placeholder="URL file atau path storage" 
+                                                   class="text-sm" required>
+                                            
+                                            <select name="reference_attachments[{{ $index }}][file_type]" class="text-sm" required>
+                                                <option value="pdf" {{ $attachment['file_type'] == 'pdf' ? 'selected' : '' }}>PDF</option>
+                                                <option value="doc" {{ $attachment['file_type'] == 'doc' ? 'selected' : '' }}>DOC</option>
+                                                <option value="docx" {{ $attachment['file_type'] == 'docx' ? 'selected' : '' }}>DOCX</option>
+                                                <option value="xls" {{ $attachment['file_type'] == 'xls' ? 'selected' : '' }}>XLS</option>
+                                                <option value="xlsx" {{ $attachment['file_type'] == 'xlsx' ? 'selected' : '' }}>XLSX</option>
+                                                <option value="ppt" {{ $attachment['file_type'] == 'ppt' ? 'selected' : '' }}>PPT</option>
+                                                <option value="pptx" {{ $attachment['file_type'] == 'pptx' ? 'selected' : '' }}>PPTX</option>
+                                                <option value="zip" {{ $attachment['file_type'] == 'zip' ? 'selected' : '' }}>ZIP</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <input type="text" name="reference_attachments[{{ $index }}][file_size]" 
+                                               value="{{ $attachment['file_size'] }}"
+                                               placeholder="Ukuran file (e.g., 2.5 MB)" 
+                                               class="w-full text-sm" required>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+
+                        <div id="attachmentsEmptyState" class="text-center py-6" style="color: rgba(235,235,245,0.5); display: {{ ($test->reference_attachments && count($test->reference_attachments) > 0) ? 'none' : 'block' }};">
+                            <i class="fas fa-paperclip text-2xl mb-2"></i>
+                            <p class="text-xs">Belum ada lampiran referensi. Klik "Tambah Lampiran" untuk menambahkan.</p>
+                        </div>
+                    </div>
+
                     {{-- Kriteria Penilaian --}}
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
@@ -676,6 +746,91 @@ function updateCriteriaNumbers() {
     const criteria = criteriaContainer.querySelectorAll('.card-nested');
     criteria.forEach((c, index) => {
         c.querySelector('.criteria-number').textContent = index + 1;
+    });
+}
+
+// Reference Attachments Management
+let attachmentIndex = {{ $test->reference_attachments && count($test->reference_attachments) > 0 ? count($test->reference_attachments) : 0 }};
+const attachmentsContainer = document.getElementById('attachmentsContainer');
+const attachmentsEmptyState = document.getElementById('attachmentsEmptyState');
+
+document.getElementById('addAttachment').addEventListener('click', function() {
+    attachmentsEmptyState.style.display = 'none';
+    
+    const attachmentItem = document.createElement('div');
+    attachmentItem.className = 'card-nested p-3 space-y-2';
+    attachmentItem.innerHTML = `
+        <div class="flex justify-between items-start">
+            <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
+                LAMPIRAN #<span class="attachment-number">${attachmentIndex + 1}</span>
+            </p>
+            <button type="button" class="remove-attachment text-apple-red hover:text-red-400 text-xs">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        
+        <input type="text" name="reference_attachments[${attachmentIndex}][name]" 
+               placeholder="Nama file (e.g., Panduan Penyusunan UKL-UPL)" 
+               class="w-full text-sm" required>
+        
+        <textarea name="reference_attachments[${attachmentIndex}][description]" 
+                  placeholder="Deskripsi singkat tentang file ini" 
+                  class="w-full text-sm" rows="2" required></textarea>
+        
+        <div class="grid grid-cols-2 gap-2">
+            <input type="text" name="reference_attachments[${attachmentIndex}][file_url]" 
+                   placeholder="URL file atau path storage" 
+                   class="text-sm" required>
+            
+            <select name="reference_attachments[${attachmentIndex}][file_type]" class="text-sm" required>
+                <option value="pdf">PDF</option>
+                <option value="doc">DOC</option>
+                <option value="docx">DOCX</option>
+                <option value="xls">XLS</option>
+                <option value="xlsx">XLSX</option>
+                <option value="ppt">PPT</option>
+                <option value="pptx">PPTX</option>
+                <option value="zip">ZIP</option>
+            </select>
+        </div>
+        
+        <input type="text" name="reference_attachments[${attachmentIndex}][file_size]" 
+               placeholder="Ukuran file (e.g., 2.5 MB)" 
+               class="w-full text-sm" required>
+    `;
+    
+    attachmentsContainer.appendChild(attachmentItem);
+    attachmentIndex++;
+    
+    // Remove attachment handler
+    attachmentItem.querySelector('.remove-attachment').addEventListener('click', function() {
+        if (confirm('Hapus lampiran ini?')) {
+            attachmentItem.remove();
+            updateAttachmentNumbers();
+            if (attachmentsContainer.children.length === 0) {
+                attachmentsEmptyState.style.display = 'block';
+            }
+        }
+    });
+});
+
+// Add remove handlers for existing attachments
+document.querySelectorAll('.remove-attachment').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (confirm('Hapus lampiran ini?')) {
+            this.closest('.card-nested').remove();
+            updateAttachmentNumbers();
+            if (attachmentsContainer.children.length === 0) {
+                attachmentsEmptyState.style.display = 'block';
+            }
+        }
+    });
+});
+
+function updateAttachmentNumbers() {
+    const attachments = attachmentsContainer.querySelectorAll('.card-nested');
+    attachments.forEach((a, index) => {
+        a.querySelector('.attachment-number').textContent = index + 1;
     });
 }
 </script>

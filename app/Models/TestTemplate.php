@@ -25,6 +25,7 @@ class TestTemplate extends Model
     protected $casts = [
         'questions_data' => 'array',
         'evaluation_criteria' => 'array',
+        'reference_attachments' => 'array',
         'is_active' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

@@ -19,6 +19,8 @@ class EmailInboxController extends Controller
         $query = EmailInbox::query();
 
         $category = $request->get('category', 'inbox');
+        
+        // Always filter by category to prevent trash/spam from showing in other views
         $query->where('category', $category);
 
         if ($request->filled('is_read')) {
@@ -177,17 +179,30 @@ class EmailInboxController extends Controller
     public function moveToTrash($id)
     {
         $email = EmailInbox::findOrFail($id);
+        $previousCategory = $email->category;
         $email->moveToTrash();
-        return redirect()->route('admin.inbox.index')
+        
+        // Redirect back to the previous category view
+        return redirect()->route('admin.inbox.index', ['category' => $previousCategory])
             ->with('success', 'Email dipindahkan ke trash.');
     }
 
     public function delete($id)
     {
         $email = EmailInbox::findOrFail($id);
-        $email->delete();
-        return redirect()->route('admin.inbox.index')
-            ->with('success', 'Email berhasil dihapus.');
+        
+        // If email is in trash, delete permanently
+        if ($email->category === 'trash') {
+            $email->delete();
+            return redirect()->route('admin.inbox.index', ['category' => 'trash'])
+                ->with('success', 'Email berhasil dihapus permanen.');
+        }
+        
+        // If email is not in trash, move to trash first
+        $previousCategory = $email->category;
+        $email->moveToTrash();
+        return redirect()->route('admin.inbox.index', ['category' => $previousCategory])
+            ->with('success', 'Email dipindahkan ke trash. Untuk menghapus permanen, buka folder Trash.');
     }
 
     public function emptyTrash()

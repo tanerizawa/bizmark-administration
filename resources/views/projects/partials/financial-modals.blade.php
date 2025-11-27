@@ -1227,6 +1227,13 @@ function deleteSchedule(scheduleId) {
 }
 
 function deleteExpense(expenseId) {
+    // Validate expenseId
+    if (!expenseId || expenseId === 'undefined' || expenseId === 'null') {
+        console.error('❌ Invalid expenseId:', expenseId);
+        alert('Error: ID pengeluaran tidak valid');
+        return;
+    }
+    
     if (!confirm('Yakin ingin menghapus pengeluaran ini?')) return;
     
     fetch(`/financial-expenses/${expenseId}`, {
@@ -1235,7 +1242,12 @@ function deleteExpense(expenseId) {
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(result => {
         if (result.success) {
             // Reload dengan hash untuk stay di tab financial
@@ -1311,6 +1323,13 @@ function recordReceivablePayment(expenseId, remainingAmount) {
 }
 
 function markAsInvoiced(expenseId) {
+    // Validate expenseId
+    if (!expenseId || expenseId === 'undefined' || expenseId === 'null') {
+        console.error('❌ Invalid expenseId:', expenseId);
+        alert('Error: ID pengeluaran tidak valid');
+        return;
+    }
+    
     if (!confirm('Tandai pengeluaran ini sudah ditagihkan ke klien?\n\nCatatan: Item ini akan dipindahkan dari daftar piutang.')) return;
     
     // For now, just add a note. In future, this could create an invoice automatically
@@ -1326,7 +1345,12 @@ function markAsInvoiced(expenseId) {
             invoice_note: invoiceNote
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(result => {
         if (result.success) {
             window.location.hash = 'financial';
@@ -1350,9 +1374,21 @@ function toggleReceivableFields() {
 }
 
 function editExpense(expenseId) {
+    // Validate expenseId
+    if (!expenseId || expenseId === 'undefined' || expenseId === 'null') {
+        console.error('❌ Invalid expenseId:', expenseId);
+        alert('Error: ID pengeluaran tidak valid');
+        return;
+    }
+    
     // Fetch expense data
     fetch(`/financial-expenses/${expenseId}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(expense => {
             // ============================================
             // VALIDATION: Check if expense can be edited

@@ -172,7 +172,7 @@
         </div>
         <div class="divide-y divide-white/5">
             @forelse($emails as $email)
-                <div class="email-item px-6 py-4 hover:bg-white/5 transition-colors cursor-pointer {{ !$email->is_read ? 'bg-white/5' : '' }}"
+                <div class="email-item px-6 py-4 hover:bg-white/5 transition-colors {{ !$email->is_read ? 'bg-white/5' : '' }}"
                      onclick="window.location='{{ route('admin.inbox.show', $email) }}'">
                     <div class="flex items-start gap-4">
                         <button type="button"
@@ -185,7 +185,7 @@
                                 {{ strtoupper(substr(($category === 'sent' ? $email->to_email : ($email->from_name ?? $email->from_email)), 0, 2)) }}
                             </div>
                         </div>
-                        <div class="flex-grow min-w-0">
+                        <div class="flex-grow min-w-0 cursor-pointer">
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-center gap-2 min-w-0">
                                     <p class="text-sm font-{{ !$email->is_read ? 'semibold' : 'medium' }} text-white truncate">
@@ -200,17 +200,31 @@
                                         <i class="fas fa-paperclip text-xs" style="color: rgba(235,235,245,0.5);"></i>
                                     @endif
                                 </div>
-                                <span class="text-xs whitespace-nowrap" style="color: rgba(235,235,245,0.6);">
-                                    @if($email->received_at->isToday())
-                                        {{ $email->received_at->format('H:i') }}
-                                    @elseif($email->received_at->isYesterday())
-                                        Kemarin
-                                    @elseif($email->received_at->diffInDays() < 7)
-                                        {{ $email->received_at->locale('id')->isoFormat('dddd') }}
-                                    @else
-                                        {{ $email->received_at->format('d M Y') }}
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs whitespace-nowrap" style="color: rgba(235,235,245,0.6);">
+                                        @if($email->received_at->isToday())
+                                            {{ $email->received_at->format('H:i') }}
+                                        @elseif($email->received_at->isYesterday())
+                                            Kemarin
+                                        @elseif($email->received_at->diffInDays() < 7)
+                                            {{ $email->received_at->locale('id')->isoFormat('dddd') }}
+                                        @else
+                                            {{ $email->received_at->format('d M Y') }}
+                                        @endif
+                                    </span>
+                                    @if($category === 'trash')
+                                        <form action="{{ route('admin.inbox.delete', $email->id) }}" 
+                                              method="POST" 
+                                              onclick="event.stopPropagation();"
+                                              onsubmit="event.stopPropagation(); return confirm('Yakin ingin menghapus email ini secara PERMANEN?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-400 hover:text-red-300 transition-colors">
+                                                <i class="fas fa-times-circle"></i>
+                                            </button>
+                                        </form>
                                     @endif
-                                </span>
+                                </div>
                             </div>
                             <h3 class="text-sm font-{{ !$email->is_read ? 'semibold' : 'normal' }} text-white mb-1 truncate">
                                 {{ $email->subject ?: '(No subject)' }}

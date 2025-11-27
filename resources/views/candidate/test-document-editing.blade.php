@@ -231,6 +231,66 @@
                 </div>
             </div>
 
+            <!-- Reference Attachments -->
+            @if($testSession->testTemplate->reference_attachments && count($testSession->testTemplate->reference_attachments) > 0)
+            <div class="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-apple-xl p-4 md:p-6 mb-6 border border-green-500/30">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-apple-lg bg-green-500/30 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-paperclip text-lg md:text-xl text-green-400"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-semibold text-sm md:text-base">Lampiran Referensi</h4>
+                        <p class="text-gray-400 text-xs md:text-sm">Data dan panduan untuk menyelesaikan tes ini</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    @foreach($testSession->testTemplate->reference_attachments as $attachment)
+                    <div class="bg-gray-800/50 rounded-apple-lg p-3 md:p-4 border border-gray-700/50 hover:border-green-500/50 transition-all">
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3 min-w-0 flex-1">
+                                <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                                    @if($attachment['file_type'] === 'pdf')
+                                    <i class="fas fa-file-pdf text-red-400"></i>
+                                    @elseif(in_array($attachment['file_type'], ['doc', 'docx']))
+                                    <i class="fas fa-file-word text-blue-400"></i>
+                                    @elseif(in_array($attachment['file_type'], ['xls', 'xlsx']))
+                                    <i class="fas fa-file-excel text-green-400"></i>
+                                    @else
+                                    <i class="fas fa-file text-gray-400"></i>
+                                    @endif
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h5 class="text-white font-medium text-sm mb-1">{{ $attachment['name'] }}</h5>
+                                    <p class="text-gray-400 text-xs mb-1 line-clamp-2">{{ $attachment['description'] }}</p>
+                                    <p class="text-gray-500 text-xs">
+                                        <i class="fas fa-file-alt mr-1"></i>{{ strtoupper($attachment['file_type']) }}
+                                        <span class="mx-2">•</span>
+                                        <i class="fas fa-hdd mr-1"></i>{{ $attachment['file_size'] }}
+                                    </p>
+                                </div>
+                            </div>
+                            <a href="{{ $attachment['file_url'] }}" 
+                               class="btn-secondary text-xs w-full md:w-auto text-center whitespace-nowrap"
+                               download
+                               target="_blank">
+                                <i class="fas fa-download mr-1"></i>
+                                Unduh
+                            </a>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                
+                <div class="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-apple-lg">
+                    <p class="text-blue-300 text-xs flex items-start gap-2">
+                        <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
+                        <span>Silakan unduh dan pelajari lampiran referensi ini untuk membantu menyelesaikan tes dengan lebih baik.</span>
+                    </p>
+                </div>
+            </div>
+            @endif
+
             <!-- File Upload -->
             <div class="bg-gray-800/50 rounded-apple-xl p-4 md:p-6">
                 <h3 class="text-base md:text-lg font-semibold text-white mb-4 flex items-center gap-2">

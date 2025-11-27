@@ -32,6 +32,9 @@
         }
     </script>
     
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh2JtHeS4ZL8SaJIs54IVqVdPXgeSrxlL1YgM7GkL4Z3+5eZ5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <!-- Alpine.js for interactivity -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
@@ -73,10 +76,24 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-linkedin-50 via-white to-linkedin-100 min-h-screen">
+    @php
+        $contact = config('landing_metrics.contact');
+        $experience = config('landing_metrics.experience');
+        $benefits = [
+            'AI biz-process memetakan izin prioritas hanya dalam 30 detik',
+            'Tim konsultan senior memvalidasi hasil sebelum dikirim',
+            'Termasuk rekomendasi timeline, instansi, dan estimasi biaya'
+        ];
+        $documentTips = [
+            'OSS RBA (NIB, NIB Perizinan Berusaha)',
+            'UKL-UPL / AMDAL & perizinan lingkungan',
+            'PBG, SLF, TDG, penetapan KBLI, dan izin sektoral lain'
+        ];
+    @endphp
     
-    <div x-data="inquiryForm()" x-cloak class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div x-data="inquiryForm()" x-init="init()" x-cloak class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
         <!-- Header -->
-        <div class="max-w-3xl mx-auto mb-8 animate-fadeIn">
+        <div class="max-w-4xl mx-auto mb-10 animate-fadeIn text-center">
             <div class="text-center">
                 <!-- Logo -->
                 <a href="{{ route('landing') }}" class="inline-flex items-center gap-2 mb-4">
@@ -111,9 +128,60 @@
             </div>
         </div>
 
-        <!-- Form Container -->
-        <div class="max-w-3xl mx-auto">
-            <form @submit.prevent="submitForm" class="bg-white rounded-2xl shadow-xl border border-linkedin-100 overflow-hidden">
+        <!-- Main Content -->
+        <div class="max-w-6xl mx-auto grid lg:grid-cols-3 gap-6 items-start">
+            <!-- Insight Sidebar -->
+            <aside class="space-y-6">
+                <div class="bg-white/90 backdrop-blur-md border border-linkedin-100 rounded-2xl p-6 shadow-lg">
+                    <h3 class="text-xl font-semibold text-linkedin-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-check-circle text-linkedin-500"></i>
+                        Kenapa Analisis Ini?
+                    </h3>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        @foreach($benefits as $benefit)
+                            <li class="flex items-start gap-3">
+                                <span class="w-2.5 h-2.5 mt-2 rounded-full bg-linkedin-500"></span>
+                                <span>{{ $benefit }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <div class="mt-4 rounded-xl bg-linkedin-50 border border-linkedin-100 px-4 py-3 text-sm text-linkedin-700">
+                        <strong>{{ $experience['years'] ?? '10+' }} tahun</strong> pengalaman lintas industri • <strong>{{ $contact['hours'] ?? 'Portal 24/7' }}</strong>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-linkedin-600 to-linkedin-700 text-white rounded-2xl p-6 shadow-xl">
+                    <p class="text-sm uppercase tracking-[0.2em] text-white/70 mb-2">Hubungi Konsultan</p>
+                    <h3 class="text-2xl font-semibold mb-3">Butuh Jawaban Cepat?</h3>
+                    <p class="text-white/80 text-sm mb-5">Tim kami siap merespons dalam 5 menit melalui WhatsApp. Anda juga dapat mengirim dokumen awal untuk review.</p>
+                    <div class="space-y-3">
+                        <a href="{{ $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855' }}" target="_blank" rel="noopener" class="flex items-center justify-center gap-3 bg-white text-linkedin-700 font-semibold rounded-xl py-3 shadow-lg hover:-translate-y-0.5 transition">
+                            <i class="fab fa-whatsapp text-xl text-green-500"></i> Chat WhatsApp
+                        </a>
+                        <a href="tel:{{ $contact['phone'] ?? '+6283879602855' }}" class="flex items-center justify-center gap-3 bg-white/10 border border-white/30 text-white font-semibold rounded-xl py-3 hover:bg-white/15 transition">
+                            <i class="fas fa-phone-alt"></i> {{ $contact['phone_display'] ?? 'Hubungi Kami' }}
+                        </a>
+                    </div>
+                    <p class="text-xs text-white/70 mt-4">{{ $contact['hours'] ?? 'Portal 24/7' }} • Email: {{ $contact['email'] ?? 'info@bizmark.id' }}</p>
+                </div>
+                <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-lg">
+                    <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500 mb-3">Siapkan Informasi</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        @foreach($documentTips as $tip)
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-folder-open text-linkedin-500 mt-0.5"></i>
+                                <span>{{ $tip }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <div class="mt-4 text-xs text-gray-500">
+                        Data Anda disimpan terenkripsi dan hanya digunakan untuk asesmen awal.
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Form Container -->
+            <div class="lg:col-span-2 space-y-6">
+                <form @submit.prevent="submitForm" @input.debounce.500ms="saveDraft()" class="bg-white rounded-2xl shadow-xl border border-linkedin-100 overflow-hidden">
                 
                 <!-- Step 1: Contact & Company Info -->
                 <div x-show="step === 1" x-transition class="p-6 sm:p-8">
@@ -123,6 +191,18 @@
                             Informasi Kontak & Perusahaan
                         </h2>
                         <p class="text-gray-600">Kami butuh info ini untuk mengirimkan hasil analisis ke Anda.</p>
+                    </div>
+                    <div x-show="draftLoaded || lastSavedAt" class="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 flex flex-col gap-2">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-info-circle mt-0.5"></i>
+                            <div>
+                                <p>Data sebelumnya dipulihkan otomatis. Anda dapat melanjutkan tanpa mengulang dari awal.</p>
+                                <p x-show="lastSavedAt" class="text-xs text-amber-700" x-text="'Terakhir tersimpan: ' + savedAtLabel"></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2">
+                            <button type="button" @click="clearDraft" class="text-xs font-semibold text-amber-800 underline hover:text-amber-900">Reset Form</button>
+                        </div>
                     </div>
 
                     <div class="space-y-5">
@@ -137,7 +217,7 @@
                                    required
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-linkedin-500 focus:border-transparent transition"
                                    placeholder="email@perusahaan.com">
-                            <p x-show="rateLimitWarning" x-text="rateLimitWarning" class="mt-1 text-sm text-amber-600"></p>
+                            <p x-show="rateLimitWarning" x-text="rateLimitWarning" class="mt-1 text-sm text-amber-600" role="status" aria-live="polite"></p>
                         </div>
 
                         <!-- Company Name -->
@@ -216,7 +296,7 @@
                                 :disabled="!isStep1Valid"
                                 :class="isStep1Valid ? 'bg-gradient-to-r from-linkedin-500 to-linkedin-600 hover:from-linkedin-600 hover:to-linkedin-700' : 'bg-gray-300 cursor-not-allowed'"
                                 class="flex-1 px-6 py-3 text-white font-semibold rounded-lg transition shadow-lg">
-                            Lanjut ke Langkah 2 →
+                            Lanjut →
                         </button>
                     </div>
                 </div>
@@ -418,6 +498,7 @@
                             </span>
                         </button>
                     </div>
+                    <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 text-center" role="alert" aria-live="assertive"></p>
                 </div>
 
             </form>
@@ -458,11 +539,16 @@
     </div>
 
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
         function inquiryForm() {
             return {
                 step: 1,
                 isSubmitting: false,
                 rateLimitWarning: '',
+                draftLoaded: false,
+                lastSavedAt: null,
+                errorMessage: '',
+                storageKey: 'bizmark_inquiry_draft',
                 formData: {
                     // Step 1
                     email: '',
@@ -481,15 +567,27 @@
                     timeline: '',
                     additional_notes: '',
                     // UTM (auto-captured)
-                    utm_source: new URLSearchParams(window.location.search).get('utm_source') || '',
-                    utm_medium: new URLSearchParams(window.location.search).get('utm_medium') || '',
-                    utm_campaign: new URLSearchParams(window.location.search).get('utm_campaign') || '',
+                    utm_source: urlParams.get('utm_source') || '',
+                    utm_medium: urlParams.get('utm_medium') || '',
+                    utm_campaign: urlParams.get('utm_campaign') || '',
+                },
+                
+                init() {
+                    this.loadDraft();
                 },
                 
                 get progress() {
-                    if (this.step === 1) return 0;
-                    if (this.step === 2) return 100;
-                    return 50;
+                    return this.step === 1 ? 50 : 100;
+                },
+
+                get savedAtLabel() {
+                    if (!this.lastSavedAt) return '';
+                    try {
+                        const date = new Date(this.lastSavedAt);
+                        return date.toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+                    } catch (e) {
+                        return '';
+                    }
                 },
                 
                 get isStep1Valid() {
@@ -518,6 +616,60 @@
                 prevStep() {
                     this.step = 1;
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+
+                getDefaultFormData() {
+                    return {
+                        email: '',
+                        company_name: '',
+                        company_type: '',
+                        phone: '',
+                        contact_person: '',
+                        position: '',
+                        business_activity: '',
+                        business_scale: '',
+                        location_province: '',
+                        location_city: '',
+                        location_category: '',
+                        estimated_investment: '',
+                        timeline: '',
+                        additional_notes: '',
+                        utm_source: urlParams.get('utm_source') || '',
+                        utm_medium: urlParams.get('utm_medium') || '',
+                        utm_campaign: urlParams.get('utm_campaign') || '',
+                    };
+                },
+
+                saveDraft() {
+                    const payload = { ...this.formData, _savedAt: new Date().toISOString() };
+                    localStorage.setItem(this.storageKey, JSON.stringify(payload));
+                    this.lastSavedAt = payload._savedAt;
+                },
+
+                loadDraft() {
+                    const saved = localStorage.getItem(this.storageKey);
+                    if (!saved) return;
+                    try {
+                        const parsed = JSON.parse(saved);
+                        const { _savedAt, ...data } = parsed;
+                        this.formData = { ...this.formData, ...data };
+                        this.lastSavedAt = _savedAt || null;
+                        this.draftLoaded = true;
+                    } catch (error) {
+                        console.warn('Failed to load draft', error);
+                    }
+                },
+
+                clearDraft(resetFields = true) {
+                    localStorage.removeItem(this.storageKey);
+                    this.draftLoaded = false;
+                    this.lastSavedAt = null;
+                    this.errorMessage = '';
+                    this.rateLimitWarning = '';
+                    if (resetFields) {
+                        this.formData = this.getDefaultFormData();
+                        this.step = 1;
+                    }
                 },
                 
                 async checkRateLimit() {
@@ -551,6 +703,7 @@
                     if (!this.isStep2Valid) return;
                     
                     this.isSubmitting = true;
+                    this.errorMessage = '';
                     
                     try {
                         const response = await fetch('{{ route("landing.service-inquiry.store") }}', {
@@ -565,18 +718,19 @@
                         const data = await response.json();
                         
                         if (data.success) {
+                            this.clearDraft(false);
                             // Poll for result
                             this.pollResult(data.inquiry_number);
                         } else if (data.error === 'rate_limit') {
-                            alert('❌ ' + data.message);
+                            this.errorMessage = data.message || 'Batas analisis gratis tercapai untuk hari ini.';
                             this.isSubmitting = false;
                         } else {
-                            alert('❌ Terjadi kesalahan. Silakan coba lagi.');
+                            this.errorMessage = data.message || 'Terjadi kesalahan. Silakan coba lagi.';
                             this.isSubmitting = false;
                         }
                     } catch (error) {
                         console.error('Submit error:', error);
-                        alert('❌ Gagal mengirim data. Periksa koneksi internet Anda.');
+                        this.errorMessage = 'Gagal mengirim data. Periksa koneksi internet Anda.';
                         this.isSubmitting = false;
                     }
                 },
@@ -585,7 +739,7 @@
                     const maxAttempts = 20; // 20 x 2 seconds = 40 seconds max
                     
                     if (attempts >= maxAttempts) {
-                        alert('⏱️ Analisis membutuhkan waktu lebih lama. Hasil akan dikirim ke email Anda.');
+                        this.errorMessage = 'Analisis membutuhkan waktu lebih lama. Hasil lengkap akan dikirim ke email Anda.';
                         this.isSubmitting = false;
                         return;
                     }

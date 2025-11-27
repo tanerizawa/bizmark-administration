@@ -63,6 +63,12 @@ class TestManagementController extends Controller
                 'evaluation_criteria.*.description' => 'required|string',
                 'evaluation_criteria.*.points' => 'required|numeric|min:0',
                 'evaluation_criteria.*.type' => 'required|in:checkbox,rating,numeric,Technical,Analysis,Quality', // Added more type options
+                'reference_attachments' => 'nullable|array',
+                'reference_attachments.*.name' => 'nullable|string|max:255',
+                'reference_attachments.*.description' => 'nullable|string',
+                'reference_attachments.*.file_url' => 'nullable|string|max:500',
+                'reference_attachments.*.file_type' => 'nullable|in:pdf,doc,docx,xls,xlsx,ppt,pptx,zip',
+                'reference_attachments.*.file_size' => 'nullable|string|max:50',
                 'instructions' => 'nullable|string',
                 'is_active' => 'boolean',
             ]);
@@ -93,6 +99,15 @@ class TestManagementController extends Controller
                 Log::info('Template file uploaded (create)', [
                     'filename' => $filename,
                     'path' => $path,
+                ]);
+            }
+            
+            // Process reference attachments if provided
+            if ($request->has('reference_attachments')) {
+                $validated['reference_attachments'] = $request->reference_attachments;
+                
+                Log::info('Reference attachments added', [
+                    'attachment_count' => count($request->reference_attachments)
                 ]);
             }
             
@@ -212,6 +227,14 @@ class TestManagementController extends Controller
             $rules['evaluation_criteria.*.description'] = 'nullable|string';
             $rules['evaluation_criteria.*.points'] = 'nullable|numeric|min:0|max:100';
             $rules['evaluation_criteria.*.type'] = 'nullable|in:Technical,Analysis,Quality,checkbox,rating,numeric';
+            
+            // Reference attachments validation
+            $rules['reference_attachments'] = 'nullable|array';
+            $rules['reference_attachments.*.name'] = 'nullable|string|max:255';
+            $rules['reference_attachments.*.description'] = 'nullable|string';
+            $rules['reference_attachments.*.file_url'] = 'nullable|string|max:500';
+            $rules['reference_attachments.*.file_type'] = 'nullable|in:pdf,doc,docx,xls,xlsx,ppt,pptx,zip';
+            $rules['reference_attachments.*.file_size'] = 'nullable|string|max:50';
         } else {
             // For non-document-editing types, questions are optional on update
             // (they might already exist in questions_data)
@@ -259,6 +282,16 @@ class TestManagementController extends Controller
                 'criteria' => $request->evaluation_criteria,
                 'total_points' => array_sum(array_column($request->evaluation_criteria, 'points'))
             ];
+        }
+
+        // Process reference_attachments for document-editing (only if provided)
+        if ($request->test_type === 'document-editing' && $request->has('reference_attachments')) {
+            $validated['reference_attachments'] = $request->reference_attachments;
+            
+            Log::info('Reference attachments updated', [
+                'test_id' => $test->id,
+                'attachment_count' => count($request->reference_attachments)
+            ]);
         }
 
         // Process questions for non-document-editing types (only if provided)
