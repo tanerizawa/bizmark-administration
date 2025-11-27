@@ -130,13 +130,22 @@
             <p class="text-gray-600 mb-4">
                 {{ $locale === 'id' ? 'Masih punya pertanyaan lain?' : 'Need help with something else?' }}
             </p>
-            <a href="https://wa.me/6283879602855?text={{ $locale === 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits' }}"
-               target="_blank"
-               class="btn btn-primary"
-               data-cta="faq_whatsapp">
-                <i class="fab fa-whatsapp"></i>
-                {{ $locale === 'id' ? 'Tanya Sekarang' : 'Ask Now' }}
-            </a>
+            <div class="flex flex-wrap gap-3 justify-center">
+                <a href="{{ route('consultation.index') }}"
+                   class="btn btn-primary"
+                   data-cta="faq_estimate">
+                    <i class="fas fa-calculator"></i>
+                    {{ $locale === 'id' ? 'Estimasi Biaya Gratis' : 'Free Cost Estimate' }}
+                </a>
+                <a href="https://wa.me/6283879602855?text={{ $locale === 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits' }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn btn-outline"
+                   data-cta="faq_whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    {{ $locale === 'id' ? 'Chat WhatsApp' : 'Chat WhatsApp' }}
+                </a>
+            </div>
         </div>
     </div>
 </section>

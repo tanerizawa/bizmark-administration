@@ -38,12 +38,20 @@
                 
                 {{-- CTA Button --}}
                 <div class="flex flex-wrap gap-4">
-                    <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi" 
+                    <a href="{{ route('consultation.index') }}" 
                        class="btn btn-primary group">
                         <span class="flex items-center justify-center h-8 w-8 rounded-full bg-white/15">
+                            <i class="fas fa-calculator text-base"></i>
+                        </span>
+                        <span>Estimasi Biaya Gratis</span>
+                        <i class="fas fa-arrow-right text-sm transition-transform group-hover:translate-x-1"></i>
+                    </a>
+                    <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi" 
+                       class="btn btn-outline group">
+                        <span class="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10">
                             <i class="fab fa-whatsapp text-base"></i>
                         </span>
-                        <span>Konsultasi Gratis</span>
+                        <span>Chat WhatsApp</span>
                         <i class="fas fa-arrow-right text-sm transition-transform group-hover:translate-x-1"></i>
                     </a>
                 </div>
