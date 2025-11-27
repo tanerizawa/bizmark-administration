@@ -88,12 +88,21 @@
         <div class="px-4 mt-6 mb-2">
             <p class="text-white/60 text-xs uppercase tracking-wider font-semibold">Hubungi Kami</p>
         </div>
-        <a href="{{ $isLandingPage ? '#contact' : $landingUrl . '#contact' }}" 
+        <a href="{{ route('consultation.index') }}" 
+           class="text-white bg-green-600 hover:bg-green-700 transition px-4 py-3 rounded-lg font-medium mb-2" 
+           onclick="toggleMobileMenu()"
+           aria-label="Get free cost estimate">
+            <i class="fas fa-calculator w-6 inline-block" aria-hidden="true"></i>
+            <span>Estimasi Biaya Gratis</span>
+        </a>
+        <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi" 
            class="text-white hover:text-blue-200 transition px-4 py-3 rounded-lg hover:bg-white/10" 
            onclick="toggleMobileMenu()"
-           aria-label="Contact us for free consultation">
-            <i class="fas fa-comments w-6 inline-block" aria-hidden="true"></i>
-            <span>Konsultasi Gratis</span>
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Chat via WhatsApp">
+            <i class="fab fa-whatsapp w-6 inline-block" aria-hidden="true"></i>
+            <span>Chat WhatsApp</span>
         </a>
         </nav>
         

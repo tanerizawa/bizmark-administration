@@ -366,16 +366,17 @@
                 Tim PT Cangah Pajaratan Mandiri siap membantu kebutuhan perizinan industri Anda dari awal hingga tuntas.
             </p>
             <div class="flex flex-col md:flex-row items-center gap-4">
+                <a href="{{ route('consultation.index') }}"
+                   class="inline-flex items-center gap-3 px-6 py-3 bg-white text-primary font-semibold rounded-full hover:bg-white/90 transition">
+                    <i class="fas fa-calculator text-lg"></i>
+                    Estimasi Biaya Gratis
+                </a>
                 <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi"
                    target="_blank"
-                   class="inline-flex items-center gap-3 px-6 py-3 bg-white text-primary font-semibold rounded-full hover:bg-white/90 transition">
-                    <i class="fab fa-whatsapp text-lg"></i>
-                    Chat via WhatsApp
-                </a>
-                <a href="tel:+6283879602855"
+                   rel="noopener noreferrer"
                    class="inline-flex items-center gap-3 px-6 py-3 border border-white/60 rounded-full font-semibold hover:bg-white/10 transition">
-                    <i class="fas fa-phone-alt text-lg"></i>
-                    Hubungi Kami
+                    <i class="fab fa-whatsapp text-lg"></i>
+                    Chat WhatsApp
                 </a>
             </div>
         </div>

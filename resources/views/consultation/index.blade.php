@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('consultation.layout')
 
 @section('meta_title', 'Estimasi Biaya Perizinan - Bizmark.ID')
 @section('meta_description', 'Dapatkan estimasi biaya perizinan usaha Anda dengan AI analysis. Pilih jenis usaha (KBLI), isi informasi bisnis, dan terima estimasi biaya instan dengan rincian lengkap.')
 @section('meta_keywords', 'estimasi biaya perizinan, kalkulator biaya izin, biaya pengurusan izin, konsultasi perizinan online, KBLI search')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-20">
     <!-- Header Section -->
     <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div class="container mx-auto px-4 py-8">

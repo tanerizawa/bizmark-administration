@@ -116,9 +116,9 @@
 
             <div class="text-center mt-12" data-aos="fade-up" data-aos-delay="200">
                 <p class="text-gray-600 mb-4">Butuh insight khusus untuk kasus Anda?</p>
-                <a href="#contact" class="btn btn-secondary" data-cta="blog_consultation">
-                    <span>Konsultasi Gratis</span>
-                    <i class="fas fa-comments text-sm"></i>
+                <a href="{{ route('consultation.index') }}" class="btn btn-secondary" data-cta="blog_consultation">
+                    <span>Estimasi Biaya Gratis</span>
+                    <i class="fas fa-calculator text-sm"></i>
                 </a>
             </div>
         @else
