@@ -49,3 +49,6 @@ check-*.php
 cookies.txt
 darkmode-converter.py
 cloudflare-email-worker.js
+
+# Documentation archive
+/docs/archive/
