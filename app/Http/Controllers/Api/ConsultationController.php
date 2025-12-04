@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ConsultRequest;
 use App\Models\Kbli;
 use App\Services\ConsultationPricingEngine;
+use App\Services\PerizinanAIService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -13,10 +14,14 @@ use Illuminate\Support\Facades\Validator;
 class ConsultationController extends Controller
 {
     protected ConsultationPricingEngine $pricingEngine;
+    protected PerizinanAIService $ragService;
     
-    public function __construct(ConsultationPricingEngine $pricingEngine)
-    {
+    public function __construct(
+        ConsultationPricingEngine $pricingEngine,
+        PerizinanAIService $ragService
+    ) {
         $this->pricingEngine = $pricingEngine;
+        $this->ragService = $ragService;
     }
     
     /**
@@ -132,6 +137,56 @@ class ConsultationController extends Controller
             ];
             $dbLocationType = $locationTypeMap[$validated['location_type']] ?? 'commercial';
             
+            // Get RAG regulation context
+            $ragInsights = null;
+            $ragConfidence = null;
+            
+            try {
+                Log::info('Fetching RAG regulation context', [
+                    'entity_type' => $validated['entity_type'],
+                    'location' => $validated['location'],
+                    'kbli_code' => $validated['kbli_code'],
+                ]);
+                
+                $ragStartTime = microtime(true);
+                
+                // Query RAG for business entity regulations
+                $ragContext = $this->ragService->getBusinessTypeRegulations(
+                    $this->getEntityTypeLabel($validated['entity_type']),
+                    $validated['location']
+                );
+                
+                $ragDuration = round((microtime(true) - $ragStartTime) * 1000, 2);
+                
+                // Store RAG insights
+                $ragInsights = json_encode([
+                    'answer' => $ragContext['answer'] ?? null,
+                    'sources' => array_slice($ragContext['sources'] ?? [], 0, 5), // Top 5 sources
+                    'confidence' => $ragContext['confidence_score'] ?? 0,
+                    'query_type' => 'business_type_regulations',
+                    'query_params' => [
+                        'entity_type' => $validated['entity_type'],
+                        'location' => $validated['location'],
+                    ],
+                ], JSON_UNESCAPED_UNICODE);
+                
+                $ragConfidence = $ragContext['confidence_score'] ?? 0;
+                
+                Log::info('RAG query successful', [
+                    'confidence' => $ragConfidence,
+                    'sources_count' => count($ragContext['sources'] ?? []),
+                    'duration_ms' => $ragDuration,
+                ]);
+                
+            } catch (\Exception $e) {
+                // Graceful degradation - continue without RAG
+                Log::warning('RAG query failed during consultation', [
+                    'error' => $e->getMessage(),
+                    'entity_type' => $validated['entity_type'],
+                    'location' => $validated['location'],
+                ]);
+            }
+            
             // Use actual applicant data or fallback to descriptive placeholder
             $applicantName = $validated['applicant_name'];
             $applicantEmail = $validated['applicant_email'] ?? ('guest-' . time() . '@bizmark.id');
@@ -164,6 +219,9 @@ class ConsultationController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'referrer_url' => $request->headers->get('referer'),
+                'rag_insights' => $ragInsights,
+                'rag_confidence' => $ragConfidence,
+                'rag_processed_at' => $ragInsights ? now() : null,
             ]);
             
             Log::info('Consultation request created', [
@@ -333,5 +391,31 @@ class ConsultationController extends Controller
         }
         
         return empty($utmParams) ? null : $utmParams;
+    }
+    
+    /**
+     * Convert entity type code to readable label for RAG query
+     * 
+     * @param string $entityType
+     * @return string
+     */
+    protected function getEntityTypeLabel(string $entityType): string
+    {
+        $labels = [
+            'individual' => 'Perorangan',
+            'cv' => 'CV (Commanditaire Vennootschap)',
+            'firma' => 'Firma',
+            'pt' => 'PT (Perseroan Terbatas)',
+            'pt_pma' => 'PT PMA (Penanaman Modal Asing)',
+            'persero' => 'Persero',
+            'perum' => 'Perum (Perusahaan Umum)',
+            'koperasi' => 'Koperasi',
+            'yayasan' => 'Yayasan',
+            'perkumpulan' => 'Perkumpulan',
+            'bumn' => 'BUMN (Badan Usaha Milik Negara)',
+            'foreign_rep' => 'Kantor Perwakilan Perusahaan Asing',
+        ];
+        
+        return $labels[$entityType] ?? 'PT';
     }
 }

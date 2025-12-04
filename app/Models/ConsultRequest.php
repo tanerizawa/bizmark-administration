@@ -38,6 +38,9 @@ class ConsultRequest extends Model
         'user_agent',
         'referrer_url',
         'utm_params',
+        'rag_insights',
+        'rag_confidence',
+        'rag_processed_at',
     ];
 
     protected $casts = [
@@ -46,6 +49,9 @@ class ConsultRequest extends Model
         'final_quote' => 'array',
         'admin_notes' => 'array',
         'utm_params' => 'array',
+        'rag_insights' => 'array',
+        'rag_confidence' => 'decimal:4',
+        'rag_processed_at' => 'datetime',
         'confidence_score' => 'decimal:2',
         'employee_count' => 'integer',
         'contacted' => 'boolean',
