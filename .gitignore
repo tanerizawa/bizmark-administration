@@ -52,3 +52,17 @@ cloudflare-email-worker.js
 
 # Documentation archive
 /docs/archive/
+
+# Archived files (tidak perlu di-track)
+_archived/
+
+# Test files dan scripts (jika ada yang terlewat)
+*test*.html
+*test*.php
+check-*.php
+cleanup*.php
+getMessage
+
+# Security sensitive
+cookies.txt
+*.backup

@@ -30,7 +30,9 @@ class ConsultationController extends Controller
         try {
             // Validate input
             $validator = Validator::make($request->all(), [
-                // Contact information (simplified - phone only for now)
+                // Contact information
+                'applicant_name' => 'required|string|max:255',
+                'applicant_email' => 'nullable|email|max:255',
                 'contact_phone' => 'required|string|max:20',
                 
                 // Business information (5-digit KBLI required)
@@ -42,9 +44,13 @@ class ConsultationController extends Controller
                 ],
                 'business_size' => 'required|in:micro,small,medium,large',
                 'location' => 'required|string|max:255',
-                'location_type' => 'required|in:jakarta,jabodetabek,jawa_bali,luar_jawa',
-                'investment_level' => 'required|in:under_1b,1b_5b,5b_10b,above_10b',
+                'location_type' => 'required|in:commercial,industrial,residential,mixed_use,special_economic,rural_agricultural,tourism,educational',
+                'geographic_region' => 'required|in:jakarta_capital,java_major_cities,java_medium_cities,java_small_cities,bali_lombok,sumatra_major,sumatra_others,kalimantan_major,kalimantan_others,sulawesi_major,sulawesi_others,eastern_indonesia,border_areas',
+                'entity_type' => 'required|in:individual,cv,firma,pt,pt_pma,persero,perum,koperasi,yayasan,perkumpulan,bumn,foreign_rep',
+                'investment_level' => 'required|in:under_100m,100m_500m,500m_2b,2b_10b,10b_50b,above_50b',
                 'employee_count' => 'nullable|integer|min:0|max:100000',
+                'target_timeline' => 'nullable|in:urgent,fast,normal,planned,flexible',
+                'business_nature' => 'nullable|in:local_market,export_oriented,import_dependent,b2b_services,b2c_retail,online_marketplace,franchise,government_contractor,high_risk',
                 
                 // Project details (optional - AI will recommend if not provided)
                 'deliverables' => 'nullable|string|max:5000',
@@ -52,6 +58,9 @@ class ConsultationController extends Controller
                 'kbli_code.required' => 'KBLI code is required',
                 'kbli_code.regex' => 'KBLI code must be exactly 5 digits',
                 'kbli_code.exists' => 'Invalid KBLI code',
+                'location_type.required' => 'Zone/kawasan lokasi is required',
+                'geographic_region.required' => 'Geographic region is required',
+                'entity_type.required' => 'Business entity type is required',
             ]);
             
             if ($validator->fails()) {
@@ -87,48 +96,71 @@ class ConsultationController extends Controller
                 'business_size' => $validated['business_size'],
                 'location' => $validated['location'],
                 'location_type' => $validated['location_type'],
+                'geographic_region' => $validated['geographic_region'] ?? null,
+                'entity_type' => $validated['entity_type'] ?? null,
                 'investment_level' => $validated['investment_level'],
                 'employee_count' => $validated['employee_count'] ?? 5,
+                'target_timeline' => $validated['target_timeline'] ?? null,
+                'business_nature' => $validated['business_nature'] ?? null,
                 'project_description' => $validated['deliverables'] ?? 'Konsultasi perizinan usaha',
                 'deliverables_requested' => [],
             ]);
             
             $estimateTime = (int) ((microtime(true) - $startTime) * 1000);
             
-            // Map form investment_level to database enum
+            // Map form investment_level to database enum (now consistent)
             $investmentLevelMap = [
-                'under_1b' => 'under_100m',
-                '1b_5b' => '100m_500m',
-                '5b_10b' => '500m_2b',
-                'above_10b' => 'over_2b',
+                'under_100m' => 'under_100m',
+                '100m_500m' => '100m_500m',
+                '500m_2b' => '500m_2b',
+                '2b_10b' => 'over_2b',       // Map to closest DB enum
+                '10b_50b' => 'over_2b',      // Large investments  
+                'above_50b' => 'over_2b',    // Very large investments
             ];
             $dbInvestmentLevel = $investmentLevelMap[$validated['investment_level']] ?? 'under_100m';
             
-            // Map form location_type to database enum
+            // Map form location_type to database enum values
             $locationTypeMap = [
-                'jakarta' => 'commercial',
-                'jabodetabek' => 'commercial',
-                'jawa_bali' => 'commercial',
-                'luar_jawa' => 'industrial',
+                'commercial' => 'commercial',
+                'industrial' => 'industrial',
+                'residential' => 'residential',
+                'mixed_use' => 'commercial',        // Mixed-use treated as commercial
+                'special_economic' => 'industrial', // KEK treated as industrial
+                'rural_agricultural' => 'rural',   // Rural/agricultural
+                'tourism' => 'commercial',          // Tourism as commercial
+                'educational' => 'residential',     // Educational as residential-like
             ];
             $dbLocationType = $locationTypeMap[$validated['location_type']] ?? 'commercial';
             
-            // Create consultation request record
+            // Use actual applicant data or fallback to descriptive placeholder
+            $applicantName = $validated['applicant_name'];
+            $applicantEmail = $validated['applicant_email'] ?? ('guest-' . time() . '@bizmark.id');
+            
+            // Create consultation request record with accurate data
             $consultRequest = ConsultRequest::create([
-                'name' => 'Guest User', // Temporary placeholder
-                'email' => 'guest-' . time() . '@bizmark.id', // Temporary email
+                'name' => $applicantName, // Real applicant name
+                'email' => $applicantEmail, // Real email or temporary
                 'phone' => $validated['contact_phone'],
                 'company_name' => null,
                 'kbli_code' => $validated['kbli_code'],
                 'business_size' => $validated['business_size'],
                 'location' => $validated['location'],
-                'location_type' => $dbLocationType, // Use mapped value
-                'investment_level' => $dbInvestmentLevel, // Use mapped value
-                'employee_count' => $validated['employee_count'] ?? null,
+                'location_type' => $dbLocationType, 
+                'investment_level' => $dbInvestmentLevel, 
+                'employee_count' => (int)($validated['employee_count'] ?? 0), // Ensure integer
                 'project_description' => $validated['deliverables'] ?? 'Konsultasi perizinan usaha',
                 'deliverables_requested' => [],
                 'estimate_status' => 'auto_estimated',
-                'auto_estimate' => $estimate,
+                'auto_estimate' => array_merge($estimate, [
+                    'form_data' => [
+                        'geographic_region' => $validated['geographic_region'] ?? null,
+                        'entity_type' => $validated['entity_type'] ?? null,
+                        'target_timeline' => $validated['target_timeline'] ?? null,
+                        'business_nature' => $validated['business_nature'] ?? null,
+                        'original_investment_level' => $validated['investment_level'], // Keep original for reference
+                        'original_location_type' => $validated['location_type'], // Keep original for reference
+                    ]
+                ]),
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'referrer_url' => $request->headers->get('referer'),
@@ -218,8 +250,9 @@ class ConsultationController extends Controller
                     'exists:kbli,code',
                 ],
                 'business_size' => 'required|in:micro,small,medium,large',
-                'location_type' => 'required|in:jakarta,jabodetabek,jawa_bali,luar_jawa',
-                'investment_level' => 'nullable|in:under_1b,1b_5b,5b_10b,above_10b',
+                'location_type' => 'required|in:commercial,industrial,residential,mixed_use,special_economic,rural_agricultural,tourism,educational',
+                'geographic_region' => 'nullable|in:jakarta_capital,java_major_cities,java_medium_cities,java_small_cities,bali_lombok,sumatra_major,sumatra_others,kalimantan_major,kalimantan_others,sulawesi_major,sulawesi_others,eastern_indonesia,border_areas',
+                'investment_level' => 'nullable|in:under_100m,100m_500m,500m_2b,2b_10b,10b_50b,above_50b',
             ]);
             
             if ($validator->fails()) {
@@ -247,6 +280,7 @@ class ConsultationController extends Controller
                 'business_size' => $validated['business_size'],
                 'location' => 'Indonesia',
                 'location_type' => $validated['location_type'],
+                'geographic_region' => $validated['geographic_region'] ?? null,
                 'investment_level' => $validated['investment_level'] ?? 'under_100m',
                 'employee_count' => 5,
                 'project_description' => 'Quick estimate preview',

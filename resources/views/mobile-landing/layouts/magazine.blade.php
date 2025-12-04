@@ -282,14 +282,12 @@
             });
         });
         
-        // Screen Width Detection with Auto-Redirect
-        let lastScreenWidth = window.innerWidth;
-        const MOBILE_BREAKPOINT = 768;
-        
+        // Screen Width Detection (Auto-redirect disabled to prevent infinite loop)
+        // Users can manually switch using the toggle in header
         function updateScreenWidth() {
             const width = window.innerWidth;
             
-            // Send width to server
+            // Send width to server for analytics
             fetch('/api/set-screen-width', {
                 method: 'POST',
                 headers: {
@@ -298,30 +296,16 @@
                 },
                 body: JSON.stringify({ width: width })
             }).catch(err => console.log('Screen width update failed:', err));
-            
-            // Check if crossed breakpoint threshold
-            const wasDesktop = lastScreenWidth >= MOBILE_BREAKPOINT;
-            const isDesktop = width >= MOBILE_BREAKPOINT;
-            
-            // If switched from mobile to desktop, redirect to desktop version
-            if (!wasDesktop && isDesktop) {
-                console.log('Switched to desktop view, redirecting...');
-                setTimeout(() => {
-                    window.location.href = '/?desktop=1';
-                }, 500);
-            }
-            
-            lastScreenWidth = width;
         }
         
         // Update on load
         updateScreenWidth();
         
-        // Debounced resize handler (only redirect after user stops resizing)
+        // Update on resize (debounced)
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(updateScreenWidth, 1000); // Wait 1 second after resize stops
+            resizeTimeout = setTimeout(updateScreenWidth, 1000);
         });
         
         // Suppress Cloudflare Insights errors (optional analytics)

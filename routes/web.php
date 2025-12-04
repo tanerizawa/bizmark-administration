@@ -26,6 +26,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\PermitManagementController;
 use App\Http\Controllers\Admin\RecruitmentController;
+use App\Http\Controllers\Admin\ConsultationLeadController;
 
 // SEO Routes
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -233,6 +234,18 @@ Route::middleware(['auth'])->group(function () {
         Route::post('admin/service-inquiries/{serviceInquiry}/note', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('admin.service-inquiries.add-note');
         Route::post('admin/service-inquiries/{serviceInquiry}/convert', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'convertToProject'])->name('admin.service-inquiries.convert');
         Route::delete('admin/service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'destroy'])->name('admin.service-inquiries.destroy');
+    });
+
+    // Consultation Leads Management Routes (Cost Estimation Leads)
+    Route::middleware('permission:clients.view')->group(function () {
+        Route::get('admin/consultation-leads', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'index'])->name('admin.consultation-leads.index');
+        Route::get('admin/consultation-leads/export', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'export'])->name('admin.consultation-leads.export');
+        Route::get('admin/consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'show'])->name('admin.consultation-leads.show');
+        Route::post('admin/consultation-leads/{consultation}/update-status', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'updateStatus'])->name('admin.consultation-leads.update-status');
+        Route::post('admin/consultation-leads/{consultation}/mark-contacted', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'markContacted'])->name('admin.consultation-leads.mark-contacted');
+        Route::post('admin/consultation-leads/{consultation}/convert', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'convertToClient'])->name('admin.consultation-leads.convert-to-client');
+        Route::post('admin/consultation-leads/{consultation}/note', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'addNote'])->name('admin.consultation-leads.add-note');
+        Route::delete('admin/consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'destroy'])->name('admin.consultation-leads.destroy');
     });
 
     // Financial Management Routes (Phase 1)
@@ -869,3 +882,40 @@ Route::prefix('candidate')->name('candidate.')->group(function () {
     Route::get('test/{token}/time', [App\Http\Controllers\Candidate\TestController::class, 'getRemainingTime'])
         ->name('test.time');
 });
+
+// Beta Tester Routes - Standalone System
+Route::prefix('beta-tester')->name('beta-tester.')->group(function () {
+    // Public Routes
+    Route::get('/', [App\Http\Controllers\BetaTesterController::class, 'index'])->name('index');
+    Route::get('/register', [App\Http\Controllers\BetaTesterController::class, 'register'])->name('register');
+    Route::post('/register', [App\Http\Controllers\BetaTesterController::class, 'store'])->name('store');
+    
+    // Dashboard & Documents (Token-based Authentication)
+    Route::get('/dashboard', [App\Http\Controllers\BetaTesterController::class, 'dashboard'])->name('dashboard');
+    Route::get('/document/{documentId}', [App\Http\Controllers\BetaTesterController::class, 'viewDocument'])->name('document.view');
+    Route::post('/document/{documentId}/sign', [App\Http\Controllers\BetaTesterController::class, 'signDocument'])->name('document.sign');
+    Route::get('/document/{documentId}/download', [App\Http\Controllers\BetaTesterController::class, 'downloadPdf'])->name('document.download');
+});
+
+// Admin Beta Tester Management Routes
+Route::middleware(['auth'])->prefix('admin/beta-tester')->name('admin.beta-tester.')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'dashboard'])->name('dashboard');
+    
+    // CRUD
+    Route::get('/', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'index'])->name('index');
+    Route::get('/{betaTester}', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'show'])->name('show');
+    Route::patch('/{betaTester}', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'update'])->name('update');
+    Route::delete('/{betaTester}', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'destroy'])->name('destroy');
+    
+    // Actions
+    Route::post('/{betaTester}/change-status', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'changeStatus'])->name('change-status');
+    Route::post('/{betaTester}/resend-documents', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'resendDocuments'])->name('resend-documents');
+    Route::post('/{betaTester}/add-note', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'addNote'])->name('add-note');
+    Route::post('/document/{document}/verify', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'verifyDocument'])->name('document.verify');
+    
+    // Export
+    Route::get('/export/csv', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'export'])->name('export');
+});
+
+

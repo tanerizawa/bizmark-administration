@@ -93,30 +93,64 @@
                     $breakdown = $consultation->estimate_data['cost_breakdown'] ?? [];
                 @endphp
 
-                <!-- Biaya Pokok -->
+                <!-- Investment Context -->
+                @if(isset($consultation->estimate_data['investment_percentage']) && isset($consultation->estimate_data['investment_value']))
+                <div class="mb-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <h3 class="font-bold text-blue-900 dark:text-blue-300 mb-2 flex items-center gap-2">
+                        <i class="fas fa-chart-pie"></i>
+                        Basis Perhitungan
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-400">Nilai Investasi</p>
+                            <p class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($consultation->estimate_data['investment_value'], 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-400">Persentase Perizinan</p>
+                            <p class="font-bold text-blue-600 dark:text-blue-400">{{ number_format($consultation->estimate_data['investment_percentage'], 1) }}%</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-400">Kompleksitas</p>
+                            <p class="font-bold text-gray-900 dark:text-white capitalize">{{ $consultation->kbli->complexity_level }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Biaya Pemerintah -->
                 <div class="mb-6">
                     <h3 class="font-bold text-gray-900 dark:text-white mb-3 flex items-center justify-between">
-                        <span>Biaya Pokok</span>
-                        <span class="text-blue-600 dark:text-blue-400">Rp {{ number_format($breakdown['biaya_pokok']['total'] ?? 0, 0, ',', '.') }}</span>
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-landmark text-blue-600"></i>
+                            Biaya Pemerintah
+                        </span>
+                        <span class="text-blue-600 dark:text-blue-400">Rp {{ number_format($breakdown['biaya_pemerintah']['total'] ?? 0, 0, ',', '.') }}</span>
                     </h3>
                     <div class="space-y-2 pl-4 border-l-2 border-blue-500">
-                        @foreach(($breakdown['biaya_pokok']['breakdown'] ?? []) as $key => $value)
+                        @foreach(($breakdown['biaya_pemerintah']['breakdown'] ?? []) as $key => $value)
                             <div class="flex items-center justify-between text-sm">
                                 <span class="text-gray-600 dark:text-gray-400 capitalize">{{ str_replace('_', ' ', $key) }}</span>
                                 <span class="font-semibold text-gray-900 dark:text-white">Rp {{ number_format($value, 0, ',', '.') }}</span>
                             </div>
                         @endforeach
                     </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 pl-4">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        PNBP, retribusi daerah, dan biaya resmi lainnya
+                    </p>
                 </div>
 
-                <!-- Biaya Jasa -->
+                <!-- Biaya Konsultan -->
                 <div class="mb-6">
                     <h3 class="font-bold text-gray-900 dark:text-white mb-3 flex items-center justify-between">
-                        <span>Biaya Jasa</span>
-                        <span class="text-purple-600 dark:text-purple-400">Rp {{ number_format($breakdown['biaya_jasa']['total'] ?? 0, 0, ',', '.') }}</span>
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-user-tie text-purple-600"></i>
+                            Biaya Konsultan
+                        </span>
+                        <span class="text-purple-600 dark:text-purple-400">Rp {{ number_format($breakdown['biaya_konsultan']['total'] ?? 0, 0, ',', '.') }}</span>
                     </h3>
                     <div class="space-y-2 pl-4 border-l-2 border-purple-500">
-                        @foreach(($breakdown['biaya_jasa']['breakdown'] ?? []) as $key => $detail)
+                        @foreach(($breakdown['biaya_konsultan']['breakdown'] ?? []) as $key => $detail)
                             <div class="flex items-center justify-between text-sm">
                                 <div class="flex-1">
                                     <span class="text-gray-600 dark:text-gray-400 capitalize">{{ str_replace('_', ' ', $key) }}</span>
@@ -130,18 +164,29 @@
                         <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
                             <div class="flex items-center justify-between text-sm font-medium">
                                 <span class="text-gray-700 dark:text-gray-300">Total Jam Kerja</span>
-                                <span class="text-gray-900 dark:text-white">{{ $breakdown['biaya_jasa']['total_hours'] ?? 0 }} jam</span>
+                                <span class="text-gray-900 dark:text-white">{{ $breakdown['biaya_konsultan']['total_hours'] ?? 0 }} jam</span>
                             </div>
                         </div>
                     </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 pl-4">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Jasa konsultasi, persiapan dokumen, dan pengurusan
+                    </p>
                 </div>
 
                 <!-- Overhead -->
                 <div class="mb-6">
                     <h3 class="font-bold text-gray-900 dark:text-white mb-3 flex items-center justify-between">
-                        <span>Overhead ({{ $breakdown['overhead']['percentage'] ?? 0 }}%)</span>
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-cog text-orange-600"></i>
+                            Overhead ({{ $breakdown['overhead']['percentage'] ?? 20 }}%)
+                        </span>
                         <span class="text-orange-600 dark:text-orange-400">Rp {{ number_format($breakdown['overhead']['amount'] ?? 0, 0, ',', '.') }}</span>
                     </h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 pl-4">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        {{ $breakdown['overhead']['description'] ?? 'Administrasi, koordinasi, dan manajemen project' }}
+                    </p>
                 </div>
             </div>
 

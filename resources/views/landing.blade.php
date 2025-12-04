@@ -8,7 +8,7 @@
     <!-- Primary Meta Tags -->
     <title>Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha Jakarta</title>
     <meta name="title" content="Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha Jakarta">
-    <meta name="description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan, dan digitalisasi administrasi perusahaan. Proses cepat, transparan, harga kompetitif. Konsultasi gratis!">
+    <meta name="description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan, dan digitalisasi administrasi perusahaan. Proses cepat, transparan, harga kompetitif. Dapatkan estimasi biaya dengan AI!">
     <meta name="keywords" content="konsultan perizinan jakarta, jasa oss, pengurusan amdal, ukl upl, pbg, slf, izin lingkungan, legalitas usaha, konsultan bisnis, digitalisasi administrasi, permit management system, andalalin">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Bizmark.ID">
@@ -19,7 +19,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bizmark.id/">
     <meta property="og:title" content="Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha">
-    <meta property="og:description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan. Proses cepat, transparan, harga kompetitif. Konsultasi gratis!">
+    <meta property="og:description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan. Proses cepat, transparan, harga kompetitif. Estimasi biaya dengan AI!">
     <meta property="og:image" content="https://bizmark.id/images/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://bizmark.id/">
     <meta name="twitter:title" content="Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha">
-    <meta name="twitter:description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF. Proses cepat & transparan. Konsultasi gratis!">
+    <meta name="twitter:description" content="Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF. Proses cepat & transparan. Estimasi biaya dengan AI!">
     <meta name="twitter:image" content="https://bizmark.id/images/twitter-image.jpg">
     
     <!-- Favicons -->
@@ -504,8 +504,8 @@
             </p>
             
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4 px-4">
-                <a href="#contact" class="btn-primary" aria-label="Hubungi kami untuk konsultasi gratis">
-                    <i class="fas fa-phone-alt mr-2" aria-hidden="true"></i>Konsultasi Gratis
+                <a href="/estimasi-biaya" class="btn-primary" aria-label="Dapatkan estimasi biaya perizinan dengan AI">
+                    <i class="fas fa-calculator mr-2" aria-hidden="true"></i>Estimasi Biaya AI
                 </a>
                 <a href="#services" class="btn-secondary" aria-label="Pelajari lebih lanjut tentang layanan kami">
                     <i class="fas fa-info-circle mr-2" aria-hidden="true"></i>Pelajari Lebih Lanjut
@@ -926,11 +926,16 @@
             <div class="section p-12 text-center">
                 <h2 class="text-4xl font-bold mb-4">Siap Meningkatkan Bisnis Anda?</h2>
                 <p class="text-xl mb-8" style="color: var(--dark-text-secondary);">
-                    Hubungi tim kami sekarang untuk konsultasi gratis dan dapatkan solusi terbaik untuk kebutuhan perizinan dan pengembangan bisnis Anda
+                    Dapatkan estimasi biaya perizinan dengan AI atau hubungi tim kami untuk konsultasi lebih lanjut
                 </p>
-                <a href="#contact" class="btn-primary">
-                    <i class="fas fa-phone-alt mr-2"></i>Hubungi Kami Sekarang
-                </a>
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="/estimasi-biaya" class="btn-primary">
+                        <i class="fas fa-calculator mr-2"></i>Estimasi Biaya AI
+                    </a>
+                    <a href="#contact" class="btn-secondary">
+                        <i class="fas fa-phone-alt mr-2"></i>Hubungi Kami
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -1406,14 +1411,12 @@
             }
         });
         
-        // Screen Width Detection with Auto-Redirect to Mobile
-        let lastScreenWidth = window.innerWidth;
-        const MOBILE_BREAKPOINT = 768;
-        
+        // Screen Width Detection (Auto-redirect disabled to prevent infinite loop)
+        // Users can manually switch using the toggle in header
         function updateScreenWidthDesktop() {
             const width = window.innerWidth;
             
-            // Send width to server
+            // Send width to server for analytics
             fetch('/api/set-screen-width', {
                 method: 'POST',
                 headers: {
@@ -1422,30 +1425,16 @@
                 },
                 body: JSON.stringify({ width: width })
             }).catch(err => console.log('Screen width update failed:', err));
-            
-            // Check if crossed breakpoint threshold
-            const wasMobile = lastScreenWidth < MOBILE_BREAKPOINT;
-            const isMobile = width < MOBILE_BREAKPOINT;
-            
-            // If switched from desktop to mobile, redirect to mobile version
-            if (!wasMobile && isMobile) {
-                console.log('Switched to mobile view, redirecting...');
-                setTimeout(() => {
-                    window.location.href = '/m/landing';
-                }, 500);
-            }
-            
-            lastScreenWidth = width;
         }
         
         // Update on load
         updateScreenWidthDesktop();
         
-        // Debounced resize handler (only redirect after user stops resizing)
+        // Update on resize (debounced)
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(updateScreenWidthDesktop, 1000); // Wait 1 second after resize stops
+            resizeTimeout = setTimeout(updateScreenWidthDesktop, 1000);
         });
         
         // Add slide up animation

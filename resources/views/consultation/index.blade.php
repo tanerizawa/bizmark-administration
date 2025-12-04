@@ -208,17 +208,21 @@
                                     required
                                 >
                                     <option value="">Pilih skala usaha...</option>
-                                    <option value="micro">Mikro (Omzet < 300 juta/tahun)</option>
-                                    <option value="small">Kecil (Omzet 300 juta - 2.5 miliar)</option>
-                                    <option value="medium">Menengah (Omzet 2.5 - 50 miliar)</option>
-                                    <option value="large">Besar (Omzet > 50 miliar)</option>
+                                    <option value="micro">Usaha Mikro (Omzet ≤ 300 juta/tahun, Karyawan ≤ 4 orang)</option>
+                                    <option value="small">Usaha Kecil (Omzet 300 juta - 2.5 miliar/tahun, Karyawan 5-19 orang)</option>
+                                    <option value="medium">Usaha Menengah (Omzet 2.5 - 50 miliar/tahun, Karyawan 20-99 orang)</option>
+                                    <option value="large">Usaha Besar (Omzet > 50 miliar/tahun, Karyawan ≥ 100 orang)</option>
                                 </select>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-chart-line mr-1"></i>
+                                    Sesuai UU No. 20 Tahun 2008 tentang UMKM
+                                </p>
                             </div>
 
-                            <!-- Location Type -->
+                            <!-- Zone/Location Type -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Tipe Lokasi <span class="text-red-500">*</span>
+                                    Zona/Kawasan Lokasi <span class="text-red-500">*</span>
                                 </label>
                                 <select 
                                     x-model="formData.location_type"
@@ -226,58 +230,180 @@
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                     required
                                 >
-                                    <option value="">Pilih tipe lokasi...</option>
-                                    <option value="jakarta">DKI Jakarta</option>
-                                    <option value="jabodetabek">Jabodetabek (di luar Jakarta)</option>
-                                    <option value="jawa_bali">Jawa & Bali</option>
-                                    <option value="luar_jawa">Luar Jawa</option>
+                                    <option value="">Pilih zona/kawasan lokasi...</option>
+                                    <option value="commercial">Kawasan Komersial/Bisnis</option>
+                                    <option value="industrial">Kawasan Industri</option>
+                                    <option value="residential">Kawasan Perumahan/Pemukiman</option>
+                                    <option value="mixed_use">Kawasan Campuran (Mixed-Use)</option>
+                                    <option value="special_economic">Kawasan Ekonomi Khusus (KEK)</option>
+                                    <option value="rural_agricultural">Kawasan Pedesaan/Pertanian</option>
+                                    <option value="tourism">Kawasan Pariwisata</option>
+                                    <option value="educational">Kawasan Pendidikan</option>
                                 </select>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Pilih sesuai dengan zona/peruntukan lokasi usaha Anda
+                                </p>
                             </div>
 
-                            <!-- Location -->
+                            <!-- Geographic Region -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Lokasi Usaha <span class="text-red-500">*</span>
+                                    Wilayah Geografis <span class="text-red-500">*</span>
+                                </label>
+                                <select 
+                                    x-model="formData.geographic_region"
+                                    @change="calculateQuickEstimate"
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    required
+                                >
+                                    <option value="">Pilih wilayah geografis...</option>
+                                    <option value="jakarta_capital">DKI Jakarta</option>
+                                    <option value="java_major_cities">Kota Besar Jawa (Surabaya, Bandung, Semarang)</option>
+                                    <option value="java_medium_cities">Kota Menengah Jawa</option>
+                                    <option value="java_small_cities">Kota Kecil/Kabupaten Jawa</option>
+                                    <option value="bali_lombok">Bali & Lombok</option>
+                                    <option value="sumatra_major">Kota Besar Sumatera (Medan, Palembang, Pekanbaru)</option>
+                                    <option value="sumatra_others">Kota Lain Sumatera</option>
+                                    <option value="kalimantan_major">Kota Besar Kalimantan (Balikpapan, Pontianak)</option>
+                                    <option value="kalimantan_others">Kota Lain Kalimantan</option>
+                                    <option value="sulawesi_major">Kota Besar Sulawesi (Makassar, Manado)</option>
+                                    <option value="sulawesi_others">Kota Lain Sulawesi</option>
+                                    <option value="eastern_indonesia">Indonesia Timur (Papua, Maluku, NTT)</option>
+                                    <option value="border_areas">Wilayah Perbatasan</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>
+                                    Mempengaruhi kompleksitas perizinan dan biaya operasional
+                                </p>
+                            </div>
+
+                            <!-- Specific Location (City/Regency) -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Kota/Kabupaten <span class="text-red-500">*</span>
                                 </label>
                                 <input 
                                     type="text" 
                                     x-model="formData.location"
-                                    placeholder="Contoh: Jakarta Selatan, Tangerang, Bandung..."
+                                    placeholder="Contoh: Jakarta Selatan, Kab. Bandung, Kota Surabaya..."
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                     required
                                 >
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-building mr-1"></i>
+                                    Untuk peraturan daerah spesifik dan retribusi lokal
+                                </p>
                             </div>
 
                             <!-- Investment Level -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Nilai Investasi <span class="text-red-500">*</span>
+                                    Total Nilai Investasi <span class="text-red-500">*</span>
                                 </label>
                                 <select 
                                     x-model="formData.investment_level"
+                                    @change="calculateQuickEstimate"
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                     required
                                 >
                                     <option value="">Pilih nilai investasi...</option>
-                                    <option value="under_1b">< 1 Miliar</option>
-                                    <option value="1b_5b">1 - 5 Miliar</option>
-                                    <option value="5b_10b">5 - 10 Miliar</option>
-                                    <option value="above_10b">> 10 Miliar</option>
+                                    <option value="under_100m">< Rp 100 Juta</option>
+                                    <option value="100m_500m">Rp 100 Juta - 500 Juta</option>
+                                    <option value="500m_2b">Rp 500 Juta - 2 Miliar</option>
+                                    <option value="2b_10b">Rp 2 Miliar - 10 Miliar</option>
+                                    <option value="10b_50b">Rp 10 Miliar - 50 Miliar</option>
+                                    <option value="above_50b">Rp 50 Miliar keatas</option>
                                 </select>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Biaya perizinan umumnya 8-12% dari total investasi
+                                </p>
+                            </div>
+
+                            <!-- Business Entity Type -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Bentuk Badan Usaha <span class="text-red-500">*</span>
+                                </label>
+                                <select 
+                                    x-model="formData.entity_type"
+                                    @change="calculateQuickEstimate"
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    required
+                                >
+                                    <option value="">Pilih bentuk badan usaha...</option>
+                                    <option value="individual">Perorangan (Tidak Berbadan Hukum)</option>
+                                    <option value="cv">CV (Comanditaire Vennootschap)</option>
+                                    <option value="firma">Firma</option>
+                                    <option value="pt">PT (Perseroan Terbatas)</option>
+                                    <option value="pt_pma">PT PMA (Penanaman Modal Asing)</option>
+                                    <option value="persero">Persero (BUMN)</option>
+                                    <option value="perum">Perum (BUMN)</option>
+                                    <option value="koperasi">Koperasi</option>
+                                    <option value="yayasan">Yayasan</option>
+                                    <option value="perkumpulan">Perkumpulan</option>
+                                    <option value="bumn">BUMN/BUMD</option>
+                                    <option value="foreign_rep">Kantor Perwakilan Asing</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-building mr-1"></i>
+                                    Mempengaruhi jenis dokumen dan persyaratan perizinan
+                                </p>
                             </div>
 
                             <!-- Employee Count -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Jumlah Karyawan
+                                    Jumlah Karyawan (Perkiraan)
                                 </label>
                                 <input 
                                     type="number" 
                                     x-model="formData.employee_count"
-                                    placeholder="Perkiraan jumlah karyawan..."
-                                    min="1"
+                                    placeholder="0 = belum ada karyawan"
+                                    min="0"
+                                    max="10000"
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 >
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-users mr-1"></i>
+                                    Termasuk owner/pendiri, mempengaruhi persyaratan ketenagakerjaan
+                                </p>
+                            </div>
+
+                            <!-- Entity/Business Name -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Nama Pengusul/Entitas <span class="text-red-500">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    x-model="formData.applicant_name"
+                                    placeholder="Contoh: PT Indovido Jaya, CV Maju Bersama, atau Budi Santoso"
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    required
+                                >
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-building mr-1"></i>
+                                    Nama badan usaha jika sudah ada, atau nama individu pengusul
+                                </p>
+                            </div>
+
+                            <!-- Optional: Email for follow-up -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Email (Opsional)
+                                </label>
+                                <input 
+                                    type="email" 
+                                    x-model="formData.applicant_email"
+                                    placeholder="Contoh: info@perusahaan.com atau email.pribadi@gmail.com"
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                >
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-envelope mr-1"></i>
+                                    Email untuk mengirim hasil estimasi detail dan follow-up
+                                </p>
                             </div>
 
                             <!-- Contact Info -->
@@ -295,19 +421,68 @@
                             </div>
                         </div>
 
-                        <!-- Deliverables (Optional) -->
-                        <div class="mt-6">
+                        <!-- Target Timeline -->
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Dokumen yang Dibutuhkan (Opsional)
+                                Target Mulai Operasi
+                            </label>
+                            <select 
+                                x-model="formData.target_timeline"
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                            >
+                                <option value="">Pilih target waktu...</option>
+                                <option value="urgent">Segera (< 1 bulan)</option>
+                                <option value="fast">Cepat (1-3 bulan)</option>
+                                <option value="normal">Normal (3-6 bulan)</option>
+                                <option value="planned">Terencana (6-12 bulan)</option>
+                                <option value="flexible">Fleksibel (> 12 bulan)</option>
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i>
+                                Mempengaruhi strategi pengurusan dan biaya ekspres
+                            </p>
+                        </div>
+
+                        <!-- Business Nature -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Sifat Usaha
+                            </label>
+                            <select 
+                                x-model="formData.business_nature"
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                            >
+                                <option value="">Pilih sifat usaha...</option>
+                                <option value="local_market">Pasar Lokal/Domestik</option>
+                                <option value="export_oriented">Berorientasi Ekspor</option>
+                                <option value="import_dependent">Bergantung Import</option>
+                                <option value="b2b_services">Layanan B2B</option>
+                                <option value="b2c_retail">Retail/B2C</option>
+                                <option value="online_marketplace">Online/E-commerce</option>
+                                <option value="franchise">Waralaba/Franchise</option>
+                                <option value="government_contractor">Kontraktor Pemerintah</option>
+                                <option value="high_risk">Berisiko Tinggi (Mining, Kimia, dll)</option>
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                <i class="fas fa-cogs mr-1"></i>
+                                Mempengaruhi jenis izin khusus yang diperlukan
+                            </p>
+                        </div>
+
+                        <!-- Deliverables (Optional) -->
+                        <div class="col-span-1 md:col-span-2 mt-6">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Dokumen Spesifik yang Dibutuhkan (Opsional)
                             </label>
                             <textarea 
                                 x-model="formData.deliverables"
                                 rows="3"
-                                placeholder="Contoh: NIB, Sertifikat Standar, Izin Lingkungan, dll..."
+                                placeholder="Contoh: NIB, Sertifikat Standar, Izin Lingkungan, AMDAL, Izin Impor, dll..."
                                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                             ></textarea>
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                Kosongkan jika ingin rekomendasi otomatis dari AI
+                                <i class="fas fa-robot mr-1"></i>
+                                Kosongkan jika ingin rekomendasi lengkap dan otomatis dari AI
                             </p>
                         </div>
                     </div>
@@ -356,7 +531,7 @@
                     <div class="p-8 bg-gray-50 dark:bg-gray-900/50">
                         <button 
                             type="submit"
-                            :disabled="submitting || !selectedKBLI || !formData.business_size || !formData.location_type"
+                            :disabled="submitting || !selectedKBLI || !formData.business_size || !formData.location_type || !formData.geographic_region || !formData.entity_type || !formData.investment_level"
                             class="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg flex items-center justify-center gap-3"
                         >
                             <span x-show="!submitting">
@@ -507,8 +682,14 @@ function consultationForm() {
             business_size: '',
             location: '',
             location_type: '',
+            geographic_region: '',
+            entity_type: '',
             investment_level: '',
             employee_count: '',
+            target_timeline: '',
+            business_nature: '',
+            applicant_name: '',
+            applicant_email: '',
             contact_phone: '',
             deliverables: ''
         },
