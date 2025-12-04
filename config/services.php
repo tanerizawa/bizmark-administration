@@ -40,4 +40,11 @@ return [
         'model' => env('OPENROUTER_MODEL', 'x-ai/grok-4-fast'),
     ],
 
+    'perizinan_ai' => [
+        'url' => env('PERIZINAN_AI_URL', 'https://api.bizmark.id'),
+        'username' => env('PERIZINAN_AI_USERNAME'),
+        'password' => env('PERIZINAN_AI_PASSWORD'),
+        'timeout' => env('PERIZINAN_AI_TIMEOUT', 30),
+    ],
+
 ];
