@@ -44,6 +44,7 @@ class ConsultRequest extends Model
         'deliverables_requested' => 'array',
         'auto_estimate' => 'array',
         'final_quote' => 'array',
+        'admin_notes' => 'array',
         'utm_params' => 'array',
         'confidence_score' => 'decimal:2',
         'employee_count' => 'integer',

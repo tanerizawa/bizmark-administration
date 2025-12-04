@@ -17,6 +17,7 @@ use App\Models\Payment;
 use App\Models\JobApplication;
 use App\Models\EmailInbox;
 use App\Models\BankReconciliation;
+use App\Models\BetaTester;
 
 class NavigationComposer
 {
@@ -70,10 +71,20 @@ class NavigationComposer
             ];
         });
 
+        // Cache beta tester notifications for 1 minute
+        $betaTesterNotifications = Cache::remember('bizmark_beta_tester_notifications', 60, function () {
+            return [
+                'pending_documents' => BetaTester::where('status', 'documents_pending')->count(),
+                'new_registrations' => BetaTester::where('created_at', '>=', now()->subDays(7))->count(),
+                'total' => BetaTester::count(),
+            ];
+        });
+
         $view->with([
             'navCounts' => $navCounts,
             'permitNotifications' => $permitNotifications,
             'otherNotifications' => $otherNotifications,
+            'betaTesterNotifications' => $betaTesterNotifications,
         ]);
     }
 }

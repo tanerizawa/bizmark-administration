@@ -792,6 +792,26 @@
                     </div>
                 </div>
 
+                <!-- Lead Management -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Lead Management</div>
+                    <div class="nav-links">
+                        <a href="{{ route('admin.service-inquiries.index') }}" class="nav-link {{ request()->routeIs('admin.service-inquiries.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-envelope"></i>
+                                <span>Service Inquiries</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.consultation-leads.index') }}" class="nav-link {{ request()->routeIs('admin.consultation-leads.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-calculator"></i>
+                                <span>Consultation Leads</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Permit Management -->
                     <div class="nav-section-title">Human Resource</div>
                     <div class="nav-links">
@@ -853,6 +873,29 @@
                             </div>
                         </a>
                     </div>
+
+                <!-- Beta Testing Program -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Beta Testing</div>
+                    <div class="nav-links">
+                        <a href="{{ route('admin.beta-tester.dashboard') }}" class="nav-link {{ request()->routeIs('admin.beta-tester.dashboard') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Dashboard</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.beta-tester.index') }}" class="nav-link {{ request()->routeIs('admin.beta-tester.index') || request()->routeIs('admin.beta-tester.show') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-users-cog"></i>
+                                <span>Daftar Beta Tester</span>
+                            </div>
+                            @if(isset($betaTesterNotifications['pending_documents']) && $betaTesterNotifications['pending_documents'] > 0)
+                                <span class="nav-badge badge-warning">{{ $betaTesterNotifications['pending_documents'] }}</span>
+                            @endif
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Email Management -->
                     <div class="nav-links">

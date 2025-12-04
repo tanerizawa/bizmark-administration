@@ -129,85 +129,235 @@ class ConsultationPricingEngine
             throw new \InvalidArgumentException('Invalid business size');
         }
         
-        // Validate location type
-        if (!in_array($validated['location_type'], ['industrial', 'commercial', 'residential', 'rural'])) {
-            throw new \InvalidArgumentException('Invalid location type');
+        // Map location type to internal calculation values
+        $locationTypeMap = [
+            'commercial' => 'commercial',
+            'industrial' => 'industrial',
+            'residential' => 'residential',
+            'mixed_use' => 'commercial',        // Mixed-use treated as commercial
+            'special_economic' => 'industrial', // KEK treated as industrial
+            'rural_agricultural' => 'rural',   // Rural/agricultural
+            'tourism' => 'commercial',          // Tourism as commercial
+            'educational' => 'residential',     // Educational as residential-like
+        ];
+        
+        $originalLocationType = $validated['location_type'];
+        if (isset($locationTypeMap[$originalLocationType])) {
+            $validated['location_type'] = $locationTypeMap[$originalLocationType];
+        } else {
+            throw new \InvalidArgumentException('Invalid location type: ' . $originalLocationType);
         }
         
         return $validated;
     }
 
     /**
-     * Get base estimate from KBLI template
+     * Get base estimate from investment level and KBLI complexity
+     * 
+     * New approach: Calculate as 8-12% of investment value
      */
     protected function getBaseEstimate(Kbli $kbli, array $params): array
     {
-        $directCosts = $kbli->default_direct_costs ?? [
-            'printing' => 200000,
-            'permits' => 500000,
-            'lab_tests' => 1000000,
-            'field_equipment' => 300000,
-        ];
+        // Get investment value in IDR
+        $investmentValue = $this->getInvestmentValue($params['investment_level']);
         
-        $hoursEstimate = $kbli->default_hours_estimate ?? [
-            'admin' => 2,
-            'technical' => 12,
-            'review' => 4,
-            'field' => 8,
-        ];
+        // Calculate license fee percentage based on complexity
+        $licensePercentage = $this->getLicensePercentage($kbli, $params);
         
-        $hourlyRates = $kbli->default_hourly_rates ?? [
-            'admin' => 100000,
-            'technical' => 200000,
-            'review' => 150000,
-            'field' => 175000,
-        ];
+        // Base calculation: percentage of investment
+        $totalLicenseCost = (int) round($investmentValue * $licensePercentage / 100, -4);
         
-        // Calculate service fees
-        $serviceFees = [];
-        $totalServiceHours = 0;
-        $totalServiceCost = 0;
+        // Ensure minimum cost based on business size
+        $minCost = $this->getMinimumCost($params['business_size'], $kbli->complexity_level);
+        $totalLicenseCost = max($totalLicenseCost, $minCost);
         
-        foreach ($hoursEstimate as $role => $hours) {
-            $rate = $hourlyRates[$role] ?? 150000;
-            $cost = $hours * $rate;
-            $serviceFees[$role] = [
-                'hours' => $hours,
-                'rate' => $rate,
-                'cost' => $cost,
-            ];
-            $totalServiceHours += $hours;
-            $totalServiceCost += $cost;
+        // Break down into components
+        $breakdown = $this->calculateCostBreakdown($totalLicenseCost, $kbli, $params);
+        
+        return $breakdown;
+    }
+    
+    /**
+     * Get investment value from level
+     */
+    protected function getInvestmentValue(string $level): int
+    {
+        return match($level) {
+            'under_100m' => 75_000_000,      // Use 75M as mid-point
+            '100m_500m' => 300_000_000,      // Use 300M as mid-point  
+            '500m_2b' => 1_250_000_000,      // Use 1.25B as mid-point
+            '2b_10b' => 6_000_000_000,       // Use 6B as mid-point
+            '10b_50b' => 30_000_000_000,     // Use 30B as mid-point
+            'above_50b' => 100_000_000_000,  // Use 100B as conservative estimate
+            default => 300_000_000,          // Default 300M
+        };
+    }
+    
+    /**
+     * Get license percentage based on complexity and business type
+     */
+    protected function getLicensePercentage(Kbli $kbli, array $params): float
+    {
+        // Base percentage range: 8-12%
+        $basePercentage = match($kbli->complexity_level) {
+            'low' => 8.0,      // Simple businesses
+            'medium' => 10.0,  // Standard businesses 
+            'high' => 12.0,    // Complex businesses (Real Estate, Manufacturing, etc)
+            default => 10.0,
+        };
+        
+        // Adjust by business size (larger businesses need more complex licensing)
+        $sizeAdjustment = match($params['business_size']) {
+            'micro' => -1.0,   // 7-11%
+            'small' => 0.0,    // 8-12% 
+            'medium' => +1.0,  // 9-13%
+            'large' => +2.0,   // 10-14%
+            default => 0.0,
+        };
+        
+        // Adjust by location type  
+        $locationAdjustment = match($params['location_type']) {
+            'industrial' => +1.5,    // More complex regulations
+            'commercial' => 0.0,     // Standard
+            'residential' => -0.5,   // Simpler
+            'rural' => -1.0,         // Much simpler
+            default => 0.0,
+        };
+        
+        // Entity type adjustment (business structure complexity)
+        $entityAdjustment = 0.0;
+        if (isset($params['entity_type'])) {
+            $entityAdjustment = match($params['entity_type']) {
+                'individual' => -1.0,        // Simplest
+                'cv', 'firma' => -0.5,       // Simple partnerships
+                'pt' => 0.0,                 // Standard corporation
+                'pt_pma' => +2.0,            // Foreign investment - more complex
+                'persero', 'perum', 'bumn' => +1.0,  // State enterprises
+                'koperasi' => -0.5,          // Cooperative - simpler
+                'yayasan', 'perkumpulan' => 0.0,     // Non-profit
+                'foreign_rep' => +1.5,       // Foreign representation
+                default => 0.0,
+            };
         }
         
-        // Calculate direct costs total
-        $totalDirectCosts = array_sum($directCosts);
+        // Business nature adjustment
+        $natureAdjustment = 0.0;
+        if (isset($params['business_nature'])) {
+            $natureAdjustment = match($params['business_nature']) {
+                'local_market' => 0.0,           // Standard
+                'export_oriented' => +1.0,       // More permits needed
+                'import_dependent' => +1.5,      // Import licenses
+                'b2b_services' => -0.5,          // Usually simpler
+                'b2c_retail' => 0.0,             // Standard retail
+                'online_marketplace' => -0.5,    // Digital business
+                'franchise' => +0.5,             // Brand compliance
+                'government_contractor' => +2.0, // Strict requirements
+                'high_risk' => +3.0,             // Mining, chemical, etc
+                default => 0.0,
+            };
+        }
         
-        // Calculate subtotal
-        $subtotal = $totalDirectCosts + $totalServiceCost;
+        $finalPercentage = $basePercentage + $sizeAdjustment + $locationAdjustment + $entityAdjustment + $natureAdjustment;
         
-        // Apply overhead (10%)
-        $overhead = $subtotal * 0.10;
+        // Cap between 6% and 18% (expanded range for complex cases)
+        return max(6.0, min(18.0, $finalPercentage));
+    }
+    
+    /**
+     * Get minimum cost based on business size and complexity
+     */
+    protected function getMinimumCost(string $businessSize, string $complexity): int
+    {
+        $baseCosts = [
+            'low' => ['micro' => 3_000_000, 'small' => 5_000_000, 'medium' => 8_000_000, 'large' => 15_000_000],
+            'medium' => ['micro' => 5_000_000, 'small' => 8_000_000, 'medium' => 12_000_000, 'large' => 20_000_000],
+            'high' => ['micro' => 8_000_000, 'small' => 15_000_000, 'medium' => 25_000_000, 'large' => 40_000_000],
+        ];
         
-        // Grand total
-        $grandTotal = $subtotal + $overhead;
+        return $baseCosts[$complexity][$businessSize] ?? 8_000_000;
+    }
+    
+    /**
+     * Break down total cost into components
+     */
+    protected function calculateCostBreakdown(int $totalCost, Kbli $kbli, array $params): array
+    {
+        // Allocate percentages
+        $biayaPemerintah = (int) ($totalCost * 0.25);    // 25% government fees
+        $biayaKonsultan = (int) ($totalCost * 0.55);     // 55% consulting fees 
+        $overhead = (int) ($totalCost * 0.20);           // 20% overhead & admin
+        
+        // Breakdown government fees
+        $governmentBreakdown = [
+            'izin_usaha' => (int) ($biayaPemerintah * 0.4),      // 40% business permits
+            'izin_teknis' => (int) ($biayaPemerintah * 0.35),    // 35% technical permits
+            'izin_lingkungan' => (int) ($biayaPemerintah * 0.15), // 15% environmental
+            'retribusi_daerah' => (int) ($biayaPemerintah * 0.1),  // 10% local fees
+        ];
+        
+        // Breakdown consulting fees based on typical hours
+        $complexity = $kbli->complexity_level;
+        $totalHours = match($complexity) {
+            'low' => 20,     // Simple: 20 hours
+            'medium' => 35,  // Standard: 35 hours
+            'high' => 60,    // Complex: 60 hours  
+            default => 35,
+        };
+        
+        // Adjust hours by business size
+        $sizeMultiplier = match($params['business_size']) {
+            'micro' => 0.8,
+            'small' => 1.0,
+            'medium' => 1.4,
+            'large' => 1.8,
+            default => 1.0,
+        };
+        
+        $adjustedHours = (int) ($totalHours * $sizeMultiplier);
+        $averageRate = $adjustedHours > 0 ? (int) ($biayaKonsultan / $adjustedHours) : 200000;
+        
+        $consultingBreakdown = [
+            'konsultasi_awal' => [
+                'hours' => max(2, (int) ($adjustedHours * 0.1)),
+                'rate' => 250000,
+                'cost' => (int) ($biayaKonsultan * 0.1),
+            ],
+            'persiapan_dokumen' => [
+                'hours' => max(6, (int) ($adjustedHours * 0.4)),
+                'rate' => $averageRate,
+                'cost' => (int) ($biayaKonsultan * 0.4),
+            ],
+            'pengajuan_izin' => [
+                'hours' => max(4, (int) ($adjustedHours * 0.3)),
+                'rate' => $averageRate,
+                'cost' => (int) ($biayaKonsultan * 0.3),
+            ],
+            'monitoring_followup' => [
+                'hours' => max(2, (int) ($adjustedHours * 0.2)),
+                'rate' => 150000,
+                'cost' => (int) ($biayaKonsultan * 0.2),
+            ],
+        ];
         
         return [
-            'biaya_pokok' => [
-                'breakdown' => $directCosts,
-                'total' => $totalDirectCosts,
+            'biaya_pemerintah' => [
+                'breakdown' => $governmentBreakdown,
+                'total' => array_sum($governmentBreakdown),
             ],
-            'biaya_jasa' => [
-                'breakdown' => $serviceFees,
-                'total_hours' => $totalServiceHours,
-                'total' => $totalServiceCost,
+            'biaya_konsultan' => [
+                'breakdown' => $consultingBreakdown,
+                'total_hours' => $adjustedHours,
+                'total' => array_sum(array_column($consultingBreakdown, 'cost')),
             ],
             'overhead' => [
-                'percentage' => 10,
+                'percentage' => 20,
                 'amount' => $overhead,
+                'description' => 'Admin, koordinasi, dan manajemen project'
             ],
-            'subtotal' => $subtotal,
-            'grand_total' => (int) round($grandTotal, -4), // Round to nearest 10k
+            'subtotal' => $biayaPemerintah + $biayaKonsultan,
+            'grand_total' => $totalCost,
+            'investment_percentage' => $this->getLicensePercentage($kbli, $params),
+            'investment_value' => $this->getInvestmentValue($params['investment_level']),
         ];
     }
 
@@ -240,38 +390,45 @@ class ConsultationPricingEngine
     }
 
     /**
-     * Apply multipliers to base estimate
+     * Apply location and complexity adjustments to investment-based estimate
+     * 
+     * Note: Business size already factored into investment percentage calculation
      */
     protected function applyMultipliers(array $base, float $sizeMultiplier, float $locationMultiplier): array
     {
-        $combined = $sizeMultiplier * $locationMultiplier;
+        // In the new system, business size is already factored in during base calculation
+        // Only apply location multiplier for regional variations
+        
+        $locationAdjustment = $locationMultiplier;
         
         $adjusted = $base;
         
-        // Apply multiplier to service fees (biaya jasa)
-        foreach ($adjusted['biaya_jasa']['breakdown'] as $role => &$data) {
-            $data['hours'] = round($data['hours'] * $combined, 1);
-            $data['cost'] = (int) ($data['hours'] * $data['rate']);
+        // Apply location adjustment to consulting fees only (government fees are fixed)
+        if (isset($adjusted['biaya_konsultan']['breakdown'])) {
+            foreach ($adjusted['biaya_konsultan']['breakdown'] as $key => &$data) {
+                if (isset($data['cost'])) {
+                    $data['cost'] = (int) ($data['cost'] * $locationAdjustment);
+                }
+                if (isset($data['hours'])) {
+                    $data['hours'] = round($data['hours'] * $locationAdjustment, 1);
+                }
+            }
+            
+            // Recalculate consulting total
+            $adjusted['biaya_konsultan']['total'] = array_sum(array_column($adjusted['biaya_konsultan']['breakdown'], 'cost'));
+            $adjusted['biaya_konsultan']['total_hours'] = array_sum(array_column($adjusted['biaya_konsultan']['breakdown'], 'hours'));
         }
         
         // Recalculate totals
-        $adjusted['biaya_jasa']['total_hours'] = array_sum(array_column($adjusted['biaya_jasa']['breakdown'], 'hours'));
-        $adjusted['biaya_jasa']['total'] = array_sum(array_column($adjusted['biaya_jasa']['breakdown'], 'cost'));
-        
-        // Apply multiplier to some direct costs (field equipment, permits)
-        $adjusted['biaya_pokok']['breakdown']['permits'] = (int) ($base['biaya_pokok']['breakdown']['permits'] * $combined);
-        $adjusted['biaya_pokok']['breakdown']['field_equipment'] = (int) ($base['biaya_pokok']['breakdown']['field_equipment'] * $combined);
-        $adjusted['biaya_pokok']['total'] = array_sum($adjusted['biaya_pokok']['breakdown']);
-        
-        // Recalculate totals
-        $adjusted['subtotal'] = $adjusted['biaya_pokok']['total'] + $adjusted['biaya_jasa']['total'];
-        $adjusted['overhead']['amount'] = (int) ($adjusted['subtotal'] * 0.10);
+        $adjusted['subtotal'] = ($adjusted['biaya_pemerintah']['total'] ?? 0) + ($adjusted['biaya_konsultan']['total'] ?? 0);
+        $adjusted['overhead']['amount'] = (int) ($adjusted['subtotal'] * ($adjusted['overhead']['percentage'] / 100));
         $adjusted['grand_total'] = (int) round($adjusted['subtotal'] + $adjusted['overhead']['amount'], -4);
         
         $adjusted['multipliers_applied'] = [
-            'business_size' => $sizeMultiplier,
-            'location' => $locationMultiplier,
-            'combined' => $combined,
+            'business_size' => $sizeMultiplier,      // Already applied in base calculation
+            'location' => $locationMultiplier,       // Applied to consulting fees
+            'combined' => $locationAdjustment,       // Effective multiplier
+            'note' => 'Business size integrated in investment percentage calculation',
         ];
         
         return $adjusted;
@@ -363,9 +520,22 @@ class ConsultationPricingEngine
         $finalCosts = $adjusted;
         if ($ai && isset($ai['cost_adjustment']['adjustment_factor'])) {
             $factor = $ai['cost_adjustment']['adjustment_factor'];
-            $finalCosts['biaya_jasa']['total'] = (int) ($adjusted['biaya_jasa']['total'] * $factor);
-            $finalCosts['subtotal'] = $finalCosts['biaya_pokok']['total'] + $finalCosts['biaya_jasa']['total'];
-            $finalCosts['overhead']['amount'] = (int) ($finalCosts['subtotal'] * 0.10);
+            
+            // Apply AI adjustment to consulting fees only
+            if (isset($finalCosts['biaya_konsultan']['total'])) {
+                $finalCosts['biaya_konsultan']['total'] = (int) ($adjusted['biaya_konsultan']['total'] * $factor);
+                
+                // Proportionally adjust breakdown
+                foreach ($finalCosts['biaya_konsultan']['breakdown'] as $key => &$data) {
+                    if (isset($data['cost'])) {
+                        $data['cost'] = (int) ($data['cost'] * $factor);
+                    }
+                }
+            }
+            
+            // Recalculate totals
+            $finalCosts['subtotal'] = ($finalCosts['biaya_pemerintah']['total'] ?? 0) + ($finalCosts['biaya_konsultan']['total'] ?? 0);
+            $finalCosts['overhead']['amount'] = (int) ($finalCosts['subtotal'] * ($finalCosts['overhead']['percentage'] / 100));
             $finalCosts['grand_total'] = (int) round($finalCosts['subtotal'] + $finalCosts['overhead']['amount'], -4);
         }
         
@@ -388,9 +558,9 @@ class ConsultationPricingEngine
                 'employee_count' => $params['employee_count'],
             ],
             'cost_breakdown' => [
-                'biaya_pokok' => $finalCosts['biaya_pokok'],
-                'biaya_jasa' => $finalCosts['biaya_jasa'],
-                'overhead' => $finalCosts['overhead'],
+                'biaya_pemerintah' => $finalCosts['biaya_pemerintah'] ?? [],
+                'biaya_konsultan' => $finalCosts['biaya_konsultan'] ?? [],
+                'overhead' => $finalCosts['overhead'] ?? [],
             ],
             'cost_summary' => [
                 'subtotal' => $finalCosts['subtotal'],
@@ -417,13 +587,16 @@ class ConsultationPricingEngine
                 'model_used' => $ai['ai_model'] ?? null,
             ] : null,
             'estimate_notes' => [
-                'This is an AI-enhanced estimate based on multiple factors',
-                'Actual costs may vary depending on document completeness and specific requirements',
-                'Biaya Pokok = Direct costs (printing, permits, lab tests, field equipment)',
-                'Biaya Jasa = Service fees (consultant hours × hourly rates)',
-                'Overhead includes administrative costs and project management (10%)',
-                'For detailed breakdown and official quotation, please register in our client portal',
+                'Estimasi ini dihitung berdasarkan ' . round($finalCosts['investment_percentage'] ?? 10, 1) . '% dari nilai investasi (' . 'Rp ' . number_format($finalCosts['investment_value'] ?? 0, 0, ',', '.') . ')',
+                'Biaya aktual dapat bervariasi tergantung kelengkapan dokumen dan persyaratan khusus',
+                'Biaya Pemerintah = PNBP, retribusi daerah, dan biaya resmi lainnya (25%)',
+                'Biaya Konsultan = Jasa konsultasi, persiapan dokumen, dan pengurusan (55%)', 
+                'Overhead = Administrasi, koordinasi, dan manajemen project (20%)',
+                'Untuk breakdown detail dan penawaran resmi, silakan daftar di client portal kami',
+                'Estimasi ini telah disesuaikan dengan kompleksitas usaha dan lokasi bisnis Anda',
             ],
+            'investment_value' => $finalCosts['investment_value'] ?? 0,
+            'investment_percentage' => $finalCosts['investment_percentage'] ?? 10,
         ];
     }
 

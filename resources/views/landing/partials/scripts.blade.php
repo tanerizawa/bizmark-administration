@@ -347,18 +347,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Device Detection & Auto Redirect (Best Practice Implementation)
-    let lastScreenWidth = window.innerWidth;
-    const MOBILE_BREAKPOINT = 768; // Tailwind md breakpoint
-    const DESKTOP_BREAKPOINT = 1024; // Tablet/Desktop threshold
-    
+    // Device Detection (Auto-redirect disabled to prevent infinite loop)
+    // Users can manually switch using the view toggle in header
     function updateScreenWidth() {
         const width = window.innerWidth;
         
         // Get CSRF token
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
         
-        // Send width to server for session storage (only if CSRF token exists)
+        // Send width to server for analytics (only if CSRF token exists)
         if (csrfToken) {
             fetch('/api/set-screen-width', {
                 method: 'POST',
@@ -369,50 +366,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ width: width })
             }).catch(err => console.log('Screen width update failed:', err));
         }
-        
-        // Check if crossed mobile threshold (going FROM desktop TO mobile)
-        const wasDesktop = lastScreenWidth >= MOBILE_BREAKPOINT;
-        const isMobile = width < MOBILE_BREAKPOINT;
-        
-        // If switched from desktop to mobile AND we're on main landing, redirect
-        if (wasDesktop && isMobile && window.location.pathname === '/') {
-            console.log('Switched to mobile view, redirecting to mobile landing...');
-            // Store preference in sessionStorage to prevent redirect loops
-            sessionStorage.setItem('device_preference', 'mobile');
-            setTimeout(() => {
-                window.location.href = '/m/landing';
-            }, 500);
-        }
-        
-        lastScreenWidth = width;
-    }
-    
-    // Check on page load - redirect if wrong view
-    const currentPath = window.location.pathname;
-    const currentWidth = window.innerWidth;
-    const devicePreference = sessionStorage.getItem('device_preference');
-    
-    // Prevent redirect loops
-    if (!devicePreference) {
-        // Remove query parameters from URL for clean check
-        const urlWithoutQuery = window.location.pathname;
-        
-        if (urlWithoutQuery === '/' && currentWidth < MOBILE_BREAKPOINT) {
-            // Desktop landing on mobile device - redirect to mobile
-            console.log('Mobile device detected on desktop landing, redirecting...');
-            sessionStorage.setItem('device_preference', 'mobile');
-            window.location.href = '/m/landing';
-        }
     }
     
     // Update on load
     updateScreenWidth();
     
-    // Debounced resize handler (only redirect after user stops resizing)
+    // Update on resize (debounced)
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(updateScreenWidth, 1000); // Wait 1 second after resize stops
+        resizeTimeout = setTimeout(updateScreenWidth, 1000);
     });
     
     // Clear service worker cache if exists
