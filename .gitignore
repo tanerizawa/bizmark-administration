@@ -66,3 +66,15 @@ getMessage
 # Security sensitive
 cookies.txt
 *.backup
+
+# Old/backup file patterns (prevent future accumulation)
+*.old
+*_old.*
+*-old.*
+*.backup
+*-backup.*
+*_backup.*
+*.bak
+*-phase[0-9].*
+*-v[0-9].*
+*-copy.*
