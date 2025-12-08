@@ -789,6 +789,16 @@
                                 <span>Pengaturan</span>
                             </div>
                         </a>
+                        
+                        @if(auth()->user()->hasRole('admin'))
+                        <a href="{{ route('admin.ai-settings.index') }}" class="nav-link {{ request()->routeIs('admin.ai-settings.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-brain"></i>
+                                <span>AI Settings</span>
+                            </div>
+                            <span class="badge badge-sm bg-gradient-info ms-2" style="font-size: 0.65rem;">NEW</span>
+                        </a>
+                        @endif
                     </div>
                 </div>
 

@@ -70,7 +70,7 @@ class ConsultationLeadController extends Controller
 
         // High value filter (above 10M)
         if ($request->filled('high_value')) {
-            $query->whereRaw("CAST(auto_estimate->'cost_summary'->>'grand_total' AS INTEGER) >= ?", [10000000]);
+            $query->whereRaw("CAST(auto_estimate->'cost_summary'->>'grand_total' AS BIGINT) >= ?", [10000000]);
         }
 
         $consultations = $query->paginate(20);
@@ -82,7 +82,7 @@ class ConsultationLeadController extends Controller
             'contacted' => ConsultRequest::where('contacted', true)->count(),
             'converted' => ConsultRequest::where('converted_to_client', true)->count(),
             'pending_review' => ConsultRequest::where('estimate_status', 'auto_estimated')->whereNull('reviewed_at')->count(),
-            'high_value' => ConsultRequest::whereRaw("CAST(auto_estimate->'cost_summary'->>'grand_total' AS INTEGER) >= ?", [10000000])->count(),
+            'high_value' => ConsultRequest::whereRaw("CAST(auto_estimate->'cost_summary'->>'grand_total' AS BIGINT) >= ?", [10000000])->count(),
             'this_week' => ConsultRequest::where('created_at', '>=', now()->startOfWeek())->count(),
             'this_month' => ConsultRequest::where('created_at', '>=', now()->startOfMonth())->count(),
         ];

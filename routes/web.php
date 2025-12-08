@@ -641,6 +641,22 @@ Route::prefix('webhook/email')->name('webhook.email.')->group(function () {
         ->name('status');
 });
 
+// AI Settings Management Routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('ai-settings', [App\Http\Controllers\Admin\AISettingsController::class, 'index'])
+        ->name('ai-settings.index');
+    Route::get('ai-settings/recent-changes', [App\Http\Controllers\Admin\AISettingsController::class, 'recentChanges'])
+        ->name('ai-settings.recent-changes');
+    Route::get('ai-settings/history/{key}', [App\Http\Controllers\Admin\AISettingsController::class, 'history'])
+        ->name('ai-settings.history');
+    Route::post('ai-settings/update', [App\Http\Controllers\Admin\AISettingsController::class, 'update'])
+        ->name('ai-settings.update');
+    Route::post('ai-settings/reset/{key}', [App\Http\Controllers\Admin\AISettingsController::class, 'reset'])
+        ->name('ai-settings.reset');
+    Route::post('ai-settings/clear-cache', [App\Http\Controllers\Admin\AISettingsController::class, 'clearCache'])
+        ->name('ai-settings.clear-cache');
+});
+
 // Multi-User Email System Routes
 Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('admin.')->group(function () {
     // Email Accounts Management

@@ -265,11 +265,14 @@ class ConsultationPricingEngine
     
     /**
      * Get minimum cost based on business size and complexity
+     * Uses AI settings for minimum grand total
      */
     protected function getMinimumCost(string $businessSize, string $complexity): int
     {
+        $minimumGrandTotal = (int) AISettingService::get('pricing.minimum_grand_total', 3000000);
+        
         $baseCosts = [
-            'low' => ['micro' => 3_000_000, 'small' => 5_000_000, 'medium' => 8_000_000, 'large' => 15_000_000],
+            'low' => ['micro' => $minimumGrandTotal, 'small' => 5_000_000, 'medium' => 8_000_000, 'large' => 15_000_000],
             'medium' => ['micro' => 5_000_000, 'small' => 8_000_000, 'medium' => 12_000_000, 'large' => 20_000_000],
             'high' => ['micro' => 8_000_000, 'small' => 15_000_000, 'medium' => 25_000_000, 'large' => 40_000_000],
         ];
@@ -339,6 +342,8 @@ class ConsultationPricingEngine
             ],
         ];
         
+        $overheadPercentage = (float) AISettingService::get('pricing.overhead_percentage', 20);
+        
         return [
             'biaya_pemerintah' => [
                 'breakdown' => $governmentBreakdown,
@@ -350,7 +355,7 @@ class ConsultationPricingEngine
                 'total' => array_sum(array_column($consultingBreakdown, 'cost')),
             ],
             'overhead' => [
-                'percentage' => 20,
+                'percentage' => $overheadPercentage,
                 'amount' => $overhead,
                 'description' => 'Admin, koordinasi, dan manajemen project'
             ],
@@ -364,29 +369,38 @@ class ConsultationPricingEngine
     /**
      * Get business size multiplier
      */
+    /**
+     * Get business size multiplier from AI settings (dynamic)
+     */
     protected function getBusinessSizeMultiplier(string $size): float
     {
-        return match($size) {
+        $key = "pricing.size_multiplier.{$size}";
+        $default = match($size) {
             'micro' => 1.0,
             'small' => 1.3,
             'medium' => 1.8,
             'large' => 2.5,
             default => 1.0,
         };
+        
+        return (float) AISettingService::get($key, $default);
     }
 
     /**
-     * Get location multiplier
+     * Get location multiplier from AI settings (dynamic)
      */
     protected function getLocationMultiplier(string $locationType): float
     {
-        return match($locationType) {
+        $key = "pricing.location_multiplier.{$locationType}";
+        $default = match($locationType) {
             'industrial' => 1.2,  // More permits required
             'commercial' => 1.0,   // Standard
             'residential' => 0.9,  // Simpler requirements
             'rural' => 0.8,        // Less complex
             default => 1.0,
         };
+        
+        return (float) AISettingService::get($key, $default);
     }
 
     /**
@@ -637,6 +651,9 @@ class ConsultationPricingEngine
     {
         Log::warning('Using fallback estimate', ['reason' => $reason, 'params' => $params]);
         
+        $minimumGrandTotal = (int) AISettingService::get('pricing.minimum_grand_total', 3000000);
+        $defaultTotal = $minimumGrandTotal + 2000000; // Add 2M for safer estimate
+        
         return [
             'kbli' => [
                 'code' => $params['kbli_code'] ?? 'unknown',
@@ -645,15 +662,15 @@ class ConsultationPricingEngine
                 'complexity_level' => 'medium',
             ],
             'cost_summary' => [
-                'grand_total' => 5000000, // Default 5 juta
+                'grand_total' => $defaultTotal,
                 'cost_range' => [
-                    'min' => 3000000,
-                    'max' => 8000000,
+                    'min' => $minimumGrandTotal,
+                    'max' => $defaultTotal + 3000000,
                     'currency' => 'IDR',
                 ],
                 'formatted' => [
-                    'grand_total' => 'Rp 5.000.000',
-                    'range' => 'Rp 3.000.000 - Rp 8.000.000',
+                    'grand_total' => 'Rp ' . number_format($defaultTotal, 0, ',', '.'),
+                    'range' => 'Rp ' . number_format($minimumGrandTotal, 0, ',', '.') . ' - Rp ' . number_format($defaultTotal + 3000000, 0, ',', '.'),
                 ],
             ],
             'estimate_notes' => [
