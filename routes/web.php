@@ -314,6 +314,27 @@ Route::middleware(['auth'])->group(function () {
         Route::post('articles/{article}/unpublish', [ArticleController::class, 'unpublish'])->name('articles.unpublish');
         Route::post('articles/{article}/archive', [ArticleController::class, 'archive'])->name('articles.archive');
         Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])->name('articles.upload-image');
+        
+        // Auto-Post Management Routes
+        Route::prefix('auto-post')->name('auto-post.')->group(function () {
+            // Configuration
+            Route::get('config', [App\Http\Controllers\Admin\AutoPostConfigController::class, 'index'])->name('config');
+            Route::put('config', [App\Http\Controllers\Admin\AutoPostConfigController::class, 'update'])->name('config.update');
+            Route::post('config/toggle', [App\Http\Controllers\Admin\AutoPostConfigController::class, 'toggle'])->name('config.toggle');
+            
+            // Topics Management
+            Route::resource('topics', App\Http\Controllers\Admin\ArticleTopicController::class);
+            Route::post('topics/bulk-action', [App\Http\Controllers\Admin\ArticleTopicController::class, 'bulkAction'])->name('topics.bulk-action');
+            
+            // Schedules Management
+            Route::resource('schedules', App\Http\Controllers\Admin\AutoPostScheduleController::class)->except(['edit', 'update']);
+            Route::post('schedules/generate-batch', [App\Http\Controllers\Admin\AutoPostScheduleController::class, 'generateBatch'])->name('schedules.generate-batch');
+            Route::post('schedules/{schedule}/retry', [App\Http\Controllers\Admin\AutoPostScheduleController::class, 'retry'])->name('schedules.retry');
+            Route::post('schedules/{schedule}/process-now', [App\Http\Controllers\Admin\AutoPostScheduleController::class, 'processNow'])->name('schedules.process-now');
+            
+            // Analytics & Logs
+            Route::get('analytics', [App\Http\Controllers\Admin\AutoPostAnalyticsController::class, 'index'])->name('analytics');
+        });
     });
 
     // Master Data - Permit Management Routes (Phase 2A)
