@@ -349,4 +349,61 @@ Berikan HANYA output JSON valid tanpa markdown atau penjelasan tambahan.";
             Log::error('Failed to log AI query', ['error' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Generic chat method for flexible AI interactions
+     */
+    public function chat(array $messages, array $options = []): array
+    {
+        $model = $options['model'] ?? $this->primaryModel;
+        $temperature = $options['temperature'] ?? 0.7;
+        $maxTokens = $options['max_tokens'] ?? 4000;
+        
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'HTTP-Referer' => config('app.url'),
+                'X-Title' => config('app.name'),
+            ])->timeout(120)->post("{$this->baseUrl}/chat/completions", [
+                'model' => $model,
+                'messages' => $messages,
+                'temperature' => $temperature,
+                'max_tokens' => $maxTokens,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return [
+                    'success' => true,
+                    'content' => $data['choices'][0]['message']['content'] ?? '',
+                    'tokens_used' => $data['usage']['total_tokens'] ?? null,
+                    'prompt_tokens' => $data['usage']['prompt_tokens'] ?? null,
+                    'completion_tokens' => $data['usage']['completion_tokens'] ?? null,
+                    'cost' => $this->calculateCost($data['usage'] ?? [], $model),
+                    'model' => $model,
+                ];
+            }
+
+            Log::error('OpenRouter API error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return [
+                'success' => false,
+                'error' => 'API request failed: ' . $response->status(),
+                'details' => $response->json(),
+            ];
+        } catch (\Exception $e) {
+            Log::error('OpenRouter chat exception', [
+                'error' => $e->getMessage(),
+                'model' => $model,
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
 }

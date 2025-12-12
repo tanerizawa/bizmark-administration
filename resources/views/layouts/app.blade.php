@@ -941,12 +941,43 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Konten</div>
                     <div class="nav-links">
-                        <a href="{{ route('articles.index') }}" class="nav-link {{ request()->routeIs('articles.*') ? 'active' : '' }}">
+                        <a href="{{ route('articles.index') }}" class="nav-link {{ request()->routeIs('articles.*') && !request()->routeIs('auto-post.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
                                 <i class="fas fa-newspaper"></i>
                                 <span>Artikel & Berita</span>
                             </div>
                         </a>
+                        
+                        @can('content.manage')
+                        <!-- Auto-Post Submenu -->
+                        <div class="nav-submenu {{ request()->routeIs('auto-post.*') ? 'active' : '' }}">
+                            <button class="nav-link nav-submenu-toggle" onclick="toggleSubmenu(this)">
+                                <div class="nav-link-content">
+                                    <i class="fas fa-robot"></i>
+                                    <span>Auto-Post AI</span>
+                                </div>
+                                <i class="fas fa-chevron-down submenu-icon"></i>
+                            </button>
+                            <div class="nav-submenu-content" style="{{ request()->routeIs('auto-post.*') ? 'display: block;' : '' }}">
+                                <a href="{{ route('auto-post.config') }}" class="nav-sublink {{ request()->routeIs('auto-post.config') ? 'active' : '' }}">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Konfigurasi</span>
+                                </a>
+                                <a href="{{ route('auto-post.topics.index') }}" class="nav-sublink {{ request()->routeIs('auto-post.topics.*') ? 'active' : '' }}">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>Topic Pool</span>
+                                </a>
+                                <a href="{{ route('auto-post.schedules.index') }}" class="nav-sublink {{ request()->routeIs('auto-post.schedules.*') ? 'active' : '' }}">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Jadwal</span>
+                                </a>
+                                <a href="{{ route('auto-post.analytics') }}" class="nav-sublink {{ request()->routeIs('auto-post.analytics') ? 'active' : '' }}">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Analytics</span>
+                                </a>
+                            </div>
+                        </div>
+                        @endcan
                     </div>
                 </div>
             </nav>
