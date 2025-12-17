@@ -129,9 +129,12 @@ class AutoPostScheduleController extends Controller
             return back()->with('error', 'Schedule harus dalam status pending');
         }
         
+        // Mark as processing
+        $schedule->markAsProcessing();
+        
         // Dispatch to queue with high priority
         \App\Jobs\GenerateAutoPostArticle::dispatch($schedule)->onQueue('default');
         
-        return back()->with('success', 'Schedule dikirim ke queue untuk diproses');
+        return back()->with('success', 'Schedule sedang diproses oleh AI. Refresh halaman untuk melihat hasilnya.');
     }
 }

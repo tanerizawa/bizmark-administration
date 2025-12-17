@@ -3,14 +3,16 @@
 @section('title', 'Edit Artikel')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+<div class="container-custom">
+    <!-- Page Header -->
+    <div class="page-header-apple">
         <div>
-            <h1 class="text-2xl font-bold text-dark-text-primary">Edit Artikel</h1>
-            <p class="text-sm text-dark-text-secondary mt-1">Edit artikel: {{ $article->title }}</p>
+            <h1 class="page-title-apple">
+                <i class="fas fa-edit mr-3"></i>Edit Artikel
+            </h1>
+            <p class="page-subtitle-apple">Edit artikel: {{ $article->title }}</p>
         </div>
-        <a href="{{ route('articles.index') }}" class="px-4 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm font-medium hover:bg-dark-bg-secondary transition-apple">
+        <a href="{{ route('articles.index') }}" class="btn-secondary-apple">
             <i class="fas fa-arrow-left mr-2"></i>Kembali
         </a>
     </div>
@@ -24,18 +26,18 @@
             <!-- Main Content -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Title -->
-                <div class="bg-dark-bg-secondary rounded-apple p-6">
-                    <label for="title" class="block text-sm font-medium text-dark-text-primary mb-2">Judul Artikel *</label>
-                    <input type="text" name="title" id="title" value="{{ old('title', $article->title) }}" required class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue @error('title') border-apple-red @enderror">
+                <div class="card-apple p-6">
+                    <label for="title" class="label-apple">Judul Artikel *</label>
+                    <input type="text" name="title" id="title" value="{{ old('title', $article->title) }}" required class="input-apple @error('title') border-apple-red @enderror">
                     @error('title')
                     <p class="mt-1 text-sm text-apple-red">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Excerpt -->
-                <div class="bg-dark-bg-secondary rounded-apple p-6">
-                    <label for="excerpt" class="block text-sm font-medium text-dark-text-primary mb-2">Excerpt</label>
-                    <textarea name="excerpt" id="excerpt" rows="3" class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue @error('excerpt') border-apple-red @enderror">{{ old('excerpt', $article->excerpt) }}</textarea>
+                <div class="card-apple p-6">
+                    <label for="excerpt" class="label-apple">Excerpt</label>
+                    <textarea name="excerpt" id="excerpt" rows="3" class="input-apple @error('excerpt') border-apple-red @enderror">{{ old('excerpt', $article->excerpt) }}</textarea>
                     <p class="mt-1 text-xs text-dark-text-tertiary">Ringkasan singkat artikel (opsional, akan di-generate otomatis jika kosong)</p>
                     @error('excerpt')
                     <p class="mt-1 text-sm text-apple-red">{{ $message }}</p>
@@ -43,8 +45,8 @@
                 </div>
 
                 <!-- Content -->
-                <div class="bg-dark-bg-secondary rounded-apple p-6">
-                    <label for="content" class="block text-sm font-medium text-dark-text-primary mb-2">Konten Artikel *</label>
+                <div class="card-apple p-6">
+                    <label for="content" class="label-apple">Konten Artikel *</label>
                     <div class="ckeditor-wrapper">
                         <textarea name="content" id="content" class="w-full @error('content') border-apple-red @enderror">{{ old('content', $article->content) }}</textarea>
                     </div>
@@ -54,25 +56,25 @@
                 </div>
 
                 <!-- SEO Section -->
-                <div class="bg-dark-bg-secondary rounded-apple p-6">
-                    <h3 class="text-lg font-semibold text-dark-text-primary mb-4">SEO Settings</h3>
+                <div class="card-apple p-6">
+                    <h3 class="text-lg font-semibold text-dark-text-primary mb-4"><i class="fas fa-search mr-2 text-apple-blue"></i>SEO Settings</h3>
                     
                     <div class="space-y-4">
                         <div>
-                            <label for="meta_title" class="block text-sm font-medium text-dark-text-primary mb-2">Meta Title</label>
-                            <input type="text" name="meta_title" id="meta_title" value="{{ old('meta_title', $article->meta_title) }}" maxlength="60" class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue">
+                            <label for="meta_title" class="label-apple">Meta Title</label>
+                            <input type="text" name="meta_title" id="meta_title" value="{{ old('meta_title', $article->meta_title) }}" maxlength="60" class="input-apple">
                             <p class="mt-1 text-xs text-dark-text-tertiary">Rekomendasi: 50-60 karakter</p>
                         </div>
 
                         <div>
-                            <label for="meta_description" class="block text-sm font-medium text-dark-text-primary mb-2">Meta Description</label>
-                            <textarea name="meta_description" id="meta_description" rows="2" maxlength="160" class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue">{{ old('meta_description', $article->meta_description) }}</textarea>
+                            <label for="meta_description" class="label-apple">Meta Description</label>
+                            <textarea name="meta_description" id="meta_description" rows="2" maxlength="160" class="input-apple">{{ old('meta_description', $article->meta_description) }}</textarea>
                             <p class="mt-1 text-xs text-dark-text-tertiary">Rekomendasi: 150-160 karakter</p>
                         </div>
 
                         <div>
-                            <label for="meta_keywords" class="block text-sm font-medium text-dark-text-primary mb-2">Meta Keywords</label>
-                            <input type="text" name="meta_keywords" id="meta_keywords" value="{{ old('meta_keywords', $article->meta_keywords) }}" class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue">
+                            <label for="meta_keywords" class="label-apple">Meta Keywords</label>
+                            <input type="text" name="meta_keywords" id="meta_keywords" value="{{ old('meta_keywords', $article->meta_keywords) }}" class="input-apple">
                             <p class="mt-1 text-xs text-dark-text-tertiary">Pisahkan dengan koma (contoh: lb3, amdal, lingkungan)</p>
                         </div>
                     </div>
@@ -82,13 +84,13 @@
             <!-- Sidebar -->
             <div class="space-y-6">
                 <!-- Publish Settings -->
-                <div class="bg-dark-bg-secondary rounded-apple p-6">
-                    <h3 class="text-lg font-semibold text-dark-text-primary mb-4">Pengaturan Publikasi</h3>
+                <div class="card-apple p-6">
+                    <h3 class="text-lg font-semibold text-dark-text-primary mb-4"><i class="fas fa-cog mr-2 text-apple-green"></i>Pengaturan Publikasi</h3>
                     
                     <div class="space-y-4">
                         <div>
-                            <label for="status" class="block text-sm font-medium text-dark-text-primary mb-2">Status *</label>
-                            <select name="status" id="status" required class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue">
+                            <label for="status" class="label-apple">Status *</label>
+                            <select name="status" id="status" required class="input-apple">
                                 <option value="draft" {{ old('status', $article->status) == 'draft' ? 'selected' : '' }}>Draft</option>
                                 <option value="published" {{ old('status', $article->status) == 'published' ? 'selected' : '' }}>Published</option>
                                 <option value="archived" {{ old('status', $article->status) == 'archived' ? 'selected' : '' }}>Archived</option>
@@ -96,8 +98,8 @@
                         </div>
 
                         <div>
-                            <label for="published_at" class="block text-sm font-medium text-dark-text-primary mb-2">Tanggal Publikasi</label>
-                            <input type="datetime-local" name="published_at" id="published_at" value="{{ old('published_at', $article->published_at ? $article->published_at->format('Y-m-d\TH:i') : '') }}" class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue">
+                            <label for="published_at" class="label-apple">Tanggal Publikasi</label>
+                            <input type="datetime-local" name="published_at" id="published_at" value="{{ old('published_at', $article->published_at ? $article->published_at->format('Y-m-d\TH:i') : '') }}" class="input-apple">
                             <p class="mt-1 text-xs text-dark-text-tertiary">Kosongkan untuk publikasi sekarang</p>
                         </div>
 
@@ -111,8 +113,8 @@
                 </div>
 
                 <!-- Featured Image -->
-                <div class="bg-dark-bg-secondary rounded-apple p-6">
-                    <h3 class="text-lg font-semibold text-dark-text-primary mb-4">Featured Image</h3>
+                <div class="card-apple p-6">
+                    <h3 class="text-lg font-semibold text-dark-text-primary mb-4"><i class="fas fa-image mr-2 text-apple-purple"></i>Featured Image</h3>
                     
                     @if($article->featured_image)
                     <div id="current-image" class="mb-4">
@@ -128,7 +130,7 @@
                         </button>
                     </div>
                     
-                    <input type="file" name="featured_image" id="featured_image" accept="image/*" class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue @error('featured_image') border-apple-red @enderror">
+                    <input type="file" name="featured_image" id="featured_image" accept="image/*" class="input-apple @error('featured_image') border-apple-red @enderror">
                     <p class="mt-2 text-xs text-dark-text-tertiary">Format: JPG, PNG, GIF (max 2MB)</p>
                     @error('featured_image')
                     <p class="mt-1 text-sm text-apple-red">{{ $message }}</p>
@@ -136,13 +138,13 @@
                 </div>
 
                 <!-- Category & Tags -->
-                <div class="bg-dark-bg-secondary rounded-apple p-6">
-                    <h3 class="text-lg font-semibold text-dark-text-primary mb-4">Kategori & Tag</h3>
+                <div class="card-apple p-6">
+                    <h3 class="text-lg font-semibold text-dark-text-primary mb-4"><i class="fas fa-tags mr-2 text-apple-orange"></i>Kategori & Tag</h3>
                     
                     <div class="space-y-4">
                         <div>
-                            <label for="category" class="block text-sm font-medium text-dark-text-primary mb-2">Kategori *</label>
-                            <select name="category" id="category" required class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue">
+                            <label for="category" class="label-apple">Kategori *</label>
+                            <select name="category" id="category" required class="input-apple">
                                 @foreach($categories as $key => $label)
                                 <option value="{{ $key }}" {{ old('category', $article->category) == $key ? 'selected' : '' }}>{{ $label }}</option>
                                 @endforeach
@@ -150,8 +152,8 @@
                         </div>
 
                         <div>
-                            <label for="tags-input" class="block text-sm font-medium text-dark-text-primary mb-2">Tags</label>
-                            <input type="text" id="tags-input" placeholder="Ketik tag dan tekan Enter" class="w-full px-3 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm border border-dark-separator focus:outline-none focus:border-apple-blue">
+                            <label for="tags-input" class="label-apple">Tags</label>
+                            <input type="text" id="tags-input" placeholder="Ketik tag dan tekan Enter" class="input-apple">
                             <div id="tags-container" class="mt-2 flex flex-wrap gap-2"></div>
                             <p class="mt-2 text-xs text-dark-text-tertiary">Tekan Enter untuk menambah tag</p>
                         </div>
@@ -159,9 +161,9 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="bg-dark-bg-secondary rounded-apple p-6">
+                <div class="card-apple p-6">
                     <div class="space-y-3">
-                        <button type="submit" class="w-full px-4 py-2 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
+                        <button type="submit" class="w-full btn-primary-apple">
                             <i class="fas fa-save mr-2"></i>Update Artikel
                         </button>
                         <a href="{{ route('articles.index') }}" class="w-full px-4 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm font-medium hover:bg-dark-bg-tertiary/80 transition-apple flex items-center justify-center">

@@ -3,18 +3,20 @@
 @section('title', $article->title)
 
 @section('content')
-<div class="container-fluid px-4 py-6">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+<div class="container-custom">
+    <!-- Page Header -->
+    <div class="page-header-apple">
         <div>
-            <h1 class="text-2xl font-bold text-dark-text-primary">Preview Artikel</h1>
-            <p class="text-sm text-dark-text-secondary mt-1">{{ $article->title }}</p>
+            <h1 class="page-title-apple">
+                <i class="fas fa-eye mr-3"></i>Preview Artikel
+            </h1>
+            <p class="page-subtitle-apple">{{ $article->title }}</p>
         </div>
-        <div class="flex gap-2">
-            <a href="{{ route('articles.edit', $article) }}" class="px-4 py-2 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
+        <div class="flex gap-3">
+            <a href="{{ route('articles.edit', $article) }}" class="btn-primary-apple">
                 <i class="fas fa-edit mr-2"></i>Edit
             </a>
-            <a href="{{ route('articles.index') }}" class="px-4 py-2 bg-dark-bg-tertiary text-dark-text-primary rounded-apple text-sm font-medium hover:bg-dark-bg-secondary transition-apple">
+            <a href="{{ route('articles.index') }}" class="btn-secondary-apple">
                 <i class="fas fa-arrow-left mr-2"></i>Kembali
             </a>
         </div>
@@ -25,7 +27,7 @@
         <!-- Main Content -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Article Header -->
-            <div class="bg-dark-bg-secondary rounded-apple p-6">
+            <div class="card-apple p-6">
                 @if($article->featured_image)
                 <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-full rounded-apple mb-6">
                 @endif
@@ -85,8 +87,8 @@
         <!-- Sidebar -->
         <div class="space-y-6">
             <!-- Article Stats -->
-            <div class="bg-dark-bg-secondary rounded-apple p-6">
-                <h3 class="text-lg font-semibold text-dark-text-primary mb-4">Statistik Artikel</h3>
+            <div class="card-apple p-6">
+                <h3 class="text-lg font-semibold text-dark-text-primary mb-4"><i class="fas fa-chart-line mr-2 text-apple-blue"></i>Statistik Artikel</h3>
                 <div class="space-y-3">
                     <div class="flex justify-between">
                         <span class="text-sm text-dark-text-secondary">Total Views</span>
@@ -108,7 +110,7 @@
             </div>
 
             <!-- SEO Info -->
-            <div class="bg-dark-bg-secondary rounded-apple p-6">
+            <div class="card-apple p-6">
                 <h3 class="text-lg font-semibold text-dark-text-primary mb-4">SEO Information</h3>
                 <div class="space-y-4">
                     <div>
@@ -133,7 +135,7 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="bg-dark-bg-secondary rounded-apple p-6">
+            <div class="card-apple p-6">
                 <h3 class="text-lg font-semibold text-dark-text-primary mb-4">Quick Actions</h3>
                 <div class="space-y-2">
                     @if($article->status == 'draft')
@@ -161,7 +163,7 @@
                     </form>
                     @endif
 
-                    <a href="{{ route('articles.edit', $article) }}" class="w-full px-4 py-2 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple flex items-center justify-center">
+                    <a href="{{ route('articles.edit', $article) }}" class="w-full btn-primary-apple flex items-center justify-center">
                         <i class="fas fa-edit mr-2"></i>Edit Artikel
                     </a>
 
@@ -176,7 +178,7 @@
             </div>
 
             <!-- Author Info -->
-            <div class="bg-dark-bg-secondary rounded-apple p-6">
+            <div class="card-apple p-6">
                 <h3 class="text-lg font-semibold text-dark-text-primary mb-4">Penulis</h3>
                 <div class="flex items-center">
                     <div class="w-12 h-12 rounded-full bg-apple-blue flex items-center justify-center text-white font-semibold text-lg">
