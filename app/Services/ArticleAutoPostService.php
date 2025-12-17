@@ -39,20 +39,42 @@ class ArticleAutoPostService
         \Log::info('🚀 Starting scheduled article generation', [
             'schedule_id' => $schedule->id,
             'topic_id' => $schedule->topic_id,
+            'topic_title' => $schedule->topic->title ?? 'N/A',
+            'timestamp' => now()->toDateTimeString(),
         ]);
 
-        AutoPostLog::logInfo('generation_started', 'Starting article generation', [
+        AutoPostLog::create([
             'schedule_id' => $schedule->id,
             'topic_id' => $schedule->topic_id,
+            'level' => 'info',
+            'event' => 'generation_started',
+            'message' => '🚀 Starting article generation for: ' . ($schedule->topic->title ?? 'Unknown Topic'),
+            'context' => ['timestamp' => now()->toDateTimeString()],
         ]);
 
         try {
             // 1. Load configuration
+            \Log::info('⚙️  Loading configuration', ['schedule_id' => $schedule->id]);
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
+                'level' => 'info',
+                'event' => 'config_loaded',
+                'message' => '⚙️  Loading auto-post configuration',
+            ]);
+            
             $config = AutoPostConfig::current();
             
             if (!$config->is_enabled) {
                 throw new \Exception('Auto-posting is disabled in configuration');
             }
+            
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
+                'level' => 'success',
+                'event' => 'config_validated',
+                'message' => '✅ Configuration validated and ready',
+                'context' => ['model' => $config->ai_model, 'auto_publish' => $config->auto_publish],
+            ]);
             
             // 2. Load topic
             $topic = $schedule->topic;
@@ -61,25 +83,70 @@ class ArticleAutoPostService
                 throw new \Exception("Topic not found for schedule #{$schedule->id}");
             }
             
+            \Log::info('📋 Topic loaded', ['topic_id' => $topic->id, 'title' => $topic->title]);
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
+                'topic_id' => $topic->id,
+                'level' => 'info',
+                'event' => 'topic_loaded',
+                'message' => '📋 Topic loaded: ' . $topic->title,
+                'context' => ['category' => $topic->category, 'keywords' => $topic->keywords],
+            ]);
+            
             // 3. Check for duplicates
+            \Log::info('🔍 Checking for duplicate topics', ['topic_id' => $topic->id]);
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
+                'topic_id' => $topic->id,
+                'level' => 'info',
+                'event' => 'duplicate_check_started',
+                'message' => '🔍 Checking for duplicate content',
+            ]);
+            
             if ($this->similarityService->isDuplicate($topic, $config->duplicate_threshold)) {
                 throw new \Exception("Topic is too similar to recent articles (duplicate detected)");
             }
+            
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
+                'topic_id' => $topic->id,
+                'level' => 'success',
+                'event' => 'duplicate_check_passed',
+                'message' => '✅ No duplicate content detected',
+            ]);
             
             // 4. Mark topic as processing
             $topic->markAsProcessing();
             
             // 5. Generate content via AI
-            AutoPostLog::logInfo('ai_generation_started', 'Generating article content with AI', [
+            \Log::info('🤖 Starting AI generation', ['topic_id' => $topic->id, 'model' => $config->ai_model]);
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
-                'context' => ['model' => $config->ai_model],
+                'level' => 'info',
+                'event' => 'ai_generation_started',
+                'message' => '🤖 Generating article content with AI',
+                'context' => ['model' => $config->ai_model, 'temperature' => 0.7],
             ]);
             
             $articleData = $this->generationService->generateArticle($topic, $config);
             
-            AutoPostLog::logSuccess('ai_generation_completed', 'AI content generation completed', [
+            $wordCount = str_word_count(strip_tags($articleData['content']));
+            \Log::info('✅ AI generation completed', ['word_count' => $wordCount, 'reading_time' => $articleData['reading_time']]);
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
-                'word_count' => str_word_count(strip_tags($articleData['content'])),
+                'article_id' => null,
+                'level' => 'success',
+                'event' => 'ai_generation_completed',
+                'message' => '✅ AI content generation completed successfully',
+                'context' => [
+                    'word_count' => $wordCount,
+                    'reading_time' => $articleData['reading_time'],
+                    'sections' => substr_count($articleData['content'], '<h2>') + substr_count($articleData['content'], '<h3>'),
+                ],
+                'word_count' => $wordCount,
+                'reading_time' => $articleData['reading_time'],
             ]);
             
             // 6. Validate quality
@@ -130,10 +197,26 @@ class ArticleAutoPostService
             // 8. Create article
             $article = $this->createArticle($articleData, $topic);
             
-            AutoPostLog::logSuccess('article_created', 'Article created in database', [
+            \Log::info('📝 Article created in database', [
+                'article_id' => $article->id,
+                'title' => $article->title,
+                'status' => $article->status,
+            ]);
+            
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
                 'article_id' => $article->id,
                 'topic_id' => $topic->id,
-                'context' => ['status' => $article->status],
+                'level' => 'success',
+                'event' => 'article_created',
+                'message' => '📝 Article created in database: ' . $article->title,
+                'context' => [
+                    'article_id' => $article->id,
+                    'status' => $article->status,
+                    'slug' => $article->slug,
+                ],
+                'word_count' => str_word_count(strip_tags($article->content)),
+                'reading_time' => $article->reading_time,
             ]);
             
             // 9. Mark topic as published
@@ -144,14 +227,22 @@ class ArticleAutoPostService
             $estimatedCost = $this->generationService->estimateCost($config);
             
             // 11. Final success log
-            AutoPostLog::logSuccess('article_published', 'Article auto-posted successfully', [
+            AutoPostLog::create([
+                'schedule_id' => $schedule->id,
                 'article_id' => $article->id,
                 'topic_id' => $topic->id,
-                'schedule_id' => $schedule->id,
+                'level' => 'success',
+                'event' => 'article_published',
+                'message' => '🚀 Article auto-posted successfully: ' . $article->title,
+                'context' => [
+                    'article_id' => $article->id,
+                    'url' => url('/blog/' . $article->slug),
+                    'quality_score' => $qualityCheck['quality_score'],
+                    'ai_cost' => $estimatedCost,
+                ],
                 'word_count' => $qualityCheck['metrics']['word_count'],
                 'reading_time' => $article->reading_time,
                 'internal_links' => $linkStats['internal_links'],
-                'quality_score' => $qualityCheck['quality_score'],
                 'ai_cost' => $estimatedCost,
             ]);
             

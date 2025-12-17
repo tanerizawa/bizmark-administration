@@ -3,9 +3,9 @@
 @section('title', 'Target Websites - Backlink Builder')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="container-custom">
     {{-- Hero Header --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    <section class="card-apple p-5 md:p-6 relative overflow-hidden mb-6">
         <!-- Background Gradient Effects -->
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
@@ -24,7 +24,7 @@
                     </p>
                 </div>
                 <div>
-                    <a href="{{ route('backlinks.targets.create') }}" class="inline-flex items-center px-4 py-2.5 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
+                    <a href="{{ route('admin.backlinks.targets.create') }}" class="inline-flex items-center px-4 py-2.5 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
                         <i class="fas fa-plus mr-2"></i>Add New Target
                     </a>
                 </div>
@@ -33,75 +33,71 @@
     </section>
 
     {{-- Filters --}}
-    <div class="card-elevated rounded-apple-xl p-5 mb-6">
-        <form method="GET" action="{{ route('backlinks.targets') }}">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-xs uppercase tracking-wider mb-2" style="color: rgba(235,235,245,0.6);">Status</label>
-                    <select name="status" class="w-full px-4 py-2.5 rounded-apple text-sm font-medium transition-apple" 
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;"
-                            onchange="this.form.submit()">
-                        <option value="">All Status</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="contacted" {{ request('status') == 'contacted' ? 'selected' : '' }}>Contacted</option>
-                        <option value="responded" {{ request('status') == 'responded' ? 'selected' : '' }}>Responded</option>
-                        <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>Accepted</option>
-                        <option value="acquired" {{ request('status') == 'acquired' ? 'selected' : '' }}>Acquired</option>
-                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                    </select>
-                </div>
+    <div class="card-apple p-5 mb-6">
+        <form method="GET" action="{{ route('admin.backlinks.targets') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div>
+                <label class="label-apple">Status</label>
+                <select name="status" class="input-apple">
+                    <option value="">All Status</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="contacted" {{ request('status') == 'contacted' ? 'selected' : '' }}>Contacted</option>
+                    <option value="responded" {{ request('status') == 'responded' ? 'selected' : '' }}>Responded</option>
+                    <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>Accepted</option>
+                    <option value="acquired" {{ request('status') == 'acquired' ? 'selected' : '' }}>Acquired</option>
+                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                </select>
+            </div>
 
-                <div>
-                    <label class="block text-xs uppercase tracking-wider mb-2" style="color: rgba(235,235,245,0.6);">Priority</label>
-                    <select name="priority" class="w-full px-4 py-2.5 rounded-apple text-sm font-medium transition-apple" 
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;"
-                            onchange="this.form.submit()">
-                        <option value="">All Priority</option>
-                        <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
-                        <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
-                        <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
-                    </select>
-                </div>
+            <div>
+                <label class="label-apple">Priority</label>
+                <select name="priority" class="input-apple">
+                    <option value="">All Priority</option>
+                    <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
+                    <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
+                    <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
+                </select>
+            </div>
 
-                <div>
-                    <label class="block text-xs uppercase tracking-wider mb-2" style="color: rgba(235,235,245,0.6);">Type</label>
-                    <select name="type" class="w-full px-4 py-2.5 rounded-apple text-sm font-medium transition-apple" 
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;"
-                            onchange="this.form.submit()">
-                        <option value="">All Types</option>
-                        <option value="guest_post" {{ request('type') == 'guest_post' ? 'selected' : '' }}>Guest Post</option>
-                        <option value="resource_link" {{ request('type') == 'resource_link' ? 'selected' : '' }}>Resource Link</option>
-                        <option value="partnership" {{ request('type') == 'partnership' ? 'selected' : '' }}>Partnership</option>
-                        <option value="directory" {{ request('type') == 'directory' ? 'selected' : '' }}>Directory</option>
-                        <option value="syndication" {{ request('type') == 'syndication' ? 'selected' : '' }}>Syndication</option>
-                    </select>
-                </div>
+            <div>
+                <label class="label-apple">Type</label>
+                <select name="type" class="input-apple">
+                    <option value="">All Types</option>
+                    <option value="guest_post" {{ request('type') == 'guest_post' ? 'selected' : '' }}>Guest Post</option>
+                    <option value="resource_link" {{ request('type') == 'resource_link' ? 'selected' : '' }}>Resource Link</option>
+                    <option value="partnership" {{ request('type') == 'partnership' ? 'selected' : '' }}>Partnership</option>
+                    <option value="directory" {{ request('type') == 'directory' ? 'selected' : '' }}>Directory</option>
+                    <option value="syndication" {{ request('type') == 'syndication' ? 'selected' : '' }}>Syndication</option>
+                </select>
+            </div>
 
-                <div>
-                    <label class="block text-xs uppercase tracking-wider mb-2" style="color: rgba(235,235,245,0.6);">Search</label>
-                    <input type="text" name="search" placeholder="Website name..." value="{{ request('search') }}"
-                           class="w-full px-4 py-2.5 rounded-apple text-sm font-medium transition-apple" 
-                           style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;">
-                </div>
+            <div>
+                <label class="label-apple">Search</label>
+                <input type="text" name="search" placeholder="Website name..." value="{{ request('search') }}" class="input-apple">
+            </div>
+            
+            <div class="flex items-end">
+                <button type="submit" class="w-full btn-primary-apple">
+                    <i class="fas fa-filter mr-2"></i>Filter
+                </button>
             </div>
         </form>
     </div>
 
     {{-- Targets List --}}
-    <div class="card-elevated rounded-apple-xl p-5">
-        <div class="overflow-x-auto">
-            <table class="w-full">
+    <div class="card-apple">
+        <div class="table-responsive">
+            <table class="table-apple">
                 <thead>
-                    <tr class="border-b" style="border-color: rgba(255,255,255,0.08);">
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">Website</th>
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">DA</th>
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">Category</th>
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">Type</th>
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">Priority</th>
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">Status</th>
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">Outreach</th>
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">Backlinks</th>
-                        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">Actions</th>
+                    <tr>
+                        <th>Website</th>
+                        <th>DA</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Outreach</th>
+                        <th>Backlinks</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -157,30 +153,26 @@
                         <td class="py-3 px-4">
                             <span class="text-xs font-medium px-2 py-1 rounded-apple" 
                                   style="background: rgba(142,142,147,0.15); color: rgba(142,142,147,1);">
-                                {{ $target->outreach_count }}
+                                {{ $target->outreaches_count ?? 0 }}
                             </span>
                         </td>
                         <td class="py-3 px-4">
                             <span class="text-xs font-medium px-2 py-1 rounded-apple" 
                                   style="background: rgba(48,209,88,0.15); color: rgba(48,209,88,1);">
-                                {{ $target->backlinks_count }}
+                                {{ $target->backlinks_count ?? 0 }}
                             </span>
                         </td>
                         <td class="py-3 px-4">
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('backlinks.targets.edit', $target) }}" 
+                                <a href="{{ route('admin.backlinks.targets.edit', $target) }}" 
                                    class="inline-flex items-center px-3 py-1.5 bg-apple-blue text-white rounded-apple text-xs font-medium hover:bg-apple-blue-dark transition-apple">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('backlinks.targets.delete', $target) }}" method="POST" 
-                                      onsubmit="return confirm('Delete {{ $target->website_name }}?')" class="inline">
+                                <form action="{{ route('admin.backlinks.targets.delete', $target) }}" method="POST" 
+                                      onsubmit="return confirm('Delete {{ addslashes($target->website_name) }}?')" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" 
-                                            class="inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple"
-                                            style="background: rgba(255,69,58,0.15); color: rgba(255,69,58,1);"
-                                            onmouseover="this.style.background='rgba(255,69,58,0.25)'"
-                                            onmouseout="this.style.background='rgba(255,69,58,0.15)'">
+                                    <button type="submit" class="btn-delete-apple">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -194,7 +186,7 @@
                                 <i class="fas fa-bullseye fa-3x mb-3 opacity-50"></i>
                                 <p class="text-sm mb-2">No targets found</p>
                                 <p class="text-xs mb-4">Try adjusting your filters or add a new target</p>
-                                <a href="{{ route('backlinks.targets.create') }}" 
+                                <a href="{{ route('admin.backlinks.targets.create') }}" 
                                    class="inline-flex items-center px-4 py-2 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
                                     <i class="fas fa-plus mr-2"></i>Add First Target
                                 </a>

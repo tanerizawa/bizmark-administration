@@ -334,6 +334,8 @@ Route::middleware(['auth'])->group(function () {
             
             // Analytics & Logs
             Route::get('analytics', [App\Http\Controllers\Admin\AutoPostAnalyticsController::class, 'index'])->name('analytics');
+            Route::get('logs', [App\Http\Controllers\Admin\AutoPostLogController::class, 'index'])->name('logs.index');
+            Route::get('logs/recent', [App\Http\Controllers\Admin\AutoPostLogController::class, 'recent'])->name('logs.recent');
         });
     });
 
@@ -514,6 +516,40 @@ Route::middleware(['auth'])->group(function () {
             Route::get('template', [App\Http\Controllers\Admin\KbliSettingsController::class, 'downloadTemplate'])->name('template');
             Route::get('export', [App\Http\Controllers\Admin\KbliSettingsController::class, 'export'])->name('export');
             Route::delete('clear', [App\Http\Controllers\Admin\KbliSettingsController::class, 'clear'])->name('clear');
+        });
+        
+        // Backlink Management Routes
+        Route::prefix('backlinks')->name('backlinks.')->group(function () {
+            // Dashboard
+            Route::get('/', [App\Http\Controllers\Admin\BacklinkController::class, 'index'])->name('index');
+            Route::get('/analytics', [App\Http\Controllers\Admin\BacklinkController::class, 'analytics'])->name('analytics');
+            
+            // Targets Management
+            Route::get('/targets', [App\Http\Controllers\Admin\BacklinkController::class, 'targets'])->name('targets');
+            Route::get('/targets/create', [App\Http\Controllers\Admin\BacklinkController::class, 'createTarget'])->name('targets.create');
+            Route::post('/targets', [App\Http\Controllers\Admin\BacklinkController::class, 'storeTarget'])->name('targets.store');
+            Route::get('/targets/{target}/edit', [App\Http\Controllers\Admin\BacklinkController::class, 'editTarget'])->name('targets.edit');
+            Route::put('/targets/{target}', [App\Http\Controllers\Admin\BacklinkController::class, 'updateTarget'])->name('targets.update');
+            Route::delete('/targets/{target}', [App\Http\Controllers\Admin\BacklinkController::class, 'deleteTarget'])->name('targets.delete');
+            
+            // Backlinks Management
+            Route::get('/list', [App\Http\Controllers\Admin\BacklinkController::class, 'backlinks'])->name('list');
+            Route::get('/list/create', [App\Http\Controllers\Admin\BacklinkController::class, 'createBacklink'])->name('create');
+            Route::post('/list', [App\Http\Controllers\Admin\BacklinkController::class, 'storeBacklink'])->name('store');
+            Route::get('/list/{backlink}/edit', [App\Http\Controllers\Admin\BacklinkController::class, 'editBacklink'])->name('edit');
+            Route::put('/list/{backlink}', [App\Http\Controllers\Admin\BacklinkController::class, 'updateBacklink'])->name('update');
+            Route::delete('/list/{backlink}', [App\Http\Controllers\Admin\BacklinkController::class, 'deleteBacklink'])->name('delete');
+            
+            // Content Syndication
+            Route::get('/syndication', [App\Http\Controllers\Admin\BacklinkController::class, 'syndication'])->name('syndication');
+            
+            // Automation Settings
+            Route::get('/settings', function() {
+                return view('admin.backlinks.settings');
+            })->name('settings');
+            
+            // Execute Command
+            Route::post('/execute-command', [App\Http\Controllers\Admin\BacklinkController::class, 'executeCommand'])->name('execute-command');
         });
     });
 

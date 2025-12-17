@@ -3,9 +3,9 @@
 @section('title', 'Backlink Builder Dashboard')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="container-custom">
     {{-- Hero Header --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    <section class="card-apple p-5 md:p-6 relative overflow-hidden mb-6">
         <!-- Background Gradient Effects -->
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
@@ -24,7 +24,7 @@
                     </p>
                 </div>
                 <div>
-                    <a href="{{ route('backlinks.targets.create') }}" class="inline-flex items-center px-4 py-2.5 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
+                    <a href="{{ route('admin.backlinks.targets.create') }}" class="inline-flex items-center px-4 py-2.5 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
                         <i class="fas fa-plus mr-2"></i>Add Target Website
                     </a>
                 </div>
@@ -42,7 +42,7 @@
     {{-- Statistics Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <!-- Target Websites -->
-        <div class="card-elevated rounded-apple-lg p-5 hover-lift">
+        <div class="card-apple p-5 hover-lift">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-12 h-12 rounded-apple flex items-center justify-center"
                      style="background: linear-gradient(135deg, rgba(10,132,255,1) 0%, rgba(37,99,235,1) 100%);">
@@ -66,7 +66,7 @@
         </div>
 
         <!-- Acquired Backlinks -->
-        <div class="card-elevated rounded-apple-lg p-5 hover-lift">
+        <div class="card-apple p-5 hover-lift">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-12 h-12 rounded-apple flex items-center justify-center"
                      style="background: linear-gradient(135deg, rgba(48,209,88,1) 0%, rgba(5,150,105,1) 100%);">
@@ -96,7 +96,7 @@
         </div>
 
         <!-- Average DA -->
-        <div class="card-elevated rounded-apple-lg p-5 hover-lift">
+        <div class="card-apple p-5 hover-lift">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-12 h-12 rounded-apple flex items-center justify-center"
                      style="background: linear-gradient(135deg, rgba(255,159,10,1) 0%, rgba(217,119,6,1) 100%);">
@@ -120,7 +120,7 @@
         </div>
 
         <!-- Response Rate -->
-        <div class="card-elevated rounded-apple-lg p-5 hover-lift">
+        <div class="card-apple p-5 hover-lift">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-12 h-12 rounded-apple flex items-center justify-center"
                      style="background: linear-gradient(135deg, rgba(175,82,222,1) 0%, rgba(124,58,237,1) 100%);">
@@ -147,13 +147,13 @@
     {{-- Content Grid --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <!-- Quick Actions -->
-        <div class="card-elevated rounded-apple-xl p-5">
+        <div class="card-apple p-5">
             <h2 class="text-lg font-bold mb-4 flex items-center" style="color: white;">
                 <i class="fas fa-rocket text-apple-blue mr-2"></i>
                 Quick Actions
             </h2>
             <div class="space-y-3">
-                <a href="{{ route('backlinks.settings') }}" class="w-full flex items-center justify-between p-3 rounded-apple transition-apple" 
+                <a href="{{ route('admin.backlinks.settings') }}" class="w-full flex items-center justify-between p-3 rounded-apple transition-apple" 
                    style="background: rgba(191,90,242,0.12); border: 1px solid rgba(191,90,242,0.3);"
                    onmouseover="this.style.background='rgba(191,90,242,0.20)'"
                    onmouseout="this.style.background='rgba(191,90,242,0.12)'">
@@ -200,7 +200,7 @@
         </div>
 
         <!-- High Priority Targets -->
-        <div class="lg:col-span-2 card-elevated rounded-apple-xl p-5">
+        <div class="lg:col-span-2 card-apple p-5">
             <h2 class="text-lg font-bold mb-4 flex items-center" style="color: white;">
                 <i class="fas fa-fire text-apple-orange mr-2"></i>
                 High Priority Targets
@@ -229,7 +229,7 @@
                                   style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,1);">
                                 {{ ucfirst(str_replace('_', ' ', $target->type)) }}
                             </span>
-                            <a href="{{ route('backlinks.targets.edit', $target) }}" 
+                            <a href="{{ route('admin.backlinks.targets.edit', $target) }}" 
                                class="inline-flex items-center px-3 py-1.5 bg-apple-blue text-white rounded-apple text-xs font-medium hover:bg-apple-blue-dark transition-apple">
                                 Contact
                             </a>
@@ -238,7 +238,7 @@
                     @endforeach
                 </div>
                 <div class="mt-4">
-                    <a href="{{ route('backlinks.targets') }}" class="text-apple-blue text-sm font-medium hover:underline">
+                    <a href="{{ route('admin.backlinks.targets') }}" class="text-apple-blue text-sm font-medium hover:underline">
                         View all {{ $stats['total_targets'] }} targets <i class="fas fa-arrow-right ml-1"></i>
                     </a>
                 </div>
@@ -246,7 +246,7 @@
                 <div class="text-center py-8" style="color: rgba(235,235,245,0.6);">
                     <i class="fas fa-bullseye fa-3x mb-3 opacity-50"></i>
                     <p class="text-sm mb-4">No high priority targets available.</p>
-                    <a href="{{ route('backlinks.targets.create') }}" class="inline-flex items-center px-4 py-2 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
+                    <a href="{{ route('admin.backlinks.targets.create') }}" class="inline-flex items-center px-4 py-2 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
                         Add Target Website
                     </a>
                 </div>
@@ -255,13 +255,13 @@
     </div>
 
     {{-- Recent Backlinks --}}
-    <div class="card-elevated rounded-apple-xl p-5">
+    <div class="card-apple p-5">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold flex items-center" style="color: white;">
                 <i class="fas fa-link text-apple-green mr-2"></i>
                 Recent Backlinks
             </h2>
-            <a href="{{ route('backlinks.list') }}" class="text-apple-blue text-sm font-medium hover:underline">
+            <a href="{{ route('admin.backlinks.list') }}" class="text-apple-blue text-sm font-medium hover:underline">
                 View All <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>
@@ -327,7 +327,7 @@
     </div>
 
     {{-- Automation Commands Info --}}
-    <div class="mt-6 card-elevated rounded-apple-xl p-5">
+    <div class="mt-6 card-apple p-5">
         <h3 class="text-sm font-bold mb-4 flex items-center" style="color: rgba(235,235,245,0.9);">
             <i class="fas fa-terminal text-apple-purple mr-2"></i>
             Available Automation Commands

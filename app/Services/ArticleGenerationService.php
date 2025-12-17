@@ -25,9 +25,13 @@ class ArticleGenerationService
             'topic_id' => $topic->id,
             'topic_title' => $topic->title,
             'model' => $config->ai_model,
+            'category' => $topic->category,
+            'target_words' => $config->min_word_count . '-' . $config->max_word_count,
         ]);
 
         $startTime = microtime(true);
+        
+        \Log::info('📝 Preparing content generation prompt', ['topic_id' => $topic->id]);
 
         try {
             // Generate content
@@ -92,23 +96,44 @@ class ArticleGenerationService
     {
         $prompt = $this->buildContentPrompt($topic, $config);
         
-        $response = $this->openRouter->chat([
-            'model' => $config->ai_model,
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => $this->getSystemPrompt()
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $prompt
-                ]
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => $this->getSystemPrompt()
             ],
+            [
+                'role' => 'user',
+                'content' => $prompt
+            ]
+        ];
+        
+        $options = [
+            'model' => $config->ai_model,
             'temperature' => 0.7,
             'max_tokens' => 4000,
+        ];
+        
+        \Log::info('🌐 Calling OpenRouter API', [
+            'model' => $options['model'],
+            'max_tokens' => $options['max_tokens'],
         ]);
         
-        $markdown = $response['choices'][0]['message']['content'];
+        $response = $this->openRouter->chat($messages, $options);
+        
+        if (!$response['success']) {
+            \Log::error('❌ OpenRouter API failed', [
+                'error' => $response['error'] ?? 'Unknown error',
+                'details' => $response['details'] ?? null,
+            ]);
+            throw new \Exception('OpenRouter API error: ' . ($response['error'] ?? 'Unknown error'));
+        }
+        
+        \Log::info('✅ OpenRouter API response received', [
+            'content_length' => strlen($response['content']),
+            'tokens_used' => $response['tokens_used'] ?? 'N/A',
+        ]);
+        
+        $markdown = $response['content'];
         
         return $this->formatContent($markdown);
     }

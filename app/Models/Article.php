@@ -24,6 +24,7 @@ class Article extends Model
         'published_at',
         'views_count',
         'author_id',
+        'source_type',
         'meta_title',
         'meta_description',
         'meta_keywords',

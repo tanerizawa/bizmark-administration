@@ -62,6 +62,20 @@ class Kernel extends ConsoleKernel
         })->weeklyOn(0, '18:00');
 
         // ========================================
+        // 📝 AUTO-POST ARTICLE MANAGEMENT
+        // ========================================
+
+        // Process overdue schedules (Every 15 minutes)
+        $schedule->command('autopost:process-overdue --limit=10')
+            ->everyFifteenMinutes()
+            ->withoutOverlapping();
+
+        // Fix stuck processing schedules (Every 5 minutes)
+        $schedule->command('autopost:fix-stuck --timeout=10')
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
+
+        // ========================================
         // 🧹 MAINTENANCE TASKS
         // ========================================
 

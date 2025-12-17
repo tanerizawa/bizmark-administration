@@ -23,7 +23,17 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
+        // Get tab parameter
+        $tab = $request->get('tab', 'all');
+        
         $query = Article::with('author');
+
+        // Filter by tab
+        if ($tab === 'manual') {
+            $query->where('source_type', 'manual');
+        } elseif ($tab === 'auto-generated') {
+            $query->where('source_type', 'auto-generated');
+        }
 
         // Search
         if ($request->has('search') && $request->search != '') {
@@ -52,7 +62,24 @@ class ArticleController extends Controller
 
         $articles = $query->paginate(15);
 
-        return view('articles.index', compact('articles'));
+        // Calculate stats for tabs
+        $stats = [
+            'all' => Article::count(),
+            'manual' => Article::where('source_type', 'manual')->count(),
+            'auto_generated' => Article::where('source_type', 'auto-generated')->count(),
+            'published' => Article::where('status', 'published')->count(),
+            'draft' => Article::where('status', 'draft')->count(),
+        ];
+
+        // Get auto-post config and upcoming schedules
+        $autoPostConfig = \App\Models\AutoPostConfig::first();
+        $upcomingSchedules = \App\Models\AutoPostSchedule::where('scheduled_at', '>', now())
+            ->where('status', 'pending')
+            ->orderBy('scheduled_at', 'asc')
+            ->take(5)
+            ->get();
+
+        return view('articles.index', compact('articles', 'tab', 'stats', 'autoPostConfig', 'upcomingSchedules'));
     }
 
     /**

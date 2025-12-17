@@ -3,9 +3,9 @@
 @section('title', 'AI Automation Settings')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="container-custom">
     <!-- Header -->
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    <section class="card-apple p-5 md:p-6 relative overflow-hidden mb-6">
         <!-- Background Gradient Effects -->
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="w-72 h-72 bg-apple-purple opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
@@ -24,7 +24,7 @@
                     </p>
                 </div>
                 <div>
-                    <a href="{{ route('backlinks.index') }}" class="inline-flex items-center px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-apple text-sm font-medium transition-apple">
+                    <a href="{{ route('admin.backlinks.index') }}" class="inline-flex items-center px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-apple text-sm font-medium transition-apple">
                         <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
                     </a>
                 </div>
@@ -40,7 +40,7 @@
     @endif
 
     <!-- AI Configuration -->
-    <div class="card-elevated rounded-apple-xl p-6 mb-6">
+    <div class="card-apple p-6 mb-6">
         <div class="flex items-center mb-4">
             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-apple flex items-center justify-center mr-4">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +126,7 @@
     </div>
 
     <!-- Automation Schedule -->
-    <div class="card-elevated rounded-apple-xl p-6 mb-6">
+    <div class="card-apple p-6 mb-6">
         <div class="flex items-center mb-4">
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-apple flex items-center justify-center mr-4">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,7 +207,7 @@
     </div>
 
     <!-- Manual Commands -->
-    <div class="card-elevated rounded-apple-xl p-6">
+    <div class="card-apple p-6">
         <div class="flex items-center mb-4">
             <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-apple flex items-center justify-center mr-4">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,7 +276,7 @@
     </div>
 
     <!-- Command Output Log -->
-    <div id="commandLog" class="card-elevated rounded-apple-xl p-6 mt-6" style="display: none;">
+    <div id="commandLog" class="card-apple p-6 mt-6" style="display: none;">
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
                 <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
@@ -313,7 +313,7 @@ function executeCommand(command, args = {}) {
     logPanel.scrollIntoView({ behavior: 'smooth' });
     
     // Execute command via AJAX
-    fetch('{{ route("backlinks.execute-command") }}', {
+    fetch('{{ route("admin.backlinks.execute-command") }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

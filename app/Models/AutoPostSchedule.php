@@ -11,6 +11,7 @@ class AutoPostSchedule extends Model
 
     protected $fillable = [
         'topic_id',
+        'article_id',
         'scheduled_at',
         'status',
         'error_message',
@@ -36,6 +37,11 @@ class AutoPostSchedule extends Model
     public function topic()
     {
         return $this->belongsTo(ArticleTopic::class, 'topic_id');
+    }
+
+    public function article()
+    {
+        return $this->belongsTo(Article::class, 'article_id');
     }
 
     public function logs()

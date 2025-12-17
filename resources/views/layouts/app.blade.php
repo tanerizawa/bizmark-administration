@@ -138,6 +138,190 @@
             box-shadow: 0 6px 20px rgba(0, 122, 255, 0.6);
         }
         
+        .btn-primary-apple {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.625rem 1.25rem;
+            background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-blue-dark) 100%);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-primary-apple:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.5);
+            color: #FFFFFF;
+        }
+        
+        .btn-secondary-apple {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.625rem 1.25rem;
+            background: rgba(142, 142, 147, 0.2);
+            color: var(--dark-text-primary);
+            border: 1px solid rgba(142, 142, 147, 0.3);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-secondary-apple:hover {
+            background: rgba(142, 142, 147, 0.3);
+            border-color: rgba(142, 142, 147, 0.5);
+            color: var(--dark-text-primary);
+        }
+        
+        .btn-delete-apple {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.75rem;
+            background: rgba(255, 69, 58, 0.15);
+            color: var(--apple-red);
+            border: none;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .btn-delete-apple:hover {
+            background: rgba(255, 69, 58, 0.25);
+            color: var(--apple-red);
+        }
+        
+        .label-apple {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--dark-text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .input-apple {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            background: var(--dark-bg-tertiary);
+            border: 1px solid rgba(84, 84, 88, 0.3);
+            border-radius: 10px;
+            color: var(--dark-text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .input-apple:focus {
+            outline: none;
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        .table-apple {
+            width: 100%;
+        }
+        
+        .table-apple thead tr {
+            border-bottom: 1px solid var(--dark-separator);
+        }
+        
+        .table-apple thead th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--dark-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .table-apple tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .table-apple tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .table-apple tbody td {
+            padding: 0.75rem 1rem;
+            color: var(--dark-text-primary);
+            font-size: 0.875rem;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .stat-card-apple {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--dark-bg-elevated);
+            border: 1px solid var(--dark-separator);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card-apple:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-icon-apple {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 1.25rem;
+        }
+        
+        .stat-value-apple {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--dark-text-primary);
+        }
+        
+        .stat-label-apple {
+            font-size: 0.875rem;
+            color: var(--dark-text-secondary);
+        }
+        
+        .badge-apple {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: rgba(52, 199, 89, 0.15);
+            color: var(--apple-green);
+        }
+        
+        .badge-warning {
+            background: rgba(255, 149, 0, 0.15);
+            color: var(--apple-orange);
+        }
+        
+        .badge-secondary {
+            background: rgba(142, 142, 147, 0.15);
+            color: rgba(142, 142, 147, 1);
+        }
+        
         .hover-lift {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -681,6 +865,78 @@
             color: #FFFFFF;
         }
 
+        /* Submenu Styles */
+        .nav-submenu {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-submenu-toggle {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark-text-secondary);
+            background: transparent;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-submenu-toggle:hover {
+            background-color: var(--dark-bg-tertiary);
+            color: var(--dark-text-primary);
+        }
+
+        .nav-submenu.active .nav-submenu-toggle {
+            background-color: rgba(0, 122, 255, 0.12);
+            color: var(--apple-blue);
+        }
+
+        .submenu-icon {
+            font-size: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-submenu-content {
+            display: none;
+            padding-left: 2rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-sublink {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            color: var(--dark-text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: 0.125rem;
+        }
+
+        .nav-sublink:hover {
+            background-color: var(--dark-bg-tertiary);
+            color: var(--dark-text-primary);
+        }
+
+        .nav-sublink.active {
+            background-color: var(--apple-blue);
+            color: #FFFFFF;
+        }
+
+        .nav-sublink i {
+            width: 1rem;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             .app-sidebar {
@@ -978,6 +1234,43 @@
                             </div>
                         </div>
                         @endcan
+                        
+                        <!-- Backlink Builder Submenu -->
+                        <div class="nav-submenu {{ request()->routeIs('admin.backlinks.*') ? 'active' : '' }}">
+                            <button class="nav-link nav-submenu-toggle" onclick="toggleSubmenu(this)">
+                                <div class="nav-link-content">
+                                    <i class="fas fa-link"></i>
+                                    <span>Backlink Builder</span>
+                                </div>
+                                <i class="fas fa-chevron-down submenu-icon"></i>
+                            </button>
+                            <div class="nav-submenu-content" style="{{ request()->routeIs('admin.backlinks.*') ? 'display: block;' : '' }}">
+                                <a href="{{ route('admin.backlinks.index') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.index') ? 'active' : '' }}">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                                <a href="{{ route('admin.backlinks.targets') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.targets*') ? 'active' : '' }}">
+                                    <i class="fas fa-bullseye"></i>
+                                    <span>Target Websites</span>
+                                </a>
+                                <a href="{{ route('admin.backlinks.list') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.list') || request()->routeIs('admin.backlinks.create') || request()->routeIs('admin.backlinks.edit') ? 'active' : '' }}">
+                                    <i class="fas fa-link"></i>
+                                    <span>Backlinks</span>
+                                </a>
+                                <a href="{{ route('admin.backlinks.analytics') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.analytics') ? 'active' : '' }}">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Analytics</span>
+                                </a>
+                                <a href="{{ route('admin.backlinks.syndication') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.syndication') ? 'active' : '' }}">
+                                    <i class="fas fa-share-alt"></i>
+                                    <span>Syndication</span>
+                                </a>
+                                <a href="{{ route('admin.backlinks.settings') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.settings') ? 'active' : '' }}">
+                                    <i class="fas fa-robot"></i>
+                                    <span>AI Automation</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -1251,6 +1544,41 @@
             resultsContainer.innerHTML = html;
         }
         @endauth
+    </script>
+    
+    <!-- Submenu Toggle Function -->
+    <script>
+        function toggleSubmenu(button) {
+            const submenu = button.parentElement;
+            const content = submenu.querySelector('.nav-submenu-content');
+            const icon = button.querySelector('.submenu-icon');
+            
+            // Toggle display
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(180deg)';
+                submenu.classList.add('active');
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(0deg)';
+                if (!button.parentElement.querySelector('.nav-sublink.active')) {
+                    submenu.classList.remove('active');
+                }
+            }
+        }
+        
+        // Auto-expand active submenu on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const activeSubmenus = document.querySelectorAll('.nav-submenu.active');
+            activeSubmenus.forEach(submenu => {
+                const content = submenu.querySelector('.nav-submenu-content');
+                const icon = submenu.querySelector('.submenu-icon');
+                if (content && icon) {
+                    content.style.display = 'block';
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
     </script>
     
     <!-- Currency Helper - MUST load before other scripts -->
