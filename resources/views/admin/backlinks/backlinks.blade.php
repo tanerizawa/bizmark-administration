@@ -151,9 +151,80 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center py-12 text-dark-text-tertiary">
-                            <i class="fas fa-link text-4xl mb-3 opacity-50"></i>
-                            <p>No backlinks found</p>
+                        <td colspan="8" class="py-0">
+                            <div class="text-center py-16 px-6">
+                                <!-- Icon -->
+                                <div class="mb-6">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4" style="background: rgba(10,132,255,0.12);">
+                                        <i class="fas fa-link text-3xl" style="color: rgba(10,132,255,1);"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Message -->
+                                <h3 class="text-xl font-bold mb-2" style="color: #FFFFFF;">
+                                    Belum Ada Backlinks
+                                </h3>
+                                <p class="text-sm mb-8 max-w-md mx-auto" style="color: rgba(235,235,245,0.6);">
+                                    Anda belum memiliki backlinks yang tercatat. Mulai tambahkan backlinks dengan cara berikut:
+                                </p>
+                                
+                                <!-- Action Cards -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8">
+                                    <!-- Manual Add -->
+                                    <div class="p-5 rounded-apple text-left" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-apple flex items-center justify-center mr-3" style="background: rgba(48,209,88,0.2);">
+                                                <i class="fas fa-plus" style="color: rgba(48,209,88,1);"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-semibold mb-1" style="color: #FFFFFF;">Manual Entry</h4>
+                                                <p class="text-xs mb-3" style="color: rgba(235,235,245,0.6);">
+                                                    Tambahkan backlink secara manual jika sudah berhasil diperoleh
+                                                </p>
+                                                <a href="{{ route('admin.backlinks.create') }}" class="inline-flex items-center text-xs font-medium" style="color: rgba(48,209,88,1);">
+                                                    <i class="fas fa-plus mr-1"></i>Add Backlink
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Auto Crawl -->
+                                    <div class="p-5 rounded-apple text-left" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-apple flex items-center justify-center mr-3" style="background: rgba(191,90,242,0.2);">
+                                                <i class="fas fa-robot" style="color: rgba(191,90,242,1);"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-semibold mb-1" style="color: #FFFFFF;">Auto Detection</h4>
+                                                <p class="text-xs mb-3" style="color: rgba(235,235,245,0.6);">
+                                                    Jalankan crawler untuk deteksi otomatis backlinks di target websites
+                                                </p>
+                                                <code class="text-xs px-2 py-1 rounded" style="background: rgba(0,0,0,0.3); color: rgba(191,90,242,1);">
+                                                    backlink:crawl --all
+                                                </code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Info Box -->
+                                <div class="max-w-2xl mx-auto p-4 rounded-apple text-left" style="background: rgba(255,159,10,0.12); border: 1px solid rgba(255,159,10,0.2);">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-info-circle mr-3 mt-0.5" style="color: rgba(255,159,10,1);"></i>
+                                        <div>
+                                            <p class="text-sm font-medium mb-1" style="color: rgba(255,159,10,1);">
+                                                Workflow untuk mendapatkan backlinks:
+                                            </p>
+                                            <ol class="text-xs space-y-1" style="color: rgba(235,235,245,0.75);">
+                                                <li>1. Tambahkan target websites di <a href="{{ route('admin.backlinks.targets') }}" class="underline">Target Websites</a></li>
+                                                <li>2. Kirim outreach email dengan <code class="bg-gray-900 px-1 rounded">backlink:outreach --ai</code></li>
+                                                <li>3. Setelah dapat backlink, tambahkan manual atau jalankan crawler untuk auto-detect</li>
+                                                <li>4. Monitor kesehatan backlinks dengan <code class="bg-gray-900 px-1 rounded">backlink:monitor</code></li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     @endforelse

@@ -300,44 +300,73 @@
 
 <script>
 function executeCommand(command, args = {}) {
+    console.log('🚀 Executing command:', command, 'with args:', args);
+    
     // Show log panel
     const logPanel = document.getElementById('commandLog');
     const output = document.getElementById('commandOutput');
     const status = document.getElementById('commandStatus');
     
+    if (!logPanel || !output || !status) {
+        console.error('❌ Required DOM elements not found');
+        alert('Error: Page elements not loaded properly');
+        return;
+    }
+    
     logPanel.style.display = 'block';
     output.innerHTML = '<span class="text-yellow-400">⏳ Executing command...</span>\n\n';
+    output.innerHTML += '<span class="text-gray-400">Command: ' + command + '\n';
+    output.innerHTML += 'Arguments: ' + JSON.stringify(args, null, 2) + '</span>\n\n';
     status.textContent = 'Running...';
     
     // Scroll to log
     logPanel.scrollIntoView({ behavior: 'smooth' });
     
+    const url = '{{ route("admin.backlinks.execute-command") }}';
+    const csrfToken = '{{ csrf_token() }}';
+    
+    console.log('📡 Sending request to:', url);
+    console.log('🔐 CSRF Token:', csrfToken.substring(0, 10) + '...');
+    
     // Execute command via AJAX
-    fetch('{{ route("admin.backlinks.execute-command") }}', {
+    fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
         },
         body: JSON.stringify({
             command: command,
             args: args
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('📥 Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('✅ Response data:', data);
+        
         if (data.success) {
             output.innerHTML = '<span class="text-green-400">✅ Command executed successfully!</span>\n\n';
             output.innerHTML += '<span class="text-gray-300">' + escapeHtml(data.output) + '</span>';
-            status.innerHTML = '<span class="text-green-400">✅ Completed</span>';
+            status.innerHTML = '<span class="text-green-400">✅ Completed (Exit: ' + (data.exit_code || 0) + ')</span>';
         } else {
             output.innerHTML = '<span class="text-red-400">❌ Command failed!</span>\n\n';
-            output.innerHTML += '<span class="text-red-300">' + escapeHtml(data.message) + '</span>';
+            output.innerHTML += '<span class="text-red-300">' + escapeHtml(data.message || 'Unknown error') + '</span>';
+            if (data.output) {
+                output.innerHTML += '\n\n<span class="text-gray-400">Output:</span>\n<span class="text-gray-300">' + escapeHtml(data.output) + '</span>';
+            }
             status.innerHTML = '<span class="text-red-400">❌ Failed</span>';
         }
     })
     .catch(error => {
-        output.innerHTML = '<span class="text-red-400">❌ Network error!</span>\n\n';
+        console.error('❌ Fetch error:', error);
+        output.innerHTML = '<span class="text-red-400">❌ Network/Request error!</span>\n\n';
         output.innerHTML += '<span class="text-red-300">' + error.message + '</span>';
         status.innerHTML = '<span class="text-red-400">❌ Error</span>';
     });
