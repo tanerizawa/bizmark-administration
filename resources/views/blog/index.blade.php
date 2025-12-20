@@ -129,7 +129,7 @@
             @if($articles->hasPages())
                 <div class="flex justify-center" data-aos="fade-up">
                     <div class="blog-pagination">
-                        {{ $articles->withQueryString()->links('vendor.pagination.tailwind') }}
+                        {{ $articles->withQueryString()->links() }}
                     </div>
                 </div>
             @endif

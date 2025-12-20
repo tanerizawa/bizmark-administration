@@ -62,6 +62,112 @@
     </div>
 
     {{-- Syndication Table --}}
+    @if($syndications->isEmpty())
+    {{-- Enhanced Empty State --}}
+    <div class="card-apple p-12 text-center">
+        <div class="max-w-2xl mx-auto">
+            <!-- Icon -->
+            <div class="mb-6">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-4" style="background: rgba(48,209,88,0.12);">
+                    <i class="fas fa-share-alt text-4xl" style="color: rgba(48,209,88,1);"></i>
+                </div>
+            </div>
+            
+            <!-- Message -->
+            <h3 class="text-2xl font-bold mb-3" style="color: #FFFFFF;">
+                Belum Ada Content Syndication
+            </h3>
+            <p class="text-sm mb-8" style="color: rgba(235,235,245,0.6);">
+                Content syndication membantu memperluas jangkauan artikel Anda dengan mempublikasikannya di platform eksternal seperti Medium, Dev.to, dan Hashnode.
+            </p>
+            
+            <!-- Action Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div class="p-6 rounded-apple text-left" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="flex items-start mb-4">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3" style="background: rgba(10,132,255,0.15);">
+                            <i class="fas fa-plus" style="color: rgba(10,132,255,1);"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold mb-1" style="color: #FFFFFF;">Manual Syndication</h4>
+                            <p class="text-xs mb-3" style="color: rgba(235,235,245,0.6);">
+                                Track articles yang sudah Anda publikasikan secara manual di platform lain
+                            </p>
+                            <span class="text-xs px-2.5 py-1 rounded inline-block" style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,1);">
+                                Coming Soon
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-6 rounded-apple text-left" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="flex items-start mb-4">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3" style="background: rgba(48,209,88,0.15);">
+                            <i class="fas fa-robot" style="color: rgba(48,209,88,1);"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold mb-1" style="color: #FFFFFF;">Auto Syndication</h4>
+                            <p class="text-xs mb-3" style="color: rgba(235,235,245,0.6);">
+                                Otomatis publikasikan artikel ke multiple platform via API
+                            </p>
+                            <span class="text-xs px-2.5 py-1 rounded inline-block" style="background: rgba(255,159,10,0.15); color: rgba(255,159,10,1);">
+                                In Development
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supported Platforms -->
+            <div class="p-6 rounded-apple text-left" style="background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.2);">
+                <h4 class="font-semibold mb-3 flex items-center" style="color: rgba(48,209,88,1);">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Platform yang Akan Didukung:
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div class="flex items-center" style="color: rgba(235,235,245,0.75);">
+                        <i class="fab fa-medium text-lg mr-2" style="color: rgba(48,209,88,1);"></i>
+                        <span><strong>Medium</strong> - 200M+ readers</span>
+                    </div>
+                    <div class="flex items-center" style="color: rgba(235,235,245,0.75);">
+                        <i class="fab fa-dev text-lg mr-2" style="color: rgba(48,209,88,1);"></i>
+                        <span><strong>Dev.to</strong> - Developer community</span>
+                    </div>
+                    <div class="flex items-center" style="color: rgba(235,235,245,0.75);">
+                        <i class="fas fa-hashtag text-lg mr-2" style="color: rgba(48,209,88,1);"></i>
+                        <span><strong>Hashnode</strong> - Tech blogging</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Benefits -->
+            <div class="mt-8 p-6 rounded-apple text-left" style="background: rgba(255,255,255,0.03);">
+                <h4 class="font-semibold mb-3" style="color: #FFFFFF;">
+                    <i class="fas fa-lightbulb mr-2" style="color: rgba(255,159,10,1);"></i>
+                    Manfaat Content Syndication:
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs" style="color: rgba(235,235,245,0.6);">
+                    <div class="flex items-start">
+                        <i class="fas fa-arrow-right mr-2 mt-0.5" style="color: rgba(48,209,88,1);"></i>
+                        <span>Meningkatkan reach & traffic artikel</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-arrow-right mr-2 mt-0.5" style="color: rgba(48,209,88,1);"></i>
+                        <span>Mendapatkan backlinks berkualitas</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-arrow-right mr-2 mt-0.5" style="color: rgba(48,209,88,1);"></i>
+                        <span>Memperluas audience di platform baru</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-arrow-right mr-2 mt-0.5" style="color: rgba(48,209,88,1);"></i>
+                        <span>Membangun authority di niche Anda</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
     <div class="card-apple">
         <div class="table-responsive">
             <table class="table-apple">
@@ -75,7 +181,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($syndications as $syndication)
+                    @foreach($syndications as $syndication)
                     <tr>
                         <td>
                             @if($syndication->article)
@@ -119,14 +225,7 @@
                             {{ $syndication->published_at ? $syndication->published_at->format('d M Y H:i') : '-' }}
                         </td>
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="text-center py-12 text-dark-text-tertiary">
-                            <i class="fas fa-share-alt text-4xl mb-3 opacity-50"></i>
-                            <p>No syndicated content found</p>
-                        </td>
-                    </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -137,5 +236,6 @@
         </div>
         @endif
     </div>
+    @endif
 </div>
 @endsection

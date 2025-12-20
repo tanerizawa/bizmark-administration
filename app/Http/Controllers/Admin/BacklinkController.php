@@ -348,33 +348,46 @@ class BacklinkController extends Controller
         }
 
         try {
-            // Build command with arguments
-            $commandString = $command;
+            // Build arguments array for Artisan::call()
+            $commandArgs = [];
             foreach ($args as $key => $value) {
                 if (is_bool($value)) {
                     if ($value) {
-                        $commandString .= " --{$key}";
+                        $commandArgs['--' . $key] = true;
                     }
                 } else {
-                    $commandString .= " --{$key}={$value}";
+                    $commandArgs['--' . $key] = $value;
                 }
             }
 
-            // Execute command and capture output
-            $output = [];
-            $exitCode = 0;
+            // Execute command and capture output using BufferedOutput
+            $outputBuffer = new \Symfony\Component\Console\Output\BufferedOutput();
+            
+            $exitCode = \Artisan::call($command, $commandArgs, $outputBuffer);
+            $output = $outputBuffer->fetch();
 
-            \Artisan::call($commandString, [], new \Symfony\Component\Console\Output\BufferedOutput());
-            $output = \Artisan::output();
+            \Log::info('Backlink command executed', [
+                'command' => $command,
+                'args' => $commandArgs,
+                'exit_code' => $exitCode,
+                'output_length' => strlen($output),
+            ]);
 
             return response()->json([
-                'success' => true,
-                'message' => 'Command executed successfully',
-                'output' => $output,
+                'success' => $exitCode === 0,
+                'message' => $exitCode === 0 ? 'Command executed successfully' : 'Command completed with errors',
+                'output' => $output ?: 'Command executed but produced no output.',
                 'exit_code' => $exitCode,
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Backlink command execution failed', [
+                'command' => $command,
+                'args' => $args,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Command execution failed: ' . $e->getMessage(),

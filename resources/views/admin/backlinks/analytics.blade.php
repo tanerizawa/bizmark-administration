@@ -32,6 +32,90 @@
         </div>
     </section>
 
+    {{-- Empty State Check --}}
+    @if($analytics['total_backlinks'] == 0 && $analytics['total_targets'] == 0)
+    {{-- Complete Empty State --}}
+    <div class="card-apple p-12 text-center">
+        <div class="max-w-2xl mx-auto">
+            <!-- Icon -->
+            <div class="mb-6">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-4" style="background: rgba(175,82,222,0.12);">
+                    <i class="fas fa-chart-line text-4xl" style="color: rgba(175,82,222,1);"></i>
+                </div>
+            </div>
+            
+            <!-- Message -->
+            <h3 class="text-2xl font-bold mb-3" style="color: #FFFFFF;">
+                Analytics Akan Tersedia Setelah Ada Data
+            </h3>
+            <p class="text-sm mb-8" style="color: rgba(235,235,245,0.6);">
+                Halaman analytics akan menampilkan statistik dan insights lengkap setelah Anda mulai mengelola backlinks.
+            </p>
+            
+            <!-- Quick Start Guide -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="p-5 rounded-apple text-left" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="text-2xl font-bold mb-2" style="color: rgba(10,132,255,1);">1</div>
+                    <h4 class="font-semibold mb-2" style="color: #FFFFFF;">Add Targets</h4>
+                    <p class="text-xs mb-3" style="color: rgba(235,235,245,0.6);">
+                        Tambahkan target websites yang potensial untuk backlink
+                    </p>
+                    <a href="{{ route('admin.backlinks.targets') }}" class="text-xs font-medium inline-flex items-center" style="color: rgba(10,132,255,1);">
+                        Go to Targets <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <div class="p-5 rounded-apple text-left" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="text-2xl font-bold mb-2" style="color: rgba(48,209,88,1);">2</div>
+                    <h4 class="font-semibold mb-2" style="color: #FFFFFF;">Send Outreach</h4>
+                    <p class="text-xs mb-3" style="color: rgba(235,235,245,0.6);">
+                        Kirim email outreach untuk mendapatkan backlink
+                    </p>
+                    <code class="text-xs px-2 py-1 rounded bg-gray-900" style="color: rgba(48,209,88,1);">
+                        backlink:outreach --ai
+                    </code>
+                </div>
+                
+                <div class="p-5 rounded-apple text-left" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="text-2xl font-bold mb-2" style="color: rgba(255,159,10,1);">3</div>
+                    <h4 class="font-semibold mb-2" style="color: #FFFFFF;">Track Results</h4>
+                    <p class="text-xs mb-3" style="color: rgba(235,235,245,0.6);">
+                        Tambahkan acquired backlinks dan lihat analytics
+                    </p>
+                    <a href="{{ route('admin.backlinks.list') }}" class="text-xs font-medium inline-flex items-center" style="color: rgba(255,159,10,1);">
+                        View Backlinks <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- What You'll See -->
+            <div class="p-6 rounded-apple text-left" style="background: rgba(175,82,222,0.12); border: 1px solid rgba(175,82,222,0.2);">
+                <h4 class="font-semibold mb-3 flex items-center" style="color: rgba(175,82,222,1);">
+                    <i class="fas fa-sparkles mr-2"></i>
+                    Data yang Akan Ditampilkan di Analytics:
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs" style="color: rgba(235,235,245,0.75);">
+                    <div class="flex items-start">
+                        <i class="fas fa-check mr-2 mt-0.5" style="color: rgba(175,82,222,1);"></i>
+                        <span><strong>Overview Stats:</strong> Total backlinks, indexed count, broken links</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check mr-2 mt-0.5" style="color: rgba(175,82,222,1);"></i>
+                        <span><strong>Quality Metrics:</strong> Dofollow vs nofollow ratio, domain authority</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check mr-2 mt-0.5" style="color: rgba(175,82,222,1);"></i>
+                        <span><strong>Outreach Performance:</strong> Success rate, response rate, conversion</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check mr-2 mt-0.5" style="color: rgba(175,82,222,1);"></i>
+                        <span><strong>Trends:</strong> Monthly acquisition growth, category distribution</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
     {{-- Overview Stats --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="stat-card-apple">
@@ -184,5 +268,6 @@
         </div>
     </div>
     @endif
+    @endif {{-- End of total_backlinks > 0 check --}}
 </div>
 @endsection

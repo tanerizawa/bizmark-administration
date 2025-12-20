@@ -177,6 +177,11 @@ class BacklinkOutreachCommand extends Command
             'status' => 'sent',
             'sent_at' => now(),
         ]);
+
+        // Update target status to 'contacted' after first successful outreach
+        if ($target->status === 'pending') {
+            $target->update(['status' => 'contacted']);
+        }
     }
 
     private function sendTestEmail($testEmail, $target, $emailData)
