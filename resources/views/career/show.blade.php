@@ -28,7 +28,7 @@
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
-                <a href="{{ route('landing') }}" class="flex items-center space-x-3">
+                <a href="{{ route('landing.id') }}" class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                         <span class="text-white font-bold text-xl">B</span>
                     </div>
@@ -290,7 +290,7 @@
                                     <i class="fas fa-globe text-blue-600 mt-1"></i>
                                     <div>
                                         <div class="font-semibold text-gray-900">Website</div>
-                                        <a href="{{ route('landing') }}" class="text-blue-600 hover:underline">bizmark.id</a>
+                                        <a href="{{ route('landing.id') }}" class="text-blue-600 hover:underline">bizmark.id</a>
                                     </div>
                                 </div>
                             </div>

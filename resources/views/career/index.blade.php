@@ -28,7 +28,7 @@
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
-                <a href="{{ route('landing') }}" class="flex items-center space-x-3">
+                <a href="{{ route('landing.id') }}" class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                         <span class="text-white font-bold text-xl">B</span>
                     </div>
@@ -36,9 +36,9 @@
                 </a>
                 
                 <nav class="hidden md:flex items-center space-x-6">
-                    <a href="{{ route('landing') }}" class="text-gray-600 hover:text-blue-600 transition">Beranda</a>
-                    <a href="{{ route('services.index') }}" class="text-gray-600 hover:text-blue-600 transition">Layanan</a>
-                    <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-blue-600 transition">Blog</a>
+                    <a href="{{ route('landing.id') }}" class="text-gray-600 hover:text-blue-600 transition">Beranda</a>
+                    <a href="{{ route('services.index.id') }}" class="text-gray-600 hover:text-blue-600 transition">Layanan</a>
+                    <a href="{{ route('blog.index.id') }}" class="text-gray-600 hover:text-blue-600 transition">Blog</a>
                     <a href="{{ route('career.index') }}" class="text-blue-600 font-semibold">Karir</a>
                 </nav>
                 
@@ -162,7 +162,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">Belum Ada Lowongan Tersedia</h3>
                     <p class="text-gray-600 mb-6">Saat ini belum ada posisi yang dibuka. Silakan cek kembali nanti.</p>
-                    <a href="{{ route('landing') }}" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition">
+                    <a href="{{ route('landing.id') }}" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition">
                         <i class="fas fa-home"></i>
                         <span>Kembali ke Beranda</span>
                     </a>

@@ -11,7 +11,7 @@
             </div>
             
             <!-- Search Form -->
-            <form action="{{ route('blog.index') }}" method="GET" class="mb-6">
+            <form action="{{ route('blog.index.id') }}" method="GET" class="mb-6">
                 <div class="relative">
                     <input type="text" 
                            name="search" 
@@ -28,27 +28,27 @@
             <div>
                 <p class="text-sm text-gray-400 mb-3">Pencarian Populer:</p>
                 <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('blog.index', ['search' => 'LB3']) }}" 
+                    <a href="{{ route('blog.index.id', ['search' => 'LB3']) }}" 
                        class="px-4 py-2 bg-white/5 hover:bg-apple-blue/20 border border-white/10 hover:border-apple-blue/30 rounded-full text-sm transition"
                        onclick="toggleSearch()">
                         Perizinan LB3
                     </a>
-                    <a href="{{ route('blog.index', ['search' => 'AMDAL']) }}" 
+                    <a href="{{ route('blog.index.id', ['search' => 'AMDAL']) }}" 
                        class="px-4 py-2 bg-white/5 hover:bg-apple-blue/20 border border-white/10 hover:border-apple-blue/30 rounded-full text-sm transition"
                        onclick="toggleSearch()">
                         AMDAL
                     </a>
-                    <a href="{{ route('blog.index', ['search' => 'UKL-UPL']) }}" 
+                    <a href="{{ route('blog.index.id', ['search' => 'UKL-UPL']) }}" 
                        class="px-4 py-2 bg-white/5 hover:bg-apple-blue/20 border border-white/10 hover:border-apple-blue/30 rounded-full text-sm transition"
                        onclick="toggleSearch()">
                         UKL-UPL
                     </a>
-                    <a href="{{ route('blog.index', ['search' => 'OSS']) }}" 
+                    <a href="{{ route('blog.index.id', ['search' => 'OSS']) }}" 
                        class="px-4 py-2 bg-white/5 hover:bg-apple-blue/20 border border-white/10 hover:border-apple-blue/30 rounded-full text-sm transition"
                        onclick="toggleSearch()">
                         OSS NIB
                     </a>
-                    <a href="{{ route('blog.index', ['category' => 'tips']) }}" 
+                    <a href="{{ route('blog.index.id', ['category' => 'tips']) }}" 
                        class="px-4 py-2 bg-white/5 hover:bg-apple-blue/20 border border-white/10 hover:border-apple-blue/30 rounded-full text-sm transition"
                        onclick="toggleSearch()">
                         Tips & Panduan

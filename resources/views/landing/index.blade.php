@@ -27,6 +27,4 @@
 @include('landing.sections.contact')
 
 {{-- Footer - ENHANCED --}}
-@include('landing.sections.footer')
-
 @endsection

@@ -65,7 +65,7 @@
         <div class="max-w-5xl mx-auto mb-6 animate-fadeIn">
             <div class="text-center">
                 <!-- Logo -->
-                <a href="{{ route('landing') }}" class="inline-flex items-center justify-center mb-3">
+                <a href="{{ route('landing.id') }}" class="inline-flex items-center justify-center mb-3">
                     <img src="{{ asset('images/logo.svg') }}" alt="Bizmark.ID Logo" class="h-12 sm:h-14">
                 </a>
                 
@@ -339,7 +339,7 @@
                 <span>·</span>
                 <a href="{{ route('terms.conditions') }}" class="hover:text-white transition">Syarat & Ketentuan</a>
                 <span>·</span>
-                <a href="{{ route('landing') }}" class="hover:text-white transition">Beranda</a>
+                <a href="{{ route('landing.id') }}" class="hover:text-white transition">Beranda</a>
             </div>
         </div>
     </footer>

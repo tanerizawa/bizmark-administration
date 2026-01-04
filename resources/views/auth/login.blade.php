@@ -4,244 +4,401 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - Bizmark Permit Management</title>
+    <title>Login - Bizmark.ID | Sistem Manajemen Perizinan</title>
     
-    <!-- External CSS - CDN Only -->
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
+    
+    <!-- External CSS - CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            /* Apple Design System Colors */
-            --apple-blue: #007AFF;
-            --apple-blue-dark: #0051D5;
-            --apple-green: #34C759;
-            --apple-indigo: #5856D6;
-            --apple-orange: #FF9500;
-            --apple-pink: #FF2D55;
-            --apple-purple: #AF52DE;
-            --apple-red: #FF3B30;
-            --apple-teal: #5AC8FA;
-            --apple-yellow: #FFCC00;
-
-            /* Dark Mode Colors */
-            --dark-bg: #000000;
-            --dark-bg-secondary: #1C1C1E;
-            --dark-bg-tertiary: #2C2C2E;
-            --dark-bg-elevated: rgba(28, 28, 30, 0.9);
-            --dark-separator: rgba(84, 84, 88, 0.35);
-            --dark-text-primary: #FFFFFF;
-            --dark-text-secondary: rgba(235, 235, 245, 0.6);
-            --dark-text-tertiary: rgba(235, 235, 245, 0.3);
+            /* Bizmark Brand Colors - Consistent with Landing Page */
+            --primary: #1E40AF; /* Blue-800 */
+            --primary-dark: #1E3A8A; /* Blue-900 */
+            --secondary: #0891B2; /* Cyan-600 */
+            --success: #10B981; /* Green-500 */
+            --danger: #EF4444; /* Red-500 */
+            --warning: #F59E0B; /* Amber-500 */
         }
 
         body {
-            background-color: var(--dark-bg);
-            color: var(--dark-text-primary);
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%);
+            min-height: 100vh;
+        }
+
+        .login-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .login-card {
-            background-color: var(--dark-bg-elevated);
-            border: 1px solid var(--dark-separator);
-            backdrop-filter: blur(20px);
+            background: white;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
         }
 
-        .login-header {
-            background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-blue-dark) 100%);
+        .login-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         }
 
         .form-input {
-            background-color: var(--dark-bg-tertiary);
-            border: 1px solid var(--dark-separator);
-            color: var(--dark-text-primary);
+            transition: all 0.3s ease;
+            border: 2px solid #E5E7EB;
         }
 
         .form-input:focus {
-            border-color: var(--apple-blue);
+            border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
         }
 
-        .form-input::placeholder {
-            color: var(--dark-text-tertiary);
+        .form-input:hover {
+            border-color: #D1D5DB;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-blue-dark) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 122, 255, 0.3);
+            box-shadow: 0 10px 15px -3px rgba(30, 64, 175, 0.4);
         }
 
-        .icon-container {
-            background-color: rgba(255, 255, 255, 0.15);
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
-        .info-box {
-            background-color: rgba(28, 28, 30, 0.8);
-            border: 1px solid var(--dark-separator);
-            backdrop-filter: blur(10px);
+        .back-link {
+            color: var(--primary);
+            transition: all 0.3s ease;
         }
 
-        .error-box {
-            background-color: rgba(255, 59, 48, 0.1);
-            border-left: 4px solid var(--apple-red);
-        }
-
-        .success-box {
-            background-color: rgba(52, 199, 89, 0.1);
-            border-left: 4px solid var(--apple-green);
+        .back-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
         }
 
         .checkbox-custom {
-            accent-color: var(--apple-blue);
+            accent-color: var(--primary);
+            width: 1.125rem;
+            height: 1.125rem;
         }
 
-        .label-text {
-            color: var(--dark-text-secondary);
+        .logo-badge {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.3);
+            margin: 0 auto 1.5rem;
+        }
+
+        .decorative-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .decorative-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .circle-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -200px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            bottom: -150px;
+            left: -150px;
+        }
+
+        .alert-error {
+            background-color: #FEE2E2;
+            border-left: 4px solid var(--danger);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-success {
+            background-color: #D1FAE5;
+            border-left: 4px solid var(--success);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 1px solid #BFDBFE;
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
+    <!-- Decorative Background -->
+    <div class="decorative-bg">
+        <div class="decorative-circle circle-1"></div>
+        <div class="decorative-circle circle-2"></div>
+    </div>
+
+    <div class="w-full max-w-md login-container">
+        <!-- Back to Home Link -->
+        <div class="mb-6 text-center">
+            <a href="{{ route('landing.id') }}" class="back-link inline-flex items-center gap-2 text-sm font-medium">
+                <i class="fas fa-arrow-left"></i>
+                Kembali ke Beranda
+            </a>
+        </div>
+
         <!-- Login Card -->
-        <div class="login-card rounded-2xl shadow-2xl overflow-hidden">
-            <!-- Header -->
-            <div class="login-header p-8 text-center">
-                <div class="w-20 h-20 icon-container rounded-full mx-auto mb-4 flex items-center justify-center backdrop-blur-sm">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                    </svg>
+        <div class="login-card rounded-2xl overflow-hidden">
+            <!-- Logo & Header -->
+            <div class="p-8 pb-6 text-center">
+                <div class="logo-badge">
+                    <i class="fas fa-certificate text-white text-4xl"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-white mb-2">Bizmark.ID</h1>
-                <p class="text-white/80">Sistem Manajemen Perizinan</p>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Selamat Datang</h1>
+                <p class="text-gray-600">Masuk ke Sistem Manajemen Perizinan Bizmark.ID</p>
             </div>
 
             <!-- Form -->
-            <div class="p-8">
+            <div class="px-8 pb-8">
                 @if ($errors->any())
-                    <div class="mb-6 error-box p-4 rounded-lg">
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" style="color: var(--apple-red);" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                            </svg>
-                            <p class="text-sm font-medium" style="color: var(--apple-red);">
-                                {{ $errors->first() }}
-                            </p>
+                    <div class="mb-6 alert-error p-4 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-circle text-red-500 mt-0.5 mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-red-800 mb-1">Login Gagal</p>
+                                <p class="text-sm text-red-700">
+                                    {{ $errors->first() }}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 @endif
 
                 @if (session('status'))
-                    <div class="mb-6 success-box p-4 rounded-lg">
-                        <p class="text-sm" style="color: var(--apple-green);">{{ session('status') }}</p>
+                    <div class="mb-6 alert-success p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <p class="text-sm text-green-800 font-medium">{{ session('status') }}</p>
+                        </div>
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                <form method="POST" action="{{ route('login') }}" class="space-y-5">
                     @csrf
 
                     <!-- Email/Username Field -->
                     <div>
-                        <label for="login" class="block text-sm font-medium label-text mb-2">
+                        <label for="login" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1 text-gray-400"></i>
                             Username atau Email
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5" style="color: var(--dark-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                            </div>
-                            <input 
-                                id="login" 
-                                type="text" 
-                                name="login" 
-                                value="{{ old('login') }}" 
-                                required 
-                                autocomplete="username" 
-                                autofocus
-                                class="form-input block w-full pl-10 pr-3 py-3 rounded-lg transition @error('login') border-red-500 @enderror"
-                                placeholder="Masukkan username atau email"
-                            >
-                        </div>
+                        <input 
+                            id="login" 
+                            type="text" 
+                            name="login" 
+                            value="{{ old('login') }}" 
+                            required 
+                            autocomplete="username" 
+                            autofocus
+                            class="form-input block w-full px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 @error('login') border-red-500 @enderror"
+                            placeholder="Masukkan username atau email Anda"
+                        >
                         @error('login')
-                            <p class="mt-1 text-sm" style="color: var(--apple-red);">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
                     <!-- Password Field -->
                     <div>
-                        <label for="password" class="block text-sm font-medium label-text mb-2">
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-lock mr-1 text-gray-400"></i>
                             Password
                         </label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5" style="color: var(--dark-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
-                            </div>
                             <input 
                                 id="password" 
                                 type="password" 
                                 name="password" 
                                 required 
                                 autocomplete="current-password"
-                                class="form-input block w-full pl-10 pr-3 py-3 rounded-lg transition @error('password') border-red-500 @enderror"
-                                placeholder="Masukkan password"
+                                class="form-input block w-full px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 pr-12 @error('password') border-red-500 @enderror"
+                                placeholder="Masukkan password Anda"
                             >
+                            <button 
+                                type="button" 
+                                onclick="togglePassword()"
+                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition"
+                                aria-label="Toggle password visibility"
+                            >
+                                <i id="toggleIcon" class="fas fa-eye"></i>
+                            </button>
                         </div>
                         @error('password')
-                            <p class="mt-1 text-sm" style="color: var(--apple-red);">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
-                    <!-- Remember Me -->
-                    <div class="flex items-center">
-                        <input 
-                            id="remember" 
-                            name="remember" 
-                            type="checkbox" 
-                            {{ old('remember') ? 'checked' : '' }}
-                            class="h-4 w-4 checkbox-custom rounded"
-                        >
-                        <label for="remember" class="ml-2 block text-sm label-text">
-                            Ingat saya
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center cursor-pointer">
+                            <input 
+                                id="remember" 
+                                name="remember" 
+                                type="checkbox" 
+                                {{ old('remember') ? 'checked' : '' }}
+                                class="checkbox-custom rounded cursor-pointer"
+                            >
+                            <span class="ml-2 text-sm text-gray-700 select-none">
+                                Ingat saya
+                            </span>
                         </label>
+
+                        <a href="#" class="text-sm font-medium back-link">
+                            Lupa password?
+                        </a>
                     </div>
 
                     <!-- Submit Button -->
                     <button 
                         type="submit" 
-                        class="btn-primary w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white"
+                        class="btn-primary w-full flex justify-center items-center py-3.5 px-4 border-0 rounded-lg text-base font-semibold text-white"
                     >
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                        </svg>
-                        Masuk
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Masuk ke Sistem
                     </button>
                 </form>
+
+                <!-- Divider -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-white text-gray-500">Informasi</span>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="info-banner rounded-lg p-4">
+                    <div class="flex items-start">
+                        <i class="fas fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
+                        <div class="flex-1">
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                Gunakan kredensial yang telah diberikan oleh admin untuk mengakses sistem manajemen perizinan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Footer -->
-            <div class="px-8 py-6 border-t" style="background-color: var(--dark-bg-secondary); border-color: var(--dark-separator);">
-                <p class="text-center text-sm" style="color: var(--dark-text-secondary);">
-                    &copy; {{ date('Y') }} Bizmark.ID - Sistem Manajemen Perizinan
+            <div class="px-8 py-5 bg-gray-50 border-t border-gray-100">
+                <p class="text-center text-sm text-gray-600">
+                    &copy; {{ date('Y') }} <strong class="text-gray-900">Bizmark.ID</strong> - PT Cangah Pajaratan Mandiri
+                </p>
+                <p class="text-center text-xs text-gray-500 mt-1">
+                    Konsultan Perizinan & Bisnis Terpercaya
                 </p>
             </div>
         </div>
 
-        <!-- Info Box -->
-        <div class="info-box mt-6 rounded-lg p-4 text-center">
-            <p class="text-sm" style="color: var(--dark-text-secondary);">
-                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-                Gunakan kredensial yang telah diberikan untuk mengakses sistem
+        <!-- Contact Support -->
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600 mb-3">
+                Butuh bantuan untuk login?
             </p>
+            <div class="flex justify-center gap-4">
+                <a href="https://wa.me/6283879602855" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow-md transition text-sm text-gray-700 font-medium">
+                    <i class="fab fa-whatsapp text-green-500"></i>
+                    WhatsApp
+                </a>
+                <a href="mailto:cs@bizmark.id" class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow-md transition text-sm text-gray-700 font-medium">
+                    <i class="fas fa-envelope text-blue-500"></i>
+                    Email
+                </a>
+            </div>
         </div>
     </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-success, .alert-error');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
+            });
+        });
+    </script>
 </body>
 </html>

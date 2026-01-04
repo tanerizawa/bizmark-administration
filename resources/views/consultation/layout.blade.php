@@ -40,7 +40,7 @@
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
-                <a href="{{ route('landing') }}" class="flex items-center gap-2">
+                <a href="{{ route('landing.id') }}" class="flex items-center gap-2">
                     <i class="fas fa-building text-blue-600 text-xl"></i>
                     <span class="text-xl font-bold text-gray-900 dark:text-white">
                         Bizmark<span class="text-blue-600">.ID</span>
@@ -49,10 +49,10 @@
                 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center gap-6">
-                    <a href="{{ route('landing') }}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                    <a href="{{ route('landing.id') }}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">
                         <i class="fas fa-home mr-2"></i>Beranda
                     </a>
-                    <a href="{{ route('blog.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                    <a href="{{ route('blog.index.id') }}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">
                         <i class="fas fa-newspaper mr-2"></i>Artikel
                     </a>
                     <a href="{{ route('contact.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">

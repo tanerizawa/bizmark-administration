@@ -63,7 +63,7 @@
     <div class="w-full max-w-md">
         <!-- Logo Header -->
         <div class="text-center mb-8">
-            <a href="{{ route('landing') }}" class="inline-flex flex-col items-center group">
+            <a href="{{ route('landing.id') }}" class="inline-flex flex-col items-center group">
                 <img src="{{ asset('images/logo-bizmark.svg') }}" 
                      alt="BizMark Indonesia" 
                      class="h-16 w-16 mb-3 transition-transform group-hover:scale-105">
@@ -194,7 +194,7 @@
 
         <!-- Bottom Links -->
         <div class="mt-6 text-center space-y-3">
-            <a href="{{ route('landing') }}" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition">
+            <a href="{{ route('landing.id') }}" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition">
                 <i class="fas fa-arrow-left"></i>
                 <span>Kembali ke Beranda</span>
             </a>

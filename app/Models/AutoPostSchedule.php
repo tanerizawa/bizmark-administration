@@ -132,7 +132,7 @@ class AutoPostSchedule extends Model
         $this->update([
             'status' => 'completed',
             'completed_at' => now(),
-            'generation_time_seconds' => $generationTime ?? (now()->diffInSeconds($this->started_at)),
+            'generation_time_seconds' => (int) ($generationTime ?? now()->diffInSeconds($this->started_at)),
         ]);
     }
 

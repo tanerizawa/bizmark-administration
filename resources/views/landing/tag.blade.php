@@ -56,7 +56,7 @@
     <nav class="navbar">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <a href="{{ route('landing') }}" class="flex items-center space-x-3">
+                <a href="{{ route('landing.id') }}" class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
                         <i class="fas fa-shield-alt text-white text-xl"></i>
                     </div>
@@ -64,8 +64,8 @@
                 </a>
                 
                 <div class="flex items-center space-x-8">
-                    <a href="{{ route('landing') }}" class="hover:text-blue-400 transition">Beranda</a>
-                    <a href="{{ route('blog.index') }}" class="hover:text-blue-400 transition">Artikel</a>
+                    <a href="{{ route('landing.id') }}" class="hover:text-blue-400 transition">Beranda</a>
+                    <a href="{{ route('blog.index.id') }}" class="hover:text-blue-400 transition">Artikel</a>
                 </div>
             </div>
         </div>
@@ -75,9 +75,9 @@
     <section class="pt-32 pb-12 px-4" style="background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);">
         <div class="container mx-auto max-w-7xl">
             <div class="mb-4 text-sm text-gray-400">
-                <a href="{{ route('landing') }}" class="hover:text-blue-400">Beranda</a>
+                <a href="{{ route('landing.id') }}" class="hover:text-blue-400">Beranda</a>
                 <span class="mx-2">/</span>
-                <a href="{{ route('blog.index') }}" class="hover:text-blue-400">Artikel</a>
+                <a href="{{ route('blog.index.id') }}" class="hover:text-blue-400">Artikel</a>
                 <span class="mx-2">/</span>
                 <span>Tag: {{ $tag }}</span>
             </div>
@@ -147,7 +147,7 @@
             <div class="text-center py-20">
                 <i class="fas fa-tag text-6xl text-gray-600 mb-4"></i>
                 <p class="text-xl text-gray-400">Belum ada artikel dengan tag ini</p>
-                <a href="{{ route('blog.index') }}" class="inline-block mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+                <a href="{{ route('blog.index.id') }}" class="inline-block mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition">
                     Lihat Semua Artikel
                 </a>
             </div>

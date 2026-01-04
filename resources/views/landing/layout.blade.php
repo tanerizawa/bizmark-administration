@@ -13,6 +13,8 @@
         @yield('content')
     </main>
     
+    @include('landing.partials.footer')
+    
     <!-- Floating Action Buttons -->
     <div class="fab-group">
         <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 

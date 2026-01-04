@@ -16,6 +16,8 @@ class ArticleTopic extends Model
         'slug',
         'description',
         'category',
+        'language',
+        'target_market',
         'keywords',
         'tags',
         'status',
@@ -94,6 +96,19 @@ class ArticleTopic extends Model
         return $query->where('category', $category);
     }
 
+    public function scopeByLanguage($query, $language)
+    {
+        return $query->where('language', $language);
+    }
+
+    public function scopeByMarket($query, $market)
+    {
+        return $query->where(function($q) use ($market) {
+            $q->where('target_market', $market)
+              ->orWhere('target_market', 'both');
+        });
+    }
+
     public function scopeHighPriority($query)
     {
         return $query->orderBy('priority', 'desc');
@@ -102,7 +117,10 @@ class ArticleTopic extends Model
     public function scopeAvailable($query)
     {
         return $query->where('status', 'pending')
-            ->whereNull('scheduled_for');
+            ->where(function($q) {
+                $q->whereNull('scheduled_for')
+                  ->orWhere('scheduled_for', '<', now()->subHours(24)); // Topics stuck in scheduling for >24h
+            });
     }
 
     /**
@@ -158,12 +176,21 @@ class ArticleTopic extends Model
             'status' => 'published',
             'article_id' => $articleId,
             'published_at' => now(),
+            'scheduled_for' => null, // Clear scheduled time after publishing
         ]);
     }
 
     public function markAsFailed()
     {
-        $this->update(['status' => 'failed']);
+        $this->update([
+            'status' => 'failed',
+            'scheduled_for' => null, // Clear scheduling on failure
+        ]);
+    }
+
+    public function clearScheduling()
+    {
+        $this->update(['scheduled_for' => null]);
     }
 
     public function incrementViews()

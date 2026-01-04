@@ -19,7 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Add middleware to web group
         $middleware->web(append: [
-            \App\Http\Middleware\SetLocale::class,
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\DeviceDetection::class, // Public landing auto-redirect (FIRST)
             \App\Http\Middleware\DetectMobile::class, // Authenticated user mobile dashboard (AFTER)
@@ -30,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'role' => \App\Http\Middleware\CheckRole::class,
+            'locale' => \App\Http\Middleware\SetLocale::class,
         ]);
         
         // Exclude webhook endpoints from CSRF verification

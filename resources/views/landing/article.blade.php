@@ -50,13 +50,13 @@
             "@type": "ListItem",
             "position": 1,
             "name": "Beranda",
-            "item": "{{ route('landing') }}"
+            "item": "{{ route('landing.id') }}"
         },
         {
             "@type": "ListItem",
             "position": 2,
             "name": "Artikel",
-            "item": "{{ route('blog.index') }}"
+            "item": "{{ route('blog.index.id') }}"
         },
         @if($article->category)
         {
@@ -189,9 +189,9 @@
     <div class="container max-w-4xl">
         <!-- Breadcrumb -->
         <nav class="flex flex-wrap items-center gap-2 text-sm text-slate-500 mb-6">
-            <a href="{{ route('landing') }}" class="hover:text-primary transition">Beranda</a>
+            <a href="{{ route('landing.id') }}" class="hover:text-primary transition">Beranda</a>
             <span>/</span>
-            <a href="{{ route('blog.index') }}" class="hover:text-primary transition">Artikel</a>
+            <a href="{{ route('blog.index.id') }}" class="hover:text-primary transition">Artikel</a>
             <span>/</span>
             <a href="{{ route('blog.category', $article->category) }}" class="hover:text-primary transition">
                 {{ $article->category_label }}
@@ -307,7 +307,7 @@
         <div class="container max-w-6xl">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
                 <h3 class="text-3xl font-bold text-slate-900">Artikel Terkait</h3>
-                <a href="{{ route('blog.index') }}" class="text-primary font-semibold hover:text-primary/80 transition">
+                <a href="{{ route('blog.index.id') }}" class="text-primary font-semibold hover:text-primary/80 transition">
                     Lihat semua artikel <i class="fas fa-arrow-right text-xs ml-2"></i>
                 </a>
             </div>
@@ -383,5 +383,4 @@
     </div>
 </section>
 
-@include('landing.sections.footer')
 @endsection

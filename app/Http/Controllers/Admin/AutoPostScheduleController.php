@@ -82,7 +82,8 @@ class AutoPostScheduleController extends Controller
         }
         
         if ($schedule->status === 'pending' && $schedule->topic) {
-            $schedule->topic->update(['status' => 'available']);
+            // Clear scheduling info when deleting pending schedule
+            $schedule->topic->clearScheduling();
         }
         
         $schedule->delete();

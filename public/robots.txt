@@ -1,8 +1,18 @@
-# Robots.txt for Bizmark.ID
+# Robots.txt for Bizmark.ID - Dual Market Website
 # https://bizmark.id/robots.txt
 
 User-agent: *
 Allow: /
+
+# Allow locale-specific content
+Allow: /id/
+Allow: /en/
+Allow: /id/layanan/
+Allow: /en/services/
+Allow: /id/blog/
+Allow: /en/blog/
+
+# Disallow admin and private areas
 Disallow: /__REDACTED_LEGACY_ADMIN_SEGMENT__
 Disallow: /dashboard
 Disallow: /projects
@@ -12,6 +22,28 @@ Disallow: /institutions
 Disallow: /clients
 Disallow: /settings
 Disallow: /api/
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+
+# Disallow form submission endpoints
+Disallow: /en/inquiry
+Disallow: /konsultasi-gratis
+
+# Disallow result/confirmation pages
+Disallow: /en/inquiry/result/
+Disallow: /konsultasi-gratis/hasil/
+Disallow: /estimasi-biaya/hasil/
+
+# Disallow locale switcher
+Disallow: /locale/
+
+# Allow assets
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /build/
 
 # Sitemap location
 Sitemap: https://bizmark.id/sitemap.xml

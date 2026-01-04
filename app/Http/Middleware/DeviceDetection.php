@@ -57,7 +57,7 @@ class DeviceDetection
 
         if ($request->has('desktop') && $request->query('desktop') === '1') {
             $request->session()->put('force_device', 'desktop');
-            return redirect()->route('landing');
+            return redirect()->route('landing.id');
         }
 
         $isMobile = $this->detectMobileDevice($request);
@@ -78,7 +78,7 @@ class DeviceDetection
             if (!$request->session()->has('force_device')) {
                 // Only redirect if coming from homepage, not direct access
                 if ($request->headers->get('referer') && str_contains($request->headers->get('referer'), 'bizmark.id')) {
-                    return redirect()->route('landing');
+                    return redirect()->route('landing.id');
                 }
             }
         }

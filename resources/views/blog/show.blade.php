@@ -1,6 +1,12 @@
 @extends('landing.layout')
 
 @section('content')
+@php
+    $blogIndexRoute = app()->getLocale() === 'en' ? 'blog.index.en' : 'blog.index.id';
+    $blogCategoryRoute = app()->getLocale() === 'en' ? 'blog.category.en' : 'blog.category.id';
+    $blogArticleRoute = app()->getLocale() === 'en' ? 'blog.article.en' : 'blog.article.id';
+    $blogTagRoute = app()->getLocale() === 'en' ? 'blog.tag.en' : 'blog.tag.id';
+@endphp
 
 <!-- Breadcrumbs -->
 <section class="pt-24 pb-4 px-4 bg-white">
@@ -10,11 +16,11 @@
                 <i class="fas fa-home"></i> Beranda
             </a>
             <span>/</span>
-            <a href="{{ route('blog.index') }}" class="hover:text-primary transition">
+            <a href="{{ route($blogIndexRoute) }}" class="hover:text-primary transition">
                 Blog
             </a>
             <span>/</span>
-            <a href="{{ route('blog.category', $article->category) }}" class="hover:text-primary transition">
+            <a href="{{ route($blogCategoryRoute, $article->category) }}" class="hover:text-primary transition">
                 {{ $article->category_label }}
             </a>
             <span>/</span>
@@ -28,14 +34,14 @@
     <div class="container mx-auto max-w-4xl">
         <!-- Back Button -->
         <div class="mb-6" data-aos="fade-up">
-            <a href="{{ route('blog.index') }}" class="text-gray-700 hover:text-primary transition font-medium">
+            <a href="{{ route($blogIndexRoute) }}" class="text-gray-700 hover:text-primary transition font-medium">
                 <i class="fas fa-arrow-left mr-2"></i>Kembali ke Blog
             </a>
         </div>
         
         <!-- Category & Date -->
         <div class="flex items-center gap-4 mb-6 flex-wrap" data-aos="fade-up" data-aos-delay="100">
-            <a href="{{ route('blog.category', $article->category) }}" class="px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary-dark transition">
+            <a href="{{ route($blogCategoryRoute, $article->category) }}" class="px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary-dark transition">
                 {{ $article->category_label }}
             </a>
             <span class="text-gray-700"><i class="far fa-calendar mr-2"></i>{{ $article->published_at->format('d F Y') }}</span>
@@ -79,7 +85,7 @@
             <h4 class="text-lg font-bold mb-4 text-gray-900">Tags:</h4>
             <div class="flex flex-wrap gap-3">
                 @foreach($article->tags as $tag)
-                <a href="{{ route('blog.tag', $tag) }}" class="px-4 py-2 bg-gray-100 hover:bg-primary/10 text-gray-700 hover:text-primary rounded-full text-sm font-medium transition">
+                <a href="{{ route($blogTagRoute, $tag) }}" class="px-4 py-2 bg-gray-100 hover:bg-primary/10 text-gray-700 hover:text-primary rounded-full text-sm font-medium transition">
                     #{{ $tag }}
                 </a>
                 @endforeach
@@ -91,22 +97,22 @@
         <div class="mt-8 pt-8 border-t border-gray-200" data-aos="fade-up">
             <h4 class="text-lg font-bold mb-4 text-gray-900">Bagikan Artikel:</h4>
             <div class="flex gap-3">
-                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('blog.article', $article->slug)) }}" 
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route($blogArticleRoute, $article->slug)) }}" 
                    target="_blank"
                    class="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition shadow-soft">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?url={{ urlencode(route('blog.article', $article->slug)) }}&text={{ urlencode($article->title) }}" 
+                <a href="https://twitter.com/intent/tweet?url={{ urlencode(route($blogArticleRoute, $article->slug)) }}&text={{ urlencode($article->title) }}" 
                    target="_blank"
                    class="w-12 h-12 bg-sky-500 hover:bg-sky-600 text-white rounded-full flex items-center justify-center transition shadow-soft">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('blog.article', $article->slug)) }}&title={{ urlencode($article->title) }}" 
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route($blogArticleRoute, $article->slug)) }}&title={{ urlencode($article->title) }}" 
                    target="_blank"
                    class="w-12 h-12 bg-blue-700 hover:bg-blue-800 text-white rounded-full flex items-center justify-center transition shadow-soft">
                     <i class="fab fa-linkedin-in"></i>
                 </a>
-                <a href="https://wa.me/?text={{ urlencode($article->title . ' - ' . route('blog.article', $article->slug)) }}" 
+                <a href="https://wa.me/?text={{ urlencode($article->title . ' - ' . route($blogArticleRoute, $article->slug)) }}" 
                    target="_blank"
                    class="w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-full flex items-center justify-center transition shadow-soft">
                     <i class="fab fa-whatsapp"></i>
@@ -144,14 +150,14 @@
                     </div>
                     
                     <h3 class="text-xl font-bold mb-3 leading-tight text-gray-900 hover:text-primary transition">
-                        <a href="{{ route('blog.article', $related->slug) }}">{{ $related->title }}</a>
+                        <a href="{{ route($blogArticleRoute, $related->slug) }}">{{ $related->title }}</a>
                     </h3>
                     
                     <p class="text-gray-600 text-sm mb-4">
                         {{ Str::limit($related->excerpt, 100) }}
                     </p>
                     
-                    <a href="{{ route('blog.article', $related->slug) }}" class="text-primary hover:text-primary-dark font-semibold text-sm inline-flex items-center group">
+                    <a href="{{ route($blogArticleRoute, $related->slug) }}" class="text-primary hover:text-primary-dark font-semibold text-sm inline-flex items-center group">
                         Baca Artikel 
                         <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                     </a>
@@ -181,7 +187,7 @@
                     <i class="fab fa-whatsapp mr-2 text-xl"></i>
                     Chat via WhatsApp
                 </a>
-                <a href="{{ route('blog.index') }}" class="px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 font-semibold rounded-xl transition shadow-soft border-2 border-gray-200 inline-flex items-center">
+                <a href="{{ route($blogIndexRoute) }}" class="px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 font-semibold rounded-xl transition shadow-soft border-2 border-gray-200 inline-flex items-center">
                     <i class="fas fa-newspaper mr-2"></i>
                     Baca Artikel Lainnya
                 </a>

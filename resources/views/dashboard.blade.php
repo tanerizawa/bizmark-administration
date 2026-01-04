@@ -4,74 +4,118 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-<div class="max-w-7xl mx-auto space-y-10">
+<div class="max-w-7xl mx-auto space-y-6 md:space-y-10">
     {{-- Hero section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden" role="region" aria-labelledby="dashboard-hero">
+        {{-- Decorative Background --}}
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10 animate-pulse"></div>
+            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10 animate-pulse" style="animation-delay: 1s;"></div>
         </div>
+        
         <div class="relative space-y-5 md:space-y-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+            {{-- Header --}}
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
                 <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Pusat Operasional</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                    <p class="text-xs uppercase tracking-[0.4em] text-dark-text-tertiary">Pusat Operasional</p>
+                    <h1 id="dashboard-hero" class="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
                         Ringkasan Eksekutif Operasional
                     </h1>
-                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                    <p class="text-sm md:text-base text-dark-text-secondary">
                         Pantau indikator kinerja utama, arus kas, dan perkembangan proyek secara terpadu dalam satu tampilan.
                     </p>
                 </div>
-                <div class="space-y-2.5 text-sm" style="color: rgba(235,235,245,0.65);">
-                    <p><i class="fas fa-clock mr-2"></i>Terakhir diperbarui: {{ now()->format('d M Y, H:i') }}</p>
-                    <p><i class="fas fa-user-shield mr-2"></i>Akses: Direksi &amp; Kepala Operasional</p>
-                    <a href="{{ route('projects.index') }}" class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold" style="background: rgba(10,132,255,0.25); color: rgba(235,235,245,0.9);">
+                
+                {{-- Metadata & Actions --}}
+                <div class="space-y-2.5 text-sm text-dark-text-secondary shrink-0">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-clock" aria-hidden="true"></i>
+                        <time datetime="{{ now()->toIso8601String() }}">
+                            Terakhir diperbarui: {{ now()->format('d M Y, H:i') }}
+                        </time>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-user-shield" aria-hidden="true"></i>
+                        <span>Akses: Direksi & Kepala Operasional</span>
+                    </div>
+                    <a href="{{ route('projects.index') }}" 
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-apple text-xs font-semibold bg-apple-blue bg-opacity-25 text-dark-text-primary hover:bg-opacity-35 transition-all duration-200">
                         Lihat semua proyek
-                        <i class="fas fa-arrow-up-right-from-square ml-2"></i>
+                        <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
 
+            {{-- KPI Cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,59,48,0.08);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.8);">Perlu Tindakan</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $criticalAlerts['total_urgent'] }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Butuh penanganan segera</p>
-                </div>
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Proyeksi Kas</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(10,132,255,1);">{{ $cashFlowStatus['runway_months'] }} bln</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Status: {{ ucfirst($cashFlowStatus['status']) }}</p>
-                </div>
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(191,90,242,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Dokumen Tertunda</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $pendingApprovals['total_pending'] }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Menunggu persetujuan</p>
-                </div>
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Agenda 30 Hari</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $thisWeek['total_items'] }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tugas &amp; target waktu</p>
-                </div>
+                {{-- Urgent Actions --}}
+                <article class="card-subtle rounded-apple-lg p-3.5 md:p-4 hover:bg-opacity-10 transition-all duration-200" 
+                         aria-labelledby="kpi-urgent">
+                    <p id="kpi-urgent" class="text-xs uppercase tracking-widest text-apple-red opacity-80">Perlu Tindakan</p>
+                    <p class="text-2xl md:text-3xl font-bold text-white mt-1.5" role="status" aria-live="polite">
+                        {{ $criticalAlerts['total_urgent'] }}
+                    </p>
+                    <p class="text-xs text-dark-text-tertiary mt-1">Butuh penanganan segera</p>
+                </article>
+                
+                {{-- Cash Runway --}}
+                <article class="card-subtle rounded-apple-lg p-3.5 md:p-4 hover:bg-opacity-10 transition-all duration-200" 
+                         aria-labelledby="kpi-cash">
+                    <p id="kpi-cash" class="text-xs uppercase tracking-widest text-apple-blue opacity-90">Proyeksi Kas</p>
+                    <p class="text-2xl md:text-3xl font-bold text-apple-blue mt-1.5" role="status" aria-live="polite">
+                        {{ $cashFlowStatus['runway_months'] }} <span class="text-lg">bln</span>
+                    </p>
+                    <p class="text-xs text-dark-text-tertiary mt-1">
+                        Status: <span class="capitalize">{{ $cashFlowStatus['status'] }}</span>
+                    </p>
+                </article>
+                
+                {{-- Pending Approvals --}}
+                <article class="card-subtle rounded-apple-lg p-3.5 md:p-4 hover:bg-opacity-10 transition-all duration-200" 
+                         aria-labelledby="kpi-approvals">
+                    <p id="kpi-approvals" class="text-xs uppercase tracking-widest text-dark-text-secondary">Dokumen Tertunda</p>
+                    <p class="text-2xl md:text-3xl font-bold text-white mt-1.5" role="status" aria-live="polite">
+                        {{ $pendingApprovals['total_pending'] }}
+                    </p>
+                    <p class="text-xs text-dark-text-tertiary mt-1">Menunggu persetujuan</p>
+                </article>
+                
+                {{-- Upcoming Tasks --}}
+                <article class="card-subtle rounded-apple-lg p-3.5 md:p-4 hover:bg-opacity-10 transition-all duration-200" 
+                         aria-labelledby="kpi-agenda">
+                    <p id="kpi-agenda" class="text-xs uppercase tracking-widest text-apple-green opacity-90">Agenda 30 Hari</p>
+                    <p class="text-2xl md:text-3xl font-bold text-apple-green mt-1.5" role="status" aria-live="polite">
+                        {{ $thisWeek['total_items'] }}
+                    </p>
+                    <p class="text-xs text-dark-text-tertiary mt-1">Tugas & target waktu</p>
+                </article>
             </div>
         </div>
     </section>
 
     {{-- Critical focus section --}}
-    <section class="space-y-3 md:space-y-4">
+    <section class="space-y-3 md:space-y-4" role="region" aria-labelledby="critical-focus">
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Prioritas Tinggi</p>
-                <h2 class="text-2xl font-semibold" style="color:#FFFFFF;">Fokus Kritis</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Informasi penting mengenai isu mendesak, arus kas, dan persetujuan dokumen.</p>
+                <p class="text-xs uppercase tracking-[0.4em] text-dark-text-tertiary">Prioritas Tinggi</p>
+                <h2 id="critical-focus" class="text-2xl font-semibold text-white">Fokus Kritis</h2>
+                <p class="text-sm text-dark-text-secondary">Informasi penting mengenai isu mendesak, arus kas, dan persetujuan dokumen.</p>
             </div>
+            
+            {{-- Status Badge --}}
             @if($criticalAlerts['total_urgent'] > 0 || $cashFlowStatus['status'] === 'critical')
-            <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,0.95);">
-                <i class="fas fa-exclamation-triangle mr-1"></i>Memerlukan Perhatian
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-red bg-opacity-15 text-apple-red flex items-center gap-2" 
+                  role="status" 
+                  aria-live="polite">
+                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                Memerlukan Perhatian
             </span>
             @else
-            <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(52,199,89,0.15); color: rgba(52,199,89,0.9);">
-                <i class="fas fa-check-circle mr-1"></i>Kondisi Stabil
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-green bg-opacity-15 text-apple-green flex items-center gap-2" 
+                  role="status" 
+                  aria-live="polite">
+                <i class="fas fa-check-circle" aria-hidden="true"></i>
+                Kondisi Stabil
             </span>
             @endif
         </div>

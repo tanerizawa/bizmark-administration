@@ -22,7 +22,7 @@
     <div class="w-full max-w-md">
         <!-- Logo -->
         <div class="text-center mb-8">
-            <a href="{{ route('landing') }}" class="inline-block">
+            <a href="{{ route('landing.id') }}" class="inline-block">
                 <img src="{{ asset('images/logo-blue.png') }}" 
                      alt="BizMark Indonesia" 
                      class="transition-transform group-hover:scale-105">

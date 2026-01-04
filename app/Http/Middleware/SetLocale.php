@@ -12,35 +12,65 @@ class SetLocale
 {
     /**
      * Handle an incoming request.
+     * 
+     * Priority: Route Param > Session > Browser > Default
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  string|null  $locale
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, $locale = null): Response
     {
-        // Check if locale is in session
+        // Available locales
+        $availableLocales = config('app.available_locales', ['id', 'en']);
+        
+        // Priority 1: Explicit locale from route parameter or query
+        if ($locale && in_array($locale, $availableLocales)) {
+            App::setLocale($locale);
+            Session::put('locale', $locale);
+            
+            // Store market segment based on locale
+            $marketSegment = $locale === 'en' ? 'pma' : 'local';
+            Session::put('market_segment', $marketSegment);
+            
+            return $next($request);
+        }
+        
+        // Check query string (?lang=en)
+        if ($request->has('lang') && in_array($request->get('lang'), $availableLocales)) {
+            $queryLocale = $request->get('lang');
+            App::setLocale($queryLocale);
+            Session::put('locale', $queryLocale);
+            Session::put('market_segment', $queryLocale === 'en' ? 'pma' : 'local');
+            return $next($request);
+        }
+        
+        // Priority 2: Session locale (user previously selected)
         if (Session::has('locale')) {
-            $locale = Session::get('locale');
-        } 
-        // Check if locale is in query string (?lang=en)
-        elseif ($request->has('lang')) {
-            $locale = $request->get('lang');
-            Session::put('locale', $locale);
+            $sessionLocale = Session::get('locale');
+            if (in_array($sessionLocale, $availableLocales)) {
+                App::setLocale($sessionLocale);
+                return $next($request);
+            }
         }
-        // Default to Indonesian
-        else {
-            $locale = 'id';
-            Session::put('locale', $locale);
-        }
-
+        
+        // Priority 3: Browser Accept-Language header
+        $browserLang = $request->getPreferredLanguage($availableLocales);
+        
+        // Priority 4: Fallback to default locale
+        $selectedLocale = $browserLang ?? config('app.fallback_locale', 'id');
+        
         // Validate locale
-        $availableLocales = ['en', 'id'];
-        if (!in_array($locale, $availableLocales)) {
-            $locale = 'id';
+        if (!in_array($selectedLocale, $availableLocales)) {
+            $selectedLocale = 'id';
         }
-
-        // Set application locale
-        App::setLocale($locale);
-
+        
+        App::setLocale($selectedLocale);
+        Session::put('locale', $selectedLocale);
+        
+        // Store market segment
+        $marketSegment = $selectedLocale === 'en' ? 'pma' : 'local';
+        Session::put('market_segment', $marketSegment);
+        
         return $next($request);
     }
 }

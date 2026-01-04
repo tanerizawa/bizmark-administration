@@ -10,16 +10,49 @@ use App\Models\JobVacancy;
 class SitemapController extends Controller
 {
     /**
-     * Generate dynamic sitemap
+     * Generate dynamic sitemap with dual-market support
      */
     public function index()
     {
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . PHP_EOL;
+        $sitemap .= '        xmlns:xhtml="http://www.w3.org/1999/xhtml"' . PHP_EOL;
         $sitemap .= '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . PHP_EOL;
         
-        // Homepage
-        $sitemap .= $this->addUrl('https://bizmark.id/', now()->toAtomString(), 'daily', '1.0');
+        // Homepage with hreflang - Indonesian at root
+        $sitemap .= $this->addUrlWithHreflang('https://bizmark.id/', [
+            'id' => 'https://bizmark.id/',
+            'en' => 'https://bizmark.id/en',
+        ], now()->toAtomString(), 'daily', '1.0');
+        
+        $sitemap .= $this->addUrlWithHreflang('https://bizmark.id/en', [
+            'id' => 'https://bizmark.id/',
+            'en' => 'https://bizmark.id/en',
+        ], now()->toAtomString(), 'daily', '1.0');
+        
+        // Services pages
+        $sitemap .= $this->addUrlWithHreflang('https://bizmark.id/layanan', [
+            'id' => 'https://bizmark.id/layanan',
+            'en' => 'https://bizmark.id/en/services',
+        ], now()->toAtomString(), 'weekly', '0.9');
+        
+        $sitemap .= $this->addUrlWithHreflang('https://bizmark.id/en/services', [
+            'id' => 'https://bizmark.id/layanan',
+            'en' => 'https://bizmark.id/en/services',
+        ], now()->toAtomString(), 'weekly', '0.9');
+        
+        // PMA Services (English)
+        foreach (config('services_pma', []) as $slug => $service) {
+            $sitemap .= $this->addUrl("https://bizmark.id/en/services/{$slug}", now()->toAtomString(), 'weekly', '0.8');
+        }
+        
+        // Local Services (Indonesian - at root)
+        foreach (config('services_data', []) as $slug => $service) {
+            $sitemap .= $this->addUrl("https://bizmark.id/layanan/{$slug}", now()->toAtomString(), 'weekly', '0.8');
+        }
+        
+        // PMA Inquiry
+        $sitemap .= $this->addUrl('https://bizmark.id/en/inquiry', now()->toAtomString(), 'monthly', '0.9');
         
         // Static pages
         $staticPages = [
@@ -138,6 +171,26 @@ class SitemapController extends Controller
         }
         
         $url .= '    </url>' . PHP_EOL;
+        
+        return $url;
+    }
+    
+    /**
+     * Add URL with hreflang alternates
+     */
+    private function addUrlWithHreflang($loc, $alternates, $lastmod, $changefreq, $priority)
+    {
+        $url = '  <url>' . PHP_EOL;
+        $url .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
+        $url .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
+        $url .= '    <changefreq>' . $changefreq . '</changefreq>' . PHP_EOL;
+        $url .= '    <priority>' . $priority . '</priority>' . PHP_EOL;
+        
+        foreach ($alternates as $hreflang => $href) {
+            $url .= '    <xhtml:link rel="alternate" hreflang="' . $hreflang . '" href="' . htmlspecialchars($href) . '"/>' . PHP_EOL;
+        }
+        
+        $url .= '  </url>' . PHP_EOL;
         
         return $url;
     }

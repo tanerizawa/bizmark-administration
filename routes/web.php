@@ -33,22 +33,64 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 // Language Switcher
-Route::get('/locale/{locale}', [LocaleController::class, 'setLocale'])->name('locale.set');
+Route::get('/locale/{locale}', [LocaleController::class, 'setLocale'])
+    ->name('locale.set')
+    ->where('locale', 'id|en');
 
-// Legal Pages
-Route::get('/kebijakan-privasi', function(\Illuminate\Http\Request $request) {
-    $isMobile = $request->header('User-Agent') && 
-               (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
-    $view = $isMobile ? 'legal.mobile-privacy' : 'legal.privacy';
-    return view($view);
-})->name('privacy.policy');
+// Indonesian Landing Page (Root - Default)
+Route::middleware('locale:id')->group(function () {
+    Route::get('/layanan', [ServiceController::class, 'index'])->name('services.index.id');
+    Route::get('/layanan/{slug}', [ServiceController::class, 'show'])->name('services.show.id');
+    Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index.id');
+    Route::get('/blog/kategori/{category}', [PublicArticleController::class, 'category'])->name('blog.category.id');
+    Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag.id');
+    Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('blog.article.id');
+    
+    // Legal Pages (ID)
+    Route::get('/kebijakan-privasi', function(\Illuminate\Http\Request $request) {
+        $isMobile = $request->header('User-Agent') && 
+                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+        $view = $isMobile ? 'legal.mobile-privacy' : 'legal.privacy';
+        return view($view);
+    })->name('privacy.policy.id');
+    
+    Route::get('/syarat-ketentuan', function(\Illuminate\Http\Request $request) {
+        $isMobile = $request->header('User-Agent') && 
+                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
+        $view = $isMobile ? 'legal.mobile-terms' : 'legal.terms';
+        return view($view);
+    })->name('terms.conditions.id');
+});
 
-Route::get('/syarat-ketentuan', function(\Illuminate\Http\Request $request) {
-    $isMobile = $request->header('User-Agent') && 
-               (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
-    $view = $isMobile ? 'legal.mobile-terms' : 'legal.terms';
-    return view($view);
-})->name('terms.conditions');
+// English/PMA Landing Page (Explicit)
+Route::prefix('en')->middleware('locale:en')->group(function () {
+    Route::get('/', [PublicArticleController::class, 'landing'])->name('landing.en');
+    Route::get('/services', [ServiceController::class, 'index'])->name('services.index.en');
+    Route::get('/services/{slug}', [ServiceController::class, 'show'])->name('services.show.en');
+    Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index.en');
+    Route::get('/blog/category/{category}', [PublicArticleController::class, 'category'])->name('blog.category.en');
+    Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag.en');
+    Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('blog.article.en');
+    
+    // PMA Inquiry Form (English)
+    Route::get('/inquiry', [App\Http\Controllers\PMAInquiryController::class, 'create'])->name('pma.inquiry.create');
+    Route::post('/inquiry', [App\Http\Controllers\PMAInquiryController::class, 'store'])->name('pma.inquiry.store');
+    Route::get('/inquiry/result/{inquiryNumber}', [App\Http\Controllers\PMAInquiryController::class, 'result'])->name('pma.inquiry.result');
+    
+    // Legal Pages (EN)
+    Route::get('/privacy-policy', function() {
+        return view('legal.en.privacy');
+    })->name('privacy.policy.en');
+    
+    Route::get('/terms-conditions', function() {
+        return view('legal.en.terms');
+    })->name('terms.conditions.en');
+});
+
+// Redirect old /id URLs to root for backward compatibility
+Route::redirect('/id', '/', 301);
+Route::redirect('/id/layanan', '/layanan', 301);
+Route::redirect('/id/blog', '/blog', 301);
 
 // Contact Page
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
@@ -58,8 +100,8 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 Route::get('/estimasi-biaya', [App\Http\Controllers\ConsultationPageController::class, 'index'])->name('consultation.index');
 Route::get('/estimasi-biaya/hasil/{requestId}', [App\Http\Controllers\ConsultationPageController::class, 'result'])->name('consultation.result');
 
-// Landing Page (Public) - Auto-detect Mobile/Desktop
-Route::get('/', function(\Illuminate\Http\Request $request) {
+// Landing Page (Public) - Indonesian Default - Auto-detect Mobile/Desktop
+Route::middleware('locale:id')->get('/', function(\Illuminate\Http\Request $request) {
     // Get screen width from session (set by JS)
     $screenWidth = session('screen_width', 0);
     
@@ -96,11 +138,7 @@ Route::get('/', function(\Illuminate\Http\Request $request) {
     
     // Desktop version (existing landing page)
     return app(PublicArticleController::class)->landing($request);
-})->name('landing');
-
-// Service Pages (Public)
-Route::get('/layanan', [ServiceController::class, 'index'])->name('services.index');
-Route::get('/layanan/{slug}', [ServiceController::class, 'show'])->name('services.show');
+})->name('landing.id');
 
 // Service Inquiry - Free AI Analysis (Landing Page Lead Generation)
 Route::prefix('konsultasi-gratis')->group(function() {
@@ -115,12 +153,6 @@ Route::prefix('konsultasi-gratis')->group(function() {
     Route::post('/api/check-rate-limit', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'checkRateLimit'])
         ->name('landing.service-inquiry.check-rate-limit');
 });
-
-// Public Blog Routes
-Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index');
-Route::get('/blog/category/{category}', [PublicArticleController::class, 'category'])->name('blog.category');
-Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag');
-Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('blog.article');
 
 // Permit Calculator Tool (Public)
 Route::get('/kalkulator-perizinan', [App\Http\Controllers\CalculatorController::class, 'index'])->name('calculator.index');

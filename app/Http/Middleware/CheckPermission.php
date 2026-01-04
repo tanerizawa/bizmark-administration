@@ -17,7 +17,7 @@ class CheckPermission
     {
         if (!auth()->check()) {
             // Redirect to landing page instead of login page to keep /__REDACTED_LEGACY_ADMIN_SEGMENT__ hidden
-            return redirect()->route('landing')->with('warning', 'Silakan login terlebih dahulu untuk mengakses halaman ini.');
+            return redirect()->route('landing.id')->with('warning', 'Silakan login terlebih dahulu untuk mengakses halaman ini.');
         }
 
         if (!auth()->user()->can($permission)) {

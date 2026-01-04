@@ -1,12 +1,18 @@
 @extends('landing.layout')
 
 @section('content')
+@php
+    $blogIndexRoute = app()->getLocale() === 'en' ? 'blog.index.en' : 'blog.index.id';
+    $blogCategoryRoute = app()->getLocale() === 'en' ? 'blog.category.en' : 'blog.category.id';
+    $blogArticleRoute = app()->getLocale() === 'en' ? 'blog.article.en' : 'blog.article.id';
+    $blogTagRoute = app()->getLocale() === 'en' ? 'blog.tag.en' : 'blog.tag.id';
+@endphp
 
 <!-- Tag Header -->
 <section class="py-20 px-4 bg-gradient-to-br from-apple-blue/10 via-purple-500/10 to-apple-green/10">
     <div class="container mx-auto text-center">
         <div class="mb-6" data-aos="fade-up">
-            <a href="{{ route('blog.index') }}" class="text-gray-400 hover:text-apple-blue transition">
+            <a href="{{ route($blogIndexRoute) }}" class="text-gray-400 hover:text-apple-blue transition">
                 <i class="fas fa-arrow-left mr-2"></i>Kembali ke Blog
             </a>
         </div>
@@ -49,7 +55,7 @@
                     
                     <!-- Category Badge -->
                     <div class="absolute top-4 left-4">
-                        <a href="{{ route('blog.category', $article->category) }}" class="px-3 py-1 bg-apple-blue/90 backdrop-blur-sm text-white rounded-full text-xs font-semibold hover:bg-apple-blue transition">
+                        <a href="{{ route($blogCategoryRoute, $article->category) }}" class="px-3 py-1 bg-apple-blue/90 backdrop-blur-sm text-white rounded-full text-xs font-semibold hover:bg-apple-blue transition">
                             {{ $article->category_label }}
                         </a>
                     </div>
@@ -63,7 +69,7 @@
                     </div>
                     
                     <h3 class="text-xl font-bold mb-3 leading-tight hover:text-apple-blue transition">
-                        <a href="{{ route('blog.article', $article->slug) }}">{{ $article->title }}</a>
+                        <a href="{{ route($blogArticleRoute, $article->slug) }}">{{ $article->title }}</a>
                     </h3>
                     
                     <p class="text-gray-400 text-sm mb-4 leading-relaxed">
@@ -74,14 +80,14 @@
                     @if($article->tags && count($article->tags) > 0)
                     <div class="flex flex-wrap gap-2 mb-4">
                         @foreach(array_slice($article->tags, 0, 3) as $articleTag)
-                        <a href="{{ route('blog.tag', $articleTag) }}" class="text-xs px-2 py-1 {{ $articleTag === $tag ? 'bg-apple-blue/20 text-apple-blue' : 'bg-white/5 text-gray-400' }} hover:bg-white/10 rounded-full hover:text-apple-blue transition">
+                        <a href="{{ route($blogTagRoute, $articleTag) }}" class="text-xs px-2 py-1 {{ $articleTag === $tag ? 'bg-apple-blue/20 text-apple-blue' : 'bg-white/5 text-gray-400' }} hover:bg-white/10 rounded-full hover:text-apple-blue transition">
                             #{{ $articleTag }}
                         </a>
                         @endforeach
                     </div>
                     @endif
                     
-                    <a href="{{ route('blog.article', $article->slug) }}" class="text-apple-blue hover:text-apple-blue-dark font-semibold text-sm inline-flex items-center group">
+                    <a href="{{ route($blogArticleRoute, $article->slug) }}" class="text-apple-blue hover:text-apple-blue-dark font-semibold text-sm inline-flex items-center group">
                         Baca Selengkapnya 
                         <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                     </a>
@@ -101,7 +107,7 @@
             <i class="fas fa-tag text-6xl text-gray-700 mb-4"></i>
             <h3 class="text-2xl font-bold mb-2">Belum Ada Artikel</h3>
             <p class="text-gray-400 mb-8">Artikel dengan tag ini akan segera hadir.</p>
-            <a href="{{ route('blog.index') }}" class="btn-primary inline-flex items-center">
+            <a href="{{ route($blogIndexRoute) }}" class="btn-primary inline-flex items-center">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Lihat Semua Artikel
             </a>
@@ -124,7 +130,7 @@
             
             @foreach($popularTags as $popularTag)
                 @if($popularTag !== $tag)
-                <a href="{{ route('blog.tag', $popularTag) }}" class="px-4 py-2 glass rounded-full hover:bg-apple-blue/20 transition text-sm font-medium">
+                <a href="{{ route($blogTagRoute, $popularTag) }}" class="px-4 py-2 glass rounded-full hover:bg-apple-blue/20 transition text-sm font-medium">
                     #{{ $popularTag }}
                 </a>
                 @endif
