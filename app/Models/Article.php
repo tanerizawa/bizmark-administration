@@ -19,6 +19,7 @@ class Article extends Model
         'content',
         'featured_image',
         'category',
+        'language',
         'tags',
         'status',
         'published_at',
@@ -52,7 +53,10 @@ class Article extends Model
 
         static::creating(function ($article) {
             if (empty($article->slug)) {
-                $article->slug = Str::slug($article->title);
+                $article->slug = static::generateUniqueSlug($article->title);
+            } else {
+                // Ensure provided slug is unique
+                $article->slug = static::generateUniqueSlug($article->slug, null, true);
             }
             
             // Auto-generate excerpt if not provided
@@ -70,7 +74,7 @@ class Article extends Model
         static::updating(function ($article) {
             // Update slug if title changed
             if ($article->isDirty('title')) {
-                $article->slug = Str::slug($article->title);
+                $article->slug = static::generateUniqueSlug($article->title, $article->id);
             }
             
             // Recalculate reading time if content changed
@@ -79,6 +83,46 @@ class Article extends Model
                 $article->reading_time = ceil($wordCount / 200);
             }
         });
+    }
+
+    /**
+     * Generate a unique slug for the article
+     * 
+     * @param string $title The title or base slug
+     * @param int|null $excludeId Article ID to exclude from uniqueness check (for updates)
+     * @param bool $isSlug Whether the input is already a slug
+     * @return string Unique slug
+     */
+    public static function generateUniqueSlug(string $title, ?int $excludeId = null, bool $isSlug = false): string
+    {
+        $slug = $isSlug ? $title : Str::slug($title);
+        $originalSlug = $slug;
+        $counter = 1;
+        
+        // Check for existing slugs and append counter if needed
+        while (true) {
+            $query = static::withTrashed()->where('slug', $slug);
+            
+            if ($excludeId) {
+                $query->where('id', '!=', $excludeId);
+            }
+            
+            if (!$query->exists()) {
+                break;
+            }
+            
+            // Append counter to make unique
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+            
+            // Safety limit to prevent infinite loop
+            if ($counter > 100) {
+                $slug = $originalSlug . '-' . uniqid();
+                break;
+            }
+        }
+        
+        return $slug;
     }
 
     /**
@@ -125,6 +169,11 @@ class Article extends Model
     public function scopeByTag($query, $tag)
     {
         return $query->whereJsonContains('tags', $tag);
+    }
+
+    public function scopeByLanguage($query, $language)
+    {
+        return $query->where('language', $language);
     }
 
     public function scopeSearch($query, $search)
@@ -202,15 +251,30 @@ class Article extends Model
 
     public function getCategoryLabelAttribute()
     {
-        $labels = [
-            'general' => 'Umum',
-            'news' => 'Berita',
-            'case-study' => 'Studi Kasus',
-            'tips' => 'Tips & Panduan',
-            'regulation' => 'Regulasi',
-        ];
+        return static::getCategoryLabel($this->category);
+    }
 
-        return $labels[$this->category] ?? 'Umum';
+    /**
+     * Get category label with translation support
+     */
+    public static function getCategoryLabel($category)
+    {
+        $key = "blog.category_labels.{$category}";
+        $translated = __($key);
+        
+        // If translation not found, return fallback
+        if ($translated === $key) {
+            $fallbacks = [
+                'general' => 'General',
+                'news' => 'News',
+                'case-study' => 'Case Study',
+                'tips' => 'Tips & Guide',
+                'regulation' => 'Regulation',
+            ];
+            return $fallbacks[$category] ?? ucfirst(str_replace('-', ' ', $category));
+        }
+        
+        return $translated;
     }
 
     /**
@@ -262,7 +326,7 @@ class Article extends Model
 
     public function getUrl()
     {
-        return route('blog.article', $this->slug);
+        return route('blog.article.id', $this->slug);
     }
 
     /**

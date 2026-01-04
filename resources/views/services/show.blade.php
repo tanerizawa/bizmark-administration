@@ -10,11 +10,11 @@
 <section class="bg-gray-50 py-6 mt-20">
     <div class="container">
         <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
-            <a href="{{ route('landing') }}" class="hover:text-primary transition">
+            <a href="{{ route('landing.id') }}" class="hover:text-primary transition">
                 <i class="fas fa-home mr-2"></i>Beranda
             </a>
             <i class="fas fa-chevron-right mx-3 text-gray-400 text-xs"></i>
-            <a href="{{ route('services.index') }}" class="hover:text-primary transition">Layanan</a>
+            <a href="{{ route('services.index.id') }}" class="hover:text-primary transition">Layanan</a>
             <i class="fas fa-chevron-right mx-3 text-gray-400 text-xs"></i>
             <span class="text-gray-900 font-medium">{{ $service['title'] }}</span>
         </nav>
@@ -70,8 +70,168 @@
                 <!-- Main Content Column -->
                 <div class="lg:col-span-2 space-y-12">
                     
+                    <!-- Narrative Introduction -->
+                    @if(!view()->exists('services.partials.' . $service['slug']))
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 border-blue-600 rounded-r-xl p-8 shadow-sm">
+                        <div class="flex items-start gap-4 mb-6">
+                            <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-lightbulb text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900 mb-2">Memahami {{ $service['title'] }}</h2>
+                                <p class="text-sm text-blue-900 font-medium">Panduan komprehensif untuk pengusaha Indonesia</p>
+                            </div>
+                        </div>
+                        
+                        <div class="prose max-w-none text-gray-700 leading-relaxed space-y-4">
+                            <p class="text-lg font-medium text-gray-900">{{ $service['short_description'] }}</p>
+                            
+                            <p>Menjalankan usaha di Indonesia memerlukan pemahaman mendalam tentang regulasi dan prosedur perizinan yang berlaku. Meskipun pemerintah telah melakukan berbagai penyederhanaan melalui sistem digital, keberhasilan dalam mendapatkan izin tetap membutuhkan keahlian lokal, hubungan yang baik dengan instansi terkait, dan manajemen kepatuhan yang proaktif.</p>
+                            
+                            <p><strong>Mengapa pendampingan profesional penting:</strong> Regulasi Indonesia sering memberikan kerangka umum, dengan persyaratan detail muncul melalui peraturan menteri, pedoman teknis, dan interpretasi yang terus berkembang. Apa yang terlihat sederhana dalam perundang-undangan bisa melibatkan persyaratan kompleks dalam praktiknya. Konsultan profesional menjembatani kesenjangan antara teks regulasi dan realitas operasional.</p>
+                            
+                            <p class="bg-white p-4 rounded-lg border-l-4 border-blue-600 italic">Pengalaman kami melayani klien di berbagai industri telah membangun pengetahuan komprehensif tentang lanskap regulasi Indonesia. Kami tidak hanya memproses aplikasi—kami memposisikan bisnis Anda secara strategis untuk kesuksesan operasional jangka panjang, membantu Anda menghindari jebakan umum yang menunda atau menggagalkan proyek perizinan.</p>
+                        </div>
+                    </div>
+                    @endif
+                    
                     <!-- Overview (Dynamically loaded based on slug) -->
+                    @if(view()->exists('services.partials.' . $service['slug']))
                     @include('services.partials.' . $service['slug'])
+                    @else
+                    <!-- Default Service Content for services without custom partial -->
+                    <div class="space-y-8">
+                        <!-- Service Description -->
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4 text-gray-900">Gambaran Layanan</h2>
+                            <div class="prose max-w-none text-gray-600 leading-relaxed">
+                                <p>{{ $service['short_description'] }}</p>
+                                @if(isset($service['long_description']))
+                                <p class="mt-4">{{ $service['long_description'] }}</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Process/Benefits -->
+                        @if(isset($service['process_time']))
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div class="p-6 bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-100">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-clock text-2xl" style="color: {{ $service['color'] }};"></i>
+                                    <span class="text-sm text-gray-600">Waktu Proses</span>
+                                </div>
+                                <p class="text-xl font-bold text-gray-900">{{ $service['process_time'] }}</p>
+                            </div>
+                            @if(isset($service['price']))
+                            <div class="p-6 bg-gradient-to-br from-green-50 to-white rounded-xl border border-green-100">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-tag text-2xl text-green-600"></i>
+                                    <span class="text-sm text-gray-600">Harga Mulai</span>
+                                </div>
+                                <p class="text-xl font-bold text-gray-900">{{ $service['price'] }}</p>
+                            </div>
+                            @endif
+                            <div class="p-6 bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-shield-alt text-2xl text-purple-600"></i>
+                                    <span class="text-sm text-gray-600">Jaminan</span>
+                                </div>
+                                <p class="text-lg font-bold text-gray-900">Transparan</p>
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Key Features -->
+                        <div>
+                            <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
+                                <i class="fas fa-check-circle mr-3" style="color: {{ $service['color'] }};"></i>
+                                Yang Anda Dapatkan
+                            </h2>
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div class="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-100">
+                                    <i class="fas fa-check-double text-green-600 mt-1 flex-shrink-0"></i>
+                                    <span class="text-gray-700">Konsultasi awal dan assessment kebutuhan</span>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-100">
+                                    <i class="fas fa-check-double text-green-600 mt-1 flex-shrink-0"></i>
+                                    <span class="text-gray-700">Persiapan dan kurasi dokumen lengkap</span>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-100">
+                                    <i class="fas fa-check-double text-green-600 mt-1 flex-shrink-0"></i>
+                                    <span class="text-gray-700">Pengajuan dan koordinasi dengan instansi</span>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-100">
+                                    <i class="fas fa-check-double text-green-600 mt-1 flex-shrink-0"></i>
+                                    <span class="text-gray-700">Monitoring progress secara real-time</span>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-100">
+                                    <i class="fas fa-check-double text-green-600 mt-1 flex-shrink-0"></i>
+                                    <span class="text-gray-700">Pendampingan hingga izin terbit</span>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-100">
+                                    <i class="fas fa-check-double text-green-600 mt-1 flex-shrink-0"></i>
+                                    <span class="text-gray-700">Dukungan pasca-penerbitan izin</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Process Steps -->
+                        <div>
+                            <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
+                                <i class="fas fa-route mr-3" style="color: {{ $service['color'] }};"></i>
+                                Proses Kami
+                            </h2>
+                            <div class="space-y-4">
+                                @foreach(['Konsultasi & Analisis Kebutuhan', 'Persiapan Dokumen & Persyaratan', 'Pengajuan ke Instansi Terkait', 'Monitoring & Follow-up', 'Penyerahan Izin & Pelaporan'] as $index => $step)
+                                <div class="flex gap-4 p-5 bg-gradient-to-r from-blue-50 to-white rounded-lg border border-blue-100 hover:shadow-md transition">
+                                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-blue-900 to-blue-700 text-white flex items-center justify-center font-bold text-lg shadow-lg">
+                                        {{ $index + 1 }}
+                                    </div>
+                                    <div class="flex-1 pt-2">
+                                        <h3 class="font-semibold text-gray-900">{{ $step }}</h3>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Requirements -->
+                        <div>
+                            <h2 class="text-2xl font-bold mb-6 text-gray-900 flex items-center">
+                                <i class="fas fa-file-alt mr-3 text-yellow-600"></i>
+                                Dokumen Yang Diperlukan
+                            </h2>
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-file-alt text-yellow-600 mt-1"></i>
+                                        <span class="text-gray-700">Akta pendirian perusahaan dan perubahannya</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-file-alt text-yellow-600 mt-1"></i>
+                                        <span class="text-gray-700">NIB (Nomor Induk Berusaha)</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-file-alt text-yellow-600 mt-1"></i>
+                                        <span class="text-gray-700">NPWP Perusahaan dan Direktur</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-file-alt text-yellow-600 mt-1"></i>
+                                        <span class="text-gray-700">Surat keterangan domisili usaha</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-file-alt text-yellow-600 mt-1"></i>
+                                        <span class="text-gray-700">Dokumen teknis sesuai jenis layanan</span>
+                                    </li>
+                                </ul>
+                                <div class="mt-4 p-3 bg-white rounded-lg text-sm text-gray-600">
+                                    <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                                    Persyaratan lengkap akan dijelaskan saat konsultasi awal sesuai kebutuhan spesifik bisnis Anda.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     
                 </div>
                 
@@ -171,7 +331,10 @@
                             <h3 class="text-lg font-bold mb-4 text-gray-900">Layanan Lainnya</h3>
                             <div class="space-y-3">
                                 @foreach($relatedServices as $slug => $related)
-                                <a href="{{ route('services.show', $slug) }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition group">
+                                @php
+                                    $serviceRoute = app()->getLocale() === 'en' ? route('services.show.en', $slug) : route('services.show.id', $slug);
+                                @endphp
+                                <a href="{{ $serviceRoute }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition group">
                                     <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background: {{ $related['color'] }}20;">
                                         <i class="fas {{ $related['icon'] }} text-sm" style="color: {{ $related['color'] }};"></i>
                                     </div>
@@ -184,7 +347,7 @@
                                 </a>
                                 @endforeach
                             </div>
-                            <a href="{{ route('services.index') }}" class="btn bg-gray-100 hover:bg-gray-200 text-gray-700 w-full justify-center mt-4">
+                            <a href="{{ route('services.index.id') }}" class="btn bg-gray-100 hover:bg-gray-200 text-gray-700 w-full justify-center mt-4">
                                 Lihat Layanan
                             </a>
                         </div>
@@ -256,7 +419,7 @@
                         <i class="fab fa-whatsapp mr-2"></i>
                         Konsultasi Sekarang
                     </a>
-                    <a href="{{ route('services.index') }}" class="btn bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 text-lg">
+                    <a href="{{ route('services.index.id') }}" class="btn bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 text-lg">
                         <i class="fas fa-th-large mr-2"></i>
                         Lihat Layanan Lain
                     </a>
@@ -265,7 +428,5 @@
         </div>
     </section>
 @endif
-
-@include('landing.sections.footer')
 
 @endsection

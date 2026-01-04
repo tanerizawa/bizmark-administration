@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 class LocaleController extends Controller
@@ -16,7 +17,7 @@ class LocaleController extends Controller
     public function setLocale($locale)
     {
         // Validate locale
-        $availableLocales = ['en', 'id'];
+        $availableLocales = config('app.available_locales', ['id', 'en']);
         
         if (!in_array($locale, $availableLocales)) {
             abort(400, 'Invalid locale');
@@ -25,7 +26,16 @@ class LocaleController extends Controller
         // Store locale in session
         Session::put('locale', $locale);
         
-        // Redirect back to previous page
-        return redirect()->back();
+        // Store market segment based on locale
+        $marketSegment = $locale === 'en' ? 'pma' : 'local';
+        Session::put('market_segment', $marketSegment);
+        
+        // Redirect to locale-specific landing page
+        // Indonesian uses root /, English uses /en
+        if ($locale === 'en') {
+            return redirect()->route('landing.en');
+        } else {
+            return redirect()->route('landing.id'); // Root for Indonesian
+        }
     }
 }

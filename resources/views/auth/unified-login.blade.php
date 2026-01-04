@@ -3,248 +3,426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0a66c2">
-    <title>Login - Bizmark.id</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Login - Bizmark.ID | Sistem Manajemen Perizinan</title>
     
     <!-- Favicons -->
     <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/pavicon.png') }}">
     
-    <!-- Tailwind CSS CDN -->
+    <!-- External CSS - CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Alpine.js for interactivity -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
     <style>
-        * {
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantarell, 'Droid Sans', Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+        :root {
+            /* Bizmark Brand Colors - Consistent with Landing Page */
+            --primary: #1E40AF; /* Blue-800 */
+            --primary-dark: #1E3A8A; /* Blue-900 */
+            --secondary: #0891B2; /* Cyan-600 */
+            --success: #10B981; /* Green-500 */
+            --danger: #EF4444; /* Red-500 */
+            --warning: #F59E0B; /* Amber-500 */
         }
-        
+
         body {
-            background: #f0eeeeff;
-            box-shadow: 0 2px 8px rgba(10, 102, 194, 0.3);
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%);
+            min-height: 100vh;
         }
-        
+
+        .login-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .login-card {
             background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
         }
-        
+
+        .login-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #E5E7EB;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-input:hover {
+            border-color: #D1D5DB;
+        }
+
         .btn-primary {
-            background: #0a66c2;
-            transition: all 0.2s ease;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.3);
         }
-        
+
         .btn-primary:hover {
-            background: #004182;
-            box-shadow: 0 2px 8px rgba(10, 102, 194, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(30, 64, 175, 0.4);
         }
-        
+
         .btn-primary:active {
-            transform: scale(0.98);
+            transform: translateY(0);
         }
-        
-        input:focus {
-            border-color: #0a66c2 !important;
-            ring-color: #0a66c2 !important;
+
+        .back-link {
+            color: var(--primary);
+            transition: all 0.3s ease;
         }
-        
-        .divider-text {
-            position: relative;
-            padding: 0 1rem;
-            color: #6b7280;
-            font-size: 0.875rem;
+
+        .back-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .checkbox-custom {
+            accent-color: var(--primary);
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+
+        .logo-badge {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.3);
+            margin: 0 auto 1.5rem;
+        }
+
+        .decorative-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .decorative-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .circle-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -200px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            bottom: -150px;
+            left: -150px;
+        }
+
+        .alert-error {
+            background-color: #FEE2E2;
+            border-left: 4px solid var(--danger);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-success {
+            background-color: #D1FAE5;
+            border-left: 4px solid var(--success);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 1px solid #BFDBFE;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4" x-data="{ email: '' }">
-    <div class="w-full max-w-md">
-        <!-- Logo Header -->
-        <div class="text-center mb-8">
-            <a href="{{ route('landing') }}" class="inline-flex flex-col items-center group">
-                <img src="{{ asset('images/logo-blue.png') }}" 
-                     alt="BizMark Indonesia" 
-                     class="transition-transform group-hover:scale-105">
+<body class="min-h-screen flex items-center justify-center p-4">
+    <!-- Decorative Background -->
+    <div class="decorative-bg">
+        <div class="decorative-circle circle-1"></div>
+        <div class="decorative-circle circle-2"></div>
+    </div>
+
+    <div class="w-full max-w-md login-container">
+        <!-- Back to Home Link -->
+        <div class="mb-6 text-center">
+            <a href="{{ route('landing.id') }}" class="back-link inline-flex items-center gap-2 text-sm font-medium">
+                <i class="fas fa-arrow-left"></i>
+                Kembali ke Beranda
             </a>
         </div>
 
         <!-- Login Card -->
-        <div class="login-card rounded-lg p-8">
-            <div class="mb-6">
-                <h1 class="text-2xl font-semibold text-gray-900 mb-2">Selamat Datang</h1>
-                <p class="text-sm text-gray-600">Masuk untuk mengakses portal Anda</p>
+        <div class="login-card rounded-2xl overflow-hidden">
+            <!-- Logo & Header -->
+            <div class="p-8 pb-6 text-center">
+                <div class="logo-badge">
+                    <i class="fas fa-certificate text-white text-4xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Selamat Datang</h1>
+                <p class="text-gray-600">Masuk ke Sistem Manajemen Perizinan Bizmark.ID</p>
             </div>
 
-            <!-- User Type Indicator (Optional UX Enhancement) -->
-            <div class="mb-4" x-show="email.length > 0">
-                <div class="p-3 rounded-lg" 
-                     :class="email.includes('@bizmark.id') ? 'bg-[#0077B5]/10 border border-[#0077B5]/30' : 'bg-[#0077B5]/10 border border-[#0077B5]/30'">
-                    <div class="flex items-center gap-2 text-sm">
-                        <i class="fas" :class="email.includes('@bizmark.id') ? 'fa-shield-alt text-[#0077B5]' : 'fa-user text-[#0077B5]'"></i>
-                        <span class="font-medium" :class="email.includes('@bizmark.id') ? 'text-[#005582]' : 'text-[#005582]'">
-                            <span x-show="email.includes('@bizmark.id')">🔐 Admin Access</span>
-                            <span x-show="!email.includes('@bizmark.id')">👤 Client Portal</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            @if (session('success'))
-                <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg flex items-start gap-3">
-                    <i class="fas fa-check-circle text-green-600 mt-0.5"></i>
-                    <div class="flex-1 text-sm">{{ session('success') }}</div>
-                </div>
-            @endif
-
-            @if (session('warning'))
-                <div class="mb-4 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg flex items-start gap-3">
-                    <i class="fas fa-exclamation-triangle text-amber-600 mt-0.5"></i>
-                    <div class="flex-1 text-sm">{{ session('warning') }}</div>
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
-                    <div class="flex items-start gap-3 mb-2">
-                        <i class="fas fa-exclamation-circle text-red-600 mt-0.5"></i>
-                        <span class="font-semibold text-sm">Terjadi Kesalahan</span>
-                    </div>
-                    <ul class="list-disc list-inside text-sm ml-7 space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
-                @csrf
-
-                <!-- Email -->
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        Email
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-gray-400"></i>
+            <!-- Form -->
+            <div class="px-8 pb-8">
+                @if ($errors->any())
+                    <div class="mb-6 alert-error p-4 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-circle text-red-500 mt-0.5 mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-red-800 mb-1">Login Gagal</p>
+                                <p class="text-sm text-red-700">
+                                    {{ $errors->first() }}
+                                </p>
+                            </div>
                         </div>
+                    </div>
+                @endif
+
+                @if (session('status'))
+                    <div class="mb-6 alert-success p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <p class="text-sm text-green-800 font-medium">{{ session('status') }}</p>
+                        </div>
+                    </div>
+                @endif
+
+                @if (session('success'))
+                    <div class="mb-6 alert-success p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <p class="text-sm text-green-800 font-medium">{{ session('success') }}</p>
+                        </div>
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                    @csrf
+
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-envelope mr-1 text-gray-400"></i>
+                            Email
+                        </label>
                         <input 
-                            type="email" 
                             id="email" 
+                            type="email" 
                             name="email" 
-                            x-model="email"
                             value="{{ old('email') }}" 
                             required 
+                            autocomplete="email" 
                             autofocus
-                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2] focus:border-transparent transition @error('email') border-red-500 @enderror"
+                            class="form-input block w-full px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 @error('email') border-red-500 @enderror"
                             placeholder="nama@email.com"
                         >
+                        @error('email')
+                            <p class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
-                </div>
 
-                <!-- Password -->
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                        Password
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-lock mr-1 text-gray-400"></i>
+                            Password
+                        </label>
+                        <div class="relative">
+                            <input 
+                                id="password" 
+                                type="password" 
+                                name="password" 
+                                required 
+                                autocomplete="current-password"
+                                class="form-input block w-full px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 pr-12 @error('password') border-red-500 @enderror"
+                                placeholder="Masukkan password Anda"
+                            >
+                            <button 
+                                type="button" 
+                                onclick="togglePassword()"
+                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition"
+                                aria-label="Toggle password visibility"
+                            >
+                                <i id="toggleIcon" class="fas fa-eye"></i>
+                            </button>
                         </div>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            required
-                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2] focus:border-transparent transition @error('password') border-red-500 @enderror"
-                            placeholder="Masukkan password Anda"
-                        >
+                        @error('password')
+                            <p class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center cursor-pointer">
+                            <input 
+                                id="remember" 
+                                name="remember" 
+                                type="checkbox" 
+                                {{ old('remember') ? 'checked' : '' }}
+                                class="checkbox-custom rounded cursor-pointer"
+                            >
+                            <span class="ml-2 text-sm text-gray-700 select-none">
+                                Ingat saya
+                            </span>
+                        </label>
+
+                        @if (Route::has('client.password.request'))
+                            <a href="{{ route('client.password.request') }}" class="text-sm font-medium back-link">
+                                Lupa password?
+                            </a>
+                        @else
+                            <a href="#" class="text-sm font-medium back-link">
+                                Lupa password?
+                            </a>
+                        @endif
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        class="btn-primary w-full flex justify-center items-center py-3.5 px-4 border-0 rounded-lg text-base font-semibold text-white"
+                    >
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Masuk ke Sistem
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-white text-gray-500">Belum punya akun?</span>
                     </div>
                 </div>
 
-                <!-- Remember Me & Forgot Password -->
-                <div class="flex items-center justify-between pt-2">
-                    <label class="flex items-center cursor-pointer group">
-                        <input type="checkbox" name="remember" class="w-4 h-4 text-[#0a66c2] border-gray-300 rounded focus:ring-[#0a66c2] cursor-pointer">
-                        <span class="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition">Ingat saya</span>
-                    </label>
-
-                    <a href="{{ route('client.password.request') }}" class="text-sm text-[#0a66c2] hover:text-[#004182] font-medium transition">
-                        Lupa password?
+                <!-- Register Button -->
+                @if (Route::has('client.register'))
+                    <a href="{{ route('client.register') }}" 
+                       class="block w-full text-center py-3 px-4 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-600 hover:text-white transition">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Daftar sebagai Klien
                     </a>
-                </div>
+                @endif
 
-
-
-                <!-- Submit Button -->
-                <button 
-                    type="submit" 
-                    class="w-full btn-primary text-white font-semibold py-3 px-6 rounded-lg mt-6"
-                >
-                    <i class="fas fa-sign-in-alt mr-2"></i>
-                    Masuk
-                </button>
-            </form>
-
-            <!-- Divider -->
-            <div class="relative my-6">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-200"></div>
-                </div>
-                <div class="relative flex justify-center">
-                    <span class="divider-text bg-white">Belum punya akun?</span>
+                <!-- Info Banner -->
+                <div class="info-banner rounded-lg p-4 mt-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
+                        <div class="flex-1">
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                <strong>Admin:</strong> Gunakan email @bizmark.id untuk akses admin.<br>
+                                <strong>Klien:</strong> Gunakan email yang terdaftar untuk akses portal klien.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Register Link -->
-            <a href="{{ route('client.register') }}" 
-               class="block w-full text-center py-3 px-6 border-2 border-[#0a66c2] text-[#0a66c2] font-semibold rounded-lg hover:bg-[#0a66c2] hover:text-white transition">
-                <i class="fas fa-user-plus mr-2"></i>
-                Daftar sebagai Klien
-            </a>
-        </div>
-
-        <!-- Bottom Links -->
-        <div class="mt-6 text-center space-y-3">
-            <a href="{{ route('landing') }}" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition">
-                <i class="fas fa-arrow-left"></i>
-                <span>Kembali ke Beranda</span>
-            </a>
-            
-            <div class="flex items-center justify-center gap-4 text-sm text-gray-500">
-                <a href="https://wa.me/6283879602855" target="_blank" class="hover:text-[#0a66c2] transition">
-                    <i class="fab fa-whatsapp mr-1"></i>WhatsApp
-                </a>
-                <span>•</span>
-                <a href="tel:+6283879602855" class="hover:text-[#0a66c2] transition">
-                    <i class="fas fa-phone mr-1"></i>Telepon
-                </a>
+            <!-- Footer -->
+            <div class="px-8 py-5 bg-gray-50 border-t border-gray-100">
+                <p class="text-center text-sm text-gray-600">
+                    &copy; {{ date('Y') }} <strong class="text-gray-900">Bizmark.ID</strong> - PT Cangah Pajaratan Mandiri
+                </p>
+                <p class="text-center text-xs text-gray-500 mt-1">
+                    Konsultan Perizinan & Bisnis Terpercaya
+                </p>
             </div>
         </div>
 
-        <!-- Footer -->
-        <p class="text-center text-gray-500 text-xs mt-8">
-            © {{ date('Y') }} BizMark.ID - Sistem Perijinan Terpadu
-        </p>
+        <!-- Contact Support -->
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600 mb-3">
+                Butuh bantuan untuk login?
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="https://wa.me/6283879602855" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow-md transition text-sm text-gray-700 font-medium">
+                    <i class="fab fa-whatsapp text-green-500"></i>
+                    WhatsApp
+                </a>
+                <a href="mailto:cs@bizmark.id" class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow-md transition text-sm text-gray-700 font-medium">
+                    <i class="fas fa-envelope text-blue-500"></i>
+                    Email
+                </a>
+            </div>
+        </div>
     </div>
-    
+
     <script>
-        // Debug CSRF Token
-        document.addEventListener('DOMContentLoaded', function() {
-            const csrfToken = document.querySelector('input[name="_token"]');
-            if (csrfToken) {
-                console.log('CSRF Token found:', csrfToken.value.substring(0, 20) + '...');
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
             } else {
-                console.error('CSRF Token NOT FOUND!');
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
             }
+        }
+
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-success, .alert-error');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
+            });
         });
     </script>
 </body>
-</html>

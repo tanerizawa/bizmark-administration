@@ -37,7 +37,7 @@
                class="text-xs font-semibold bg-blue-50 text-blue-700 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
                 #Regulasi
             </a>
-            <a href="{{ route('blog.index') }}" 
+            <a href="{{ route('blog.index.id') }}" 
                class="text-xs font-semibold bg-gray-100 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-200 transition-colors">
                 Lihat Semua →
             </a>
@@ -150,7 +150,7 @@
     
     <!-- CTA: View All Articles -->
     <div class="mt-8 text-center">
-        <a href="{{ route('blog.index') }}" 
+        <a href="{{ route('blog.index.id') }}" 
            class="inline-block bg-gradient-to-r from-[#0077B5] to-[#005582] text-white font-semibold px-8 py-4 rounded-xl hover:shadow-lg transition-all">
             <i class="fas fa-th-large mr-2"></i>Lihat Semua Artikel
         </a>

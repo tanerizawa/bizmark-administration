@@ -147,6 +147,4 @@
     </div>
 </section>
 
-@include('landing.sections.footer')
-
 @endsection

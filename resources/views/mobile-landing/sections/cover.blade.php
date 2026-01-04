@@ -139,13 +139,13 @@
         
         <!-- Menu Items -->
         <nav class="flex-1 p-6 overflow-y-auto">
-            <a href="{{ route('services.index') }}" class="block text-white text-lg py-4 border-b border-gray-800">
+            <a href="{{ route('services.index.id') }}" class="block text-white text-lg py-4 border-b border-gray-800">
                 <i class="fas fa-certificate mr-3"></i> Layanan
             </a>
             <a href="#why-us" onclick="toggleMobileMenu()" class="block text-white text-lg py-4 border-b border-gray-800">
                 <i class="fas fa-star mr-3"></i> Mengapa Kami
             </a>
-            <a href="{{ route('blog.index') }}" class="block text-white text-lg py-4 border-b border-gray-800">
+            <a href="{{ route('blog.index.id') }}" class="block text-white text-lg py-4 border-b border-gray-800">
                 <i class="fas fa-newspaper mr-3"></i> Artikel
             </a>
             <a href="{{ route('career.index') }}" class="block text-white text-lg py-4 border-b border-gray-800">

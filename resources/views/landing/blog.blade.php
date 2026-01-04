@@ -18,13 +18,13 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Beranda",
-                "item": "{{ route('landing') }}"
+                "item": "{{ route('landing.id') }}"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Artikel",
-                "item": "{{ route('blog.index') }}"
+                "item": "{{ route('blog.index.id') }}"
             }
         ]
     }
@@ -85,7 +85,7 @@
     <nav class="navbar">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <a href="{{ route('landing') }}" class="flex items-center space-x-3">
+                <a href="{{ route('landing.id') }}" class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
                         <i class="fas fa-shield-alt text-white text-xl"></i>
                     </div>
@@ -93,8 +93,8 @@
                 </a>
                 
                 <div class="flex items-center space-x-8">
-                    <a href="{{ route('landing') }}" class="hover:text-blue-400 transition">Beranda</a>
-                    <a href="{{ route('blog.index') }}" class="text-blue-400">Artikel</a>
+                    <a href="{{ route('landing.id') }}" class="hover:text-blue-400 transition">Beranda</a>
+                    <a href="{{ route('blog.index.id') }}" class="text-blue-400">Artikel</a>
                 </div>
             </div>
         </div>
@@ -111,7 +111,7 @@
     <!-- Search & Filter -->
     <section class="py-8 px-4" style="background: var(--dark-bg-secondary);">
         <div class="container mx-auto max-w-7xl">
-            <form action="{{ route('blog.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+            <form action="{{ route('blog.index.id') }}" method="GET" class="flex flex-col md:flex-row gap-4">
                 <!-- Search -->
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel..." class="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none">

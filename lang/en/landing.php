@@ -1,7 +1,20 @@
 <?php
 
+/**
+ * English Landing Page Translations
+ * For PMA (Foreign Investment) market segment
+ */
+
 return [
-    // Meta & Schema
+    // Meta & SEO
+    'meta' => [
+        'title' => 'Bizmark.ID - Business Consulting & Investment Services in Indonesia',
+        'description' => 'Your trusted partner for business establishment, investment permits, and regulatory compliance in Indonesia. We serve foreign investors and multinational companies.',
+        'keywords' => 'indonesia investment, business permit indonesia, pma establishment, company setup indonesia, foreign investment indonesia, bkpm permit, kitas work permit',
+        'og_title' => 'Bizmark.ID - Professional Business & Investment Services',
+        'og_description' => 'Expert business consulting and permit services for foreign investors in Indonesia. Fast, transparent, professional.',
+    ],
+    
     'schema_description' => 'Professional environmental permit consultant for manufacturing industry',
     
     // Navigation
@@ -14,56 +27,79 @@ return [
         'contact' => 'Contact',
         'portal' => 'Portal',
         'consultation' => 'Free Consultation',
+        'blog' => 'Blog',
+        'get_started' => 'Get Started',
     ],
 
     // Hero Section
     'hero' => [
-        'badge' => 'Trusted Permit Consultant',
-        'title_prefix' => 'Industrial Permits',
-        'title_highlight' => 'Fast, Transparent, & Reliable',
-        'description' => 'Specialist in B3 Waste, AMDAL, UKL-UPL permits for manufacturing industries in Karawang. Your permit process is more efficient with full assistance from our expert team.',
+        'badge' => 'Trusted Business Partner',
+        'title' => 'Foreign Investment (PMA) Services in Indonesia',
+        'subtitle' => 'Your One-Stop Solution for Business Establishment & Permits',
+        'description' => 'We help foreign investors establish and grow their business in Indonesia. From company registration to permit processing, we handle everything professionally and transparently.',
         'cta_primary' => 'Free Consultation',
-        'cta_secondary' => 'View Services',
+        'cta_secondary' => 'Download Brochure',
+        'trust_badge' => 'Trusted by 500+ International Companies',
     ],
 
-    // Trust Bar
-    'trust' => [
-        'clients' => 'Companies Served',
-        'satisfaction' => 'Satisfaction Rate',
-        'experience' => 'Years Experience',
-        'services' => 'Service Types',
+    // Stats Section
+    'stats' => [
+        'clients' => [
+            'value' => '500+',
+            'label' => 'International Clients',
+            'description' => 'Companies Served',
+        ],
+        'experience' => [
+            'value' => '15+',
+            'label' => 'Years',
+            'description' => 'Industry Experience',
+        ],
+        'success_rate' => [
+            'value' => '98%',
+            'label' => 'Success Rate',
+            'description' => 'Permits Approved',
+        ],
+        'iso_certified' => [
+            'value' => 'ISO',
+            'label' => 'Certified',
+            'description' => 'Quality Standard',
+        ],
     ],
 
     // Services Section
     'services' => [
-        'title' => 'Our Permit Services',
-        'subtitle' => 'Complete industrial permit solutions for all your business needs',
+        'badge' => 'Our Services',
+        'title' => 'Comprehensive PMA Services',
+        'subtitle' => 'Complete business solutions tailored for foreign investors in Indonesia',
         'learn_more' => 'Learn More',
+        'starting_from' => 'Starting from',
+        'duration' => 'Duration',
     ],
 
     // Process Section
     'process' => [
-        'title' => 'Easy & Transparent Permit Process',
-        'subtitle' => 'We ensure your permit process runs smoothly from start to finish',
+        'badge' => 'Our Process',
+        'title' => 'Simple & Transparent Process',
+        'subtitle' => 'We guide you through every step of establishing your business in Indonesia',
         'step1' => [
-            'title' => 'Consultation',
-            'desc' => 'Discuss requirements and initial document analysis',
+            'title' => 'Initial Consultation',
+            'desc' => 'Discuss your business goals and requirements',
         ],
         'step2' => [
-            'title' => 'Preparation',
-            'desc' => 'Data collection and document preparation',
+            'title' => 'Document Preparation',
+            'desc' => 'We prepare all necessary documents and applications',
         ],
         'step3' => [
-            'title' => 'Submission',
-            'desc' => 'Submit documents to relevant agencies',
+            'title' => 'Government Liaison',
+            'desc' => 'Submit and follow up with relevant government agencies',
         ],
         'step4' => [
-            'title' => 'Monitoring',
-            'desc' => 'Follow up and regular progress updates',
+            'title' => 'Regular Updates',
+            'desc' => 'Get real-time updates on your application status',
         ],
         'step5' => [
-            'title' => 'Complete',
-            'desc' => 'Permit issued and complete documentation',
+            'title' => 'Delivery & Support',
+            'desc' => 'Receive permits and ongoing compliance support',
         ],
     ],
 
@@ -137,14 +173,15 @@ return [
     // Footer
     'footer' => [
         'tagline' => 'Trusted Industrial Permits',
-        'description' => 'PT CANGAH PAJARATAN MANDIRI is your trusted partner in industrial permit processing. With over 10 years of experience, we are committed to providing fast, transparent, and professional permit solutions.',
+        'description' => 'PT CANGAH PAJARATAN MANDIRI is your trusted partner for business establishment and permit processing in Indonesia. With over 15 years of experience, we are committed to providing fast, transparent, and professional solutions.',
         'newsletter_title' => 'Newsletter',
-        'newsletter_desc' => 'Get latest updates about permits and regulations',
+        'newsletter_desc' => 'Get latest updates about business regulations and investment opportunities',
         'newsletter_placeholder' => 'Your Email',
         'subscribe' => 'Subscribe',
         'services_title' => 'Services',
         'company_title' => 'Company',
-        'contact_title' => 'Contact & Legal',
+        'contact_title' => 'Contact Us',
+        'legal' => 'Legal',
         'about' => 'About Us',
         'team' => 'Our Team',
         'portfolio' => 'Portfolio',
@@ -155,8 +192,10 @@ return [
         'phone' => 'Phone',
         'email' => 'Email',
         'address' => 'Address',
-        'working_hours' => 'Monday - Friday, 08:00 - 17:00',
+        'working_hours' => 'Monday - Friday, 08:00 - 17:00 WIB',
+        'privacy_policy' => 'Privacy Policy',
         'privacy' => 'Privacy Policy',
+        'terms_conditions' => 'Terms & Conditions',
         'terms' => 'Terms & Conditions',
         'sitemap' => 'Sitemap',
         'copyright' => '© 2025 PT CANGAH PAJARATAN MANDIRI (Bizmark.ID). All rights reserved.',
@@ -164,6 +203,8 @@ return [
         'in_indonesia' => 'in Indonesia',
         'verified_company' => 'Verified Company',
         'iso_certified' => 'ISO Certified',
+        'navigation' => 'Navigation',
+        'contact_us' => 'Contact Us',
     ],
 
     // Search
@@ -176,6 +217,7 @@ return [
     // Breadcrumbs
     'breadcrumb' => [
         'home' => 'Home',
-        'blog' => 'Blog',
+        'blog' => 'Blog & Articles',
     ],
 ];
+

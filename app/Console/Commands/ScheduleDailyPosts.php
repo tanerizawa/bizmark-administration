@@ -48,6 +48,21 @@ class ScheduleDailyPosts extends Command
         $this->line("   Posts per day: {$config->posts_per_day}");
         $this->line("   Post times: " . implode(', ', $config->post_times));
         $this->line("   AI Model: {$config->ai_model}");
+        
+        if ($config->language_distribution) {
+            $langDist = collect($config->language_distribution)
+                ->map(fn($val, $key) => strtoupper($key) . ": {$val}%")
+                ->implode(', ');
+            $this->line("   Language: {$langDist}");
+        }
+        
+        if ($config->market_focus) {
+            $markets = [];
+            if ($config->market_focus['local'] ?? false) $markets[] = 'Local';
+            if ($config->market_focus['pma'] ?? false) $markets[] = 'PMA';
+            $this->line("   Markets: " . implode(' + ', $markets));
+        }
+        
         $this->newLine();
 
         // Schedule posts
@@ -61,14 +76,18 @@ class ScheduleDailyPosts extends Command
                 return 0;
             }
 
-            $this->info("✅ Successfully scheduled {count($schedules)} post(s):");
+            $this->info("✅ Successfully scheduled " . count($schedules) . " post(s):");
             $this->newLine();
 
             foreach ($schedules as $schedule) {
                 $topic = $schedule->topic;
+                $languageFlag = $topic->language === 'en' ? '🇬🇧' : '🇮🇩';
+                $marketBadge = $topic->target_market === 'pma' ? '[PMA]' : ($topic->target_market === 'both' ? '[BOTH]' : '[LOCAL]');
+                
                 $this->line("📄 Schedule #{$schedule->id}");
                 $this->line("   Topic: {$topic->title}");
                 $this->line("   Category: {$topic->category}");
+                $this->line("   Language: {$languageFlag} " . strtoupper($topic->language) . " {$marketBadge}");
                 $this->line("   Time: {$schedule->scheduled_at->format('H:i')}");
                 $this->newLine();
             }
@@ -81,6 +100,10 @@ class ScheduleDailyPosts extends Command
 
         } catch (\Exception $e) {
             $this->error("❌ Scheduling failed: {$e->getMessage()}");
+            $this->error("   File: {$e->getFile()}:{$e->getLine()}");
+            if ($this->option('verbose')) {
+                $this->error($e->getTraceAsString());
+            }
             return 1;
         }
     }

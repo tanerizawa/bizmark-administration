@@ -36,10 +36,18 @@ class ArticleAutoPostService
     {
         $startTime = microtime(true);
         
+        // Mark as processing
+        $schedule->update([
+            'status' => 'processing',
+            'started_at' => now(),
+            'attempts' => $schedule->attempts + 1,
+        ]);
+        
         \Log::info('🚀 Starting scheduled article generation', [
             'schedule_id' => $schedule->id,
             'topic_id' => $schedule->topic_id,
             'topic_title' => $schedule->topic->title ?? 'N/A',
+            'attempt' => $schedule->attempts,
             'timestamp' => now()->toDateTimeString(),
         ]);
 
@@ -48,7 +56,7 @@ class ArticleAutoPostService
             'topic_id' => $schedule->topic_id,
             'level' => 'info',
             'event' => 'generation_started',
-            'message' => '🚀 Starting article generation for: ' . ($schedule->topic->title ?? 'Unknown Topic'),
+            'message' => '🚀 Starting article generation for: ' . ($schedule->topic->title ?? 'Unknown Topic') . ' (Attempt #' . $schedule->attempts . ')',
             'context' => ['timestamp' => now()->toDateTimeString()],
         ]);
 
@@ -68,12 +76,15 @@ class ArticleAutoPostService
                 throw new \Exception('Auto-posting is disabled in configuration');
             }
             
+            // Set timeout based on config
+            set_time_limit($config->timeout_seconds ?? 120);
+            
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'level' => 'success',
                 'event' => 'config_validated',
                 'message' => '✅ Configuration validated and ready',
-                'context' => ['model' => $config->ai_model, 'auto_publish' => $config->auto_publish],
+                'context' => ['model' => $config->ai_model, 'auto_publish' => $config->auto_publish, 'timeout' => $config->timeout_seconds],
             ]);
             
             // 2. Load topic
@@ -153,25 +164,33 @@ class ArticleAutoPostService
             $qualityCheck = $this->qualityService->validateQuality($articleData, $config);
             
             if (!$qualityCheck['valid']) {
-                AutoPostLog::logWarning('quality_check_failed', 'Article quality below standards', [
+                // Only log failure if quality is critically low
+                if ($qualityCheck['quality_score'] < 50) {
+                    AutoPostLog::logError('quality_check_failed', 'Article quality too low - rejected', [
+                        'topic_id' => $topic->id,
+                        'context' => [
+                            'issues' => $qualityCheck['issues'],
+                            'quality_score' => $qualityCheck['quality_score'],
+                        ],
+                    ]);
+                    throw new \Exception('Article quality too low: ' . implode(', ', $qualityCheck['issues']));
+                }
+                
+                // Log warning for marginal quality but continue
+                AutoPostLog::logWarning('quality_check_warning', 'Article quality marginal but acceptable', [
                     'topic_id' => $topic->id,
                     'context' => [
                         'issues' => $qualityCheck['issues'],
                         'quality_score' => $qualityCheck['quality_score'],
                     ],
                 ]);
-                
-                // Proceed with warnings but log them
-                if ($qualityCheck['quality_score'] < 50) {
-                    throw new \Exception('Article quality too low: ' . implode(', ', $qualityCheck['issues']));
-                }
             }
             
             AutoPostLog::logSuccess('quality_check_passed', 'Article quality validation passed', [
                 'topic_id' => $topic->id,
                 'context' => [
                     'quality_score' => $qualityCheck['quality_score'],
-                    'warnings' => count($qualityCheck['warnings']),
+                    'warnings' => count($qualityCheck['warnings'] ?? []),
                 ],
             ]);
             
@@ -223,7 +242,7 @@ class ArticleAutoPostService
             $topic->markAsPublished($article->id);
             
             // 10. Calculate generation time and cost
-            $generationTime = round((microtime(true) - $startTime), 2);
+            $generationTime = (int) round(microtime(true) - $startTime);
             $estimatedCost = $this->generationService->estimateCost($config);
             
             // 11. Final success log
@@ -256,18 +275,37 @@ class ArticleAutoPostService
             return $article;
             
         } catch (\Exception $e) {
+            $generationTime = (int) round(microtime(true) - $startTime);
+            
             AutoPostLog::logError('article_generation_failed', $e->getMessage(), [
                 'schedule_id' => $schedule->id,
                 'topic_id' => $schedule->topic_id,
             ]);
             
-            // Mark topic as failed
+            // Update schedule status
+            $shouldRetry = $schedule->attempts < ($config->retry_attempts ?? 3);
+            
+            $schedule->update([
+                'status' => $shouldRetry ? 'pending' : 'failed',
+                'error_message' => substr($e->getMessage(), 0, 500),
+                'generation_time_seconds' => $generationTime,
+                'completed_at' => now(),
+            ]);
+            
+            // Mark topic as failed only if max retries exceeded
             if (isset($topic)) {
-                $topic->markAsFailed();
+                if (!$shouldRetry) {
+                    $topic->markAsFailed();
+                } else {
+                    // Clear scheduling for retry
+                    $topic->clearScheduling();
+                }
             }
             
             \Log::error('❌ Article generation failed', [
                 'schedule_id' => $schedule->id,
+                'attempt' => $schedule->attempts,
+                'will_retry' => $shouldRetry,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -277,7 +315,7 @@ class ArticleAutoPostService
     }
 
     /**
-     * Create article in database
+     * Create article in database with proper duplicate handling
      */
     protected function createArticle(array $articleData, ArticleTopic $topic): Article
     {
@@ -288,21 +326,66 @@ class ArticleAutoPostService
             $author = \App\Models\User::first();
         }
         
-        return Article::create([
-            'title' => $articleData['title'],
-            'content' => $articleData['content'],
-            'excerpt' => $articleData['excerpt'],
-            'category' => $articleData['category'],
-            'tags' => $articleData['tags'],
-            'status' => $articleData['status'],
-            'published_at' => $articleData['published_at'],
-            'author_id' => $author->id,
-            'meta_title' => $articleData['meta_title'],
-            'meta_description' => $articleData['meta_description'],
-            'meta_keywords' => $articleData['meta_keywords'],
-            'reading_time' => $articleData['reading_time'],
-            'is_featured' => false,
-        ]);
+        // Check if article with same title already exists (INCLUDING soft deleted)
+        $existingArticle = Article::withTrashed()->where('title', $articleData['title'])->first();
+        
+        if ($existingArticle) {
+            \Log::warning('⚠️ Article with same title already exists', [
+                'existing_id' => $existingArticle->id,
+                'title' => $articleData['title'],
+                'is_deleted' => $existingArticle->trashed(),
+            ]);
+            
+            // If soft deleted, restore it and update
+            if ($existingArticle->trashed()) {
+                $existingArticle->restore();
+                $existingArticle->update([
+                    'content' => $articleData['content'],
+                    'excerpt' => $articleData['excerpt'],
+                    'status' => $articleData['status'],
+                    'published_at' => $articleData['published_at'],
+                    'meta_title' => $articleData['meta_title'],
+                    'meta_description' => $articleData['meta_description'],
+                ]);
+                \Log::info('✅ Restored and updated soft-deleted article', [
+                    'article_id' => $existingArticle->id,
+                ]);
+            } elseif ($existingArticle->status === 'draft') {
+                // Update existing draft
+                $existingArticle->update([
+                    'content' => $articleData['content'],
+                    'excerpt' => $articleData['excerpt'],
+                    'status' => $articleData['status'],
+                    'published_at' => $articleData['published_at'],
+                ]);
+            }
+            
+            return $existingArticle;
+        }
+        
+        // Generate unique slug BEFORE create to avoid constraint violation
+        $slug = Article::generateUniqueSlug($articleData['title']);
+        
+        // Use database transaction to ensure atomicity
+        return \DB::transaction(function () use ($articleData, $topic, $author, $slug) {
+            return Article::create([
+                'title' => $articleData['title'],
+                'slug' => $slug, // Explicitly set unique slug
+                'content' => $articleData['content'],
+                'excerpt' => $articleData['excerpt'],
+                'category' => $articleData['category'],
+                'language' => $topic->language ?? 'id',
+                'tags' => $articleData['tags'],
+                'status' => $articleData['status'],
+                'published_at' => $articleData['published_at'],
+                'author_id' => $author->id,
+                'meta_title' => $articleData['meta_title'],
+                'meta_description' => $articleData['meta_description'],
+                'meta_keywords' => $articleData['meta_keywords'],
+                'reading_time' => $articleData['reading_time'],
+                'is_featured' => false,
+            ]);
+        });
     }
 
     /**
@@ -363,9 +446,12 @@ class ArticleAutoPostService
                 'time' => $time->toDateTimeString(),
             ]);
             
-            AutoPostLog::logInfo('post_scheduled', 'Post scheduled for publication', [
+            AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
+                'level' => 'info',
+                'event' => 'post_scheduled',
+                'message' => 'Post scheduled for publication',
                 'context' => [
                     'scheduled_at' => $time->toDateTimeString(),
                 ],
@@ -387,11 +473,17 @@ class ArticleAutoPostService
     {
         $config = AutoPostConfig::current();
         
+        // Get target language and market
+        $targetLanguage = $config->getNextLanguage();
+        $targetMarket = $config->getTargetMarket($targetLanguage);
+        
         // Get target category based on weights
         $targetCategory = $config->getNextCategory();
         
-        // Get available topics in target category
+        // Get available topics in target language, market, and category
         $topics = ArticleTopic::available()
+            ->byLanguage($targetLanguage)
+            ->byMarket($targetMarket)
             ->byCategory($targetCategory)
             ->highPriority()
             ->get();
@@ -399,6 +491,17 @@ class ArticleAutoPostService
         // If no topics in target category, get from any category
         if ($topics->isEmpty()) {
             $topics = ArticleTopic::available()
+                ->byLanguage($targetLanguage)
+                ->byMarket($targetMarket)
+                ->highPriority()
+                ->get();
+        }
+        
+        // If still empty, try other language
+        if ($topics->isEmpty()) {
+            $otherLanguage = $targetLanguage === 'id' ? 'en' : 'id';
+            $topics = ArticleTopic::available()
+                ->byLanguage($otherLanguage)
                 ->highPriority()
                 ->get();
         }

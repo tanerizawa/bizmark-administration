@@ -171,7 +171,7 @@ class InternalLinkService
         foreach ($opportunities as $opp) {
             $anchorText = $opp['anchor_text'];
             $article = $opp['article'];
-            $url = route('blog.article', $article->slug);
+            $url = route('blog.article.id', $article->slug);
             
             // Create link with appropriate attributes
             $link = sprintf(

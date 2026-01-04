@@ -142,7 +142,7 @@
             <p class="text-sm text-gray-600 mb-6">
                 Saat ini tidak ada posisi yang tersedia. Silakan cek kembali nanti.
             </p>
-            <a href="{{ route('landing') }}" class="inline-block bg-[#0077B5] text-white font-semibold px-6 py-3 rounded-xl">
+            <a href="{{ route('landing.id') }}" class="inline-block bg-[#0077B5] text-white font-semibold px-6 py-3 rounded-xl">
                 <i class="fas fa-home mr-2"></i>Kembali ke Beranda
             </a>
         </div>

@@ -65,15 +65,36 @@ class Kernel extends ConsoleKernel
         // 📝 AUTO-POST ARTICLE MANAGEMENT
         // ========================================
 
+        // Health check and auto-fix stuck schedules (Every 30 minutes)
+        $schedule->command('articles:health-check --fix')
+            ->everyThirtyMinutes()
+            ->withoutOverlapping()
+            ->emailOutputOnFailure('cs@bizmark.id');
+
+        // Fix log permissions to prevent permission denied errors (Every hour)
+        $schedule->call(function () {
+            $logPath = storage_path('logs');
+            if (is_dir($logPath)) {
+                @chmod($logPath, 0775);
+                foreach (glob("{$logPath}/*.log") as $logFile) {
+                    @chmod($logFile, 0664);
+                }
+            }
+        })->hourly()->name('fix-log-permissions');
+
         // Process overdue schedules (Every 15 minutes)
         $schedule->command('autopost:process-overdue --limit=10')
             ->everyFifteenMinutes()
-            ->withoutOverlapping();
+            ->withoutOverlapping()
+            ->skip(function () {
+                // Skip if command doesn't exist yet
+                return !class_exists(\App\Console\Commands\ProcessOverdueSchedules::class);
+            });
 
-        // Fix stuck processing schedules (Every 5 minutes)
-        $schedule->command('autopost:fix-stuck --timeout=10')
-            ->everyFiveMinutes()
-            ->withoutOverlapping();
+        // Fix stuck processing schedules (Every 5 minutes) - DEPRECATED, use health-check instead
+        // $schedule->command('autopost:fix-stuck --timeout=10')
+        //     ->everyFiveMinutes()
+        //     ->withoutOverlapping();
 
         // ========================================
         // 🧹 MAINTENANCE TASKS

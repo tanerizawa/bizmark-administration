@@ -119,7 +119,7 @@
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div class="flex items-center justify-between px-6 h-16">
             <!-- Logo -->
-            <a href="{{ route('landing') }}" class="flex items-center gap-2">
+            <a href="{{ route('landing.id') }}" class="flex items-center gap-2">
                 <i class="fas fa-building text-yellow-400 text-xl"></i>
                 <span class="font-bold text-gray-900 text-lg">
                     Bizmark<span class="text-yellow-400">.ID</span>
@@ -156,22 +156,22 @@
             
             <!-- Menu Items -->
             <nav class="flex-1 p-6 overflow-y-auto">
-                <a href="{{ route('landing') }}" class="block text-white text-lg py-4 border-b border-gray-800">
+                <a href="{{ route('landing.id') }}" class="block text-white text-lg py-4 border-b border-gray-800">
                     <i class="fas fa-home mr-3"></i> Beranda
                 </a>
-                <a href="{{ route('services.index') }}" class="block text-white text-lg py-4 border-b border-gray-800">
+                <a href="{{ route('services.index.id') }}" class="block text-white text-lg py-4 border-b border-gray-800">
                     <i class="fas fa-certificate mr-3"></i> Layanan
                 </a>
-                <a href="{{ route('blog.index') }}" class="block text-white text-lg py-4 border-b border-gray-800">
+                <a href="{{ route('blog.index.id') }}" class="block text-white text-lg py-4 border-b border-gray-800">
                     <i class="fas fa-newspaper mr-3"></i> Artikel
                 </a>
                 <a href="{{ route('career.index') }}" class="block text-white text-lg py-4 border-b border-gray-800">
                     <i class="fas fa-briefcase mr-3"></i> Karir
                 </a>
-                <a href="{{ route('landing') }}#faq" class="block text-white text-lg py-4 border-b border-gray-800">
+                <a href="{{ route('landing.id') }}#faq" class="block text-white text-lg py-4 border-b border-gray-800">
                     <i class="fas fa-question-circle mr-3"></i> FAQ
                 </a>
-                <a href="{{ route('landing') }}#contact" class="block text-white text-lg py-4 border-b border-gray-800">
+                <a href="{{ route('landing.id') }}#contact" class="block text-white text-lg py-4 border-b border-gray-800">
                     <i class="fas fa-envelope mr-3"></i> Kontak
                 </a>
                 

@@ -60,7 +60,7 @@
                 <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Directory</p>
                 <p class="text-base font-semibold text-slate-900">Lihat daftar lengkap layanan beserta studi kasus.</p>
             </div>
-            <a href="{{ route('services.index') }}" class="btn btn-secondary" data-cta="services_directory">
+            <a href="{{ route('services.index.id') }}" class="btn btn-secondary" data-cta="services_directory">
                 Jelajahi
                 <i class="fas fa-arrow-right text-xs"></i>
             </a>

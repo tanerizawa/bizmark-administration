@@ -143,52 +143,180 @@ class ArticleGenerationService
      */
     protected function buildContentPrompt(ArticleTopic $topic, AutoPostConfig $config): string
     {
-        $keywords = $topic->keywords ? implode(', ', $topic->keywords) : 'perizinan usaha';
+        $keywords = $topic->keywords ? implode(', ', $topic->keywords) : ($topic->language === 'en' ? 'business licensing' : 'perizinan usaha');
+        
+        // Language-specific context
+        $languageContext = $this->getLanguageContext($topic->language, $topic->target_market);
         
         return "
-Tugas: Buat artikel blog profesional tentang \"{$topic->title}\" untuk situs konsultan perizinan.
+{$languageContext['task_instruction']} \"{$topic->title}\" {$languageContext['for_site']}
 
-**Konteks Bisnis:**
-- Perusahaan: PT. Cangah Pajaratan Mandiri (bizmark.id)
+**{$languageContext['business_context_title']}**
+{$languageContext['company_info']}
+
+**{$languageContext['article_category']}** {$topic->category}
+**{$languageContext['main_keywords']}** {$keywords}
+**{$languageContext['topic_description']}** {$topic->description}
+
+**{$languageContext['content_requirements']}**
+1. **{$languageContext['length']}** {$config->min_word_count}-{$config->max_word_count} {$languageContext['words']}
+2. **{$languageContext['structure']}**
+   - {$languageContext['opening']} (2-3 {$languageContext['paragraphs']}: {$languageContext['pain_point']})
+   - {$config->min_headings}-{$config->max_headings} {$languageContext['sections']}
+   - {$languageContext['minimum']} {$config->min_paragraphs} {$languageContext['substantive_paragraphs']}
+   - {$languageContext['conclusion_cta']}
+3. **{$languageContext['writing_style']}**
+   - {$languageContext['professional_tone']}
+   - {$languageContext['practical_actionable']}
+   - {$languageContext['include_examples']}
+   - {$languageContext['tone_description']}
+   - {$languageContext['use_bullets']}
+4. **{$languageContext['seo_practices']}**
+   - {$languageContext['natural_keywords']}
+   - {$languageContext['descriptive_subheadings']}
+   - {$languageContext['internal_mentions']}
+   - {$languageContext['meta_friendly']}
+
+**{$languageContext['html_format']}**
+{$languageContext['html_instructions']}
+
+**{$languageContext['example_structure']}**
+{$languageContext['structure_example']}
+
+**{$languageContext['important']}**
+{$languageContext['important_points']}
+
+{$languageContext['output_instruction']}
+";
+    }
+
+    /**
+     * Get language-specific context for prompts
+     */
+    protected function getLanguageContext(string $language, string $targetMarket): array
+    {
+        if ($language === 'en') {
+            return [
+                'task_instruction' => 'Task: Create a professional blog article about',
+                'for_site' => 'for a business licensing consultancy website.',
+                'business_context_title' => 'Business Context:',
+                'company_info' => '- Company: PT. Cangah Pajaratan Mandiri (bizmark.id)
+- Services: Business licensing consultant, environmental documents (UKL-UPL, AMDAL, SPPL), business analysis
+- Target Readers: ' . ($targetMarket === 'pma' ? 'Foreign investors (PMA), international businesses, expat entrepreneurs' : 'Business owners, developers, industries') . '
+- Expertise: 15+ years experience in licensing & environmental documentation',
+                'article_category' => 'Article Category:',
+                'main_keywords' => 'Main Keywords:',
+                'topic_description' => 'Topic Description:',
+                'content_requirements' => 'Content Requirements:',
+                'length' => 'Length:',
+                'words' => 'words',
+                'structure' => 'Structure:',
+                'opening' => 'Engaging opening',
+                'paragraphs' => 'paragraphs',
+                'pain_point' => 'reader pain point, relevance, promise',
+                'sections' => 'sections with descriptive H2/H3 headings',
+                'minimum' => 'Minimum',
+                'substantive_paragraphs' => 'substantive paragraphs with concrete examples',
+                'conclusion_cta' => 'Conclusion + natural CTA (not hard-selling)',
+                'writing_style' => 'Writing Style:',
+                'professional_tone' => 'Professional yet easy to understand (avoid excessive jargon)',
+                'practical_actionable' => 'Practical and actionable (provide concrete steps when applicable)',
+                'include_examples' => 'Include real examples/case studies when relevant',
+                'tone_description' => 'Tone: Informative, helpful, trust-building',
+                'use_bullets' => 'Use bullet points for checklists/lists',
+                'seo_practices' => 'SEO Best Practices:',
+                'natural_keywords' => 'Use keywords naturally (no keyword stuffing)',
+                'descriptive_subheadings' => 'Descriptive and search-friendly subheadings',
+                'internal_mentions' => 'Mention related topics internally (just mention, don\'t create links)',
+                'meta_friendly' => 'Meta-friendly structure',
+                'html_format' => 'HTML Output Format:',
+                'html_instructions' => 'Use clean HTML structure:
+- <h2> for main headings
+- <h3> for sub-headings
+- <p> for paragraphs
+- <ul><li> for bullet points
+- <ol><li> for numbered lists
+- <strong> for important emphasis
+- <em> for light emphasis',
+                'example_structure' => 'Example Structure:',
+                'structure_example' => '<h2>What is [Topic]?</h2>
+<p>Basic concept explanation...</p>
+
+<h2>Why [Topic] Matters?</h2>
+<p>Benefits and importance...</p>
+<ul>
+<li>Benefit 1</li>
+<li>Benefit 2</li>
+</ul>
+
+<h2>How to [Topic-Related Action]</h2>
+<p>Step-by-step guide...</p>
+<ol>
+<li>Step 1</li>
+<li>Step 2</li>
+</ol>
+
+<h2>Tips and Best Practices</h2>
+<p>Practical advice...</p>
+
+<h2>Conclusion</h2>
+<p>Summary + natural CTA (example: \'Need professional assistance? Our team is ready to help.\')</p>',
+                'important' => 'IMPORTANT:',
+                'important_points' => '- Don\'t copy-paste from other sources, create original content
+- Focus on value for readers, not promotion
+- Don\'t be too promotional, maximum 1 service mention at the end
+- Include company expertise naturally in content
+- Use concrete data/facts when applicable (timeline, cost ranges, regulations)
+- ' . ($targetMarket === 'pma' ? 'Address specific PMA/foreign investment concerns and regulations' : 'Focus on local Indonesian business context'),
+                'output_instruction' => 'PROVIDE ONLY HTML CONTENT, DO NOT INCLUDE TITLE OR OTHER METADATA.',
+            ];
+        }
+
+        // Indonesian (default)
+        return [
+            'task_instruction' => 'Tugas: Buat artikel blog profesional tentang',
+            'for_site' => 'untuk situs konsultan perizinan.',
+            'business_context_title' => 'Konteks Bisnis:',
+            'company_info' => '- Perusahaan: PT. Cangah Pajaratan Mandiri (bizmark.id)
 - Layanan: Konsultan perizinan, dokumen lingkungan (UKL-UPL, AMDAL, SPPL), analisis bisnis
-- Target Pembaca: Pemilik usaha, developer, industri yang memerlukan perizinan
-- Expertise: 15+ tahun pengalaman perizinan & dokumen lingkungan
-
-**Kategori Artikel:** {$topic->category}
-**Kata Kunci Utama:** {$keywords}
-**Deskripsi Topik:** {$topic->description}
-
-**Requirements Konten:**
-1. **Panjang:** {$config->min_word_count}-{$config->max_word_count} kata
-2. **Struktur:**
-   - Pembukaan menarik (2-3 paragraf: pain point pembaca, relevansi, promise)
-   - {$config->min_headings}-{$config->max_headings} section dengan heading H2/H3 yang descriptive
-   - Minimal {$config->min_paragraphs} paragraf substantif dengan contoh konkret
-   - Kesimpulan + CTA natural (tidak hard-selling)
-3. **Gaya Penulisan:**
-   - Profesional namun mudah dipahami (hindari jargon berlebihan)
-   - Praktis dan actionable (berikan langkah konkret jika applicable)
-   - Sertakan contoh nyata/studi kasus jika relevan
-   - Tone: Informatif, membantu, membangun kepercayaan
-   - Gunakan bullet points untuk checklist/daftar
-4. **SEO Best Practices:**
-   - Gunakan kata kunci secara natural (jangan keyword stuffing)
-   - Subheading yang descriptive dan search-friendly
-   - Internal mention untuk topik terkait (tapi jangan buat link, cukup sebut topiknya)
-   - Meta-friendly structure
-
-**Format Output HTML:**
-Gunakan struktur HTML yang bersih:
+- Target Pembaca: Pemilik usaha lokal, developer, industri yang memerlukan perizinan
+- Expertise: 15+ tahun pengalaman perizinan & dokumen lingkungan',
+            'article_category' => 'Kategori Artikel:',
+            'main_keywords' => 'Kata Kunci Utama:',
+            'topic_description' => 'Deskripsi Topik:',
+            'content_requirements' => 'Requirements Konten:',
+            'length' => 'Panjang:',
+            'words' => 'kata',
+            'structure' => 'Struktur:',
+            'opening' => 'Pembukaan menarik',
+            'paragraphs' => 'paragraf',
+            'pain_point' => 'pain point pembaca, relevansi, promise',
+            'sections' => 'section dengan heading H2/H3 yang descriptive',
+            'minimum' => 'Minimal',
+            'substantive_paragraphs' => 'paragraf substantif dengan contoh konkret',
+            'conclusion_cta' => 'Kesimpulan + CTA natural (tidak hard-selling)',
+            'writing_style' => 'Gaya Penulisan:',
+            'professional_tone' => 'Profesional namun mudah dipahami (hindari jargon berlebihan)',
+            'practical_actionable' => 'Praktis dan actionable (berikan langkah konkret jika applicable)',
+            'include_examples' => 'Sertakan contoh nyata/studi kasus jika relevan',
+            'tone_description' => 'Tone: Informatif, membantu, membangun kepercayaan',
+            'use_bullets' => 'Gunakan bullet points untuk checklist/daftar',
+            'seo_practices' => 'SEO Best Practices:',
+            'natural_keywords' => 'Gunakan kata kunci secara natural (jangan keyword stuffing)',
+            'descriptive_subheadings' => 'Subheading yang descriptive dan search-friendly',
+            'internal_mentions' => 'Internal mention untuk topik terkait (tapi jangan buat link, cukup sebut topiknya)',
+            'meta_friendly' => 'Meta-friendly structure',
+            'html_format' => 'Format Output HTML:',
+            'html_instructions' => 'Gunakan struktur HTML yang bersih:
 - <h2> untuk heading utama
 - <h3> untuk sub-heading
 - <p> untuk paragraf
 - <ul><li> untuk bullet points
 - <ol><li> untuk numbered list
 - <strong> untuk emphasis penting
-- <em> untuk emphasis ringan
-
-**Contoh Struktur:**
-<h2>Apa Itu [Topik]?</h2>
+- <em> untuk emphasis ringan',
+            'example_structure' => 'Contoh Struktur:',
+            'structure_example' => '<h2>Apa Itu [Topik]?</h2>
 <p>Penjelasan konsep dasar...</p>
 
 <h2>Mengapa [Topik] Penting?</h2>
@@ -209,17 +337,15 @@ Gunakan struktur HTML yang bersih:
 <p>Saran praktis...</p>
 
 <h2>Kesimpulan</h2>
-<p>Ringkasan + CTA natural (contoh: 'Butuh bantuan profesional? Tim kami siap membantu.')</p>
-
-**PENTING:**
-- Jangan copy-paste dari sumber lain, buat konten original
+<p>Ringkasan + CTA natural (contoh: \'Butuh bantuan profesional? Tim kami siap membantu.\')</p>',
+            'important' => 'PENTING:',
+            'important_points' => '- Jangan copy-paste dari sumber lain, buat konten original
 - Fokus pada value untuk pembaca, bukan promosi
 - Jangan terlalu promotional, maksimal 1 mention jasa di akhir
 - Sisipkan expertise perusahaan secara natural dalam konten
-- Gunakan data/fakta konkret jika applicable (misal: timeline, biaya kisaran, regulasi)
-
-HANYA BERIKAN HTML KONTEN, JANGAN SERTAKAN TITLE ATAU METADATA LAIN.
-";
+- Gunakan data/fakta konkret jika applicable (misal: timeline, biaya kisaran, regulasi)',
+            'output_instruction' => 'HANYA BERIKAN HTML KONTEN, JANGAN SERTAKAN TITLE ATAU METADATA LAIN.',
+        ];
     }
 
     /**

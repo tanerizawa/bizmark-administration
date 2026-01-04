@@ -41,10 +41,10 @@
             <div>
                 <h4 class="font-bold text-white text-sm mb-2">Layanan</h4>
                 <ul class="space-y-1.5 text-xs text-gray-400">
-                    <li><a href="{{ route('services.index') }}" class="hover:text-white transition-colors">Semua Layanan</a></li>
-                    <li><a href="{{ route('services.index') }}#oss" class="hover:text-white transition-colors">OSS & NIB</a></li>
-                    <li><a href="{{ route('services.index') }}#amdal" class="hover:text-white transition-colors">AMDAL</a></li>
-                    <li><a href="{{ route('services.index') }}#pbg" class="hover:text-white transition-colors">PBG & SLF</a></li>
+                    <li><a href="{{ route('services.index.id') }}" class="hover:text-white transition-colors">Semua Layanan</a></li>
+                    <li><a href="{{ route('services.index.id') }}#oss" class="hover:text-white transition-colors">OSS & NIB</a></li>
+                    <li><a href="{{ route('services.index.id') }}#amdal" class="hover:text-white transition-colors">AMDAL</a></li>
+                    <li><a href="{{ route('services.index.id') }}#pbg" class="hover:text-white transition-colors">PBG & SLF</a></li>
                 </ul>
             </div>
             
@@ -53,7 +53,7 @@
                 <h4 class="font-bold text-white text-sm mb-2">Perusahaan</h4>
                 <ul class="space-y-1.5 text-xs text-gray-400">
                     <li><a href="#why-us" class="hover:text-white transition-colors">Tentang Kami</a></li>
-                    <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Artikel</a></li>
+                    <li><a href="{{ route('blog.index.id') }}" class="hover:text-white transition-colors">Artikel</a></li>
                     <li><a href="{{ route('career.index') }}" class="hover:text-white transition-colors">Karir</a></li>
                     <li><a href="{{ route('login') }}" class="hover:text-white transition-colors">Portal Klien</a></li>
                 </ul>

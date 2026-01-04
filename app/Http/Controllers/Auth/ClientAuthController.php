@@ -99,7 +99,7 @@ class ClientAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('landing')
+        return redirect()->route('landing.id')
             ->with('success', 'Anda telah berhasil logout.');
     }
 

@@ -9,7 +9,7 @@
 <section class="magazine-section bg-gradient-to-br from-blue-50 via-white to-purple-50">
     <div class="content-container">
         <!-- Back Button -->
-        <a href="{{ route('services.index') }}" class="inline-flex items-center gap-2 text-sm text-gray-600 mb-6">
+        <a href="{{ route('services.index.id') }}" class="inline-flex items-center gap-2 text-sm text-gray-600 mb-6">
             <i class="fas fa-arrow-left"></i>
             <span>Kembali ke Layanan</span>
         </a>

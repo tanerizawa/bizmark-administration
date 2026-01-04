@@ -15,20 +15,19 @@ window.addEventListener('load', function() {
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
     const menuButton = document.getElementById('mobile-menu-button');
-    const isActive = menu.classList.toggle('active');
-    document.body.classList.toggle('mobile-menu-open');
+    const isHidden = menu.classList.contains('hidden');
     
-    // Update aria-expanded attribute for accessibility
-    if (menuButton) {
-        menuButton.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-        menuButton.setAttribute('aria-label', isActive ? 'Close navigation menu' : 'Open navigation menu');
-    }
-    
-    // Trap focus inside menu when open
-    if (isActive) {
-        const focusableElements = menu.querySelectorAll('a, button');
-        if (focusableElements.length > 0) {
-            focusableElements[0].focus();
+    if (isHidden) {
+        menu.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        if (menuButton) {
+            menuButton.setAttribute('aria-expanded', 'true');
+        }
+    } else {
+        menu.classList.add('hidden');
+        document.body.style.overflow = '';
+        if (menuButton) {
+            menuButton.setAttribute('aria-expanded', 'false');
         }
     }
 }

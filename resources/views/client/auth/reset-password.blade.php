@@ -21,7 +21,7 @@
     <div class="w-full max-w-md">
         <!-- Logo -->
         <div class="text-center mb-8">
-            <a href="{{ route('landing') }}" class="inline-block">
+            <a href="{{ route('landing.id') }}" class="inline-block">
                 <h1 class="text-4xl font-bold text-white">Bizmark<span class="text-yellow-300">.id</span></h1>
             </a>
             <p class="text-white/80 mt-2">Portal Klien - Buat Password Baru</p>
