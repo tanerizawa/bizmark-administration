@@ -67,7 +67,7 @@
                 </p>
                 
                 <!-- CTA Button -->
-                <a href="{{ route('services.show', $slug) }}" class="inline-flex items-center text-primary font-semibold hover:gap-3 gap-2 transition-all group">
+                <a href="{{ route($locale === 'en' ? 'services.show.en' : 'services.show.id', $slug) }}" class="inline-flex items-center text-primary font-semibold hover:gap-3 gap-2 transition-all group">
                     <span>Pelajari Lebih Lanjut</span>
                     <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </a>

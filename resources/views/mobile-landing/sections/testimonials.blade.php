@@ -1,11 +1,15 @@
 <!-- PULL QUOTES: Testimonials - Editorial Typography -->
-<section id="testimonials" class="magazine-section bg-white fade-in-up">
+@php
+    $currentLocale = app()->getLocale();
+@endphp
+
+<section id="testimonials" class="magazine-section bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 fade-in-up">
     <!-- Section Header -->
     <div class="text-center mb-8">
         <h2 class="headline text-4xl text-gray-900 mb-2">
-            Apa Kata <span class="text-gradient">Mereka</span>
+            {{ __('mobile.testimonials.title') }}
         </h2>
-        <p class="text-sm text-gray-600">Testimoni para klien kami yang telah merasakan manfaat layanan Bizmark.ID</p>
+        <p class="text-sm text-gray-600">{{ __('mobile.testimonials.subtitle') }}</p>
     </div>
     
     <!-- Pull Quote Cards -->
@@ -137,17 +141,6 @@
                     <span>Daftar Portal Gratis</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
-            </div>
-            
-            <div class="mt-6 flex items-center justify-center gap-4 text-gray-600 text-xs">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-clock text-blue-500"></i>
-                    <span>Proses {{ $metrics['performance']['average_days_min'] }}-{{ $metrics['performance']['average_days_max'] }} Hari</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-desktop text-blue-500"></i>
-                    <span>Portal 24/7</span>
-                </div>
             </div>
         </div>
     </div>

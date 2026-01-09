@@ -178,13 +178,13 @@
                 <!-- Legal & Info -->
                 <div class="mt-6 pt-6 border-t border-gray-800">
                     <p class="text-gray-400 text-xs mb-3 uppercase tracking-wider">Informasi</p>
-                    <a href="{{ route('privacy.policy') }}" class="block text-gray-300 text-sm py-3 border-b border-gray-800">
-                        <i class="fas fa-shield-alt mr-3 text-gray-500"></i> Kebijakan Privasi
+                    <a href="{{ route('privacy.policy.id') }}" class="block text-gray-300 text-sm py-3 border-b border-gray-800">
+                        <i class="fas fa-shield-alt mr-3"></i>Kebijakan Privasi
                     </a>
-                    <a href="{{ route('terms.conditions') }}" class="block text-gray-300 text-sm py-3 border-b border-gray-800">
-                        <i class="fas fa-file-contract mr-3 text-gray-500"></i> Syarat & Ketentuan
+                    <a href="{{ route('terms.conditions.id') }}" class="block text-gray-300 text-sm py-3 border-b border-gray-800">
+                        <i class="fas fa-file-contract mr-3"></i>Syarat & Ketentuan
                     </a>
-                    <a href="{{ route('sitemap') }}" class="block text-gray-300 text-sm py-3">
+                    <a href="{{ url('/sitemap.xml') }}" class="block text-gray-300 text-sm py-3">
                         <i class="fas fa-sitemap mr-3 text-gray-500"></i> Sitemap
                     </a>
                 </div>

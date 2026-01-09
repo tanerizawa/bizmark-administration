@@ -155,7 +155,7 @@
         </h2>
         <div class="space-y-4">
             @foreach($relatedServices as $slug => $related)
-            <a href="{{ route('services.show', $slug) }}" 
+            <a href="{{ route($locale === 'en' ? 'services.show.en' : 'services.show.id', $slug) }}" 
                class="block bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 shadow-sm hover:shadow-md transition-all border border-gray-100">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0077B5] to-[#005582] flex items-center justify-center text-white flex-shrink-0">

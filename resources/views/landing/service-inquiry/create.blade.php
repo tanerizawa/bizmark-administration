@@ -508,8 +508,8 @@
                 <p class="text-sm text-gray-600 mb-3">✨ Gratis · 🔒 Data Aman · ⚡ Hasil dalam 30 detik</p>
                 <p class="text-xs text-gray-500">
                     Dengan mengirim form ini, Anda setuju dengan 
-                    <a href="{{ route('privacy.policy') }}" class="text-linkedin-500 hover:underline" target="_blank">Kebijakan Privasi</a> dan 
-                    <a href="{{ route('terms.conditions') }}" class="text-linkedin-500 hover:underline" target="_blank">Syarat & Ketentuan</a> kami.
+                    <a href="{{ route('privacy.policy.id') }}" class="text-linkedin-500 hover:underline" target="_blank">Kebijakan Privasi</a> dan 
+                    <a href="{{ route('terms.conditions.id') }}" class="text-linkedin-500 hover:underline" target="_blank">Syarat & Ketentuan</a> kami.
                 </p>
             </div>
         </div>

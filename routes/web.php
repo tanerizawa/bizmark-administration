@@ -64,7 +64,44 @@ Route::middleware('locale:id')->group(function () {
 
 // English/PMA Landing Page (Explicit)
 Route::prefix('en')->middleware('locale:en')->group(function () {
-    Route::get('/', [PublicArticleController::class, 'landing'])->name('landing.en');
+    Route::get('/', function(\Illuminate\Http\Request $request) {
+        // Get screen width from session (set by JS)
+        $screenWidth = session('screen_width', 0);
+        
+        // Detect mobile by screen width (priority)
+        $isMobileByScreen = $screenWidth > 0 && $screenWidth < 768;
+        
+        // Detect mobile by user agent (fallback)
+        $userAgent = $request->header('User-Agent');
+        $isMobileByUA = stripos($userAgent, 'Mobile') !== false || 
+                        stripos($userAgent, 'Android') !== false || 
+                        stripos($userAgent, 'iPhone') !== false ||
+                        stripos($userAgent, 'iPad') !== false;
+        
+        // Final decision
+        $isMobile = $isMobileByScreen || $isMobileByUA;
+        
+        // Override if screen width explicitly shows desktop
+        if ($screenWidth >= 768) {
+            $isMobile = false;
+        }
+        
+        // Check manual preference
+        if ($request->query('mobile') === '1') {
+            return redirect()->route('mobile.landing.en');
+        }
+        if ($request->query('desktop') === '1') {
+            return app(PublicArticleController::class)->landing($request);
+        }
+        
+        // Auto-redirect based on detection
+        if ($isMobile) {
+            return redirect()->route('mobile.landing.en');
+        }
+        
+        // Desktop version (existing landing page)
+        return app(PublicArticleController::class)->landing($request);
+    })->name('landing.en');
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index.en');
     Route::get('/services/{slug}', [ServiceController::class, 'show'])->name('services.show.en');
     Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index.en');
@@ -125,7 +162,7 @@ Route::middleware('locale:id')->get('/', function(\Illuminate\Http\Request $requ
     
     // Check manual preference
     if ($request->query('mobile') === '1') {
-        return redirect()->route('mobile.landing');
+        return redirect()->route('mobile.landing.id');
     }
     if ($request->query('desktop') === '1') {
         return app(PublicArticleController::class)->landing($request);
@@ -133,7 +170,7 @@ Route::middleware('locale:id')->get('/', function(\Illuminate\Http\Request $requ
     
     // Auto-redirect based on detection
     if ($isMobile) {
-        return redirect()->route('mobile.landing');
+        return redirect()->route('mobile.landing.id');
     }
     
     // Desktop version (existing landing page)

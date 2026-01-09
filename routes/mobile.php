@@ -33,9 +33,20 @@ Route::prefix('m')->group(function () {
         return view('mobile.welcome');
     })->name('mobile.welcome');
     
-    // Mobile Landing Page (Magazine Style)
-    Route::get('/landing', function() {
+    // Mobile Landing Page (Magazine Style) - Indonesian
+    Route::middleware('locale:id')->get('/landing', function() {
         return view('mobile-landing.index');
+    })->name('mobile.landing.id');
+    
+    // Mobile Landing Page - English
+    Route::middleware('locale:en')->get('/en/landing', function() {
+        return view('mobile-landing.index');
+    })->name('mobile.landing.en');
+    
+    // Fallback route for old mobile.landing (redirect based on locale)
+    Route::get('/landing-redirect', function() {
+        $locale = app()->getLocale();
+        return redirect()->route($locale === 'en' ? 'mobile.landing.en' : 'mobile.landing.id');
     })->name('mobile.landing');
 });
 

@@ -1,120 +1,60 @@
 @php
+    $currentLocale = app()->getLocale();
+    $isEnglish = $currentLocale === 'en';
     $steps = config('landing.process_steps', []);
-    $metrics = config('landing_metrics');
 @endphp
 
-<!-- PROCESS TIMELINE: How We Work -->
-<section id="process" class="magazine-section bg-gradient-to-b from-gray-50 to-white fade-in-up">
-    <!-- Section Header -->
-    <div class="mb-8">
-        <h2 class="headline text-4xl text-gray-900 mb-3">
-            Alur Kerja <span class="text-gradient">Terukur</span>
-        </h2>
-        <p class="text-gray-600 text-sm max-w-xl leading-relaxed">
-            Lima fase inti memastikan setiap izin ditangani dengan SLA terukur 
-            dan komunikasi transparan.
-        </p>
-        
-        <!-- Quick Metrics -->
-        <div class="mt-6 flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full">
-                <i class="fas fa-check-circle text-green-600"></i>
-                <span class="text-sm font-semibold text-green-900">{{ $metrics['display']['sla_rate'] }} SLA</span>
-            </div>
-            <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full">
-                <i class="fas fa-clock text-blue-600"></i>
-                <span class="text-sm font-semibold text-blue-900">{{ $metrics['display']['process_time'] }}</span>
-            </div>
-            <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full">
-                <i class="fas fa-shield-alt text-blue-600"></i>
-                <span class="text-sm font-semibold text-blue-900">Proses Legal</span>
-            </div>
+<!-- Process Section - Dark Theme -->
+<section id="process" class="py-20 px-4 bg-black">
+    <div class="container mx-auto">
+        <!-- Section Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                {{ $isEnglish ? 'Our' : 'Alur' }} 
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
+                    {{ $isEnglish ? 'Process' : 'Kerja Kami' }}
+                </span>
+            </h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">
+                {{ $isEnglish ? 'Five core phases ensure every permit is handled with measurable SLA' : 'Lima fase inti memastikan setiap izin ditangani dengan SLA terukur' }}
+            </p>
         </div>
-    </div>
-    
-    <!-- Timeline Steps -->
-    <div class="relative space-y-5">
-        <!-- Vertical Timeline Line -->
-        <div class="absolute left-[19px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-300 via-yellow-200 to-blue-300"></div>
-        
-        @foreach($steps as $index => $step)
-        <!-- Process Step Card -->
-        <article class="relative pl-14">
-            <!-- Step Number Badge -->
-            <div class="absolute left-0 top-0 z-10 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-lg"
-                 style="background: linear-gradient(135deg, {{ $step['color'] }} 0%, {{ $step['color'] }}cc 100%);">
-                {{ $index + 1 }}
-            </div>
-            
-            <!-- Step Content Card -->
-            <div class="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
-                <div class="flex items-start gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                         style="background: {{ $step['color'] }}15; color: {{ $step['color'] }};">
-                        <i class="{{ $step['icon'] }} text-lg"></i>
+
+        <!-- Timeline Steps -->
+        <div class="max-w-4xl mx-auto space-y-8">
+            @foreach($steps as $index => $step)
+            <!-- Step Card -->
+            <div class="section p-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-white flex-shrink-0"
+                         style="background: linear-gradient(135deg, {{ $step['color'] }}, {{ $step['color'] }}dd);">
+                        {{ $index + 1 }}
                     </div>
                     <div class="flex-1">
-                        <h3 class="text-lg font-bold text-gray-900 mb-1">
-                            {{ $step['title']['id'] }}
+                        <h3 class="text-xl font-bold text-white mb-2">
+                            {{ $isEnglish ? $step['title']['en'] : $step['title']['id'] }}
                         </h3>
-                        <p class="text-sm text-gray-600 leading-relaxed">
-                            {{ $step['body']['id'] }}
+                        <p class="text-gray-400">
+                            {{ $isEnglish ? $step['body']['en'] : $step['body']['id'] }}
                         </p>
                     </div>
                 </div>
-                
-                @if($index === 0)
-                <!-- First step highlight -->
-                <div class="mt-3 pt-3 border-t border-gray-100">
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="fas fa-desktop text-blue-500"></i>
-                        <span class="font-semibold">Akses Portal - Monitoring real-time sejak awal</span>
-                    </div>
-                </div>
-                @endif
-                
-                @if($index === 3)
-                <!-- SLA Monitoring highlight -->
-                <div class="mt-3 pt-3 border-t border-gray-100">
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="fas fa-bell text-orange-500"></i>
-                        <span class="font-semibold">Update Progress Mingguan via WhatsApp/Portal</span>
-                    </div>
-                </div>
-                @endif
-                
-                @if($index === 4)
-                <!-- Final step highlight -->
-                <div class="mt-3 pt-3 border-t border-gray-100">
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="fas fa-archive text-green-500"></i>
-                        <span class="font-semibold">Arsip Digital + Panduan Compliance Gratis</span>
-                    </div>
-                </div>
-                @endif
             </div>
-        </article>
-        @endforeach
-    </div>
-    
-    <!-- Trust Banner -->
-    <div class="mt-10 relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0077B5] to-[#005582] p-6 text-white text-center">
-        <div class="relative z-10">
-            <div class="flex items-center justify-center gap-3 mb-3">
-                <i class="fas fa-shield-check text-3xl"></i>
-                <h3 class="text-xl font-bold">Dokumentasi Lengkap</h3>
-            </div>
-            <p class="text-sm opacity-90 mb-5">
-                Setiap tahap terekam dalam portal digital dengan timeline yang jelas
-            </p>
-            <a href="{{ route('client.register') }}" 
-               class="inline-block bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
-                <i class="fas fa-rocket mr-2"></i>Daftar & Mulai
-            </a>
+            @endforeach
         </div>
-        
-        <!-- Decorative -->
-        <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
     </div>
 </section>
+
+<style>
+.section {
+    background: #1C1C1E;
+    border-radius: 1rem;
+    border: 1px solid rgba(84,84,88,0.35);
+    transition: all 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(0, 122, 255, 0.2);
+}
+</style>
