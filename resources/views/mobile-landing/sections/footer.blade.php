@@ -66,11 +66,11 @@
         <!-- Footer Bottom -->
         <div class="text-center space-y-2">
             <div class="flex items-center justify-center gap-3 text-xs text-gray-500">
-                <a href="{{ route('privacy.policy') }}" class="hover:text-white transition-colors">Kebijakan Privasi</a>
+                <a href="{{ route('privacy.policy.id') }}" class="hover:text-white transition-colors">Kebijakan Privasi</a>
                 <span>•</span>
-                <a href="{{ route('terms.conditions') }}" class="hover:text-white transition-colors">Syarat & Ketentuan</a>
+                <a href="{{ route('terms.conditions.id') }}" class="hover:text-white transition-colors">Syarat & Ketentuan</a>
                 <span>•</span>
-                <a href="{{ route('sitemap') }}" class="hover:text-white transition-colors">Sitemap</a>
+                <a href="{{ url('/sitemap.xml') }}" class="hover:text-white transition-colors">Sitemap</a>
             </div>
             <p class="text-xs text-gray-500">
                 © {{ date('Y') }} Bizmark.ID. Seluruh hak cipta dilindungi.

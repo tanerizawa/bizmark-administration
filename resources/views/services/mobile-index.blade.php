@@ -45,7 +45,7 @@
     <div class="content-container">
         <div class="space-y-4">
             @foreach($services as $slug => $service)
-            <a href="{{ route('services.show', $slug) }}" 
+            <a href="{{ route($locale === 'en' ? 'services.show.en' : 'services.show.id', $slug) }}" 
                class="block bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border border-gray-100">
                 <!-- Icon & Title -->
                 <div class="flex items-start gap-4 mb-3">

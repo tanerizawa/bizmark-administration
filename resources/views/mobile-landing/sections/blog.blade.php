@@ -25,19 +25,19 @@
         
         <!-- Category Quick Links -->
         <div class="mt-6 flex flex-wrap items-center gap-2">
-            <a href="{{ route('blog.category', 'perizinan') }}" 
+            <a href="{{ route(app()->getLocale() === 'en' ? 'blog.category.en' : 'blog.category.id', 'perizinan') }}" 
                class="text-xs font-semibold bg-blue-50 text-blue-700 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
                 #Perizinan
             </a>
-            <a href="{{ route('blog.category', 'compliance') }}" 
+            <a href="{{ route(app()->getLocale() === 'en' ? 'blog.category.en' : 'blog.category.id', 'compliance') }}" 
                class="text-xs font-semibold bg-green-50 text-green-700 px-4 py-2 rounded-full hover:bg-green-100 transition-colors">
                 #Compliance
             </a>
-            <a href="{{ route('blog.category', 'regulasi') }}" 
+            <a href="{{ route(app()->getLocale() === 'en' ? 'blog.category.en' : 'blog.category.id', 'regulasi') }}" 
                class="text-xs font-semibold bg-blue-50 text-blue-700 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
                 #Regulasi
             </a>
-            <a href="{{ route('blog.index.id') }}" 
+            <a href="{{ route(app()->getLocale() === 'en' ? 'blog.index.en' : 'blog.index.id') }}" 
                class="text-xs font-semibold bg-gray-100 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-200 transition-colors">
                 Lihat Semua →
             </a>
@@ -98,7 +98,7 @@
                     {{ $article->excerpt ?? strip_tags(substr($article->content, 0, 150)) }}...
                 </p>
                 
-                <a href="{{ route('blog.article', $article->slug) }}" 
+                <a href="{{ route(app()->getLocale() === 'en' ? 'blog.article.en' : 'blog.article.id', $article->slug) }}" 
                    class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
                     Baca Artikel Lengkap
                     <i class="fas fa-arrow-right text-xs"></i>
@@ -138,7 +138,7 @@
                     <span>{{ $article->read_time ?? '5' }} min</span>
                 </div>
                 
-                <a href="{{ route('blog.article', $article->slug) }}" 
+                <a href="{{ route(app()->getLocale() === 'en' ? 'blog.article.en' : 'blog.article.id', $article->slug) }}" 
                    class="text-xs font-semibold text-blue-600 hover:underline">
                     Baca Selengkapnya →
                 </a>
@@ -150,7 +150,7 @@
     
     <!-- CTA: View All Articles -->
     <div class="mt-8 text-center">
-        <a href="{{ route('blog.index.id') }}" 
+        <a href="{{ route(app()->getLocale() === 'en' ? 'blog.index.en' : 'blog.index.id') }}" 
            class="inline-block bg-gradient-to-r from-[#0077B5] to-[#005582] text-white font-semibold px-8 py-4 rounded-xl hover:shadow-lg transition-all">
             <i class="fas fa-th-large mr-2"></i>Lihat Semua Artikel
         </a>

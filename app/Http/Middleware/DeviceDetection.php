@@ -52,33 +52,48 @@ class DeviceDetection
         // Handle manual preferences via query parameters
         if ($request->has('mobile') && $request->query('mobile') === '1') {
             $request->session()->put('force_device', 'mobile');
-            return redirect()->route('mobile.landing');
+            // Determine locale from route or path
+            $locale = $this->determineLocale($request);
+            return redirect()->route($locale === 'en' ? 'mobile.landing.en' : 'mobile.landing.id');
         }
 
         if ($request->has('desktop') && $request->query('desktop') === '1') {
             $request->session()->put('force_device', 'desktop');
-            return redirect()->route('landing.id');
+            // Determine locale from route or path
+            $locale = $this->determineLocale($request);
+            return redirect()->route($locale === 'en' ? 'landing.en' : 'landing.id');
         }
 
         $isMobile = $this->detectMobileDevice($request);
-        $isOnMobilePath = $request->is('m/*') || $request->route()?->getName() === 'mobile.landing';
-        $isOnLanding = $request->is('/') || $request->route()?->getName() === 'landing';
+        $isOnMobilePath = $request->is('m/*') || 
+                         $request->route()?->getName() === 'mobile.landing.id' || 
+                         $request->route()?->getName() === 'mobile.landing.en' ||
+                         $request->route()?->getName() === 'mobile.landing';
+        $isOnLanding = $request->is('/') || 
+                      $request->route()?->getName() === 'landing.id' || 
+                      $request->route()?->getName() === 'landing.en';
 
         // Only auto-redirect from ROOT landing page, not if user directly access mobile landing
         // Force mobile view for mobile devices on ROOT landing (/)
         if ($isMobile && $isOnLanding && !$isOnMobilePath) {
-            return redirect()->route('mobile.landing');
+            // Determine locale from route or path
+            $locale = $this->determineLocale($request);
+            return redirect()->route($locale === 'en' ? 'mobile.landing.en' : 'mobile.landing.id');
         }
 
         // Only redirect desktop devices from mobile landing if they came from homepage redirect
         // Allow manual access to mobile landing (useful for testing, manual toggle)
         // Force desktop view ONLY if no manual preference and coming from auto-redirect
-        if (!$isMobile && $isOnMobilePath && $request->route()?->getName() === 'mobile.landing') {
+        if (!$isMobile && $isOnMobilePath && 
+            ($request->route()?->getName() === 'mobile.landing.id' || 
+             $request->route()?->getName() === 'mobile.landing.en')) {
             // Check if user has manual preference to stay on mobile
             if (!$request->session()->has('force_device')) {
                 // Only redirect if coming from homepage, not direct access
                 if ($request->headers->get('referer') && str_contains($request->headers->get('referer'), 'bizmark.id')) {
-                    return redirect()->route('landing.id');
+                    // Determine locale from route or path
+                    $locale = $this->determineLocale($request);
+                    return redirect()->route($locale === 'en' ? 'landing.en' : 'landing.id');
                 }
             }
         }
@@ -154,5 +169,35 @@ class DeviceDetection
         }
 
         return false;
+    }
+
+    /**
+     * Determine locale from request
+     * Checks route name and path to determine if it's English or Indonesian
+     *
+     * @param Request $request
+     * @return string
+     */
+    private function determineLocale(Request $request): string
+    {
+        // Check route name first
+        $routeName = $request->route()?->getName();
+        if ($routeName && str_contains($routeName, '.en')) {
+            return 'en';
+        }
+
+        // Check path for /en prefix
+        if ($request->is('en') || $request->is('en/*')) {
+            return 'en';
+        }
+
+        // Check app locale if already set
+        $currentLocale = app()->getLocale();
+        if ($currentLocale && $currentLocale !== 'en') {
+            return $currentLocale;
+        }
+
+        // Default to Indonesian
+        return 'id';
     }
 }

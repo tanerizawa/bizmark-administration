@@ -1,23 +1,29 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
-    <title>{{ config('app.name') }} - Solusi Perizinan Terpercaya</title>
+    @php
+        $currentLocale = app()->getLocale();
+        $isEnglish = $currentLocale === 'en';
+    @endphp
+    
+    <title>{{ config('app.name') }} - {{ $isEnglish ? 'Trusted Business Licensing Solutions' : 'Solusi Perizinan Terpercaya' }}</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Layanan perizinan usaha terpercaya untuk OSS, AMDAL, PBG, SLF, dan lainnya. Proses cepat, transparan, dan 100% legal.">
-    <meta name="keywords" content="OSS, AMDAL, PBG, SLF, Perizinan Usaha, NIB, Izin Usaha, Konsultan Perizinan">
+    <meta name="description" content="{{ $isEnglish ? 'Trusted business licensing services for OSS, AMDAL, PBG, SLF, and more. Fast, transparent, and 100% legal.' : 'Layanan perizinan usaha terpercaya untuk OSS, AMDAL, PBG, SLF, dan lainnya. Proses cepat, transparan, dan 100% legal.' }}">
+    <meta name="keywords" content="OSS, AMDAL, PBG, SLF, {{ $isEnglish ? 'Business Licensing, NIB, Business License, Licensing Consultant' : 'Perizinan Usaha, NIB, Izin Usaha, Konsultan Perizinan' }}">
     <meta name="author" content="Bizmark.ID">
     
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Bizmark.ID - Solusi Perizinan Terpercaya">
-    <meta property="og:description" content="Layanan perizinan usaha profesional dengan proses cepat dan transparan">
+    <meta property="og:title" content="Bizmark.ID - {{ $isEnglish ? 'Trusted Licensing Solutions' : 'Solusi Perizinan Terpercaya' }}">
+    <meta property="og:description" content="{{ $isEnglish ? 'Professional business licensing services with fast and transparent processes' : 'Layanan perizinan usaha profesional dengan proses cepat dan transparan' }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:locale" content="{{ $isEnglish ? 'en_US' : 'id_ID' }}">
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#0077B5">
@@ -34,6 +40,12 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js (for interactive components) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom Styles from Sections -->
+    @stack('styles')
     
     <!-- Magazine Custom Styles -->
     <style>
@@ -76,8 +88,17 @@
         /* Typography */
         body {
             font-family: var(--font-body);
-            color: var(--color-ink);
+            color: var(--color-paper);
+            background: #000000;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
             -moz-osx-font-smoothing: grayscale;
         }
         
@@ -213,11 +234,111 @@
     </style>
     
     @stack('styles')
+    
+    <!-- Mobile Navbar Styles -->
+    <style>
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(84, 84, 88, 0.35);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            overflow-y: auto;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        .mobile-menu a {
+            color: rgba(235, 235, 245, 0.6);
+            transition: color 0.2s ease;
+        }
+        
+        .mobile-menu a:hover {
+            color: #007AFF;
+        }
+    </style>
 </head>
 <body class="bg-white overflow-x-hidden">
     
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-white">Bizmark<span class="text-yellow-400">.ID</span></span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8 text-white">
+                    <a href="#home" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Home' : 'Beranda' }}</a>
+                    <a href="#services" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Services' : 'Layanan' }}</a>
+                    <a href="#why-us" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Why Us' : 'Keunggulan' }}</a>
+                    <a href="#contact" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Contact' : 'Kontak' }}</a>
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition text-white">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                    </a>
+                </div>
+                
+                <button class="md:hidden text-2xl text-white" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <div id="mobileMenu" class="mobile-menu">
+        <div class="container mx-auto px-4 py-6">
+            <a href="#home" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
+                <i class="fas fa-home mr-3"></i>{{ $isEnglish ? 'Home' : 'Beranda' }}
+            </a>
+            <a href="#services" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
+                <i class="fas fa-certificate mr-3"></i>{{ $isEnglish ? 'Services' : 'Layanan' }}
+            </a>
+            <a href="#why-us" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
+                <i class="fas fa-award mr-3"></i>{{ $isEnglish ? 'Why Us' : 'Keunggulan' }}
+            </a>
+            <a href="#testimonials" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
+                <i class="fas fa-star mr-3"></i>{{ $isEnglish ? 'Testimonials' : 'Testimoni' }}
+            </a>
+            <a href="#faq" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
+                <i class="fas fa-question-circle mr-3"></i>FAQ</a>
+            <a href="#contact" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
+                <i class="fas fa-envelope mr-3"></i>{{ $isEnglish ? 'Contact' : 'Kontak' }}
+            </a>
+            <div class="mt-6 pt-6 border-t border-gray-800">
+                <a href="{{ route('login') }}" class="block py-3 px-6 bg-blue-600 hover:bg-blue-700 rounded-lg text-center text-white transition font-semibold">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                </a>
+            </div>
+        </div>
+    </div>
+    
     <!-- Magazine Content -->
-    <main id="magazine-content">
+    <main id="magazine-content" class="pt-16">
         @yield('content')
     </main>
     
@@ -315,6 +436,22 @@
                 console.log('Cloudflare Insights blocked or unavailable (optional analytics)');
             }
         }, true);
+        
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+        
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
     </script>
     
     @stack('scripts')

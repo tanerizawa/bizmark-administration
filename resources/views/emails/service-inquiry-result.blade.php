@@ -229,9 +229,9 @@
                                 No. Inquiry: {{ $inquiry->inquiry_number }} · {{ $inquiry->created_at->format('d M Y') }}
                             </p>
                             <div style="margin-top: 15px;">
-                                <a href="{{ route('privacy.policy') }}" style="color: #99cfe3; text-decoration: none; font-size: 11px; margin: 0 8px;">Kebijakan Privasi</a>
+                                <a href="{{ route('privacy.policy.id') }}" style="color: #99cfe3; text-decoration: none; font-size: 11px; margin: 0 8px;">Kebijakan Privasi</a>
                                 <span style="color: #99cfe3;">·</span>
-                                <a href="{{ route('terms.conditions') }}" style="color: #99cfe3; text-decoration: none; font-size: 11px; margin: 0 8px;">Syarat & Ketentuan</a>
+                                <a href="{{ route('terms.conditions.id') }}" style="color: #99cfe3; text-decoration: none; font-size: 11px; margin: 0 8px;">Syarat & Ketentuan</a>
                             </div>
                         </td>
                     </tr>

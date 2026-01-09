@@ -1,149 +1,110 @@
 @php
+    $currentLocale = app()->getLocale();
+    $isEnglish = $currentLocale === 'en';
     $services = collect(config('services_data'));
-    $metrics = config('landing_metrics');
-    
-    // Get featured service (OSS)
     $featured = $services->where('featured', true)->first();
-    
-    // Get other services (non-featured, limit 4 for grid)
-    $others = $services->where('featured', '!=', true)->take(4);
+    $others = $services->where('featured', '!=', true)->take(5);
 @endphp
 
-<!-- FEATURED ARTICLES: Services as Magazine Stories -->
-<section id="services" class="magazine-section bg-white fade-in-up">
-    <!-- Section Header -->
-    <div class="mb-10">
-        <h2 class="headline text-4xl text-gray-900 mb-3">
-            Layanan <span class="text-gradient">Unggulan</span> Kami
-        </h2>
-        <p class="text-gray-600 text-sm max-w-xl leading-relaxed">
-            Berbagai layanan perizinan yang kami tawarkan dengan 
-            proses yang efisien dan transparan.
-        </p>
-        
-        <!-- Quick Stats Bar -->
-        <div class="mt-6 flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full">
-                <i class="fas fa-users text-blue-600"></i>
-                <span class="text-sm font-semibold text-blue-900">{{ $metrics['display']['clients_total'] }} Klien</span>
-            </div>
-            <div class="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full">
-                <i class="fas fa-check-circle text-green-600"></i>
-                <span class="text-sm font-semibold text-green-900">{{ $metrics['display']['permits_processed'] }} Izin Selesai</span>
-            </div>
-            <div class="flex items-center gap-2 bg-orange-50 px-4 py-2 rounded-full">
-                <i class="fas fa-clock text-orange-600"></i>
-                <span class="text-sm font-semibold text-orange-900">{{ $metrics['display']['process_time'] }}</span>
-            </div>
+<!-- Services Section - Dark Theme -->
+<section id="services" class="py-20 px-4" style="background: #1C1C1E;">
+    <div class="container mx-auto">
+        <!-- Section Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                {{ $isEnglish ? 'Our' : 'Layanan' }} 
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
+                    {{ $isEnglish ? 'Services' : 'Kami' }}
+                </span>
+            </h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">
+                {{ $isEnglish ? 'Professional business licensing services with fast and transparent processes' : 'Layanan perizinan usaha profesional dengan proses cepat dan transparan' }}
+            </p>
         </div>
-    </div>
-    
-    <!-- Magazine Grid Layout -->
-    <div class="space-y-6">
-        
-        @if($featured)
-        <!-- Hero Article (Featured Service) -->
-        <article class="magazine-card">
-            <div class="relative h-48 overflow-hidden" style="background: linear-gradient(135deg, {{ $featured['color'] }} 0%, {{ $featured['color'] }}dd 100%);">
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <i class="fas {{ $featured['icon'] }} text-white text-6xl opacity-20"></i>
+
+        <!-- Services Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @if($featured)
+            <!-- Featured Service -->
+            <div class="feature-card md:col-span-2">
+                <div class="feature-icon" style="background: linear-gradient(135deg, {{ $featured['color'] }}, {{ $featured['color'] }}dd);">
+                    <i class="fas {{ $featured['icon'] }}"></i>
                 </div>
-                <div class="absolute top-4 left-4">
-                    <span class="category-tag bg-white/30 backdrop-blur-sm text-white px-3 py-1.5 rounded-full shadow-lg">
-                        {{ $featured['badge'] ?? 'Paling Populer' }}
-                    </span>
-                </div>
-            </div>
-            <div class="p-6">
-                <div class="category-tag mb-2" style="color: {{ $featured['color'] }};">
-                    PERIZINAN USAHA
-                </div>
-                <h3 class="headline text-2xl text-gray-900 mb-3">
-                    {{ $featured['title'] }}
-                </h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">
-                    {{ $featured['short_description'] }}
-                </p>
-                <div class="flex items-center justify-between">
-                    <div>
-                        @if(isset($featured['price']))
-                        <span class="text-xs text-gray-500">Mulai dari</span>
-                        <span class="text-2xl font-bold ml-1" style="color: {{ $featured['color'] }};">{{ $featured['price'] }}</span>
-                        @endif
-                    </div>
-                    <div class="flex items-center gap-1 bg-red-50 px-3 py-1 rounded-full">
-                        <i class="fas fa-fire text-red-500 text-xs"></i>
-                        <span class="text-xs font-bold text-red-700">{{ $featured['badge'] ?? 'Terfavorit' }}</span>
-                    </div>
-                </div>
-                <a href="{{ route('services.show', $featured['slug']) }}" 
-                   class="block mt-4 text-center bg-gradient-to-r from-[#0077B5] to-[#005582] text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all">
-                    <i class="fas fa-arrow-right mr-2"></i>Lihat Detail
+                <h3 class="text-xl font-bold text-white mb-2">{{ $featured['title'] }}</h3>
+                <p class="text-gray-400 mb-4">{{ $featured['short_description'] }}</p>
+                @if(isset($featured['price']))
+                <p class="text-sm text-gray-500 mb-2">{{ $isEnglish ? 'Starting from' : 'Mulai dari' }}</p>
+                <p class="text-2xl font-bold mb-4" style="color: {{ $featured['color'] }};">{{ $featured['price'] }}</p>
+                @endif
+                <a href="{{ route($isEnglish ? 'services.show.en' : 'services.show.id', $featured['slug']) }}" 
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg transition">
+                    <span>{{ $isEnglish ? 'Learn More' : 'Lihat Detail' }}</span>
+                    <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
-        </article>
-        @endif
-        
-        <!-- Grid of 2 Medium Articles -->
-        <div class="grid grid-cols-2 gap-4">
+            @endif
+
             @foreach($others as $service)
-            <!-- Article Card -->
-            <article class="magazine-card">
-                <div class="relative h-32 overflow-hidden" style="background: linear-gradient(135deg, {{ $service['color'] }} 0%, {{ $service['color'] }}dd 100%);">
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <i class="fas {{ $service['icon'] }} text-white text-4xl opacity-30"></i>
-                    </div>
+            <!-- Service Card -->
+            <article class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, {{ $service['color'] }}, {{ $service['color'] }}dd);">
+                    <i class="fas {{ $service['icon'] }}"></i>
                 </div>
-                <div class="p-4">
-                    @if(isset($service['category']))
-                    <div class="category-tag mb-1" style="color: {{ $service['color'] }};">
-                        {{ $service['category'] }}
-                    </div>
-                    @endif
-                    <h4 class="text-base font-bold text-gray-900 mb-2">
-                        {{ $service['title'] }}
-                    </h4>
-                    <p class="text-xs text-gray-600 mb-3">
-                        {{ $service['short_description'] }}
-                    </p>
-                    <a href="{{ route('services.show', $service['slug']) }}" 
-                       class="text-xs font-semibold hover:underline" 
-                       style="color: {{ $service['color'] }};">
-                        Baca Selengkapnya →
-                    </a>
-                </div>
+                <h3 class="text-lg font-bold text-white mb-2">{{ $service['title'] }}</h3>
+                <p class="text-sm text-gray-400 mb-4">{{ $service['short_description'] }}</p>
+                <a href="{{ route($isEnglish ? 'services.show.en' : 'services.show.id', $service['slug']) }}" 
+                   class="text-blue-400 hover:text-blue-300 text-sm font-semibold transition">
+                    {{ $isEnglish ? 'Learn more' : 'Selengkapnya' }} →
+                </a>
             </article>
             @endforeach
         </div>
-        
-        <!-- Call-to-Action Banner -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0077B5] to-[#005582] p-8 text-white text-center">
-            <div class="relative z-10">
-                <i class="fas fa-robot text-5xl mb-4 opacity-90"></i>
-                <h3 class="text-2xl font-bold mb-2">Tidak Tahu Izin Apa yang Dibutuhkan?</h3>
-                <p class="text-sm mb-6 opacity-90">Coba <strong>Analisis AI Gratis</strong> kami dalam 30 detik!</p>
-                <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="{{ route('landing.service-inquiry.create') }}" 
-                       class="bg-gradient-to-r from-gold-400 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:shadow-xl transition-all inline-flex items-center justify-center gap-2"
-                       onclick="trackEvent('CTA', 'click', 'services_free_analysis_mobile')">
-                        <span>🤖</span>
-                        <span>Analisis AI Gratis</span>
-                        <span class="text-xs px-2 py-0.5 bg-red-500 text-white rounded-full">BARU!</span>
-                    </a>
-                    <a href="{{ route('client.register') }}" 
-                       class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition-all">
-                        <i class="fas fa-rocket mr-2"></i>Daftar Portal
-                    </a>
-                </div>
-                <p class="text-xs mt-4 opacity-75">
-                    ✨ Gratis · 🔒 Data Aman · ⚡ Hasil dalam 30 detik
-                </p>
-            </div>
-            
-            <!-- Decorative Elements -->
-            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+
+        <!-- CTA Banner -->
+        <div class="mt-12 p-8 rounded-2xl text-center" style="background: linear-gradient(135deg, #007AFF, #0051D5);">
+            <i class="fas fa-robot text-5xl text-white mb-4 opacity-90"></i>
+            <h3 class="text-2xl font-bold text-white mb-2">
+                {{ $isEnglish ? "Not sure which permit you need?" : "Tidak Tahu Izin Apa yang Dibutuhkan?" }}
+            </h3>
+            <p class="text-white/90 mb-6">
+                {{ $isEnglish ? "Try our FREE AI Analysis in 30 seconds!" : "Coba Analisis AI Gratis kami dalam 30 detik!" }}
+            </p>
+            <button @click="window.dispatchEvent(new CustomEvent('open-ai-estimator'))" 
+                    class="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:shadow-xl transition">
+                <span>🤖</span>
+                <span>{{ $isEnglish ? 'AI Analysis' : 'Analisis AI Gratis' }}</span>
+            </button>
         </div>
-        
     </div>
 </section>
+
+<style>
+.feature-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 15px 35px rgba(0,122,255,0.2);
+    border-color: #007AFF;
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #007AFF, #0051D5);
+    color: #fff;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+</style>

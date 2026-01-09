@@ -1,195 +1,126 @@
 @php
-    $metrics = config('landing_metrics');
-    $trustBadges = $metrics['trust_badges'] ?? [];
+    $currentLocale = app()->getLocale();
+    $isEnglish = $currentLocale === 'en';
 @endphp
 
-<!-- COVER PAGE: Magazine-Style Hero -->
-<section class="magazine-cover relative min-h-screen overflow-hidden">
-    <!-- Parallax Background -->
-    <div class="parallax-bg absolute inset-0 -top-12 -bottom-12">
-        <!-- Gradient Background (no image needed) -->
-        <div class="w-full h-full bg-gradient-to-br from-[#0077B5] via-[#005582] to-[#003d5c]"></div>
-        <!-- Pattern Overlay -->
-        <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-        <!-- Dark Gradient Overlay -->
-        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
-    </div>
-    
-    <!-- Content -->
-    <div class="relative z-10 h-full flex flex-col">
-        <!-- Minimal Header -->
-        <div class="flex items-center justify-between p-6">
-            <div class="text-white font-bold text-xl flex items-center gap-2">
-                <i class="fas fa-building text-yellow-400"></i>
-                <span>Bizmark<span class="text-yellow-400">.ID</span></span>
-            </div>
-            <button type="button" data-menu-toggle onclick="toggleMobileMenu()" class="text-white text-2xl" aria-controls="mobileMenu" aria-expanded="false">
-                <i class="fas fa-bars"></i>
-            </button>
+<!-- Hero Section - Desktop Style Adapted for Mobile -->
+<section id="home" class="hero-gradient pt-32 pb-20 px-4 min-h-screen flex items-center" role="banner">
+    <div class="container mx-auto text-center max-w-5xl relative z-10">
+        <!-- Logo -->
+        <div class="logo-container mb-8" aria-label="{{ $isEnglish ? 'Bizmark.ID Logo' : 'Logo Bizmark.ID' }}">
+            <img src="{{ asset('images/logo-bizmark.svg') }}" 
+                 alt="{{ $isEnglish ? 'BizMark Indonesia - Licensing Consultant' : 'BizMark Indonesia - Konsultan Perizinan' }}" 
+                 class="w-24 h-24 mx-auto filter drop-shadow-lg">
         </div>
         
-        <!-- Cover Story Content -->
-        <div class="flex-1 flex flex-col justify-end p-6 pb-8">
-            <!-- Issue Tag -->
-            <div class="mb-2">
-                <span class="category-tag bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs">
-                    Edisi Spesial 2025
-                </span>
-            </div>
+        <!-- Main Headline -->
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-white">
+            {{ $isEnglish ? 'Business Licensing' : 'Solusi' }} 
+            <span class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
+                {{ $isEnglish ? 'Management Solutions' : 'Manajemen Perizinan' }}
+            </span>
+            <br>{{ $isEnglish ? '& Trusted Business Consultant' : '& Konsultan Bisnis Terpercaya' }}
+        </h1>
+        
+        <!-- Subtitle -->
+        <p class="text-base sm:text-lg md:text-xl mb-8 max-w-3xl mx-auto px-4 text-gray-300">
+            {{ $isEnglish 
+                ? 'Administrative digitalization, professional OSS, AMDAL, UKL-UPL, PBG, SLF licensing services, and business consulting for modern companies in Indonesia. Fast, transparent, and trusted processes.' 
+                : 'Digitalisasi administrasi, layanan perizinan profesional OSS, AMDAL, UKL-UPL, PBG, SLF, dan konsultasi bisnis untuk perusahaan modern di Indonesia. Proses cepat, transparan, dan terpercaya.'
+            }}
+        </p>
+        
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 px-4">
+            <button @click="window.dispatchEvent(new CustomEvent('open-ai-estimator'))" 
+                    class="btn-primary w-full sm:w-auto"
+                    aria-label="{{ $isEnglish ? 'Get cost estimate with AI' : 'Dapatkan estimasi biaya perizinan dengan AI' }}">
+                <i class="fas fa-calculator mr-2" aria-hidden="true"></i>
+                {{ __('mobile.hero.cta_primary') }}
+            </button>
             
-            <!-- Main Headline -->
-            <h1 class="headline text-white text-4xl mb-3 leading-tight">
-                <span class="text-yellow-400">Perizinan Usaha</span><br>
-                yang Efisien
-            </h1>
-            
-            <!-- Deck (Subtitle) -->
-            <p class="deck text-white text-base mb-3 max-w-md leading-relaxed opacity-90">
-                Platform digital untuk mengelola perizinan dan legalitas perusahaan Anda.
-            </p>
-            
-            <!-- Quick Stats - REMOVED unreliable numbers -->
-            <div class="flex items-center gap-3 text-white text-xs mb-3 opacity-90 flex-wrap">
-                <div class="flex items-center gap-1.5">
-                    <i class="fas fa-clock"></i>
-                    <span>Proses <strong>{{ $metrics['performance']['average_days_min'] }}-{{ $metrics['performance']['average_days_max'] }} Hari</strong></span>
-                </div>
-                <span class="text-white/40">•</span>
-                <div class="flex items-center gap-1.5">
-                    <i class="fas fa-desktop"></i>
-                    <span><strong>{{ $metrics['contact']['hours'] ?? 'Portal 24/7' }}</strong></span>
-                </div>
-            </div>
-            
-            <!-- Byline -->
-            <div class="flex items-center gap-2 text-white text-sm mb-4 opacity-75">
-                <i class="fas fa-map-marked-alt"></i>
-                <span>Melayani perusahaan di berbagai kota sejak {{ $metrics['experience']['since_year'] }}</span>
-            </div>
-            
-            <!-- Primary CTA - PLATFORM FIRST -->
-            <div class="space-y-3 mb-4">
-                <!-- Main CTA: Register -->
-                <a href="{{ route('landing.service-inquiry.create') }}" 
-                   class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200"
-                   onclick="trackEvent('CTA', 'click', 'hero_analysis_mobile')">
-                    <div class="flex items-center justify-center gap-3">
-                        <span>Analisis Usaha Anda</span>
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                </a>
-                
-                <!-- Tertiary CTAs -->
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('login') }}" 
-                       class="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-white/20 active:scale-95 transition-all duration-200 text-center">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Masuk / Daftar
-                    </a>
-                    <a href="#services" 
-                       class="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-white/20 active:scale-95 transition-all duration-200 text-center"
-                       onclick="trackEvent('CTA', 'click', 'hero_services_mobile')">
-                        <i class="fas fa-list mr-2"></i>Lihat Layanan
-                    </a>
-                </div>
-                <p class="text-center text-white text-xs opacity-80">
-                    <i class="fas fa-info-circle mr-1"></i> Mulai analisis usaha atau eksplor layanan kami kapan saja
-                </p>
-                <div class="flex items-center justify-center gap-2 text-white text-xs opacity-80">
-                    <i class="fas fa-phone-volume"></i>
-                    <a href="{{ $metrics['contact']['whatsapp_link'] ?? '#' }}" target="_blank" rel="noopener" class="underline underline-offset-2">
-                        {{ $metrics['contact']['phone_display'] ?? 'Hubungi Kami' }}
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Trust Badges - PLATFORM CAPABILITIES -->
-            @if(!empty($trustBadges))
-                <div class="grid grid-cols-2 gap-2 mb-4 max-w-md mx-auto w-full">
-                    @foreach($trustBadges as $badge)
-                        @php
-                            $color = $badge['color'] === 'yellow' ? 'text-yellow-300' : 'text-blue-400';
-                        @endphp
-                        <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-2">
-                            <i class="fas {{ $badge['icon'] ?? 'fa-check-circle' }} {{ $color }} text-base"></i>
-                            <span class="text-white text-xs font-medium">{{ $badge['label'] ?? '' }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-            
-            <!-- Scroll Indicator -->
-            <div class="scroll-indicator flex flex-col items-center text-white opacity-60 animate-bounce">
-                <i class="fas fa-chevron-down text-xl mb-1"></i>
-                <p class="text-xs">Jelajahi Lebih Lanjut</p>
-            </div>
+            <a href="#services" 
+               class="btn-secondary w-full sm:w-auto" 
+               aria-label="{{ $isEnglish ? 'Learn more about our services' : 'Pelajari lebih lanjut tentang layanan kami' }}">
+                <i class="fas fa-info-circle mr-2" aria-hidden="true"></i>
+                {{ __('mobile.hero.cta_tertiary') }}
+            </a>
         </div>
     </div>
 </section>
 
-<!-- Mobile Menu (Hidden by default) -->
-<div id="mobileMenu" class="fixed inset-0 z-50 bg-gray-900 transform translate-x-full transition-transform duration-300" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="flex flex-col h-full">
-        <!-- Menu Header -->
-        <div class="flex items-center justify-between p-6 border-b border-gray-800">
-            <span class="text-white font-bold text-xl">Menu Utama</span>
-            <button type="button" data-menu-toggle onclick="toggleMobileMenu()" class="text-white text-2xl" aria-controls="mobileMenu" aria-expanded="false">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <!-- Menu Items -->
-        <nav class="flex-1 p-6 overflow-y-auto">
-            <a href="{{ route('services.index.id') }}" class="block text-white text-lg py-4 border-b border-gray-800">
-                <i class="fas fa-certificate mr-3"></i> Layanan
-            </a>
-            <a href="#why-us" onclick="toggleMobileMenu()" class="block text-white text-lg py-4 border-b border-gray-800">
-                <i class="fas fa-star mr-3"></i> Mengapa Kami
-            </a>
-            <a href="{{ route('blog.index.id') }}" class="block text-white text-lg py-4 border-b border-gray-800">
-                <i class="fas fa-newspaper mr-3"></i> Artikel
-            </a>
-            <a href="{{ route('career.index') }}" class="block text-white text-lg py-4 border-b border-gray-800">
-                <i class="fas fa-briefcase mr-3"></i> Karir
-            </a>
-            <a href="#faq" onclick="toggleMobileMenu()" class="block text-white text-lg py-4 border-b border-gray-800">
-                <i class="fas fa-question-circle mr-3"></i> FAQ
-            </a>
-            <a href="#contact" onclick="toggleMobileMenu()" class="block text-white text-lg py-4 border-b border-gray-800">
-                <i class="fas fa-envelope mr-3"></i> Kontak
-            </a>
-            
-            <!-- Legal & Info -->
-            <div class="mt-6 pt-6 border-t border-gray-800">
-                <p class="text-gray-400 text-xs mb-3 uppercase tracking-wider">Informasi</p>
-                <a href="{{ route('privacy.policy') }}" class="block text-gray-300 text-sm py-3 border-b border-gray-800">
-                    <i class="fas fa-shield-alt mr-3 text-gray-500"></i> Kebijakan Privasi
-                </a>
-                <a href="{{ route('terms.conditions') }}" class="block text-gray-300 text-sm py-3 border-b border-gray-800">
-                    <i class="fas fa-file-contract mr-3 text-gray-500"></i> Syarat & Ketentuan
-                </a>
-                <a href="{{ route('sitemap') }}" class="block text-gray-300 text-sm py-3">
-                    <i class="fas fa-sitemap mr-3 text-gray-500"></i> Sitemap
-                </a>
-            </div>
-        </nav>
-        
-        <!-- Menu Footer -->
-        <div class="p-6 border-t border-gray-800">
-            <a href="{{ route('login') }}" class="flex items-center justify-center gap-2 bg-white/10 text-white font-semibold py-4 px-6 rounded-xl border border-white/20">
-                <i class="fas fa-sign-in-alt text-xl"></i>
-                <span>Daftar / Masuk</span>
-            </a>
-        </div>
-    </div>
-</div>
-
-<script>
-function toggleMobileMenu() {
-    const menu = document.getElementById('mobileMenu');
-    const toggles = document.querySelectorAll('[data-menu-toggle]');
-    const isHidden = menu.classList.toggle('translate-x-full');
-    menu.setAttribute('aria-hidden', isHidden ? 'true' : 'false');
-    document.body.classList.toggle('overflow-hidden', !isHidden);
-    toggles.forEach(button => button.setAttribute('aria-expanded', isHidden ? 'false' : 'true'));
-}
-</script>
+<style>
+    .hero-gradient {
+        background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-gradient::before {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(0, 122, 255, 0.15) 0%, transparent 70%);
+        top: -250px;
+        right: -250px;
+        animation: float 20s infinite ease-in-out;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(50px, 50px) rotate(180deg); }
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+        color: #fff;
+        border-radius: 0.75rem;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        min-height: 48px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 122, 255, 0.4);
+    }
+    
+    .btn-primary:active {
+        transform: scale(0.98);
+    }
+    
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.75rem;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        min-height: 48px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+    
+    .btn-secondary:active {
+        transform: scale(0.98);
+    }
+</style>

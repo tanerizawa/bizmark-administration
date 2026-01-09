@@ -335,9 +335,9 @@
         <div class="max-w-5xl mx-auto px-4 text-center">
             <p class="mb-2 text-sm">© {{ date('Y') }} Bizmark.ID - Platform Perizinan Digital</p>
             <div class="flex items-center justify-center gap-3 text-xs text-linkedin-200">
-                <a href="{{ route('privacy.policy') }}" class="hover:text-white transition">Kebijakan Privasi</a>
-                <span>·</span>
-                <a href="{{ route('terms.conditions') }}" class="hover:text-white transition">Syarat & Ketentuan</a>
+                <a href="{{ route('privacy.policy.id') }}" class="hover:text-white transition">Kebijakan Privasi</a>
+                <span>•</span>
+                <a href="{{ route('terms.conditions.id') }}" class="hover:text-white transition">Syarat & Ketentuan</a>
                 <span>·</span>
                 <a href="{{ route('landing.id') }}" class="hover:text-white transition">Beranda</a>
             </div>

@@ -16,7 +16,7 @@
                 </h3>
                 <p id="cookieConsentDesc" class="cookie-consent-description">
                     Kami menggunakan cookie dan teknologi pelacakan untuk meningkatkan pengalaman Anda, menganalisis lalu lintas website, dan memahami kebutuhan Anda. Data Anda akan dilindungi sesuai 
-                    <a href="{{ route('privacy.policy') }}" class="cookie-link">Kebijakan Privasi</a> kami.
+                    <a href="{{ route('privacy.policy.id') }}" class="cookie-link">Kebijakan Privasi</a> kami.
                 </p>
                 <div class="cookie-options">
                     <label class="cookie-option">

@@ -1,81 +1,71 @@
 @php
-    $metrics = config('landing_metrics');
+    $currentLocale = app()->getLocale();
+    $isEnglish = $currentLocale === 'en';
 @endphp
 
-<!-- STATS INFOGRAPHIC: Magazine-Style Data Visualization -->
-<section class="magazine-section bg-gradient-to-br from-blue-50 to-white fade-in-up">
-    <!-- Section Title (Editorial Style) -->
-    <div class="text-center mb-8">
-        <h2 class="headline text-4xl text-gray-900 mb-3">
-            Melayani <span class="text-gradient">Berbagai Industri</span>
-        </h2>
-        <div class="w-16 h-1 bg-yellow-500 mx-auto"></div>
-    </div>
-    
-    <!-- Stats Grid - FOKUS KAPABILITAS PLATFORM -->
-    <div class="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
-        <!-- Stat Card 1 -->
-        <div class="magazine-card bg-white p-4">
-            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-trophy text-2xl text-blue-600"></i>
+<!-- Stats Section - Desktop Style -->
+<section class="py-16 px-4 bg-dark-bg-secondary" aria-label="{{ $isEnglish ? 'Bizmark.ID Statistics and Achievements' : 'Statistik dan Pencapaian Bizmark.ID' }}">
+    <div class="container mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            <!-- Stat 1 -->
+            <div class="stat-card text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold mb-2 text-white">10+</div>
+                <p class="text-sm md:text-lg text-gray-400">
+                    {{ $isEnglish ? 'Years Experience' : 'Tahun Pengalaman' }}
+                </p>
             </div>
-            <div class="text-4xl font-bold text-blue-600 mb-1">{{ $metrics['display']['experience_years'] }}</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">Tahun Pengalaman</div>
-            <div class="text-xs text-gray-500">
-                Sejak {{ $metrics['experience']['since_year'] }}, melayani berbagai industri
+            
+            <!-- Stat 2 -->
+            <div class="stat-card text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold mb-2 text-white">500+</div>
+                <p class="text-sm md:text-lg text-gray-400">
+                    {{ $isEnglish ? 'Clients Served' : 'Klien Terlayani' }}
+                </p>
             </div>
-        </div>
-        
-        <!-- Stat Card 2 -->
-        <div class="magazine-card bg-white p-4">
-            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-industry text-2xl text-green-600"></i>
+            
+            <!-- Stat 3 -->
+            <div class="stat-card text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold mb-2 text-white">1000+</div>
+                <p class="text-sm md:text-lg text-gray-400">
+                    {{ $isEnglish ? 'Permits Completed' : 'Perizinan Selesai' }}
+                </p>
             </div>
-            <div class="text-4xl font-bold text-green-600 mb-1">{{ $metrics['clients']['industries'] }}+</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">Sektor Industri</div>
-            <div class="text-xs text-gray-500">
-                Manufaktur, properti, F&B, dan lainnya
-            </div>
-        </div>
-        
-        <!-- Stat Card 3 (Featured - Full Width) -->
-        <div class="col-span-2 bg-gradient-to-r from-[#0077B5] to-[#005582] rounded-2xl p-4 text-white shadow-lg">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <div class="text-4xl font-bold mb-1">{{ $metrics['permits']['types_available'] }}+</div>
-                    <div class="text-sm font-medium opacity-90 mb-2">Jenis Layanan Perizinan</div>
-                    <div class="text-xs opacity-75">
-                        OSS, AMDAL, PBG, SLF, dan lainnya
-                    </div>
-                </div>
-                <div class="w-16 h-16 flex items-center justify-center">
-                    <i class="fas fa-file-certificate text-5xl opacity-20"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Stat Card 4 -->
-        <div class="magazine-card bg-white p-4">
-            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-bolt text-2xl text-yellow-600"></i>
-            </div>
-            <div class="text-4xl font-bold text-yellow-600 mb-1">{{ $metrics['display']['process_time'] }}</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">Waktu Proses</div>
-            <div class="text-xs text-gray-500">
-                Rata-rata untuk OSS
-            </div>
-        </div>
-        
-        <!-- Stat Card 5 -->
-        <div class="magazine-card bg-white p-4">
-            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                <i class="fas fa-desktop text-2xl text-blue-600"></i>
-            </div>
-            <div class="text-base font-bold text-blue-600 mb-1">{{ $metrics['display']['platform_uptime'] }}</div>
-            <div class="text-sm text-gray-600 font-medium mb-2">Portal Aktif</div>
-            <div class="text-xs text-gray-500">
-                Monitoring real-time kapanpun
+            
+            <!-- Stat 4 -->
+            <div class="stat-card text-center">
+                <div class="stat-number text-4xl md:text-5xl font-bold mb-2 text-white">98%</div>
+                <p class="text-sm md:text-lg text-gray-400">
+                    {{ $isEnglish ? 'Client Satisfaction' : 'Kepuasan Klien' }}
+                </p>
             </div>
         </div>
     </div>
 </section>
+
+<style>
+    .bg-dark-bg-secondary {
+        background: #1C1C1E;
+    }
+    
+    .stat-card {
+        padding: 1.5rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 122, 255, 0.2);
+    }
+    
+    .stat-number {
+        background: linear-gradient(135deg, #007AFF 0%, #34C759 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+</style>

@@ -2,6 +2,15 @@
 
 @section('content')
 
+<!-- Language Switcher (Fixed Top-Right) -->
+@include('mobile-landing.components.language-switcher')
+
+<!-- WhatsApp FAB (Fixed Bottom-Right) -->
+@include('mobile-landing.components.fab-whatsapp')
+
+<!-- AI Estimator Modal -->
+@include('mobile-landing.components.ai-estimator-modal')
+
 <!-- 1. COVER PAGE (Hero) -->
 @include('mobile-landing.sections.cover')
 
@@ -19,6 +28,9 @@
 
 <!-- 5. PHOTO ESSAY (Why Us) -->
 @include('mobile-landing.sections.why-us')
+
+<!-- 5.5 TESTIMONIALS (Social Proof) -->
+@include('mobile-landing.sections.testimonials')
 
 <!-- 6. BLOG/ARTICLES -->
 @include('mobile-landing.sections.blog')
