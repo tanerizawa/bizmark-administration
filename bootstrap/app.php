@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\DeviceDetection::class, // Public landing auto-redirect (FIRST)
             \App\Http\Middleware\DetectMobile::class, // Authenticated user mobile dashboard (AFTER)
-            \App\Http\Middleware\LogReconciliationRequests::class, // DEBUG reconciliation
+            \App\Http\Middleware\LogReconciliationRequests::class, // Debug reconciliation (only active when APP_DEBUG=true)
         ]);
         
         // Register middleware aliases

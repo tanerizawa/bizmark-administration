@@ -10,25 +10,30 @@ class LogReconciliationRequests
 {
     public function handle(Request $request, Closure $next)
     {
-        if ($request->is('reconciliations') || $request->is('reconciliations/*')) {
-            Log::info("=== RECONCILIATION REQUEST ===", [
-                'method' => $request->method(),
-                'url' => $request->fullUrl(),
-                'has_file' => $request->hasFile('bank_statement'),
-                'file_size' => $request->hasFile('bank_statement') ? $request->file('bank_statement')->getSize() : 0,
-                'all_inputs' => $request->except(['_token', 'bank_statement']),
-                'ip' => $request->ip(),
-                'user_id' => auth()->id(),
-            ]);
+        // Only log in debug mode to avoid performance issues and log bloat in production
+        if (config('app.debug')) {
+            if ($request->is('reconciliations') || $request->is('reconciliations/*')) {
+                Log::info("=== RECONCILIATION REQUEST ===", [
+                    'method' => $request->method(),
+                    'url' => $request->fullUrl(),
+                    'has_file' => $request->hasFile('bank_statement'),
+                    'file_size' => $request->hasFile('bank_statement') ? $request->file('bank_statement')->getSize() : 0,
+                    'all_inputs' => $request->except(['_token', 'bank_statement']),
+                    'ip' => $request->ip(),
+                    'user_id' => auth()->id(),
+                ]);
+            }
         }
 
         $response = $next($request);
 
-        if ($request->is('reconciliations') || $request->is('reconciliations/*')) {
-            Log::info("=== RECONCILIATION RESPONSE ===", [
-                'status' => $response->getStatusCode(),
-                'redirect_to' => $response->isRedirect() ? $response->headers->get('Location') : null,
-            ]);
+        if (config('app.debug')) {
+            if ($request->is('reconciliations') || $request->is('reconciliations/*')) {
+                Log::info("=== RECONCILIATION RESPONSE ===", [
+                    'status' => $response->getStatusCode(),
+                    'redirect_to' => $response->isRedirect() ? $response->headers->get('Location') : null,
+                ]);
+            }
         }
 
         return $response;
