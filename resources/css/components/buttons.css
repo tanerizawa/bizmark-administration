@@ -1,0 +1,425 @@
+/**
+ * ===================================================================
+ * BUTTONS - Neuroscience-Based Component
+ * ===================================================================
+ *
+ * Research-backed button design for optimal interaction
+ * - Soft colors reduce visual stress
+ * - Adequate touch targets (44px minimum)
+ * - Smooth transitions feel natural
+ * - Clear hierarchy reduces decision fatigue
+ *
+ * @version 1.0.0
+ * @date 2026-01-09
+ */
+
+/* ============================================
+ * BASE BUTTON STYLES
+ * ============================================ */
+
+.btn {
+  /* Display & Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  /* Sizing - Accessibility: minimum touch target */
+  padding: var(--button-padding-y) var(--button-padding-x);
+  min-height: var(--touch-target); /* 44px iOS minimum */
+  min-width: 88px; /* Material Design minimum */
+
+  /* Typography */
+  font-family: var(--font-sans);
+  font-size: var(--button-size);
+  font-weight: var(--button-weight);
+  line-height: var(--button-leading);
+  letter-spacing: var(--button-tracking);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  /* Appearance */
+  background-color: transparent;
+  border: 2px solid transparent;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  user-select: none;
+
+  /* Transitions - Neuroscience: 250ms feels instant yet smooth */
+  transition: all var(--duration-base) var(--ease-out);
+
+  /* States */
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--neuro-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+/* ============================================
+ * PRIMARY BUTTON - Main Call-to-Action
+ * ============================================ */
+
+.btn-primary {
+  /* Neuroscience: Soft periwinkle instead of harsh blue */
+  background: linear-gradient(135deg, var(--neuro-primary) 0%, var(--neuro-primary-dark) 100%);
+  color: var(--neuro-primary-contrast);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+
+  &:hover:not(:disabled) {
+    /* Subtle lift + shadow increase (not transform to avoid motion sickness) */
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.05);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+    box-shadow: var(--shadow-xs);
+  }
+
+  &:focus-visible {
+    box-shadow: var(--glow-primary);
+  }
+}
+
+/* ============================================
+ * SECONDARY BUTTON - Alternative Action
+ * ============================================ */
+
+.btn-secondary {
+  background: transparent;
+  color: var(--neuro-primary);
+  border-color: var(--neuro-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--neuro-primary-muted);
+    border-color: var(--neuro-primary-dark);
+    color: var(--neuro-primary-dark);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--neuro-primary-light);
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    box-shadow: var(--glow-primary);
+  }
+}
+
+/* ============================================
+ * GHOST BUTTON - Low Emphasis
+ * ============================================ */
+
+.btn-ghost {
+  background: transparent;
+  color: var(--neuro-primary);
+  border-color: transparent;
+
+  &:hover:not(:disabled) {
+    background: var(--neuro-primary-muted);
+    color: var(--neuro-primary-dark);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--neuro-primary-light);
+    transform: scale(0.98);
+  }
+}
+
+/* ============================================
+ * TEXT BUTTON - Minimal Emphasis
+ * ============================================ */
+
+.btn-text {
+  padding: var(--space-2) var(--space-3);
+  min-height: auto;
+  min-width: auto;
+  background: transparent;
+  color: var(--neuro-primary);
+  border: none;
+
+  &:hover:not(:disabled) {
+    color: var(--neuro-primary-dark);
+    text-decoration: underline;
+  }
+
+  &:active:not(:disabled) {
+    color: var(--neuro-primary-dark);
+  }
+}
+
+/* ============================================
+ * FUNCTIONAL VARIANTS
+ * ============================================ */
+
+/* Success Button */
+.btn-success {
+  background: linear-gradient(135deg, var(--neuro-success) 0%, var(--neuro-success-dark) 100%);
+  color: var(--neuro-success-contrast);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+
+  &:hover:not(:disabled) {
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.05);
+  }
+
+  &:focus-visible {
+    box-shadow: var(--glow-success);
+  }
+}
+
+/* Warning Button */
+.btn-warning {
+  background: linear-gradient(135deg, var(--neuro-warning) 0%, var(--neuro-warning-dark) 100%);
+  color: var(--neuro-warning-contrast);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+
+  &:hover:not(:disabled) {
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.05);
+  }
+}
+
+/* Error/Danger Button */
+.btn-error,
+.btn-danger {
+  background: linear-gradient(135deg, var(--neuro-error) 0%, var(--neuro-error-dark) 100%);
+  color: var(--neuro-error-contrast);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+
+  &:hover:not(:disabled) {
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.05);
+  }
+
+  &:focus-visible {
+    box-shadow: var(--glow-error);
+  }
+}
+
+/* ============================================
+ * SIZE VARIANTS
+ * ============================================ */
+
+/* Small Button */
+.btn-sm {
+  padding: var(--button-padding-sm-y) var(--button-padding-sm-x);
+  font-size: var(--text-sm);
+  min-height: 36px;
+  min-width: 72px;
+  border-radius: calc(var(--button-radius) - 2px);
+}
+
+/* Large Button */
+.btn-lg {
+  padding: var(--button-padding-lg-y) var(--button-padding-lg-x);
+  font-size: var(--text-lg);
+  min-height: 56px;
+  min-width: 120px;
+  border-radius: calc(var(--button-radius) + 2px);
+}
+
+/* Extra Small Button (use sparingly) */
+.btn-xs {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  min-height: 28px;
+  min-width: 60px;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================
+ * FULL WIDTH BUTTON
+ * ============================================ */
+
+.btn-block {
+  display: flex;
+  width: 100%;
+  min-width: 100%;
+}
+
+/* ============================================
+ * ICON BUTTONS
+ * ============================================ */
+
+.btn-icon {
+  padding: var(--space-3);
+  min-width: var(--touch-target);
+  aspect-ratio: 1;
+  border-radius: var(--radius-full);
+
+  /* Remove gap for icon-only buttons */
+  &:empty {
+    gap: 0;
+  }
+}
+
+.btn-icon-sm {
+  padding: var(--space-2);
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.btn-icon-lg {
+  padding: var(--space-4);
+  min-width: 56px;
+  min-height: 56px;
+}
+
+/* ============================================
+ * LOADING STATE
+ * ============================================ */
+
+.btn-loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    top: 50%;
+    left: 50%;
+    margin-left: -0.5em;
+    margin-top: -0.5em;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin var(--duration-slower) linear infinite;
+  }
+}
+
+/* Dark variant loading spinner */
+.btn-loading.btn-primary::after,
+.btn-loading.btn-success::after,
+.btn-loading.btn-warning::after,
+.btn-loading.btn-error::after,
+.btn-loading.btn-danger::after {
+  border-color: white;
+  border-top-color: transparent;
+}
+
+/* ============================================
+ * BUTTON GROUPS
+ * ============================================ */
+
+.btn-group {
+  display: inline-flex;
+  gap: var(--space-2);
+
+  /* Neuroscience: Max 3 buttons to reduce decision fatigue */
+  &:has(> :nth-child(4)) {
+    border: 2px dashed var(--neuro-warning);
+    padding: var(--space-2);
+    border-radius: var(--radius-base);
+
+    &::after {
+      content: '⚠️ Too many buttons (max 3 for cognitive load)';
+      position: absolute;
+      bottom: -24px;
+      left: 0;
+      font-size: var(--text-xs);
+      color: var(--neuro-warning);
+    }
+  }
+}
+
+/* Connected button group (no gaps) */
+.btn-group-connected {
+  display: inline-flex;
+  gap: 0;
+
+  > .btn {
+    border-radius: 0;
+    border-right-width: 1px;
+
+    &:first-child {
+      border-top-left-radius: var(--button-radius);
+      border-bottom-left-radius: var(--button-radius);
+    }
+
+    &:last-child {
+      border-top-right-radius: var(--button-radius);
+      border-bottom-right-radius: var(--button-radius);
+      border-right-width: 2px;
+    }
+
+    &:focus {
+      z-index: 1;
+    }
+  }
+}
+
+/* ============================================
+ * ACCESSIBILITY HELPERS
+ * ============================================ */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn {
+    border-width: 3px;
+  }
+
+  .btn-primary,
+  .btn-success,
+  .btn-warning,
+  .btn-error,
+  .btn-danger {
+    border: 3px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn:active {
+    transform: none;
+  }
+
+  .btn-loading::after {
+    animation: none;
+    border-top-color: currentColor;
+  }
+}
+
+/* ============================================
+ * DARK MODE ADJUSTMENTS
+ * ============================================ */
+
+.dark-mode .btn-secondary {
+  border-color: var(--neuro-primary-light);
+  color: var(--neuro-primary-light);
+
+  &:hover:not(:disabled) {
+    background: rgba(139, 159, 216, 0.15);
+    border-color: var(--neuro-primary);
+    color: var(--neuro-primary);
+  }
+}
+
+.dark-mode .btn-ghost {
+  &:hover:not(:disabled) {
+    background: rgba(139, 159, 216, 0.15);
+  }
+}
