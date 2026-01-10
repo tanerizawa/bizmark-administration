@@ -12,57 +12,82 @@
     };
 @endphp
 
-<!-- Services Section -->
-<section id="services" class="py-12 lg:py-20 bg-slate-50">
-    <div class="container-wide space-y-8">
-        <div class="max-w-3xl text-center mx-auto space-y-4" data-aos="fade-up">
-            <div class="pill pill-brand mx-auto justify-center">
-                Layanan Bizmark.ID
+<!-- Services Section - Neuroscience-Based Design -->
+<section id="services" class="py-16 lg:py-24 bg-white">
+    <div class="container-wide space-y-12">
+        {{-- Section Header --}}
+        <div class="max-w-3xl mx-auto space-y-6 text-center" data-aos="fade-up" data-aos-duration="800">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#5B8DBE]/10 border border-[#5B8DBE]/20">
+                <span class="text-sm font-semibold text-[#5B8DBE]">Layanan Bizmark.ID</span>
             </div>
-            <h2 class="text-3xl lg:text-4xl font-semibold text-slate-900 leading-tight">
+            <h2 class="text-4xl lg:text-5xl font-black leading-tight text-[#1A1410]" style="letter-spacing: -0.02em;">
                 Layanan perizinan end-to-end agar operasional tetap jalan tanpa hambatan.
             </h2>
-            <p class="text-lg text-slate-500">
+            <p class="text-lg text-[#6B5D52] leading-relaxed font-light max-w-2xl mx-auto">
                 Mulai dari desk study sampai izin terbit, tiap layanan punya owner, dokumentasi, dan pelacakan jelas.
             </p>
         </div>
         
-        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-            @forelse ($services as $slug => $service)
+        {{-- Services Grid - Reduced from 4 to 3 columns --}}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @forelse ($services->take(6) as $slug => $service)
                 @php
-                    $iconColor = $service['color'] ?? '#0077B5';
+                    $iconColor = $service['color'] ?? '#5B8DBE';
+                    // Map old colors to neuroscience palette
+                    $colorMap = [
+                        '#0077B5' => '#5B8DBE',
+                        '#F97316' => '#E8956F',
+                        '#10B981' => '#7CB342',
+                    ];
+                    $mappedColor = $colorMap[$iconColor] ?? $iconColor;
                 @endphp
-                <article class="card h-full flex flex-col justify-between" data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}" style="--icon-color: {{ $iconColor }}; --icon-sheen: {{ $colorRgba($iconColor, 0.18) }}; --icon-border: {{ $colorRgba($iconColor, 0.35) }};">
-                    <div class="space-y-4">
-                        <div class="icon-ring">
-                            <i class="fas {{ $service['icon'] }} text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-slate-900">{{ $service['title'] }}</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">
+                <article class="group relative bg-white rounded-2xl border border-[#5B8DBE]/10 p-8 transition-all duration-300 hover:shadow-soft-lg hover:border-[#5B8DBE]/30 hover:translate-y-[-4px]" 
+                         data-aos="fade-up" 
+                         data-aos-delay="{{ $loop->index * 80 }}"
+                         data-aos-duration="800">
+                    {{-- Top Border Accent --}}
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#5B8DBE] to-[#E8956F] rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {{-- Icon --}}
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[{{ $mappedColor }}]/15 to-[{{ $mappedColor }}]/5 border border-[{{ $mappedColor }}]/20 flex items-center justify-center mb-6 group-hover:shadow-soft transition-all duration-300">
+                        <i class="fas {{ $service['icon'] }} text-2xl text-[{{ $mappedColor }}]"></i>
+                    </div>
+
+                    {{-- Content --}}
+                    <div class="space-y-4 mb-6">
+                        <h3 class="text-xl font-bold text-[#1A1410] group-hover:text-[#5B8DBE] transition-colors duration-300">
+                            {{ $service['title'] }}
+                        </h3>
+                        <p class="text-sm text-[#6B5D52] leading-relaxed">
                             {{ $service['short_description'] }}
                         </p>
                     </div>
-                    <div class="flex items-center justify-between pt-6 mt-6 border-t border-slate-100 text-xs uppercase tracking-[0.35em] text-slate-400">
-                        <span>Detail</span>
-                        <a href="{{ route('services.show', $service['slug']) }}" class="inline-flex items-center gap-2 text-slate-900 font-semibold hover:gap-3 transition-all">
-                            Buka
-                            <i class="fas fa-arrow-right text-[0.65rem]"></i>
+
+                    {{-- Footer Link --}}
+                    <div class="pt-6 border-t border-[#5B8DBE]/10">
+                        <a href="{{ route('services.show', $service['slug']) }}" 
+                           class="inline-flex items-center gap-2 text-[#5B8DBE] font-semibold text-sm hover:gap-3 transition-all duration-300 group/link">
+                            <span>Pelajari Lebih Lanjut</span>
+                            <i class="fas fa-arrow-right text-xs group-hover/link:translate-x-1 transition-transform duration-300"></i>
                         </a>
                     </div>
                 </article>
             @empty
-                <p class="text-center text-slate-500 col-span-full">Layanan sedang diperbarui.</p>
+                <p class="text-center text-[#6B5D52] col-span-full py-12">Layanan sedang diperbarui.</p>
             @endforelse
         </div>
 
-        <div class="rounded-3xl border border-slate-200 bg-white px-6 py-5 flex flex-wrap items-center justify-between gap-5">
+        {{-- CTA Card - Directory --}}
+        <div class="rounded-2xl border border-[#5B8DBE]/10 bg-gradient-to-r from-[#5B8DBE]/5 to-[#E8956F]/5 px-8 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-[#5B8DBE]/30 transition-all duration-300">
             <div>
-                <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Directory</p>
-                <p class="text-base font-semibold text-slate-900">Lihat daftar lengkap layanan beserta studi kasus.</p>
+                <p class="text-xs font-semibold text-[#9B8B7E] uppercase tracking-wider mb-2">Directory Lengkap</p>
+                <p class="text-lg font-bold text-[#1A1410]">Lihat daftar lengkap layanan beserta studi kasus.</p>
             </div>
-            <a href="{{ route('services.index.id') }}" class="btn btn-secondary" data-cta="services_directory">
-                Jelajahi
-                <i class="fas fa-arrow-right text-xs"></i>
+            <a href="{{ route('services.index.id') }}" 
+               class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#5B8DBE] to-[#3A5D82] text-white rounded-full font-semibold hover:shadow-soft-lg transition-all duration-300 hover:translate-y-[-2px] whitespace-nowrap"
+               data-cta="services_directory">
+                <span>Jelajahi Semua</span>
+                <i class="fas fa-arrow-right text-sm"></i>
             </a>
         </div>
     </div>

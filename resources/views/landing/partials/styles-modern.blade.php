@@ -59,22 +59,23 @@
     }
     
     :root {
-        /* Premium Color Palette - LinkedIn Official Blue */
-        --primary: #0077B5;
-        --primary-dark: #005582;
-        --primary-darker: #003d5c;
-        --secondary: #F97316;
-        --secondary-dark: #EA580C;
-        --accent: #10B981;
+        /* Neuroscience-Based Soft Color Palette */
+        --primary: #5B8DBE;        /* Serene Blue */
+        --primary-dark: #3A5D82;
+        --primary-darker: #1A2D46;
+        --secondary: #E8956F;      /* Warm Coral */
+        --secondary-dark: #C96535;
+        --accent: #7CB342;         /* Healing Green */
         
-        /* Modern Grays */
-        --gray-50: #F9FAFB;
-        --gray-100: #F3F4F6;
-        --gray-200: #E5E7EB;
-        --gray-600: #4B5563;
-        --gray-700: #374151;
-        --gray-800: #1F2937;
-        --gray-900: #111827;
+        /* Warm-Tinted Neutral Grays */
+        --gray-50: #FDFBF8;        /* Soft Cream */
+        --gray-100: #F9F7F4;
+        --gray-200: #F5F3F8;       /* Pale Lavender */
+        --gray-300: #F0F4ED;       /* Soft Sage */
+        --gray-600: #6B5D52;       /* Warm Gray */
+        --gray-700: #4A3F38;
+        --gray-800: #2D2420;
+        --gray-900: #1A1410;       /* Dark Charcoal */
         
         /* Spacing - Generous for modern look */
         --section-y: 120px;
@@ -257,15 +258,15 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #0077B5, #005582);
+    background: linear-gradient(135deg, #5B8DBE, #3A5D82);
     color: white;
-    border: 1px solid rgba(0, 119, 181, 0.65);
-    box-shadow: 0 12px 28px -18px rgba(0, 119, 181, 0.8);
+    border: 1px solid rgba(91, 141, 190, 0.65);
+    box-shadow: 0 12px 28px -18px rgba(91, 141, 190, 0.6);
 }
 
 .btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 18px 32px -18px rgba(0, 85, 130, 0.9);
+    box-shadow: 0 18px 32px -18px rgba(58, 93, 130, 0.7);
 }
 
 .btn-secondary {
@@ -448,8 +449,8 @@ body {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #0077B5, #005582);
-        box-shadow: 0 10px 25px rgba(0, 119, 181, 0.25);
+        background: linear-gradient(135deg, #5B8DBE, #3A5D82);
+        box-shadow: 0 10px 25px rgba(91, 141, 190, 0.25);
         position: relative;
         z-index: 1;
     }
@@ -545,14 +546,14 @@ body {
         width: 3.5rem;
         height: 3.5rem;
         border-radius: 9999px;
-        background: linear-gradient(135deg, #0077B5, #005582);
+        background: linear-gradient(135deg, #5B8DBE, #3A5D82);
         color: white;
         font-weight: 700;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-size: 1.25rem;
-        box-shadow: 0 10px 20px rgba(0, 119, 181, 0.3);
+        box-shadow: 0 10px 20px rgba(91, 141, 190, 0.3);
     }
 
     .testimonial-verified {
@@ -595,9 +596,9 @@ body {
     }
 
     .carousel-nav:hover {
-        background: linear-gradient(135deg, #0077B5, #005582);
+        background: linear-gradient(135deg, #5B8DBE, #3A5D82);
         color: white;
-        border-color: #0077B5;
+        border-color: #5B8DBE;
         transform: translateY(-50%) scale(1.05);
     }
 
@@ -684,26 +685,302 @@ body {
         margin-bottom: 0;
     }
     
-    /* Modern Navbar */
+    /* Modern Navbar - Neuroscience Soft Colors */
     .navbar {
         position: fixed;
         top: 0;
         width: 100%;
-        background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: linear-gradient(135deg, #5B8DBE 0%, #7BA3C0 100%);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         z-index: 1000;
         transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
                     box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                     border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
     
     .navbar.scrolled {
-        background: linear-gradient(135deg, #005582 0%, #003d5c 100%);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+        background: linear-gradient(135deg, #3A5D82 0%, #5B8DBE 100%);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Navigation Links - Neuroscience Soft Hover Effects */
+    .nav-link {
+        position: relative;
+        font-weight: 500;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        color: rgba(255, 255, 255, 0.9);
+        transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .nav-link:hover {
+        color: white;
+    }
+    
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.5);
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .nav-link:hover::after {
+        width: 100%;
+    }
+    
+    .nav-link.active {
+        color: white;
+    }
+    
+    .nav-link.active::after {
+        width: 100%;
+        background: white;
+    }
+    
+    /* ============================================
+       HERO SECTION - NEUROSCIENCE OPTIMIZED
+       ============================================ */
+    
+    #home {
+        background: linear-gradient(to bottom, #FDFBF8, #FDFBF8, #F5F3F8);
+    }
+    
+    #home h1 {
+        font-size: clamp(2.5rem, 5vw, 3.75rem);
+        font-weight: 900;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: #1A1410;
+    }
+    
+    #home > div > div > div:first-child > div:nth-child(3) p {
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        line-height: 1.7;
+        color: #6B5D52;
+        font-weight: 300;
+    }
+    
+    #home .metric-card {
+        text-align: center;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        background: rgba(91, 141, 190, 0.05);
+        border: 1px solid rgba(91, 141, 190, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    #home .metric-card:hover {
+        background: rgba(91, 141, 190, 0.08);
+        border-color: rgba(91, 141, 190, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    #home .metric-card p:first-child {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 900;
+        margin: 0;
+        color: #5B8DBE;
+    }
+    
+    #home .metric-card p:last-child {
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin: 0.5rem 0 0 0;
+        color: #6B5D52;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    /* Trust Signals Bar */
+    #home + section {
+        background: white;
+        border-color: rgba(91, 141, 190, 0.1);
+    }
+    
+    #home + section > div > div > div {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    #home + section > div > div > div:hover {
+        transform: translateY(-4px);
+    }
+    
+    /* ============================================
+       SERVICES SECTION - NEUROSCIENCE OPTIMIZED
+       ============================================ */
+    
+    #services {
+        background: white;
+    }
+    
+    #services h2 {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        font-weight: 900;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: #1A1410;
+    }
+    
+    #services > div > div:first-child p {
+        font-size: clamp(1rem, 2vw, 1.125rem);
+        line-height: 1.7;
+        color: #6B5D52;
+        font-weight: 300;
+    }
+    
+    /* Service Cards - Neuroscience Design */
+    #services article {
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid rgba(91, 141, 190, 0.1);
+        padding: 2rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    #services article:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(91, 141, 190, 0.15);
+        border-color: rgba(91, 141, 190, 0.3);
+    }
+    
+    #services article > div:first-child {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(91, 141, 190, 0.1);
+        border: 1px solid rgba(91, 141, 190, 0.2);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    #services article:hover > div:first-child {
+        background: linear-gradient(135deg, #5B8DBE, #3A5D82);
+        color: white;
+        border-color: #5B8DBE;
+        box-shadow: 0 8px 20px rgba(91, 141, 190, 0.3);
+    }
+    
+    #services article h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1A1410;
+        margin-bottom: 1rem;
+    }
+    
+    #services article p {
+        font-size: 0.95rem;
+        color: #6B5D52;
+        line-height: 1.6;
+    }
+    
+    /* ============================================
+       PROCESS SECTION - NEUROSCIENCE OPTIMIZED
+       ============================================ */
+    
+    #process {
+        background: white;
+    }
+    
+    #process h2 {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        font-weight: 900;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: #1A1410;
+    }
+    
+    #process > div > div:first-child p {
+        font-size: clamp(1rem, 2vw, 1.125rem);
+        line-height: 1.7;
+        color: #6B5D52;
+        font-weight: 300;
+    }
+    
+    /* Process Steps - Timeline Design */
+    #process article {
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid rgba(91, 141, 190, 0.1);
+        padding: 2rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    #process article:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(91, 141, 190, 0.15);
+        border-color: rgba(91, 141, 190, 0.3);
+    }
+    
+    /* Step Number Circle */
+    #process article .flex-shrink-0 .w-12 {
+        background: linear-gradient(135deg, #5B8DBE, #3A5D82);
+        box-shadow: 0 8px 20px rgba(91, 141, 190, 0.3);
+    }
+    
+    /* Connector Line */
+    #process article .w-1 {
+        background: linear-gradient(to bottom, rgba(91, 141, 190, 0.3), rgba(91, 141, 190, 0.1));
+    }
+    
+    /* Step Icon */
+    #process article > div > div:nth-child(2) {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(91, 141, 190, 0.1);
+        border: 1px solid rgba(91, 141, 190, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    #process article:hover > div > div:nth-child(2) {
+        background: linear-gradient(135deg, #5B8DBE, #3A5D82);
+        color: white;
+        border-color: #5B8DBE;
+        box-shadow: 0 8px 20px rgba(91, 141, 190, 0.3);
+    }
+    
+    #process article h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1A1410;
+        margin-bottom: 0.75rem;
+    }
+    
+    #process article p {
+        font-size: 0.95rem;
+        color: #6B5D52;
+        line-height: 1.6;
+    }
+    
+    /* Process Image */
+    #process figure {
+        border-radius: 1rem;
+        border: 1px solid rgba(91, 141, 190, 0.1);
+        background: #FDFBF8;
+        box-shadow: 0 20px 40px rgba(91, 141, 190, 0.1);
+    }
+    
+    #process figcaption {
+        color: #9B8B7E;
+        border-color: rgba(91, 141, 190, 0.1);
     }
     
     /* Service Cards - Modern Grid */
@@ -815,7 +1092,7 @@ body {
         transform: translateX(100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
-        background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
+        background: linear-gradient(135deg, #5B8DBE 0%, #3A5D82 100%);
         overflow-y: auto;
     }
     
@@ -927,7 +1204,7 @@ body {
     }
     
     .fab-phone {
-        background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
+        background: linear-gradient(135deg, #5B8DBE 0%, #3A5D82 100%);
     }
     
     .fab-back-to-top {
