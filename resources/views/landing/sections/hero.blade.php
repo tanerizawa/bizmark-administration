@@ -2,89 +2,89 @@
     $metrics = config('landing_metrics');
 @endphp
 
-{{-- Hero Section --}}
-<section id="home" class="relative overflow-hidden bg-gradient-to-b from-white via-white to-slate-50 pt-28 pb-24 lg:pt-36 lg:pb-28">
-    <div class="absolute inset-0 pointer-events-none">
-        <div class="absolute -top-24 right-6 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[75%] h-56 bg-gradient-to-t from-primary/5 via-white to-transparent"></div>
-        <div class="absolute -bottom-32 -right-16 w-72 h-72 bg-secondary/10 rounded-full blur-3xl"></div>
+{{-- Hero Section - Neuroscience-Based Design --}}
+<section id="home" class="relative overflow-hidden pt-32 pb-20 lg:pt-40 lg:pb-32">
+    {{-- Background Gradient - Soft Cream --}}
+    <div class="absolute inset-0 bg-gradient-to-b from-[#FDFBF8] via-[#FDFBF8] to-[#F5F3F8] pointer-events-none"></div>
+    
+    {{-- Subtle Background Elements --}}
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        {{-- Soft Blue Glow (Top Right) --}}
+        <div class="absolute -top-32 right-0 w-96 h-96 bg-[#5B8DBE]/8 rounded-full blur-3xl"></div>
+        {{-- Soft Coral Glow (Bottom Left) --}}
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-[#E8956F]/8 rounded-full blur-3xl"></div>
+        {{-- Soft Green Glow (Center) --}}
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[#7CB342]/5 rounded-full blur-3xl"></div>
     </div>
 
     <div class="container-wide relative z-10">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="space-y-5" data-aos="fade-up">
-                <span class="pill pill-brand">
-                    Bizmark.ID
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    Permit Bureau
-                </span>
-                <div class="space-y-5">
-                    <h1 class="text-4xl lg:text-[3.4rem] font-semibold leading-tight text-slate-900">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            {{-- Left Column: Content --}}
+            <div class="space-y-8" data-aos="fade-up" data-aos-duration="800">
+                {{-- Pill Badge --}}
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#5B8DBE]/10 border border-[#5B8DBE]/20">
+                    <span class="text-sm font-semibold text-[#5B8DBE]">Bizmark.ID</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#7CB342]"></span>
+                    <span class="text-sm font-semibold text-[#5B8DBE]">Permit Bureau</span>
+                </div>
+
+                {{-- Main Heading --}}
+                <div class="space-y-6">
+                    <h1 class="text-5xl lg:text-6xl font-black leading-tight text-[#1A1410]" style="letter-spacing: -0.02em;">
                         Arsip, regulasi, dan koordinasi perizinan berpadu dalam satu ekosistem.
                     </h1>
-                    <p class="text-lg text-slate-500 leading-relaxed max-w-2xl">
+                    <p class="text-xl text-[#6B5D52] leading-relaxed max-w-2xl font-light">
                         Kami mengelola LB3, AMDAL, UKL-UPL, OSS, dan legalitas lain dengan SOP terdokumentasi sehingga pimpinan selalu punya visibilitas penuh.
                     </p>
                 </div>
-                <div class="grid grid-cols-3 gap-6" role="list" aria-label="Ringkasan capaian Bizmark.ID">
+
+                {{-- Metrics - Reduced from 3 to 2 for cognitive load --}}
+                <div class="grid grid-cols-2 gap-8 pt-4" role="list" aria-label="Ringkasan capaian Bizmark.ID">
                     <div class="metric-card" role="listitem">
-                        <p class="metric-value">{{ $metrics['projects']['completed'] }}</p>
-                        <p class="metric-label">Project</p>
+                        <p class="text-4xl font-black text-[#5B8DBE]">{{ $metrics['projects']['completed'] }}</p>
+                        <p class="text-sm font-semibold text-[#6B5D52] mt-2">Project Selesai</p>
                     </div>
                     <div class="metric-card" role="listitem">
-                        <p class="metric-value">{{ $metrics['display']['sla_rate'] }}</p>
-                        <p class="metric-label">SLA Tepat</p>
-                    </div>
-                    <div class="metric-card" role="listitem">
-                        <p class="metric-value">{{ $metrics['coverage']['provinces'] }}</p>
-                        <p class="metric-label">Provinsi</p>
+                        <p class="text-4xl font-black text-[#7CB342]">{{ $metrics['display']['sla_rate'] }}</p>
+                        <p class="text-sm font-semibold text-[#6B5D52] mt-2">SLA On-Time</p>
                     </div>
                 </div>
-                {{-- Primary & Secondary CTAs --}}
-                <div class="space-y-4">
+
+                {{-- CTA Buttons - Simplified --}}
+                <div class="space-y-4 pt-4">
                     <div class="flex items-center gap-4 flex-wrap">
+                        {{-- Primary CTA --}}
                         <a href="{{ route('landing.service-inquiry.create') }}"
-                           class="btn btn-primary group relative"
+                           class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#5B8DBE] to-[#3A5D82] text-white rounded-full font-semibold hover:shadow-lg transition-all duration-300 hover:translate-y-[-2px]"
                            data-cta="hero_ai_analysis"
                            onclick="trackEvent('CTA', 'click', 'hero_ai_analysis_primary')">
-                            <i class="fas fa-robot text-base"></i>
+                            <i class="fas fa-robot text-lg"></i>
                             <span>Analisis Izin Anda</span>
-                            <span class="absolute -top-2 -right-2 px-2 py-0.5 bg-yellow-400 text-[#0077B5] text-[10px] font-bold rounded-full shadow-lg animate-pulse">BARU</span>
-                            <i class="fas fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            <i class="fas fa-arrow-right text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </a>
+                        {{-- Secondary CTA --}}
                         <a href="#services"
-                           class="btn btn-secondary"
+                           class="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#5B8DBE] rounded-full font-semibold border-2 border-[#5B8DBE]/20 hover:border-[#5B8DBE]/50 hover:bg-[#5B8DBE]/5 transition-all duration-300"
                            data-cta="hero_services"
                            onclick="trackEvent('CTA', 'click', 'hero_services_secondary')">
                             <span>Lihat Layanan</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </a>
-                        <a href="{{ route('career.index') }}"
-                           class="btn btn-outline"
-                           data-cta="hero_career"
-                           onclick="trackEvent('CTA', 'click', 'hero_career_tertiary')">
-                            <i class="fas fa-briefcase text-xs"></i>
-                            <span>Karir</span>
+                            <i class="fas fa-chevron-down text-sm"></i>
                         </a>
                     </div>
-                    <div class="flex items-center gap-3 text-sm text-slate-500">
-                        <div class="flex items-center gap-2">
+
+                    {{-- Social Proof --}}
+                    <div class="flex items-center gap-4 text-sm text-[#6B5D52] pt-4">
+                        <div class="flex items-center gap-3">
                             <div class="flex -space-x-2">
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white flex items-center justify-center text-xs text-white font-semibold">
-                                    A
-                                </div>
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 border-2 border-white flex items-center justify-center text-xs text-white font-semibold">
-                                    B
-                                </div>
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white flex items-center justify-center text-xs text-white font-semibold">
-                                    C
-                                </div>
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#5B8DBE] to-[#3A5D82] border-2 border-white flex items-center justify-center text-xs text-white font-semibold">A</div>
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#E8956F] to-[#C96535] border-2 border-white flex items-center justify-center text-xs text-white font-semibold">B</div>
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#7CB342] to-[#5A8328] border-2 border-white flex items-center justify-center text-xs text-white font-semibold">C</div>
                             </div>
-                            <span class="font-medium text-slate-700">{{ $metrics['projects']['active_this_month'] }}+ klien aktif bulan ini</span>
+                            <span class="font-medium text-[#1A1410]">{{ $metrics['projects']['active_this_month'] }}+ klien aktif bulan ini</span>
                         </div>
-                        <span class="text-slate-300">•</span>
+                        <span class="text-[#9B8B7E]">•</span>
                         <a href="tel:{{ str_replace(' ', '', $metrics['contact']['phone']) }}" 
-                           class="hover:text-primary transition font-medium"
+                           class="hover:text-[#5B8DBE] transition font-semibold"
                            onclick="trackEvent('Engagement', 'phone_click', 'hero_phone')">
                             {{ $metrics['contact']['phone_display'] }}
                         </a>
@@ -92,8 +92,9 @@
                 </div>
             </div>
 
-            <div class="relative" data-aos="fade-left" data-aos-delay="120">
-                <div class="rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_35px_120px_rgba(15,23,42,0.15)] overflow-hidden">
+            {{-- Right Column: Image --}}
+            <div class="relative" data-aos="fade-left" data-aos-delay="200" data-aos-duration="800">
+                <div class="rounded-3xl border border-[#5B8DBE]/10 bg-white shadow-soft-xl overflow-hidden">
                     <picture>
                         <source srcset="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp 800w,
                                         https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200&fm=webp 1200w,
@@ -108,21 +109,22 @@
                         <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1400"
                              alt="Tim konsultan Bizmark.ID sedang membahas kepatuhan"
                              class="w-full h-full object-cover"
-                             loading="eager"
+                             loading="lazy"
                              decoding="async"
-                             fetchpriority="high"
                              width="560"
                              height="560">
                     </picture>
                 </div>
-                <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] rounded-3xl bg-white shadow-xl border border-gray-100 px-6 py-5 flex flex-wrap gap-4 items-center justify-between">
+
+                {{-- Info Card - Floating --}}
+                <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[95%] rounded-2xl bg-white shadow-soft-lg border border-[#5B8DBE]/10 px-6 py-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Izin Utama</p>
-                        <p class="text-lg font-semibold text-slate-900">AMDAL • UKL-UPL • OSS</p>
+                        <p class="text-xs font-semibold text-[#9B8B7E] uppercase tracking-wider">Izin Utama</p>
+                        <p class="text-base font-bold text-[#1A1410] mt-1">AMDAL • UKL-UPL • OSS</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Progress</p>
-                        <p class="text-xl font-semibold text-green-600">89% selesai</p>
+                        <p class="text-xs font-semibold text-[#9B8B7E] uppercase tracking-wider">Progress</p>
+                        <p class="text-lg font-bold text-[#7CB342] mt-1">89% selesai</p>
                     </div>
                 </div>
             </div>
@@ -130,69 +132,59 @@
     </div>
 </section>
 
-{{-- Trust Signals Bar --}}
-<section class="py-8 border-y border-slate-100 bg-white">
+{{-- Trust Signals Bar - Neuroscience Soft Colors --}}
+<section class="py-12 border-y border-[#5B8DBE]/10 bg-white">
     <div class="container-wide">
-        <div class="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-sm" data-aos="fade-up">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-6" data-aos="fade-up" data-aos-duration="800">
             {{-- Years of Experience --}}
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#5B8DBE] to-[#3A5D82] flex items-center justify-center mb-3">
                     <i class="fas fa-briefcase text-white text-lg"></i>
                 </div>
-                <div>
-                    <p class="font-semibold text-slate-900">15+ Tahun</p>
-                    <p class="text-xs text-slate-500">Pengalaman Perizinan</p>
-                </div>
+                <p class="font-bold text-[#1A1410] text-lg">15+ Tahun</p>
+                <p class="text-xs text-[#9B8B7E] mt-1">Pengalaman</p>
             </div>
             
             {{-- Multi-Sector Expertise --}}
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#E8956F] to-[#C96535] flex items-center justify-center mb-3">
                     <i class="fas fa-industry text-white text-lg"></i>
                 </div>
-                <div>
-                    <p class="font-semibold text-slate-900">15+ Sektor</p>
-                    <p class="text-xs text-slate-500">Industri Dilayani</p>
-                </div>
+                <p class="font-bold text-[#1A1410] text-lg">15+ Sektor</p>
+                <p class="text-xs text-[#9B8B7E] mt-1">Industri</p>
             </div>
             
             {{-- SLA Guarantee --}}
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#7CB342] to-[#5A8328] flex items-center justify-center mb-3">
                     <i class="fas fa-shield-check text-white text-lg"></i>
                 </div>
-                <div>
-                    <p class="font-semibold text-slate-900">{{ $metrics['display']['sla_rate'] }} SLA</p>
-                    <p class="text-xs text-slate-500">On-Time Delivery</p>
-                </div>
+                <p class="font-bold text-[#1A1410] text-lg">{{ $metrics['display']['sla_rate'] }} SLA</p>
+                <p class="text-xs text-[#9B8B7E] mt-1">On-Time</p>
             </div>
             
             {{-- Real-time Activity --}}
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+            <div class="flex flex-col items-center text-center">
+                <div class="relative w-12 h-12 mb-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#5B8DBE] to-[#3A5D82] flex items-center justify-center">
                         <i class="fas fa-headset text-white text-lg"></i>
                     </div>
                     <span class="absolute -top-1 -right-1 flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#7CB342] opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-[#7CB342]"></span>
                     </span>
                 </div>
-                <div>
-                    <p class="font-semibold text-slate-900">Support 24/7</p>
-                    <p class="text-xs text-slate-500">Fast Response</p>
-                </div>
+                <p class="font-bold text-[#1A1410] text-lg">24/7 Support</p>
+                <p class="text-xs text-[#9B8B7E] mt-1">Fast Response</p>
             </div>
             
             {{-- Government Partnership --}}
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#C97C7C] to-[#A85555] flex items-center justify-center mb-3">
                     <i class="fas fa-landmark text-white text-lg"></i>
                 </div>
-                <div>
-                    <p class="font-semibold text-slate-900">Gov. Partner</p>
-                    <p class="text-xs text-slate-500">Verified Consultant</p>
-                </div>
+                <p class="font-bold text-[#1A1410] text-lg">Gov. Partner</p>
+                <p class="text-xs text-[#9B8B7E] mt-1">Verified</p>
             </div>
         </div>
     </div>

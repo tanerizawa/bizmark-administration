@@ -1079,6 +1079,7 @@
                 </div>
 
                 <!-- Permit Management -->
+                <div class="nav-section">
                     <div class="nav-section-title">Human Resource</div>
                     <div class="nav-links">
                         <a href="{{ route('admin.permits.index') }}" class="nav-link {{ request()->routeIs('admin.permits.*') || request()->routeIs('admin.permit-dashboard') || request()->routeIs('admin.permit-applications.*') || request()->routeIs('permit-types.*') || request()->routeIs('admin.payments.*') || request()->routeIs('admin.master-data.*') || request()->routeIs('admin.settings.kbli.*') ? 'active' : '' }}">
@@ -1091,7 +1092,10 @@
                             @endif
                         </a>
                     </div>
+                </div>
+
                 <!-- Recruitment -->
+                <div class="nav-section">
                     <div class="nav-section-title">Recruitment</div>
                     <div class="nav-links">
                         <a href="{{ route('admin.recruitment.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.index') ? 'active' : '' }}">

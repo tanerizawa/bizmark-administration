@@ -1,4 +1,7 @@
-<script>
+<script type="module">
+// Import Neuroscience Navigation System
+import '/resources/js/navbar.js';
+
 // AOS and Alpine.js are now loaded via Vite (app.js)
 
 // Hide Loading Screen

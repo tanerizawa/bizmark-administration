@@ -13,8 +13,8 @@
     <!-- Backdrop -->
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
     
-    <!-- Menu Panel -->
-    <div class="fixed top-0 right-0 w-80 max-w-[85vw] h-full bg-gradient-to-br from-blue-900 to-blue-800 shadow-2xl">
+    <!-- Menu Panel - Neuroscience Soft Colors -->
+    <div class="fixed top-0 right-0 w-80 max-w-[85vw] h-full bg-gradient-to-br from-[#5B8DBE] to-[#3A5D82] shadow-2xl">
         <div class="p-6 h-full flex flex-col">
             <!-- Close Button -->
             <div class="flex justify-between items-center mb-8">
