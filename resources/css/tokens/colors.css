@@ -1,0 +1,267 @@
+/**
+ * ===================================================================
+ * NEUROSCIENCE COLOR PALETTE - Design Tokens
+ * ===================================================================
+ *
+ * Based on neuroscience research and cognitive psychology principles
+ * Designed to reduce cognitive load, eye strain, and mental fatigue
+ *
+ * Research Sources:
+ * - Neurodesign in UX (Muzli/Medium)
+ * - Color Psychology 2025 (MockFlow, IxDF)
+ * - Web Design Psychology (TheSOLIDCorp)
+ *
+ * @version 1.0.0
+ * @date 2026-01-09
+ */
+
+:root {
+  /* ============================================
+   * PRIMARY COLORS - Soft Cognition Palette
+   * ============================================ */
+
+  /* Primary - Soft Periwinkle (Trust + Calm) */
+  --neuro-primary: #8B9FD8;           /* Main brand color - soft blue-purple */
+  --neuro-primary-light: #A8B8E6;     /* Lighter variant for backgrounds */
+  --neuro-primary-dark: #6B7FB8;      /* Darker variant for text/borders */
+  --neuro-primary-muted: #D4DCF2;     /* Very light for hover states */
+  --neuro-primary-contrast: #FFFFFF;  /* Text on primary background */
+
+  /* Secondary - Sage Green (Focus + Balance) */
+  --neuro-secondary: #A8C5A8;         /* Soft sage - promotes concentration */
+  --neuro-secondary-light: #C5DCC5;   /* Lighter variant */
+  --neuro-secondary-dark: #7FA87F;    /* Darker variant */
+  --neuro-secondary-muted: #E5F2E5;   /* Very light for backgrounds */
+  --neuro-secondary-contrast: #2C2A27; /* Text on secondary background */
+
+  /* Accent - Warm Taupe (Grounding + Stability) */
+  --neuro-accent: #C9B5A0;            /* Warm neutral - provides comfort */
+  --neuro-accent-light: #E0D3C4;      /* Lighter variant */
+  --neuro-accent-dark: #A89882;       /* Darker variant */
+  --neuro-accent-muted: #F0EBE5;      /* Very light for subtle highlights */
+  --neuro-accent-contrast: #2C2A27;   /* Text on accent background */
+
+  /* ============================================
+   * FUNCTIONAL COLORS - Cognitive Signaling
+   * ============================================ */
+
+  /* Success - Soft Mint (Achievement without excitement) */
+  --neuro-success: #88D4AB;           /* Soft mint green */
+  --neuro-success-light: #A8E4C3;     /* Lighter variant */
+  --neuro-success-dark: #68B48B;      /* Darker variant */
+  --neuro-success-bg: #E8F7EF;        /* Background tint */
+  --neuro-success-border: #B8E7CE;    /* Border/outline */
+  --neuro-success-contrast: #2C2A27;  /* Text on success background */
+
+  /* Warning - Butter Yellow (Alert without alarm) */
+  --neuro-warning: #F5D887;           /* Soft yellow - gentle attention */
+  --neuro-warning-light: #F9E5A8;     /* Lighter variant */
+  --neuro-warning-dark: #D9BC68;      /* Darker variant */
+  --neuro-warning-bg: #FEF9E8;        /* Background tint */
+  --neuro-warning-border: #F9E9B8;    /* Border/outline */
+  --neuro-warning-contrast: #2C2A27;  /* Text on warning background */
+
+  /* Error - Blush Pink (Urgency without stress) */
+  --neuro-error: #E8A0A0;             /* Soft coral-pink - less aggressive */
+  --neuro-error-light: #F2C5C5;       /* Lighter variant */
+  --neuro-error-dark: #D88080;        /* Darker variant */
+  --neuro-error-bg: #FCF0F0;          /* Background tint */
+  --neuro-error-border: #F2C5C5;      /* Border/outline */
+  --neuro-error-contrast: #2C2A27;    /* Text on error background */
+
+  /* Info - Soft Lavender (Neutral information) */
+  --neuro-info: #B8A8D8;              /* Soft lavender - non-intrusive */
+  --neuro-info-light: #D9CEE8;        /* Lighter variant */
+  --neuro-info-dark: #9888B8;         /* Darker variant */
+  --neuro-info-bg: #F5F2FA;           /* Background tint */
+  --neuro-info-border: #D9CEE8;       /* Border/outline */
+  --neuro-info-contrast: #2C2A27;     /* Text on info background */
+
+  /* ============================================
+   * LIGHT MODE - Natural Lighting
+   * ============================================ */
+
+  /* Background Layers */
+  --bg-primary: #FDFCFB;              /* Warm white (not pure white) */
+  --bg-secondary: #F7F5F3;            /* Subtle warm gray */
+  --bg-tertiary: #F0EDE9;             /* Slightly darker warm gray */
+  --bg-elevated: #FFFFFF;             /* Pure white for cards */
+  --bg-overlay: rgba(253, 252, 251, 0.95); /* Modal overlays */
+
+  /* Text Colors */
+  --text-primary: #2C2A27;            /* Soft black for main content */
+  --text-secondary: #6B6662;          /* Medium gray for supporting text */
+  --text-tertiary: #9B9590;           /* Light gray for metadata */
+  --text-disabled: #C9C4BF;           /* Disabled state */
+  --text-placeholder: #9B9590;        /* Placeholder text */
+
+  /* Links */
+  --text-link: #6B7FB8;               /* Primary dark for links */
+  --text-link-hover: #8B9FD8;         /* Primary base on hover */
+  --text-link-visited: #9888B8;       /* Info dark for visited */
+
+  /* Borders & Separators */
+  --border-light: #E5E2DD;            /* Light borders */
+  --border-medium: #D4CFC8;           /* Medium emphasis */
+  --border-dark: #A89F96;             /* Strong emphasis */
+  --separator: rgba(0, 0, 0, 0.08);   /* Subtle visual separation */
+
+  /* ============================================
+   * DARK MODE - Circadian-Friendly
+   * ============================================ */
+
+  /* Background Layers (Dark) */
+  --bg-dark-primary: #1E1E20;         /* Soft black (not pure #000) */
+  --bg-dark-secondary: #2A2A2C;       /* Elevated surfaces */
+  --bg-dark-tertiary: #363638;        /* Cards and components */
+  --bg-dark-elevated: #3F3F42;        /* Modals and overlays */
+  --bg-dark-overlay: rgba(30, 30, 32, 0.92); /* Semi-transparent overlays */
+
+  /* Text Colors (Dark) */
+  --text-dark-primary: #F5F3F0;       /* Warm white (not pure white) */
+  --text-dark-secondary: #C9C4BF;     /* Medium warm gray */
+  --text-dark-tertiary: #9B9590;      /* Light warm gray */
+  --text-dark-disabled: #6B6662;      /* Disabled state */
+  --text-dark-placeholder: #9B9590;   /* Placeholder text */
+
+  /* Links (Dark) */
+  --text-dark-link: #A8B8E6;          /* Primary light for links */
+  --text-dark-link-hover: #8B9FD8;    /* Primary base on hover */
+  --text-dark-link-visited: #B8A8D8;  /* Info base for visited */
+
+  /* Borders & Separators (Dark) */
+  --border-dark-light: #3F3F42;       /* Light borders */
+  --border-dark-medium: #525256;      /* Medium emphasis */
+  --border-dark-strong: #6B6B6F;      /* Strong emphasis */
+  --separator-dark: rgba(255, 255, 255, 0.12); /* Subtle separation */
+}
+
+/* ============================================
+ * DARK MODE CLASS - Apply dark mode colors
+ * ============================================ */
+
+.dark-mode,
+html.dark-mode {
+  /* Background */
+  --bg-primary: var(--bg-dark-primary);
+  --bg-secondary: var(--bg-dark-secondary);
+  --bg-tertiary: var(--bg-dark-tertiary);
+  --bg-elevated: var(--bg-dark-elevated);
+  --bg-overlay: var(--bg-dark-overlay);
+
+  /* Text */
+  --text-primary: var(--text-dark-primary);
+  --text-secondary: var(--text-dark-secondary);
+  --text-tertiary: var(--text-dark-tertiary);
+  --text-disabled: var(--text-dark-disabled);
+  --text-placeholder: var(--text-dark-placeholder);
+
+  /* Links */
+  --text-link: var(--text-dark-link);
+  --text-link-hover: var(--text-dark-link-hover);
+  --text-link-visited: var(--text-dark-link-visited);
+
+  /* Borders */
+  --border-light: var(--border-dark-light);
+  --border-medium: var(--border-dark-medium);
+  --border-dark: var(--border-dark-strong);
+  --separator: var(--separator-dark);
+}
+
+/* ============================================
+ * SYSTEM PREFERENCE DETECTION
+ * ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode) {
+    /* Auto-apply dark mode based on system preference */
+    --bg-primary: var(--bg-dark-primary);
+    --bg-secondary: var(--bg-dark-secondary);
+    --bg-tertiary: var(--bg-dark-tertiary);
+    --bg-elevated: var(--bg-dark-elevated);
+    --bg-overlay: var(--bg-dark-overlay);
+
+    --text-primary: var(--text-dark-primary);
+    --text-secondary: var(--text-dark-secondary);
+    --text-tertiary: var(--text-dark-tertiary);
+    --text-disabled: var(--text-dark-disabled);
+    --text-placeholder: var(--text-dark-placeholder);
+
+    --text-link: var(--text-dark-link);
+    --text-link-hover: var(--text-dark-link-hover);
+    --text-link-visited: var(--text-dark-link-visited);
+
+    --border-light: var(--border-dark-light);
+    --border-medium: var(--border-dark-medium);
+    --border-dark: var(--border-dark-strong);
+    --separator: var(--separator-dark);
+  }
+}
+
+/* ============================================
+ * LEGACY COLOR MAPPINGS (for backward compatibility)
+ * ============================================ */
+
+:root {
+  /* Map old Apple colors to new neuroscience colors */
+  --apple-blue: var(--neuro-primary);
+  --apple-blue-dark: var(--neuro-primary-dark);
+  --apple-green: var(--neuro-success);
+  --apple-orange: var(--neuro-warning);
+  --apple-red: var(--neuro-error);
+
+  /* Map old LinkedIn colors to new neuroscience colors */
+  --linkedin-blue: var(--neuro-primary);
+  --linkedin-dark: var(--neuro-primary-dark);
+
+  /* Map old dark mode variables */
+  --dark-bg: var(--bg-dark-primary);
+  --dark-bg-secondary: var(--bg-dark-secondary);
+  --dark-bg-tertiary: var(--bg-dark-tertiary);
+  --dark-bg-elevated: var(--bg-dark-elevated);
+  --dark-separator: var(--separator-dark);
+  --dark-text-primary: var(--text-dark-primary);
+  --dark-text-secondary: var(--text-dark-secondary);
+  --dark-text-tertiary: var(--text-dark-tertiary);
+}
+
+/* ============================================
+ * UTILITY CLASSES FOR QUICK COLOR APPLICATION
+ * ============================================ */
+
+/* Background utilities */
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+.bg-elevated { background-color: var(--bg-elevated); }
+
+/* Text color utilities */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-link { color: var(--text-link); }
+
+/* Brand color utilities */
+.text-neuro-primary { color: var(--neuro-primary); }
+.text-neuro-secondary { color: var(--neuro-secondary); }
+.text-neuro-accent { color: var(--neuro-accent); }
+
+.bg-neuro-primary { background-color: var(--neuro-primary); }
+.bg-neuro-secondary { background-color: var(--neuro-secondary); }
+.bg-neuro-accent { background-color: var(--neuro-accent); }
+
+/* Functional color utilities */
+.text-success { color: var(--neuro-success); }
+.text-warning { color: var(--neuro-warning); }
+.text-error { color: var(--neuro-error); }
+.text-info { color: var(--neuro-info); }
+
+.bg-success { background-color: var(--neuro-success-bg); }
+.bg-warning { background-color: var(--neuro-warning-bg); }
+.bg-error { background-color: var(--neuro-error-bg); }
+.bg-info { background-color: var(--neuro-info-bg); }
+
+/* Border utilities */
+.border-light { border-color: var(--border-light); }
+.border-medium { border-color: var(--border-medium); }
+.border-dark { border-color: var(--border-dark); }

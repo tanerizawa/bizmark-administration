@@ -1,0 +1,261 @@
+/**
+ * ===================================================================
+ * SHADOW SYSTEM - Design Tokens
+ * ===================================================================
+ *
+ * Based on neuroscience principles for depth perception
+ * Soft shadows (10-14% opacity) are more natural and less fatiguing
+ *
+ * @version 1.0.0
+ * @date 2026-01-09
+ */
+
+:root {
+  /* ============================================
+   * LIGHT MODE SHADOWS - Soft & Natural
+   * ============================================ */
+
+  /* Neuroscience: Soft shadows create depth without visual stress */
+
+  /* Extra Small - Minimal elevation (1-2px) */
+  --shadow-xs: 0 1px 2px rgba(44, 42, 39, 0.06);
+
+  /* Small - Subtle elevation (2-4px) */
+  --shadow-sm: 0 2px 4px rgba(44, 42, 39, 0.08),
+               0 1px 2px rgba(44, 42, 39, 0.04);
+
+  /* Medium - Standard cards (4-8px) */
+  --shadow-md: 0 4px 8px rgba(44, 42, 39, 0.10),
+               0 2px 4px rgba(44, 42, 39, 0.06);
+
+  /* Large - Elevated components (8-16px) */
+  --shadow-lg: 0 8px 16px rgba(44, 42, 39, 0.12),
+               0 4px 8px rgba(44, 42, 39, 0.08);
+
+  /* Extra Large - Modals, popovers (16-32px) */
+  --shadow-xl: 0 16px 32px rgba(44, 42, 39, 0.14),
+               0 8px 16px rgba(44, 42, 39, 0.10);
+
+  /* 2X Large - Hero elements (32-64px) */
+  --shadow-2xl: 0 24px 48px rgba(44, 42, 39, 0.16),
+                0 12px 24px rgba(44, 42, 39, 0.12);
+
+  /* ============================================
+   * DARK MODE SHADOWS - Deeper contrast
+   * ============================================ */
+
+  /* Dark mode requires stronger shadows for depth perception */
+
+  /* Extra Small - Dark */
+  --shadow-dark-xs: 0 1px 2px rgba(0, 0, 0, 0.20);
+
+  /* Small - Dark */
+  --shadow-dark-sm: 0 2px 4px rgba(0, 0, 0, 0.24),
+                    0 1px 2px rgba(0, 0, 0, 0.16);
+
+  /* Medium - Dark */
+  --shadow-dark-md: 0 4px 8px rgba(0, 0, 0, 0.28),
+                    0 2px 4px rgba(0, 0, 0, 0.20);
+
+  /* Large - Dark */
+  --shadow-dark-lg: 0 8px 16px rgba(0, 0, 0, 0.32),
+                    0 4px 8px rgba(0, 0, 0, 0.24);
+
+  /* Extra Large - Dark */
+  --shadow-dark-xl: 0 16px 32px rgba(0, 0, 0, 0.36),
+                    0 8px 16px rgba(0, 0, 0, 0.28);
+
+  /* 2X Large - Dark */
+  --shadow-dark-2xl: 0 24px 48px rgba(0, 0, 0, 0.40),
+                     0 12px 24px rgba(0, 0, 0, 0.32);
+
+  /* ============================================
+   * COLORED SHADOWS (For emphasis)
+   * ============================================ */
+
+  /* Primary color shadow (for focus, hover) */
+  --shadow-primary: 0 0 0 3px var(--neuro-primary-muted);
+
+  /* Success shadow */
+  --shadow-success: 0 0 0 3px var(--neuro-success-bg);
+
+  /* Warning shadow */
+  --shadow-warning: 0 0 0 3px var(--neuro-warning-bg);
+
+  /* Error shadow */
+  --shadow-error: 0 0 0 3px var(--neuro-error-bg);
+
+  /* ============================================
+   * INNER SHADOWS (For depth)
+   * ============================================ */
+
+  /* Inset shadow for pressed/active states */
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  /* Inset shadow for inputs (subtle depth) */
+  --shadow-input: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  /* ============================================
+   * GLOW EFFECTS (For focus states)
+   * ============================================ */
+
+  /* Focus glow - Primary */
+  --glow-primary: 0 0 0 3px var(--neuro-primary-muted),
+                  0 2px 8px rgba(139, 159, 216, 0.15);
+
+  /* Focus glow - Success */
+  --glow-success: 0 0 0 3px var(--neuro-success-bg),
+                  0 2px 8px rgba(136, 212, 171, 0.15);
+
+  /* Focus glow - Error */
+  --glow-error: 0 0 0 3px var(--neuro-error-bg),
+                0 2px 8px rgba(232, 160, 160, 0.15);
+}
+
+/* ============================================
+ * DARK MODE - Apply dark shadows
+ * ============================================ */
+
+.dark-mode,
+html.dark-mode {
+  --shadow-xs: var(--shadow-dark-xs);
+  --shadow-sm: var(--shadow-dark-sm);
+  --shadow-md: var(--shadow-dark-md);
+  --shadow-lg: var(--shadow-dark-lg);
+  --shadow-xl: var(--shadow-dark-xl);
+  --shadow-2xl: var(--shadow-dark-2xl);
+}
+
+/* System preference */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode) {
+    --shadow-xs: var(--shadow-dark-xs);
+    --shadow-sm: var(--shadow-dark-sm);
+    --shadow-md: var(--shadow-dark-md);
+    --shadow-lg: var(--shadow-dark-lg);
+    --shadow-xl: var(--shadow-dark-xl);
+    --shadow-2xl: var(--shadow-dark-2xl);
+  }
+}
+
+/* ============================================
+ * SHADOW UTILITY CLASSES
+ * ============================================ */
+
+/* Standard shadows */
+.shadow-none { box-shadow: none; }
+.shadow-xs { box-shadow: var(--shadow-xs); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-2xl { box-shadow: var(--shadow-2xl); }
+
+/* Colored shadows */
+.shadow-primary { box-shadow: var(--shadow-primary); }
+.shadow-success { box-shadow: var(--shadow-success); }
+.shadow-warning { box-shadow: var(--shadow-warning); }
+.shadow-error { box-shadow: var(--shadow-error); }
+
+/* Inner shadows */
+.shadow-inner { box-shadow: var(--shadow-inner); }
+.shadow-input { box-shadow: var(--shadow-input); }
+
+/* Glow effects */
+.glow-primary { box-shadow: var(--glow-primary); }
+.glow-success { box-shadow: var(--glow-success); }
+.glow-error { box-shadow: var(--glow-error); }
+
+/* ============================================
+ * ELEVATION SYSTEM (Semantic shadows)
+ * ============================================ */
+
+/* Neuroscience: Consistent elevation helps users understand layer hierarchy */
+
+.elevated-0 {
+  box-shadow: none;
+  position: relative;
+  z-index: var(--z-base);
+}
+
+.elevated-1 {
+  box-shadow: var(--shadow-xs);
+  position: relative;
+  z-index: calc(var(--z-base) + 1);
+}
+
+.elevated-2 {
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: calc(var(--z-base) + 2);
+}
+
+.elevated-3 {
+  box-shadow: var(--shadow-md);
+  position: relative;
+  z-index: calc(var(--z-base) + 3);
+}
+
+.elevated-4 {
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  z-index: calc(var(--z-base) + 4);
+}
+
+.elevated-5 {
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  z-index: calc(var(--z-base) + 5);
+}
+
+/* ============================================
+ * HOVER SHADOW TRANSITIONS
+ * ============================================ */
+
+/* Neuroscience: Smooth shadow transitions feel more natural */
+
+.hover-shadow {
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-shadow:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.hover-shadow-sm {
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-shadow-sm:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.hover-shadow-lg {
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-shadow-lg:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+/* ============================================
+ * TEXT SHADOWS (For readability on images)
+ * ============================================ */
+
+/* Subtle text shadow for legibility on backgrounds */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* Light text shadow for dark text on light backgrounds */
+.text-shadow-light {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.50);
+}

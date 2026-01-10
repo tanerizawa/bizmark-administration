@@ -1,0 +1,323 @@
+/**
+ * ===================================================================
+ * SPACING SYSTEM - Design Tokens
+ * ===================================================================
+ *
+ * Based on 8px baseline grid for optical consistency
+ * Neuroscience: 8px base aligns with pattern recognition systems
+ *
+ * @version 1.0.0
+ * @date 2026-01-09
+ */
+
+:root {
+  /* ============================================
+   * SPACING SCALE - 8px Base Unit
+   * ============================================ */
+
+  /* Neuroscience: 8px increment is visually harmonious and easy to scale */
+  --space-0: 0;              /* 0px - No spacing */
+  --space-px: 1px;           /* 1px - Hairline */
+  --space-0-5: 0.125rem;     /* 2px - Minimal spacing */
+  --space-1: 0.25rem;        /* 4px - Micro spacing */
+  --space-2: 0.5rem;         /* 8px - Tight spacing (BASE) */
+  --space-3: 0.75rem;        /* 12px - Small spacing */
+  --space-4: 1rem;           /* 16px - Medium spacing */
+  --space-5: 1.5rem;         /* 24px - Standard spacing */
+  --space-6: 2rem;           /* 32px - Large spacing */
+  --space-7: 2.5rem;         /* 40px - XL spacing */
+  --space-8: 3rem;           /* 48px - XXL spacing */
+  --space-10: 4rem;          /* 64px - Section spacing */
+  --space-12: 6rem;          /* 96px - Large section */
+  --space-16: 8rem;          /* 128px - Hero spacing */
+  --space-20: 10rem;         /* 160px - Maximum spacing */
+
+  /* ============================================
+   * COMPONENT-SPECIFIC SPACING
+   * ============================================ */
+
+  /* Card Padding */
+  --card-padding: var(--space-5);           /* 24px - Standard card */
+  --card-padding-sm: var(--space-4);        /* 16px - Compact card */
+  --card-padding-lg: var(--space-6);        /* 32px - Spacious card */
+
+  /* Button Padding */
+  --button-padding-x: var(--space-5);       /* 24px - Horizontal */
+  --button-padding-y: var(--space-3);       /* 12px - Vertical */
+  --button-padding-sm-x: var(--space-4);    /* 16px - Small horizontal */
+  --button-padding-sm-y: var(--space-2);    /* 8px - Small vertical */
+  --button-padding-lg-x: var(--space-6);    /* 32px - Large horizontal */
+  --button-padding-lg-y: var(--space-4);    /* 16px - Large vertical */
+
+  /* Form Element Padding */
+  --input-padding-x: var(--space-4);        /* 16px - Horizontal */
+  --input-padding-y: var(--space-3);        /* 12px - Vertical */
+  --input-padding-sm-x: var(--space-3);     /* 12px - Small horizontal */
+  --input-padding-sm-y: var(--space-2);     /* 8px - Small vertical */
+  --input-padding-lg-x: var(--space-5);     /* 24px - Large horizontal */
+  --input-padding-lg-y: var(--space-4);     /* 16px - Large vertical */
+
+  /* Section Spacing */
+  --section-spacing: var(--space-12);       /* 96px - Between sections */
+  --section-spacing-sm: var(--space-8);     /* 48px - Compact sections */
+  --section-spacing-lg: var(--space-16);    /* 128px - Spacious sections */
+
+  /* Container Padding */
+  --container-padding: var(--space-5);      /* 24px - Mobile */
+  --container-padding-md: var(--space-6);   /* 32px - Tablet */
+  --container-padding-lg: var(--space-8);   /* 48px - Desktop */
+
+  /* Grid Gap */
+  --grid-gap: var(--space-4);               /* 16px - Standard grid gap */
+  --grid-gap-sm: var(--space-3);            /* 12px - Compact grid */
+  --grid-gap-lg: var(--space-6);            /* 32px - Spacious grid */
+
+  /* Stack Spacing (Vertical rhythm) */
+  --stack-space: var(--space-4);            /* 16px - Standard vertical */
+  --stack-space-sm: var(--space-2);         /* 8px - Tight vertical */
+  --stack-space-lg: var(--space-6);         /* 32px - Loose vertical */
+
+  /* ============================================
+   * LAYOUT WIDTHS & CONSTRAINTS
+   * ============================================ */
+
+  /* Container max widths */
+  --container-sm: 640px;                    /* Small container */
+  --container-md: 768px;                    /* Medium container */
+  --container-lg: 1024px;                   /* Large container */
+  --container-xl: 1280px;                   /* XL container */
+  --container-2xl: 1536px;                  /* 2XL container */
+
+  /* Content max widths (Neuroscience: Optimal reading width) */
+  --content-narrow: 45rem;                  /* 720px - Narrow content */
+  --content-normal: 65rem;                  /* 1040px - Normal content */
+  --content-wide: 80rem;                    /* 1280px - Wide content */
+
+  /* ============================================
+   * TOUCH TARGETS (Mobile Accessibility)
+   * ============================================ */
+
+  /* Neuroscience: Minimum touch target for finger tap accuracy */
+  --touch-target: 44px;                     /* iOS minimum (44x44px) */
+  --touch-target-android: 48px;             /* Android minimum (48x48dp) */
+
+  /* Safe touch target with spacing */
+  --touch-safe: 56px;                       /* Comfortable touch target */
+
+  /* ============================================
+   * BORDER RADIUS (Consistent rounding)
+   * ============================================ */
+
+  /* Neuroscience: Rounded corners feel friendlier and less threatening */
+  --radius-none: 0;                         /* No rounding */
+  --radius-sm: 0.25rem;                     /* 4px - Small */
+  --radius-base: 0.5rem;                    /* 8px - Standard */
+  --radius-md: 0.625rem;                    /* 10px - Medium (Apple-inspired) */
+  --radius-lg: 0.75rem;                     /* 12px - Large */
+  --radius-xl: 1rem;                        /* 16px - XL */
+  --radius-2xl: 1.25rem;                    /* 20px - 2XL */
+  --radius-full: 9999px;                    /* Full rounding (circles) */
+
+  /* Component-specific radius */
+  --button-radius: var(--radius-md);        /* 10px - Buttons */
+  --card-radius: var(--radius-lg);          /* 12px - Cards */
+  --input-radius: var(--radius-md);         /* 10px - Form inputs */
+  --modal-radius: var(--radius-xl);         /* 16px - Modals */
+  --badge-radius: var(--radius-full);       /* Full - Badges/pills */
+
+  /* ============================================
+   * Z-INDEX LAYERS (Stacking context)
+   * ============================================ */
+
+  /* Neuroscience: Predictable layering reduces cognitive load */
+  --z-base: 0;                              /* Base layer */
+  --z-dropdown: 1000;                       /* Dropdowns, popovers */
+  --z-sticky: 1020;                         /* Sticky headers */
+  --z-fixed: 1030;                          /* Fixed elements */
+  --z-modal-backdrop: 1040;                 /* Modal backdrops */
+  --z-modal: 1050;                          /* Modals */
+  --z-popover: 1060;                        /* Popovers over modals */
+  --z-tooltip: 1070;                        /* Tooltips */
+  --z-notification: 1080;                   /* Toast notifications */
+  --z-maximum: 9999;                        /* Maximum z-index */
+}
+
+/* ============================================
+ * SPACING UTILITY CLASSES
+ * ============================================ */
+
+/* Margin utilities */
+.m-0 { margin: var(--space-0); }
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-5 { margin: var(--space-5); }
+.m-6 { margin: var(--space-6); }
+.m-8 { margin: var(--space-8); }
+.m-auto { margin: auto; }
+
+/* Margin top */
+.mt-0 { margin-top: var(--space-0); }
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-5 { margin-top: var(--space-5); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+
+/* Margin bottom */
+.mb-0 { margin-bottom: var(--space-0); }
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-5 { margin-bottom: var(--space-5); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+/* Padding utilities */
+.p-0 { padding: var(--space-0); }
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.p-6 { padding: var(--space-6); }
+.p-8 { padding: var(--space-8); }
+
+/* Padding horizontal */
+.px-0 { padding-left: var(--space-0); padding-right: var(--space-0); }
+.px-1 { padding-left: var(--space-1); padding-right: var(--space-1); }
+.px-2 { padding-left: var(--space-2); padding-right: var(--space-2); }
+.px-3 { padding-left: var(--space-3); padding-right: var(--space-3); }
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+.px-5 { padding-left: var(--space-5); padding-right: var(--space-5); }
+.px-6 { padding-left: var(--space-6); padding-right: var(--space-6); }
+.px-8 { padding-left: var(--space-8); padding-right: var(--space-8); }
+
+/* Padding vertical */
+.py-0 { padding-top: var(--space-0); padding-bottom: var(--space-0); }
+.py-1 { padding-top: var(--space-1); padding-bottom: var(--space-1); }
+.py-2 { padding-top: var(--space-2); padding-bottom: var(--space-2); }
+.py-3 { padding-top: var(--space-3); padding-bottom: var(--space-3); }
+.py-4 { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+.py-5 { padding-top: var(--space-5); padding-bottom: var(--space-5); }
+.py-6 { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+.py-8 { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+
+/* Gap utilities (for flexbox/grid) */
+.gap-0 { gap: var(--space-0); }
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-5 { gap: var(--space-5); }
+.gap-6 { gap: var(--space-6); }
+.gap-8 { gap: var(--space-8); }
+
+/* Border radius utilities */
+.rounded-none { border-radius: var(--radius-none); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded { border-radius: var(--radius-base); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-2xl { border-radius: var(--radius-2xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* ============================================
+ * CONTAINER UTILITIES
+ * ============================================ */
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+@media (min-width: 640px) {
+  .container { max-width: var(--container-sm); }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: var(--container-md);
+    padding-left: var(--container-padding-md);
+    padding-right: var(--container-padding-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: var(--container-lg);
+    padding-left: var(--container-padding-lg);
+    padding-right: var(--container-padding-lg);
+  }
+}
+
+@media (min-width: 1280px) {
+  .container { max-width: var(--container-xl); }
+}
+
+@media (min-width: 1536px) {
+  .container { max-width: var(--container-2xl); }
+}
+
+/* Content width containers */
+.content-narrow {
+  max-width: var(--content-narrow);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content-normal {
+  max-width: var(--content-normal);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content-wide {
+  max-width: var(--content-wide);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+ * STACK SPACING UTILITIES (Vertical Rhythm)
+ * ============================================ */
+
+/* Neuroscience: Consistent vertical spacing improves scanability */
+.stack > * + * {
+  margin-top: var(--stack-space);
+}
+
+.stack-sm > * + * {
+  margin-top: var(--stack-space-sm);
+}
+
+.stack-lg > * + * {
+  margin-top: var(--stack-space-lg);
+}
+
+/* ============================================
+ * SECTION SPACING
+ * ============================================ */
+
+.section {
+  padding-top: var(--section-spacing);
+  padding-bottom: var(--section-spacing);
+}
+
+.section-sm {
+  padding-top: var(--section-spacing-sm);
+  padding-bottom: var(--section-spacing-sm);
+}
+
+.section-lg {
+  padding-top: var(--section-spacing-lg);
+  padding-bottom: var(--section-spacing-lg);
+}

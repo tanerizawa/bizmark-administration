@@ -1,0 +1,565 @@
+/**
+ * ===================================================================
+ * ANIMATION SYSTEM - Design Tokens
+ * ===================================================================
+ *
+ * Based on neuroscience research for optimal motion perception
+ * - Animations 150-350ms feel instant but not jarring
+ * - Natural easing curves (ease-out) feel more comfortable
+ * - Respect prefers-reduced-motion for accessibility
+ *
+ * @version 1.0.0
+ * @date 2026-01-09
+ */
+
+:root {
+  /* ============================================
+   * ANIMATION DURATIONS
+   * ============================================ */
+
+  /* Neuroscience: Optimal animation durations */
+  --duration-instant: 0ms;          /* Immediate feedback */
+  --duration-fast: 150ms;           /* Micro-interactions (tooltips, dropdowns) */
+  --duration-base: 250ms;           /* Standard transitions (buttons, links) */
+  --duration-slow: 350ms;           /* Emphasis animations (modals, cards) */
+  --duration-slower: 500ms;         /* Page transitions (maximum recommended) */
+
+  /* ============================================
+   * EASING FUNCTIONS (Timing curves)
+   * ============================================ */
+
+  /* Neuroscience: Natural motion feels more comfortable to the brain */
+
+  /* Linear - Constant speed (use sparingly) */
+  --ease-linear: linear;
+
+  /* Ease In - Slow start, fast end (entering elements) */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Ease Out - Fast start, slow end (most common, feels natural) */
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* Ease In Out - Slow start and end (smooth both directions) */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Spring - Playful bounce effect (use for delight) */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Smooth - Very smooth, subtle (for elegant animations) */
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* Sharp - Quick, decisive (for dismissals) */
+  --ease-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* ============================================
+   * COMMON TRANSITIONS
+   * ============================================ */
+
+  /* All properties - Use sparingly (can be expensive) */
+  --transition-all: all var(--duration-base) var(--ease-out);
+
+  /* Transform - GPU-accelerated, best performance */
+  --transition-transform: transform var(--duration-base) var(--ease-out);
+
+  /* Opacity - GPU-accelerated */
+  --transition-opacity: opacity var(--duration-base) var(--ease-out);
+
+  /* Colors - Smooth color transitions */
+  --transition-colors: color var(--duration-base) var(--ease-out),
+                       background-color var(--duration-base) var(--ease-out),
+                       border-color var(--duration-base) var(--ease-out);
+
+  /* Shadows - Smooth shadow transitions */
+  --transition-shadow: box-shadow var(--duration-base) var(--ease-out);
+
+  /* Combined - Transform + opacity (common for modals) */
+  --transition-modal: transform var(--duration-slow) var(--ease-out),
+                      opacity var(--duration-slow) var(--ease-out);
+}
+
+/* ============================================
+ * KEYFRAME ANIMATIONS
+ * ============================================ */
+
+/* Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade Out */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Slide Up */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide Down */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In from Left */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide In from Right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Scale Out */
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Pulse - For loading states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Spin - For loading spinners */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Shimmer - For skeleton screens */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Bounce - Subtle bounce for success feedback */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Shake - For error feedback */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+/* ============================================
+ * ANIMATION UTILITY CLASSES
+ * ============================================ */
+
+/* Fade animations */
+.animate-fadeIn {
+  animation: fadeIn var(--duration-base) var(--ease-out);
+}
+
+.animate-fadeOut {
+  animation: fadeOut var(--duration-base) var(--ease-out);
+}
+
+/* Slide animations */
+.animate-slideUp {
+  animation: slideUp var(--duration-slow) var(--ease-out);
+}
+
+.animate-slideDown {
+  animation: slideDown var(--duration-slow) var(--ease-out);
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft var(--duration-base) var(--ease-out);
+}
+
+.animate-slideInRight {
+  animation: slideInRight var(--duration-base) var(--ease-out);
+}
+
+/* Scale animations */
+.animate-scaleIn {
+  animation: scaleIn var(--duration-base) var(--ease-out);
+}
+
+.animate-scaleOut {
+  animation: scaleOut var(--duration-base) var(--ease-out);
+}
+
+/* Loading animations */
+.animate-pulse {
+  animation: pulse var(--duration-slower) var(--ease-in-out) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Feedback animations */
+.animate-bounce {
+  animation: bounce 0.5s var(--ease-out);
+}
+
+.animate-shake {
+  animation: shake 0.5s var(--ease-out);
+}
+
+/* ============================================
+ * TRANSITION UTILITY CLASSES
+ * ============================================ */
+
+/* Basic transitions */
+.transition-none {
+  transition: none;
+}
+
+.transition-all {
+  transition: var(--transition-all);
+}
+
+.transition-transform {
+  transition: var(--transition-transform);
+}
+
+.transition-opacity {
+  transition: var(--transition-opacity);
+}
+
+.transition-colors {
+  transition: var(--transition-colors);
+}
+
+.transition-shadow {
+  transition: var(--transition-shadow);
+}
+
+/* Duration modifiers */
+.duration-fast {
+  transition-duration: var(--duration-fast);
+}
+
+.duration-base {
+  transition-duration: var(--duration-base);
+}
+
+.duration-slow {
+  transition-duration: var(--duration-slow);
+}
+
+.duration-slower {
+  transition-duration: var(--duration-slower);
+}
+
+/* Easing modifiers */
+.ease-linear {
+  transition-timing-function: var(--ease-linear);
+}
+
+.ease-in {
+  transition-timing-function: var(--ease-in);
+}
+
+.ease-out {
+  transition-timing-function: var(--ease-out);
+}
+
+.ease-in-out {
+  transition-timing-function: var(--ease-in-out);
+}
+
+.ease-spring {
+  transition-timing-function: var(--ease-spring);
+}
+
+/* ============================================
+ * HOVER/FOCUS EFFECTS (Micro-interactions)
+ * ============================================ */
+
+/* Subtle lift effect */
+.hover-lift {
+  transition: transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Subtle scale effect */
+.hover-scale {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Brightness effect */
+.hover-brightness {
+  transition: filter var(--duration-fast) var(--ease-out);
+}
+
+.hover-brightness:hover {
+  filter: brightness(1.05);
+}
+
+/* Opacity effect */
+.hover-opacity {
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.hover-opacity:hover {
+  opacity: 0.8;
+}
+
+/* ============================================
+ * LOADING STATES
+ * ============================================ */
+
+/* Skeleton screen shimmer effect */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+  border-radius: var(--radius-base);
+}
+
+/* Pulse loading indicator */
+.loading-pulse {
+  animation: pulse var(--duration-slower) ease-in-out infinite;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--neuro-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ============================================
+ * ACCESSIBILITY - Reduced Motion
+ * ============================================ */
+
+/* Neuroscience: Respect user's motion preferences for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep essential animations but make them instant */
+  .skeleton,
+  .loading-pulse,
+  .spinner {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
+/* ============================================
+ * PAGE TRANSITIONS
+ * ============================================ */
+
+/* Page enter (when navigating to new page) */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--duration-base) var(--ease-out),
+              transform var(--duration-base) var(--ease-out);
+}
+
+/* Page exit (when leaving current page) */
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-in);
+}
+
+/* ============================================
+ * MODAL TRANSITIONS
+ * ============================================ */
+
+/* Modal backdrop */
+.modal-backdrop-enter {
+  opacity: 0;
+}
+
+.modal-backdrop-enter-active {
+  opacity: 1;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.modal-backdrop-exit {
+  opacity: 1;
+}
+
+.modal-backdrop-exit-active {
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-in);
+}
+
+/* Modal content */
+.modal-enter {
+  opacity: 0;
+  transform: translateY(20px) scale(0.96);
+}
+
+.modal-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity var(--duration-slow) var(--ease-out),
+              transform var(--duration-slow) var(--ease-out);
+}
+
+.modal-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-exit-active {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity var(--duration-base) var(--ease-in),
+              transform var(--duration-base) var(--ease-in);
+}
+
+/* ============================================
+ * TOAST NOTIFICATION TRANSITIONS
+ * ============================================ */
+
+/* Toast slide in from top */
+.toast-enter {
+  opacity: 0;
+  transform: translateY(-100%) scale(0.95);
+}
+
+.toast-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity var(--duration-base) var(--ease-out),
+              transform var(--duration-base) var(--ease-spring);
+}
+
+.toast-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.toast-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity var(--duration-fast) var(--ease-in),
+              transform var(--duration-fast) var(--ease-in);
+}

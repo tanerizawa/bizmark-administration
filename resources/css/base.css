@@ -1,0 +1,505 @@
+/**
+ * ===================================================================
+ * BASE STYLES - CSS Reset & Global Defaults
+ * ===================================================================
+ *
+ * Modern CSS reset + neuroscience-optimized defaults
+ * Based on research for optimal readability and accessibility
+ *
+ * @version 1.0.0
+ * @date 2026-01-09
+ */
+
+/* ============================================
+ * MODERN CSS RESET
+ * ============================================ */
+
+/* Box sizing reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margins */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Remove list styles on ul, ol elements with a list role */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Set core root defaults */
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: var(--text-link);
+}
+
+a:not([class]):hover {
+  color: var(--text-link-hover);
+}
+
+/* Make images easier to work with */
+img,
+picture,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+ * TYPOGRAPHY DEFAULTS
+ * ============================================ */
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  line-height: var(--leading-tight);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  text-wrap: balance; /* Better heading wrapping */
+}
+
+/* Paragraphs */
+p {
+  margin-top: 0;
+  margin-bottom: 1em;
+  text-wrap: pretty; /* Better paragraph wrapping */
+}
+
+/* Strong & bold */
+strong, b {
+  font-weight: var(--font-bold);
+}
+
+/* Emphasis */
+em, i {
+  font-style: italic;
+}
+
+/* Small text */
+small {
+  font-size: var(--text-sm);
+}
+
+/* Code */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background-color: var(--bg-tertiary);
+  padding: 0.125em 0.375em;
+  border-radius: var(--radius-sm);
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Pre */
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background-color: var(--bg-tertiary);
+  padding: var(--space-4);
+  border-radius: var(--radius-base);
+  overflow-x: auto;
+  margin-bottom: 1em;
+}
+
+/* Blockquote */
+blockquote {
+  border-left: 4px solid var(--border-medium);
+  padding-left: var(--space-4);
+  margin-left: 0;
+  margin-bottom: 1em;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Horizontal rule */
+hr {
+  border: 0;
+  border-top: 1px solid var(--border-light);
+  margin: var(--space-6) 0;
+}
+
+/* ============================================
+ * LINKS
+ * ============================================ */
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+a:hover {
+  color: var(--text-link-hover);
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--neuro-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================
+ * LISTS
+ * ============================================ */
+
+ul, ol {
+  padding-left: var(--space-5);
+  margin-bottom: 1em;
+}
+
+li {
+  margin-bottom: 0.25em;
+}
+
+/* Nested lists */
+ul ul,
+ul ol,
+ol ul,
+ol ol {
+  margin-bottom: 0;
+  margin-top: 0.25em;
+}
+
+/* ============================================
+ * TABLES
+ * ============================================ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+th {
+  text-align: left;
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  padding: var(--space-3);
+  border-bottom: 2px solid var(--border-medium);
+}
+
+td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border-light);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================
+ * FORMS
+ * ============================================ */
+
+/* Form elements base styles */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"],
+textarea,
+select {
+  width: 100%;
+  padding: var(--input-padding-y) var(--input-padding-x);
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--input-radius);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  transition: all var(--duration-fast) var(--ease-out);
+  min-height: var(--touch-target); /* Accessibility */
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-placeholder);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--neuro-primary);
+  box-shadow: var(--glow-primary);
+  background-color: var(--bg-elevated);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: var(--bg-tertiary);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Textarea specific */
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Checkbox & Radio */
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  min-height: auto;
+  margin-right: var(--space-2);
+  cursor: pointer;
+}
+
+/* Select */
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B6662' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right var(--space-3) center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: var(--space-8);
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+  font-weight: var(--font-medium);
+  transition: all var(--duration-fast) var(--ease-out);
+  border: none;
+  background-color: transparent;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ============================================
+ * FOCUS STATES (Accessibility)
+ * ============================================ */
+
+/* High visibility focus for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--neuro-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Remove focus outline for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+ * UTILITY CLASSES
+ * ============================================ */
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip to content link (accessibility) */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--neuro-primary);
+  color: white;
+  padding: var(--space-3) var(--space-5);
+  text-decoration: none;
+  border-radius: var(--radius-base);
+  z-index: var(--z-maximum);
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+/* Visually hidden but accessible */
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* Clearfix */
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* ============================================
+ * SCROLLBAR STYLING (Webkit browsers)
+ * ============================================ */
+
+/* Custom scrollbar for better aesthetics */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: var(--radius-md);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-dark);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) var(--bg-secondary);
+}
+
+/* ============================================
+ * SELECTION STYLING
+ * ============================================ */
+
+::selection {
+  background-color: var(--neuro-primary-muted);
+  color: var(--text-primary);
+}
+
+::-moz-selection {
+  background-color: var(--neuro-primary-muted);
+  color: var(--text-primary);
+}
+
+/* ============================================
+ * PRINT STYLES
+ * ============================================ */
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]::after {
+    content: " (" attr(title) ")";
+  }
+
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}

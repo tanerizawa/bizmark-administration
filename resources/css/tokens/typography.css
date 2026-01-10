@@ -1,0 +1,371 @@
+/**
+ * ===================================================================
+ * TYPOGRAPHY SYSTEM - Design Tokens
+ * ===================================================================
+ *
+ * Based on neuroscience research for optimal readability
+ * - Modular scale 1.250 (Major Third)
+ * - Line heights optimized for reading comprehension
+ * - Letter spacing for improved character recognition
+ *
+ * @version 1.0.0
+ * @date 2026-01-09
+ */
+
+:root {
+  /* ============================================
+   * FONT FAMILIES
+   * ============================================ */
+
+  /* Primary font stack - Sans-serif for UI */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               Roboto, 'Helvetica Neue', Arial, sans-serif,
+               'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+
+  /* Monospace font for code */
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono',
+               Consolas, 'Courier New', monospace;
+
+  /* Display font (same as sans for consistency) */
+  --font-display: var(--font-sans);
+
+  /* ============================================
+   * FONT SIZES - Modular Scale 1.250 (Major Third)
+   * ============================================ */
+
+  /* Base: 16px (1rem) - Minimum for readability */
+  --text-xs: 0.75rem;      /* 12px - Metadata, captions */
+  --text-sm: 0.875rem;     /* 14px - Supporting text, labels */
+  --text-base: 1rem;       /* 16px - Body text (WCAG minimum) */
+  --text-lg: 1.125rem;     /* 18px - Emphasized body text */
+  --text-xl: 1.25rem;      /* 20px - H4 headings */
+  --text-2xl: 1.5rem;      /* 24px - H3 headings */
+  --text-3xl: 1.875rem;    /* 30px - H2 headings */
+  --text-4xl: 2.25rem;     /* 36px - H1 headings */
+  --text-5xl: 3rem;        /* 48px - Hero text */
+  --text-6xl: 3.75rem;     /* 60px - Display text */
+
+  /* ============================================
+   * FONT WEIGHTS
+   * ============================================ */
+
+  --font-light: 300;       /* Light - Rare use */
+  --font-normal: 400;      /* Regular - Body text */
+  --font-medium: 500;      /* Medium - Emphasis, buttons */
+  --font-semibold: 600;    /* Semibold - Subheadings */
+  --font-bold: 700;        /* Bold - Headings */
+  --font-extrabold: 800;   /* Extra bold - Strong emphasis */
+
+  /* ============================================
+   * LINE HEIGHTS - Optimized for Comprehension
+   * ============================================ */
+
+  /* Neuroscience: Optimal line heights reduce eye strain and improve reading speed */
+  --leading-none: 1;          /* Tight - Display text only */
+  --leading-tight: 1.25;      /* Tight - Headings */
+  --leading-snug: 1.375;      /* Snug - Short text blocks */
+  --leading-normal: 1.5;      /* Normal - Short paragraphs */
+  --leading-relaxed: 1.625;   /* Relaxed - Standard body text */
+  --leading-loose: 1.75;      /* Loose - Long-form reading */
+
+  /* ============================================
+   * LETTER SPACING - Character Recognition
+   * ============================================ */
+
+  /* Neuroscience: Slight letter spacing improves character recognition 10-15% */
+  --tracking-tighter: -0.05em;  /* Tight - Large headings */
+  --tracking-tight: -0.025em;   /* Slightly tight - Headings */
+  --tracking-normal: 0;         /* Normal - Body text */
+  --tracking-wide: 0.025em;     /* Wide - Small text, labels */
+  --tracking-wider: 0.05em;     /* Wider - All caps, buttons */
+  --tracking-widest: 0.1em;     /* Widest - Micro text */
+
+  /* ============================================
+   * HEADING STYLES - Semantic Typography
+   * ============================================ */
+
+  /* H1 - Page title */
+  --h1-size: var(--text-4xl);
+  --h1-weight: var(--font-bold);
+  --h1-leading: var(--leading-tight);
+  --h1-tracking: var(--tracking-tight);
+
+  /* H2 - Section heading */
+  --h2-size: var(--text-3xl);
+  --h2-weight: var(--font-bold);
+  --h2-leading: var(--leading-tight);
+  --h2-tracking: var(--tracking-tight);
+
+  /* H3 - Subsection heading */
+  --h3-size: var(--text-2xl);
+  --h3-weight: var(--font-semibold);
+  --h3-leading: var(--leading-snug);
+  --h3-tracking: var(--tracking-normal);
+
+  /* H4 - Component heading */
+  --h4-size: var(--text-xl);
+  --h4-weight: var(--font-semibold);
+  --h4-leading: var(--leading-snug);
+  --h4-tracking: var(--tracking-normal);
+
+  /* H5 - Card heading */
+  --h5-size: var(--text-lg);
+  --h5-weight: var(--font-medium);
+  --h5-leading: var(--leading-normal);
+  --h5-tracking: var(--tracking-normal);
+
+  /* H6 - Small heading */
+  --h6-size: var(--text-base);
+  --h6-weight: var(--font-medium);
+  --h6-leading: var(--leading-normal);
+  --h6-tracking: var(--tracking-wide);
+
+  /* ============================================
+   * BODY TEXT STYLES
+   * ============================================ */
+
+  /* Body - Standard paragraph */
+  --body-size: var(--text-base);
+  --body-weight: var(--font-normal);
+  --body-leading: var(--leading-relaxed);
+  --body-tracking: var(--tracking-normal);
+
+  /* Body Large - Emphasized content */
+  --body-lg-size: var(--text-lg);
+  --body-lg-weight: var(--font-normal);
+  --body-lg-leading: var(--leading-relaxed);
+  --body-lg-tracking: var(--tracking-normal);
+
+  /* Body Small - Supporting text */
+  --body-sm-size: var(--text-sm);
+  --body-sm-weight: var(--font-normal);
+  --body-sm-leading: var(--leading-normal);
+  --body-sm-tracking: var(--tracking-wide);
+
+  /* ============================================
+   * SPECIALTY TEXT STYLES
+   * ============================================ */
+
+  /* Label - Form labels, metadata */
+  --label-size: var(--text-sm);
+  --label-weight: var(--font-medium);
+  --label-leading: var(--leading-normal);
+  --label-tracking: var(--tracking-wide);
+
+  /* Button - Button text */
+  --button-size: var(--text-base);
+  --button-weight: var(--font-medium);
+  --button-leading: var(--leading-none);
+  --button-tracking: var(--tracking-wider);
+
+  /* Caption - Small supporting text */
+  --caption-size: var(--text-xs);
+  --caption-weight: var(--font-normal);
+  --caption-leading: var(--leading-normal);
+  --caption-tracking: var(--tracking-wide);
+
+  /* Code - Inline code */
+  --code-size: var(--text-sm);
+  --code-weight: var(--font-normal);
+  --code-leading: var(--leading-normal);
+  --code-tracking: var(--tracking-normal);
+}
+
+/* ============================================
+ * TYPOGRAPHY UTILITY CLASSES
+ * ============================================ */
+
+/* Heading classes */
+h1, .h1 {
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  line-height: var(--h1-leading);
+  letter-spacing: var(--h1-tracking);
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+h2, .h2 {
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  line-height: var(--h2-leading);
+  letter-spacing: var(--h2-tracking);
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+h3, .h3 {
+  font-size: var(--h3-size);
+  font-weight: var(--h3-weight);
+  line-height: var(--h3-leading);
+  letter-spacing: var(--h3-tracking);
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+h4, .h4 {
+  font-size: var(--h4-size);
+  font-weight: var(--h4-weight);
+  line-height: var(--h4-leading);
+  letter-spacing: var(--h4-tracking);
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+h5, .h5 {
+  font-size: var(--h5-size);
+  font-weight: var(--h5-weight);
+  line-height: var(--h5-leading);
+  letter-spacing: var(--h5-tracking);
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+h6, .h6 {
+  font-size: var(--h6-size);
+  font-weight: var(--h6-weight);
+  line-height: var(--h6-leading);
+  letter-spacing: var(--h6-tracking);
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+/* Body text classes */
+p, .body {
+  font-size: var(--body-size);
+  font-weight: var(--body-weight);
+  line-height: var(--body-leading);
+  letter-spacing: var(--body-tracking);
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.body-lg {
+  font-size: var(--body-lg-size);
+  font-weight: var(--body-lg-weight);
+  line-height: var(--body-lg-leading);
+  letter-spacing: var(--body-lg-tracking);
+}
+
+.body-sm {
+  font-size: var(--body-sm-size);
+  font-weight: var(--body-sm-weight);
+  line-height: var(--body-sm-leading);
+  letter-spacing: var(--body-sm-tracking);
+}
+
+/* Specialty text classes */
+.label {
+  font-size: var(--label-size);
+  font-weight: var(--label-weight);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+  color: var(--text-primary);
+}
+
+.caption {
+  font-size: var(--caption-size);
+  font-weight: var(--caption-weight);
+  line-height: var(--caption-leading);
+  letter-spacing: var(--caption-tracking);
+  color: var(--text-secondary);
+}
+
+code, .code {
+  font-family: var(--font-mono);
+  font-size: var(--code-size);
+  font-weight: var(--code-weight);
+  line-height: var(--code-leading);
+  letter-spacing: var(--code-tracking);
+  background-color: var(--bg-tertiary);
+  padding: 0.125em 0.375em;
+  border-radius: 0.25rem;
+}
+
+/* Font weight utilities */
+.font-light { font-weight: var(--font-light); }
+.font-normal { font-weight: var(--font-normal); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
+.font-extrabold { font-weight: var(--font-extrabold); }
+
+/* Line height utilities */
+.leading-none { line-height: var(--leading-none); }
+.leading-tight { line-height: var(--leading-tight); }
+.leading-snug { line-height: var(--leading-snug); }
+.leading-normal { line-height: var(--leading-normal); }
+.leading-relaxed { line-height: var(--leading-relaxed); }
+.leading-loose { line-height: var(--leading-loose); }
+
+/* Letter spacing utilities */
+.tracking-tighter { letter-spacing: var(--tracking-tighter); }
+.tracking-tight { letter-spacing: var(--tracking-tight); }
+.tracking-normal { letter-spacing: var(--tracking-normal); }
+.tracking-wide { letter-spacing: var(--tracking-wide); }
+.tracking-wider { letter-spacing: var(--tracking-wider); }
+.tracking-widest { letter-spacing: var(--tracking-widest); }
+
+/* Text transform utilities */
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.lowercase { text-transform: lowercase; }
+.capitalize { text-transform: capitalize; }
+
+/* Text decoration */
+.no-underline { text-decoration: none; }
+.underline { text-decoration: underline; }
+.line-through { text-decoration: line-through; }
+
+/* Text alignment */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* ============================================
+ * OPTIMAL READING WIDTH (Neuroscience)
+ * ============================================ */
+
+/* Neuroscience: 50-75 characters per line is optimal for reading comprehension */
+.prose {
+  max-width: 65ch; /* ~65 characters per line (optimal) */
+  font-size: var(--body-size);
+  line-height: var(--leading-relaxed);
+  color: var(--text-primary);
+}
+
+.prose-lg {
+  max-width: 60ch;
+  font-size: var(--body-lg-size);
+  line-height: var(--leading-loose);
+}
+
+.prose-sm {
+  max-width: 70ch;
+  font-size: var(--body-sm-size);
+  line-height: var(--leading-normal);
+}
+
+/* ============================================
+ * FONT SMOOTHING (Better rendering)
+ * ============================================ */
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+}
