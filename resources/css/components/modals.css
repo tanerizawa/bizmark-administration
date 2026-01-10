@@ -1,0 +1,651 @@
+/**
+ * ===================================================================
+ * MODALS & DIALOGS - Neuroscience-Based Component
+ * ===================================================================
+ *
+ * Research-backed modal design for optimal focus and interaction
+ * - Soft overlays (60% opacity) don't jar the user
+ * - Gentle animations (250-350ms) feel natural
+ * - Focus trap keeps keyboard navigation contained
+ * - ESC key to close is predictable (reduces cognitive load)
+ *
+ * @version 1.0.0
+ * @date 2026-01-10
+ */
+
+/* ============================================
+ * MODAL OVERLAY (Backdrop)
+ * ============================================ */
+
+.modal-overlay {
+  /* Positioning */
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal-backdrop);
+
+  /* Appearance - Soft overlay (not harsh) */
+  background-color: rgba(44, 42, 39, 0.60);
+  backdrop-filter: blur(4px); /* Subtle blur */
+
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+
+  /* Scrollable if modal is tall */
+  overflow-y: auto;
+
+  /* Animation */
+  animation: fadeIn var(--duration-base) var(--ease-out);
+}
+
+/* Exit animation */
+.modal-overlay.closing {
+  animation: fadeOut var(--duration-base) var(--ease-in);
+}
+
+/* ============================================
+ * MODAL CONTAINER
+ * ============================================ */
+
+.modal {
+  /* Positioning */
+  position: relative;
+  z-index: var(--z-modal);
+
+  /* Sizing */
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+
+  /* Appearance */
+  background-color: var(--bg-elevated);
+  border-radius: var(--modal-radius);
+  box-shadow: var(--shadow-xl);
+
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* Animation - Gentle slide up */
+  animation: slideUp var(--duration-slow) var(--ease-out);
+}
+
+/* Exit animation */
+.modal.closing {
+  animation: slideDown var(--duration-base) var(--ease-in);
+}
+
+/* Modal sizes */
+.modal-sm {
+  max-width: 400px;
+}
+
+.modal-md {
+  max-width: 600px;
+}
+
+.modal-lg {
+  max-width: 800px;
+}
+
+.modal-xl {
+  max-width: 1200px;
+}
+
+.modal-fullscreen {
+  max-width: 100%;
+  max-height: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* ============================================
+ * MODAL HEADER
+ * ============================================ */
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--separator);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+.modal-subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: var(--space-1);
+}
+
+.modal-close {
+  /* Sizing - Adequate touch target */
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+
+  /* Appearance */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+
+  /* Transition */
+  transition: all var(--duration-fast) var(--ease-out);
+
+  /* Icon */
+  &::before {
+    content: '×';
+    line-height: 1;
+  }
+
+  /* Hover */
+  &:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  /* Focus */
+  &:focus-visible {
+    outline: 2px solid var(--neuro-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================
+ * MODAL BODY
+ * ============================================ */
+
+.modal-body {
+  flex: 1;
+  padding: var(--space-5);
+  overflow-y: auto;
+
+  /* Neuroscience: Optimal reading width */
+  p {
+    max-width: 65ch;
+  }
+
+  /* Smooth scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Compact body spacing */
+.modal-body-compact {
+  padding: var(--space-4);
+}
+
+/* Spacious body spacing */
+.modal-body-spacious {
+  padding: var(--space-6);
+}
+
+/* ============================================
+ * MODAL FOOTER
+ * ============================================ */
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-top: 1px solid var(--separator);
+  flex-shrink: 0;
+
+  /* Neuroscience: Max 3 actions to reduce decision fatigue */
+  &:has(> :nth-child(4)) {
+    border: 2px dashed var(--neuro-warning);
+
+    &::before {
+      content: '⚠️ Too many actions (max 3)';
+      position: absolute;
+      bottom: -20px;
+      right: 0;
+      font-size: var(--text-xs);
+      color: var(--neuro-warning);
+      background: var(--bg-elevated);
+      padding: 0 var(--space-2);
+    }
+  }
+}
+
+/* Footer with primary action on right */
+.modal-footer-reverse {
+  justify-content: space-between;
+}
+
+/* ============================================
+ * MODAL VARIANTS
+ * ============================================ */
+
+/* Success modal */
+.modal-success {
+  .modal-header {
+    background-color: var(--neuro-success-bg);
+    border-bottom-color: var(--neuro-success-border);
+  }
+
+  .modal-title {
+    color: var(--neuro-success-dark);
+  }
+}
+
+/* Warning modal */
+.modal-warning {
+  .modal-header {
+    background-color: var(--neuro-warning-bg);
+    border-bottom-color: var(--neuro-warning-border);
+  }
+
+  .modal-title {
+    color: var(--neuro-warning-dark);
+  }
+}
+
+/* Error/Danger modal */
+.modal-error,
+.modal-danger {
+  .modal-header {
+    background-color: var(--neuro-error-bg);
+    border-bottom-color: var(--neuro-error-border);
+  }
+
+  .modal-title {
+    color: var(--neuro-error-dark);
+  }
+}
+
+/* Info modal */
+.modal-info {
+  .modal-header {
+    background-color: var(--neuro-info-bg);
+    border-bottom-color: var(--neuro-info-border);
+  }
+
+  .modal-title {
+    color: var(--neuro-info-dark);
+  }
+}
+
+/* ============================================
+ * CONFIRM DIALOG (Simple Alert)
+ * ============================================ */
+
+.confirm-dialog {
+  max-width: 400px;
+  text-align: center;
+
+  .modal-body {
+    padding: var(--space-6);
+  }
+
+  .confirm-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--neuro-primary-muted);
+    color: var(--neuro-primary);
+    border-radius: var(--radius-full);
+    font-size: var(--text-4xl);
+  }
+
+  .confirm-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .confirm-message {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-5);
+  }
+
+  .confirm-actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+  }
+}
+
+/* ============================================
+ * DRAWER (Side Modal)
+ * ============================================ */
+
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: var(--z-modal);
+  width: 400px;
+  max-width: 90vw;
+
+  /* Appearance */
+  background-color: var(--bg-elevated);
+  box-shadow: var(--shadow-2xl);
+  overflow-y: auto;
+
+  /* Transition */
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+/* Drawer positions */
+.drawer-left {
+  left: 0;
+  transform: translateX(-100%);
+
+  &.show {
+    transform: translateX(0);
+  }
+}
+
+.drawer-right {
+  right: 0;
+  transform: translateX(100%);
+
+  &.show {
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+ * BOTTOM SHEET (Mobile)
+ * ============================================ */
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-modal);
+
+  /* Sizing */
+  max-height: 90vh;
+
+  /* Appearance */
+  background-color: var(--bg-elevated);
+  border-radius: var(--modal-radius) var(--modal-radius) 0 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+
+  /* Safe area support */
+  padding-bottom: env(safe-area-inset-bottom);
+
+  /* Transition */
+  transform: translateY(100%);
+  transition: transform var(--duration-slow) var(--ease-out);
+
+  &.show {
+    transform: translateY(0);
+  }
+}
+
+/* Bottom sheet handle (drag indicator) */
+.bottom-sheet-handle {
+  width: 40px;
+  height: 4px;
+  margin: var(--space-3) auto;
+  background-color: var(--border-dark);
+  border-radius: var(--radius-full);
+}
+
+/* ============================================
+ * TOAST NOTIFICATIONS
+ * ============================================ */
+
+.toast-container {
+  position: fixed;
+  z-index: var(--z-notification);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  pointer-events: none;
+}
+
+/* Toast positions */
+.toast-container-top {
+  top: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.toast-container-top-right {
+  top: var(--space-4);
+  right: var(--space-4);
+}
+
+.toast-container-bottom {
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.toast-container-bottom-right {
+  bottom: var(--space-4);
+  right: var(--space-4);
+}
+
+/* Toast notification */
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 300px;
+  max-width: 500px;
+  padding: var(--space-4);
+
+  /* Appearance */
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+
+  /* Interaction */
+  pointer-events: all;
+
+  /* Animation */
+  animation: slideInRight var(--duration-base) var(--ease-out);
+
+  /* Icon */
+  .toast-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  /* Content */
+  .toast-content {
+    flex: 1;
+  }
+
+  .toast-title {
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  .toast-message {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+  }
+
+  /* Close button */
+  .toast-close {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--duration-fast) var(--ease-out);
+
+    &:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+  }
+}
+
+/* Toast variants */
+.toast-success {
+  border-left: 4px solid var(--neuro-success);
+
+  .toast-icon {
+    color: var(--neuro-success);
+  }
+}
+
+.toast-warning {
+  border-left: 4px solid var(--neuro-warning);
+
+  .toast-icon {
+    color: var(--neuro-warning);
+  }
+}
+
+.toast-error {
+  border-left: 4px solid var(--neuro-error);
+
+  .toast-icon {
+    color: var(--neuro-error);
+  }
+}
+
+.toast-info {
+  border-left: 4px solid var(--neuro-info);
+
+  .toast-icon {
+    color: var(--neuro-info);
+  }
+}
+
+/* Toast exit animation */
+.toast.closing {
+  animation: slideOutRight var(--duration-fast) var(--ease-in);
+}
+
+/* Slide in from right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide out to right */
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* ============================================
+ * DARK MODE ADJUSTMENTS
+ * ============================================ */
+
+.dark-mode {
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.70);
+  }
+
+  .modal,
+  .drawer,
+  .bottom-sheet,
+  .toast {
+    background-color: var(--bg-dark-tertiary);
+    border-color: var(--border-dark-light);
+  }
+
+  .modal-header,
+  .modal-footer {
+    border-color: var(--separator-dark);
+  }
+
+  .bottom-sheet-handle {
+    background-color: var(--border-dark-strong);
+  }
+}
+
+/* ============================================
+ * ACCESSIBILITY
+ * ============================================ */
+
+/* Focus trap - first focusable element */
+.modal:focus {
+  outline: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal,
+  .drawer,
+  .bottom-sheet,
+  .toast {
+    animation: none;
+    transition: none;
+  }
+
+  .modal,
+  .drawer,
+  .bottom-sheet {
+    &.show {
+      transform: none;
+    }
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .modal {
+    max-width: 100%;
+    margin: var(--space-2);
+  }
+
+  .modal-fullscreen {
+    margin: 0;
+  }
+
+  .toast {
+    min-width: auto;
+    max-width: calc(100vw - 2rem);
+  }
+}

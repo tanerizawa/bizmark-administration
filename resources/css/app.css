@@ -22,6 +22,13 @@
 /* Base Styles - CSS Reset & Global Defaults */
 @import './base.css';
 
+/* Components - Neuroscience-optimized UI components */
+@import './components/buttons.css';      /* Button system */
+@import './components/cards.css';        /* Card components */
+@import './components/forms.css';        /* Form elements */
+@import './components/navigation.css';   /* Navigation components */
+@import './components/modals.css';       /* Modals & dialogs */
+
 /* Remove conflicting imports - use CDN instead for now */
 /* @import '@fortawesome/fontawesome-free/css/all.min.css'; */
 /* @import 'aos/dist/aos.css'; */

@@ -1,0 +1,684 @@
+/**
+ * ===================================================================
+ * FORMS - Neuroscience-Based Component
+ * ===================================================================
+ *
+ * Research-backed form design for optimal user input
+ * - Gentle focus states reduce visual stress
+ * - Clear error feedback without alarm
+ * - Adequate touch targets for accessibility
+ * - Progressive disclosure reduces cognitive load
+ *
+ * @version 1.0.0
+ * @date 2026-01-10
+ */
+
+/* ============================================
+ * FORM GROUP STRUCTURE
+ * ============================================ */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+/* Inline form group (label beside input) */
+.form-group-inline {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-4);
+
+  .form-label {
+    margin-bottom: 0;
+    min-width: 120px;
+  }
+}
+
+/* ============================================
+ * FORM LABELS
+ * ============================================ */
+
+.form-label {
+  display: block;
+  font-size: var(--label-size);
+  font-weight: var(--label-weight);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+
+  /* Required indicator */
+  &.required::after,
+  &[required]::after {
+    content: '*';
+    color: var(--neuro-error);
+    margin-left: var(--space-1);
+  }
+
+  /* Optional indicator */
+  .optional {
+    font-weight: var(--font-normal);
+    color: var(--text-tertiary);
+    font-size: var(--text-xs);
+    margin-left: var(--space-2);
+  }
+}
+
+/* ============================================
+ * TEXT INPUTS
+ * ============================================ */
+
+.form-input,
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"],
+input[type="month"],
+input[type="week"] {
+  /* Sizing */
+  width: 100%;
+  padding: var(--input-padding-y) var(--input-padding-x);
+  min-height: var(--touch-target);
+
+  /* Typography */
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+
+  /* Appearance */
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--input-radius);
+
+  /* Transitions - Neuroscience: gentle, not jarring */
+  transition: all var(--duration-fast) var(--ease-out);
+
+  /* Placeholder */
+  &::placeholder {
+    color: var(--text-placeholder);
+    opacity: 1;
+  }
+
+  /* Focus state - Soft periwinkle glow */
+  &:focus {
+    outline: none;
+    border-color: var(--neuro-primary);
+    box-shadow: var(--glow-primary);
+    background-color: var(--bg-elevated);
+  }
+
+  /* Hover state */
+  &:hover:not(:disabled):not(:focus) {
+    border-color: var(--border-medium);
+  }
+
+  /* Disabled state */
+  &:disabled {
+    background-color: var(--bg-tertiary);
+    color: var(--text-disabled);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* Read-only state */
+  &:read-only {
+    background-color: var(--bg-tertiary);
+    cursor: default;
+  }
+}
+
+/* ============================================
+ * TEXTAREA
+ * ============================================ */
+
+textarea,
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: var(--font-sans);
+
+  /* Neuroscience: Limited max height to prevent overwhelming */
+  max-height: 400px;
+}
+
+/* ============================================
+ * SELECT DROPDOWN
+ * ============================================ */
+
+select,
+.form-select {
+  cursor: pointer;
+  appearance: none;
+
+  /* Custom dropdown arrow - soft color */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B6662' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right var(--space-3) center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: var(--space-8);
+
+  /* Focus state */
+  &:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%238B9FD8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  }
+}
+
+/* Multiple select */
+select[multiple] {
+  padding-right: var(--input-padding-x);
+  background-image: none;
+}
+
+/* ============================================
+ * CHECKBOX & RADIO
+ * ============================================ */
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  cursor: pointer;
+  user-select: none;
+}
+
+input[type="checkbox"],
+input[type="radio"],
+.form-checkbox,
+.form-radio {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border-medium);
+  transition: all var(--duration-fast) var(--ease-out);
+
+  /* Focus */
+  &:focus {
+    outline: none;
+    border-color: var(--neuro-primary);
+    box-shadow: var(--glow-primary);
+  }
+
+  /* Checked state */
+  &:checked {
+    background-color: var(--neuro-primary);
+    border-color: var(--neuro-primary);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* Disabled */
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+/* Radio specific - rounded */
+input[type="radio"],
+.form-radio {
+  border-radius: var(--radius-full);
+
+  &:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Ccircle cx='8' cy='8' r='4'/%3E%3C/svg%3E");
+  }
+}
+
+/* Checkbox specific - rounded corners */
+input[type="checkbox"],
+.form-checkbox {
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================
+ * FORM VALIDATION STATES
+ * ============================================ */
+
+/* Success state */
+.form-input.is-valid,
+.form-control.is-valid,
+input.is-valid,
+textarea.is-valid,
+select.is-valid {
+  border-color: var(--neuro-success);
+
+  &:focus {
+    box-shadow: var(--glow-success);
+  }
+}
+
+/* Error state - Blush pink instead of harsh red */
+.form-input.is-invalid,
+.form-control.is-invalid,
+input.is-invalid,
+textarea.is-invalid,
+select.is-invalid {
+  border-color: var(--neuro-error);
+
+  &:focus {
+    box-shadow: var(--glow-error);
+  }
+}
+
+/* ============================================
+ * FEEDBACK MESSAGES
+ * ============================================ */
+
+.form-help,
+.form-text {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: var(--space-2);
+  line-height: var(--leading-normal);
+}
+
+.form-error,
+.invalid-feedback {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--neuro-error);
+  margin-top: var(--space-2);
+
+  /* Icon */
+  &::before {
+    content: '⚠';
+    flex-shrink: 0;
+  }
+}
+
+.form-success,
+.valid-feedback {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--neuro-success);
+  margin-top: var(--space-2);
+
+  /* Icon */
+  &::before {
+    content: '✓';
+    flex-shrink: 0;
+  }
+}
+
+/* Hide feedback by default */
+.invalid-feedback,
+.valid-feedback {
+  display: none;
+}
+
+/* Show feedback when parent has validation class */
+.is-invalid ~ .invalid-feedback {
+  display: flex;
+}
+
+.is-valid ~ .valid-feedback {
+  display: flex;
+}
+
+/* ============================================
+ * INPUT SIZES
+ * ============================================ */
+
+/* Small input */
+.form-input-sm,
+.form-control-sm {
+  padding: var(--input-padding-sm-y) var(--input-padding-sm-x);
+  font-size: var(--text-sm);
+  min-height: 36px;
+}
+
+/* Large input */
+.form-input-lg,
+.form-control-lg {
+  padding: var(--input-padding-lg-y) var(--input-padding-lg-x);
+  font-size: var(--text-lg);
+  min-height: 56px;
+}
+
+/* ============================================
+ * INPUT GROUPS
+ * ============================================ */
+
+.input-group {
+  display: flex;
+  gap: 0;
+  width: 100%;
+
+  /* Input takes remaining space */
+  .form-input,
+  .form-control {
+    flex: 1;
+    border-radius: 0;
+  }
+
+  /* First element */
+  > :first-child {
+    border-top-left-radius: var(--input-radius);
+    border-bottom-left-radius: var(--input-radius);
+  }
+
+  /* Last element */
+  > :last-child {
+    border-top-right-radius: var(--input-radius);
+    border-bottom-right-radius: var(--input-radius);
+  }
+
+  /* Remove duplicate borders */
+  > * + * {
+    margin-left: -2px;
+  }
+
+  /* Bring focused element to front */
+  > :focus {
+    z-index: 1;
+  }
+}
+
+/* Input group addon */
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: var(--input-padding-y) var(--input-padding-x);
+  background-color: var(--bg-tertiary);
+  border: 2px solid var(--border-light);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+}
+
+/* ============================================
+ * FILE INPUT
+ * ============================================ */
+
+input[type="file"],
+.form-file {
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+
+  &::file-selector-button {
+    padding: var(--space-2) var(--space-4);
+    margin-right: var(--space-3);
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-base);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-out);
+
+    &:hover {
+      background-color: var(--neuro-primary-muted);
+      border-color: var(--neuro-primary);
+      color: var(--neuro-primary-dark);
+    }
+  }
+}
+
+/* ============================================
+ * RANGE INPUT
+ * ============================================ */
+
+input[type="range"],
+.form-range {
+  width: 100%;
+  height: 6px;
+  padding: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+
+  /* Track */
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+  }
+
+  &::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+  }
+
+  /* Thumb */
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    margin-top: -7px;
+    background: var(--neuro-primary);
+    border: 3px solid white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+    cursor: grab;
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--neuro-primary);
+    border: 3px solid white;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+    cursor: grab;
+  }
+
+  /* Hover/Focus */
+  &:hover::-webkit-slider-thumb,
+  &:focus::-webkit-slider-thumb {
+    transform: scale(1.1);
+    box-shadow: var(--glow-primary);
+  }
+
+  &:active::-webkit-slider-thumb {
+    cursor: grabbing;
+  }
+
+  /* Focus */
+  &:focus {
+    outline: none;
+  }
+}
+
+/* ============================================
+ * SWITCH TOGGLE
+ * ============================================ */
+
+.form-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  user-select: none;
+
+  input[type="checkbox"] {
+    position: relative;
+    width: 48px;
+    height: 24px;
+    margin: 0;
+    appearance: none;
+    background-color: var(--bg-tertiary);
+    border: 2px solid var(--border-medium);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--duration-base) var(--ease-out);
+
+    /* Knob */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background-color: white;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--duration-base) var(--ease-out);
+    }
+
+    /* Checked state */
+    &:checked {
+      background-color: var(--neuro-primary);
+      border-color: var(--neuro-primary);
+
+      &::before {
+        transform: translateX(24px);
+      }
+    }
+
+    /* Focus */
+    &:focus {
+      box-shadow: var(--glow-primary);
+    }
+
+    /* Disabled */
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* ============================================
+ * FORM LAYOUTS
+ * ============================================ */
+
+/* Inline form */
+.form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: flex-end;
+
+  .form-group {
+    flex: 1;
+    margin-bottom: 0;
+    min-width: 200px;
+  }
+
+  .btn {
+    flex-shrink: 0;
+  }
+}
+
+/* Grid form */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .form-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ============================================
+ * DARK MODE
+ * ============================================ */
+
+.dark-mode {
+  .form-input,
+  .form-control,
+  input,
+  textarea,
+  select {
+    background-color: var(--bg-dark-secondary);
+    border-color: var(--border-dark-light);
+    color: var(--text-dark-primary);
+
+    &::placeholder {
+      color: var(--text-dark-placeholder);
+    }
+
+    &:hover:not(:disabled):not(:focus) {
+      border-color: var(--border-dark-medium);
+    }
+
+    &:disabled,
+    &:read-only {
+      background-color: var(--bg-dark-primary);
+      color: var(--text-dark-disabled);
+    }
+  }
+
+  .input-group-text {
+    background-color: var(--bg-dark-primary);
+    border-color: var(--border-dark-light);
+    color: var(--text-dark-secondary);
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    background-color: var(--bg-dark-secondary);
+    border-color: var(--border-dark-medium);
+  }
+
+  .form-switch input[type="checkbox"] {
+    background-color: var(--bg-dark-secondary);
+    border-color: var(--border-dark-medium);
+
+    &::before {
+      background-color: var(--bg-dark-elevated);
+    }
+  }
+}
+
+/* ============================================
+ * ACCESSIBILITY
+ * ============================================ */
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .form-input,
+  .form-control,
+  input,
+  textarea,
+  select,
+  .form-switch input[type="checkbox"],
+  .form-switch input[type="checkbox"]::before {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .form-input,
+  .form-control,
+  input,
+  textarea,
+  select {
+    border-width: 3px;
+  }
+}
