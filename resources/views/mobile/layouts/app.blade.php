@@ -32,8 +32,11 @@
     <link rel="apple-touch-icon" href="/images/pavicon.png">
     
     <title>@yield('title', 'Dashboard') - Bizmark Admin</title>
-    
-    {{-- Tailwind CSS CDN (for development - use compiled in production) --}}
+
+    {{-- Neuroscience Design System - Vite Compiled CSS --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- Tailwind CSS CDN (fallback for development) --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // Suppress Tailwind CDN warning in console (we know it's for development)

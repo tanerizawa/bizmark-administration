@@ -3,6 +3,9 @@
 <head>
     @include('landing.partials.head')
     @include('landing.partials.styles-modern')
+
+    {{-- Neuroscience Design System - Vite Compiled CSS --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     @include('landing.partials.navbar')

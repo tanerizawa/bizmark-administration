@@ -8,11 +8,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>@yield('title', 'Client Portal') - Bizmark.id</title>
-    
+
     <!-- Favicons -->
     <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/pavicon.png') }}">
-    
+
+    {{-- Neuroscience Design System - Vite Compiled CSS --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <!-- External CSS - CDN Only -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
