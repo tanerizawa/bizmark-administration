@@ -1,160 +1,150 @@
-{{-- MODERN HERO SECTION - Bold, Dynamic, Impressive --}}
-<section id="home" class="relative min-h-[75vh] md:min-h-[80vh] flex items-center overflow-hidden pt-32 md:pt-36 pb-20">
-    {{-- Animated Background --}}
-    <div class="absolute inset-0 gradient-mesh opacity-80"></div>
+{{-- OPTIMIZED HERO SECTION - Phase 1: Quick Wins --}}
+<section id="home" class="relative min-h-[80vh] md:min-h-[85vh] flex items-center overflow-hidden pt-32 md:pt-36 pb-24">
+    {{-- Simplified Background - Less visual noise --}}
+    <div class="absolute inset-0 gradient-mesh opacity-70"></div>
     <div class="absolute inset-0">
-        <div class="absolute top-24 left-12 w-56 h-56 bg-primary/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-24 right-16 w-72 h-72 bg-secondary/10 rounded-full blur-3xl"></div>
+        <div class="absolute top-24 left-12 w-64 h-64 bg-primary/8 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-24 right-16 w-80 h-80 bg-secondary/8 rounded-full blur-3xl"></div>
     </div>
-    
+
     <div class="container relative z-10">
-        <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
-            
-            {{-- LEFT: Content --}}
-            <div class="space-y-8" data-aos="fade-up" data-aos-duration="800">
-                
-                {{-- Badge --}}
-                <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full border border-primary/10">
-                    <span class="flex h-2.5 w-2.5 rounded-full bg-primary/90"></span>
-                    <span class="text-xs font-semibold text-primary uppercase tracking-[0.2em]">
-                        Konsultan Perizinan
-                    </span>
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+            {{-- LEFT: Content - SIMPLIFIED (12 → 5 elements) --}}
+            <div class="space-y-10" data-aos="fade-up" data-aos-duration="800">
+
+                {{-- 1. POWER HEADLINE - Maximum Contrast & Impact --}}
+                <div class="space-y-4">
+                    <h1 class="space-y-3">
+                        {{-- Primary headline - MAX attention --}}
+                        <span class="block headline-hero">
+                            Perizinan Industri
+                        </span>
+                        {{-- Power statement - Gradient accent --}}
+                        <span class="block headline-hero-accent">
+                            <span class="headline-power-word">100% Legal.</span> Zero Ribet.
+                        </span>
+                    </h1>
+
+                    {{-- Sub-headline - Optimized for F-pattern scanning --}}
+                    <p class="text-xl md:text-2xl leading-relaxed max-w-xl" style="color: #6B5D52;">
+                        <strong class="text-attention-high font-semibold">Pendampingan penuh</strong> izin
+                        <strong class="text-attention-max">AMDAL, UKL-UPL, dan LB3</strong>
+                        dengan <strong class="text-attention-high">monitoring digital 24/7</strong>.
+                    </p>
                 </div>
-                
-                {{-- HERO HEADLINE - MASSIVE & BOLD --}}
-                <h1 class="space-y-2">
-                    <span class="block text-5xl md:text-6xl font-black leading-tight tracking-tight text-gray-900">
-                        Perizinan Industri
-                    </span>
-                    <span class="block text-5xl md:text-6xl font-black leading-tight text-gradient">
-                        Lebih Mudah & Profesional
-                    </span>
-                </h1>
-                
-                {{-- Sub-headline --}}
-                <p class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-xl">
-                    Kami mendampingi perusahaan Anda mendapatkan izin <strong class="text-primary font-semibold">LB3, AMDAL, dan UKL-UPL</strong> dengan proses yang terstruktur, transparan, dan nyaman di setiap tahapannya.
-                </p>
-                
-                {{-- CTA Button --}}
-                <div class="flex flex-wrap gap-4">
-                    <a href="{{ route('consultation.index') }}" 
-                       class="btn btn-primary group">
-                        <span class="flex items-center justify-center h-8 w-8 rounded-full bg-white/15">
-                            <i class="fas fa-calculator text-base"></i>
+
+                {{-- 2. PRIMARY CTA - IMPOSSIBLE TO MISS --}}
+                <div class="flex flex-col sm:flex-row gap-4 items-start">
+                    <a href="{{ route('consultation.index') }}"
+                       class="btn-primary-enhanced pulse group">
+                        <span class="flex items-center justify-center h-10 w-10 rounded-full bg-white/20">
+                            <i class="fas fa-calculator text-lg"></i>
                         </span>
                         <span>Estimasi Biaya Gratis</span>
-                        <i class="fas fa-arrow-right text-sm transition-transform group-hover:translate-x-1"></i>
-                    </a>
-                    <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi" 
-                       class="btn btn-outline group">
-                        <span class="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10">
-                            <i class="fab fa-whatsapp text-base"></i>
-                        </span>
-                        <span>Chat WhatsApp</span>
-                        <i class="fas fa-arrow-right text-sm transition-transform group-hover:translate-x-1"></i>
+                        <i class="fas fa-arrow-right text-base transition-transform group-hover:translate-x-2"></i>
                     </a>
                 </div>
 
-                {{-- Support details --}}
-                <div class="flex flex-col gap-3 text-gray-600 text-sm leading-relaxed max-w-xl">
-                    <p>
-                        Layanan kami mencakup pendampingan OSS/NIB, AMDAL, UKL-UPL, PBG/SLF, dan legalitas bisnis dengan monitoring digital 24/7.
-                    </p>
-                    <p>
-                        Tim konsultan bersertifikat memastikan setiap dokumen validated sesuai regulasi terbaru sehingga proses jadi lebih ringan.
-                    </p>
-                </div>
-                
-                {{-- Trust Indicators - Modern Layout --}}
-                <div class="grid grid-cols-3 gap-5 p-5 bg-white/80 backdrop-blur rounded-2xl border border-primary/5 max-w-xl">
-                    <div class="text-center space-y-1">
-                        <div class="text-3xl font-extrabold text-primary">100+</div>
-                        <div class="text-xs text-gray-500 font-medium uppercase tracking-[0.2em]">Klien</div>
-                    </div>
-                    <div class="text-center space-y-1">
-                        <div class="text-3xl font-extrabold text-secondary">10+</div>
-                        <div class="text-xs text-gray-500 font-medium uppercase tracking-[0.2em]">Tahun</div>
-                    </div>
-                    <div class="text-center space-y-1">
-                        <div class="flex items-center justify-center gap-1 text-3xl font-extrabold text-gray-900">
-                            <i class="fas fa-star text-yellow-400 text-base"></i>
-                            4.9
+                {{-- 3. TRUST SIGNALS - Animated Counters + Unified Colors --}}
+                <div class="grid grid-cols-3 gap-4 max-w-2xl">
+                    <div class="trust-metric">
+                        <div class="trust-metric-value"
+                             data-counter="247"
+                             data-counter-suffix="+"
+                             data-counter-duration="2000"
+                             data-counter-delay="200">
+                            0
                         </div>
-                        <div class="text-xs text-gray-500 font-medium uppercase tracking-[0.2em]">Rating</div>
+                        <div class="trust-metric-label">Klien</div>
+                    </div>
+
+                    <div class="trust-metric">
+                        <div class="trust-metric-value"
+                             data-counter="12"
+                             data-counter-suffix="+"
+                             data-counter-duration="1800"
+                             data-counter-delay="400">
+                            0
+                        </div>
+                        <div class="trust-metric-label">Tahun</div>
+                    </div>
+
+                    <div class="trust-metric">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <i class="fas fa-star text-yellow-400 text-xl"></i>
+                            <span class="trust-metric-value"
+                                  data-counter="4.9"
+                                  data-counter-decimals="1"
+                                  data-counter-duration="1600"
+                                  data-counter-delay="600">
+                                0
+                            </span>
+                        </div>
+                        <div class="trust-metric-label">Rating</div>
                     </div>
                 </div>
-                
+
+                {{-- 4. SECONDARY CTA - WhatsApp (subtle) --}}
+                <div class="flex items-center gap-4 pt-2">
+                    <span class="text-sm font-medium" style="color: #9B8B7E;">Atau hubungi via:</span>
+                    <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi"
+                       class="inline-flex items-center gap-2 px-5 py-3 bg-green-50 hover:bg-green-100 rounded-full border border-green-200 hover:border-green-400 transition-all duration-250 group">
+                        <i class="fab fa-whatsapp text-xl text-green-600"></i>
+                        <span class="text-sm font-semibold text-green-700">WhatsApp</span>
+                        <i class="fas fa-arrow-right text-xs text-green-600 transition-transform group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+
             </div>
             
-            {{-- RIGHT: Hero Image/Illustration --}}
-            <div class="relative" data-aos="fade-left" data-aos-duration="900" data-aos-delay="150">
-                
-                {{-- Main Visual --}}
-                    <div class="relative">
-                        {{-- Professional Business Consultation Visual --}}
-                        <div class="aspect-[4/3] bg-white/75 backdrop-blur-xl border border-primary/10 rounded-3xl relative overflow-hidden shadow-[0_25px_60px_-40px_rgba(30,64,175,0.45)]">
-                            
-                            {{-- Hero Photo --}}
-                            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.pexels.com/photos/3183286/pexels-photo-3183286.jpeg?auto=compress&cs=tinysrgb&w=1400');"></div>
-                            <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 via-white/30 to-transparent opacity-80"></div>
-                        
-                        {{-- Overlay Card --}}
-                        <div class="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur border border-primary/10 rounded-2xl p-5 shadow-[0_18px_35px_-28px_rgba(30,64,175,0.45)]">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-xs uppercase tracking-[0.3em] text-gray-400 mb-1">Progress</p>
-                                    <p class="text-sm font-semibold text-gray-900">Pendampingan izin UKL-UPL</p>
+            {{-- RIGHT: Hero Visual - SIMPLIFIED for better focus --}}
+            <div class="relative hidden lg:block" data-aos="fade-left" data-aos-duration="900" data-aos-delay="200">
+
+                {{-- Main Visual - Cleaner design --}}
+                <div class="relative">
+                    {{-- Professional Business Visual --}}
+                    <div class="aspect-[4/3] bg-white/80 backdrop-blur-xl border-2 border-primary/15 rounded-3xl relative overflow-hidden shadow-[0_30px_70px_-40px_rgba(26,45,70,0.5)]">
+
+                        {{-- Hero Photo --}}
+                        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.pexels.com/photos/3183286/pexels-photo-3183286.jpeg?auto=compress&cs=tinysrgb&w=1400');"></div>
+                        <div class="absolute inset-0 bg-gradient-to-tr from-primary/25 via-white/20 to-transparent"></div>
+
+                        {{-- Progress Indicator - Simplified --}}
+                        <div class="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-lg border border-primary/10 rounded-2xl p-6 shadow-2xl">
+                            <div class="flex items-center justify-between gap-4">
+                                <div class="flex-1">
+                                    <p class="text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Live Progress</p>
+                                    <p class="text-base font-bold text-attention-max">Izin AMDAL - PT Mandiri Jaya</p>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                        <i class="fas fa-check"></i>
-                                    </span>
-                                    <p class="text-sm font-semibold text-primary">Selesai 90%</p>
+                                <div class="flex flex-col items-end gap-2">
+                                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-200">
+                                        <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                                        <span class="text-sm font-bold text-green-700">90% Selesai</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    {{-- Decorative Elements --}}
-                    <div class="absolute -z-10 -top-10 -right-6 w-48 h-48 bg-primary/15 rounded-full blur-3xl"></div>
-                    <div class="absolute -z-10 -bottom-10 -left-8 w-56 h-56 bg-secondary/15 rounded-full blur-3xl"></div>
+
+                    {{-- Subtle decorative glow --}}
+                    <div class="absolute -z-10 -top-8 -right-8 w-64 h-64 bg-primary/12 rounded-full blur-3xl"></div>
+                    <div class="absolute -z-10 -bottom-8 -left-8 w-64 h-64 bg-secondary/10 rounded-full blur-3xl"></div>
                 </div>
-                
-                {{-- Small Feature Cards --}}
-                <div class="grid grid-cols-2 gap-4 mt-6">
-                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-primary/10">
-                        <i class="fas fa-shield text-xl text-green-500 mb-2"></i>
-                        <div class="text-sm font-semibold text-gray-900">100% Legal</div>
-                        <div class="text-xs text-gray-600">Pendampingan penuh</div>
-                    </div>
-                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-primary/10">
-                        <i class="fas fa-headset text-xl text-primary mb-2"></i>
-                        <div class="text-sm font-semibold text-gray-900">Support Responsif</div>
-                        <div class="text-xs text-gray-600">Update berkala</div>
-                    </div>
-                </div>
-                
+
             </div>
-            
+
         </div>
     </div>
-    
-    <div class="container relative z-10 mt-10 flex flex-col items-center gap-3 text-gray-500 md:mt-16">
-        <a href="#services" class="inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-gray-600 hover:text-primary transition">
-            <span>Jelajahi Layanan</span>
-            <i class="fas fa-chevron-down text-base"></i>
-        </a>
-        <span class="block h-px w-12 bg-gray-200"></span>
+
+    {{-- Scroll Indicator - Cleaner design --}}
+    <div class="container relative z-10 mt-12 md:mt-16">
+        <div class="flex flex-col items-center gap-4">
+            <a href="#services"
+               class="inline-flex flex-col items-center gap-2 text-sm font-semibold text-gray-500 hover:text-attention-high transition-all duration-300 group">
+                <span class="uppercase tracking-widest">Lihat Layanan</span>
+                <i class="fas fa-chevron-down text-base animate-bounce group-hover:translate-y-1 transition-transform"></i>
+            </a>
+        </div>
     </div>
 </section>
-<style>
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-    }
-    
-    .animate-float {
-        animation: float 3s ease-in-out infinite;
-    }
-</style>

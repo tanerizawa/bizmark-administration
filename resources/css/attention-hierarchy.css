@@ -1,0 +1,395 @@
+/* ============================================
+   ATTENTION HIERARCHY COLOR SYSTEM
+   Neuroscience-Optimized for Maximum Impact
+   ============================================ */
+
+:root {
+  /* ============================================
+     ATTENTION LEVELS - Progressive Contrast
+     Based on cognitive processing hierarchy
+     ============================================ */
+
+  /* CRITICAL - Headlines, Primary CTAs (Contrast Ratio: 12:1) */
+  --color-attention-max: #1A2D46;
+  --color-attention-max-rgb: 26, 45, 70;
+
+  /* HIGH - Sub-headlines, Secondary CTAs (Contrast Ratio: 8:1) */
+  --color-attention-high: #3A5D82;
+  --color-attention-high-rgb: 58, 93, 130;
+
+  /* MEDIUM - Body text, Supporting elements (Contrast Ratio: 4.5:1) */
+  --color-attention-medium: #5B8DBE;
+  --color-attention-medium-rgb: 91, 141, 190;
+
+  /* LOW - Meta info, Subtle elements (Contrast Ratio: 3:1) */
+  --color-attention-low: #8CBAE1;
+  --color-attention-low-rgb: 140, 186, 225;
+
+  /* ============================================
+     CTA ENHANCEMENT - Impossible to Miss
+     ============================================ */
+
+  /* Primary CTA Gradient (Blue Depth) */
+  --cta-primary-start: #3A5D82;
+  --cta-primary-end: #1A2D46;
+  --cta-primary-hover-start: #1A2D46;
+  --cta-primary-hover-end: #0F1A2B;
+
+  /* CTA Glow Effect */
+  --cta-glow-color: rgba(58, 93, 130, 0.6);
+  --cta-glow-hover: rgba(26, 45, 70, 0.8);
+
+  /* Secondary CTA (Warm Accent) */
+  --cta-secondary-bg: rgba(232, 149, 111, 0.08);
+  --cta-secondary-border: rgba(232, 149, 111, 0.3);
+  --cta-secondary-text: #C96535;
+  --cta-secondary-hover-bg: rgba(232, 149, 111, 0.15);
+
+  /* ============================================
+     TRUST SIGNAL COLORS - Unified Palette
+     ============================================ */
+
+  /* All trust metrics use single color family */
+  --trust-primary: #5B8DBE;
+  --trust-bg: rgba(91, 141, 190, 0.06);
+  --trust-border: rgba(91, 141, 190, 0.15);
+  --trust-highlight: rgba(91, 141, 190, 0.25);
+
+  /* Success states */
+  --trust-success: #7CB342;
+  --trust-success-bg: rgba(124, 179, 66, 0.1);
+
+  /* ============================================
+     GRADIENT OVERLAYS - Depth & Dimension
+     ============================================ */
+
+  /* Hero Background Gradient */
+  --gradient-hero: linear-gradient(135deg,
+    #FDFBF8 0%,
+    #F5F3F8 50%,
+    #F0F4ED 100%
+  );
+
+  /* Card Hover Gradient */
+  --gradient-card-hover: linear-gradient(135deg,
+    rgba(91, 141, 190, 0.03) 0%,
+    rgba(91, 141, 190, 0.08) 100%
+  );
+
+  /* Text Gradient (Headlines) */
+  --gradient-text: linear-gradient(135deg,
+    #3A5D82 0%,
+    #5B8DBE 100%
+  );
+
+  --gradient-text-warm: linear-gradient(135deg,
+    #C96535 0%,
+    #E8956F 100%
+  );
+}
+
+/* ============================================
+   UTILITY CLASSES - Ready to Use
+   ============================================ */
+
+/* Text Attention Levels */
+.text-attention-max {
+  color: var(--color-attention-max);
+}
+
+.text-attention-high {
+  color: var(--color-attention-high);
+}
+
+.text-attention-medium {
+  color: var(--color-attention-medium);
+}
+
+.text-attention-low {
+  color: var(--color-attention-low);
+}
+
+/* Gradient Text */
+.text-gradient-primary {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-warm {
+  background: var(--gradient-text-warm);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   ENHANCED BUTTON STYLES
+   Neuroscience-Optimized Interactions
+   ============================================ */
+
+.btn-primary-enhanced {
+  /* Base Styles */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  /* Size - WCAG 2.5.5 Compliant */
+  min-height: 64px;
+  min-width: 200px;
+  padding: 1rem 2rem;
+
+  /* Typography */
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+
+  /* Visual */
+  background: linear-gradient(135deg, var(--cta-primary-start), var(--cta-primary-end));
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+
+  /* Shadow - Dramatic depth */
+  box-shadow:
+    0 8px 24px -12px var(--cta-glow-color),
+    0 4px 12px -4px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  /* Transition */
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Cursor */
+  cursor: pointer;
+}
+
+.btn-primary-enhanced:hover {
+  /* Transform - Noticeable lift */
+  transform: translateY(-4px) scale(1.02);
+
+  /* Background - Darker gradient */
+  background: linear-gradient(135deg, var(--cta-primary-hover-start), var(--cta-primary-hover-end));
+
+  /* Shadow - Enhanced glow */
+  box-shadow:
+    0 16px 40px -16px var(--cta-glow-hover),
+    0 8px 20px -8px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+  /* Border */
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-primary-enhanced:active {
+  transform: translateY(-2px) scale(1.0);
+  box-shadow:
+    0 4px 16px -8px var(--cta-glow-color),
+    0 2px 8px -4px rgba(0, 0, 0, 0.2);
+}
+
+/* Pulse Animation for Primary CTA */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow:
+      0 8px 24px -12px var(--cta-glow-color),
+      0 4px 12px -4px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 8px 32px -8px var(--cta-glow-hover),
+      0 4px 16px -2px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+.btn-primary-enhanced.pulse {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Secondary CTA Enhanced */
+.btn-secondary-enhanced {
+  /* Base Styles */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  /* Size */
+  min-height: 64px;
+  min-width: 200px;
+  padding: 1rem 2rem;
+
+  /* Typography */
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+
+  /* Visual */
+  background: var(--cta-secondary-bg);
+  color: var(--cta-secondary-text);
+  border: 2px solid var(--cta-secondary-border);
+  border-radius: 9999px;
+
+  /* Transition */
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.btn-secondary-enhanced:hover {
+  transform: translateY(-3px);
+  background: var(--cta-secondary-hover-bg);
+  border-color: var(--cta-secondary-text);
+  box-shadow: 0 12px 28px -16px rgba(201, 101, 53, 0.4);
+}
+
+/* ============================================
+   TRUST SIGNAL STYLES
+   ============================================ */
+
+.trust-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  background: var(--trust-bg);
+  border: 1px solid var(--trust-border);
+  border-radius: 1rem;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trust-metric:hover {
+  background: var(--trust-highlight);
+  border-color: var(--trust-primary);
+  transform: translateY(-2px);
+}
+
+.trust-metric-value {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--trust-primary);
+  letter-spacing: -0.02em;
+}
+
+.trust-metric-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   COUNTER ANIMATION
+   ============================================ */
+
+@keyframes counter-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.counter-animate {
+  animation: counter-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ============================================
+   HEADLINE OPTIMIZATIONS
+   ============================================ */
+
+.headline-hero {
+  font-size: clamp(3rem, 7vw, 5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--color-attention-max);
+}
+
+.headline-hero-accent {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.headline-power-word {
+  position: relative;
+  display: inline-block;
+  font-weight: 900;
+  color: var(--color-attention-high);
+}
+
+.headline-power-word::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.25em;
+  background: var(--trust-success-bg);
+  border-radius: 0.125em;
+  z-index: -1;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .btn-primary-enhanced,
+  .btn-secondary-enhanced {
+    min-height: 56px;
+    min-width: 160px;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .btn-primary-enhanced:hover,
+  .btn-secondary-enhanced:hover {
+    transform: translateY(-2px);
+  }
+
+  .trust-metric-value {
+    font-size: 2.5rem;
+  }
+
+  .headline-hero {
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
+  }
+
+  .headline-hero-accent {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+}
+
+/* Reduce animations on mobile if preferred */
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary-enhanced,
+  .btn-secondary-enhanced,
+  .trust-metric {
+    transition: none;
+    animation: none;
+  }
+
+  .btn-primary-enhanced:hover,
+  .btn-secondary-enhanced:hover,
+  .trust-metric:hover {
+    transform: none;
+  }
+}

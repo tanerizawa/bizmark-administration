@@ -5,6 +5,9 @@ import Alpine from 'alpinejs';
 import collapse from '@alpinejs/collapse';
 import AOS from 'aos';
 
+// Import custom modules
+import './counters';
+
 // Register Alpine plugins
 Alpine.plugin(collapse);
 

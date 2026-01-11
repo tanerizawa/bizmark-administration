@@ -5,6 +5,7 @@
 
 /* Import CSS Variables */
 @import 'neuroscience-variables.css';
+@import 'attention-hierarchy.css';
 
 /* Import Tailwind CSS */
 @import 'tailwindcss';
