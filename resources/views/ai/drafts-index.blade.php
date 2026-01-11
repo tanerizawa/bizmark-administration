@@ -230,7 +230,7 @@ function checkProcessingStatus() {
         .then(response => response.json())
         .then(data => {
             const statusDiv = document.getElementById('processingStatus');
-            
+
             if (data.processing && data.processing.length > 0) {
                 let html = '<div class="card-elevated rounded-apple-lg p-4 mb-6" style="background: rgba(255, 149, 0, 0.1); border-left: 4px solid #FF9500;">';
                 html += '<div class="flex items-center">';
@@ -238,21 +238,38 @@ function checkProcessingStatus() {
                 html += '<div style="color: #FFFFFF;"><strong>Proses AI Sedang Berjalan:</strong></div>';
                 html += '</div>';
                 html += '<ul class="mt-3 space-y-2">';
-                
+
                 data.processing.forEach(item => {
                     html += '<li class="text-sm" style="color: rgba(235, 235, 245, 0.8);">';
                     html += '<i class="fas fa-circle text-xs mr-2" style="color: #FF9500;"></i>';
                     html += item.template_name + ' - ' + item.status + ' (' + item.started_at + ')';
                     html += '</li>';
                 });
-                
+
                 html += '</ul></div>';
                 statusDiv.innerHTML = html;
-                
+
+                // Clear any existing reload timeout
+                if (window.processingReloadTimeout) {
+                    clearTimeout(window.processingReloadTimeout);
+                }
+
                 // Reload page when processing completes
-                setTimeout(() => location.reload(), 30000);
+                window.processingReloadTimeout = setTimeout(() => location.reload(), 30000);
             } else {
                 statusDiv.innerHTML = '';
+
+                // No processing items, stop checking
+                if (window.processingCheckInterval) {
+                    clearInterval(window.processingCheckInterval);
+                    window.processingCheckInterval = null;
+                }
+
+                // Clear any pending reload
+                if (window.processingReloadTimeout) {
+                    clearTimeout(window.processingReloadTimeout);
+                    window.processingReloadTimeout = null;
+                }
             }
         })
         .catch(error => console.error('Error checking status:', error));
@@ -261,8 +278,8 @@ function checkProcessingStatus() {
 // Check on page load
 checkProcessingStatus();
 
-// Check every 10 seconds
-setInterval(checkProcessingStatus, 10000);
+// Check every 10 seconds (store interval ID for cleanup)
+window.processingCheckInterval = setInterval(checkProcessingStatus, 10000);
 </script>
 @endpush
 @endsection
