@@ -8,6 +8,7 @@
 @import 'attention-hierarchy.css';
 @import 'typography-enhanced.css';
 @import 'visual-hierarchy.css';
+@import 'micro-interactions.css';
 
 /* Import Tailwind CSS */
 @import 'tailwindcss';

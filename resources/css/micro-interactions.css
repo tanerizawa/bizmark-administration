@@ -1,0 +1,607 @@
+/* ============================================
+   MICRO-INTERACTIONS & DELIGHT
+   Enhanced hover states, feedback, animations
+   ============================================ */
+
+:root {
+  /* ============================================
+     INTERACTION TIMINGS
+     ============================================ */
+  --interaction-instant: 100ms;
+  --interaction-fast: 200ms;
+  --interaction-normal: 300ms;
+  --interaction-slow: 400ms;
+  --interaction-lazy: 600ms;
+
+  /* ============================================
+     EASING FUNCTIONS
+     ============================================ */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.5, 1.5, 0.5, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================
+   ENHANCED BUTTON HOVER STATES
+   ============================================ */
+
+/* Primary Buttons - Lift + Glow */
+.btn-primary,
+.btn-primary-enhanced,
+button[type="submit"]:not(.btn-secondary) {
+  position: relative;
+  overflow: hidden;
+  transition: all var(--interaction-normal) var(--ease-smooth);
+}
+
+.btn-primary::before,
+.btn-primary-enhanced::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0;
+  transition: opacity var(--interaction-fast);
+}
+
+.btn-primary:hover::before,
+.btn-primary-enhanced:hover::before {
+  opacity: 1;
+}
+
+/* Ripple Effect on Click */
+.btn-primary::after,
+.btn-primary-enhanced::after,
+.btn-secondary-enhanced::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width var(--interaction-slow) ease-out,
+              height var(--interaction-slow) ease-out,
+              opacity var(--interaction-slow) ease-out;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-primary:active::after,
+.btn-primary-enhanced:active::after,
+.btn-secondary-enhanced:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0.3;
+  transition: none;
+}
+
+/* Secondary Buttons - Scale + Border */
+.btn-secondary,
+.btn-outline {
+  transition: all var(--interaction-normal) var(--ease-smooth);
+}
+
+.btn-secondary:hover,
+.btn-outline:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary:active,
+.btn-outline:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ============================================
+   LINK HOVER EFFECTS
+   ============================================ */
+
+/* Underline Slide Animation */
+.link-hover-slide {
+  position: relative;
+  text-decoration: none;
+}
+
+.link-hover-slide::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width var(--interaction-normal) var(--ease-smooth);
+}
+
+.link-hover-slide:hover::after {
+  width: 100%;
+}
+
+/* Glow on Hover */
+.link-hover-glow {
+  position: relative;
+  transition: all var(--interaction-normal);
+}
+
+.link-hover-glow:hover {
+  text-shadow: 0 0 8px currentColor;
+}
+
+/* ============================================
+   CARD HOVER ENHANCEMENTS
+   ============================================ */
+
+.card-interactive,
+.hierarchy-card,
+article.card {
+  position: relative;
+  transition: all var(--interaction-normal) var(--ease-smooth);
+}
+
+.card-interactive:hover,
+.hierarchy-card:hover,
+article.card:hover {
+  transform: translateY(-6px) scale(1.01);
+}
+
+/* Card Shine Effect */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shine::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  transition: transform var(--interaction-lazy) var(--ease-smooth);
+}
+
+.card-shine:hover::before {
+  transform: translateX(100%) translateY(100%) rotate(45deg);
+}
+
+/* ============================================
+   FORM FEEDBACK STATES
+   ============================================ */
+
+/* Input Focus Enhancement */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  transition: all var(--interaction-normal) var(--ease-smooth);
+  position: relative;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  transform: scale(1.01);
+  box-shadow: 0 0 0 4px rgba(91, 141, 190, 0.15),
+              0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Success State */
+.input-success,
+input.success,
+textarea.success {
+  border-color: var(--color-accent) !important;
+  background-color: rgba(124, 179, 66, 0.05);
+}
+
+.input-success:focus,
+input.success:focus,
+textarea.success:focus {
+  box-shadow: 0 0 0 4px rgba(124, 179, 66, 0.15),
+              0 4px 12px rgba(124, 179, 66, 0.1);
+}
+
+/* Error State */
+.input-error,
+input.error,
+textarea.error {
+  border-color: var(--color-error) !important;
+  background-color: rgba(201, 124, 124, 0.05);
+}
+
+.input-error:focus,
+input.error:focus,
+textarea.error:focus {
+  box-shadow: 0 0 0 4px rgba(201, 124, 124, 0.15),
+              0 4px 12px rgba(201, 124, 124, 0.1);
+  animation: shake 0.4s ease;
+}
+
+/* Shake Animation for Errors */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Validation Checkmark */
+.input-wrapper {
+  position: relative;
+}
+
+.input-validation-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.25rem;
+  opacity: 0;
+  transition: all var(--interaction-normal) var(--ease-bounce);
+  pointer-events: none;
+}
+
+.input-wrapper.success .input-validation-icon {
+  opacity: 1;
+  color: var(--color-accent);
+  animation: pop-in 0.4s var(--ease-out-back);
+}
+
+.input-wrapper.error .input-validation-icon {
+  opacity: 1;
+  color: var(--color-error);
+}
+
+@keyframes pop-in {
+  0% {
+    transform: translateY(-50%) scale(0);
+  }
+  60% {
+    transform: translateY(-50%) scale(1.2);
+  }
+  100% {
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+/* Button Loading */
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(200, 200, 200, 0.2) 25%,
+    rgba(200, 200, 200, 0.3) 50%,
+    rgba(200, 200, 200, 0.2) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: 0.5em;
+}
+
+.skeleton-title {
+  height: 2em;
+  width: 60%;
+  margin-bottom: 1em;
+}
+
+/* ============================================
+   TOOLTIPS
+   ============================================ */
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  padding: 8px 12px;
+  background: var(--color-attention-max);
+  color: white;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--interaction-normal) var(--ease-smooth);
+  z-index: 1000;
+}
+
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--color-attention-max);
+}
+
+.tooltip-wrapper:hover .tooltip-content {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================
+   CELEBRATION ANIMATIONS
+   ============================================ */
+
+/* Success Checkmark */
+.success-checkmark {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  position: relative;
+  animation: scale-in 0.4s var(--ease-out-back);
+}
+
+.success-checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+@keyframes scale-in {
+  0% {
+    transform: scale(0) rotate(-180deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+/* Confetti (CSS-only fallback) */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: var(--color-primary);
+  animation: confetti-fall 3s linear forwards;
+  pointer-events: none;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   BADGE ANIMATIONS
+   ============================================ */
+
+.badge-animate {
+  display: inline-block;
+  animation: badge-bounce 0.6s var(--ease-out-back);
+}
+
+@keyframes badge-bounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================
+   ICON ANIMATIONS
+   ============================================ */
+
+/* Icon Spin on Hover */
+.icon-spin-hover {
+  transition: transform var(--interaction-normal) var(--ease-smooth);
+}
+
+.icon-spin-hover:hover {
+  transform: rotate(360deg);
+}
+
+/* Icon Bounce */
+.icon-bounce {
+  animation: icon-bounce 0.6s var(--ease-bounce);
+}
+
+@keyframes icon-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Icon Pulse */
+.icon-pulse {
+  animation: icon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ============================================
+   NUMBER COUNTER ANIMATIONS
+   ============================================ */
+
+.counter-increment {
+  animation: counter-pop 0.4s var(--ease-out-back);
+}
+
+@keyframes counter-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+    color: var(--color-primary);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================
+   SMOOTH SCROLL BEHAVIOR
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ============================================
+   FOCUS VISIBLE ENHANCEMENTS
+   ============================================ */
+
+*:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Remove default focus for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   DISABLED STATE
+   ============================================ */
+
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Reduce motion on mobile for performance */
+  .card-shine::before {
+    display: none;
+  }
+
+  /* Simpler hover states */
+  .card-interactive:hover,
+  .hierarchy-card:hover {
+    transform: translateY(-3px) scale(1.005);
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .skeleton {
+    animation: none;
+    background: rgba(200, 200, 200, 0.2);
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .tooltip-content {
+    border: 2px solid currentColor;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 3px solid currentColor;
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .tooltip-content,
+  .btn-loading::after,
+  .skeleton,
+  .confetti {
+    display: none !important;
+  }
+}

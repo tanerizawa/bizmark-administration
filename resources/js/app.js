@@ -9,6 +9,7 @@ import AOS from 'aos';
 import './counters';
 import './social-proof';
 import './visual-hierarchy';
+import './micro-interactions';
 
 // Register Alpine plugins
 Alpine.plugin(collapse);
