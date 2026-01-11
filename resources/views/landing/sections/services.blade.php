@@ -15,16 +15,29 @@
 <!-- Services Section - Neuroscience-Based Design -->
 <section id="services" class="py-16 lg:py-24 bg-white">
     <div class="container-wide space-y-12">
-        {{-- Section Header --}}
+        {{-- Section Header - Enhanced Typography --}}
         <div class="max-w-3xl mx-auto space-y-6 text-center" data-aos="fade-up" data-aos-duration="800">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#5B8DBE]/10 border border-[#5B8DBE]/20">
-                <span class="text-sm font-semibold text-[#5B8DBE]">Layanan Bizmark.ID</span>
+            <div class="power-word-badge">
+                <i class="fas fa-briefcase text-xs"></i>
+                <span>Layanan Kami</span>
             </div>
-            <h2 class="text-4xl lg:text-5xl font-black leading-tight text-[#1A1410]" style="letter-spacing: -0.02em;">
-                Layanan perizinan end-to-end agar operasional tetap jalan tanpa hambatan.
+
+            {{-- Heading with Power Words --}}
+            <h2 class="heading-section space-y-2">
+                <span class="block text-display-md">
+                    Perizinan <span class="power-word-gradient">End-to-End</span>
+                </span>
+                <span class="block text-body-xl text-gray-600 font-normal">
+                    Operasional lancar. <span class="power-word-highlight">Zero hambatan</span>.
+                </span>
             </h2>
-            <p class="text-lg text-[#6B5D52] leading-relaxed font-light max-w-2xl mx-auto">
-                Mulai dari desk study sampai izin terbit, tiap layanan punya owner, dokumentasi, dan pelacakan jelas.
+
+            {{-- Body with F-Pattern Optimization --}}
+            <p class="text-body-lg paragraph-short mx-auto">
+                <strong class="emphasize">Desk study hingga izin terbit</strong> – setiap layanan memiliki
+                <span class="power-word">owner dedicated</span>,
+                <span class="power-word">dokumentasi lengkap</span>, dan
+                <span class="power-word">tracking real-time</span>.
             </p>
         </div>
         
@@ -53,12 +66,12 @@
                         <i class="fas {{ $service['icon'] }} text-2xl text-[{{ $mappedColor }}]"></i>
                     </div>
 
-                    {{-- Content --}}
+                    {{-- Content - Enhanced Typography --}}
                     <div class="space-y-4 mb-6">
-                        <h3 class="text-xl font-bold text-[#1A1410] group-hover:text-[#5B8DBE] transition-colors duration-300">
+                        <h3 class="heading-card group-hover:text-[#5B8DBE] transition-colors duration-300">
                             {{ $service['title'] }}
                         </h3>
-                        <p class="text-sm text-[#6B5D52] leading-relaxed">
+                        <p class="text-body paragraph-short">
                             {{ $service['short_description'] }}
                         </p>
                     </div>

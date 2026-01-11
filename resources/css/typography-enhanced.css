@@ -1,0 +1,367 @@
+/* ============================================
+   TYPOGRAPHY & READABILITY SYSTEM
+   F-Pattern Optimized, Power Words Framework
+   ============================================ */
+
+:root {
+  /* ============================================
+     DRAMATIC TYPOGRAPHY SCALE
+     100% contrast jumps for clear hierarchy
+     ============================================ */
+
+  /* Display Sizes - Hero Headlines */
+  --font-size-display-xl: clamp(3.5rem, 8vw, 6rem);    /* 56-96px */
+  --font-size-display-lg: clamp(3rem, 7vw, 5rem);      /* 48-80px */
+  --font-size-display-md: clamp(2.5rem, 6vw, 4rem);    /* 40-64px */
+  --font-size-display-sm: clamp(2rem, 5vw, 3rem);      /* 32-48px */
+
+  /* Heading Sizes - Section Titles */
+  --font-size-h1: clamp(2.5rem, 5vw, 3.75rem);         /* 40-60px */
+  --font-size-h2: clamp(2rem, 4vw, 3rem);              /* 32-48px */
+  --font-size-h3: clamp(1.5rem, 3vw, 2.25rem);         /* 24-36px */
+  --font-size-h4: clamp(1.25rem, 2.5vw, 1.875rem);     /* 20-30px */
+
+  /* Body Sizes */
+  --font-size-body-xl: clamp(1.25rem, 2vw, 1.5rem);    /* 20-24px */
+  --font-size-body-lg: clamp(1.125rem, 1.5vw, 1.375rem); /* 18-22px */
+  --font-size-body: 1rem;                               /* 16px */
+  --font-size-body-sm: 0.875rem;                        /* 14px */
+  --font-size-body-xs: 0.75rem;                         /* 12px */
+
+  /* ============================================
+     LINE HEIGHT - Optimized for Scanning
+     ============================================ */
+
+  --line-height-display: 0.95;  /* Tight for headlines */
+  --line-height-heading: 1.2;   /* Compact for titles */
+  --line-height-body: 1.6;      /* Comfortable for reading */
+  --line-height-relaxed: 1.8;   /* Extra space for emphasis */
+  --line-height-loose: 2.0;     /* Maximum readability */
+
+  /* ============================================
+     LETTER SPACING
+     ============================================ */
+
+  --letter-spacing-tight: -0.03em;   /* -3% for large displays */
+  --letter-spacing-normal: -0.01em;  /* -1% for headings */
+  --letter-spacing-wide: 0.02em;     /* +2% for body */
+  --letter-spacing-wider: 0.05em;    /* +5% for labels */
+  --letter-spacing-widest: 0.1em;    /* +10% for badges */
+
+  /* ============================================
+     FONT WEIGHTS
+     ============================================ */
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+}
+
+/* ============================================
+   POWER WORDS FRAMEWORK
+   Neuroscience-optimized attention triggers
+   ============================================ */
+
+.power-word {
+  position: relative;
+  display: inline-block;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-attention-high);
+}
+
+.power-word-highlight {
+  position: relative;
+  display: inline-block;
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-attention-max);
+  background: linear-gradient(
+    to bottom,
+    transparent 60%,
+    rgba(124, 179, 66, 0.2) 60%,
+    rgba(124, 179, 66, 0.2) 100%
+  );
+  padding: 0 0.15em;
+}
+
+.power-word-underline {
+  position: relative;
+  display: inline-block;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-attention-high);
+  text-decoration: none;
+}
+
+.power-word-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0.1em;
+  left: 0;
+  right: 0;
+  height: 0.15em;
+  background: var(--color-accent);
+  border-radius: 0.075em;
+  opacity: 0.4;
+}
+
+.power-word-gradient {
+  background: linear-gradient(135deg, #3A5D82 0%, #5B8DBE 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: var(--font-weight-black);
+}
+
+.power-word-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25em 0.75em;
+  font-size: 0.85em;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: rgba(91, 141, 190, 0.1);
+  border: 1px solid rgba(91, 141, 190, 0.25);
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+/* ============================================
+   DISPLAY TYPOGRAPHY CLASSES
+   ============================================ */
+
+.text-display-xl {
+  font-size: var(--font-size-display-xl);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-display);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-attention-max);
+}
+
+.text-display-lg {
+  font-size: var(--font-size-display-lg);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-display);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-attention-max);
+}
+
+.text-display-md {
+  font-size: var(--font-size-display-md);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.1;
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--color-attention-high);
+}
+
+/* ============================================
+   HEADING CLASSES
+   ============================================ */
+
+.heading-section {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--color-attention-max);
+  margin-bottom: 1rem;
+}
+
+.heading-subsection {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--color-attention-high);
+  margin-bottom: 0.75rem;
+}
+
+.heading-card {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
+  color: var(--color-attention-max);
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   BODY TEXT CLASSES - F-Pattern Optimized
+   ============================================ */
+
+.text-body-xl {
+  font-size: var(--font-size-body-xl);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-secondary);
+}
+
+.text-body-lg {
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-body);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-secondary);
+}
+
+.text-body {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-primary);
+}
+
+/* Lead paragraph - First paragraph emphasis */
+.text-lead {
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   SCANNING OPTIMIZATIONS
+   ============================================ */
+
+/* F-Pattern: Bold first 3 words */
+.f-pattern-text strong:first-of-type {
+  color: var(--color-attention-high);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Short paragraphs for better scanning */
+.paragraph-short {
+  max-width: 65ch; /* Optimal line length */
+  margin-bottom: 1rem;
+}
+
+.paragraph-short:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+
+/* Visual anchors - Numbers and stats */
+.stat-number {
+  font-size: 1.25em;
+  font-weight: var(--font-weight-black);
+  color: var(--color-primary);
+  font-feature-settings: 'tnum'; /* Tabular numbers */
+}
+
+/* ============================================
+   READABILITY UTILITIES
+   ============================================ */
+
+/* Prevent orphans (single word on last line) */
+.no-orphans {
+  text-wrap: balance;
+}
+
+/* Optimal reading width */
+.reading-width {
+  max-width: 65ch;
+}
+
+.reading-width-narrow {
+  max-width: 50ch;
+}
+
+.reading-width-wide {
+  max-width: 80ch;
+}
+
+/* Emphasis helpers */
+.emphasize {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-attention-high);
+}
+
+.emphasize-strong {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-attention-max);
+}
+
+/* ============================================
+   LIST STYLING
+   ============================================ */
+
+.list-checkmark {
+  list-style: none;
+  padding-left: 0;
+}
+
+.list-checkmark li {
+  position: relative;
+  padding-left: 2em;
+  margin-bottom: 0.75rem;
+}
+
+.list-checkmark li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  font-size: 1.25em;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  :root {
+    /* Slightly smaller on mobile */
+    --font-size-display-xl: clamp(2.5rem, 10vw, 3.5rem);
+    --font-size-display-lg: clamp(2rem, 8vw, 3rem);
+    --line-height-body: 1.7; /* More breathing room on mobile */
+  }
+
+  /* Prevent text overflow */
+  .text-display-xl,
+  .text-display-lg,
+  .text-display-md {
+    word-break: break-word;
+    hyphens: auto;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Respect user preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    text-wrap: initial !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .power-word,
+  .power-word-highlight,
+  .power-word-underline {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-black);
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .text-display-xl,
+  .text-display-lg {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .power-word-gradient {
+    -webkit-text-fill-color: initial;
+    color: var(--color-text-primary);
+  }
+}

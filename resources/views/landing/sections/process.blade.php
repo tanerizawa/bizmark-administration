@@ -17,16 +17,36 @@
 <!-- Process Section - Neuroscience-Based Design -->
 <section id="process" class="py-16 lg:py-24 bg-white">
     <div class="container-wide">
-        {{-- Section Header --}}
+        {{-- Section Header - Enhanced Typography --}}
         <div class="max-w-3xl mx-auto text-center mb-16 space-y-6" data-aos="fade-up" data-aos-duration="800">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#5B8DBE]/10 border border-[#5B8DBE]/20">
-                <span class="text-sm font-semibold text-[#5B8DBE]">{{ $isIndonesian ? 'Cara Kerja Kami' : 'How We Work' }}</span>
+            <div class="power-word-badge">
+                <i class="fas fa-route text-xs"></i>
+                <span>{{ $isIndonesian ? 'Cara Kerja Kami' : 'How We Work' }}</span>
             </div>
-            <h2 class="text-4xl lg:text-5xl font-black leading-tight text-[#1A1410]" style="letter-spacing: -0.02em;">
-                {{ $isIndonesian ? 'Proses Perizinan Terukur & Transparan' : 'A Measurable, Transparent Permit Process' }}
+
+            {{-- Heading with Power Words --}}
+            <h2 class="heading-section space-y-2">
+                <span class="block text-display-md">
+                    Proses <span class="power-word-gradient">{{ $isIndonesian ? 'Terukur' : 'Measurable' }}</span>
+                </span>
+                <span class="block text-body-xl text-gray-600 font-normal">
+                    {{ $isIndonesian ? 'Transparan. Terpantau.' : 'Transparent. Trackable.' }} <span class="power-word-highlight">{{ $isIndonesian ? 'Real-time' : 'Real-time' }}</span>.
+                </span>
             </h2>
-            <p class="text-lg text-[#6B5D52] leading-relaxed font-light max-w-2xl mx-auto">
-                {{ $isIndonesian ? 'Lima fase inti memastikan setiap izin ditangani oleh owner yang jelas, SLA terukur, dan komunikasi lintas instansi berjalan dalam satu jalur.' : 'Five structured phases ensure each permit has a clear owner, measurable SLA, and a single coordination lane across agencies.' }}
+
+            {{-- Body with F-Pattern Optimization --}}
+            <p class="text-body-lg paragraph-short mx-auto">
+                @if($isIndonesian)
+                    <strong class="emphasize">5 fase terstruktur</strong> memastikan setiap izin memiliki
+                    <span class="power-word">owner jelas</span>,
+                    <span class="power-word">SLA terukur</span>, dan
+                    <span class="power-word">koordinasi 1 jalur</span> lintas instansi.
+                @else
+                    <strong class="emphasize">5 structured phases</strong> ensure each permit has
+                    <span class="power-word">clear ownership</span>,
+                    <span class="power-word">measurable SLA</span>, and
+                    <span class="power-word">single coordination</span> across agencies.
+                @endif
             </p>
         </div>
 
@@ -61,12 +81,12 @@
                             </div>
                         </div>
 
-                        {{-- Content --}}
+                        {{-- Content - Enhanced Typography --}}
                         <div class="ml-[72px]">
-                            <h3 class="text-xl font-bold text-[#1A1410] mb-3 group-hover:text-[#5B8DBE] transition-colors duration-300">
+                            <h3 class="heading-subsection mb-3 group-hover:text-[#5B8DBE] transition-colors duration-300">
                                 {{ $isIndonesian ? ($step['title']['id'] ?? '') : ($step['title']['en'] ?? '') }}
                             </h3>
-                            <p class="text-sm text-[#6B5D52] leading-relaxed">
+                            <p class="text-body paragraph-short">
                                 {{ $isIndonesian ? ($step['body']['id'] ?? '') : ($step['body']['en'] ?? '') }}
                             </p>
                         </div>

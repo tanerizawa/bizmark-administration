@@ -94,13 +94,31 @@
 
 <section id="faq" class="section bg-gray-50">
     <div class="container max-w-4xl">
-        <div class="text-center mb-8" data-aos="fade-up">
-            <span class="section-label">FAQ</span>
-            <h2 class="section-title mb-4">
-                {{ $locale === 'id' ? 'Pertanyaan yang Sering Diajukan' : 'Frequently Asked Questions' }}
+        {{-- Section Header - Enhanced Typography --}}
+        <div class="text-center mb-12 space-y-6 max-w-3xl mx-auto" data-aos="fade-up">
+            <div class="power-word-badge mx-auto">
+                <i class="fas fa-question-circle text-xs"></i>
+                <span>FAQ</span>
+            </div>
+
+            {{-- Heading with Power Words --}}
+            <h2 class="heading-section space-y-2">
+                <span class="block text-display-md">
+                    {{ $locale === 'id' ? 'Pertanyaan' : 'Questions' }} <span class="power-word-gradient">{{ $locale === 'id' ? 'Umum' : 'Answered' }}</span>
+                </span>
             </h2>
-            <p class="section-description max-w-2xl mx-auto">
-                {{ $locale === 'id' ? 'Temukan jawaban atas pertanyaan umum seputar layanan perizinan kami.' : 'Find quick answers about our permitting services and engagement model.' }}
+
+            {{-- Body --}}
+            <p class="text-body-lg paragraph-short mx-auto">
+                @if($locale === 'id')
+                    <strong class="emphasize">Jawaban cepat</strong> untuk pertanyaan seputar
+                    <span class="power-word">layanan</span> dan
+                    <span class="power-word">cara kerja</span> kami.
+                @else
+                    <strong class="emphasize">Quick answers</strong> about our
+                    <span class="power-word">services</span> and
+                    <span class="power-word">engagement model</span>.
+                @endif
             </p>
         </div>
 

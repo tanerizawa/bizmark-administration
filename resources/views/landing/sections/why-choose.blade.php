@@ -16,15 +16,31 @@
 
 <section id="about" class="section bg-white md:bg-[#F7F8FC]">
     <div class="container">
-        <div class="text-center mb-8" data-aos="fade-up">
-            <span class="section-label">
-                {{ $isIndonesian ? 'Mengapa Kami' : 'Why Us' }}
-            </span>
-            <h2 class="section-title mb-4">
-                {{ $isIndonesian ? 'Mengapa Memilih Bizmark.ID?' : 'Why Choose Bizmark.ID?' }}
+        {{-- Section Header - Enhanced Typography --}}
+        <div class="text-center mb-12 space-y-6 max-w-3xl mx-auto" data-aos="fade-up">
+            <div class="power-word-badge mx-auto">
+                <i class="fas fa-star text-xs"></i>
+                <span>{{ $isIndonesian ? 'Mengapa Kami' : 'Why Us' }}</span>
+            </div>
+
+            {{-- Heading with Power Words --}}
+            <h2 class="heading-section space-y-2">
+                <span class="block text-display-md">
+                    Mengapa <span class="power-word-gradient">Bizmark.ID</span>?
+                </span>
             </h2>
-            <p class="section-description max-w-3xl mx-auto">
-                {{ $isIndonesian ? 'Keunggulan yang membuat kami menjadi pilihan terbaik untuk perizinan industri Anda.' : 'Advantages that make us the most reliable partner for your permitting needs.' }}
+
+            {{-- Body with F-Pattern --}}
+            <p class="text-body-lg paragraph-short mx-auto">
+                @if($isIndonesian)
+                    <strong class="emphasize">Keunggulan nyata</strong> yang membuat kami menjadi
+                    <span class="power-word">pilihan #1</span> untuk
+                    <span class="power-word">perizinan industri</span> Anda.
+                @else
+                    <strong class="emphasize">Real advantages</strong> that make us the
+                    <span class="power-word">#1 choice</span> for your
+                    <span class="power-word">industrial permits</span>.
+                @endif
             </p>
         </div>
         
@@ -34,10 +50,10 @@
                     <div class="icon-ring mx-auto mb-4">
                         <i class="{{ $item['icon'] }} text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-900">
+                    <h3 class="heading-card mb-3">
                         {{ $isIndonesian ? ($item['title']['id'] ?? '') : ($item['title']['en'] ?? '') }}
                     </h3>
-                    <p class="text-gray-600 leading-relaxed">
+                    <p class="text-body paragraph-short mx-auto">
                         {{ $isIndonesian ? ($item['body']['id'] ?? '') : ($item['body']['en'] ?? '') }}
                     </p>
                 </article>
