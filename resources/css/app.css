@@ -7,6 +7,7 @@
 @import 'neuroscience-variables.css';
 @import 'attention-hierarchy.css';
 @import 'typography-enhanced.css';
+@import 'visual-hierarchy.css';
 
 /* Import Tailwind CSS */
 @import 'tailwindcss';

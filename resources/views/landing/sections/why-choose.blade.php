@@ -44,9 +44,18 @@
             </p>
         </div>
         
+        {{-- Cards with Visual Hierarchy --}}
         <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             @foreach($whyChoose as $index => $item)
-                <article class="card text-center" data-aos="zoom-in" data-aos-delay="{{ $index * 80 }}" style="--icon-color: {{ $item['color'] }}; --icon-sheen: {{ $colorRgba($item['color'], 0.15) }}; --icon-border: {{ $colorRgba($item['color'], 0.35) }};">
+                @php
+                    // Assign hierarchy levels (primary for first 3, secondary for rest)
+                    $hierarchyLevel = $index < 3 ? 'level-primary' : 'level-secondary';
+                @endphp
+                <article class="hierarchy-card {{ $hierarchyLevel }} text-center attention-hotspot"
+                         data-aos="zoom-in"
+                         data-aos-delay="{{ $index * 80 }}"
+                         id="advantage-{{ $index + 1 }}"
+                         style="--icon-color: {{ $item['color'] }}; --icon-sheen: {{ $colorRgba($item['color'], 0.15) }}; --icon-border: {{ $colorRgba($item['color'], 0.35) }};">
                     <div class="icon-ring mx-auto mb-4">
                         <i class="{{ $item['icon'] }} text-xl"></i>
                     </div>
@@ -59,5 +68,8 @@
                 </article>
             @endforeach
         </div>
+
+        {{-- Section Connector --}}
+        <div class="section-connector mt-16"></div>
     </div>
 </section>

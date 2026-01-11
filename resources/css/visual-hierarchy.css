@@ -1,0 +1,516 @@
+/* ============================================
+   VISUAL HIERARCHY & Z-PATTERN SYSTEM
+   Optimized for Attention Flow & Engagement
+   ============================================ */
+
+:root {
+  /* ============================================
+     Z-PATTERN FLOW VARIABLES
+     ============================================ */
+  --z-pattern-spacing: clamp(2rem, 5vw, 4rem);
+  --flow-indicator-color: rgba(91, 141, 190, 0.3);
+  --flow-indicator-active: rgba(91, 141, 190, 0.8);
+
+  /* ============================================
+     VISUAL WEIGHT RATIOS
+     60% visual, 40% text for optimal engagement
+     ============================================ */
+  --visual-content-ratio: 0.6;
+  --text-content-ratio: 0.4;
+
+  /* ============================================
+     PROGRESSIVE DISCLOSURE
+     ============================================ */
+  --disclosure-transition: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --disclosure-delay: 150ms;
+}
+
+/* ============================================
+   Z-PATTERN LAYOUT SYSTEM
+   Guides eye movement in natural Z-shape
+   ============================================ */
+
+/* Z-Pattern Container */
+.z-pattern-section {
+  position: relative;
+  display: grid;
+  gap: var(--z-pattern-spacing);
+}
+
+/* Desktop Z-Pattern (2 columns) */
+@media (min-width: 1024px) {
+  .z-pattern-section {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+
+  /* Alternate layout for Z-pattern */
+  .z-pattern-section:nth-child(even) .z-content-left {
+    order: 2;
+  }
+
+  .z-pattern-section:nth-child(even) .z-content-right {
+    order: 1;
+  }
+}
+
+/* Z-Pattern Elements */
+.z-entry-point {
+  /* Top-left: Primary entry point */
+  position: relative;
+  z-index: 10;
+}
+
+.z-diagonal {
+  /* Diagonal movement across */
+  position: relative;
+  transform: translateX(0);
+  transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.z-diagonal.in-view {
+  transform: translateX(0);
+}
+
+.z-endpoint {
+  /* Bottom-right: CTA endpoint */
+  position: relative;
+  z-index: 10;
+}
+
+/* ============================================
+   DIRECTIONAL CUES
+   Visual indicators that guide eye movement
+   ============================================ */
+
+/* Arrow Indicators */
+.flow-arrow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.flow-arrow::after {
+  content: '→';
+  font-size: 1.5em;
+  color: var(--color-primary);
+  transition: transform 300ms ease;
+}
+
+.flow-arrow:hover::after {
+  transform: translateX(8px);
+}
+
+/* Connecting Lines */
+.flow-line {
+  position: relative;
+}
+
+.flow-line::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--flow-indicator-color) 10%,
+    var(--flow-indicator-color) 90%,
+    transparent 100%
+  );
+  left: -1rem;
+  top: 0;
+}
+
+/* Curved Path Indicator */
+.flow-curve {
+  position: relative;
+}
+
+.flow-curve::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border: 2px dashed var(--flow-indicator-color);
+  border-radius: 0 60px 0 0;
+  border-left: none;
+  border-bottom: none;
+  right: -30px;
+  bottom: -30px;
+  opacity: 0.5;
+}
+
+/* ============================================
+   PROGRESSIVE DISCLOSURE
+   Show content strategically based on scroll
+   ============================================ */
+
+/* Disclosure Container */
+.disclosure-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Collapsed State */
+.disclosure-content {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: max-height var(--disclosure-transition),
+              opacity var(--disclosure-transition),
+              transform var(--disclosure-transition);
+}
+
+/* Expanded State */
+.disclosure-content.expanded {
+  max-height: 2000px; /* Large enough for content */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Disclosure Trigger */
+.disclosure-trigger {
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(91, 141, 190, 0.08), rgba(91, 141, 190, 0.03));
+  border: 1px solid rgba(91, 141, 190, 0.2);
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--color-attention-high);
+  transition: all 300ms ease;
+}
+
+.disclosure-trigger:hover {
+  background: linear-gradient(135deg, rgba(91, 141, 190, 0.15), rgba(91, 141, 190, 0.08));
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -10px rgba(91, 141, 190, 0.4);
+}
+
+.disclosure-trigger .icon {
+  transition: transform 300ms ease;
+}
+
+.disclosure-trigger.active .icon {
+  transform: rotate(180deg);
+}
+
+/* Fold-Based Strategy */
+.fold-primary {
+  /* Above the fold - Always visible */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fold-secondary {
+  /* Second fold - Quick summary */
+  padding-block: clamp(3rem, 8vw, 6rem);
+}
+
+.fold-tertiary {
+  /* Third fold and beyond - Detailed content */
+  padding-block: clamp(2rem, 6vw, 4rem);
+}
+
+/* ============================================
+   VISUAL WEIGHT REBALANCING
+   60% visual content, 40% text
+   ============================================ */
+
+/* Visual-First Grid */
+.visual-dominant-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .visual-dominant-grid {
+    grid-template-columns: 1.5fr 1fr; /* 60/40 ratio */
+  }
+
+  .visual-dominant-grid.text-first {
+    grid-template-columns: 1fr 1.5fr;
+  }
+}
+
+/* Image Containers with Aspect Ratio */
+.visual-container {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.3);
+}
+
+.visual-container::before {
+  content: '';
+  display: block;
+  padding-top: 75%; /* 4:3 aspect ratio */
+}
+
+.visual-container img,
+.visual-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Aspect Ratio Variants */
+.visual-container.ratio-16-9::before {
+  padding-top: 56.25%; /* 16:9 */
+}
+
+.visual-container.ratio-1-1::before {
+  padding-top: 100%; /* Square */
+}
+
+.visual-container.ratio-3-4::before {
+  padding-top: 133.33%; /* Portrait */
+}
+
+/* ============================================
+   SCROLL PROGRESS INDICATOR
+   Shows reading progress
+   ============================================ */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: transparent;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.scroll-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #5B8DBE 0%, #E8956F 50%, #7CB342 100%);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 100ms linear;
+  box-shadow: 0 2px 8px rgba(91, 141, 190, 0.3);
+}
+
+/* ============================================
+   PARALLAX EFFECTS
+   Creates depth perception
+   ============================================ */
+
+.parallax-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.parallax-layer {
+  transition: transform 100ms linear;
+}
+
+/* Layer depths */
+.parallax-layer-bg {
+  transform: translateZ(-100px) scale(1.1);
+}
+
+.parallax-layer-mid {
+  transform: translateZ(-50px) scale(1.05);
+}
+
+.parallax-layer-fg {
+  transform: translateZ(0);
+}
+
+/* Parallax on scroll (applied via JS) */
+.parallax-layer[data-speed] {
+  will-change: transform;
+}
+
+/* ============================================
+   SECTION CONNECTORS
+   Visual bridges between sections
+   ============================================ */
+
+.section-connector {
+  position: relative;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(91, 141, 190, 0.03), transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-connector::before {
+  content: '';
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--color-primary), transparent);
+  animation: pulse-line 2s ease-in-out infinite;
+}
+
+@keyframes pulse-line {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scaleY(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* ============================================
+   ATTENTION HOTSPOTS
+   Key areas that demand focus
+   ============================================ */
+
+.attention-hotspot {
+  position: relative;
+  isolation: isolate;
+}
+
+.attention-hotspot::before {
+  content: '';
+  position: absolute;
+  inset: -1rem;
+  background: radial-gradient(
+    circle at center,
+    rgba(91, 141, 190, 0.08) 0%,
+    transparent 70%
+  );
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.attention-hotspot:hover::before,
+.attention-hotspot.active::before {
+  opacity: 1;
+}
+
+/* Pulsing Indicator */
+.attention-pulse {
+  position: relative;
+}
+
+.attention-pulse::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(91, 141, 190, 0.4), transparent 70%);
+  transform: translate(-50%, -50%);
+  animation: pulse-expand 2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   CONTENT CARDS WITH HIERARCHY
+   ============================================ */
+
+.hierarchy-card {
+  position: relative;
+  background: white;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  border: 1px solid rgba(26, 20, 16, 0.08);
+  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card Levels */
+.hierarchy-card.level-primary {
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+}
+
+.hierarchy-card.level-secondary {
+  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
+  transform: translateY(8px);
+}
+
+.hierarchy-card.level-tertiary {
+  box-shadow: 0 5px 15px -10px rgba(0, 0, 0, 0.08);
+  transform: translateY(16px);
+}
+
+.hierarchy-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 30px 60px -25px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Simplify on mobile */
+  .z-pattern-section {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-line::before,
+  .flow-curve::after {
+    display: none; /* Hide decorative elements */
+  }
+
+  .visual-dominant-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fold-primary {
+    min-height: auto;
+    padding-block: 4rem;
+  }
+
+  .scroll-progress {
+    height: 3px; /* Thinner on mobile */
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .z-diagonal,
+  .disclosure-content,
+  .parallax-layer,
+  .hierarchy-card {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .scroll-progress-bar {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .flow-line::before,
+  .section-connector::before {
+    background: currentColor;
+  }
+}

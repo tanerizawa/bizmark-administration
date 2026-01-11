@@ -8,6 +8,7 @@ import AOS from 'aos';
 // Import custom modules
 import './counters';
 import './social-proof';
+import './visual-hierarchy';
 
 // Register Alpine plugins
 Alpine.plugin(collapse);
