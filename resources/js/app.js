@@ -7,6 +7,7 @@ import AOS from 'aos';
 
 // Import custom modules
 import './counters';
+import './social-proof';
 
 // Register Alpine plugins
 Alpine.plugin(collapse);

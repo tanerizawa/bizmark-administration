@@ -2,8 +2,11 @@
 
 @section('content')
 
-{{-- Hero Section - Professional & Clean --}}
-@include('landing.sections.hero')
+{{-- Hero Section - Optimized (Phase 1) --}}
+@include('landing.sections.hero-modern')
+
+{{-- Trust Bar - Phase 2: Social Proof --}}
+@include('landing.partials.trust-bar')
 
 {{-- Services Section --}}
 @include('landing.sections.services')
@@ -11,8 +14,8 @@
 {{-- Process Section --}}
 @include('landing.sections.process')
 
-{{-- Social Proof: Clients + Testimonials (Merged) --}}
-@include('landing.sections.social-proof')
+{{-- Enhanced Testimonials - Phase 2: Trust & Credibility --}}
+@include('landing.partials.testimonials-enhanced')
 
 {{-- Blog/Articles Carousel - ENHANCED --}}
 @include('landing.sections.blog')
