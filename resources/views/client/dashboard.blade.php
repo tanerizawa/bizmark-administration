@@ -48,8 +48,6 @@
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
-<<<<<<< Updated upstream
-=======
     
     /* Neuroscience Card Styles */
     .neuro-card {

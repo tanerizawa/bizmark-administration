@@ -31,10 +31,8 @@
 
         <div class="card-elevated rounded-apple-lg p-4 space-y-3">
             <div class="flex items-center justify-between">
-<<<<<<< Updated upstream
                 <h3 class="text-lg font-semibold text-white">Pantauan Keuangan</h3>
                 <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(191,90,242,0.18); color: rgba(191,90,242,0.9);">Aktif</span>
-=======
                 <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--text-dark-primary);">Pantauan Keuangan</h3>
                 <span class="rounded-full" style="font-size: var(--text-xs); padding: var(--space-1) var(--space-3); background: var(--neuro-secondary); opacity: var(--opacity-bg-light); color: var(--neuro-secondary); opacity: var(--opacity-text-strong);">Aktif</span>
 >>>>>>> Stashed changes

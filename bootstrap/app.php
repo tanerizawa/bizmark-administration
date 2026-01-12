@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'role' => \App\Http\Middleware\CheckRole::class,
             'locale' => \App\Http\Middleware\SetLocale::class,
+            'email.access' => \App\Http\Middleware\CheckEmailManagementAccess::class,
         ]);
         
         // Exclude webhook endpoints from CSRF verification

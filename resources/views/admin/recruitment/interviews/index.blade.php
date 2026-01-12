@@ -89,9 +89,7 @@
                                     <p class="text-sm font-semibold text-white">{{ $interview->jobApplication->full_name }}</p>
                                     <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $interview->jobApplication?->jobVacancy?->title ?? 'Position Deleted' }}</p>
                                 </div>
-<<<<<<< Updated upstream
                                 <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: {{ $interview->status === 'scheduled' ? 'rgba(10,132,255,0.2)' : 'rgba(142,142,147,0.2)' }};">
-=======
                                 <span class="rounded-full font-semibold" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: {{ $interview->status === 'scheduled' ? 'var(--neuro-primary)' : 'var(--text-dark-tertiary)' }}; opacity: var(--opacity-bg-medium); color: {{ $interview->status === 'scheduled' ? 'var(--neuro-primary)' : 'var(--text-dark-tertiary)' }};">
 >>>>>>> Stashed changes
                                     {{ ucfirst($interview->status) }}

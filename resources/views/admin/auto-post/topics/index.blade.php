@@ -1,56 +1,93 @@
 @extends('layouts.app')
 
+@section('title', 'Topic Pool')
+@section('page-title', 'Topic Pool')
+
 @section('content')
-<div class="container-fluid px-4 py-6">
-    <!-- Header -->
-    <div class="mb-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Topic Pool</h1>
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Kelola topic untuk artikel auto-generated
-                </p>
+<div class="max-w-7xl mx-auto space-y-6">
+    {{-- Hero Section --}}
+    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="w-72 h-72 bg-apple-purple opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
+            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+        </div>
+        <div class="relative space-y-5 md:space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div class="space-y-2.5 max-w-3xl">
+                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Content Management</p>
+                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                        Topic Pool Management
+                    </h1>
+                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
+                        Kelola topic untuk artikel auto-generated AI dengan mudah.
+                    </p>
+                </div>
+                <div class="space-y-2.5">
+                    <a href="{{ route('auto-post.topics.create') }}" class="inline-flex items-center px-4 py-2.5 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
+                        <i class="fas fa-plus mr-2"></i>Tambah Topic
+                    </a>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">
+                        <i class="fas fa-sync-alt mr-2"></i>Diperbarui: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}
+                    </p>
+                </div>
             </div>
-            <a href="{{ route('auto-post.topics.create') }}" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
-                + Tambah Topic
-            </a>
-        </div>
-    </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-            <div class="text-sm text-gray-600 dark:text-gray-400">Total Topics</div>
-            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total'] }}</div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-            <div class="text-sm text-gray-600 dark:text-gray-400">Available</div>
-            <div class="text-2xl font-bold text-green-600">{{ $stats['available'] }}</div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-            <div class="text-sm text-gray-600 dark:text-gray-400">Scheduled</div>
-            <div class="text-2xl font-bold text-yellow-600">{{ $stats['scheduled'] }}</div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-            <div class="text-sm text-gray-600 dark:text-gray-400">Used</div>
-            <div class="text-2xl font-bold text-gray-600">{{ $stats['used'] }}</div>
-        </div>
-    </div>
+            <!-- Summary Statistics -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Topics</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">
+                        {{ number_format($stats['total']) }}
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua topic</p>
+                </div>
 
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Available</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">
+                        {{ number_format($stats['available']) }}
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Siap digunakan</p>
+                </div>
+
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Scheduled</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">
+                        {{ number_format($stats['scheduled']) }}
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Terjadwal</p>
+                </div>
+
+                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(175,82,222,0.12);">
+                    <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Used</p>
+                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">
+                        {{ number_format($stats['used']) }}
+                    </h2>
+                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sudah dipakai</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Success Message --}}
     @if(session('success'))
-        <div class="mb-4 rounded-lg bg-green-50 dark:bg-green-900/20 p-4 text-sm text-green-800 dark:text-green-300">
-            {{ session('success') }}
-        </div>
+    <div class="mb-5 p-4 rounded-apple-lg" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+        <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+    </div>
     @endif
 
+    {{-- Error Message --}}
     @if(session('error'))
-        <div class="mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-800 dark:text-red-300">
-            {{ session('error') }}
-        </div>
+    <div class="mb-5 p-4 rounded-apple-lg" style="background: rgba(255,69,58,0.12); border: 1px solid rgba(255,69,58,0.3); color: rgba(255,69,58,1);">
+        <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
+    </div>
     @endif
 
-    <!-- Filters -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+    {{-- Filters --}}
+    <div class="card-elevated rounded-apple-xl p-5 md:p-6 mb-6">
+        <h3 class="text-lg font-semibold text-dark-text-primary mb-4">
+            <i class="fas fa-filter mr-2 text-apple-blue"></i>Filter & Pencarian
+        </h3>
         <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <input 
@@ -58,10 +95,12 @@
                     name="search" 
                     value="{{ request('search') }}" 
                     placeholder="Cari topic..."
-                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                    class="w-full px-4 py-3 rounded-apple text-sm text-dark-text-primary" 
+                    style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
             </div>
             <div>
-                <select name="status" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                <select name="status" class="w-full px-4 py-3 rounded-apple text-sm text-dark-text-primary" 
+                        style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
                     <option value="">Semua Status</option>
                     <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Available</option>
                     <option value="scheduled" {{ request('status') === 'scheduled' ? 'selected' : '' }}>Scheduled</option>
@@ -69,7 +108,8 @@
                 </select>
             </div>
             <div>
-                <select name="category" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
+                <select name="category" class="w-full px-4 py-3 rounded-apple text-sm text-dark-text-primary" 
+                        style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
                     <option value="">Semua Kategori</option>
                     <option value="tips" {{ request('category') === 'tips' ? 'selected' : '' }}>Tips</option>
                     <option value="guide" {{ request('category') === 'guide' ? 'selected' : '' }}>Guide</option>
@@ -80,103 +120,114 @@
                 </select>
             </div>
             <div class="flex space-x-2">
-                <button type="submit" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
-                    Filter
+                <button type="submit" class="flex-1 px-4 py-3 text-sm font-medium text-white bg-apple-blue rounded-apple hover:bg-apple-blue-dark transition-apple">
+                    <i class="fas fa-search mr-2"></i>Filter
                 </button>
-                <a href="{{ route('auto-post.topics.index') }}" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600">
+                <a href="{{ route('auto-post.topics.index') }}" class="px-4 py-3 text-sm font-medium text-dark-text-primary rounded-apple transition-apple" 
+                   style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
                     Reset
                 </a>
             </div>
         </form>
     </div>
 
-    <!-- Topics Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+    {{-- Topics Table --}}
+    <div class="card-elevated rounded-apple-xl overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-900">
+            <table class="min-w-full">
+                <thead style="background: var(--dark-bg-tertiary);">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
                             Topic
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
                             Category
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
                             Priority
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
                             Status
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
                             Used
                         </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-right text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
                             Actions
                         </th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody style="background: var(--dark-bg-primary);">
                     @forelse($topics as $topic)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <tr class="hover-apple border-b" style="border-color: var(--dark-separator);">
                             <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                <div class="text-sm font-medium text-dark-text-primary">
                                     {{ $topic->title }}
                                 </div>
                                 @if($topic->description)
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <div class="text-xs text-dark-text-tertiary mt-1">
                                         {{ Str::limit($topic->description, 100) }}
                                     </div>
                                 @endif
                                 <div class="flex flex-wrap gap-1 mt-2">
                                     @foreach($topic->keywords as $keyword)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-apple text-xs font-medium" 
+                                              style="background: rgba(255,255,255,0.1); color: rgba(235,235,245,0.8);">
                                             {{ $keyword }}
                                         </span>
                                     @endforeach
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                    @if($topic->category === 'tips') bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300
-                                    @elseif($topic->category === 'guide') bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300
-                                    @elseif($topic->category === 'case-study') bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-300
-                                    @elseif($topic->category === 'news') bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300
-                                    @elseif($topic->category === 'regulation') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300
-                                    @else bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-apple text-xs font-medium 
+                                    @if($topic->category === 'tips')
+                                        " style="background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);
+                                    @elseif($topic->category === 'guide')
+                                        " style="background: rgba(175,82,222,0.2); color: rgba(175,82,222,1);
+                                    @elseif($topic->category === 'case-study')
+                                        " style="background: rgba(88,86,214,0.2); color: rgba(88,86,214,1);
+                                    @elseif($topic->category === 'news')
+                                        " style="background: rgba(255,69,58,0.2); color: rgba(255,69,58,1);
+                                    @elseif($topic->category === 'regulation')
+                                        " style="background: rgba(255,159,10,0.2); color: rgba(255,159,10,1);
+                                    @else
+                                        " style="background: rgba(255,255,255,0.1); color: rgba(235,235,245,0.8);
                                     @endif">
                                     {{ ucfirst($topic->category) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $topic->priority }}</span>
-                                    <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">/10</span>
+                                    <span class="text-sm font-medium text-dark-text-primary">{{ $topic->priority }}</span>
+                                    <span class="ml-2 text-xs text-dark-text-tertiary">/10</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                    @if($topic->status === 'available') bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300
-                                    @elseif($topic->status === 'scheduled') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300
-                                    @else bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-apple text-xs font-medium 
+                                    @if($topic->status === 'available') 
+                                        " style="background: rgba(52,199,89,0.2); color: rgba(52,199,89,1);
+                                    @elseif($topic->status === 'scheduled') 
+                                        " style="background: rgba(255,159,10,0.2); color: rgba(255,159,10,1);
+                                    @else 
+                                        " style="background: rgba(255,255,255,0.1); color: rgba(235,235,245,0.8);
                                     @endif">
                                     {{ ucfirst($topic->status) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-dark-text-tertiary">
                                 {{ $topic->times_used }}x
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-2">
-                                    <a href="{{ route('auto-post.topics.edit', $topic) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">
-                                        Edit
+                                <div class="flex items-center justify-end space-x-3">
+                                    <a href="{{ route('auto-post.topics.edit', $topic) }}" class="text-apple-blue hover:text-apple-blue-dark transition-apple">
+                                        <i class="fas fa-edit mr-1"></i>Edit
                                     </a>
                                     @if($topic->status !== 'scheduled')
                                         <form action="{{ route('auto-post.topics.destroy', $topic) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Yakin hapus topic ini?')" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">
-                                                Delete
+                                            <button type="submit" onclick="return confirm('Yakin hapus topic ini?')" class="text-apple-red hover:text-red-400 transition-apple">
+                                                <i class="fas fa-trash mr-1"></i>Delete
                                             </button>
                                         </form>
                                     @endif
@@ -185,8 +236,14 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
-                                Tidak ada topic. <a href="{{ route('auto-post.topics.create') }}" class="text-blue-600 dark:text-blue-400">Tambah topic pertama</a>
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <div class="space-y-3">
+                                    <i class="fas fa-lightbulb text-4xl text-dark-text-tertiary"></i>
+                                    <p class="text-sm text-dark-text-secondary">Tidak ada topic yang ditemukan.</p>
+                                    <a href="{{ route('auto-post.topics.create') }}" class="inline-flex items-center px-4 py-2 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
+                                        <i class="fas fa-plus mr-2"></i>Tambah Topic Pertama
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
@@ -194,10 +251,12 @@
             </table>
         </div>
 
-        <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+        {{-- Pagination --}}
+        @if($topics->hasPages())
+        <div class="px-6 py-4 border-t" style="border-color: var(--dark-separator);">
             {{ $topics->links() }}
         </div>
+        @endif
     </div>
 </div>
 @endsection

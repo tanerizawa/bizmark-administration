@@ -58,12 +58,10 @@
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Finished tests</p>
         </div>
 
-<<<<<<< Updated upstream
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Pass Rate</p>
             <p class="text-2xl font-bold text-white">{{ $stats['pass_rate'] }}%</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Success rate</p>
-=======
         <div class="card-elevated rounded-apple-lg" style="padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-1);">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Pass Rate</p>
             <p class="text-2xl font-bold" style="color: var(--text-dark-primary);">{{ $stats['pass_rate'] }}%</p>

@@ -15,7 +15,6 @@
     
     <style>
         :root {
-<<<<<<< Updated upstream
             /* Bizmark Brand Colors - Consistent with Landing Page */
             --primary: #1E40AF; /* Blue-800 */
             --primary-dark: #1E3A8A; /* Blue-900 */
@@ -23,7 +22,6 @@
             --success: #10B981; /* Green-500 */
             --danger: #EF4444; /* Red-500 */
             --warning: #F59E0B; /* Amber-500 */
-=======
             /* Neuroscience Design System - Primary Colors */
             --neuro-primary: #8B9FD8;
             --neuro-primary-dark: #6B7FB8;
@@ -77,11 +75,6 @@
         }
 
         .login-card {
-<<<<<<< Updated upstream
-            background: white;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            transition: all 0.3s ease;
-=======
             background-color: var(--dark-bg-elevated);
             border: 1px solid var(--dark-separator);
             backdrop-filter: blur(20px);
@@ -106,9 +99,6 @@
         .form-input:focus {
             border-color: var(--primary);
             outline: none;
-<<<<<<< Updated upstream
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-=======
             box-shadow: 0 0 0 3px var(--neuro-primary-muted, rgba(139, 159, 216, 0.15));
             background-color: var(--dark-bg-secondary);
 >>>>>>> Stashed changes
@@ -119,16 +109,6 @@
         }
 
         .btn-primary {
-<<<<<<< Updated upstream
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(30, 64, 175, 0.4);
-=======
             background: linear-gradient(135deg, var(--neuro-primary) 0%, var(--neuro-primary-dark) 100%);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 12px var(--neuro-primary, rgba(139, 159, 216, 0.3));

@@ -213,4 +213,16 @@ class EmailInboxController extends Controller
         return redirect()->route('admin.inbox.index', ['category' => 'trash'])
             ->with('success', "{$count} email berhasil dihapus permanen dari trash.");
     }
+
+    public function batchDelete(Request $request)
+    {
+        $request->validate([
+            'email_ids' => 'required|array|min:1',
+            'email_ids.*' => 'exists:email_inbox,id'
+        ]);
+
+        $count = EmailInbox::whereIn('id', $request->email_ids)->delete();
+        
+        return redirect()->back()->with('success', "{$count} email berhasil dihapus.");
+    }
 }

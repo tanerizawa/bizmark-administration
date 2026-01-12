@@ -543,7 +543,7 @@ Route::middleware(['auth'])->group(function () {
     });
     
     // Email Management Routes
-    Route::prefix('admin')->name('admin.')->middleware('permission:email.manage')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'email.access'])->group(function () {
         // Email Management Hub (Unified Tab Interface)
         Route::get('email-management', [App\Http\Controllers\Admin\EmailManagementController::class, 'index'])->name('email-management.index');
         
@@ -557,6 +557,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('inbox', [App\Http\Controllers\Admin\EmailInboxController::class, 'index'])->name('inbox.index');
         Route::get('inbox/compose', [App\Http\Controllers\Admin\EmailInboxController::class, 'compose'])->name('inbox.compose');
         Route::post('inbox/send', [App\Http\Controllers\Admin\EmailInboxController::class, 'send'])->name('inbox.send');
+        Route::delete('inbox/batch-delete', [App\Http\Controllers\Admin\EmailInboxController::class, 'batchDelete'])->name('inbox.batch-delete');
         Route::get('inbox/{id}', [App\Http\Controllers\Admin\EmailInboxController::class, 'show'])->name('inbox.show');
         Route::get('inbox/{id}/reply', [App\Http\Controllers\Admin\EmailInboxController::class, 'reply'])->name('inbox.reply');
         Route::post('inbox/{id}/reply', [App\Http\Controllers\Admin\EmailInboxController::class, 'sendReply'])->name('inbox.send-reply');

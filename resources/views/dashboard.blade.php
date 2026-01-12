@@ -25,7 +25,6 @@
                         Pantau indikator kinerja utama, arus kas, dan perkembangan proyek secara terpadu dalam satu tampilan.
                     </p>
                 </div>
-<<<<<<< Updated upstream
                 
                 {{-- Metadata & Actions --}}
                 <div class="space-y-2.5 text-sm text-dark-text-secondary shrink-0">
@@ -47,7 +46,6 @@
                 </div>
             </div>
 
-<<<<<<< Updated upstream
             {{-- KPI Cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {{-- Urgent Actions --}}
@@ -106,7 +104,6 @@
             
             {{-- Status Badge --}}
             @if($criticalAlerts['total_urgent'] > 0 || $cashFlowStatus['status'] === 'critical')
-<<<<<<< Updated upstream
             <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-red bg-opacity-15 text-apple-red flex items-center gap-2" 
                   role="status" 
                   aria-live="polite">

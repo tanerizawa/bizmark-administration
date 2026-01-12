@@ -148,10 +148,8 @@
                                     @endif
                                     @if($payment->payment_proof)
                                         <a href="{{ Storage::url($payment->payment_proof) }}" target="_blank"
-<<<<<<< Updated upstream
                                            class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple" 
                                            style="background-color: rgba(175,82,222,0.15); color: rgba(175,82,222,1); border: 1px solid rgba(175,82,222,0.25);"
-=======
                                            class="inline-flex items-center rounded-apple transition-apple" 
                                            style="padding: var(--space-1) var(--space-2-5); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--neuro-secondary); opacity: var(--opacity-bg-medium); color: var(--neuro-secondary); border: 1px solid var(--neuro-secondary); opacity: var(--opacity-border-medium);"
 >>>>>>> Stashed changes

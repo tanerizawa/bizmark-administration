@@ -8,7 +8,10 @@
             </p>
         </div>
         <div class="flex items-center gap-2">
-            <button class="btn-apple-sm px-4 py-2">
+            <button id="deleteSelectedBtn" class="btn-apple-sm px-4 py-2 hidden" style="background: rgba(255,69,58,0.2); color: rgba(255,69,58,1);" onclick="deleteSelected()">
+                <i class="fas fa-trash mr-2"></i>Delete Selected (<span id="selectedCount">0</span>)
+            </button>
+            <button class="btn-apple-sm px-4 py-2" onclick="location.reload()">
                 <i class="fas fa-sync-alt mr-2"></i>Refresh
             </button>
             <a href="{{ route('admin.inbox.compose') ?? '#' }}" class="btn-apple-primary-sm px-4 py-2">
@@ -19,6 +22,10 @@
 
     {{-- Filters --}}
     <div class="flex flex-wrap items-center gap-3">
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="selectAll" class="rounded text-apple-blue focus:ring-apple-blue" onchange="toggleSelectAll()">
+            <span class="text-sm text-dark-text-secondary">Select All</span>
+        </label>
         <div class="flex-1 min-w-[200px]">
             <input type="text" placeholder="Search emails..." 
                    class="input-apple w-full" value="{{ request('search') }}">
@@ -37,35 +44,55 @@
         </select>
     </div>
 
+    <form id="batchDeleteForm" action="{{ route('admin.inbox.batch-delete') ?? '#' }}" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
     {{-- Email List --}}
     @if(isset($emails) && $emails->count() > 0)
         <div class="space-y-2">
             @foreach($emails as $email)
-                <div class="card-elevated rounded-apple-lg p-4 hover:bg-opacity-80 transition-apple cursor-pointer"
-                     onclick="window.location='{{ route('admin.inbox.show', $email->id) ?? '#' }}'">
+                @php
+                    // Clean email address from bounce/tracking prefixes
+                    $cleanEmail = $email->from_email;
+                    if (preg_match('/^[^@]+\+[^@]+=([^@]+@[^@]+)$/', $cleanEmail, $matches)) {
+                        $cleanEmail = str_replace('=', '@', $matches[1]);
+                    }
+                    $displayName = $email->from_name ?: $cleanEmail;
+                @endphp
+                <div class="card-elevated rounded-apple-lg p-4 hover:bg-opacity-80 transition-apple" data-email-id="{{ $email->id }}">
                     <div class="flex items-start gap-4">
+                        {{-- Checkbox --}}
+                        <div class="flex-shrink-0 pt-1">
+                            <input type="checkbox" class="email-checkbox rounded text-apple-blue focus:ring-apple-blue" 
+                                   value="{{ $email->id }}" 
+                                   onchange="updateSelectedCount()" 
+                                   onclick="event.stopPropagation()">
+                        </div>
+
                         {{-- Avatar --}}
-                        <div class="flex-shrink-0">
-<<<<<<< Updated upstream
+                        <div class="flex-shrink-0 cursor-pointer" onclick="window.location='{{ route('admin.inbox.show', $email->id) ?? '#' }}'">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
                                  style="background: linear-gradient(135deg, rgba(10,132,255,0.8), rgba(30,86,172,0.8));">
-=======
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-semibold"
-                                 style="width: var(--space-10); height: var(--space-10); font-weight: var(--font-semibold); background: var(--neuro-primary); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
->>>>>>> Stashed changes
-                                {{ strtoupper(substr($email->from_name ?? $email->from_email ?? 'U', 0, 1)) }}
+                                {{ strtoupper(substr($displayName, 0, 1)) }}
                             </div>
                         </div>
 
                         {{-- Email Content --}}
-                        <div class="flex-1 min-w-0">
+                        <div class="flex-1 min-w-0 cursor-pointer" onclick="window.location='{{ route('admin.inbox.show', $email->id) ?? '#' }}'">
                             <div class="flex items-center justify-between gap-2 mb-1">
-                                <h3 class="font-semibold text-white truncate">
-                                    {{ $email->from_name ?? $email->from_email }}
-                                    @if(!$email->is_read)
-                                        <span class="ml-2 w-2 h-2 rounded-full inline-block" style="background: var(--neuro-primary);"></span>
+                                <div class="flex items-center gap-2 truncate">
+                                    <h3 class="font-semibold text-white truncate">
+                                        {{ $displayName }}
+                                    </h3>
+                                    @if($cleanEmail !== $displayName)
+                                        <span class="text-xs text-dark-text-tertiary truncate">&lt;{{ $cleanEmail }}&gt;</span>
                                     @endif
-                                </h3>
+                                    @if(!$email->is_read)
+                                        <span class="w-2 h-2 rounded-full inline-block flex-shrink-0" style="background: var(--neuro-primary);"></span>
+                                    @endif
+                                </div>
                                 <div class="flex items-center gap-2 flex-shrink-0">
                                     @if($email->is_starred)
                                         <i class="fas fa-star" style="color: var(--neuro-warning);"></i>
@@ -120,3 +147,55 @@
         </div>
     @endif
 </div>
+
+@push('scripts')
+<script>
+function toggleSelectAll() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.email-checkbox');
+    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+    updateSelectedCount();
+}
+
+function updateSelectedCount() {
+    const checkboxes = document.querySelectorAll('.email-checkbox:checked');
+    const count = checkboxes.length;
+    const deleteBtn = document.getElementById('deleteSelectedBtn');
+    const countSpan = document.getElementById('selectedCount');
+    
+    countSpan.textContent = count;
+    if (count > 0) {
+        deleteBtn.classList.remove('hidden');
+    } else {
+        deleteBtn.classList.add('hidden');
+    }
+    
+    // Update select all checkbox state
+    const allCheckboxes = document.querySelectorAll('.email-checkbox');
+    const selectAll = document.getElementById('selectAll');
+    selectAll.checked = allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length;
+}
+
+function deleteSelected() {
+    const checkboxes = document.querySelectorAll('.email-checkbox:checked');
+    if (checkboxes.length === 0) return;
+    
+    if (!confirm(`Yakin ingin menghapus ${checkboxes.length} email yang dipilih?`)) {
+        return;
+    }
+    
+    const form = document.getElementById('batchDeleteForm');
+    
+    // Add selected email IDs to form
+    checkboxes.forEach((cb, index) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'email_ids[]';
+        input.value = cb.value;
+        form.appendChild(input);
+    });
+    
+    form.submit();
+}
+</script>
+@endpush
