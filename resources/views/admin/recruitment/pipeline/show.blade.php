@@ -13,9 +13,11 @@
         justify-content: center;
         font-weight: 700;
         font-size: 36px;
-        background: linear-gradient(135deg, rgba(10,132,255,0.2), rgba(191,90,242,0.2));
-        color: #0A84FF;
-        border: 2px solid rgba(10,132,255,0.3);
+        background: linear-gradient(135deg, var(--neuro-primary), var(--neuro-accent));
+        opacity: var(--opacity-bg-light);
+        color: var(--neuro-primary);
+        border: 2px solid var(--neuro-primary);
+        opacity: var(--opacity-border-light);
     }
 
     .timeline-item {
@@ -29,7 +31,8 @@
         top: 50px;
         bottom: -20px;
         width: 2px;
-        background: rgba(58,58,60,0.6);
+        background: var(--dark-separator);
+        opacity: var(--opacity-border-medium);
     }
 
     .stage-icon {
@@ -64,16 +67,16 @@
     {{-- Header --}}
     <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <nav class="text-xs mb-2 flex items-center gap-2" style="color: rgba(235,235,245,0.6);">
+            <nav class="text-xs mb-2 flex items-center gap-2" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-medium);">
                 <a href="{{ route('admin.recruitment.index') }}" class="hover:text-apple-blue transition-colors">Rekrutmen</a>
                 <i class="fas fa-chevron-right text-[10px]"></i>
                 <a href="{{ route('admin.recruitment.pipeline.index') }}" class="hover:text-apple-blue transition-colors">Pipeline</a>
                 <i class="fas fa-chevron-right text-[10px]"></i>
-                <span style="color: rgba(235,235,245,0.9);">Detail Kandidat</span>
+                <span style="color: var(--text-dark-primary); opacity: var(--opacity-text-strong);">Detail Kandidat</span>
             </nav>
             <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">{{ $application->full_name }}</h1>
             @if($application->jobVacancy)
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">
+                <p class="text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                     <i class="fas fa-briefcase mr-2"></i>{{ $application->jobVacancy->title }}
                 </p>
             @else
@@ -98,7 +101,7 @@
                     {{ strtoupper(substr($application->full_name, 0, 2)) }}
                 </div>
                 <h3 class="text-xl font-bold text-white mb-1">{{ $application->full_name }}</h3>
-                <p class="text-sm mb-3" style="color: rgba(235,235,245,0.65);">{{ $application->email }}</p>
+                <p class="text-sm mb-3" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">{{ $application->email }}</p>
                 
                 <div class="flex justify-center gap-2 mb-4">
                     @php
@@ -114,14 +117,14 @@
                     </span>
                 </div>
 
-                <div class="border-t pt-4 mt-4" style="border-color: rgba(58,58,60,0.6);">
-                    <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="border-t pt-4 mt-4" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                            <p class="text-xs mb-1" style="color: rgba(235,235,245,0.55);">Tanggal Melamar</p>
+                            <p class="text-xs mb-1" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Tanggal Melamar</p>
                             <p class="font-semibold text-white">{{ $application->created_at->format('d M Y') }}</p>
                         </div>
                         <div>
-                            <p class="text-xs mb-1" style="color: rgba(235,235,245,0.55);">Telepon</p>
+                            <p class="text-xs mb-1" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Telepon</p>
                             <p class="font-semibold text-white">{{ $application->phone ?? '-' }}</p>
                         </div>
                     </div>
@@ -130,15 +133,15 @@
 
             {{-- Pipeline Progress --}}
             <section class="card-elevated rounded-apple-xl overflow-hidden">
-                <div class="px-4 py-3 border-b" style="border-color: rgba(58,58,60,0.6);">
-                    <p class="text-xs uppercase tracking-[0.25em]" style="color: rgba(235,235,245,0.55);">Progress</p>
+                <div class="px-4 py-3 border-b" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
+                    <p class="text-xs uppercase tracking-[0.25em]" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Progress</p>
                     <h3 class="text-base font-semibold text-white">Tahap Rekrutmen</h3>
                 </div>
                 <div class="p-4">
                     @if($application->recruitmentStages->count() > 0)
                         <div class="space-y-4">
                             @foreach($application->recruitmentStages->sortBy('stage_order') as $stage)
-                                <div class="border rounded-apple-lg p-4" style="border-color: rgba(58,58,60,0.6); background: rgba(255,255,255,0.02);">
+                                <div class="border rounded-apple-lg p-4" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium); background: var(--light-separator); opacity: var(--opacity-bg-light);">
                                     <div class="flex items-start gap-3 mb-3">
                                         <div class="stage-icon flex-shrink-0
                                             @if($stage->status == 'passed')

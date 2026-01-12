@@ -48,6 +48,46 @@
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
+<<<<<<< Updated upstream
+=======
+    
+    /* Neuroscience Card Styles */
+    .neuro-card {
+        background: var(--dark-bg-elevated);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--dark-separator);
+    }
+    
+    .neuro-card-hover:hover {
+        background: var(--dark-bg-tertiary);
+    }
+    
+    /* Status badge neuroscience colors */
+    .status-selesai {
+        background: var(--neuro-success);
+        opacity: var(--opacity-bg-light);
+        color: var(--neuro-success);
+    }
+    
+    .status-proses {
+        background: var(--neuro-primary);
+        opacity: var(--opacity-bg-light);
+        color: var(--neuro-primary);
+    }
+    
+    .status-draft {
+        background: var(--text-dark-tertiary);
+        opacity: var(--opacity-bg-light);
+        color: var(--text-dark-secondary);
+    }
+    
+    .status-warning {
+        background: var(--neuro-warning);
+        opacity: var(--opacity-bg-light);
+        color: var(--neuro-warning);
+    }
+>>>>>>> Stashed changes
 </style>
 @endpush
 

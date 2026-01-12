@@ -2,13 +2,13 @@
 <div>
     <div class="mb-4 flex justify-between items-center">
         <div>
-            <h3 class="text-lg font-semibold" style="color: #FFFFFF;">Roles & Permissions</h3>
-            <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
+            <h3 class="text-lg font-semibold" style="color: var(--dark-text-primary, #F5F3F0);">Roles & Permissions</h3>
+            <p class="text-sm mt-1" style="color: var(--dark-text-secondary, #C9C4BF);">
                 Manage user roles and their permissions
             </p>
         </div>
         <button onclick="openRoleModal()" class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-all duration-300"
-                style="background: rgba(0, 122, 255, 1); color: #FFFFFF;">
+                style="background: var(--neuro-primary, #8B9FD8); color: var(--dark-text-primary, #F5F3F0);">
             <i class="fas fa-plus text-xs mr-2"></i>
             Add Role
         </button>
@@ -20,11 +20,11 @@
         <div class="card-elevated rounded-apple-lg p-4">
             <div class="flex justify-between items-start mb-3">
                 <div class="flex-1">
-                    <h4 class="text-base font-semibold flex items-center" style="color: #FFFFFF;">
-                        <i class="fas fa-user-shield mr-2" style="color: rgba(0, 122, 255, 0.8);"></i>
+                    <h4 class="text-base font-semibold flex items-center" style="color: var(--dark-text-primary, #F5F3F0);">
+                        <i class="fas fa-user-shield mr-2" style="color: var(--neuro-primary, #8B9FD8);"></i></i>
                         {{ $role->display_name }}
                         @if($role->is_system)
-                            <span class="ml-2 px-2 py-0.5 text-xs rounded-apple" style="background: rgba(255, 149, 0, 0.15); color: rgba(255, 149, 0, 1);">
+                            <span class="ml-2 px-2 py-0.5 text-xs rounded-apple" style="background: var(--neuro-warning, rgba(245, 216, 135, 0.15)); color: var(--neuro-warning, #F5D887);">
                                 System
                             </span>
                         @endif
@@ -35,21 +35,21 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between py-2 border-t border-b my-3" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="flex items-center justify-between py-2 border-t border-b my-3" style="border-color: var(--dark-separator, rgba(84, 84, 88, 0.1));">
                 <div class="text-center flex-1">
-                    <div class="text-lg font-bold" style="color: #FFFFFF;">{{ $role->users_count }}</div>
-                    <div class="text-xs" style="color: rgba(235, 235, 245, 0.5);">Users</div>
+                    <div class="text-lg font-bold" style="color: var(--dark-text-primary, #F5F3F0);">{{ $role->users_count }}</div>
+                    <div class="text-xs" style="color: var(--dark-text-secondary, #C9C4BF);">Users</div>
                 </div>
                 <div class="text-center flex-1">
-                    <div class="text-lg font-bold" style="color: rgba(0, 122, 255, 1);">{{ $role->permissions->count() }}</div>
-                    <div class="text-xs" style="color: rgba(235, 235, 245, 0.5);">Permissions</div>
+                    <div class="text-lg font-bold" style="color: var(--neuro-primary, #8B9FD8);">{{ $role->permissions->count() }}</div>
+                    <div class="text-xs" style="color: var(--dark-text-secondary, #C9C4BF);">Permissions</div>
                 </div>
             </div>
 
             <div class="flex space-x-2">
                 <button onclick="editRole({{ $role->id }})" 
                         class="flex-1 px-3 py-2 rounded-apple text-sm font-medium transition-all duration-300"
-                        style="background: rgba(0, 122, 255, 0.15); color: rgba(0, 122, 255, 1);">
+                        style="background: var(--neuro-primary-muted, rgba(212, 220, 242, 0.15)); color: var(--neuro-primary, #8B9FD8);">
                     <i class="fas fa-pencil mr-1"></i> Edit
                 </button>
                 @if(!$role->is_system)
@@ -59,7 +59,7 @@
                         @method('DELETE')
                         <button type="submit" 
                                 class="w-full px-3 py-2 rounded-apple text-sm font-medium transition-all duration-300"
-                                style="background: rgba(255, 59, 48, 0.15); color: rgba(255, 59, 48, 1);">
+                                style="background: var(--neuro-error, rgba(232, 160, 160, 0.15)); color: var(--neuro-error, #E8A0A0);">
                             <i class="fas fa-trash mr-1"></i> Delete
                         </button>
                     </form>
@@ -71,7 +71,7 @@
 </div>
 
 <!-- Role Modal -->
-<div id="roleModal" class="fixed inset-0 z-50 hidden overflow-y-auto" style="background: rgba(0, 0, 0, 0.7);">
+<div id="roleModal" class="fixed inset-0 z-50 hidden overflow-y-auto" style="background: var(--dark-bg, rgba(30, 30, 32, 0.7));">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="card-elevated rounded-apple-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <form id="roleForm" method="POST">
@@ -79,7 +79,7 @@
                 <input type="hidden" name="_method" id="roleMethod" value="POST">
                 
                 <div class="p-6 border-b sticky top-0 card-elevated z-10" style="border-color: rgba(255, 255, 255, 0.1);">
-                    <h3 class="text-lg font-semibold" style="color: #FFFFFF;" id="roleModalTitle">Add New Role</h3>
+                    <h3 class="text-lg font-semibold" style="color: var(--dark-text-primary, #F5F3F0);" id="roleModalTitle">Add New Role</h3>
                 </div>
 
                 <div class="p-6 space-y-6">

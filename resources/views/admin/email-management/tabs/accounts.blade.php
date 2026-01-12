@@ -41,8 +41,13 @@
                     <div class="flex flex-col md:flex-row md:items-center gap-4">
                         {{-- Account Icon --}}
                         <div class="flex-shrink-0">
+<<<<<<< Updated upstream
                             <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg"
                                  style="background: linear-gradient(135deg, {{ $account->type == 'shared' ? 'rgba(10,132,255,0.8), rgba(30,86,172,0.8)' : 'rgba(52,199,89,0.8), rgba(30,172,86,0.8)' }});">
+=======
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center font-semibold"
+                                 style="width: var(--space-12); height: var(--space-12); font-size: var(--text-lg); font-weight: var(--font-semibold); background: {{ $account->type == 'shared' ? 'var(--neuro-primary)' : 'var(--neuro-success)' }}; opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
+>>>>>>> Stashed changes
                                 {{ strtoupper(substr($account->email, 0, 1)) }}
                             </div>
                         </div>
@@ -55,26 +60,29 @@
                                 </h3>
                                 
                                 {{-- Type Badge --}}
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ 
-                                    $account->type == 'shared' ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400'
-                                }}">
+                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: {{ $account->type == 'shared' ? 'var(--neuro-primary)' : 'var(--neuro-success)' }}; opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
                                     {{ ucfirst($account->type) }}
                                 </span>
 
                                 {{-- Status Badge --}}
                                 @if($account->is_active)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-500/20 text-green-400">
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--neuro-success); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
                                         Active
                                     </span>
                                 @else
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500/20 text-red-400">
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--neuro-error); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
                                         Inactive
                                     </span>
                                 @endif
 
                                 {{-- Department Badge --}}
+<<<<<<< Updated upstream
                                 <span class="px-2 py-0.5 text-xs rounded-full" 
                                       style="background: rgba(175,82,222,0.15); color: rgba(175,82,222,1);">
+=======
+                                <span class="px-2 py-0.5 rounded-full" 
+                                      style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); background: var(--neuro-secondary); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
+>>>>>>> Stashed changes
                                     {{ $account->department_label }}
                                 </span>
                             </div>
@@ -95,8 +103,13 @@
                                     <span class="text-xs" style="color: rgba(235,235,245,0.5);">Assigned to:</span>
                                     <div class="flex -space-x-2">
                                         @foreach($account->activeUsers->take(3) as $user)
+<<<<<<< Updated upstream
                                             <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold text-white border-2"
                                                  style="background: linear-gradient(135deg, rgba(52,199,89,0.8), rgba(30,172,86,0.8)); border-color: var(--dark-elevated);"
+=======
+                                            <div class="w-6 h-6 rounded-full flex items-center justify-center font-semibold border-2"
+                                                 style="width: var(--space-6); height: var(--space-6); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--neuro-success); opacity: var(--opacity-bg-strong); border-color: var(--dark-elevated); color: var(--text-dark-primary);"
+>>>>>>> Stashed changes
                                                  title="{{ $user->name }}">
                                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                                             </div>

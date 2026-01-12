@@ -33,7 +33,11 @@
             @foreach($templates as $template)
                 <div class="card-elevated rounded-apple-lg overflow-hidden hover:bg-opacity-80 transition-apple">
                     {{-- Thumbnail --}}
+<<<<<<< Updated upstream
                     <div class="h-40 overflow-hidden relative" style="background: linear-gradient(135deg, rgba(10,132,255,0.2), rgba(30,86,172,0.2));">
+=======
+                    <div class="h-40 overflow-hidden relative" style="background: var(--neuro-primary); opacity: var(--opacity-bg-medium);">
+>>>>>>> Stashed changes
                         @if($template->thumbnail)
                             <img src="{{ asset('storage/' . $template->thumbnail) }}" alt="{{ $template->name }}"
                                  class="w-full h-full object-cover">
@@ -45,11 +49,19 @@
                         
                         {{-- Status Badge --}}
                         @if($template->is_active)
+<<<<<<< Updated upstream
                             <span class="absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full bg-green-500/80 text-white">
                                 Active
                             </span>
                         @else
                             <span class="absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full bg-gray-500/80 text-white">
+=======
+                            <span class="absolute top-3 right-3 px-2 py-1 rounded-full font-semibold" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--neuro-success); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
+                                Active
+                            </span>
+                        @else
+                            <span class="absolute top-3 right-3 px-2 py-1 rounded-full font-semibold" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--dark-bg-tertiary); opacity: var(--opacity-bg-strong); color: var(--text-dark-tertiary);">
+>>>>>>> Stashed changes
                                 Inactive
                             </span>
                         @endif
@@ -62,8 +74,13 @@
                                 {{ $template->name }}
                             </h3>
                             @if($template->category)
+<<<<<<< Updated upstream
                                 <span class="px-2 py-0.5 text-xs rounded-full ml-2" 
                                       style="background: rgba(175,82,222,0.15); color: rgba(175,82,222,1);">
+=======
+                                <span class="px-2 py-0.5 rounded-full ml-2" 
+                                      style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); background: var(--neuro-secondary); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
+>>>>>>> Stashed changes
                                     {{ ucfirst($template->category) }}
                                 </span>
                             @endif
@@ -79,8 +96,13 @@
                                 <p class="text-xs mb-1" style="color: rgba(235,235,245,0.5);">Variables:</p>
                                 <div class="flex flex-wrap gap-1">
                                     @foreach(array_slice($template->variables, 0, 3) as $variable)
+<<<<<<< Updated upstream
                                         <code class="px-2 py-0.5 text-xs rounded" 
                                               style="background: rgba(255,255,255,0.05); color: rgba(90,200,250,1);">
+=======
+                                        <code class="px-2 py-0.5 rounded" 
+                                              style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); background: var(--dark-bg-elevated); opacity: var(--opacity-bg-light); color: var(--neuro-primary);">
+>>>>>>> Stashed changes
                                             @{{ $variable }}
                                         </code>
                                     @endforeach

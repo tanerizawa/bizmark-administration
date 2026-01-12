@@ -6,7 +6,7 @@
 <div class="pb-20">
     
     {{-- Cash Balance Card --}}
-    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-2xl p-6 mb-4 text-white shadow-lg">
+    <div class="rounded-2xl p-6 mb-4 text-white shadow-lg" style="background: linear-gradient(135deg, var(--neuro-primary), var(--neuro-info));">
         <div class="text-sm opacity-90 mb-2">Saldo Kas</div>
         <div class="text-3xl font-bold mb-1">Rp {{ number_format($cashBalance['total'] ?? 0, 0, ',', '.') }}</div>
         <div class="text-sm opacity-75">Runway: {{ $runway['months'] ?? 0 }} bulan</div>
@@ -90,7 +90,7 @@
     <div>
         <div class="flex items-center justify-between mb-3 px-1">
             <h3 class="text-sm font-semibold text-gray-900">Transaksi Terakhir</h3>
-            <a href="{{ mobile_route('financial.cash-flow') }}" class="text-xs text-[#0077b5] font-medium">
+            <a href="{{ mobile_route('financial.cash-flow') }}" class="text-xs font-medium" style="color: var(--neuro-primary);">
                 Lihat Semua →
             </a>
         </div>

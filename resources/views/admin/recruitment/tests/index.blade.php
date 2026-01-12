@@ -35,24 +35,24 @@
     {{-- Stats --}}
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Template</p>
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-primary); opacity: var(--opacity-text-strong);">Total Template</p>
             <p class="text-2xl font-bold text-white">{{ $stats['total_templates'] }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Seluruh template tersedia</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Seluruh template tersedia</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Template Aktif</p>
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-success); opacity: var(--opacity-text-strong);">Template Aktif</p>
             <p class="text-2xl font-bold text-white">{{ $stats['active_templates'] }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Dapat ditugaskan</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Dapat ditugaskan</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Sesi Aktif</p>
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-warning); opacity: var(--opacity-text-strong);">Sesi Aktif</p>
             <p class="text-2xl font-bold text-white">{{ $stats['active_sessions'] }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Kandidat sedang tes</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Kandidat sedang tes</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Selesai Hari Ini</p>
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Selesai Hari Ini</p>
             <p class="text-2xl font-bold text-white">{{ $stats['completed_today'] }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tes selesai</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Tes selesai</p>
         </div>
     </section>
 
@@ -63,7 +63,7 @@
                 <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Filter</p>
                 <h3 class="text-base font-semibold text-white">Susun Template</h3>
             </div>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $templates->total() }} template ditemukan</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">{{ $templates->total() }} template ditemukan</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div class="space-y-1">

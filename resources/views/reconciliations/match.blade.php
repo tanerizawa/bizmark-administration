@@ -8,10 +8,10 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-3 sm:space-y-0">
         <div>
-            <h2 class="text-xl font-bold mb-1" style="color: rgba(235, 235, 245, 0.9);">
+            <h2 class="text-xl font-bold mb-1" style="color: var(--text-dark-primary); opacity: var(--opacity-text-strong);">
                 {{ $reconciliation->cashAccount->account_name }}
             </h2>
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">
+            <p class="text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">
                 Periode: {{ $reconciliation->start_date->format('d M Y') }} - {{ $reconciliation->end_date->format('d M Y') }}
             </p>
         </div>
@@ -26,36 +26,36 @@
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="rounded-apple p-4" style="background: rgba(255, 255, 255, 0.05);">
+        <div class="rounded-apple p-4" style="background: var(--light-separator); opacity: var(--opacity-bg-light);">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Total Transaksi Bank</span>
-                <i class="fas fa-university" style="color: rgba(0, 122, 255, 0.6);"></i>
+                <span class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Total Transaksi Bank</span>
+                <i class="fas fa-university" style="color: var(--neuro-primary); opacity: var(--opacity-text-medium);"></i>
             </div>
-            <p class="text-2xl font-bold" style="color: rgba(235, 235, 245, 0.9);">{{ $stats['total'] }}</p>
+            <p class="text-2xl font-bold" style="color: var(--text-dark-primary); opacity: var(--opacity-text-strong);">{{ $stats['total'] }}</p>
         </div>
 
-        <div class="rounded-apple p-4" style="background: rgba(52, 199, 89, 0.1);">
+        <div class="rounded-apple p-4" style="background: var(--neuro-success); opacity: var(--opacity-bg-light);">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs" style="color: rgba(52, 199, 89, 0.8);">Sudah Cocok</span>
-                <i class="fas fa-check-circle" style="color: rgba(52, 199, 89, 1);"></i>
+                <span class="text-xs" style="color: var(--neuro-success); opacity: var(--opacity-text-strong);">Sudah Cocok</span>
+                <i class="fas fa-check-circle" style="color: var(--neuro-success);"></i>
             </div>
-            <p class="text-2xl font-bold" style="color: rgba(52, 199, 89, 1);">{{ $stats['matched'] }}</p>
+            <p class="text-2xl font-bold" style="color: var(--neuro-success);">{{ $stats['matched'] }}</p>
         </div>
 
-        <div class="rounded-apple p-4" style="background: rgba(255, 159, 10, 0.1);">
+        <div class="rounded-apple p-4" style="background: var(--neuro-warning); opacity: var(--opacity-bg-light);">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs" style="color: rgba(255, 159, 10, 0.8);">Belum Cocok</span>
-                <i class="fas fa-exclamation-triangle" style="color: rgba(255, 159, 10, 1);"></i>
+                <span class="text-xs" style="color: var(--neuro-warning); opacity: var(--opacity-text-strong);">Belum Cocok</span>
+                <i class="fas fa-exclamation-triangle" style="color: var(--neuro-warning);"></i>
             </div>
-            <p class="text-2xl font-bold" style="color: rgba(255, 159, 10, 1);">{{ $stats['unmatched'] }}</p>
+            <p class="text-2xl font-bold" style="color: var(--neuro-warning);">{{ $stats['unmatched'] }}</p>
         </div>
 
-        <div class="rounded-apple p-4" style="background: rgba(0, 122, 255, 0.1);">
+        <div class="rounded-apple p-4" style="background: var(--neuro-primary); opacity: var(--opacity-bg-light);">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs" style="color: rgba(0, 122, 255, 0.8);">Match Rate</span>
-                <i class="fas fa-percentage" style="color: rgba(0, 122, 255, 1);"></i>
+                <span class="text-xs" style="color: var(--neuro-primary); opacity: var(--opacity-text-strong);">Match Rate</span>
+                <i class="fas fa-percentage" style="color: var(--neuro-primary);"></i>
             </div>
-            <p class="text-2xl font-bold" style="color: rgba(0, 122, 255, 1);">{{ number_format($stats['match_rate'], 1) }}%</p>
+            <p class="text-2xl font-bold" style="color: var(--neuro-primary);">{{ number_format($stats['match_rate'], 1) }}%</p>
         </div>
     </div>
 
@@ -66,7 +66,7 @@
                 @csrf
                 <button type="submit" 
                         class="px-4 py-2 rounded-apple text-sm font-medium transition-all hover:opacity-90"
-                        style="background: linear-gradient(135deg, rgba(52, 199, 89, 1) 0%, rgba(48, 209, 88, 1) 100%); color: white;">
+                        style="background: linear-gradient(135deg, var(--neuro-success), var(--neuro-success)); color: white;">
                     <i class="fas fa-magic mr-2"></i> Auto-Match
                 </button>
             </form>

@@ -2,8 +2,8 @@
 <div>
     <div class="mb-4 flex justify-between items-center">
         <div>
-            <h3 class="text-lg font-semibold" style="color: #FFFFFF;">User Management</h3>
-            <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
+            <h3 class="text-lg font-semibold" style="color: var(--dark-text-primary, #F5F3F0);">User Management</h3>
+            <p class="text-sm mt-1" style="color: var(--dark-text-secondary, #C9C4BF);">
                 Manage system users and assign roles (Total: {{ $users->count() }} users)
             </p>
         </div>
@@ -12,13 +12,13 @@
             <div class="relative">
                 <input type="text" id="userSearch" placeholder="Search users..." 
                        class="input-apple w-64 pl-10" 
-                       style="background: rgba(255, 255, 255, 0.05);">
+                       style="background: var(--dark-bg-secondary, rgba(42, 42, 44, 0.05));">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-xs" 
-                   style="color: rgba(235, 235, 245, 0.4);"></i>
+                   style="color: var(--dark-text-tertiary, rgba(201, 196, 191, 0.5));"></i>
             </div>
             
             <!-- Filter by Role -->
-            <select id="roleFilter" class="input-apple" style="background: rgba(255, 255, 255, 0.05);">
+            <select id="roleFilter" class="input-apple" style="background: var(--dark-bg-secondary, rgba(42, 42, 44, 0.05));">
                 <option value="">All Roles</option>
                 @foreach($roles as $role)
                     <option value="{{ $role->id }}">{{ $role->display_name }}</option>
@@ -26,7 +26,7 @@
             </select>
             
             <button onclick="openUserModal()" class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-medium transition-all duration-300"
-                    style="background: rgba(0, 122, 255, 1); color: #FFFFFF;">
+                    style="background: var(--neuro-primary, #8B9FD8); color: var(--dark-text-primary, #F5F3F0);">
                 <i class="fas fa-plus text-xs mr-2"></i>
                 Add User
             </button>
@@ -34,10 +34,10 @@
     </div>
 
     <!-- Users Table -->
-    <div class="overflow-x-auto rounded-apple" style="background: rgba(255, 255, 255, 0.02);">
-        <table class="min-w-full divide-y" style="border-color: rgba(255, 255, 255, 0.08);">
+    <div class="overflow-x-auto rounded-apple" style="background: var(--dark-bg-secondary, rgba(42, 42, 44, 0.02));">
+        <table class="min-w-full divide-y" style="border-color: var(--dark-separator, rgba(84, 84, 88, 0.08));">
             <thead>
-                <tr style="background: rgba(255, 255, 255, 0.02);">
+                <tr style="background: var(--dark-bg-tertiary, rgba(54, 54, 56, 0.02));">
                     <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: rgba(235, 235, 245, 0.5);">
                         User
                     </th>
@@ -61,7 +61,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody class="divide-y" style="border-color: rgba(255, 255, 255, 0.05);">
+            <tbody class="divide-y" style="border-color: var(--dark-separator, rgba(84, 84, 88, 0.05));">
                 @forelse($users as $user)
                 <tr class="hover:bg-opacity-50 transition-colors duration-200 user-row" 
                     style="background: transparent;"
@@ -75,18 +75,18 @@
                                 @if($user->avatar)
                                     <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}">
                                 @else
-                                    <div class="h-10 w-10 rounded-full flex items-center justify-center" style="background: rgba(0, 122, 255, 0.2);">
-                                        <span class="text-sm font-medium" style="color: rgba(0, 122, 255, 1);">
+                                    <div class="h-10 w-10 rounded-full flex items-center justify-center" style="background: var(--neuro-primary-muted, rgba(212, 220, 242, 0.2));">
+                                        <span class="text-sm font-medium" style="color: var(--neuro-primary, #8B9FD8);">
                                             {{ strtoupper(substr($user->full_name ?? $user->name, 0, 2)) }}
                                         </span>
                                     </div>
                                 @endif
                             </div>
                             <div class="ml-3">
-                                <div class="text-sm font-medium" style="color: #FFFFFF;">{{ $user->full_name ?? $user->name }}</div>
-                                <div class="text-xs" style="color: rgba(235, 235, 245, 0.5);">{{ $user->email }}</div>
+                                <div class="text-sm font-medium" style="color: var(--dark-text-primary, #F5F3F0);">{{ $user->full_name ?? $user->name }}</div>
+                                <div class="text-xs" style="color: var(--dark-text-secondary, #C9C4BF);">{{ $user->email }}</div>
                                 @if($user->email_verified_at)
-                                    <span class="inline-flex items-center text-xs" style="color: rgba(52, 199, 89, 0.8);">
+                                    <span class="inline-flex items-center text-xs" style="color: var(--neuro-success, #88D4AB);">
                                         <i class="fas fa-check-circle mr-1"></i>Verified
                                     </span>
                                 @endif
@@ -94,52 +94,52 @@
                         </div>
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap">
-                        <div class="text-sm font-mono" style="color: rgba(235, 235, 245, 0.9);">{{ $user->username ?? $user->name }}</div>
+                        <div class="text-sm font-mono" style="color: var(--dark-text-primary, #F5F3F0);">{{ $user->username ?? $user->name }}</div>
                         @if($user->employee_id)
-                            <div class="text-xs" style="color: rgba(235, 235, 245, 0.4);">ID: {{ $user->employee_id }}</div>
+                            <div class="text-xs" style="color: var(--dark-text-tertiary, rgba(201, 196, 191, 0.5));">ID: {{ $user->employee_id }}</div>
                         @endif
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap">
                         @if($user->role)
                             <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-apple"
-                                  style="background: rgba(0, 122, 255, 0.15); color: rgba(0, 122, 255, 1);">
+                                  style="background: var(--neuro-primary-muted, rgba(212, 220, 242, 0.15)); color: var(--neuro-primary, #8B9FD8);">
                                 <i class="fas fa-user-shield mr-1"></i>
                                 {{ $user->role->display_name }}
                             </span>
                         @else
-                            <span class="text-xs" style="color: rgba(235, 235, 245, 0.4);">No role</span>
+                            <span class="text-xs" style="color: var(--dark-text-tertiary, rgba(201, 196, 191, 0.5));">No role</span>
                         @endif
                         @if($user->position)
-                            <div class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">{{ $user->position }}</div>
+                            <div class="text-xs mt-1" style="color: var(--dark-text-secondary, #C9C4BF);">{{ $user->position }}</div>
                         @endif
                         @if($user->department)
-                            <div class="text-xs" style="color: rgba(235, 235, 245, 0.5);">{{ $user->department }}</div>
+                            <div class="text-xs" style="color: var(--dark-text-secondary, #C9C4BF);">{{ $user->department }}</div>
                         @endif
                     </td>
                     <td class="px-4 py-3">
-                        <div class="text-sm" style="color: rgba(235, 235, 245, 0.7);">
+                        <div class="text-sm" style="color: var(--dark-text-secondary, #C9C4BF);">
                             @if($user->phone)
                                 <div><i class="fas fa-phone text-xs mr-1"></i>{{ $user->phone }}</div>
                             @else
-                                <span style="color: rgba(235, 235, 245, 0.4);">-</span>
+                                <span style="color: var(--dark-text-tertiary, rgba(201, 196, 191, 0.5));">-</span>
                             @endif
                         </div>
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-center">
                         @if($user->is_active)
                             <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-apple"
-                                  style="background: rgba(52, 199, 89, 0.15); color: rgba(52, 199, 89, 1);">
+                                  style="background: var(--neuro-success, rgba(136, 212, 171, 0.15)); color: var(--neuro-success, #88D4AB);">
                                 <i class="fas fa-check-circle mr-1"></i>Active
                             </span>
                         @else
                             <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-apple"
-                                  style="background: rgba(255, 59, 48, 0.15); color: rgba(255, 59, 48, 1);">
+                                  style="background: var(--neuro-error, rgba(232, 160, 160, 0.15)); color: var(--neuro-error, #E8A0A0);">
                                 <i class="fas fa-times-circle mr-1"></i>Inactive
                             </span>
                         @endif
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap">
-                        <div class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                        <div class="text-xs" style="color: var(--dark-text-secondary, #C9C4BF);">
                             <div><i class="fas fa-calendar-plus mr-1"></i>{{ $user->created_at->format('d M Y') }}</div>
                             <div class="mt-1"><i class="fas fa-clock mr-1"></i>{{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never logged in' }}</div>
                         </div>

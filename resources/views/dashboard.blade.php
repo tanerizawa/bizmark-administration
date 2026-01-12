@@ -25,6 +25,7 @@
                         Pantau indikator kinerja utama, arus kas, dan perkembangan proyek secara terpadu dalam satu tampilan.
                     </p>
                 </div>
+<<<<<<< Updated upstream
                 
                 {{-- Metadata & Actions --}}
                 <div class="space-y-2.5 text-sm text-dark-text-secondary shrink-0">
@@ -40,12 +41,19 @@
                     </div>
                     <a href="{{ route('projects.index') }}" 
                        class="inline-flex items-center gap-2 px-4 py-2 rounded-apple text-xs font-semibold bg-apple-blue bg-opacity-25 text-dark-text-primary hover:bg-opacity-35 transition-all duration-200">
+=======
+                <div class="text-sm" style="display: flex; flex-direction: column; gap: var(--space-3); color: var(--text-dark-secondary);">
+                    <p style="margin: 0; display: flex; align-items: center; gap: var(--space-2);"><i class="fas fa-clock"></i>Terakhir diperbarui: {{ now()->format('d M Y, H:i') }}</p>
+                    <p style="margin: 0; display: flex; align-items: center; gap: var(--space-2);"><i class="fas fa-user-shield"></i>Akses: Direksi &amp; Kepala Operasional</p>
+                    <a href="{{ route('projects.index') }}" class="dashboard-link inline-flex items-center rounded-apple font-semibold transition-colors" style="padding: var(--space-2) var(--space-4); font-size: var(--text-xs); background: var(--neuro-primary); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary); text-decoration: none !important;">
+>>>>>>> Stashed changes
                         Lihat semua proyek
                         <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
 
+<<<<<<< Updated upstream
             {{-- KPI Cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {{-- Urgent Actions --}}
@@ -89,6 +97,29 @@
                     </p>
                     <p class="text-xs text-dark-text-tertiary mt-1">Tugas & target waktu</p>
                 </article>
+=======
+            <div class="grid grid-cols-2 md:grid-cols-4" style="gap: var(--space-4);">
+                <div class="dashboard-summary-card rounded-apple-lg" style="background: var(--neuro-error); opacity: var(--opacity-bg-light);">
+                    <p class="uppercase tracking-widest" style="font-size: var(--text-xs); letter-spacing: var(--tracking-wider); color: var(--neuro-error); margin: 0; padding-bottom: var(--space-3);">Perlu Tindakan</p>
+                    <h2 class="font-bold" style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--text-dark-primary); margin: 0; padding-bottom: var(--space-3);">{{ $criticalAlerts['total_urgent'] }}</h2>
+                    <p class="body-sm" style="font-size: var(--text-xs); line-height: var(--leading-normal); color: var(--text-dark-secondary); margin: 0; padding-top: var(--space-1);">Butuh penanganan segera</p>
+                </div>
+                <div class="dashboard-summary-card rounded-apple-lg" style="background: var(--neuro-primary); opacity: var(--opacity-bg-medium);">
+                    <p class="uppercase tracking-widest" style="font-size: var(--text-xs); letter-spacing: var(--tracking-wider); color: var(--neuro-primary); margin: 0; padding-bottom: var(--space-3);">Proyeksi Kas</p>
+                    <h2 class="font-bold" style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--neuro-primary); margin: 0; padding-bottom: var(--space-3);">{{ $cashFlowStatus['runway_months'] }} bln</h2>
+                    <p class="body-sm" style="font-size: var(--text-xs); line-height: var(--leading-normal); color: var(--text-dark-secondary); margin: 0; padding-top: var(--space-1);">Status: {{ ucfirst($cashFlowStatus['status']) }}</p>
+                </div>
+                <div class="dashboard-summary-card rounded-apple-lg" style="background: var(--neuro-info); opacity: var(--opacity-bg-medium);">
+                    <p class="uppercase tracking-widest" style="font-size: var(--text-xs); letter-spacing: var(--tracking-wider); color: var(--neuro-info); margin: 0; padding-bottom: var(--space-3);">Dokumen Tertunda</p>
+                    <h2 class="font-bold" style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--text-dark-primary); margin: 0; padding-bottom: var(--space-3);">{{ $pendingApprovals['total_pending'] }}</h2>
+                    <p class="body-sm" style="font-size: var(--text-xs); line-height: var(--leading-normal); color: var(--text-dark-secondary); margin: 0; padding-top: var(--space-1);">Menunggu persetujuan</p>
+                </div>
+                <div class="dashboard-summary-card rounded-apple-lg" style="background: var(--neuro-success); opacity: var(--opacity-bg-medium);">
+                    <p class="uppercase tracking-widest" style="font-size: var(--text-xs); letter-spacing: var(--tracking-wider); color: var(--neuro-success); margin: 0; padding-bottom: var(--space-3);">Agenda 30 Hari</p>
+                    <h2 class="font-bold" style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--neuro-success); margin: 0; padding-bottom: var(--space-3);">{{ $thisWeek['total_items'] }}</h2>
+                    <p class="body-sm" style="font-size: var(--text-xs); line-height: var(--leading-normal); color: var(--text-dark-secondary); margin: 0; padding-top: var(--space-1);">Tugas &amp; target waktu</p>
+                </div>
+>>>>>>> Stashed changes
             </div>
         </div>
     </section>
@@ -104,6 +135,7 @@
             
             {{-- Status Badge --}}
             @if($criticalAlerts['total_urgent'] > 0 || $cashFlowStatus['status'] === 'critical')
+<<<<<<< Updated upstream
             <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-red bg-opacity-15 text-apple-red flex items-center gap-2" 
                   role="status" 
                   aria-live="polite">
@@ -116,6 +148,14 @@
                   aria-live="polite">
                 <i class="fas fa-check-circle" aria-hidden="true"></i>
                 Kondisi Stabil
+=======
+            <span class="rounded-full font-semibold" style="padding: var(--space-1) var(--space-3); font-size: var(--text-xs); background: var(--neuro-error); opacity: var(--opacity-bg-strong); color: var(--neuro-error); display: inline-flex; align-items: center; gap: var(--space-1);">
+                <i class="fas fa-exclamation-triangle"></i>Memerlukan Perhatian
+            </span>
+            @else
+            <span class="rounded-full font-semibold" style="padding: var(--space-1) var(--space-3); font-size: var(--text-xs); background: var(--neuro-success); opacity: var(--opacity-bg-strong); color: var(--neuro-success); display: inline-flex; align-items: center; gap: var(--space-1);">
+                <i class="fas fa-check-circle"></i>Kondisi Stabil
+>>>>>>> Stashed changes
             </span>
             @endif
         </div>

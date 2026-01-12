@@ -29,7 +29,7 @@
     {{-- Actions --}}
     <div class="flex items-center justify-between gap-3">
         <div>
-            <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Manajemen</p>
+            <p class="text-xs uppercase tracking-[0.35em]" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Manajemen</p>
             <h2 class="text-lg font-semibold text-white">Katalog Jenis Izin</h2>
         </div>
         <a href="{{ route('permit-types.create') }}" class="btn-primary-sm">
@@ -109,12 +109,12 @@
                             <td class="px-4 py-2.5 text-center whitespace-nowrap">
                                 @if($type->is_active)
                                     <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                          style="background-color: rgba(52,199,89,0.15); color: rgba(52,199,89,1);">
+                                          style="background: var(--neuro-success); opacity: var(--opacity-bg-strong); color: var(--neuro-success);">
                                         Aktif
                                     </span>
                                 @else
                                     <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                          style="background-color: rgba(142,142,147,0.15); color: rgba(142,142,147,1);">
+                                          style="background: var(--text-dark-tertiary); opacity: var(--opacity-bg-strong); color: var(--text-dark-tertiary);">
                                         Nonaktif
                                     </span>
                                 @endif

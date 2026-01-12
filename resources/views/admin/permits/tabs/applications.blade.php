@@ -63,7 +63,7 @@
     <div class="card-elevated rounded-apple-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700 text-sm">
-                <thead style="background-color: rgba(28,28,30,0.45);">
+                <thead style="background-color: var(--dark-bg-tertiary); opacity: var(--opacity-bg-medium);">
                     <tr>
                         <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Nomor</th>
                         <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Klien</th>
@@ -95,17 +95,18 @@
                             <td class="px-4 py-2.5 whitespace-nowrap">
                                 @php
                                     $statusColors = [
-                                        'submitted' => 'rgba(10,132,255,0.15)|rgba(10,132,255,1)',
-                                        'under_review' => 'rgba(255,159,10,0.15)|rgba(255,159,10,1)',
-                                        'quoted' => 'rgba(175,82,222,0.15)|rgba(175,82,222,1)',
-                                        'payment_verified' => 'rgba(52,199,89,0.15)|rgba(52,199,89,1)',
-                                        'in_progress' => 'rgba(90,200,250,0.15)|rgba(90,200,250,1)',
-                                        'completed' => 'rgba(52,199,89,0.15)|rgba(52,199,89,1)',
+                                        'submitted' => 'var(--neuro-primary)|var(--neuro-primary)',
+                                        'under_review' => 'var(--neuro-warning)|var(--neuro-warning)',
+                                        'quoted' => 'var(--neuro-secondary)|var(--neuro-secondary)',
+                                        'payment_verified' => 'var(--neuro-success)|var(--neuro-success)',
+                                        'in_progress' => 'var(--neuro-info)|var(--neuro-info)',
+                                        'completed' => 'var(--neuro-success)|var(--neuro-success)',
                                     ];
-                                    $colors = explode('|', $statusColors[$app->status] ?? 'rgba(128,128,128,0.15)|rgba(128,128,128,1)');
+                                    $status = $statusColors[$app->status] ?? 'var(--text-dark-tertiary)|var(--text-dark-tertiary)';
+                                    $colors = explode('|', $status);
                                 @endphp
                                 <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                      style="background-color: {{ $colors[0] }}; color: {{ $colors[1] }};">
+                                      style="background: {{ $colors[0] }}; opacity: var(--opacity-bg-strong); color: {{ $colors[1] }};">
                                     {{ ucfirst(str_replace('_', ' ', $app->status)) }}
                                 </span>
                             </td>

@@ -14,7 +14,7 @@
     <!-- Header with Tabs -->
     <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-60 h-60 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
+            <div class="w-60 h-60 blur-3xl rounded-full absolute -top-10 -right-6" style="background: var(--neuro-primary); opacity: var(--opacity-bg-light);"></div>
         </div>
         <div class="relative">
             <div class="flex items-center justify-between mb-4">
@@ -58,10 +58,17 @@
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Finished tests</p>
         </div>
 
+<<<<<<< Updated upstream
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Pass Rate</p>
             <p class="text-2xl font-bold text-white">{{ $stats['pass_rate'] }}%</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Success rate</p>
+=======
+        <div class="card-elevated rounded-apple-lg" style="padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-1);">
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Pass Rate</p>
+            <p class="text-2xl font-bold" style="color: var(--text-dark-primary);">{{ $stats['pass_rate'] }}%</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary);">Success rate</p>
+>>>>>>> Stashed changes
         </div>
     </section>
 
@@ -108,14 +115,14 @@
                             <tr>
                                 <td>
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-apple-blue to-purple-600 flex items-center justify-center">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--neuro-primary), var(--neuro-accent));">
                                             <span class="text-white font-semibold text-sm">
                                                 {{ substr($session->jobApplication->full_name, 0, 1) }}
                                             </span>
                                         </div>
                                         <div>
                                             <div class="font-medium text-white">{{ $session->jobApplication->full_name }}</div>
-                                            <div class="text-sm text-dark-text-tertiary">{{ $session->jobApplication->email }}</div>
+                                            <div class="text-sm" style="color: var(--text-dark-tertiary);">{{ $session->jobApplication->email }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -124,7 +131,7 @@
                                         {{ $session->testTemplate->title }}
                                     </span>
                                 </td>
-                                <td class="text-dark-text-secondary">
+                                <td style="color: var(--text-dark-secondary);">
                                     {{ $session->created_at->format('d M Y') }}
                                 </td>
                                 <td>
@@ -136,7 +143,7 @@
                                     @if($session->score)
                                         {{ number_format($session->score, 1) }}%
                                     @else
-                                        <span class="text-dark-text-tertiary">-</span>
+                                        <span style="color: var(--text-dark-tertiary);">-</span>
                                     @endif
                                 </td>
                                 <td>
@@ -153,7 +160,7 @@
                                             </span>
                                         @endif
                                     @else
-                                        <span class="text-dark-text-tertiary">-</span>
+                                        <span style="color: var(--text-dark-tertiary);">-</span>
                                     @endif
                                 </td>
                                 <td>
@@ -199,9 +206,9 @@
             </div>
         @else
             <div class="text-center py-12">
-                <i class="fas fa-clipboard-check text-6xl text-dark-text-tertiary mb-4"></i>
-                <p class="text-dark-text-secondary text-lg mb-2">No tests assigned yet</p>
-                <p class="text-dark-text-tertiary text-sm mb-6">Start by assigning a test to candidates for this position</p>
+                <i class="fas fa-clipboard-check text-6xl mb-4" style="color: var(--text-dark-tertiary);"></i>
+                <p class="text-lg mb-2" style="color: var(--text-dark-secondary);">No tests assigned yet</p>
+                <p class="text-sm mb-6" style="color: var(--text-dark-tertiary);">Start by assigning a test to candidates for this position</p>
                 <button type="button" 
                         onclick="document.getElementById('assignTestModal').classList.remove('hidden')"
                         class="btn-apple-blue">

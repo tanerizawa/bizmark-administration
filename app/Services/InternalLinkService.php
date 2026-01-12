@@ -171,7 +171,16 @@ class InternalLinkService
         foreach ($opportunities as $opp) {
             $anchorText = $opp['anchor_text'];
             $article = $opp['article'];
-            $url = route('blog.article.id', $article->slug);
+            
+            try {
+                $url = route('blog.article.id', $article->slug);
+            } catch (\Exception $e) {
+                \Log::warning('Failed to generate route for internal link', [
+                    'article_slug' => $article->slug,
+                    'error' => $e->getMessage()
+                ]);
+                continue; // Skip this link if route fails
+            }
             
             // Create link with appropriate attributes
             $link = sprintf(

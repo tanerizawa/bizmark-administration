@@ -15,6 +15,7 @@
     
     <style>
         :root {
+<<<<<<< Updated upstream
             /* Bizmark Brand Colors - Consistent with Landing Page */
             --primary: #1E40AF; /* Blue-800 */
             --primary-dark: #1E3A8A; /* Blue-900 */
@@ -22,6 +23,31 @@
             --success: #10B981; /* Green-500 */
             --danger: #EF4444; /* Red-500 */
             --warning: #F59E0B; /* Amber-500 */
+=======
+            /* Primary - Soft Periwinkle (Trust + Calm) */
+            --neuro-primary: #8B9FD8;
+            --neuro-primary-dark: #6B7FB8;
+            --neuro-primary-light: #A8B8E6;
+            --neuro-primary-muted: #D4DCF2;
+            
+            /* Functional Colors - Soft Cognition */
+            --neuro-success: #88D4AB;
+            --neuro-error: #E8A0A0;
+            --neuro-warning: #F5D887;
+            --neuro-info: #B8A8D8;
+            
+            /* Dark Mode Backgrounds - Soft Black (28% less eye strain) */
+            --dark-bg: #1E1E20;
+            --dark-bg-secondary: #2A2A2C;
+            --dark-bg-tertiary: #363638;
+            --dark-bg-elevated: var(--neuro-primary-muted, rgba(212, 220, 242, 0.92));
+            --dark-separator: var(--dark-text-tertiary, rgba(201, 196, 191, 0.5));
+            
+            /* Text Colors */
+            --dark-text-primary: #F5F3F0;
+            --dark-text-secondary: #C9C4BF;
+            --dark-text-tertiary: rgba(201, 196, 191, 0.5);
+>>>>>>> Stashed changes
         }
 
         body {
@@ -45,6 +71,7 @@
         }
 
         .login-card {
+<<<<<<< Updated upstream
             background: white;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             transition: all 0.3s ease;
@@ -56,6 +83,24 @@
 
         .gradient-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+=======
+            background: var(--dark-bg-elevated);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--dark-separator);
+            box-shadow: 0 8px 32px var(--neuro-primary-dark, rgba(107, 127, 184, 0.4));
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neuro-primary) 0%, var(--neuro-primary-dark) 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px var(--neuro-primary, rgba(139, 159, 216, 0.3));
+        }
+        
+        .btn-primary:hover {
+            filter: brightness(1.05);
+            box-shadow: 0 6px 20px var(--neuro-primary, rgba(139, 159, 216, 0.4));
+>>>>>>> Stashed changes
         }
 
         .form-input {
@@ -66,7 +111,12 @@
         .form-input:focus {
             border-color: var(--primary);
             outline: none;
+<<<<<<< Updated upstream
             box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+=======
+            box-shadow: 0 0 0 3px var(--neuro-primary-muted, rgba(139, 159, 216, 0.15));
+            background-color: var(--dark-bg-secondary);
+>>>>>>> Stashed changes
         }
 
         .form-input:hover {

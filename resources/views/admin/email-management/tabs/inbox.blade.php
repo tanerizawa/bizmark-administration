@@ -46,8 +46,13 @@
                     <div class="flex items-start gap-4">
                         {{-- Avatar --}}
                         <div class="flex-shrink-0">
+<<<<<<< Updated upstream
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
                                  style="background: linear-gradient(135deg, rgba(10,132,255,0.8), rgba(30,86,172,0.8));">
+=======
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-semibold"
+                                 style="width: var(--space-10); height: var(--space-10); font-weight: var(--font-semibold); background: var(--neuro-primary); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
+>>>>>>> Stashed changes
                                 {{ strtoupper(substr($email->from_name ?? $email->from_email ?? 'U', 0, 1)) }}
                             </div>
                         </div>
@@ -58,12 +63,12 @@
                                 <h3 class="font-semibold text-white truncate">
                                     {{ $email->from_name ?? $email->from_email }}
                                     @if(!$email->is_read)
-                                        <span class="ml-2 w-2 h-2 rounded-full bg-apple-blue inline-block"></span>
+                                        <span class="ml-2 w-2 h-2 rounded-full inline-block" style="background: var(--neuro-primary);"></span>
                                     @endif
                                 </h3>
                                 <div class="flex items-center gap-2 flex-shrink-0">
                                     @if($email->is_starred)
-                                        <i class="fas fa-star text-yellow-500"></i>
+                                        <i class="fas fa-star" style="color: var(--neuro-warning);"></i>
                                     @endif
                                     @if($email->attachments && count($email->attachments) > 0)
                                         <i class="fas fa-paperclip" style="color: rgba(235,235,245,0.6);"></i>

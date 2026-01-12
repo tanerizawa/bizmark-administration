@@ -17,7 +17,7 @@
         </div>
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div class="space-y-2.5">
-                <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">
+                <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em]" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-medium);">
                     <a href="{{ route('admin.recruitment.index') }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
                         <i class="fas fa-arrow-left text-xs"></i> Rekrutmen
                     </a>
@@ -25,7 +25,7 @@
                     <span>Interviews</span>
                 </div>
                 <h1 class="text-2xl font-semibold text-white leading-tight">Manajemen Interview</h1>
-                <p class="text-sm" style="color: rgba(235,235,245,0.7);">
+                <p class="text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                     Jadwalkan dan pantau interview kandidat dalam satu panel.
                 </p>
             </div>
@@ -67,7 +67,7 @@
             <div class="card-elevated rounded-apple-xl p-4">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Kalender</p>
+                        <p class="text-xs uppercase tracking-[0.3em]" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Kalender</p>
                         <h3 class="text-base font-semibold text-white">Jadwal Interview</h3>
                     </div>
                 </div>
@@ -89,7 +89,11 @@
                                     <p class="text-sm font-semibold text-white">{{ $interview->jobApplication->full_name }}</p>
                                     <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $interview->jobApplication?->jobVacancy?->title ?? 'Position Deleted' }}</p>
                                 </div>
+<<<<<<< Updated upstream
                                 <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: {{ $interview->status === 'scheduled' ? 'rgba(10,132,255,0.2)' : 'rgba(142,142,147,0.2)' }};">
+=======
+                                <span class="rounded-full font-semibold" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: {{ $interview->status === 'scheduled' ? 'var(--neuro-primary)' : 'var(--text-dark-tertiary)' }}; opacity: var(--opacity-bg-medium); color: {{ $interview->status === 'scheduled' ? 'var(--neuro-primary)' : 'var(--text-dark-tertiary)' }};">
+>>>>>>> Stashed changes
                                     {{ ucfirst($interview->status) }}
                                 </span>
                             </div>
@@ -116,15 +120,15 @@
             </div>
 
             <div class="card-elevated rounded-apple-xl overflow-hidden">
-                <div class="px-4 py-3 border-b" style="border-color: rgba(58,58,60,0.6);">
-                    <h3 class="text-base font-semibold text-white">Minggu Ini</h3>
+                <div class="px-4 py-3 border-b" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
+                    <h3 class="text-base font-semibold text-white">Interview Hari Ini</h3>
                 </div>
-                <div class="divide-y" style="border-color: rgba(58,58,60,0.6);">
+                <div class="divide-y" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
                     @forelse($upcomingInterviews->take(5) as $interview)
                         <div class="px-4 py-3">
-                            <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $interview->scheduled_at->format('D, d M H:i') }}</p>
-                            <p class="text-sm font-semibold text-white">{{ $interview->jobApplication->full_name }}</p>
-                            <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $interview->jobApplication?->jobVacancy?->title ?? 'Position Deleted' }}</p>
+                            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">{{ $interview->scheduled_at->format('D, d M H:i') }}</p>
+                            <p class="font-medium text-white">{{ $interview->jobApplication->full_name }}</p>
+                            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">{{ $interview->jobApplication?->jobVacancy?->title ?? 'Position Deleted' }}</p>
                         </div>
                     @empty
                         <div class="p-4 text-center" style="color: rgba(235,235,245,0.6);">
@@ -151,7 +155,8 @@
         min-height: 600px;
     }
     .fc-theme-standard td, .fc-theme-standard th {
-        border-color: rgba(58,58,60,0.6);
+        border-color: var(--dark-separator);
+        opacity: var(--opacity-border-medium);
     }
     .fc .fc-toolbar-title {
         color: #fff;
@@ -159,20 +164,25 @@
         font-weight: 600;
     }
     .fc .fc-button-primary {
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.15);
+        background: var(--light-separator);
+        opacity: var(--opacity-bg-light);
+        border: 1px solid var(--light-separator);
+        opacity: var(--opacity-border-light);
         color: #fff;
     }
     .fc .fc-button-primary:hover {
-        background: rgba(255,255,255,0.15);
+        background: var(--light-separator);
+        opacity: var(--opacity-bg-medium);
     }
     .fc .fc-col-header-cell-cushion, .fc .fc-daygrid-day-number {
-        color: rgba(235,235,245,0.8);
+        color: var(--text-dark-secondary);
+        opacity: var(--opacity-text-strong);
     }
     .fc-event {
         border: none;
         padding: 2px 6px;
-        background: rgba(10,132,255,0.9);
+        background: var(--neuro-primary);
+        opacity: var(--opacity-bg-strong);
     }
     .fc-event:hover {
         opacity: 0.9;

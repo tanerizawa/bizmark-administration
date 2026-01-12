@@ -19,8 +19,8 @@
     {{-- Header with Tabs --}}
     <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-60 h-60 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
-            <div class="w-44 h-44 bg-apple-green opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
+            <div class="w-60 h-60 opacity-20 blur-3xl rounded-full absolute -top-10 -right-6" style="background: var(--neuro-primary);"></div>
+            <div class="w-44 h-44 opacity-15 blur-2xl rounded-full absolute bottom-0 left-6" style="background: var(--neuro-success);"></div>
         </div>
         <div class="relative">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
@@ -31,7 +31,7 @@
                             {{ $statusText }}
                         </span>
                     </div>
-                    <p class="text-sm" style="color: rgba(235,235,245,0.7);">
+                    <p class="text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">
                         Dipublikasikan {{ $vacancy->created_at->format('d M Y') }} · Lokasi {{ $vacancy->location }}
                     </p>
                 </div>
@@ -50,24 +50,24 @@
     {{-- Stats --}}
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Pelamar</p>
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-primary); opacity: var(--opacity-text-strong);">Total Pelamar</p>
             <p class="text-2xl font-bold text-white">{{ $vacancy->applications_count }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akumulasi lamaran</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Akumulasi lamaran</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: {{ $statusTextColor }};">Status Lowongan</p>
             <p class="text-2xl font-bold text-white">{{ $statusText }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Update: {{ $vacancy->updated_at->diffForHumans() }}</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Update: {{ $vacancy->updated_at->diffForHumans() }}</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Dipublikasikan</p>
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-success); opacity: var(--opacity-text-strong);">Dipublikasikan</p>
             <p class="text-2xl font-bold text-white">{{ $vacancy->created_at->format('d M Y') }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tanggal tayang</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Tanggal tayang</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Batas Waktu</p>
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-warning); opacity: var(--opacity-text-strong);">Batas Waktu</p>
             <p class="text-2xl font-bold text-white">{{ $vacancy->deadline ? $vacancy->deadline->format('d M Y') : 'Tidak ada' }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Deadline lamaran</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Deadline lamaran</p>
         </div>
     </section>
 
@@ -133,9 +133,10 @@
 
             {{-- Recent Applications --}}
             <div class="card-elevated rounded-apple-xl overflow-hidden">
-                <div class="flex items-center justify-between px-4 py-3 border-b" style="border-color: rgba(58,58,60,0.6);">
+                <div class="flex items-center justify-between px-4 py-3 border-b" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.25em]" style="color: rgba(235,235,245,0.55);">Pelamar</p>
+                        <p class="text-xs uppercase tracking-[0.25em]" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">
+Pelamar</p>
                         <h3 class="text-base font-semibold text-white">Pelamar Terbaru</h3>
                     </div>
                     <a href="{{ route('admin.jobs.applications', $vacancy->id) }}" class="btn-secondary-sm">
@@ -145,8 +146,8 @@
                 @if($recentApplications->count() > 0)
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-sm">
-                            <thead class="bg-dark-bg-secondary border-b" style="border-color: rgba(58,58,60,0.6);">
-                                <tr class="text-left text-xs uppercase tracking-wider" style="color: rgba(235,235,245,0.55);">
+                            <thead class="bg-dark-bg-secondary border-b" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
+                                <tr class="text-left text-xs uppercase tracking-wider" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">
                                     <th class="px-4 py-2">Nama</th>
                                     <th class="px-4 py-2">Email</th>
                                     <th class="px-4 py-2">Status</th>
@@ -154,17 +155,17 @@
                                     <th class="px-4 py-2 text-center">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y" style="border-color: rgba(58,58,60,0.6); color: rgba(235,235,245,0.9);">
+                            <tbody class="divide-y" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium); color: var(--text-dark-primary); opacity: var(--opacity-text-strong);">
                                 @foreach($recentApplications as $application)
                                     @php
-                                        $appStatusColor = $application->status === 'pending' ? 'rgba(255,204,0,0.2)' : ($application->status === 'accepted' ? 'rgba(52,199,89,0.2)' : 'rgba(255,59,48,0.2)');
+                                        $appStatusColor = $application->status === 'pending' ? 'var(--neuro-warning)' : ($application->status === 'accepted' ? 'var(--neuro-success)' : 'var(--neuro-error)');
                                         $appStatusText = ucfirst($application->status);
                                     @endphp
                                     <tr class="hover:bg-white/5 transition-colors">
                                         <td class="px-4 py-2 font-semibold">{{ $application->full_name }}</td>
                                         <td class="px-4 py-2">{{ $application->email }}</td>
                                         <td class="px-4 py-2">
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: {{ $appStatusColor }};">
+                                            <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: {{ $appStatusColor }}; opacity: var(--opacity-bg-light); color: {{ $appStatusColor }};">
                                                 {{ $appStatusText }}
                                             </span>
                                         </td>
@@ -180,7 +181,7 @@
                         </table>
                     </div>
                 @else
-                    <div class="p-6 text-center" style="color: rgba(235,235,245,0.6);">
+                    <div class="p-6 text-center" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">
                         <i class="fas fa-inbox text-3xl mb-2"></i>
                         <p class="mb-0">Belum ada pelamar untuk lowongan ini</p>
                     </div>
@@ -191,28 +192,28 @@
         {{-- Sidebar --}}
         <div class="space-y-4">
             <div class="card-elevated rounded-apple-xl overflow-hidden">
-                <div class="px-4 py-3 border-b" style="border-color: rgba(58,58,60,0.6);">
+                <div class="px-4 py-3 border-b" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
                     <h3 class="text-base font-semibold text-white">Aksi Cepat</h3>
                 </div>
-                <div class="divide-y" style="border-color: rgba(58,58,60,0.6);">
+                <div class="divide-y" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
                     <a href="{{ route('admin.jobs.applications', $vacancy->id) }}" class="flex items-center gap-2 px-4 py-3 hover:bg-white/5 transition-apple">
-                        <i class="fas fa-users text-apple-blue"></i>
+                        <i class="fas fa-users" style="color: var(--neuro-primary);"></i>
                         <span class="text-sm">View All Applications</span>
                     </a>
                     <a href="{{ route('admin.jobs.pipeline', $vacancy->id) }}" class="flex items-center gap-2 px-4 py-3 hover:bg-white/5 transition-apple">
-                        <i class="fas fa-stream text-apple-purple"></i>
+                        <i class="fas fa-stream" style="color: var(--neuro-accent);"></i>
                         <span class="text-sm">Recruitment Pipeline</span>
                     </a>
                     <a href="{{ route('admin.jobs.tests', $vacancy->id) }}" class="flex items-center gap-2 px-4 py-3 hover:bg-white/5 transition-apple">
-                        <i class="fas fa-clipboard-check text-yellow-500"></i>
+                        <i class="fas fa-clipboard-check" style="color: var(--neuro-warning);"></i>
                         <span class="text-sm">Assign & Track Tests</span>
                     </a>
                     <a href="{{ route('admin.jobs.interviews', $vacancy->id) }}" class="flex items-center gap-2 px-4 py-3 hover:bg-white/5 transition-apple">
-                        <i class="fas fa-calendar-alt text-apple-green"></i>
+                        <i class="fas fa-calendar-alt" style="color: var(--neuro-success);"></i>
                         <span class="text-sm">View Interviews</span>
                     </a>
                     <a href="{{ route('admin.recruitment.interviews.create', ['vacancy_id' => $vacancy->id]) }}" class="flex items-center gap-2 px-4 py-3 hover:bg-white/5 transition-apple">
-                        <i class="fas fa-calendar-plus text-apple-orange"></i>
+                        <i class="fas fa-calendar-plus" style="color: var(--neuro-warning);"></i>
                         <span class="text-sm">Schedule New Interview</span>
                     </a>
                 </div>
@@ -226,7 +227,7 @@
                 <form action="{{ route('admin.jobs.update', $vacancy->id) }}" method="POST" class="space-y-2">
                     @csrf
                     @method('PUT')
-                    <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Ubah Status</label>
+                    <label class="text-xs uppercase tracking-widest" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Ubah Status</label>
                     <select name="status" class="w-full" onchange="this.form.submit()">
                         <option value="draft" {{ $vacancy->status === 'draft' ? 'selected' : '' }}>Draft</option>
                         <option value="open" {{ $vacancy->status === 'open' ? 'selected' : '' }}>Aktif (Buka)</option>
@@ -260,48 +261,48 @@
                 @endphp
                 <div class="space-y-3">
                     <div>
-                        <div class="flex justify-between text-sm" style="color: rgba(235,235,245,0.75);">
+                        <div class="flex justify-between text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                             <span>Total Pelamar</span>
                             <span class="font-semibold">{{ $vacancy->applications_count }}</span>
                         </div>
                         <div class="h-1.5 rounded-full bg-white/10 mt-1">
-                            <div class="h-full rounded-full bg-apple-blue" style="width: 100%"></div>
+                            <div class="h-full rounded-full" style="background: var(--neuro-primary); width: 100%"></div>
                         </div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-sm" style="color: rgba(235,235,245,0.75);">
+                        <div class="flex justify-between text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                             <span>Pending</span>
                             <span class="font-semibold">{{ $pendingCount }}</span>
                         </div>
                         <div class="h-1.5 rounded-full bg-white/10 mt-1">
-                            <div class="h-full rounded-full bg-apple-orange" style="width: {{ $vacancy->applications_count ? ($pendingCount / $vacancy->applications_count * 100) : 0 }}%"></div>
+                            <div class="h-full rounded-full" style="background: var(--neuro-warning); width: {{ $vacancy->applications_count ? ($pendingCount / $vacancy->applications_count * 100) : 0 }}%"></div>
                         </div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-sm" style="color: rgba(235,235,245,0.75);">
+                        <div class="flex justify-between text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                             <span>Reviewed</span>
                             <span class="font-semibold">{{ $reviewedCount }}</span>
                         </div>
                         <div class="h-1.5 rounded-full bg-white/10 mt-1">
-                            <div class="h-full rounded-full bg-apple-blue" style="width: {{ $vacancy->applications_count ? ($reviewedCount / $vacancy->applications_count * 100) : 0 }}%"></div>
+                            <div class="h-full rounded-full" style="background: var(--neuro-primary); width: {{ $vacancy->applications_count ? ($reviewedCount / $vacancy->applications_count * 100) : 0 }}%"></div>
                         </div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-sm" style="color: rgba(235,235,245,0.75);">
+                        <div class="flex justify-between text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                             <span>Diterima</span>
                             <span class="font-semibold">{{ $acceptedCount }}</span>
                         </div>
                         <div class="h-1.5 rounded-full bg-white/10 mt-1">
-                            <div class="h-full rounded-full bg-apple-green" style="width: {{ $vacancy->applications_count ? ($acceptedCount / $vacancy->applications_count * 100) : 0 }}%"></div>
+                            <div class="h-full rounded-full" style="background: var(--neuro-success); width: {{ $vacancy->applications_count ? ($acceptedCount / $vacancy->applications_count * 100) : 0 }}%"></div>
                         </div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-sm" style="color: rgba(235,235,245,0.75);">
+                        <div class="flex justify-between text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                             <span>Ditolak</span>
                             <span class="font-semibold">{{ $rejectedCount }}</span>
                         </div>
                         <div class="h-1.5 rounded-full bg-white/10 mt-1">
-                            <div class="h-full rounded-full bg-apple-red" style="width: {{ $vacancy->applications_count ? ($rejectedCount / $vacancy->applications_count * 100) : 0 }}%"></div>
+                            <div class="h-full rounded-full" style="background: var(--neuro-error); width: {{ $vacancy->applications_count ? ($rejectedCount / $vacancy->applications_count * 100) : 0 }}%"></div>
                         </div>
                     </div>
                 </div>

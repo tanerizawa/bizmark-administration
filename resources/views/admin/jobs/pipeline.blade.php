@@ -14,13 +14,13 @@
     {{-- Header with Tabs --}}
     <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-60 h-60 bg-apple-purple opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
+            <div class="w-60 h-60 blur-3xl rounded-full absolute -top-10 -right-6" style="background: var(--neuro-accent); opacity: var(--opacity-bg-light);"></div>
         </div>
         <div class="relative">
             <div class="flex items-center justify-between mb-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $vacancy->title }}</h1>
-                    <p class="text-sm mt-1" style="color: rgba(235,235,245,0.7);">
+                    <p class="text-sm mt-1" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">
                         Recruitment Pipeline Overview
                     </p>
                 </div>
@@ -33,7 +33,7 @@
 
     {{-- Flash messages --}}
     @if(session('success'))
-        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: var(--neuro-success); opacity: var(--opacity-bg-light); border: 1px solid var(--neuro-success); opacity: var(--opacity-border-medium); color: var(--neuro-success);">
             <i class="fas fa-check-circle"></i>
             <span class="text-sm">{{ session('success') }}</span>
         </div>
@@ -51,10 +51,17 @@
             <p class="text-2xl font-bold text-white">{{ $stats['screening'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">In progress</p>
         </div>
+<<<<<<< Updated upstream
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Interview</p>
             <p class="text-2xl font-bold text-white">{{ $stats['interview'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Scheduled</p>
+=======
+        <div class="card-elevated rounded-apple-lg" style="padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-1);">
+            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Interview</p>
+            <p class="text-2xl font-bold" style="color: var(--text-dark-primary);">{{ $stats['interview'] }}</p>
+            <p class="text-xs" style="color: var(--text-dark-secondary);">Scheduled</p>
+>>>>>>> Stashed changes
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Passed</p>
@@ -99,26 +106,26 @@
         @if($applications->isNotEmpty())
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead style="background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(235,235,245,0.1);">
+                    <thead style="background: var(--light-separator); opacity: var(--opacity-bg-light); border-bottom: 1px solid var(--dark-separator); opacity: var(--opacity-border-medium);">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-medium);">
                                 Candidate
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-medium);">
                                 Current Stage
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-medium);">
                                 Progress
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-medium);">
                                 Status
                             </th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider" style="color: rgba(235,235,245,0.6);">
+                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-medium);">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y" style="divide-color: rgba(235,235,245,0.1);">
+                    <tbody class="divide-y" style="border-color: var(--dark-separator); opacity: var(--opacity-border-light);">
                         @foreach($applications as $application)
                             @php
                                 $currentStage = $application->recruitmentStages->where('status', 'in-progress')->first();
@@ -127,22 +134,22 @@
                                 $progress = $totalStages > 0 ? round(($completedStages / $totalStages) * 100) : 0;
                                 
                                 $stageColors = [
-                                    'screening' => 'rgba(255,214,10,1)',
-                                    'testing' => 'rgba(10,132,255,1)',
-                                    'interview' => 'rgba(175,82,222,1)',
-                                    'final' => 'rgba(52,199,89,1)',
+                                    'screening' => 'var(--neuro-warning)',
+                                    'testing' => 'var(--neuro-info)',
+                                    'interview' => 'var(--neuro-accent)',
+                                    'final' => 'var(--neuro-success)',
                                 ];
                             @endphp
                             <tr class="hover:bg-white/5 transition-apple">
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold" 
-                                             style="background: rgba(10,132,255,0.2);">
+                                             style="background: var(--neuro-primary); opacity: var(--opacity-bg-medium);">
                                             {{ substr($application->full_name, 0, 1) }}
                                         </div>
                                         <div>
                                             <p class="font-semibold text-white">{{ $application->full_name }}</p>
-                                            <p class="text-xs" style="color: rgba(235,235,245,0.6);">
+                                            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">
                                                 {{ $application->email }}
                                             </p>
                                         </div>
@@ -151,24 +158,24 @@
                                 <td class="px-4 py-3">
                                     @if($currentStage)
                                         <span class="px-3 py-1 rounded-full text-xs font-semibold" 
-                                              style="background: rgba({{ $stageColors[$currentStage->stage_name] ?? '142,142,147' }}, 0.2); color: {{ $stageColors[$currentStage->stage_name] ?? 'rgba(142,142,147,1)' }};">
+                                              style="background: {{ $stageColors[$currentStage->stage_name] ?? 'var(--text-dark-tertiary)' }}; opacity: var(--opacity-bg-light); color: {{ $stageColors[$currentStage->stage_name] ?? 'var(--text-dark-tertiary)' }};">
                                             {{ ucfirst($currentStage->stage_name) }}
                                         </span>
                                     @else
-                                        <span class="text-xs" style="color: rgba(235,235,245,0.5);">Not started</span>
+                                        <span class="text-xs" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Not started</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2">
-                                        <div class="flex-1 h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.1);">
+                                        <div class="flex-1 h-2 rounded-full overflow-hidden" style="background: var(--light-separator); opacity: var(--opacity-bg-medium);">
                                             <div class="h-full rounded-full transition-all" 
-                                                 style="width: {{ $progress }}%; background: rgba(10,132,255,1);"></div>
+                                                 style="width: {{ $progress }}%; background: var(--neuro-primary);"></div>
                                         </div>
-                                        <span class="text-xs font-semibold" style="color: rgba(235,235,245,0.8);">
+                                        <span class="text-xs font-semibold" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                                             {{ $progress }}%
                                         </span>
                                     </div>
-                                    <p class="text-xs mt-1" style="color: rgba(235,235,245,0.5);">
+                                    <p class="text-xs mt-1" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">
                                         {{ $completedStages }}/{{ $totalStages }} stages
                                     </p>
                                 </td>

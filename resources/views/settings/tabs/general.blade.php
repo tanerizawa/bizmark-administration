@@ -1,16 +1,16 @@
 {{-- General Settings Tab --}}
 <div>
-    <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">General Settings</h3>
+    <h3 class="text-lg font-semibold mb-4" style="color: var(--dark-text-primary, #F5F3F0);">General Settings</h3>
 
     <form method="POST" action="{{ route('settings.general.update') }}" class="space-y-6">
         @csrf
         @method('PUT')
 
         <div class="p-4 rounded-apple" style="background: rgba(255, 255, 255, 0.02);">
-            <h4 class="text-base font-medium mb-4" style="color: #FFFFFF;">Company Information</h4>
+            <h4 class="text-base font-medium mb-4" style="color: var(--dark-text-primary, #F5F3F0);">Company Information</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="company_name" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                    <label for="company_name" class="block text-sm font-medium mb-2" style="color: var(--dark-text-secondary, #C9C4BF);">
                         Company Name
                     </label>
                     <input type="text" name="company_name" id="company_name" class="input-apple w-full"

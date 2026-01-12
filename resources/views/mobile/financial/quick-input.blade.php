@@ -42,8 +42,9 @@
                     @input="formatAmount"
                     inputmode="numeric"
                     placeholder="0"
-                    class="w-full pl-12 pr-3 py-3 text-xl font-bold border-2 border-gray-200 rounded-lg 
-                           focus:border-[#0077b5] focus:ring-2 focus:ring-[#e7f3f8] transition-all"
+                    class="w-full pl-12 pr-3 py-3 text-xl font-bold border-2 border-gray-200 rounded-lg transition-all"
+                    style="--focus-border: var(--neuro-primary); --focus-ring: var(--neuro-primary); --focus-ring-opacity: 0.2;"
+                    onfocus="this.style.borderColor='var(--neuro-primary)'; this.style.boxShadow='0 0 0 3px rgba(91, 141, 190, 0.2)';"
                     required>
             </div>
 
@@ -85,8 +86,9 @@
             <label class="block text-sm font-medium text-gray-700 mb-1.5">Kategori</label>
             <select 
                 x-model="category" 
-                class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg 
-                       focus:border-[#0077b5] focus:ring-2 focus:ring-[#e7f3f8] transition-all text-sm"
+                    class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg transition-all text-sm"
+                    style="--focus-border: var(--neuro-primary); --focus-ring: var(--neuro-primary); --focus-ring-opacity: 0.2;"
+                    onfocus="this.style.borderColor='var(--neuro-primary)'; this.style.boxShadow='0 0 0 3px rgba(91, 141, 190, 0.2)';"
                 required>
                 <option value="">Pilih kategori...</option>
                 <template x-if="type === 'income'">
@@ -199,7 +201,9 @@
             <button 
                 type="submit"
                 :disabled="loading || !amount || !category"
-                class="w-full py-3 bg-[#0077b5] hover:bg-[#004182] text-white rounded-lg font-bold 
+                class="w-full py-3 text-white rounded-lg font-bold 
+                       active:scale-95 transition-all duration-200 disabled:opacity-50"
+                style="background: var(--neuro-primary); &:hover { background: var(--neuro-info); }"
                        disabled:opacity-50 disabled:cursor-not-allowed 
                        active:scale-95 transition-all flex items-center justify-center gap-2">
                 <template x-if="loading">
