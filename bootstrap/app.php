@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Add middleware to web group
         $middleware->web(append: [
+            \App\Http\Middleware\NeuralResponseTime::class, // Neuroscience: Monitor response time (<300ms optimal)
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\DeviceDetection::class, // Public landing auto-redirect (FIRST)
             \App\Http\Middleware\DetectMobile::class, // Authenticated user mobile dashboard (AFTER)
