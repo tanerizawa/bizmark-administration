@@ -130,11 +130,22 @@
                     </h3>
                     <p class="text-sm text-gray-600 mb-4">Our team is available to answer any immediate concerns</p>
                     <div class="space-y-2">
-                        <a href="https://wa.me/6283879602855?text=Hi,%20I%20submitted%20inquiry%20{{ $inquiry->inquiry_number }}" 
+                        @php
+                            $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+                            $whatsappBase = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+                            $supportEmail = $contact['email'] ?? 'info@bizmark.id';
+                            $waText = "Hi, I submitted inquiry {$inquiry->inquiry_number}";
+                            $waHref = $whatsappBase . (str_contains($whatsappBase, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
+                            $mailSubject = "Inquiry {$inquiry->inquiry_number}";
+                            $mailHref = 'mailto:' . $supportEmail . '?subject=' . rawurlencode($mailSubject);
+                        @endphp
+                        <a href="{{ $waHref }}" 
+                           target="_blank"
+                           rel="noopener"
                            class="block w-full px-4 py-2 bg-green-600 text-white rounded-lg text-center font-semibold hover:bg-green-700 transition text-sm">
                             <i class="fab fa-whatsapp mr-2"></i>WhatsApp Support
                         </a>
-                        <a href="mailto:cs@bizmark.id?subject=Inquiry%20{{ $inquiry->inquiry_number }}" 
+                        <a href="{{ $mailHref }}" 
                            class="block w-full px-4 py-2 bg-blue-900 text-white rounded-lg text-center font-semibold hover:bg-blue-800 transition text-sm">
                             <i class="fas fa-envelope mr-2"></i>Email Us
                         </a>

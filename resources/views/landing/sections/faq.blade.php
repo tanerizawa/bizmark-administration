@@ -92,6 +92,26 @@
     $locale = app()->getLocale();
 @endphp
 
+<!-- FAQPage Schema for Google Rich Snippets -->
+<script type="application/ld+json">
+{
+    "@@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        @foreach($faqItems as $index => $item)
+        {
+            "@type": "Question",
+            "name": "{{ $locale === 'id' ? $item['question']['id'] : $item['question']['en'] }}",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{ $locale === 'id' ? $item['answer']['id'] : $item['answer']['en'] }}"
+            }
+        }@if(!$loop->last),@endif
+        @endforeach
+    ]
+}
+</script>
+
 <section id="faq" class="section bg-gray-50">
     <div class="container max-w-4xl">
         <div class="text-center mb-8" data-aos="fade-up">
@@ -137,7 +157,7 @@
                     <i class="fas fa-calculator"></i>
                     {{ $locale === 'id' ? 'Estimasi Biaya Gratis' : 'Free Cost Estimate' }}
                 </a>
-                <a href="https://wa.me/6283879602855?text={{ $locale === 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits' }}"
+                <a href="{{ config('landing_metrics.contact.whatsapp_link') }}?text={{ rawurlencode($locale === 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits') }}"
                    target="_blank"
                    rel="noopener noreferrer"
                    class="btn btn-outline"

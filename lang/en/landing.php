@@ -38,24 +38,24 @@ return [
         'subtitle' => 'Your One-Stop Solution for Business Establishment & Permits',
         'description' => 'We help foreign investors establish and grow their business in Indonesia. From company registration to permit processing, we handle everything professionally and transparently.',
         'cta_primary' => 'Free Consultation',
-        'cta_secondary' => 'Download Brochure',
-        'trust_badge' => 'Trusted by 500+ International Companies',
+        'cta_secondary' => 'Explore Services',
+        'trust_badge' => 'Trusted by 138+ Companies in Indonesia',
     ],
 
     // Stats Section
     'stats' => [
         'clients' => [
-            'value' => '500+',
-            'label' => 'International Clients',
+            'value' => '138+',
+            'label' => 'Clients Served',
             'description' => 'Companies Served',
         ],
         'experience' => [
-            'value' => '15+',
+            'value' => '10+',
             'label' => 'Years',
             'description' => 'Industry Experience',
         ],
         'success_rate' => [
-            'value' => '98%',
+            'value' => '96%',
             'label' => 'Success Rate',
             'description' => 'Permits Approved',
         ],
@@ -74,6 +74,9 @@ return [
         'learn_more' => 'Learn More',
         'starting_from' => 'Starting from',
         'duration' => 'Duration',
+        'popular' => 'Popular',
+        'show_more' => 'Show All Services',
+        'show_less' => 'Show Less',
     ],
 
     // Process Section
@@ -135,6 +138,7 @@ return [
 
     // Blog Section
     'blog' => [
+        'badge' => 'Blog',
         'title' => 'Latest Articles & Insights',
         'subtitle' => 'Find the latest information about industrial permits and environmental regulations',
         'all_articles' => 'All Articles',
@@ -168,12 +172,37 @@ return [
         'subtitle' => 'Contact us now for a free consultation and get the best permit solutions for your business',
         'chat_whatsapp' => 'Chat via WhatsApp',
         'call_us' => 'Call Us',
+        'button_primary' => 'Start Free Consultation',
+        'button_email' => 'Email Us',
+        'whatsapp' => 'WhatsApp',
+    ],
+
+    // About Section
+    'about' => [
+        'badge' => 'About Us',
+        'title' => 'Your Trusted Partner for Business Success',
+        'description_1' => 'PT Cangah Pajaratan Mandiri (Bizmark.ID) has been serving business operators in Indonesia for over 10 years. We specialize in helping you navigate the complexities of Indonesian permit regulations to ensure your business runs smoothly and in compliance.',
+        'description_2' => 'Our certified consulting team has extensive experience handling various types of permits for diverse industries across Indonesia. We work closely with government agencies including the Ministry of Environment, BKPM, and local governments to ensure your compliance and operational readiness.',
+        'iso_title' => 'ISO Certified',
+        'iso_desc' => 'Certified quality management system',
+        'expert_title' => 'Expert Team',
+        'expert_desc' => 'Certified environmental consultants',
+        'clients_title' => '138+ Clients',
+        'clients_desc' => 'Trusted by Indonesian companies',
+        'nationwide_title' => 'Nationwide',
+        'nationwide_desc' => 'Services across Indonesia',
+        'cta_consult' => 'Free Consultation',
+        'cta_services' => 'Our Services',
+        'years_title' => '10+ Years',
+        'years_desc' => 'Serving Businesses in Indonesia',
+        'success_rate_label' => 'Success Rate',
+        'companies_served_label' => 'Companies Served',
     ],
 
     // Footer
     'footer' => [
         'tagline' => 'Trusted Industrial Permits',
-        'description' => 'PT CANGAH PAJARATAN MANDIRI is your trusted partner for business establishment and permit processing in Indonesia. With over 15 years of experience, we are committed to providing fast, transparent, and professional solutions.',
+        'description' => 'PT CANGAH PAJARATAN MANDIRI is your trusted partner for business establishment and permit processing in Indonesia. With over 10 years of experience since 2015, we are committed to providing fast, transparent, and professional solutions.',
         'newsletter_title' => 'Newsletter',
         'newsletter_desc' => 'Get latest updates about business regulations and investment opportunities',
         'newsletter_placeholder' => 'Your Email',
@@ -198,13 +227,16 @@ return [
         'terms_conditions' => 'Terms & Conditions',
         'terms' => 'Terms & Conditions',
         'sitemap' => 'Sitemap',
-        'copyright' => '© 2025 PT CANGAH PAJARATAN MANDIRI (Bizmark.ID). All rights reserved.',
+        'copyright' => '© :year PT CANGAH PAJARATAN MANDIRI (Bizmark.ID). All rights reserved.',
         'made_with' => 'Made with',
         'in_indonesia' => 'in Indonesia',
         'verified_company' => 'Verified Company',
         'iso_certified' => 'ISO Certified',
         'navigation' => 'Navigation',
         'contact_us' => 'Contact Us',
+        'language' => 'Language',
+        'location' => 'Karawang, West Java',
+        'whatsapp' => 'WhatsApp',
     ],
 
     // Search

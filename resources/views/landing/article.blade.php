@@ -13,7 +13,7 @@
 <!-- Article Schema -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
+    "@@context": "https://schema.org",
     "@type": "Article",
     "headline": "{{ $article->title }}",
     "description": "{{ $article->meta_description ?? $article->excerpt ?? Str::limit(strip_tags($article->content), 160) }}",
@@ -43,7 +43,7 @@
 <!-- Breadcrumb Schema -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
+    "@@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
         {
@@ -371,7 +371,7 @@
                     <i class="fas fa-calculator text-lg"></i>
                     Estimasi Biaya Gratis
                 </a>
-                <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi"
+                <a href="{{ config('landing_metrics.contact.whatsapp_link') }}?text={{ rawurlencode('Halo PT Cangah Pajaratan Mandiri, saya ingin konsultasi') }}"
                    target="_blank"
                    rel="noopener noreferrer"
                    class="inline-flex items-center gap-3 px-6 py-3 border border-white/60 rounded-full font-semibold hover:bg-white/10 transition">

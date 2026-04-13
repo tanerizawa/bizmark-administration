@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="space-y-4">
     <div class="max-w-2xl mx-auto">
         <!-- Header -->
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Jadwal Manual</h1>
+            <h1 class="text-lg font-bold text-gray-900 dark:text-white">Jadwal Manual</h1>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Buat jadwal posting untuk topic tertentu
             </p>

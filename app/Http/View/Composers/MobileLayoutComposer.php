@@ -21,7 +21,7 @@ class MobileLayoutComposer
 
         // Get my tasks count (assigned to current user, not completed)
         $myTasksCount = \App\Models\Task::where('assigned_user_id', Auth::id())
-            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->where('status', '!=', 'done')
             ->count();
 
         // Get unread notifications count

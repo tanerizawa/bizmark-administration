@@ -263,7 +263,10 @@
                 <div class="card-footer">
                     <small class="text-muted">
                         <i class="fas fa-info-circle me-1"></i>
-                        Perlu bantuan? <a href="mailto:cs@bizmark.id">Hubungi kami</a>
+                        @php
+                            $supportEmail = data_get(config('landing_metrics'), 'contact.email', 'info@bizmark.id');
+                        @endphp
+                        Perlu bantuan? <a href="mailto:{{ $supportEmail }}">Hubungi kami</a>
                     </small>
                 </div>
             </div>

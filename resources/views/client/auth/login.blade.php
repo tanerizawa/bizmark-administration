@@ -200,11 +200,17 @@
             </a>
             
             <div class="flex items-center justify-center gap-4 text-sm text-gray-500">
-                <a href="https://wa.me/6283879602855" target="_blank" class="hover:text-[#0a66c2] transition">
+                @php
+                    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+                    $whatsappLink = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+                    $phoneRaw = $contact['phone'] ?? '+62 838 7960 2855';
+                    $phoneHref = 'tel:' . preg_replace('/\s+/', '', $phoneRaw);
+                @endphp
+                <a href="{{ $whatsappLink }}" target="_blank" rel="noopener" class="hover:text-[#0a66c2] transition">
                     <i class="fab fa-whatsapp mr-1"></i>WhatsApp
                 </a>
                 <span>•</span>
-                <a href="tel:+6283879602855" class="hover:text-[#0a66c2] transition">
+                <a href="{{ $phoneHref }}" class="hover:text-[#0a66c2] transition">
                     <i class="fas fa-phone mr-1"></i>Telepon
                 </a>
             </div>

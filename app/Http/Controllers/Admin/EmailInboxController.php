@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\EmailAccount;
+use App\Models\EmailAssignment;
 use App\Models\EmailInbox;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\RedirectResponse;
 
 class EmailInboxController extends Controller
 {
@@ -16,62 +19,24 @@ class EmailInboxController extends Controller
 
     public function index(Request $request)
     {
-        $query = EmailInbox::query();
-
-        $category = $request->get('category', 'inbox');
-        
-        // Always filter by category to prevent trash/spam from showing in other views
-        $query->where('category', $category);
-
-        if ($request->filled('is_read')) {
-            $query->where('is_read', $request->is_read);
-        }
-
-        if ($request->filled('is_starred')) {
-            $query->where('is_starred', true);
-        }
-
-        if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('subject', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('from_email', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('body_text', 'ilike', '%' . $request->search . '%');
-            });
-        }
-
-        if ($request->filled('to_email')) {
-            $query->where('to_email', $request->to_email);
-        }
-
-        $emails = $query->with('emailAccount')->orderBy('received_at', 'desc')->paginate(25);
-
-        $stats = [
-            'total' => EmailInbox::whereNotIn('category', ['trash', 'spam'])->count(),
-            'inbox' => EmailInbox::where('category', 'inbox')->count(),
-            'sent' => EmailInbox::where('category', 'sent')->count(),
-            'unread' => EmailInbox::where('category', 'inbox')->where('is_read', false)->count(),
-            'starred' => EmailInbox::where('is_starred', true)->whereNotIn('category', ['trash', 'spam'])->count(),
-            'trash' => EmailInbox::where('category', 'trash')->count(),
-            'spam' => EmailInbox::where('category', 'spam')->count(),
-        ];
-
-        return view('admin.email.inbox.index', compact('emails', 'stats', 'category'));
+        return redirect()->route('admin.email-management.index', $this->buildInboxHubQueryFromRequest($request));
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $email = EmailInbox::with(['replyTo', 'replies'])->findOrFail($id);
-        
-        if (!$email->is_read) {
-            $email->markAsRead();
-        }
+        $email = EmailInbox::findOrFail($id);
 
-        return view('admin.email.inbox.show', compact('email'));
+        return redirect()->route('admin.email-management.index', $this->buildInboxHubQueryFromRequest($request, [
+            'folder' => $request->input('folder', $request->input('category', $email->category ?: 'inbox')),
+            'email' => $email->id,
+        ]));
     }
 
     public function compose()
     {
-        return view('admin.email.inbox.compose');
+        $fromAccounts = $this->getSendableAccounts(auth()->user());
+
+        return view('admin.email.inbox.compose', compact('fromAccounts'));
     }
 
     public function send(Request $request)
@@ -80,28 +45,46 @@ class EmailInboxController extends Controller
             'to_email' => 'required|email',
             'subject' => 'required|string|max:255',
             'body_html' => 'required|string',
+            'from_account_id' => 'nullable|exists:email_accounts,id',
         ]);
 
+        $selectedAccount = $this->resolveSendAccount($request->user(), $validated['from_account_id'] ?? null);
+
+        if (($validated['from_account_id'] ?? null) && !$selectedAccount) {
+            return redirect()->back()
+                ->with('error', 'Akun pengirim tidak valid atau tidak punya izin kirim.')
+                ->withInput();
+        }
+
+        $fromEmail = $selectedAccount?->email ?? config('mail.from.address');
+        $fromName = $selectedAccount?->name ?? config('mail.from.name');
+
         try {
-            Mail::html($validated['body_html'], function($message) use ($validated) {
+            Mail::html($validated['body_html'], function($message) use ($validated, $fromEmail, $fromName) {
                 $message->to($validated['to_email'])
                     ->subject($validated['subject'])
-                    ->from(config('mail.from.address'), config('mail.from.name'));
+                    ->from($fromEmail, $fromName);
             });
 
             EmailInbox::create([
                 'message_id' => 'sent-' . \Illuminate\Support\Str::random(20),
-                'from_email' => config('mail.from.address'),
-                'from_name' => config('mail.from.name'),
+                'from_email' => $fromEmail,
+                'from_name' => $fromName,
                 'to_email' => $validated['to_email'],
                 'subject' => $validated['subject'],
                 'body_html' => $validated['body_html'],
                 'category' => 'sent',
                 'is_read' => true,
+                'email_account_id' => $selectedAccount?->id,
+                'department' => $selectedAccount?->department,
                 'received_at' => now(),
             ]);
 
-            return redirect()->route('admin.inbox.index', ['category' => 'sent'])
+            if ($selectedAccount) {
+                $selectedAccount->incrementSent();
+            }
+
+            return $this->redirectToInboxHub(['folder' => 'sent'])
                 ->with('success', 'Email berhasil dikirim!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -113,7 +96,9 @@ class EmailInboxController extends Controller
     public function reply($id)
     {
         $email = EmailInbox::findOrFail($id);
-        return view('admin.email.inbox.reply', compact('email'));
+        $fromAccounts = $this->getSendableAccounts(auth()->user());
+
+        return view('admin.email.inbox.reply', compact('email', 'fromAccounts'));
     }
 
     public function sendReply(Request $request, $id)
@@ -122,31 +107,54 @@ class EmailInboxController extends Controller
         
         $validated = $request->validate([
             'body_html' => 'required|string',
+            'from_account_id' => 'nullable|exists:email_accounts,id',
         ]);
+
+        $defaultAccountId = $originalEmail->email_account_id;
+        $requestedAccountId = $validated['from_account_id'] ?? $defaultAccountId;
+        $selectedAccount = $this->resolveSendAccount($request->user(), $requestedAccountId);
+
+        if ($requestedAccountId && !$selectedAccount) {
+            return redirect()->back()
+                ->with('error', 'Akun pengirim balasan tidak valid atau tidak punya izin kirim.')
+                ->withInput();
+        }
+
+        $fromEmail = $selectedAccount?->email ?? config('mail.from.address');
+        $fromName = $selectedAccount?->name ?? config('mail.from.name');
 
         try {
             $subject = 'Re: ' . $originalEmail->subject;
             
-            Mail::html($validated['body_html'], function($message) use ($originalEmail, $subject) {
+            Mail::html($validated['body_html'], function($message) use ($originalEmail, $subject, $fromEmail, $fromName) {
                 $message->to($originalEmail->from_email)
                     ->subject($subject)
-                    ->from(config('mail.from.address'), config('mail.from.name'));
+                    ->from($fromEmail, $fromName);
             });
 
             EmailInbox::create([
                 'message_id' => 'reply-' . \Illuminate\Support\Str::random(20),
-                'from_email' => config('mail.from.address'),
-                'from_name' => config('mail.from.name'),
+                'from_email' => $fromEmail,
+                'from_name' => $fromName,
                 'to_email' => $originalEmail->from_email,
                 'subject' => $subject,
                 'body_html' => $validated['body_html'],
                 'category' => 'sent',
                 'is_read' => true,
                 'replied_to' => $originalEmail->id,
+                'email_account_id' => $selectedAccount?->id,
+                'department' => $selectedAccount?->department,
                 'received_at' => now(),
             ]);
 
-            return redirect()->route('admin.inbox.show', $originalEmail)
+            if ($selectedAccount) {
+                $selectedAccount->incrementSent();
+            }
+
+            return $this->redirectToInboxHub([
+                'folder' => $originalEmail->category ?: 'inbox',
+                'email' => $originalEmail->id,
+            ])
                 ->with('success', 'Balasan berhasil dikirim!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -183,7 +191,7 @@ class EmailInboxController extends Controller
         $email->moveToTrash();
         
         // Redirect back to the previous category view
-        return redirect()->route('admin.inbox.index', ['category' => $previousCategory])
+        return $this->redirectToInboxHub(['folder' => $previousCategory])
             ->with('success', 'Email dipindahkan ke trash.');
     }
 
@@ -194,14 +202,14 @@ class EmailInboxController extends Controller
         // If email is in trash, delete permanently
         if ($email->category === 'trash') {
             $email->delete();
-            return redirect()->route('admin.inbox.index', ['category' => 'trash'])
+            return $this->redirectToInboxHub(['folder' => 'trash'])
                 ->with('success', 'Email berhasil dihapus permanen.');
         }
         
         // If email is not in trash, move to trash first
         $previousCategory = $email->category;
         $email->moveToTrash();
-        return redirect()->route('admin.inbox.index', ['category' => $previousCategory])
+        return $this->redirectToInboxHub(['folder' => $previousCategory])
             ->with('success', 'Email dipindahkan ke trash. Untuk menghapus permanen, buka folder Trash.');
     }
 
@@ -210,7 +218,7 @@ class EmailInboxController extends Controller
         $count = EmailInbox::where('category', 'trash')->count();
         EmailInbox::where('category', 'trash')->delete();
         
-        return redirect()->route('admin.inbox.index', ['category' => 'trash'])
+        return $this->redirectToInboxHub(['folder' => 'trash'])
             ->with('success', "{$count} email berhasil dihapus permanen dari trash.");
     }
 
@@ -221,8 +229,114 @@ class EmailInboxController extends Controller
             'email_ids.*' => 'exists:email_inbox,id'
         ]);
 
-        $count = EmailInbox::whereIn('id', $request->email_ids)->delete();
-        
-        return redirect()->back()->with('success', "{$count} email berhasil dihapus.");
+        $emails = EmailInbox::whereIn('id', $request->email_ids)->get();
+        $movedToTrash = 0;
+        $deletedPermanently = 0;
+
+        foreach ($emails as $email) {
+            if ($email->category === 'trash') {
+                $email->delete();
+                $deletedPermanently++;
+            } else {
+                $email->moveToTrash();
+                $movedToTrash++;
+            }
+        }
+
+        $message = [];
+        if ($movedToTrash > 0) {
+            $message[] = "{$movedToTrash} email dipindahkan ke trash";
+        }
+        if ($deletedPermanently > 0) {
+            $message[] = "{$deletedPermanently} email dihapus permanen";
+        }
+
+        return redirect()->back()->with('success', implode(' dan ', $message) . '.');
+    }
+
+    private function getSendableAccounts($user)
+    {
+        $query = EmailAccount::query()
+            ->where('is_active', true)
+            ->orderBy('email');
+
+        if (!$user || !$user->hasRole('admin')) {
+            $query->whereHas('assignments', function ($assignmentQuery) use ($user) {
+                $assignmentQuery->where('user_id', $user?->id)
+                    ->where('is_active', true)
+                    ->where('can_send', true);
+            });
+        }
+
+        return $query->get();
+    }
+
+    private function resolveSendAccount($user, $accountId): ?EmailAccount
+    {
+        if (!$accountId) {
+            return null;
+        }
+
+        $account = EmailAccount::where('id', $accountId)
+            ->where('is_active', true)
+            ->first();
+
+        if (!$account || !$user) {
+            return null;
+        }
+
+        if ($user->hasRole('admin')) {
+            return $account;
+        }
+
+        $canSend = EmailAssignment::where('email_account_id', $account->id)
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('can_send', true)
+            ->exists();
+
+        return $canSend ? $account : null;
+    }
+
+    private function redirectToInboxHub(array $overrides = []): RedirectResponse
+    {
+        return redirect()->route('admin.email-management.index', $this->buildInboxHubQueryFromRequest(request(), $overrides));
+    }
+
+    private function buildInboxHubQueryFromRequest(Request $request, array $overrides = []): array
+    {
+        $previousQuery = [];
+        $previousUrl = $request->headers->get('referer') ?: url()->previous();
+
+        if (is_string($previousUrl) && str_contains($previousUrl, '/admin/email-management')) {
+            parse_str((string) parse_url($previousUrl, PHP_URL_QUERY), $previousQuery);
+        }
+
+        $folder = $request->input('folder', $request->input('category', $previousQuery['folder'] ?? 'inbox'));
+
+        if ($request->boolean('is_starred')) {
+            $folder = 'starred';
+        }
+
+        $query = [
+            'tab' => 'inbox',
+            'folder' => $folder,
+        ];
+
+        foreach (['search', 'is_read', 'to_email', 'email', 'inbox_page'] as $key) {
+            if ($request->filled($key)) {
+                $query[$key] = $request->input($key);
+            } elseif (filled($previousQuery[$key] ?? null)) {
+                $query[$key] = $previousQuery[$key];
+            }
+        }
+
+        if ($request->filled('redirect_folder')) {
+            $query['folder'] = $request->input('redirect_folder');
+        }
+
+        $query = array_merge($query, $overrides);
+
+        return array_filter($query, static fn ($value) => !($value === null || $value === ''));
     }
 }

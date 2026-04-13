@@ -26,25 +26,25 @@
         <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
             <button 
                 @click="filter = 'today'" 
-                :class="filter === 'today' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'today' ? 'bg-[#0A66C2] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-calendar-day text-xs"></i>
                 <span>Hari Ini</span>
                 <span x-show="stats.today > 0" 
-                      :class="filter === 'today' ? 'bg-white text-[#0077b5]' : 'bg-[#e7f3f8] text-[#0077b5]'"
+                      :class="filter === 'today' ? 'bg-white text-[#0A66C2]' : 'bg-[#E7F3F8] text-[#0A66C2]'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.today"></span>
             </button>
             <button 
                 @click="filter = 'week'" 
-                :class="filter === 'week' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'week' ? 'bg-[#0A66C2] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-calendar-week text-xs"></i>
                 <span>Minggu Ini</span>
                 <span x-show="stats.week > 0" 
-                      :class="filter === 'week' ? 'bg-white text-[#0077b5]' : 'bg-gray-100 text-gray-600'"
+                      :class="filter === 'week' ? 'bg-white text-[#0A66C2]' : 'bg-gray-100 text-gray-600'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.week"></span>
             </button>
@@ -62,12 +62,12 @@
             </button>
             <button 
                 @click="filter = 'all'" 
-                :class="filter === 'all' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'all' ? 'bg-[#0A66C2] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <span>Semua</span>
                 <span x-show="filter === 'all'" 
-                      :class="filter === 'all' ? 'bg-white text-[#0077b5]' : 'bg-gray-100 text-gray-600'"
+                      :class="filter === 'all' ? 'bg-white text-[#0A66C2]' : 'bg-gray-100 text-gray-600'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.all"></span>
             </button>
@@ -117,7 +117,7 @@
                         
                         {{-- Right: More Options --}}
                         <div class="flex-1"></div>
-                        <div class="w-20 bg-[#0077b5] flex items-center justify-center">
+                        <div class="w-20 bg-[#0A66C2] flex items-center justify-center">
                             <i class="fas fa-ellipsis-h text-white text-xl"></i>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                                            active:scale-95 transition-all"
                                     :class="task.status === 'completed' 
                                         ? 'bg-green-500 border-green-500' 
-                                        : 'border-gray-300 hover:border-[#0077b5]'">
+                                        : 'border-gray-300 hover:border-[#0A66C2]'">
                                     <i x-show="task.status === 'completed'" 
                                        class="fas fa-check text-white text-xs"></i>
                                 </button>
@@ -177,7 +177,7 @@
                                             :class="{
                                                 'bg-red-100 text-red-600': task.priority === 'urgent',
                                                 'bg-orange-100 text-orange-600': task.priority === 'high',
-                                                'bg-[#e7f3f8] text-[#0077b5]': task.priority === 'low'
+                                                'bg-[#E7F3F8] text-[#0A66C2]': task.priority === 'low'
                                             }">
                                             <span x-text="task.priority_label"></span>
                                         </span>
@@ -281,7 +281,7 @@
                         type="text" 
                         required
                         placeholder="Misal: Review dokumen proposal"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
                 </div>
 
                 {{-- Project Selection --}}
@@ -292,7 +292,7 @@
                     <select 
                         x-model="quickTask.project_id"
                         required
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
                         <option value="">Pilih Project...</option>
                         @foreach(\App\Models\Project::where('status_id', '!=', 8)->orderBy('name')->get() as $project)
                             <option value="{{ $project->id }}">{{ $project->name }}</option>
@@ -310,7 +310,7 @@
                         type="date" 
                         required
                         :min="new Date().toISOString().split('T')[0]"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
                 </div>
 
                 {{-- Priority --}}
@@ -320,7 +320,7 @@
                         <button 
                             type="button"
                             @click="quickTask.priority = 'low'"
-                            :class="quickTask.priority === 'low' ? 'bg-[#0077b5] text-white border-[#0077b5]' : 'bg-white text-gray-700 border-gray-300'"
+                            :class="quickTask.priority === 'low' ? 'bg-[#0A66C2] text-white border-[#0A66C2]' : 'bg-white text-gray-700 border-gray-300'"
                             class="px-3 py-2 rounded-lg border font-medium text-sm transition-all active:scale-95">
                             Low
                         </button>
@@ -346,7 +346,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Assign To</label>
                     <select 
                         x-model="quickTask.assigned_user_id"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
                         <option value="">Diri Sendiri</option>
                         @foreach(\App\Models\User::where('is_active', true)->orderBy('name')->get() as $user)
                             <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -365,7 +365,7 @@
                     <button 
                         type="submit"
                         :disabled="submitting"
-                        class="flex-1 px-4 py-2.5 bg-[#0077b5] hover:bg-[#005582] text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="flex-1 px-4 py-2.5 bg-[#0A66C2] hover:bg-[#005582] text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
                         <span x-show="!submitting">Buat Task</span>
                         <span x-show="submitting">
                             <i class="fas fa-spinner fa-spin"></i> Menyimpan...

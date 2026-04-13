@@ -10,9 +10,9 @@ class AutoPostLogController extends Controller
 {
     public function index(Request $request)
     {
-        $query = AutoPostSchedule::with(['article'])
-            ->whereNotNull('processed_at')
-            ->orderBy('processed_at', 'desc');
+        $query = AutoPostSchedule::with(['article', 'topic'])
+            ->whereNotNull('completed_at')
+            ->orderBy('completed_at', 'desc');
 
         // Filter by status
         if ($request->has('status') && $request->status != '') {
@@ -21,16 +21,16 @@ class AutoPostLogController extends Controller
 
         // Filter by date range
         if ($request->has('from_date') && $request->from_date != '') {
-            $query->whereDate('processed_at', '>=', $request->from_date);
+            $query->whereDate('completed_at', '>=', $request->from_date);
         }
         if ($request->has('to_date') && $request->to_date != '') {
-            $query->whereDate('processed_at', '<=', $request->to_date);
+            $query->whereDate('completed_at', '<=', $request->to_date);
         }
 
         $logs = $query->paginate(20);
 
         $stats = [
-            'total' => AutoPostSchedule::whereNotNull('processed_at')->count(),
+            'total' => AutoPostSchedule::whereNotNull('completed_at')->count(),
             'completed' => AutoPostSchedule::where('status', 'completed')->count(),
             'failed' => AutoPostSchedule::where('status', 'failed')->count(),
             'processing' => AutoPostSchedule::where('status', 'processing')->count(),
@@ -58,7 +58,7 @@ class AutoPostLogController extends Controller
                     'created_at' => $log->created_at->format('Y-m-d H:i:s'),
                     'topic' => $log->schedule ? [
                         'id' => $log->schedule->topic_id,
-                        'title' => $log->schedule->topic->title ?? 'N/A',
+                        'title' => $log->schedule->topic?->title ?? 'N/A',
                     ] : null,
                 ];
             });

@@ -19,7 +19,7 @@
         <div class="relative">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $vacancy->title }}</h1>
+                    <h1 class="text-2xl md:text-xl font-bold text-white">{{ $vacancy->title }}</h1>
                     <p class="text-sm mt-1" style="color: rgba(235,235,245,0.7);">
                         Manage test assignments for this position
                     </p>
@@ -42,31 +42,26 @@
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Assigned</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['total'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['total'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Test sessions</p>
         </div>
 
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">In Progress</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['in_progress'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['in_progress'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Active tests</p>
         </div>
 
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Completed</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['completed'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['completed'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Finished tests</p>
         </div>
 
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Pass Rate</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['pass_rate'] }}%</p>
+            <p class="text-lg font-bold text-white">{{ $stats['pass_rate'] }}%</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Success rate</p>
-        <div class="card-elevated rounded-apple-lg" style="padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-1);">
-            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Pass Rate</p>
-            <p class="text-2xl font-bold" style="color: var(--text-dark-primary);">{{ $stats['pass_rate'] }}%</p>
-            <p class="text-xs" style="color: var(--text-dark-secondary);">Success rate</p>
->>>>>>> Stashed changes
         </div>
     </section>
 
@@ -204,7 +199,7 @@
             </div>
         @else
             <div class="text-center py-12">
-                <i class="fas fa-clipboard-check text-6xl mb-4" style="color: var(--text-dark-tertiary);"></i>
+                <i class="fas fa-clipboard-check text-4xl mb-4" style="color: var(--text-dark-tertiary);"></i>
                 <p class="text-lg mb-2" style="color: var(--text-dark-secondary);">No tests assigned yet</p>
                 <p class="text-sm mb-6" style="color: var(--text-dark-tertiary);">Start by assigning a test to candidates for this position</p>
                 <button type="button" 
@@ -222,7 +217,7 @@
 <div id="assignTestModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="card-elevated rounded-apple-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-white">Assign Test to Candidate</h2>
+            <h2 class="text-lg font-bold text-white">Assign Test to Candidate</h2>
             <button type="button" 
                     onclick="document.getElementById('assignTestModal').classList.add('hidden')"
                     class="text-white/60 hover:text-white transition-colors">

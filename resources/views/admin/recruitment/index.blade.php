@@ -7,77 +7,113 @@
     $pendingCount = $notifications['applications'] ?? 0;
 @endphp
 
-<div class="recruitment-shell max-w-7xl mx-auto space-y-5">
-{{-- Hero Section --}}
-<section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+<div class="recruitment-shell space-y-4">
+{{-- Compact Hero Section --}}
+<section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden">
     <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-        <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+        <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-12 -right-8"></div>
     </div>
-    <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        <div class="space-y-3 max-w-3xl">
-            <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Talenta</p>
-            <h1 class="text-2xl md:text-3xl font-bold text-white">Rekrutmen & Lamaran</h1>
-            <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
-                Kelola lowongan kerja dan proses rekrutmen kandidat dalam satu platform terpadu.
-            </p>
-            <div class="text-xs flex flex-wrap gap-3" style="color: rgba(235,235,245,0.6);">
-                <span><i class="fas fa-briefcase mr-2"></i>{{ $totalJobs }} lowongan</span>
-                <span><i class="fas fa-users mr-2"></i>{{ $totalApplications }} lamaran</span>
+    <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div class="flex-1 min-w-0">
+            <p class="admin-hero-subtitle">Manajemen Talenta</p>
+            <h1 class="admin-hero-title text-white">Rekrutmen & Lamaran</h1>
+            <p class="admin-hero-desc">Kelola lowongan dan proses rekrutmen kandidat</p>
+            <div class="admin-hero-meta flex flex-wrap gap-3">
+                <span><i class="fas fa-briefcase mr-1.5"></i>{{ $totalJobs }} lowongan</span>
+                <span><i class="fas fa-users mr-1.5"></i>{{ $totalApplications }} lamaran</span>
                 @if($pendingCount > 0)
-                    <span><i class="fas fa-clock mr-2"></i>{{ $pendingCount }} menunggu review</span>
+                    <span><i class="fas fa-clock mr-1.5"></i>{{ $pendingCount }} pending</span>
                 @endif
             </div>
         </div>
-        <div class="flex flex-col items-start gap-3">
-            <a href="{{ route('admin.recruitment.pipeline.index') }}" class="btn-secondary">
-                <i class="fas fa-stream mr-2"></i>Pipeline Kandidat
-            </a>
-            <a href="{{ route('admin.jobs.create') }}" class="btn-primary">
-                <i class="fas fa-plus mr-2"></i>Tambah Lowongan
+        <div class="flex items-center gap-2">
+            <a href="{{ route('admin.jobs.create') }}" class="admin-btn admin-btn-sm rounded bg-apple-blue text-white">
+                <i class="fas fa-plus mr-1"></i>Lowongan
             </a>
         </div>
     </div>
 </section>
 
-{{-- Stats --}}
-<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Lowongan</p>
-        <p class="text-3xl font-bold text-white">{{ $totalJobs }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $activeJobs }} sedang aktif</p>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Lowongan Aktif</p>
-        <p class="text-3xl font-bold text-white">{{ $activeJobs }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sedang tayang untuk publik</p>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Lamaran</p>
-        <p class="text-3xl font-bold text-white">{{ $totalApplications }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akumulasi seluruh lowongan</p>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Pending Review</p>
-        <p class="text-3xl font-bold text-white">{{ $pendingCount }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu peninjauan</p>
-    </div>
-</section>
+{{-- Compact Stats --}}
+<div class="grid grid-cols-4 gap-2">
+    <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
+             style="background: rgba(10,132,255,0.1); border: 1px solid rgba(10,132,255,0.2);">
+        <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(10,132,255,0.2);">
+            <i class="fas fa-briefcase text-apple-blue" style="font-size: 0.7rem;"></i>
+        </div>
+        <div>
+            <p class="admin-small text-apple-blue uppercase tracking-wider">Total</p>
+            <p class="admin-stat text-white">{{ $totalJobs }}</p>
+        </div>
+    </article>
+    <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
+             style="background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.2);">
+        <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(52,199,89,0.2);">
+            <i class="fas fa-check-circle text-apple-green" style="font-size: 0.7rem;"></i>
+        </div>
+        <div>
+            <p class="admin-small text-apple-green uppercase tracking-wider">Aktif</p>
+            <p class="admin-stat text-apple-green">{{ $activeJobs }}</p>
+        </div>
+    </article>
+    <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
+             style="background: rgba(175,82,222,0.1); border: 1px solid rgba(175,82,222,0.2);">
+        <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(175,82,222,0.2);">
+            <i class="fas fa-users" style="color: #AF52DE; font-size: 0.7rem;"></i>
+        </div>
+        <div>
+            <p class="admin-small uppercase tracking-wider" style="color: #AF52DE;">Lamaran</p>
+            <p class="admin-stat text-white">{{ $totalApplications }}</p>
+        </div>
+    </article>
+    <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
+             style="background: rgba(255,214,10,0.1); border: 1px solid rgba(255,214,10,0.2);">
+        <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,214,10,0.2);">
+            <i class="fas fa-clock" style="color: #FFD60A; font-size: 0.7rem;"></i>
+        </div>
+        <div>
+            <p class="admin-small uppercase tracking-wider" style="color: #FFD60A;">Pending</p>
+            <p class="admin-stat text-white">{{ $pendingCount }}</p>
+        </div>
+    </article>
+</div>
 
-{{-- Quick Actions --}}
-<section class="mb-5">
-    <a href="{{ route('admin.recruitment.pipeline.index') }}" class="card-elevated rounded-apple-xl p-5 block hover:scale-[1.01] transition-transform">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-apple-blue to-apple-purple flex items-center justify-center">
-                    <i class="fas fa-stream text-2xl text-white"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold text-white mb-1">Pipeline Rekrutmen</h3>
-                    <p class="text-sm" style="color: rgba(235,235,245,0.7);">Pantau pergerakan kandidat di setiap tahap proses rekrutmen</p>
-                </div>
+{{-- Compact Quick Actions Grid --}}
+<section class="grid grid-cols-3 gap-2">
+    <a href="{{ route('admin.recruitment.pipeline.index') }}" class="admin-module-card card-elevated rounded-apple">
+        <div class="flex items-center gap-2">
+            <div class="admin-stat-icon rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #0A84FF, #AF52DE);">
+                <i class="fas fa-stream text-white" style="font-size: 0.65rem;"></i>
             </div>
-            <i class="fas fa-chevron-right text-apple-blue"></i>
+            <div class="flex-1 min-w-0">
+                <h3 class="admin-body font-medium text-white">Pipeline</h3>
+                <p class="admin-small text-dark-text-tertiary truncate">Pergerakan kandidat</p>
+            </div>
+            <i class="fas fa-chevron-right text-apple-blue" style="font-size: 10px;"></i>
+        </div>
+    </a>
+    <a href="{{ route('admin.recruitment.interviews.index') }}" class="admin-module-card card-elevated rounded-apple">
+        <div class="flex items-center gap-2">
+            <div class="admin-stat-icon rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #34C759, #14B8A6);">
+                <i class="fas fa-calendar-alt text-white" style="font-size: 0.65rem;"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="admin-body font-medium text-white">Interview</h3>
+                <p class="admin-small text-dark-text-tertiary truncate">Jadwal interview</p>
+            </div>
+            <i class="fas fa-chevron-right text-apple-green" style="font-size: 10px;"></i>
+        </div>
+    </a>
+    <a href="{{ route('admin.recruitment.tests.index') }}" class="admin-module-card card-elevated rounded-apple">
+        <div class="flex items-center gap-2">
+            <div class="admin-stat-icon rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #F97316, #EF4444);">
+                <i class="fas fa-clipboard-list text-white" style="font-size: 0.65rem;"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="admin-body font-medium text-white">Testing</h3>
+                <p class="admin-small text-dark-text-tertiary truncate">Template & sesi tes</p>
+            </div>
+            <i class="fas fa-chevron-right text-orange-400 text-xs"></i>
         </div>
     </a>
 </section>

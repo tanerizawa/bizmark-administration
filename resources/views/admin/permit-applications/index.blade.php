@@ -40,7 +40,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div class="space-y-2.5 max-w-3xl">
                     <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Permohonan</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                    <h1 class="text-2xl md:text-xl font-bold" style="color: #FFFFFF;">
                         Database Lengkap Permohonan Izin
                     </h1>
                     <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
@@ -50,7 +50,7 @@
                 <div class="text-sm space-y-2.5" style="color: rgba(235,235,245,0.65);">
                     <p><i class="fas fa-database mr-2"></i>{{ $totalApplications }} total permohonan</p>
                     <p><i class="fas fa-percentage mr-2"></i>Tingkat penyelesaian {{ $completionRate }}%</p>
-                    <a href="{{ route('admin.permit-dashboard') }}" class="btn-secondary-sm">
+                    <a href="{{ route('admin.permits.index') }}" class="btn-secondary-sm">
                         <i class="fas fa-chart-network mr-2"></i>Kembali ke Dashboard
                     </a>
                 </div>
@@ -58,22 +58,22 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div class="rounded-apple-lg p-4" style="background: rgba(255,59,48,0.08);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.8);">Antrian Tinjauan</p>
-                    <h2 class="text-2xl font-bold text-white mt-1.5">{{ $reviewBacklog }}</h2>
+                    <h2 class="text-lg font-bold text-white mt-1.5">{{ $reviewBacklog }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.65);">Menunggu verifikasi</p>
                 </div>
                 <div class="rounded-apple-lg p-4" style="background: rgba(191,90,242,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Butuh Penawaran</p>
-                    <h2 class="text-2xl font-bold text-white mt-1.5">{{ $quoted }}</h2>
+                    <h2 class="text-lg font-bold text-white mt-1.5">{{ $quoted }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.65);">Menunggu tindak lanjut</p>
                 </div>
                 <div class="rounded-apple-lg p-4" style="background: rgba(10,132,255,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Dalam Proses</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(10,132,255,1);">{{ $inProgress }}</h2>
+                    <h2 class="text-lg font-bold mt-1.5" style="color: rgba(10,132,255,1);">{{ $inProgress }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $activePipeline }} permohonan aktif</p>
                 </div>
                 <div class="rounded-apple-lg p-4" style="background: rgba(52,199,89,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Selesai</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $completed }}</h2>
+                    <h2 class="text-lg font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $completed }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.65);">Tingkat penyelesaian {{ $completionRate }}%</p>
                 </div>
             </div>
@@ -100,7 +100,7 @@
         <div class="flex items-center justify-between flex-wrap gap-3">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Pencarian</p>
-                <h2 class="text-xl font-semibold text-white">Cari Permohonan</h2>
+                <h2 class="text-base font-semibold text-white">Cari Permohonan</h2>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">Filter berdasarkan nomor permohonan, nama klien, atau status pengajuan.</p>
             </div>
             <div class="flex items-center gap-2 text-xs" style="color: rgba(235,235,245,0.6);">
@@ -145,7 +145,7 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-5" style="border-bottom: 1px solid rgba(84,84,88,0.35);">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Data Table</p>
-                <h3 class="text-lg font-semibold text-white">Daftar permohonan</h3>
+                <h3 class="text-sm font-semibold text-white">Daftar permohonan</h3>
                 <p class="text-xs mt-1" style="color: rgba(235,235,245,0.6);">
                     {{ $applications->firstItem() ?? 0 }}-{{ $applications->lastItem() ?? 0 }} dari {{ $applications->total() }} entri
                 </p>

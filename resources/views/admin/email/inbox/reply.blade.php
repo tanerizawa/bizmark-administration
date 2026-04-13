@@ -63,6 +63,27 @@
         <div class="card-body">
             <form action="{{ route('admin.inbox.send-reply', $email->id) }}" method="POST">
                 @csrf
+
+                <!-- From Account -->
+                <div class="mb-3">
+                    <label for="from_account_id" class="form-label text-white">
+                        <i class="fas fa-at me-2"></i>From Account
+                    </label>
+                    <select class="form-select bg-dark text-white border-secondary @error('from_account_id') is-invalid @enderror"
+                            id="from_account_id"
+                            name="from_account_id">
+                        <option value="">Default ({{ config('mail.from.address') }})</option>
+                        @foreach(($fromAccounts ?? collect()) as $account)
+                            <option value="{{ $account->id }}"
+                                {{ (string) old('from_account_id', $email->email_account_id) === (string) $account->id ? 'selected' : '' }}>
+                                {{ $account->name }} ({{ $account->email }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('from_account_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 
                 <!-- To (Readonly) -->
                 <div class="mb-3">

@@ -93,12 +93,14 @@ class ApprovalController extends Controller
         try {
             $this->processApproval($type, $item, 'approved', $request->note);
             
-            // Log activity
-            activity()
-                ->performedOn($item)
-                ->causedBy(auth()->user())
-                ->withProperties(['type' => $type, 'action' => 'approved'])
-                ->log('approval_approved');
+            // Log activity (only if spatie/laravel-activitylog is installed)
+            if (function_exists('activity')) {
+                activity()
+                    ->performedOn($item)
+                    ->causedBy(auth()->user())
+                    ->withProperties(['type' => $type, 'action' => 'approved'])
+                    ->log('approval_approved');
+            }
             
             DB::commit();
             
@@ -146,16 +148,18 @@ class ApprovalController extends Controller
         try {
             $this->processApproval($type, $item, 'rejected', $request->note, $request->reason);
             
-            // Log activity
-            activity()
-                ->performedOn($item)
-                ->causedBy(auth()->user())
-                ->withProperties([
-                    'type' => $type,
-                    'action' => 'rejected',
-                    'reason' => $request->reason
-                ])
-                ->log('approval_rejected');
+            // Log activity (only if spatie/laravel-activitylog is installed)
+            if (function_exists('activity')) {
+                activity()
+                    ->performedOn($item)
+                    ->causedBy(auth()->user())
+                    ->withProperties([
+                        'type' => $type,
+                        'action' => 'rejected',
+                        'reason' => $request->reason
+                    ])
+                    ->log('approval_rejected');
+            }
             
             DB::commit();
             

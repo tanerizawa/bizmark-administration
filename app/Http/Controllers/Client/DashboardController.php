@@ -19,15 +19,21 @@ class DashboardController extends Controller
         // Authorize that client can view their projects
         $this->authorize('viewAnyAsClient', [Project::class, $client]);
         
-        // Get client's projects with latest status
+        // Eager-load ALL needed relations in a single query to avoid N+1
         $projects = $client->projects()
-            ->with(['status', 'permitApplication.permitType', 'tasks' => function($query) {
-                $query->latest()->limit(5);
-            }])
+            ->with([
+                'status',
+                'permitApplication.permitType',
+                'tasks' => function($query) {
+                    $query->orderBy('due_date', 'asc');
+                },
+                'tasks.assignedUser',
+                'documents',
+            ])
             ->latest()
             ->get();
         
-        // Calculate metrics
+        // Calculate metrics from already-loaded collection (no extra queries)
         $activeProjects = $projects->filter(function($project) {
             return $project->status && $project->status->name !== 'Selesai';
         })->count();
@@ -36,40 +42,40 @@ class DashboardController extends Controller
             return $project->status && $project->status->name === 'Selesai';
         })->count();
         
-        $totalInvested = $projects->sum('project_value');
+        // FIX: Project model uses 'contract_value', not 'project_value'
+        $totalInvested = $projects->sum('contract_value');
         
-        // Get recent documents
-        $recentDocuments = $client->projects()
-            ->with('documents')
-            ->get()
+        // Get recent documents from already-loaded relation (no extra query)
+        $recentDocuments = $projects
             ->pluck('documents')
             ->flatten()
             ->sortByDesc('created_at')
             ->take(5);
         
-        // Get upcoming deadlines (tasks due within 7 days)
-        $upcomingDeadlines = $client->projects()
-            ->with('tasks')
-            ->get()
+        // Get all documents stats for progress calculation
+        $allDocuments = $projects->pluck('documents')->flatten();
+        $totalDocuments = $allDocuments->count();
+        $uploadedDocuments = $allDocuments->filter(fn($doc) => !empty($doc->file_path))->count();
+        
+        // Get upcoming deadlines from already-loaded tasks (no extra query)
+        // FIX: Task model uses 'status' and 'completed_at', not 'completed' boolean
+        $upcomingDeadlines = $projects
             ->pluck('tasks')
             ->flatten()
             ->filter(function($task) {
                 return $task->due_date && 
                        $task->due_date->isFuture() && 
                        $task->due_date->diffInDays(now()) <= 7 &&
-                       !$task->completed;
+                       $task->status !== 'done' &&
+                       $task->completed_at === null;
             })
             ->sortBy('due_date')
             ->take(5);
         
-        // Get pending documents count (documents not yet uploaded)
-        $pendingDocuments = $client->projects()
-            ->with('documents')
-            ->get()
-            ->pluck('documents')
-            ->flatten()
+        // Get pending documents count from already-loaded data (no extra query)
+        $pendingDocuments = $allDocuments
             ->filter(function($doc) {
-                return empty($doc->file_path) || !$doc->verified_at;
+                return empty($doc->file_path);
             })
             ->count();
         
@@ -87,7 +93,9 @@ class DashboardController extends Controller
             'recentDocuments',
             'upcomingDeadlines',
             'pendingDocuments',
-            'submittedCount'
+            'submittedCount',
+            'totalDocuments',
+            'uploadedDocuments'
         ));
     }
 }

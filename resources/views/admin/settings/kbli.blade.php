@@ -20,7 +20,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div class="space-y-2.5 max-w-3xl">
                     <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Master Data</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                    <h1 class="text-2xl md:text-xl font-bold" style="color: #FFFFFF;">
                         Klasifikasi Baku Lapangan Usaha Indonesia (KBLI)
                     </h1>
                     <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
@@ -44,22 +44,22 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total KBLI</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">{{ number_format($totalKbli) }}</h2>
+                    <h2 class="text-lg font-bold mt-1.5" style="color:#FFFFFF;">{{ number_format($totalKbli) }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Klasifikasi tersedia</p>
                 </div>
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Sektor Aktif</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $bySector->count() }}</h2>
+                    <h2 class="text-lg font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $bySector->count() }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sektor A-U</p>
                 </div>
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(191,90,242,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Sektor Teratas</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">{{ $topSectors->first()->sector ?? 'T/A' }}</h2>
+                    <h2 class="text-lg font-bold mt-1.5" style="color:#FFFFFF;">{{ $topSectors->first()->sector ?? 'T/A' }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $topSectors->first()->count ?? 0 }} klasifikasi</p>
                 </div>
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,149,0,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Status Data</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color:#FFFFFF;">{{ $totalKbli > 0 ? '✓' : '✗' }}</h2>
+                    <h2 class="text-lg font-bold mt-1.5" style="color:#FFFFFF;">{{ $totalKbli > 0 ? '✓' : '✗' }}</h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $totalKbli > 0 ? 'Siap digunakan' : 'Perlu impor' }}</p>
                 </div>
             </div>
@@ -86,7 +86,7 @@
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
                 <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Pengelolaan Data</p>
-                <h2 class="text-2xl font-semibold text-white">Alat Impor dan Ekspor</h2>
+                <h2 class="text-xl font-semibold text-white">Alat Impor dan Ekspor</h2>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                     Kelola basis data KBLI dengan fitur impor CSV, ekspor data, dan templat standar.
                 </p>
@@ -101,7 +101,7 @@
                     </div>
                     <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Utama</span>
                 </div>
-                <h3 class="text-lg font-semibold text-white">Impor Data KBLI</h3>
+                <h3 class="text-sm font-semibold text-white">Impor Data KBLI</h3>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                     Unggah berkas CSV dengan format standar untuk menambah atau memperbarui data KBLI. Mendukung pembaruan massal.
                 </p>
@@ -117,7 +117,7 @@
                     </div>
                     <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(52,199,89,0.18); color: rgba(52,199,89,0.9);">Ekspor</span>
                 </div>
-                <h3 class="text-lg font-semibold text-white">Unduh Templat</h3>
+                <h3 class="text-sm font-semibold text-white">Unduh Templat</h3>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                     Unduh templat CSV dengan format dan contoh data yang sudah sesuai standar untuk memudahkan impor.
                 </p>
@@ -133,7 +133,7 @@
                     </div>
                     <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(255,59,48,0.18); color: rgba(255,59,48,0.9);">Danger</span>
                 </div>
-                <h3 class="text-lg font-semibold text-white">Hapus Semua Data</h3>
+                <h3 class="text-sm font-semibold text-white">Hapus Semua Data</h3>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                     Menghapus seluruh data KBLI dari database. Tindakan ini tidak dapat dibatalkan. Gunakan dengan hati-hati.
                 </p>
@@ -149,7 +149,7 @@
         <div class="flex items-center justify-between flex-wrap gap-2.5">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Distribusi</p>
-                <h2 class="text-xl font-semibold text-white">Breakdown per Sektor</h2>
+                <h2 class="text-base font-semibold text-white">Breakdown per Sektor</h2>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">Jumlah klasifikasi KBLI berdasarkan sektor bisnis A-U.</p>
             </div>
             <span class="text-xs" style="color: rgba(235,235,245,0.65);">Total {{ $totalKbli }} klasifikasi</span>
@@ -210,7 +210,7 @@
         <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Pratinjau</p>
-                <h2 class="text-xl font-semibold text-white">Contoh Data KBLI</h2>
+                <h2 class="text-base font-semibold text-white">Contoh Data KBLI</h2>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">Menampilkan beberapa klasifikasi dari basis data untuk referensi.</p>
             </div>
             <a href="{{ route('admin.settings.kbli.export') }}" class="btn-secondary-sm">
@@ -256,7 +256,7 @@
     <div class="card-elevated rounded-apple-xl max-w-2xl w-full p-6 space-y-5" style="background: var(--dark-bg-elevated);">
         <div class="flex items-center justify-between">
             <div>
-                <h3 class="text-xl font-semibold text-white">Impor Data KBLI</h3>
+                <h3 class="text-base font-semibold text-white">Impor Data KBLI</h3>
                 <p class="text-sm mt-1" style="color: rgba(235,235,245,0.65);">Unggah berkas CSV dengan format standar</p>
             </div>
             <button onclick="closeImportModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-apple">
@@ -326,7 +326,7 @@
                 <i class="fas fa-exclamation-triangle text-xl" style="color: rgba(255,59,48,0.9);"></i>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-white">Konfirmasi Penghapusan</h3>
+                <h3 class="text-sm font-semibold text-white">Konfirmasi Penghapusan</h3>
                 <p class="text-sm mt-1" style="color: rgba(235,235,245,0.65);">Tindakan ini tidak dapat dibatalkan</p>
             </div>
         </div>

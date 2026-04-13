@@ -4,7 +4,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
         <div class="card-elevated rounded-apple-lg p-4 space-y-3">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-white">Antrian Tinjauan</h3>
+                <h3 class="text-sm font-semibold text-white">Antrian Tinjauan</h3>
                 <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(255,149,0,0.18); color: rgba(255,149,0,0.9);">
                     @php
                         $reviewRatio = $totalApplications > 0 ? round(($pendingApplications / $totalApplications) * 100) : 0;
@@ -12,7 +12,7 @@
                     {{ $reviewRatio }}%
                 </span>
             </div>
-            <p class="text-3xl font-bold text-white">{{ $pendingApplications }}</p>
+            <p class="text-xl font-bold text-white">{{ $pendingApplications }}</p>
             <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                 Permohonan menunggu verifikasi admin. Prioritaskan yang telah diajukan dan sedang ditinjau.
             </p>
@@ -20,10 +20,10 @@
 
         <div class="card-elevated rounded-apple-lg p-4 space-y-3">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-white">Jalur Penawaran</h3>
+                <h3 class="text-sm font-semibold text-white">Jalur Penawaran</h3>
                 <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Operasional</span>
             </div>
-            <p class="text-3xl font-bold text-white">{{ $needQuotation }}</p>
+            <p class="text-xl font-bold text-white">{{ $needQuotation }}</p>
             <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                 Permohonan tanpa penawaran harga. Percepat proses agar pendapatan tidak tertahan.
             </p>
@@ -31,13 +31,10 @@
 
         <div class="card-elevated rounded-apple-lg p-4 space-y-3">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-white">Pantauan Keuangan</h3>
+                <h3 class="text-sm font-semibold text-white">Pantauan Keuangan</h3>
                 <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(191,90,242,0.18); color: rgba(191,90,242,0.9);">Aktif</span>
-                <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--text-dark-primary);">Pantauan Keuangan</h3>
-                <span class="rounded-full" style="font-size: var(--text-xs); padding: var(--space-1) var(--space-3); background: var(--neuro-secondary); opacity: var(--opacity-bg-light); color: var(--neuro-secondary); opacity: var(--opacity-text-strong);">Aktif</span>
->>>>>>> Stashed changes
             </div>
-            <p class="text-3xl font-bold text-white">{{ $pendingPayments }}</p>
+            <p class="text-xl font-bold text-white">{{ $pendingPayments }}</p>
             <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                 Pembayaran menunggu verifikasi. Lihat tab Pembayaran untuk detail lengkap.
             </p>
@@ -49,7 +46,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Distribusi Status</p>
-                <h3 class="text-xl font-semibold text-white">Rekap Permohonan per Status</h3>
+                <h3 class="text-base font-semibold text-white">Rekap Permohonan per Status</h3>
             </div>
             <span class="text-xs" style="color: rgba(235,235,245,0.65);">Total {{ $totalApplications }} permohonan</span>
         </div>
@@ -81,7 +78,7 @@
         <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Aktivitas Terbaru</p>
-                <h2 class="text-xl font-semibold text-white">Permohonan Terbaru</h2>
+                <h2 class="text-base font-semibold text-white">Permohonan Terbaru</h2>
                 <p class="text-sm" style="color: rgba(235,235,245,0.65);">10 permohonan terakhir yang masuk ke sistem.</p>
             </div>
             <a href="{{ route('admin.permits.index', ['tab' => 'applications']) }}" class="btn-secondary-sm">

@@ -252,7 +252,7 @@ return [
         ],
         'proven_track' => [
             'title' => 'Proven Track Record',
-            'description' => '98% success rate with permits approved on first submission.',
+            'description' => '96% success rate with permits approved on first submission.',
         ],
         'transparent' => [
             'title' => 'Transparent Pricing',

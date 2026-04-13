@@ -4,6 +4,29 @@
 @section('page-title', 'Detail Email')
 
 @section('content')
+@php
+    $htmlDocument = null;
+
+    if ($email->body_html) {
+        $htmlDocument = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+            . '<base target="_blank">'
+            . '<style>'
+            . 'html,body{margin:0;padding:0;background:#eef2f7;color:#111827;}'
+            . 'body{font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;overflow-wrap:anywhere;padding:18px;}'
+            . '@media (min-width: 768px){body{padding:24px;}}'
+            . '*{box-sizing:border-box;}'
+            . '.email-frame-inner{max-width:100%;margin:0 auto;background:#ffffff;border-radius:18px;box-shadow:0 12px 30px rgba(15,23,42,0.08);padding:18px;overflow:visible;}'
+            . '@media (min-width: 768px){.email-frame-inner{padding:24px;}}'
+            . 'img{max-width:100%;height:auto;}'
+            . 'table{max-width:100% !important;}'
+            . 'body table{width:auto;}'
+            . 'a{color:#0a66c2;}'
+            . 'pre{white-space:pre-wrap;word-break:break-word;}'
+            . '</style></head><body><div class="email-frame-inner">'
+            . $email->clean_body_html
+            . '</div></body></html>';
+    }
+@endphp
 <div class="max-w-5xl mx-auto space-y-6">
     {{-- Actions --}}
     <div class="flex flex-wrap items-center justify-between gap-3">
@@ -76,7 +99,7 @@
     <section class="card-elevated rounded-apple-xl overflow-hidden">
         <div class="px-6 py-6 border-b border-white/5 space-y-4">
             <div>
-                <h1 class="text-2xl font-semibold text-white">{{ $email->subject }}</h1>
+                <h1 class="text-xl font-semibold text-white">{{ $email->subject }}</h1>
                 @if($email->labels && count($email->labels) > 0)
                     <div class="flex flex-wrap gap-2 mt-3">
                         @foreach($email->labels as $label)
@@ -168,10 +191,23 @@
 
             {{-- HTML View --}}
             @if($email->body_html)
-                <div id="htmlView" class="rounded-apple-xl overflow-auto email-html-container" style="background: #ffffff; border: 1px solid rgba(0,0,0,0.1); max-height: 600px;">
-                    <div class="email-html-content" style="padding: 24px; color: #000000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; background: #ffffff;">
-                        {!! $email->clean_body_html !!}
+                <div id="htmlView" class="rounded-apple-xl overflow-hidden email-html-shell">
+                    <div class="email-html-meta">
+                        <span class="email-html-badge">
+                            <i class="fas fa-envelope-open-text mr-2"></i>Rendered HTML Email
+                        </span>
+                        <span class="text-xs text-slate-500">Konten diisolasi agar layout email tetap utuh</span>
                     </div>
+                    <iframe
+                        id="emailHtmlFrame"
+                        class="email-html-frame"
+                        title="Email HTML content"
+                        sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+                        referrerpolicy="no-referrer"
+                        loading="lazy"
+                        scrolling="no"
+                    ></iframe>
+                    <script type="application/json" id="emailHtmlPayload">@json($htmlDocument)</script>
                 </div>
             @endif
 
@@ -247,166 +283,142 @@
 </div>
 
 <style>
-/* Email HTML View - Force Light Mode */
-.email-html-container {
-    background: #ffffff !important;
-    /* Isolate from parent dark mode */
-    isolation: isolate;
+.email-html-shell {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-.email-html-content {
-    background: #ffffff !important;
-    color: #000000 !important;
-    /* Override CSS variables */
-    --dark-text-primary: #000000 !important;
-    --dark-text-secondary: #333333 !important;
-    --dark-text-tertiary: #666666 !important;
-    --dark-bg: #ffffff !important;
-    --dark-bg-secondary: #f5f5f5 !important;
-    --dark-bg-tertiary: #eeeeee !important;
+.email-html-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
-/* Override any dark mode styles within email content */
-.email-html-content *,
-.email-html-content *::before,
-.email-html-content *::after {
-    /* Force remove CSS variable usage */
-    color: inherit !important;
-    background-color: transparent !important;
+.email-html-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #0f172a;
+    background: rgba(10, 132, 255, 0.12);
 }
 
-/* Re-establish proper text color hierarchy */
-.email-html-content,
-.email-html-content h1,
-.email-html-content h2,
-.email-html-content h3,
-.email-html-content h4,
-.email-html-content h5,
-.email-html-content h6,
-.email-html-content p,
-.email-html-content span,
-.email-html-content div,
-.email-html-content label,
-.email-html-content td,
-.email-html-content th,
-.email-html-content li,
-.email-html-content strong,
-.email-html-content em,
-.email-html-content b,
-.email-html-content i {
-    color: #000000 !important;
-}
-
-/* Override specific Jobstreet colors */
-.email-html-content [style*="color: #1c1c1c"],
-.email-html-content [style*="color:#1c1c1c"],
-.email-html-content [style*="color: #747474"],
-.email-html-content [style*="color:#747474"],
-.email-html-content [style*="color: #666"],
-.email-html-content [style*="color:#666"],
-.email-html-content [style*="color: #333"],
-.email-html-content [style*="color:#333"] {
-    color: #000000 !important;
-}
-
-/* Ensure links are visible */
-.email-html-content a {
-    color: #0066cc !important;
-    text-decoration: underline !important;
-}
-
-.email-html-content a:hover {
-    color: #004499 !important;
-    background-color: rgba(0, 102, 204, 0.05) !important;
-}
-
-/* Table styling for email tables */
-.email-html-content table {
-    border-collapse: collapse;
-    color: #000000 !important;
-}
-
-.email-html-content td,
-.email-html-content th {
-    color: #000000 !important;
-    background-color: transparent !important;
-}
-
-/* Ensure buttons/CTAs are visible */
-.email-html-content button,
-.email-html-content .button,
-.email-html-content [role="button"],
-.email-html-content input[type="button"],
-.email-html-content input[type="submit"] {
-    color: #000000 !important;
-    background-color: transparent !important;
-}
-
-/* Override inline styles that use CSS variables */
-.email-html-content [style*="var(--dark"],
-.email-html-content [style*="var(--bs"] {
-    color: #000000 !important;
-}
-
-/* Specific handling for email with dark backgrounds */
-.email-html-content [style*="background:"][style*="rgb(28"],
-.email-html-content [style*="background-color:"][style*="rgb(28"],
-.email-html-content [style*="background:"][style*="#1c1c1e"],
-.email-html-content [style*="background-color:"][style*="#1c1c1e"],
-.email-html-content [style*="background:"][style*="#000"],
-.email-html-content [style*="background-color:"][style*="#000"] {
-    background: #f5f5f7 !important;
-    color: #000000 !important;
-}
-
-/* Handle bgcolor attribute (old HTML style) */
-.email-html-content [bgcolor="#eeeeee"],
-.email-html-content [bgcolor="#eee"],
-.email-html-content [bgcolor="#f7f7f7"],
-.email-html-content [bgcolor="#f5f5f5"],
-.email-html-content [bgcolor="#fafafa"] {
-    background-color: #fafafa !important;
-}
-
-.email-html-content [bgcolor="#ffffff"],
-.email-html-content [bgcolor="#fff"] {
-    background-color: #ffffff !important;
-}
-
-/* Ensure proper contrast for any dark elements */
-.email-html-content [style*="color: rgba(235"],
-.email-html-content [style*="color:rgba(235"],
-.email-html-content [style*="color: #fff"],
-.email-html-content [style*="color:#fff"],
-.email-html-content [style*="color: white"],
-.email-html-content [style*="color:white"] {
-    color: #000000 !important;
-}
-
-/* Remove hover effects that might use dark mode */
-.email-html-content *:hover {
-    background-color: transparent !important;
-}
-
-.email-html-content a:hover {
-    background-color: rgba(0, 102, 204, 0.05) !important;
-}
-
-/* Override Bootstrap and global color utilities */
-.email-html-content .text-white,
-.email-html-content .text-light,
-.email-html-content .text-muted {
-    color: #000000 !important;
-}
-
-.email-html-content .bg-dark,
-.email-html-content .bg-black,
-.email-html-content .bg-secondary {
-    background-color: #f5f5f5 !important;
+.email-html-frame {
+    display: block;
+    width: 100%;
+    min-height: 220px;
+    border: 0;
+    background: #ffffff;
+    overflow: hidden;
 }
 </style>
 
 <script>
+const emailFrame = document.getElementById('emailHtmlFrame');
+const emailPayloadNode = document.getElementById('emailHtmlPayload');
+
+function applyEmailFrameHeight(nextHeight) {
+    if (!emailFrame) {
+        return;
+    }
+
+    if (!Number.isFinite(nextHeight)) {
+        return;
+    }
+
+    emailFrame.style.height = `${Math.max(220, Math.ceil(nextHeight) + 2)}px`;
+}
+
+function measureEmailFrameHeight() {
+    if (!emailFrame || !emailFrame.contentDocument) {
+        return null;
+    }
+
+    const doc = emailFrame.contentDocument;
+    const body = doc.body;
+    const html = doc.documentElement;
+
+    if (!body || !html) {
+        return null;
+    }
+
+    const lastElement = body.lastElementChild;
+    const lastElementBottom = lastElement
+        ? lastElement.getBoundingClientRect().bottom + body.getBoundingClientRect().top
+        : 0;
+
+    return Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        body.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight,
+        html.clientHeight,
+        lastElementBottom
+    );
+}
+
+function syncEmailFrameHeight() {
+    const measuredHeight = measureEmailFrameHeight();
+    if (measuredHeight) {
+        applyEmailFrameHeight(measuredHeight);
+    }
+}
+
+function scheduleEmailFrameResizes() {
+    [0, 60, 180, 360, 700, 1200, 2200, 4000].forEach((delay) => {
+        window.setTimeout(syncEmailFrameHeight, delay);
+    });
+}
+
+function bindEmailFrameObservers() {
+    if (!emailFrame || !emailFrame.contentDocument) {
+        return;
+    }
+
+    const doc = emailFrame.contentDocument;
+
+    doc.querySelectorAll('img').forEach((img) => {
+        if (!img.complete) {
+            img.addEventListener('load', syncEmailFrameHeight);
+            img.addEventListener('error', syncEmailFrameHeight);
+        }
+    });
+
+    if (doc.fonts?.ready) {
+        doc.fonts.ready.then(syncEmailFrameHeight).catch(() => {});
+    }
+
+    if (window.ResizeObserver && doc.body) {
+        const resizeObserver = new ResizeObserver(syncEmailFrameHeight);
+        resizeObserver.observe(doc.body);
+        if (doc.documentElement) {
+            resizeObserver.observe(doc.documentElement);
+        }
+    }
+}
+
+if (emailFrame && emailPayloadNode) {
+    const payload = JSON.parse(emailPayloadNode.textContent || 'null');
+    if (payload) {
+        applyEmailFrameHeight(220);
+        emailFrame.addEventListener('load', () => {
+            bindEmailFrameObservers();
+            syncEmailFrameHeight();
+            scheduleEmailFrameResizes();
+        });
+        emailFrame.srcdoc = payload;
+    }
+}
+
 function toggleStar(emailId, button) {
     fetch(`/admin/inbox/${emailId}/star`, {
         method: 'POST',

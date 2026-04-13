@@ -4,152 +4,112 @@
 @section('page-title', 'Manajemen Proyek')
 
 @section('content')
-    {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+<div class="space-y-3">
+    {{-- Compact Hero Section --}}
+    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-12 -right-8"></div>
         </div>
-        <div class="relative space-y-5 md:space-y-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Proyek</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Pantau dan Kelola Semua Proyek Perizinan
-                    </h1>
-                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Kelola proyek perizinan dari awal hingga selesai dengan visibilitas penuh terhadap status, tenggat, dan kemajuan setiap proyek.
-                    </p>
-                </div>
-                <div class="space-y-2.5">
-                    <a href="{{ route('projects.create') }}" 
-                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
-                       style="background: rgba(10,132,255,0.25); color: rgba(235,235,245,0.9);">
-                        <i class="fas fa-plus mr-2"></i>
-                        Tambah Proyek
-                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
-                    </a>
-                </div>
+        <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div class="flex-1 min-w-0">
+                <p class="admin-hero-subtitle">Manajemen Proyek</p>
+                <h1 class="admin-hero-title text-white">Proyek Perizinan</h1>
+                <p class="admin-hero-desc">Kelola proyek dari awal hingga selesai</p>
             </div>
-
-            <!-- Summary Statistics -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <!-- Total Projects -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Proyek</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $totalProjects }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua proyek</p>
-                </div>
-
-                <!-- In Progress -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Sedang Berjalan</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">{{ $inProgressProjects }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Aktif dikerjakan</p>
-                </div>
-
-                <!-- Completed -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Selesai</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">{{ $completedProjects }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Proyek tuntas</p>
-                </div>
-
-                <!-- Overdue -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,59,48,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Terlambat</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,59,48,1);">{{ $overdueProjects }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu perhatian</p>
-                </div>
-            </div>
+            <a href="{{ route('projects.create') }}" class="admin-btn admin-btn-sm rounded" style="background: rgba(10,132,255,0.25); color: #fff;">
+                <i class="fas fa-plus mr-1"></i>Tambah Proyek
+            </a>
         </div>
     </section>
 
-    <!-- Search and Filter Card -->
-    <div class="card-elevated rounded-apple-lg mb-5 overflow-hidden">
-        <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.45);">
-            <h3 class="text-sm font-semibold uppercase tracking-wide" style="color: rgba(235, 235, 245, 0.8);">Pencarian & Filter</h3>
+    {{-- Compact Stats Row --}}
+    <div class="grid grid-cols-4 gap-2">
+        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" style="background: rgba(10,132,255,0.1); border: 1px solid rgba(10,132,255,0.2);">
+            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(10,132,255,0.2);">
+                <i class="fas fa-folder text-apple-blue" style="font-size: 0.7rem;"></i>
+            </div>
+            <div>
+                <p class="admin-small text-apple-blue uppercase tracking-wider">Total</p>
+                <p class="admin-stat text-white">{{ $totalProjects }}</p>
+            </div>
         </div>
-        <div class="p-4 md:p-5">
-            <form method="GET" action="{{ route('projects.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Pencarian</label>
-                        <div class="relative">
-                            <input type="text" 
-                                   name="search" 
-                                   value="{{ request('search') }}" 
-                                   placeholder="Nama proyek atau klien..." 
-                                   class="input-dark w-full pl-9 pr-3 py-2 rounded-apple text-sm">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-sm" style="color: rgba(235, 235, 245, 0.3);"></i>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Status</label>
-                        <select name="status" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
-                            <option value="">Semua Status</option>
-                            @foreach($statuses as $status)
-                                <option value="{{ $status->id }}" {{ request('status') == $status->id ? 'selected' : '' }}>
-                                    {{ $status->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Klien</label>
-                        <select name="client" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
-                            <option value="">Semua Klien</option>
-                            @foreach($clients as $client)
-                                <option value="{{ $client->id }}" {{ request('client') == $client->id ? 'selected' : '' }}>
-                                    {{ $client->company_name ?? $client->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Tahun</label>
-                        <select name="year" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
-                            <option value="">Semua Tahun</option>
-                            @for($year = date('Y'); $year >= 2020; $year--)
-                                <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
-                                    {{ $year }}
-                                </option>
-                            @endfor
-                        </select>
-                    </div>
+        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" style="background: rgba(255,149,0,0.1); border: 1px solid rgba(255,149,0,0.2);">
+            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,149,0,0.2);">
+                <i class="fas fa-spinner text-apple-orange" style="font-size: 0.7rem;"></i>
+            </div>
+            <div>
+                <p class="admin-small text-apple-orange uppercase tracking-wider">Berjalan</p>
+                <p class="admin-stat text-apple-orange">{{ $inProgressProjects }}</p>
+            </div>
+        </div>
+        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" style="background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.2);">
+            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(52,199,89,0.2);">
+                <i class="fas fa-check text-apple-green" style="font-size: 0.7rem;"></i>
+            </div>
+            <div>
+                <p class="admin-small text-apple-green uppercase tracking-wider">Selesai</p>
+                <p class="admin-stat text-apple-green">{{ $completedProjects }}</p>
+            </div>
+        </div>
+        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" style="background: rgba(255,69,58,0.1); border: 1px solid rgba(255,69,58,0.2);">
+            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,69,58,0.2);">
+                <i class="fas fa-exclamation text-apple-red" style="font-size: 0.7rem;"></i>
+            </div>
+            <div>
+                <p class="admin-small text-apple-red uppercase tracking-wider">Terlambat</p>
+                <p class="admin-stat text-apple-red">{{ $overdueProjects }}</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- Compact Search and Filter --}}
+    <div class="card-elevated rounded-apple p-3">
+        <form method="GET" action="{{ route('projects.index') }}" class="flex flex-wrap gap-2 items-end">
+            <div class="flex-1 min-w-[150px]">
+                <label class="admin-label-compact block">Cari</label>
+                <div class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama proyek..." 
+                           class="admin-input w-full pl-7 rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2" style="font-size: 0.625rem; color: rgba(235,235,245,0.3);"></i>
                 </div>
-                <script>
-                // Auto submit form on filter change
-                document.addEventListener('DOMContentLoaded', function() {
-                    const form = document.querySelector('form[action="{{ route('projects.index') }}"]');
-                    if (!form) return;
-                    
-                    const searchInput = form.querySelector('input[name="search"]');
-                    
-                    // Auto-submit for select dropdowns
-                    form.querySelectorAll('select[name]').forEach(function(el) {
-                        el.addEventListener('change', function() {
-                            form.submit();
-                        });
-                    });
-                    
-                    // Submit search on Enter key only
-                    if (searchInput) {
-                        searchInput.addEventListener('keydown', function(e) {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                form.submit();
-                            }
-                        });
-                    }
-                });
-                </script>
-            </form>
-        </div>
+            </div>
+            <div class="w-32">
+                <label class="admin-label-compact block">Status</label>
+                <select name="status" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    @foreach($statuses as $status)
+                        <option value="{{ $status->id }}" {{ request('status') == $status->id ? 'selected' : '' }}>{{ $status->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="w-36">
+                <label class="admin-label-compact block">Klien</label>
+                <select name="client" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    @foreach($clients as $client)
+                        <option value="{{ $client->id }}" {{ request('client') == $client->id ? 'selected' : '' }}>{{ $client->company_name ?? $client->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="w-24">
+                <label class="admin-label-compact block">Tahun</label>
+                <select name="year" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    @for($year = date('Y'); $year >= 2020; $year--)
+                        <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                    @endfor
+                </select>
+            </div>
+        </form>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action="{{ route('projects.index') }}"]');
+            if (!form) return;
+            form.querySelectorAll('select[name]').forEach(el => el.addEventListener('change', () => form.submit()));
+            const searchInput = form.querySelector('input[name="search"]');
+            if (searchInput) searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); form.submit(); }});
+        });
+        </script>
     </div>
 
     <!-- Projects Table Card -->
@@ -243,15 +203,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-16 text-center">
+                            <td colspan="5" class="px-4 py-8 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-project-diagram text-6xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
-                                    <h3 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Proyek</h3>
-                                    <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">Mulai dengan membuat proyek pertama Anda</p>
-                                    <a href="{{ route('projects.create') }}" 
-                                       class="btn-primary inline-flex items-center px-6 py-3 rounded-apple font-medium">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Tambah Proyek Pertama
+                                    <i class="fas fa-project-diagram text-3xl mb-3" style="color: rgba(235, 235, 245, 0.3);"></i>
+                                    <h3 class="admin-section mb-1" style="color: #FFFFFF;">Belum Ada Proyek</h3>
+                                    <p class="admin-body mb-3" style="color: rgba(235, 235, 245, 0.6);">Mulai dengan membuat proyek pertama</p>
+                                    <a href="{{ route('projects.create') }}" class="admin-btn inline-flex items-center">
+                                        <i class="fas fa-plus mr-1.5"></i>Tambah Proyek
                                     </a>
                                 </div>
                             </td>

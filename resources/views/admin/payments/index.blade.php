@@ -36,7 +36,7 @@
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div class="space-y-3 max-w-3xl">
                 <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Operasional Pembayaran</p>
-                <h1 class="text-2xl md:text-3xl font-bold text-white">Verifikasi Pembayaran Manual</h1>
+                <h1 class="text-2xl md:text-xl font-bold text-white">Verifikasi Pembayaran Manual</h1>
                 <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
                     Pantau antrean pembayaran manual, tinjau bukti transfer, dan verifikasi transaksi dalam satu tampilan terpadu.
                 </p>
@@ -60,22 +60,22 @@
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Menunggu Review</p>
-            <p class="text-3xl font-bold" style="color:#FFFFFF;">{{ $queueCount }}</p>
+            <p class="text-xl font-bold" style="color:#FFFFFF;">{{ $queueCount }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $processingCount }} menunggu verifikasi admin</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Terverifikasi Hari Ini</p>
-            <p class="text-3xl font-bold" style="color: rgba(52,199,89,1);">{{ $verifiedToday }}</p>
+            <p class="text-xl font-bold" style="color: rgba(52,199,89,1);">{{ $verifiedToday }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $rejectedToday }} ditolak hari ini</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Nilai Antrean</p>
-            <p class="text-3xl font-bold" style="color: rgba(191,90,242,1);">Rp {{ number_format($queueAmount, 0, ',', '.') }}</p>
+            <p class="text-xl font-bold" style="color: rgba(191,90,242,1);">Rp {{ number_format($queueAmount, 0, ',', '.') }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Total dana menunggu approval</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Durasi Terbuka</p>
-            <p class="text-3xl font-bold" style="color: rgba(10,132,255,1);">{{ $oldestAge }}</p>
+            <p class="text-xl font-bold" style="color: rgba(10,132,255,1);">{{ $oldestAge }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Antrean tertua di pipeline</p>
         </div>
     </section>

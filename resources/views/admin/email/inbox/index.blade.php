@@ -22,7 +22,7 @@
     <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div class="space-y-3 max-w-3xl">
             <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Komunikasi</p>
-            <h1 class="text-2xl md:text-3xl font-bold text-white">Kotak Masuk Email</h1>
+            <h1 class="text-2xl md:text-xl font-bold text-white">Kotak Masuk Email</h1>
             <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
                 Kelola pesan masuk, balasan, dan prioritas komunikasi tim secara terpusat.
             </p>
@@ -59,22 +59,22 @@
 <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Email</p>
-        <p class="text-3xl font-bold text-white">{{ $stats['total'] ?? 0 }}</p>
+        <p class="text-xl font-bold text-white">{{ $stats['total'] ?? 0 }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $stats['inbox'] ?? 0 }} di kotak masuk</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Belum Dibaca</p>
-        <p class="text-3xl font-bold text-white">{{ $stats['unread'] ?? 0 }}</p>
+        <p class="text-xl font-bold text-white">{{ $stats['unread'] ?? 0 }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu tindak lanjut</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Berbintang</p>
-        <p class="text-3xl font-bold text-white">{{ $stats['starred'] ?? 0 }}</p>
+        <p class="text-xl font-bold text-white">{{ $stats['starred'] ?? 0 }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Pesan prioritas</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Terkirim</p>
-        <p class="text-3xl font-bold text-white">{{ $stats['sent'] ?? 0 }}</p>
+        <p class="text-xl font-bold text-white">{{ $stats['sent'] ?? 0 }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Email keluar</p>
     </div>
 </section>
@@ -106,7 +106,7 @@
     <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
             <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-            <h2 class="text-lg font-semibold text-white">Cari Email</h2>
+            <h2 class="text-sm font-semibold text-white">Cari Email</h2>
         </div>
         <div class="flex items-center gap-3">
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $emails->total() }} email ditemukan</p>
@@ -172,6 +172,37 @@
         </div>
         <div class="divide-y divide-white/5">
             @forelse($emails as $email)
+                @php
+                    $isSentCategory = $category === 'sent';
+                    $senderEmail = $isSentCategory ? $email->to_email : $email->from_email;
+                    $senderName = $isSentCategory ? null : trim((string) $email->from_name);
+
+                    if (!$isSentCategory && (!$senderName || strcasecmp($senderName, (string) $senderEmail) === 0 || str_contains($senderName, '@'))) {
+                        $senderName = $senderEmail
+                            ? (string) Str::of(strstr($senderEmail, '@', true) ?: $senderEmail)->replace(['.', '_', '-'], ' ')->title()
+                            : null;
+                    }
+
+                    $senderPrimary = $isSentCategory
+                        ? ($email->to_email ?: 'Penerima tidak diketahui')
+                        : ($senderName ?: ($senderEmail ?: 'Pengirim tidak diketahui'));
+
+                    $senderSecondary = !$isSentCategory && $senderEmail && strcasecmp($senderPrimary, $senderEmail) !== 0
+                        ? $senderEmail
+                        : null;
+
+                    $senderInitials = collect(preg_split('/\s+/', trim($senderPrimary)) ?: [])
+                        ->filter()
+                        ->take(2)
+                        ->map(fn ($part) => Str::upper(Str::substr($part, 0, 1)))
+                        ->implode('');
+
+                    $senderInitials = $senderInitials !== ''
+                        ? $senderInitials
+                        : Str::upper(Str::substr($senderPrimary, 0, 2));
+
+                    $previewText = $email->preview ?: 'Tidak ada ringkasan isi email.';
+                @endphp
                 <div class="email-item px-6 py-4 hover:bg-white/5 transition-colors {{ !$email->is_read ? 'bg-white/5' : '' }}"
                      onclick="window.location='{{ route('admin.inbox.show', $email) }}'">
                     <div class="flex items-start gap-4">
@@ -182,22 +213,29 @@
                         </button>
                         <div class="flex-shrink-0">
                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-apple-blue to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                                {{ strtoupper(substr(($category === 'sent' ? $email->to_email : ($email->from_name ?? $email->from_email)), 0, 2)) }}
+                                {{ $senderInitials }}
                             </div>
                         </div>
                         <div class="flex-grow min-w-0 cursor-pointer">
                             <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-center gap-2 min-w-0">
-                                    <p class="text-sm font-{{ !$email->is_read ? 'semibold' : 'medium' }} text-white truncate">
-                                        {{ $category === 'sent' ? $email->to_email : ($email->from_name ?? $email->from_email) }}
-                                    </p>
-                                    @if(!$email->is_read && $category !== 'sent')
-                                        <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-full" style="background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);">
-                                            NEW
-                                        </span>
-                                    @endif
-                                    @if($email->has_attachments)
-                                        <i class="fas fa-paperclip text-xs" style="color: rgba(235,235,245,0.5);"></i>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <p class="text-sm font-{{ !$email->is_read ? 'semibold' : 'medium' }} text-white truncate">
+                                            {{ $senderPrimary }}
+                                        </p>
+                                        @if(!$email->is_read && $category !== 'sent')
+                                            <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-full flex-shrink-0" style="background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);">
+                                                NEW
+                                            </span>
+                                        @endif
+                                        @if($email->has_attachments)
+                                            <i class="fas fa-paperclip text-xs flex-shrink-0" style="color: rgba(235,235,245,0.5);"></i>
+                                        @endif
+                                    </div>
+                                    @if($senderSecondary)
+                                        <p class="text-xs truncate mt-0.5" style="color: rgba(235,235,245,0.5);">
+                                            {{ $senderSecondary }}
+                                        </p>
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-3">
@@ -229,8 +267,8 @@
                             <h3 class="text-sm font-{{ !$email->is_read ? 'semibold' : 'normal' }} text-white mb-1 truncate">
                                 {{ $email->subject ?: '(No subject)' }}
                             </h3>
-                            <p class="text-xs line-clamp-2" style="color: rgba(235,235,245,0.55);">
-                                {{ Str::limit($email->preview, 120) }}
+                            <p class="text-xs line-clamp-2 leading-5 mb-2" style="color: rgba(235,235,245,0.58);">
+                                {{ $previewText }}
                             </p>
                             @if($email->emailAccount)
                                 <span class="inline-flex items-center px-2 py-1 text-xs rounded-apple" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.7);">
@@ -243,7 +281,7 @@
             @empty
                 <div class="text-center py-16 space-y-2">
                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-full" style="background: rgba(255,255,255,0.05);">
-                        <i class="fas fa-inbox text-3xl" style="color: rgba(235,235,245,0.35);"></i>
+                        <i class="fas fa-inbox text-2xl" style="color: rgba(235,235,245,0.35);"></i>
                     </div>
                     <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                         @if(request('search'))

@@ -42,7 +42,7 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0A66C2">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Bizmark.ID">
     
@@ -660,7 +660,7 @@
     
     <!-- Mobile Menu: Progressive Disclosure -->
     <div id="mobileMenu" class="mobile-menu" role="menu" aria-label="Mobile navigation">
-        <a href="#services" class="block py-3 transition font-medium" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="high">
+        <a href="{{ app()->getLocale() === 'en' ? route('services.index.en') : route('services.index.id') }}" class="block py-3 transition font-medium" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="high">
             <i class="fas fa-briefcase mr-2" style="color: var(--color-primary);"></i>Layanan
         </a>
         <a href="#why-us" class="block py-3 transition font-medium" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="medium">
@@ -1035,11 +1035,17 @@
                 </div>
             </details>
             
-            <!-- CTA: Encourage exploration -->
-            <div class="text-center">
-                <a href="/estimasi-biaya" 
+            <!-- CTA: View all services & cost estimation -->
+            <div class="text-center flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="{{ app()->getLocale() === 'en' ? route('services.index.en') : route('services.index.id') }}" 
                    class="btn-primary inline-flex items-center gap-2"
                    data-neural-priority="highest">
+                    <i class="fas fa-th-list" aria-hidden="true"></i>
+                    <span>{{ __('landing.services.show_more') }}</span>
+                </a>
+                <a href="/estimasi-biaya" 
+                   class="btn-secondary inline-flex items-center gap-2"
+                   data-neural-priority="high">
                     <i class="fas fa-calculator" aria-hidden="true"></i>
                     <span>Dapatkan Estimasi Biaya</span>
                 </a>
@@ -1732,12 +1738,12 @@
     </a>
 
     <!-- Google Analytics (Replace with your GA4 Measurement ID) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DT71N7BSW9"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX');
+        gtag('config', 'G-DT71N7BSW9');
     </script>
 
     <script>

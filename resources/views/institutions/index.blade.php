@@ -4,142 +4,115 @@
 @section('page-title', 'Manajemen Institusi')
 
 @section('content')
-    {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    {{-- Compact Hero Section --}}
+    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden mb-4">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
+            <div class="w-32 h-32 bg-apple-green opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
         </div>
-        <div class="relative space-y-5 md:space-y-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Institusi</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Database Institusi Penerbit Izin
-                    </h1>
-                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Kelola data lengkap institusi pemerintah, BUMN, dan swasta yang menjadi mitra dalam proses perizinan.
-                    </p>
+        <div class="relative space-y-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div class="space-y-1 max-w-3xl">
+                    <p class="admin-label-compact">Manajemen Institusi</p>
+                    <h1 class="admin-hero-title">Database Institusi Penerbit Izin</h1>
+                    <p class="admin-body" style="color: rgba(235,235,245,0.75);">Kelola data institusi pemerintah, BUMN, dan swasta yang menjadi mitra proses perizinan.</p>
                 </div>
-                <div class="space-y-2.5">
-                    <a href="{{ route('institutions.create') }}" 
-                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
-                       style="background: rgba(10,132,255,0.25); color: rgba(235,235,245,0.9);">
-                        <i class="fas fa-plus mr-2"></i>
-                        Tambah Institusi
-                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                <div>
+                    <a href="{{ route('institutions.create') }}" class="admin-btn inline-flex items-center">
+                        <i class="fas fa-plus mr-1.5"></i>Tambah Institusi
                     </a>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <!-- Total -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Institusi</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $institutions->total() }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Lembaga terdaftar</p>
+            {{-- Compact Stats Cards --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div class="admin-stat-card" style="background: rgba(10,132,255,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
+                            <i class="fas fa-building text-xs" style="color: var(--apple-blue);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: #FFFFFF;">{{ $institutions->total() }}</p>
+                            <p class="admin-label-compact">Total Institusi</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Pemerintah -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,59,48,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Pemerintah</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,59,48,1);">
-                        {{ $institutions->where('type', 'Pemerintah')->count() }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Instansi negara</p>
+                <div class="admin-stat-card" style="background: rgba(255,59,48,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,59,48,0.25);">
+                            <i class="fas fa-landmark text-xs" style="color: var(--apple-red);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(255,59,48,1);">{{ $institutions->where('type', 'Pemerintah')->count() }}</p>
+                            <p class="admin-label-compact">Pemerintah</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- BUMN -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,149,0,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">BUMN</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,149,0,1);">
-                        {{ $institutions->where('type', 'BUMN')->count() }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perusahaan negara</p>
+                <div class="admin-stat-card" style="background: rgba(255,149,0,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,149,0,0.25);">
+                            <i class="fas fa-city text-xs" style="color: var(--apple-orange);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(255,149,0,1);">{{ $institutions->where('type', 'BUMN')->count() }}</p>
+                            <p class="admin-label-compact">BUMN</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Swasta -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Swasta</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">
-                        {{ $institutions->where('type', 'Swasta')->count() }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sektor privat</p>
+                <div class="admin-stat-card" style="background: rgba(52,199,89,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(52,199,89,0.25);">
+                            <i class="fas fa-briefcase text-xs" style="color: var(--apple-green);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(52,199,89,1);">{{ $institutions->where('type', 'Swasta')->count() }}</p>
+                            <p class="admin-label-compact">Swasta</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Search and Filter Card -->
-    <div class="card-elevated rounded-apple-lg mb-4 overflow-hidden">
-        <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-            <h3 class="text-base font-semibold" style="color: #FFFFFF;">Pencarian & Filter</h3>
-        </div>
-        <div class="p-4">
-            <form method="GET" action="{{ route('institutions.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Pencarian</label>
-                        <div class="relative">
-                            <input type="text" 
-                                   name="search" 
-                                   value="{{ request('search') }}" 
-                                   placeholder="Nama institusi..." 
-                                   class="input-dark w-full pl-9 pr-3 py-2 rounded-apple text-sm">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-sm" style="color: rgba(235, 235, 245, 0.3);"></i>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Tipe</label>
-                        <select name="type" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
-                            <option value="">Semua Tipe</option>
-                            <option value="Pemerintah" {{ request('type') == 'Pemerintah' ? 'selected' : '' }}>Pemerintah</option>
-                            <option value="Swasta" {{ request('type') == 'Swasta' ? 'selected' : '' }}>Swasta</option>
-                            <option value="BUMN" {{ request('type') == 'BUMN' ? 'selected' : '' }}>BUMN</option>
-                            <option value="Lainnya" {{ request('type') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Status</label>
-                        <select name="is_active" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
-                            <option value="">Semua Status</option>
-                            <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Aktif</option>
-                            <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
-                        </select>
-                    </div>
+    {{-- Compact Search and Filter --}}
+    <div class="card-elevated rounded-apple p-3 mb-3">
+        <form method="GET" action="{{ route('institutions.index') }}" class="flex flex-wrap gap-2 items-end">
+            <div class="flex-1 min-w-[150px]">
+                <label class="admin-label-compact block">Cari</label>
+                <div class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama institusi..." 
+                           class="admin-input w-full pl-7 rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2" style="font-size: 0.625rem; color: rgba(235,235,245,0.3);"></i>
                 </div>
-                <script>
-                // Auto submit form on filter change
-                document.addEventListener('DOMContentLoaded', function() {
-                    const form = document.querySelector('form[action="{{ route('institutions.index') }}"]');
-                    if (!form) return;
-                    
-                    const searchInput = form.querySelector('input[name="search"]');
-                    
-                    // Auto-submit for select dropdowns
-                    form.querySelectorAll('select[name]').forEach(function(el) {
-                        el.addEventListener('change', function() {
-                            form.submit();
-                        });
-                    });
-                    
-                    // Submit search on Enter key only
-                    if (searchInput) {
-                        searchInput.addEventListener('keydown', function(e) {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                form.submit();
-                            }
-                        });
-                    }
-                });
-                </script>
-            </form>
-        </div>
+            </div>
+            <div class="w-28">
+                <label class="admin-label-compact block">Tipe</label>
+                <select name="type" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    <option value="Pemerintah" {{ request('type') == 'Pemerintah' ? 'selected' : '' }}>Pemerintah</option>
+                    <option value="Swasta" {{ request('type') == 'Swasta' ? 'selected' : '' }}>Swasta</option>
+                    <option value="BUMN" {{ request('type') == 'BUMN' ? 'selected' : '' }}>BUMN</option>
+                    <option value="Lainnya" {{ request('type') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                </select>
+            </div>
+            <div class="w-28">
+                <label class="admin-label-compact block">Status</label>
+                <select name="is_active" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Aktif</option>
+                    <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
+                </select>
+            </div>
+        </form>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action="{{ route('institutions.index') }}"]');
+            if (!form) return;
+            form.querySelectorAll('select[name]').forEach(el => el.addEventListener('change', () => form.submit()));
+            const searchInput = form.querySelector('input[name="search"]');
+            if (searchInput) searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); form.submit(); }});
+        });
+        </script>
     </div>
 
     <!-- Institutions Table -->

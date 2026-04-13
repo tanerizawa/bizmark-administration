@@ -27,10 +27,28 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\PermitManagementController;
 use App\Http\Controllers\Admin\RecruitmentController;
 use App\Http\Controllers\Admin\ConsultationLeadController;
+use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\ProgrammaticSeoController;
+use App\Http\Controllers\ServiceComparisonController;
+use App\Http\Controllers\FaqAggregationController;
+use App\Http\Controllers\PillarPageController;
 
 // SEO Routes
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+
+// RSS & Atom Feeds
+Route::get('/feed/rss', [RssFeedController::class, 'rss'])->name('feed.rss');
+Route::get('/feed/atom', [RssFeedController::class, 'atom'])->name('feed.atom');
+
+// IndexNow key verification
+Route::get('/{key}.txt', function (string $key) {
+    $indexNowKey = config('services.indexnow.key', '');
+    if ($key === $indexNowKey && !empty($indexNowKey)) {
+        return response($indexNowKey, 200)->header('Content-Type', 'text/plain');
+    }
+    abort(404);
+})->where('key', '[a-zA-Z0-9_-]+');
 
 // Language Switcher
 Route::get('/locale/{locale}', [LocaleController::class, 'setLocale'])
@@ -40,7 +58,16 @@ Route::get('/locale/{locale}', [LocaleController::class, 'setLocale'])
 // Indonesian Landing Page (Root - Default)
 Route::middleware('locale:id')->group(function () {
     Route::get('/layanan', [ServiceController::class, 'index'])->name('services.index.id');
+    Route::get('/layanan/kota/{citySlug}', [ProgrammaticSeoController::class, 'cityIndex'])->name('programmatic.city.id');
+    Route::get('/layanan/perbandingan', [ServiceComparisonController::class, 'index'])->name('comparison.index');
+    Route::get('/layanan/perbandingan/{comparisonSlug}', [ServiceComparisonController::class, 'show'])->name('comparison.show');
     Route::get('/layanan/{slug}', [ServiceController::class, 'show'])->name('services.show.id');
+    Route::get('/layanan/{serviceSlug}/sub/{subSlug}', [ServiceController::class, 'showSub'])->name('services.sub.id');
+    Route::get('/layanan/{serviceSlug}/{citySlug}', [ProgrammaticSeoController::class, 'serviceLocation'])->name('programmatic.service-location.id');
+    Route::get('/faq', [FaqAggregationController::class, 'index'])->name('faq.index');
+    Route::get('/faq/{topicSlug}', [FaqAggregationController::class, 'show'])->name('faq.show');
+    Route::get('/panduan', [PillarPageController::class, 'index'])->name('pillar.index');
+    Route::get('/panduan/{pillarSlug}', [PillarPageController::class, 'show'])->name('pillar.show');
     Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index.id');
     Route::get('/blog/kategori/{category}', [PublicArticleController::class, 'category'])->name('blog.category.id');
     Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag.id');
@@ -62,48 +89,16 @@ Route::middleware('locale:id')->group(function () {
     })->name('terms.conditions.id');
 });
 
-// English/PMA Landing Page (Explicit)
+// English/PMA Landing Page (Explicit) - Responsive (No Mobile Redirect)
 Route::prefix('en')->middleware('locale:en')->group(function () {
     Route::get('/', function(\Illuminate\Http\Request $request) {
-        // Get screen width from session (set by JS)
-        $screenWidth = session('screen_width', 0);
-        
-        // Detect mobile by screen width (priority)
-        $isMobileByScreen = $screenWidth > 0 && $screenWidth < 768;
-        
-        // Detect mobile by user agent (fallback)
-        $userAgent = $request->header('User-Agent');
-        $isMobileByUA = stripos($userAgent, 'Mobile') !== false || 
-                        stripos($userAgent, 'Android') !== false || 
-                        stripos($userAgent, 'iPhone') !== false ||
-                        stripos($userAgent, 'iPad') !== false;
-        
-        // Final decision
-        $isMobile = $isMobileByScreen || $isMobileByUA;
-        
-        // Override if screen width explicitly shows desktop
-        if ($screenWidth >= 768) {
-            $isMobile = false;
-        }
-        
-        // Check manual preference
-        if ($request->query('mobile') === '1') {
-            return redirect()->route('mobile.landing.en');
-        }
-        if ($request->query('desktop') === '1') {
-            return app(PublicArticleController::class)->landing($request);
-        }
-        
-        // Auto-redirect based on detection
-        if ($isMobile) {
-            return redirect()->route('mobile.landing.en');
-        }
-        
-        // Desktop version (existing landing page)
+        // Fully responsive landing page — serves all devices
+        // Manual mobile override handled by DeviceDetection middleware (?mobile=1)
         return app(PublicArticleController::class)->landing($request);
     })->name('landing.en');
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index.en');
     Route::get('/services/{slug}', [ServiceController::class, 'show'])->name('services.show.en');
+    Route::get('/services/{serviceSlug}/sub/{subSlug}', [ServiceController::class, 'showSub'])->name('services.sub.en');
     Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index.en');
     Route::get('/blog/category/{category}', [PublicArticleController::class, 'category'])->name('blog.category.en');
     Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag.en');
@@ -137,43 +132,10 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 Route::get('/estimasi-biaya', [App\Http\Controllers\ConsultationPageController::class, 'index'])->name('consultation.index');
 Route::get('/estimasi-biaya/hasil/{requestId}', [App\Http\Controllers\ConsultationPageController::class, 'result'])->name('consultation.result');
 
-// Landing Page (Public) - Indonesian Default - Auto-detect Mobile/Desktop
+// Landing Page (Public) - Indonesian Default - Responsive (No Mobile Redirect)
 Route::middleware('locale:id')->get('/', function(\Illuminate\Http\Request $request) {
-    // Get screen width from session (set by JS)
-    $screenWidth = session('screen_width', 0);
-    
-    // Detect mobile by screen width (priority)
-    $isMobileByScreen = $screenWidth > 0 && $screenWidth < 768;
-    
-    // Detect mobile by user agent (fallback)
-    $userAgent = $request->header('User-Agent');
-    $isMobileByUA = stripos($userAgent, 'Mobile') !== false || 
-                    stripos($userAgent, 'Android') !== false || 
-                    stripos($userAgent, 'iPhone') !== false ||
-                    stripos($userAgent, 'iPad') !== false;
-    
-    // Final decision
-    $isMobile = $isMobileByScreen || $isMobileByUA;
-    
-    // Override if screen width explicitly shows desktop
-    if ($screenWidth >= 768) {
-        $isMobile = false;
-    }
-    
-    // Check manual preference
-    if ($request->query('mobile') === '1') {
-        return redirect()->route('mobile.landing.id');
-    }
-    if ($request->query('desktop') === '1') {
-        return app(PublicArticleController::class)->landing($request);
-    }
-    
-    // Auto-redirect based on detection
-    if ($isMobile) {
-        return redirect()->route('mobile.landing.id');
-    }
-    
-    // Desktop version (existing landing page)
+    // Fully responsive landing page — serves all devices
+    // Manual mobile override handled by DeviceDetection middleware (?mobile=1)
     return app(PublicArticleController::class)->landing($request);
 })->name('landing.id');
 
@@ -194,6 +156,9 @@ Route::prefix('konsultasi-gratis')->group(function() {
 // Permit Calculator Tool (Public)
 Route::get('/kalkulator-perizinan', [App\Http\Controllers\CalculatorController::class, 'index'])->name('calculator.index');
 Route::post('/kalkulator-perizinan/calculate', [App\Http\Controllers\CalculatorController::class, 'calculate'])->name('calculator.calculate');
+
+// Polygon SHP Maker Tool (Public)
+Route::get('/polygon-shp-maker', [App\Http\Controllers\PolygonToolController::class, 'index'])->name('polygon.shp.index');
 
 // Career/Jobs Pages (Public)
 Route::get('/karir', [App\Http\Controllers\JobVacancyController::class, 'index'])->name('career.index');
@@ -231,8 +196,29 @@ Route::get('/__REDACTED_LEGACY_ADMIN_SEGMENT__', [App\Http\Controllers\Auth\Logi
 Route::post('/__REDACTED_LEGACY_ADMIN_SEGMENT__', [App\Http\Controllers\Auth\LoginController::class, 'login'])
     ->middleware('throttle:3,1'); // Stricter rate limit for admin path
 
-// Protected Routes (require authentication)
+// ========================================
+// BACKWARD COMPATIBILITY REDIRECTS
+// Redirect old URLs without /admin/ to new URLs with /admin/
+// ========================================
 Route::middleware(['auth'])->group(function () {
+    Route::redirect('/dashboard', '/admin/dashboard', 301);
+    Route::redirect('/projects', '/admin/projects', 301);
+    Route::redirect('/tasks', '/admin/tasks', 301);
+    Route::redirect('/documents', '/admin/documents', 301);
+    Route::redirect('/institutions', '/admin/institutions', 301);
+    Route::redirect('/clients', '/admin/clients', 301);
+    Route::redirect('/settings', '/admin/settings', 301);
+    Route::redirect('/cash-accounts', '/admin/cash-accounts', 301);
+    Route::redirect('/articles', '/admin/articles', 301);
+    Route::redirect('/reconciliations', '/admin/reconciliations', 301);
+    Route::redirect('/permit-types', '/admin/permit-types', 301);
+    Route::redirect('/permit-templates', '/admin/permit-templates', 301);
+    Route::redirect('/auto-post', '/admin/auto-post', 301);
+});
+
+// Protected Routes (require authentication)
+// All admin panel routes are prefixed with /admin/
+Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Dashboard - desktop version (mobile auto-redirects handled in DetectMobile middleware)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
@@ -242,7 +228,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('home');
 
     // Admin Profile Routes
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::name('admin.')->group(function () {
         Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
         Route::put('/profile/password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password');
@@ -293,39 +279,35 @@ Route::middleware(['auth'])->group(function () {
         Route::get('api/clients', [App\Http\Controllers\ClientController::class, 'apiIndex'])->name('api.clients');
     });
 
-    // Service Inquiry Management Routes (Lead Generation)
+    // Lead Management Routes (Unified with Tabs)
     Route::middleware('permission:clients.view')->group(function () {
-        Route::get('admin/service-inquiries', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'index'])->name('admin.service-inquiries.index');
-        Route::get('admin/service-inquiries/export', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'export'])->name('admin.service-inquiries.export');
-        Route::get('admin/service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'show'])->name('admin.service-inquiries.show');
-        Route::patch('admin/service-inquiries/{serviceInquiry}/status', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updateStatus'])->name('admin.service-inquiries.update-status');
-        Route::patch('admin/service-inquiries/{serviceInquiry}/priority', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updatePriority'])->name('admin.service-inquiries.update-priority');
-        Route::post('admin/service-inquiries/{serviceInquiry}/note', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('admin.service-inquiries.add-note');
-        Route::post('admin/service-inquiries/{serviceInquiry}/convert', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'convertToProject'])->name('admin.service-inquiries.convert');
-        Route::delete('admin/service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'destroy'])->name('admin.service-inquiries.destroy');
-    });
-
-    // Consultation Leads Management Routes (Cost Estimation Leads)
-    Route::middleware('permission:clients.view')->group(function () {
-        Route::get('admin/consultation-leads', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'index'])->name('admin.consultation-leads.index');
-        Route::get('admin/consultation-leads/export', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'export'])->name('admin.consultation-leads.export');
-        Route::get('admin/consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'show'])->name('admin.consultation-leads.show');
-        Route::post('admin/consultation-leads/{consultation}/update-status', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'updateStatus'])->name('admin.consultation-leads.update-status');
-        Route::post('admin/consultation-leads/{consultation}/mark-contacted', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'markContacted'])->name('admin.consultation-leads.mark-contacted');
-        Route::post('admin/consultation-leads/{consultation}/convert', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'convertToClient'])->name('admin.consultation-leads.convert-to-client');
-        Route::post('admin/consultation-leads/{consultation}/note', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'addNote'])->name('admin.consultation-leads.add-note');
-        Route::delete('admin/consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'destroy'])->name('admin.consultation-leads.destroy');
+        // Unified Lead Management Page with Tabs
+        Route::get('leads', [App\Http\Controllers\Admin\LeadManagementController::class, 'index'])->name('admin.leads.index');
+        
+        // Service Inquiry routes (kept for detail pages and actions)
+        Route::get('service-inquiries/export', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'export'])->name('admin.service-inquiries.export');
+        Route::get('service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'show'])->name('admin.service-inquiries.show');
+        Route::patch('service-inquiries/{serviceInquiry}/status', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updateStatus'])->name('admin.service-inquiries.update-status');
+        Route::patch('service-inquiries/{serviceInquiry}/priority', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updatePriority'])->name('admin.service-inquiries.update-priority');
+        Route::post('service-inquiries/{serviceInquiry}/note', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('admin.service-inquiries.add-note');
+        Route::post('service-inquiries/{serviceInquiry}/convert', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'convertToProject'])->name('admin.service-inquiries.convert');
+        Route::delete('service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'destroy'])->name('admin.service-inquiries.destroy');
+        
+        // Consultation Leads routes (kept for detail pages and actions)
+        Route::get('consultation-leads/export', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'export'])->name('admin.consultation-leads.export');
+        Route::get('consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'show'])->name('admin.consultation-leads.show');
+        Route::post('consultation-leads/{consultation}/update-status', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'updateStatus'])->name('admin.consultation-leads.update-status');
+        Route::post('consultation-leads/{consultation}/mark-contacted', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'markContacted'])->name('admin.consultation-leads.mark-contacted');
+        Route::post('consultation-leads/{consultation}/convert', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'convertToClient'])->name('admin.consultation-leads.convert-to-client');
+        Route::post('consultation-leads/{consultation}/note', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'addNote'])->name('admin.consultation-leads.add-note');
+        Route::delete('consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'destroy'])->name('admin.consultation-leads.destroy');
+        
+        // Backward compatibility redirects
+        Route::redirect('service-inquiries', '/admin/leads?tab=service-inquiries');
+        Route::redirect('consultation-leads', '/admin/leads?tab=consultation-leads');
     });
 
     // Financial Management Routes (Phase 1)
-    // Master Data Hub - DEPRECATED: Now integrated into Permits page
-    Route::middleware('auth')->group(function () {
-        // Redirect to Permits page with KBLI tab
-        Route::get('admin/master-data', function() {
-            return redirect()->route('admin.permits.index', ['tab' => 'kbli']);
-        })->name('admin.master-data.index');
-    });
-    
     // Read-only routes (auth required)
     Route::middleware('auth')->group(function () {
         Route::get('cash-accounts', [CashAccountController::class, 'index'])->name('cash-accounts.index');
@@ -384,25 +366,38 @@ Route::middleware(['auth'])->group(function () {
         Route::post('articles/{article}/archive', [ArticleController::class, 'archive'])->name('articles.archive');
         Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])->name('articles.upload-image');
         
-        // Auto-Post Management Routes
+        // Pexels API Routes
+        Route::prefix('pexels')->name('pexels.')->group(function () {
+            Route::get('search', [App\Http\Controllers\Admin\PexelsController::class, 'search'])->name('search');
+            Route::get('curated', [App\Http\Controllers\Admin\PexelsController::class, 'curated'])->name('curated');
+            Route::post('download', [App\Http\Controllers\Admin\PexelsController::class, 'download'])->name('download');
+        });
+        
+        // Auto-Post Management Routes (Unified Dashboard)
         Route::prefix('auto-post')->name('auto-post.')->group(function () {
-            // Configuration
-            Route::get('config', [App\Http\Controllers\Admin\AutoPostConfigController::class, 'index'])->name('config');
+            // Unified Dashboard with Tabs
+            Route::get('/', [App\Http\Controllers\Admin\AutoPostController::class, 'index'])->name('index');
+            
+            // Configuration (kept for form submission)
             Route::put('config', [App\Http\Controllers\Admin\AutoPostConfigController::class, 'update'])->name('config.update');
             Route::post('config/toggle', [App\Http\Controllers\Admin\AutoPostConfigController::class, 'toggle'])->name('config.toggle');
             
-            // Topics Management
+            // Legacy redirect: config -> unified dashboard
+            Route::get('config', fn() => redirect()->route('auto-post.index', ['tab' => 'config']))->name('config');
+            
+            // Topics Management (resource routes for CRUD)
             Route::resource('topics', App\Http\Controllers\Admin\ArticleTopicController::class);
             Route::post('topics/bulk-action', [App\Http\Controllers\Admin\ArticleTopicController::class, 'bulkAction'])->name('topics.bulk-action');
             
-            // Schedules Management
+            // Schedules Management (resource routes for CRUD)
             Route::resource('schedules', App\Http\Controllers\Admin\AutoPostScheduleController::class)->except(['edit', 'update']);
+            Route::post('schedules/bulk-action', [App\Http\Controllers\Admin\AutoPostScheduleController::class, 'bulkAction'])->name('schedules.bulk-action');
             Route::post('schedules/generate-batch', [App\Http\Controllers\Admin\AutoPostScheduleController::class, 'generateBatch'])->name('schedules.generate-batch');
             Route::post('schedules/{schedule}/retry', [App\Http\Controllers\Admin\AutoPostScheduleController::class, 'retry'])->name('schedules.retry');
             Route::post('schedules/{schedule}/process-now', [App\Http\Controllers\Admin\AutoPostScheduleController::class, 'processNow'])->name('schedules.process-now');
             
-            // Analytics & Logs
-            Route::get('analytics', [App\Http\Controllers\Admin\AutoPostAnalyticsController::class, 'index'])->name('analytics');
+            // Legacy redirects
+            Route::get('analytics', fn() => redirect()->route('auto-post.index', ['tab' => 'analytics']))->name('analytics');
             Route::get('logs', [App\Http\Controllers\Admin\AutoPostLogController::class, 'index'])->name('logs.index');
             Route::get('logs/recent', [App\Http\Controllers\Admin\AutoPostLogController::class, 'recent'])->name('logs.recent');
         });
@@ -523,7 +518,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Career Management Routes (Admin)
-    Route::prefix('admin')->name('admin.')->middleware('permission:recruitment.view')->group(function () {
+    Route::name('admin.')->middleware('permission:recruitment.view')->group(function () {
         // Job Vacancy Management
         Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class);
         
@@ -543,7 +538,7 @@ Route::middleware(['auth'])->group(function () {
     });
     
     // Email Management Routes
-    Route::prefix('admin')->name('admin.')->middleware(['auth', 'email.access'])->group(function () {
+    Route::name('admin.')->middleware(['auth', 'email.access'])->group(function () {
         // Email Management Hub (Unified Tab Interface)
         Route::get('email-management', [App\Http\Controllers\Admin\EmailManagementController::class, 'index'])->name('email-management.index');
         
@@ -587,39 +582,61 @@ Route::middleware(['auth'])->group(function () {
             Route::get('export', [App\Http\Controllers\Admin\KbliSettingsController::class, 'export'])->name('export');
             Route::delete('clear', [App\Http\Controllers\Admin\KbliSettingsController::class, 'clear'])->name('clear');
         });
-        
-        // Backlink Management Routes
-        Route::prefix('backlinks')->name('backlinks.')->group(function () {
-            // Dashboard
-            Route::get('/', [App\Http\Controllers\Admin\BacklinkController::class, 'index'])->name('index');
-            Route::get('/analytics', [App\Http\Controllers\Admin\BacklinkController::class, 'analytics'])->name('analytics');
+
+        // SEO Command Center (Unified Hub)
+        Route::prefix('seo')->name('seo.')->group(function () {
+            // Unified Command Center (main entry point)
+            Route::get('/command-center', [App\Http\Controllers\Admin\SeoCommandCenterController::class, 'index'])->name('command-center');
             
-            // Targets Management
-            Route::get('/targets', [App\Http\Controllers\Admin\BacklinkController::class, 'targets'])->name('targets');
-            Route::get('/targets/create', [App\Http\Controllers\Admin\BacklinkController::class, 'createTarget'])->name('targets.create');
-            Route::post('/targets', [App\Http\Controllers\Admin\BacklinkController::class, 'storeTarget'])->name('targets.store');
-            Route::get('/targets/{target}/edit', [App\Http\Controllers\Admin\BacklinkController::class, 'editTarget'])->name('targets.edit');
-            Route::put('/targets/{target}', [App\Http\Controllers\Admin\BacklinkController::class, 'updateTarget'])->name('targets.update');
-            Route::delete('/targets/{target}', [App\Http\Controllers\Admin\BacklinkController::class, 'deleteTarget'])->name('targets.delete');
-            
-            // Backlinks Management
-            Route::get('/list', [App\Http\Controllers\Admin\BacklinkController::class, 'backlinks'])->name('list');
-            Route::get('/list/create', [App\Http\Controllers\Admin\BacklinkController::class, 'createBacklink'])->name('create');
-            Route::post('/list', [App\Http\Controllers\Admin\BacklinkController::class, 'storeBacklink'])->name('store');
-            Route::get('/list/{backlink}/edit', [App\Http\Controllers\Admin\BacklinkController::class, 'editBacklink'])->name('edit');
-            Route::put('/list/{backlink}', [App\Http\Controllers\Admin\BacklinkController::class, 'updateBacklink'])->name('update');
-            Route::delete('/list/{backlink}', [App\Http\Controllers\Admin\BacklinkController::class, 'deleteBacklink'])->name('delete');
-            
-            // Content Syndication
-            Route::get('/syndication', [App\Http\Controllers\Admin\BacklinkController::class, 'syndication'])->name('syndication');
-            
-            // Automation Settings
-            Route::get('/settings', function() {
-                return view('admin.backlinks.settings');
-            })->name('settings');
-            
-            // Execute Command
-            Route::post('/execute-command', [App\Http\Controllers\Admin\BacklinkController::class, 'executeCommand'])->name('execute-command');
+            // Redirect old dashboard to command-center
+            Route::get('/', function() {
+                return redirect()->route('admin.seo.command-center');
+            })->name('dashboard');
+            Route::get('/scores', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'scores'])->name('scores');
+
+            // Static POST/GET routes BEFORE wildcard {articleId}
+            Route::post('/scores/fix-batch', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'fixBatch'])->name('fix-batch');
+            Route::post('/scores/rescore-all', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'rescoreAll'])->name('rescore-all');
+            Route::get('/scores/fix-candidates', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'fixCandidates'])->name('fix-candidates');
+            Route::post('/scores/fix-single-ajax/{articleId}', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'fixSingleAjax'])->name('fix-single-ajax');
+
+            Route::get('/scores/{articleId}', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'scoreDetail'])->name('score-detail');
+            Route::post('/scores/{articleId}/fix', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'fixSingle'])->name('fix-single');
+
+            Route::get('/reports', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'reports'])->name('reports');
+            Route::get('/reports/{reportId}', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'reportDetail'])->name('report-detail');
+            Route::get('/competitors', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'competitors'])->name('competitors');
+            Route::get('/competitors/{id}', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'competitorDetail'])->name('competitor-detail');
+            Route::post('/competitors/{id}/re-analyze', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'reAnalyzeKeyword'])->name('competitor-reanalyze');
+            Route::post('/competitors/analyze-keyword', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'analyzeCustomKeyword'])->name('competitor-analyze-keyword');
+            Route::post('/competitors/{id}/apply-fix', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'applyCompetitorFix'])->name('competitor-apply-fix');
+            Route::post('/competitors/{id}/verify', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'verifyCompetitorFix'])->name('competitor-verify');
+            Route::get('/competitors/{id}/smart-fix', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'competitorSmartFix'])->name('competitor-smart-fix');
+            Route::post('/competitors/{id}/smart-fix', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'executeSmartFix'])->name('competitor-execute-smart-fix');
+            Route::get('/ab-tests', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'abTests'])->name('ab-tests');
+            Route::post('/ab-tests/{id}/evaluate', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'evaluateAbTest'])->name('ab-tests.evaluate');
+            Route::post('/ab-tests/{id}/stop', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'stopAbTest'])->name('ab-tests.stop');
+            Route::post('/ab-tests/{id}/apply', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'applyAbTestWinner'])->name('ab-tests.apply');
+            Route::post('/ab-tests/{id}/update-data', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'updateAbTestData'])->name('ab-tests.update-data');
+            Route::delete('/ab-tests/{id}', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'deleteAbTest'])->name('ab-tests.delete');
+            Route::post('/ab-tests/evaluate-all', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'evaluateAllAbTests'])->name('ab-tests.evaluate-all');
+            Route::get('/search-console', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'searchConsole'])->name('search-console');
+            Route::post('/search-console/import', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'importSearchConsole'])->name('search-console.import');
+            Route::post('/search-console/clear', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'clearSearchConsole'])->name('search-console.clear');
+            Route::get('/refresh-logs', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'refreshLogs'])->name('refresh-logs');
+            Route::post('/refresh-logs/run', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'runContentRefresh'])->name('refresh-logs.run');
+            Route::post('/refresh-logs/{id}/retry', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'retryRefresh'])->name('refresh-logs.retry');
+            Route::delete('/refresh-logs/{id}', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'deleteRefreshLog'])->name('refresh-logs.delete');
+            Route::get('/refresh-logs/{id}', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'showRefreshLog'])->name('refresh-logs.show');
+            Route::get('/programmatic', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'programmatic'])->name('programmatic');
+            Route::post('/programmatic/clear-cache', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'clearProgrammaticCache'])->name('programmatic.clear-cache');
+
+            // Web-triggered SEO commands (replaces manual artisan commands)
+            Route::post('/run/snapshot-views', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'runSnapshotViews'])->name('run-snapshot-views');
+            Route::post('/run/generate-report', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'runGenerateReport'])->name('run-generate-report');
+            Route::post('/run/competitor-analyze', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'runCompetitorAnalyze'])->name('run-competitor-analyze');
+            Route::post('/run/ab-tests', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'runAbTests'])->name('run-ab-tests');
+            Route::match(['get', 'post'], '/run/score-articles', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'scoreArticlesProgress'])->name('run-score-articles');
         });
     });
 
@@ -668,11 +685,11 @@ Route::prefix('client')->name('client.')->group(function () {
         
         Route::get('/register', [App\Http\Controllers\Auth\ClientAuthController::class, 'showRegistrationForm'])->name('register');
         Route::post('/register', [App\Http\Controllers\Auth\ClientAuthController::class, 'register'])
-            ->middleware('throttle:3,1'); // Max 3 registrations per minute
+            ->middleware('throttle:10,1'); // Max 10 registrations per minute
         
         Route::get('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'showForgotPasswordForm'])->name('password.request');
         Route::post('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'sendResetLinkEmail'])
-            ->middleware('throttle:3,1') // Max 3 attempts per minute
+            ->middleware('throttle:5,1') // Max 5 attempts per minute
             ->name('password.email');
         
         Route::get('/reset-password/{token}', [App\Http\Controllers\Auth\ClientAuthController::class, 'showResetPasswordForm'])->name('password.reset');
@@ -757,14 +774,17 @@ Route::prefix('client')->name('client.')->group(function () {
 Route::prefix('webhook/email')->name('webhook.email.')->group(function () {
     // Receive incoming email
     Route::post('/receive', [App\Http\Controllers\EmailWebhookController::class, 'receive'])
+        ->middleware('throttle:60,1')
         ->name('receive');
     
     // Test webhook dengan data dummy
     Route::post('/test', [App\Http\Controllers\EmailWebhookController::class, 'test'])
+        ->middleware(['auth', 'role:admin'])
         ->name('test');
     
     // Check webhook status
     Route::get('/status', [App\Http\Controllers\EmailWebhookController::class, 'status'])
+        ->middleware(['auth', 'role:admin'])
         ->name('status');
 });
 
@@ -815,11 +835,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
     // Unified Permit Management Interface (New Tabbed Interface)
     Route::get('permits', [App\Http\Controllers\Admin\PermitManagementController::class, 'index'])
         ->name('permits.index');
-    
-    // Backward-compatible redirects to new tabbed interface
-    Route::get('permit-dashboard', function() {
-        return redirect()->route('admin.permits.index', ['tab' => 'dashboard']);
-    })->name('permit-dashboard');
     
     // Unified Recruitment Management Interface (Tabbed Interface)
     Route::get('recruitment', [RecruitmentController::class, 'index'])
@@ -1024,41 +1039,6 @@ Route::prefix('candidate')->name('candidate.')->group(function () {
         ->name('test.track-tab');
     Route::get('test/{token}/time', [App\Http\Controllers\Candidate\TestController::class, 'getRemainingTime'])
         ->name('test.time');
-});
-
-// Beta Tester Routes - Standalone System
-Route::prefix('beta-tester')->name('beta-tester.')->group(function () {
-    // Public Routes
-    Route::get('/', [App\Http\Controllers\BetaTesterController::class, 'index'])->name('index');
-    Route::get('/register', [App\Http\Controllers\BetaTesterController::class, 'register'])->name('register');
-    Route::post('/register', [App\Http\Controllers\BetaTesterController::class, 'store'])->name('store');
-    
-    // Dashboard & Documents (Token-based Authentication)
-    Route::get('/dashboard', [App\Http\Controllers\BetaTesterController::class, 'dashboard'])->name('dashboard');
-    Route::get('/document/{documentId}', [App\Http\Controllers\BetaTesterController::class, 'viewDocument'])->name('document.view');
-    Route::post('/document/{documentId}/sign', [App\Http\Controllers\BetaTesterController::class, 'signDocument'])->name('document.sign');
-    Route::get('/document/{documentId}/download', [App\Http\Controllers\BetaTesterController::class, 'downloadPdf'])->name('document.download');
-});
-
-// Admin Beta Tester Management Routes
-Route::middleware(['auth'])->prefix('admin/beta-tester')->name('admin.beta-tester.')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'dashboard'])->name('dashboard');
-    
-    // CRUD
-    Route::get('/', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'index'])->name('index');
-    Route::get('/{betaTester}', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'show'])->name('show');
-    Route::patch('/{betaTester}', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'update'])->name('update');
-    Route::delete('/{betaTester}', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'destroy'])->name('destroy');
-    
-    // Actions
-    Route::post('/{betaTester}/change-status', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'changeStatus'])->name('change-status');
-    Route::post('/{betaTester}/resend-documents', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'resendDocuments'])->name('resend-documents');
-    Route::post('/{betaTester}/add-note', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'addNote'])->name('add-note');
-    Route::post('/document/{document}/verify', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'verifyDocument'])->name('document.verify');
-    
-    // Export
-    Route::get('/export/csv', [App\Http\Controllers\Admin\BetaTesterManagementController::class, 'export'])->name('export');
 });
 
 

@@ -42,7 +42,7 @@
             @foreach($userPerformance as $user)
             <div class="border-b border-gray-100 last:border-0 pb-3 last:pb-0">
                 <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#0077b5] to-[#004d6d] flex items-center justify-center text-white font-bold text-sm">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#0A66C2] to-[#004182] flex items-center justify-center text-white font-bold text-sm">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                     </div>
                     <div class="flex-1">
@@ -71,7 +71,7 @@
                                 $completed = $user->completed_tasks ?? 0;
                                 $rate = $total > 0 ? round(($completed / $total) * 100) : 0;
                             @endphp
-                            <div class="text-sm font-bold text-[#0077b5]">{{ $rate }}%</div>
+                            <div class="text-sm font-bold text-[#0A66C2]">{{ $rate }}%</div>
                             <div class="text-xs text-gray-500">Rate</div>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                         @php
                             $percentage = (($user->completed_tasks ?? 0) / $user->total_tasks) * 100;
                         @endphp
-                        <div class="h-full bg-gradient-to-r from-[#0077b5] to-[#00a0dc]" 
+                        <div class="h-full bg-gradient-to-r from-[#0A66C2] to-[#00a0dc]" 
                              style="width: {{ $percentage }}%"></div>
                     </div>
                     @endif

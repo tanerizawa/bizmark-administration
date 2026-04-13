@@ -109,10 +109,10 @@ class DocumentController extends Controller
     
     public function download(Document $document)
     {
-        if (!Storage::exists($document->file_path)) {
+        if (!Storage::disk('public')->exists($document->file_path)) {
             return back()->with('error', 'File tidak ditemukan');
         }
         
-        return Storage::download($document->file_path, $document->title);
+        return Storage::disk('public')->download($document->file_path, $document->title);
     }
 }

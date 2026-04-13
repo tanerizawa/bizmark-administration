@@ -6,7 +6,7 @@
 <div class="pb-20">
     
     {{-- Header --}}
-    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-2xl p-6 mb-4 text-white">
+    <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-2xl p-6 mb-4 text-white">
         <div class="flex items-center justify-between mb-3">
             <div>
                 <h2 class="text-xl font-bold">Klien</h2>
@@ -29,7 +29,7 @@
     {{-- Stats --}}
     <div class="grid grid-cols-3 gap-3 mb-4">
         <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
-            <div class="text-2xl font-bold text-[#0077b5] mb-1">{{ $stats['total'] }}</div>
+            <div class="text-2xl font-bold text-[#0A66C2] mb-1">{{ $stats['total'] }}</div>
             <div class="text-xs text-gray-600">Total</div>
         </div>
         <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
@@ -49,7 +49,7 @@
             <div class="flex items-start justify-between mb-3">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-1">
-                        <div class="w-10 h-10 bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-lg flex items-center justify-center text-white font-bold">
+                        <div class="w-10 h-10 bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-lg flex items-center justify-center text-white font-bold">
                             {{ strtoupper(substr($client->name, 0, 1)) }}
                         </div>
                         <div class="flex-1">
@@ -86,7 +86,7 @@
             
             <div class="mt-3 pt-3 border-t border-gray-100">
                 <a href="{{ mobile_route('clients.show', $client->id) }}" 
-                   class="text-[#0077b5] text-sm font-medium inline-flex items-center gap-1">
+                   class="text-[#0A66C2] text-sm font-medium inline-flex items-center gap-1">
                     Lihat Detail
                     <i class="fas fa-chevron-right text-xs"></i>
                 </a>

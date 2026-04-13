@@ -46,7 +46,7 @@
                         <span>Estimasi Biaya Gratis</span>
                         <i class="fas fa-arrow-right text-sm transition-transform group-hover:translate-x-1"></i>
                     </a>
-                    <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri,%20saya%20ingin%20konsultasi" 
+                    <a href="{{ config('landing_metrics.contact.whatsapp_link') }}?text={{ rawurlencode('Halo PT Cangah Pajaratan Mandiri, saya ingin konsultasi') }}" 
                        class="btn btn-outline group">
                         <span class="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10">
                             <i class="fab fa-whatsapp text-base"></i>
@@ -96,7 +96,7 @@
                         <div class="aspect-[4/3] bg-white/75 backdrop-blur-xl border border-primary/10 rounded-3xl relative overflow-hidden shadow-[0_25px_60px_-40px_rgba(30,64,175,0.45)]">
                             
                             {{-- Hero Photo --}}
-                            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.pexels.com/photos/3183286/pexels-photo-3183286.jpeg?auto=compress&cs=tinysrgb&w=1400');"></div>
+                            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/images/landing/hero-modern-1400.webp');"></div>
                             <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 via-white/30 to-transparent opacity-80"></div>
                         
                         {{-- Overlay Card --}}

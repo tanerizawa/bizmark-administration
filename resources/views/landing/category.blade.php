@@ -51,7 +51,7 @@
         }
     </style>
 </head>
-<body>
+<body style="min-height: 100vh; display: flex; flex-direction: column;">
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container mx-auto px-4 py-4">
@@ -71,6 +71,8 @@
         </div>
     </nav>
 
+    <!-- Main Content -->
+    <div style="flex: 1; display: flex; flex-direction: column;">
     <!-- Header -->
     <section class="pt-32 pb-12 px-4" style="background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);">
         <div class="container mx-auto max-w-7xl">
@@ -151,9 +153,10 @@
             @endif
         </div>
     </section>
+    </div>
 
     <!-- Footer -->
-    <footer class="py-8 px-4 border-t border-gray-800">
+    <footer class="py-8 px-4 border-t border-gray-800" style="margin-top: auto;">
         <div class="container mx-auto max-w-7xl text-center text-gray-500">
             <p>&copy; 2025 Bizmark.ID - PT Cangah Pajaratan Mandiri. All rights reserved.</p>
         </div>

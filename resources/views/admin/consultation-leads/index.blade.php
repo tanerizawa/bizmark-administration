@@ -50,7 +50,7 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
         <div class="card-elevated rounded-apple-lg p-3">
-            <div class="text-2xl font-bold text-white mb-1">{{ $stats['total'] }}</div>
+            <div class="text-lg font-bold text-white mb-1">{{ $stats['total'] }}</div>
             <div class="text-xs text-dark-text-secondary">Total</div>
         </div>
         <div class="card-elevated rounded-apple-lg p-3">
@@ -255,7 +255,7 @@
                     @empty
                         <tr>
                             <td colspan="7" class="px-4 py-8 text-center text-dark-text-secondary">
-                                <i class="fas fa-inbox text-3xl mb-3 block opacity-30"></i>
+                                <i class="fas fa-inbox text-2xl mb-3 block opacity-30"></i>
                                 <p>Tidak ada consultation leads ditemukan</p>
                                 @if(request()->hasAny(['search', 'status', 'contacted', 'date_from', 'date_to']))
                                     <a href="{{ route('admin.consultation-leads.index') }}" class="text-apple-blue hover:text-blue-400 text-sm mt-2 inline-block">
@@ -292,7 +292,7 @@
 <!-- Convert to Client Modal -->
 <div id="convertModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
     <div class="card-elevated rounded-apple-lg max-w-md w-full p-6">
-        <h3 class="text-xl font-semibold text-white mb-4">Konversi ke Klien</h3>
+        <h3 class="text-base font-semibold text-white mb-4">Konversi ke Klien</h3>
         <p class="text-sm text-dark-text-secondary mb-6">
             Konversi consultation lead ini menjadi akun klien terdaftar?
         </p>

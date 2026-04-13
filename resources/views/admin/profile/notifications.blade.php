@@ -19,7 +19,7 @@
             </div>
             <form action="{{ route('admin.notifications.read-all') }}" method="POST">
                 @csrf
-                <button type="submit" class="px-4 py-2 text-sm text-apple-blue font-medium hover:bg-apple-blue hover:bg-opacity-10 rounded-apple transition">
+                <button type="submit" class="px-4 py-2 text-sm text-apple-blue font-medium rounded-apple transition" style="background: transparent;" onmouseover="this.style.backgroundColor='rgba(0,122,255,0.10)'" onmouseout="this.style.backgroundColor='transparent'">
                     <i class="fas fa-check-double mr-2"></i>Tandai Semua Dibaca
                 </button>
             </form>

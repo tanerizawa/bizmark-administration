@@ -4,58 +4,78 @@
 @section('page-title', 'Manajemen Keuangan')
 
 @section('content')
-<div class="cash-shell space-y-5">
-    {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
+<div class="cash-shell space-y-3">
+    {{-- Compact Hero Section --}}
+    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
+            <div class="w-32 h-32 bg-apple-green opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
         </div>
-        <div class="relative space-y-5 md:space-y-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.55);">Kendali Keuangan Terintegrasi</p>
-                    <h1 class="text-base md:text-lg font-semibold" style="color: #FFFFFF;">
-                        Kendali Kas & Rekening Terpadu
-                    </h1>
-                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.72);">
-                        Pantau arus kas, piutang, dan tren finansial secara ringkas dalam satu panel.
-                    </p>
+        <div class="relative space-y-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div class="space-y-1 max-w-3xl">
+                    <p class="admin-label-compact">Kendali Keuangan Terintegrasi</p>
+                    <h1 class="admin-hero-title">Kendali Kas & Rekening Terpadu</h1>
+                    <p class="admin-body" style="color: rgba(235,235,245,0.72);">Pantau arus kas, piutang, dan tren finansial secara ringkas dalam satu panel.</p>
                 </div>
-                <div class="space-y-2.5 text-sm" style="color: rgba(235,235,245,0.65);">
-                    <p><i class="fas fa-sync-alt mr-2"></i>Sinkronisasi terakhir: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
-                    <p><i class="fas fa-shield-alt mr-2"></i>Akses Tim Keuangan</p>
-                    <div class="flex gap-3 flex-wrap">
-                        <a href="{{ route('cash-accounts.create') }}" class="btn-primary-sm">
-                            <i class="fas fa-plus mr-2"></i>Tambah Akun
+                <div class="space-y-1.5 text-xs" style="color: rgba(235,235,245,0.65);">
+                    <p><i class="fas fa-sync-alt mr-1.5"></i>Sync: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
+                    <p><i class="fas fa-shield-alt mr-1.5"></i>Akses Tim Keuangan</p>
+                    <div class="flex gap-2 flex-wrap">
+                        <a href="{{ route('cash-accounts.create') }}" class="admin-btn">
+                            <i class="fas fa-plus mr-1.5"></i>Tambah Akun
                         </a>
-                        <button onclick="showPeriodFilter()" class="btn-secondary-sm">
-                            <i class="fas fa-calendar-alt mr-2"></i>Filter Periode
+                        <button onclick="showPeriodFilter()" class="admin-btn" style="background: rgba(255,255,255,0.1);">
+                            <i class="fas fa-calendar-alt mr-1.5"></i>Filter
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <div class="rounded-apple-lg p-3 md:p-3.5" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Aset Likuid</p>
-                    <h2 class="text-base font-semibold mt-1.5" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['liquid_assets'] / 1000000, 1) }}M</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Bank + Kas Tunai</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div class="admin-stat-card" style="background: rgba(10,132,255,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
+                            <i class="fas fa-wallet text-xs" style="color: var(--apple-blue);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['liquid_assets'] / 1000000, 1) }}M</p>
+                            <p class="admin-label-compact">Aset Likuid</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="rounded-apple-lg p-3 md:p-3.5" style="background: rgba(255,149,0,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Piutang Belum Dibayar</p>
-                    <h2 class="text-base font-semibold mt-1.5" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Faktur dan Kasbon</p>
+                <div class="admin-stat-card" style="background: rgba(255,149,0,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,149,0,0.25);">
+                            <i class="fas fa-file-invoice text-xs" style="color: var(--apple-orange);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</p>
+                            <p class="admin-label-compact">Piutang</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="rounded-apple-lg p-3 md:p-3.5" style="background: rgba(52,199,89,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Kas Masuk Periode</p>
-                    <h2 class="text-base font-semibold mt-1.5" style="color: rgba(52,199,89,1);">Rp {{ number_format($financialSummary['cash_inflow_this_month'] / 1000000, 1) }}M</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $startDate->isoFormat('MMM YYYY') }}</p>
+                <div class="admin-stat-card" style="background: rgba(52,199,89,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(52,199,89,0.25);">
+                            <i class="fas fa-arrow-down text-xs" style="color: var(--apple-green);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(52,199,89,1);">Rp {{ number_format($financialSummary['cash_inflow_this_month'] / 1000000, 1) }}M</p>
+                            <p class="admin-label-compact">Kas Masuk</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="rounded-apple-lg p-3 md:p-3.5" style="background: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.12)' }};">
-                    <p class="text-xs uppercase tracking-widest" style="color: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">Arus Kas Bersih</p>
-                    <h2 class="text-base font-semibold mt-1.5" style="color:#FFFFFF;">{{ $financialSummary['net_cash_flow'] >= 0 ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $financialSummary['net_cash_flow'] >= 0 ? 'Surplus' : 'Defisit' }}</p>
+                <div class="admin-stat-card" style="background: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.12)' }};">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.25)' : 'rgba(255,59,48,0.25)' }};">
+                            <i class="fas fa-chart-line text-xs" style="color: {{ $financialSummary['net_cash_flow'] >= 0 ? 'var(--apple-green)' : 'var(--apple-red)' }};"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color:#FFFFFF;">{{ $financialSummary['net_cash_flow'] >= 0 ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</p>
+                            <p class="admin-label-compact">Arus Bersih</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,69 +83,63 @@
 
     {{-- Alerts --}}
     @if(session('success'))
-        <div class="alert alert-success flex items-center gap-3 mb-5">
-            <i class="fas fa-check-circle text-lg"></i>
-            <span>{{ session('success') }}</span>
+        <div class="alert alert-success flex items-center gap-2 mb-3">
+            <i class="fas fa-check-circle"></i>
+            <span class="admin-body">{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger flex items-center gap-3 mb-5">
-            <i class="fas fa-exclamation-circle text-lg"></i>
-            <span>{{ session('error') }}</span>
+        <div class="alert alert-danger flex items-center gap-2 mb-3">
+            <i class="fas fa-exclamation-circle"></i>
+            <span class="admin-body">{{ session('error') }}</span>
         </div>
     @endif
 
     {{-- Period Filter & Insights --}}
-    <section class="space-y-3 md:space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2.5">
+    <section class="space-y-2">
+        <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
-                <p class="text-xs uppercase tracking-[0.25em]" style="color: rgba(235,235,245,0.55);">Periode Aktif</p>
-                <h2 class="text-base font-semibold text-white">{{ $startDate->isoFormat('D MMM Y') }} - {{ $endDate->isoFormat('D MMM Y') }}</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.62);">
+                <p class="admin-label-compact">Periode Aktif</p>
+                <h2 class="admin-section text-white">{{ $startDate->isoFormat('D MMM Y') }} - {{ $endDate->isoFormat('D MMM Y') }}</h2>
+                <p class="admin-body" style="color: rgba(235,235,245,0.62);">
                     @php $daysDiff = $startDate->diffInDays($endDate) + 1; @endphp
-                    Menampilkan data {{ $daysDiff }} hari dengan {{ count($recentTransactions) }} transaksi tercatat.
+                    {{ $daysDiff }} hari • {{ count($recentTransactions) }} transaksi
                 </p>
             </div>
-            <button onclick="showPeriodFilter()" class="btn-secondary-sm">
-                <i class="fas fa-calendar-alt mr-2"></i>Ubah Periode
+            <button onclick="showPeriodFilter()" class="admin-btn" style="background: rgba(255,255,255,0.1);">
+                <i class="fas fa-calendar-alt mr-1.5"></i>Ubah
             </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
-            <div class="card-elevated rounded-apple-lg p-3.5 space-y-3">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+            <div class="card-elevated rounded-apple-lg p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-semibold text-white">Kas Keluar</h3>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(255,59,48,0.18); color: rgba(255,59,48,0.9);">Expense</span>
+                    <h3 class="admin-section text-white">Kas Keluar</h3>
+                    <span class="admin-label-compact px-2 py-0.5 rounded" style="background: rgba(255,59,48,0.18); color: rgba(255,59,48,0.9);">Expense</span>
                 </div>
-                <p class="text-xl font-semibold text-white">Rp {{ number_format($financialSummary['cash_outflow_this_month'] / 1000000, 1) }}M</p>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Pengeluaran periode berjalan untuk operasional dan proyek
-                </p>
+                <p class="admin-stat text-white">Rp {{ number_format($financialSummary['cash_outflow_this_month'] / 1000000, 1) }}M</p>
+                <p class="admin-body" style="color: rgba(235,235,245,0.65);">Pengeluaran periode berjalan</p>
             </div>
 
-            <div class="card-elevated rounded-apple-lg p-3.5 space-y-3">
+            <div class="card-elevated rounded-apple-lg p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-semibold text-white">Arus Kas Bersih</h3>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.18)' : 'rgba(255,59,48,0.18)' }}; color: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">
+                    <h3 class="admin-section text-white">Arus Kas Bersih</h3>
+                    <span class="admin-label-compact px-2 py-0.5 rounded" style="background: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.18)' : 'rgba(255,59,48,0.18)' }}; color: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">
                         {{ $financialSummary['is_positive_trend'] ? 'Positif' : 'Negatif' }}
                     </span>
                 </div>
-                <p class="text-xl font-semibold text-white">{{ $financialSummary['is_positive_trend'] ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Perbandingan dengan bulan lalu
-                </p>
+                <p class="admin-stat text-white">{{ $financialSummary['is_positive_trend'] ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
+                <p class="admin-body" style="color: rgba(235,235,245,0.65);">vs bulan lalu</p>
             </div>
 
-            <div class="card-elevated rounded-apple-lg p-3.5 space-y-3">
+            <div class="card-elevated rounded-apple-lg p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-semibold text-white">Rekening Aktif</h3>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Live</span>
+                    <h3 class="admin-section text-white">Rekening Aktif</h3>
+                    <span class="admin-label-compact px-2 py-0.5 rounded" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Live</span>
                 </div>
-                <p class="text-lg font-semibold text-white">{{ $accounts->count() }}</p>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">
-                    Rekening dan kas tercatat di sistem
-                </p>
+                <p class="admin-stat text-white">{{ $accounts->count() }}</p>
+                <p class="admin-body" style="color: rgba(235,235,245,0.65);">Rekening dan kas</p>
             </div>
         </div>
     </section>
@@ -188,7 +202,7 @@
 
             <!-- Tab 4: Bank Reconciliations -->
             <div id="content-reconciliations" class="tab-content hidden">
-                @include('admin.master-data.tabs.reconciliations')
+                @include('cash-accounts.tabs.reconciliations')
             </div>
 
             <!-- Tab 5: Project Transactions Timeline (renamed) -->

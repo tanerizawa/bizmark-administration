@@ -4,176 +4,141 @@
 @section('page-title', 'Manajemen Dokumen')
 
 @section('content')
-    {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    {{-- Compact Hero Section --}}
+    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden mb-4">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
+            <div class="w-32 h-32 bg-apple-green opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
         </div>
-        <div class="relative space-y-5 md:space-y-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Dokumen</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Arsip Digital Dokumen Perizinan
-                    </h1>
-                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Simpan, kelola, dan akses semua dokumen perizinan secara terpusat dengan sistem keamanan dan versioning yang terstruktur.
-                    </p>
+        <div class="relative space-y-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div class="space-y-1 max-w-3xl">
+                    <p class="admin-label-compact">Manajemen Dokumen</p>
+                    <h1 class="admin-hero-title">Arsip Digital Dokumen Perizinan</h1>
+                    <p class="admin-body" style="color: rgba(235,235,245,0.75);">Simpan, kelola, dan akses semua dokumen perizinan secara terpusat dengan sistem keamanan terstruktur.</p>
                 </div>
-                <div class="space-y-2.5">
-                    <a href="{{ route('documents.create') }}" 
-                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
-                       style="background: rgba(10,132,255,0.25); color: rgba(235,235,245,0.9);">
-                        <i class="fas fa-upload mr-2"></i>
-                        Upload Dokumen
-                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                <div>
+                    <a href="{{ route('documents.create') }}" class="admin-btn inline-flex items-center">
+                        <i class="fas fa-upload mr-1.5"></i>Upload Dokumen
                     </a>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {{-- Compact Stats Cards --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                 @php
                     $totalDocs = $documents->total();
                     $totalSize = $documents->sum('file_size');
                     $perizinanCount = $documents->where('category', 'perizinan')->count();
                     $confidentialCount = $documents->where('is_confidential', true)->count();
-                    
-                    // Format file size
                     $formattedSize = $totalSize >= 1073741824 ? 
                         number_format($totalSize / 1073741824, 2) . ' GB' : 
                         ($totalSize >= 1048576 ? 
                             number_format($totalSize / 1048576, 2) . ' MB' : 
                             number_format($totalSize / 1024, 2) . ' KB');
                 @endphp
-
-                <!-- Total Dokumen -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Dokumen</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $totalDocs }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Berkas tersimpan</p>
+                <div class="admin-stat-card" style="background: rgba(10,132,255,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
+                            <i class="fas fa-file-alt text-xs" style="color: var(--apple-blue);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: #FFFFFF;">{{ $totalDocs }}</p>
+                            <p class="admin-label-compact">Total Dokumen</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Total Size -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(175,82,222,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Total Ukuran</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(175,82,222,1);">{{ $formattedSize }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Kapasitas terpakai</p>
+                <div class="admin-stat-card" style="background: rgba(175,82,222,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(175,82,222,0.25);">
+                            <i class="fas fa-hdd text-xs" style="color: rgba(175,82,222,1);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(175,82,222,1);">{{ $formattedSize }}</p>
+                            <p class="admin-label-compact">Total Ukuran</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Perizinan -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Perizinan</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">{{ $perizinanCount }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Dokumen izin</p>
+                <div class="admin-stat-card" style="background: rgba(255,159,10,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,159,10,0.25);">
+                            <i class="fas fa-certificate text-xs" style="color: var(--apple-orange);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(255,159,10,1);">{{ $perizinanCount }}</p>
+                            <p class="admin-label-compact">Perizinan</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Confidential -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,59,48,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Rahasia</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,59,48,1);">{{ $confidentialCount }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akses terbatas</p>
+                <div class="admin-stat-card" style="background: rgba(255,59,48,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,59,48,0.25);">
+                            <i class="fas fa-lock text-xs" style="color: var(--apple-red);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(255,59,48,1);">{{ $confidentialCount }}</p>
+                            <p class="admin-label-compact">Rahasia</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Search and Filter Card -->
-    <div class="card-elevated rounded-apple-lg mb-4 overflow-hidden">
-        <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-            <h3 class="text-base font-semibold" style="color: #FFFFFF;">Pencarian & Filter</h3>
-        </div>
-        <div class="p-4">
-            <form method="GET" action="{{ route('documents.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <!-- Search -->
-                    <div>
-                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Pencarian</label>
-                        <div class="relative">
-                            <input type="text" 
-                                   name="search" 
-                                   value="{{ request('search') }}" 
-                                   placeholder="Judul, deskripsi, atau nama file..." 
-                                   class="input-dark w-full pl-9 pr-3 py-2 rounded-apple text-sm">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-sm" style="color: rgba(235, 235, 245, 0.3);"></i>
-                        </div>
-                    </div>
-
-                    <!-- Category -->
-                    <div>
-                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Kategori</label>
-                        <select name="category" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
-                            <option value="">Semua Kategori</option>
-                            @isset($categories)
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
-                                        {{ ucfirst($cat) }}
-                                    </option>
-                                @endforeach
-                            @endisset
-                        </select>
-                    </div>
-
-                    <!-- Document Type -->
-                    <div>
-                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Tipe Dokumen</label>
-                        <select name="document_type" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
-                            <option value="">Semua Tipe</option>
-                            @isset($documentTypes)
-                                @foreach($documentTypes as $type)
-                                    <option value="{{ $type }}" {{ request('document_type') == $type ? 'selected' : '' }}>
-                                        {{ ucfirst($type) }}
-                                    </option>
-                                @endforeach
-                            @endisset
-                        </select>
-                    </div>
-
-                    <!-- Project -->
-                    <div>
-                        <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.6);">Proyek</label>
-                        <select name="project_id" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
-                            <option value="">Semua Proyek</option>
-                            @isset($projects)
-                                @foreach($projects as $project)
-                                    <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>
-                                        {{ $project->name }}
-                                    </option>
-                                @endforeach
-                            @endisset
-                        </select>
-                    </div>
+    {{-- Compact Search and Filter --}}
+    <div class="card-elevated rounded-apple p-3 mb-3">
+        <form method="GET" action="{{ route('documents.index') }}" class="flex flex-wrap gap-2 items-end">
+            <div class="flex-1 min-w-[150px]">
+                <label class="admin-label-compact block">Cari</label>
+                <div class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Judul atau nama file..." 
+                           class="admin-input w-full pl-7 rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2" style="font-size: 0.625rem; color: rgba(235,235,245,0.3);"></i>
                 </div>
-                <script>
-                // Auto submit form on filter change
-                document.addEventListener('DOMContentLoaded', function() {
-                    const form = document.querySelector('form[action="{{ route('documents.index') }}"]');
-                    if (!form) return;
-                    
-                    const searchInput = form.querySelector('input[name="search"]');
-                    
-                    // Auto-submit for select dropdowns
-                    form.querySelectorAll('select[name]').forEach(function(el) {
-                        el.addEventListener('change', function() {
-                            form.submit();
-                        });
-                    });
-                    
-                    // Submit search on Enter key only
-                    if (searchInput) {
-                        searchInput.addEventListener('keydown', function(e) {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                form.submit();
-                            }
-                        });
-                    }
-                });
-                </script>
-            </form>
-        </div>
+            </div>
+            <div class="w-28">
+                <label class="admin-label-compact block">Kategori</label>
+                <select name="category" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    @isset($categories)
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ ucfirst($cat) }}</option>
+                        @endforeach
+                    @endisset
+                </select>
+            </div>
+            <div class="w-28">
+                <label class="admin-label-compact block">Tipe</label>
+                <select name="document_type" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    @isset($documentTypes)
+                        @foreach($documentTypes as $type)
+                            <option value="{{ $type }}" {{ request('document_type') == $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
+                        @endforeach
+                    @endisset
+                </select>
+            </div>
+            <div class="w-36">
+                <label class="admin-label-compact block">Proyek</label>
+                <select name="project_id" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    @isset($projects)
+                        @foreach($projects as $project)
+                            <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>{{ $project->name }}</option>
+                        @endforeach
+                    @endisset
+                </select>
+            </div>
+        </form>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action="{{ route('documents.index') }}"]');
+            if (!form) return;
+            form.querySelectorAll('select[name]').forEach(el => el.addEventListener('change', () => form.submit()));
+            const searchInput = form.querySelector('input[name="search"]');
+            if (searchInput) searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); form.submit(); }});
+        });
+        </script>
     </div>
 
     <!-- Documents Table -->

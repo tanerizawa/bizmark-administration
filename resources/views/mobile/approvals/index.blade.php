@@ -5,21 +5,21 @@
 @section('content')
 <div class="mobile-page pb-20" x-data="approvalsPage()">
     <!-- Stats Header -->
-    <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 safe-top">
+    <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] text-white p-6 safe-top rounded-2xl mb-4">
         <h1 class="text-2xl font-bold mb-4">Pending Approvals</h1>
         
         <div class="grid grid-cols-3 gap-3">
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
                 <div class="text-2xl font-bold">{{ $stats['expenses'] }}</div>
-                <div class="text-xs text-purple-100 mt-0.5">Expenses</div>
+                <div class="text-xs opacity-90 mt-0.5">Expenses</div>
             </div>
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
                 <div class="text-2xl font-bold">{{ $stats['documents'] }}</div>
-                <div class="text-xs text-purple-100 mt-0.5">Dokumen</div>
+                <div class="text-xs opacity-90 mt-0.5">Dokumen</div>
             </div>
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
                 <div class="text-2xl font-bold">{{ $stats['invoices'] }}</div>
-                <div class="text-xs text-purple-100 mt-0.5">Invoice</div>
+                <div class="text-xs opacity-90 mt-0.5">Invoice</div>
             </div>
         </div>
     </div>
@@ -28,17 +28,17 @@
     <div class="sticky top-14 z-10 bg-white border-b border-gray-200">
         <div class="flex overflow-x-auto scrollbar-hide">
             <button @click="filterType('all')" 
-                    :class="currentType === 'all' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500'"
+                    :class="currentType === 'all' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Semua ({{ $stats['total'] }})
             </button>
             <button @click="filterType('expenses')" 
-                    :class="currentType === 'expenses' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
+                    :class="currentType === 'expenses' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Expenses ({{ $stats['expenses'] }})
             </button>
             <button @click="filterType('documents')" 
-                    :class="currentType === 'documents' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500'"
+                    :class="currentType === 'documents' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm">
                 Dokumen ({{ $stats['documents'] }})
             </button>
@@ -53,7 +53,7 @@
     <!-- Bulk Actions Bar (when items selected) -->
     <div x-show="selectedItems.length > 0" 
          x-transition
-         class="sticky top-[106px] z-10 bg-[#f0f7fa] border-b border-[#caccce] p-3">
+         class="sticky top-[106px] z-10 bg-[#E7F3F8] border-b border-[#caccce] p-3">
         <div class="flex items-center justify-between">
             <span class="text-sm font-medium text-[#000000]">
                 <span x-text="selectedItems.length"></span> item dipilih
@@ -122,7 +122,7 @@
                             <input type="checkbox" 
                                    :checked="isSelected(approval)"
                                    @change="toggleSelection(approval)"
-                                   class="w-5 h-5 rounded border-gray-300 text-[#0077b5] focus:ring-[#0077b5]">
+                                   class="w-5 h-5 rounded border-gray-300 text-[#0A66C2] focus:ring-[#0A66C2]">
                         </div>
 
                         <a :href="`/m/approvals/${approval.type}/${approval.id}`" 
@@ -405,7 +405,7 @@ function approvalsPage() {
 
         getIconColor(type) {
             const colors = {
-                'expenses': 'bg-[#e7f3f8] text-[#0077b5]',
+                'expenses': 'bg-[#E7F3F8] text-[#0A66C2]',
                 'documents': 'bg-purple-100 text-purple-600',
                 'invoices': 'bg-green-100 text-green-600'
             };
@@ -414,7 +414,7 @@ function approvalsPage() {
 
         getTypeBadge(type) {
             const badges = {
-                'expenses': 'bg-[#e7f3f8] text-[#0077b5]',
+                'expenses': 'bg-[#E7F3F8] text-[#0A66C2]',
                 'documents': 'bg-purple-100 text-purple-700',
                 'invoices': 'bg-green-100 text-green-700'
             };

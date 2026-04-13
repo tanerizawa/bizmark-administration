@@ -1,4 +1,4 @@
-{{-- Locale Switcher Component --}}
+{{-- Locale Switcher Component (vanilla JS - no Alpine dependency) --}}
 @php
     $currentLocale = app()->getLocale();
     $availableLocales = [
@@ -13,10 +13,12 @@
             'flag' => '🇬🇧',
         ],
     ];
+    $switcherId = 'locale-switcher-' . Str::random(6);
 @endphp
 
-<div class="relative inline-block text-left" x-data="{ open: false }">
-    <button @click="open = !open" type="button" 
+<div class="relative inline-block text-left" id="{{ $switcherId }}">
+    <button type="button" 
+            onclick="this.nextElementSibling.classList.toggle('hidden')"
             class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             aria-expanded="false" 
             aria-haspopup="true">
@@ -27,19 +29,9 @@
         </svg>
     </button>
 
-    <div x-show="open" 
-         @click.away="open = false"
-         x-transition:enter="transition ease-out duration-100"
-         x-transition:enter-start="transform opacity-0 scale-95"
-         x-transition:enter-end="transform opacity-100 scale-100"
-         x-transition:leave="transition ease-in duration-75"
-         x-transition:leave-start="transform opacity-100 scale-100"
-         x-transition:leave-end="transform opacity-0 scale-95"
-         class="absolute right-0 z-50 w-56 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+    <div class="hidden absolute right-0 z-50 w-56 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
          role="menu" 
-         aria-orientation="vertical" 
-         aria-labelledby="locale-menu"
-         style="display: none;">
+         aria-orientation="vertical">
         
         <div class="py-1">
             @foreach($availableLocales as $locale => $info)
@@ -76,3 +68,22 @@
         </div>
     </div>
 </div>
+
+<script>
+(function() {
+    var container = document.getElementById('{{ $switcherId }}');
+    if (!container) return;
+    document.addEventListener('click', function(e) {
+        if (!container.contains(e.target)) {
+            var dd = container.querySelector('[role="menu"]');
+            if (dd) dd.classList.add('hidden');
+        }
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            var dd = container.querySelector('[role="menu"]');
+            if (dd) dd.classList.add('hidden');
+        }
+    });
+})();
+</script>

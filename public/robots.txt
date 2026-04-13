@@ -26,6 +26,8 @@ Disallow: /admin/
 Disallow: /login
 Disallow: /register
 Disallow: /password/
+Disallow: /m/
+Disallow: /client/
 
 # Disallow form submission endpoints
 Disallow: /en/inquiry

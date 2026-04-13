@@ -85,6 +85,12 @@ class ServiceInquiryController extends Controller
 
         try {
             // Create inquiry record
+            $kbliDescription = null;
+            if (!empty($data['kbli_code'])) {
+                $kbli = \App\Models\Kbli::where('code', $data['kbli_code'])->first();
+                $kbliDescription = $kbli?->title ?? $kbli?->description ?? null;
+            }
+
             $inquiry = ServiceInquiry::create([
                 'email' => $email,
                 'company_name' => $data['company_name'],
@@ -94,6 +100,7 @@ class ServiceInquiryController extends Controller
                 'position' => $data['position'] ?? null,
                 'business_activity' => $data['business_activity'],
                 'kbli_code' => $data['kbli_code'] ?? null,
+                'kbli_description' => $kbliDescription,
                 'form_data' => [
                     'business_scale' => $data['business_scale'],
                     'location_province' => $data['location_province'],
@@ -102,6 +109,7 @@ class ServiceInquiryController extends Controller
                     'estimated_investment' => $data['estimated_investment'],
                     'timeline' => $data['timeline'] ?? null,
                     'additional_notes' => $data['additional_notes'] ?? null,
+                    'company_type' => $data['company_type'] ?? null,
                 ],
                 'status' => 'processing',
                 'source' => 'landing_page',
@@ -162,11 +170,20 @@ class ServiceInquiryController extends Controller
         }
 
         // Check if still processing
-        if ($inquiry->status === 'processing' && !$inquiry->ai_analysis) {
+        if (in_array($inquiry->status, ['processing', 'new']) && !$inquiry->ai_analysis) {
             return response()->json([
                 'success' => false,
                 'status' => 'processing',
                 'message' => 'AI masih memproses analisis Anda. Mohon tunggu...'
+            ]);
+        }
+
+        // Check if permanently failed (no analysis generated)
+        if ($inquiry->status === 'error' && !$inquiry->ai_analysis) {
+            return response()->json([
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Terjadi kendala dalam analisis. Tim kami akan menghubungi Anda melalui email.'
             ]);
         }
 
@@ -191,10 +208,16 @@ class ServiceInquiryController extends Controller
      */
     public function result(string $inquiryNumber)
     {
-        $inquiry = ServiceInquiry::where('inquiry_number', $inquiryNumber)->firstOrFail();
+        $inquiry = ServiceInquiry::where('inquiry_number', $inquiryNumber)->first();
+
+        if (!$inquiry) {
+            return response()->view('landing.service-inquiry.not-found', [
+                'inquiryNumber' => $inquiryNumber,
+            ], 404);
+        }
 
         return view('landing.service-inquiry.result', [
-            'inquiry' => $inquiry
+            'inquiry' => $inquiry,
         ]);
     }
 

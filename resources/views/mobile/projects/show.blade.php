@@ -5,7 +5,7 @@
 @section('content')
 <div class="mobile-page pb-20" x-data="projectDetail({{ $project->id }})">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] text-white p-6 safe-top">
+    <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] text-white p-6 safe-top">
         <div class="flex items-start justify-between mb-3">
             <div class="flex-1 min-w-0 pr-3">
                 <h1 class="text-xl font-bold mb-1">{{ $project->name }}</h1>
@@ -61,19 +61,19 @@
     <div class="sticky top-14 z-10 bg-white border-b border-gray-200">
         <div class="flex justify-around">
             <button @click="activeTab = 'overview'" 
-                    :class="activeTab === 'overview' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'overview' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs">
                 <i class="fas fa-info-circle text-base"></i>
                 <span>Info</span>
             </button>
             <button @click="activeTab = 'financial'" 
-                    :class="activeTab === 'financial' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'financial' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs">
                 <i class="fas fa-wallet text-base"></i>
                 <span>Keuangan</span>
             </button>
             <button @click="activeTab = 'tasks'" 
-                    :class="activeTab === 'tasks' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'tasks' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs relative">
                 <i class="fas fa-tasks text-base"></i>
                 <span>Tasks</span>
@@ -84,13 +84,13 @@
                 @endif
             </button>
             <button @click="activeTab = 'timeline'" 
-                    :class="activeTab === 'timeline' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'timeline' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs">
                 <i class="fas fa-stream text-base"></i>
                 <span>Timeline</span>
             </button>
             <button @click="activeTab = 'files'" 
-                    :class="activeTab === 'files' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
+                    :class="activeTab === 'files' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-1 flex flex-col items-center gap-1 py-3 border-b-2 font-medium text-xs">
                 <i class="fas fa-folder text-base"></i>
                 <span>Files</span>
@@ -109,7 +109,7 @@
                     @if($project->client)
                     <div class="flex justify-between text-sm pb-2.5 border-b border-gray-100">
                         <span class="text-gray-600">Klien</span>
-                        <span class="font-medium text-[#0077b5]">{{ $project->client->company_name }}</span>
+                        <span class="font-medium text-[#0A66C2]">{{ $project->client->company_name }}</span>
                     </div>
                     @if($project->client->contact_person)
                     <div class="flex justify-between text-sm">
@@ -120,7 +120,7 @@
                     @if($project->client->phone)
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Telepon</span>
-                        <a href="tel:{{ $project->client->phone }}" class="font-medium text-[#0077b5] hover:underline">
+                        <a href="tel:{{ $project->client->phone }}" class="font-medium text-[#0A66C2] hover:underline">
                             {{ $project->client->phone }}
                         </a>
                     </div>
@@ -153,8 +153,8 @@
                         <div class="text-2xl font-bold text-green-600">{{ $stats['completedTasks'] }}</div>
                         <div class="text-xs text-gray-600 mt-1">Selesai</div>
                     </div>
-                    <div class="text-center p-3 bg-[#f0f7fa] rounded-lg">
-                        <div class="text-2xl font-bold text-[#0077b5]">{{ $stats['totalTasks'] - $stats['completedTasks'] }}</div>
+                    <div class="text-center p-3 bg-[#E7F3F8] rounded-lg">
+                        <div class="text-2xl font-bold text-[#0A66C2]">{{ $stats['totalTasks'] - $stats['completedTasks'] }}</div>
                         <div class="text-xs text-gray-600 mt-1">Aktif</div>
                     </div>
                     <div class="text-center p-3 bg-red-50 rounded-lg">
@@ -174,7 +174,7 @@
                     </button>
                     <button @click="showStatusModal = true" 
                             class="p-3 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100">
-                        <i class="fas fa-exchange-alt mr-2 text-[#0077b5]"></i>Update Status
+                        <i class="fas fa-exchange-alt mr-2 text-[#0A66C2]"></i>Update Status
                     </button>
                 </div>
             </div>
@@ -315,7 +315,7 @@
                         <h4 class="font-medium text-gray-900 flex-1 pr-3">{{ $task->title }}</h4>
                         <span class="flex-shrink-0 px-2 py-1 text-xs rounded-full
                             {{ $task->status === 'done' ? 'bg-green-100 text-green-800' : 
-                               ($task->status === 'in_progress' ? 'bg-[#e7f3f8] text-[#0077b5]' : 'bg-gray-100 text-gray-800') }}">
+                               ($task->status === 'in_progress' ? 'bg-[#E7F3F8] text-[#0A66C2]' : 'bg-gray-100 text-gray-800') }}">
                             {{ ucfirst($task->status) }}
                         </span>
                     </div>
@@ -374,8 +374,8 @@
                 <a href="{{ Storage::url($doc->file_path) }}" 
                    target="_blank"
                    class="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
-                    <div class="flex-shrink-0 w-10 h-10 bg-[#f0f7fa] rounded-lg flex items-center justify-center">
-                        <i class="fas fa-file-alt text-[#0077b5]"></i>
+                    <div class="flex-shrink-0 w-10 h-10 bg-[#E7F3F8] rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-alt text-[#0A66C2]"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <h4 class="font-medium text-gray-900 text-sm truncate">{{ $doc->title }}</h4>
@@ -418,7 +418,7 @@
                     x-model="noteContent"
                     placeholder="Tulis catatan..."
                     rows="5"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent resize-none"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent resize-none"
                     required></textarea>
                 <div class="mt-4 flex gap-2">
                     <button type="button" 
@@ -428,7 +428,7 @@
                     </button>
                     <button type="submit" 
                             :disabled="submitting"
-                            class="flex-1 px-4 py-2.5 bg-[#0077b5] text-white rounded-lg font-medium hover:bg-[#006399] disabled:opacity-50">
+                            class="flex-1 px-4 py-2.5 bg-[#0A66C2] text-white rounded-lg font-medium hover:bg-[#006399] disabled:opacity-50">
                         <span x-show="!submitting">Save Note</span>
                         <span x-show="submitting"><i class="fas fa-spinner fa-spin mr-1"></i>Saving...</span>
                     </button>
@@ -460,7 +460,7 @@
             <form @submit.prevent="submitStatus" class="p-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Status Baru</label>
                 <select x-model="selectedStatusId" 
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent"
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent"
                         required>
                     <option value="">-- Pilih Status --</option>
                     @foreach(\App\Models\ProjectStatus::all() as $status)
@@ -477,7 +477,7 @@
                     </button>
                     <button type="submit" 
                             :disabled="submitting || !selectedStatusId"
-                            class="flex-1 px-4 py-2.5 bg-[#0077b5] text-white rounded-lg font-medium hover:bg-[#006399] disabled:opacity-50">
+                            class="flex-1 px-4 py-2.5 bg-[#0A66C2] text-white rounded-lg font-medium hover:bg-[#006399] disabled:opacity-50">
                         <span x-show="!submitting">Update Status</span>
                         <span x-show="submitting"><i class="fas fa-spinner fa-spin mr-1"></i>Updating...</span>
                     </button>
@@ -619,7 +619,7 @@ function projectDetail(projectId) {
         getEventColor(color) {
             const colors = {
                 'green': 'bg-green-500',
-                'blue': 'bg-[#0077b5]',
+                'blue': 'bg-[#0A66C2]',
                 'red': 'bg-red-500',
                 'yellow': 'bg-yellow-500',
                 'purple': 'bg-purple-500'

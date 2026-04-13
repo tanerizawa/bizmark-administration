@@ -22,6 +22,17 @@ class EmailSettingsController extends Controller
 
     public function update(Request $request)
     {
+        $request->merge([
+            'mail_mailer' => $request->input('mail_mailer', $request->input('smtp_mailer')),
+            'mail_host' => $request->input('mail_host', $request->input('smtp_host')),
+            'mail_port' => $request->input('mail_port', $request->input('smtp_port')),
+            'mail_username' => $request->input('mail_username', $request->input('smtp_username')),
+            'mail_password' => $request->input('mail_password', $request->input('smtp_password')),
+            'mail_encryption' => $request->input('mail_encryption', $request->input('smtp_encryption')),
+            'mail_from_address' => $request->input('mail_from_address', $request->input('from_email')),
+            'mail_from_name' => $request->input('mail_from_name', $request->input('from_name')),
+        ]);
+
         $request->validate([
             'mail_mailer' => 'required|string',
             'mail_host' => 'nullable|string',
@@ -64,11 +75,9 @@ class EmailSettingsController extends Controller
             // Clear config cache
             Artisan::call('config:clear');
 
-            return redirect()->route('admin.email.settings.index')
-                ->with('success', 'Email settings updated successfully!');
+            return $this->settingsRedirect($request, 'success', 'Email settings updated successfully!');
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Failed to update settings: ' . $e->getMessage())
+            return $this->settingsRedirect($request, 'error', 'Failed to update settings: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -85,9 +94,16 @@ class EmailSettingsController extends Controller
                     ->subject('Test Email from Bizmark.id');
             });
 
+            $mailHost = (string) config('mail.mailers.smtp.host', '');
+            $message = 'Test email successfully handed off to the mail provider for ' . $request->test_email . '.';
+
+            if (str_contains($mailHost, 'brevo')) {
+                $message .= ' Jika email tetap tidak masuk, periksa Transactional Logs di Brevo karena recipient bisa diblokir akibat unsubscribed, blacklist, atau policy deliverability.';
+            }
+
             return response()->json([
                 'success' => true,
-                'message' => 'Test email sent successfully to ' . $request->test_email
+                'message' => $message
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -138,5 +154,14 @@ class EmailSettingsController extends Controller
         }
 
         File::put($envPath, $envContent);
+    }
+
+    private function settingsRedirect(Request $request, string $flashType, string $message)
+    {
+        $target = $request->input('redirect_to') === 'email-management'
+            ? route('admin.email-management.index', ['tab' => 'settings'])
+            : route('admin.email.settings.index');
+
+        return redirect($target)->with($flashType, $message);
     }
 }

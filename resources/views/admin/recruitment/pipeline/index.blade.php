@@ -23,7 +23,7 @@
                     <span class="text-dark-text-tertiary">/</span>
                     <span>Pipeline</span>
                 </div>
-                <h1 class="text-2xl font-semibold text-white leading-tight">Rekrutmen Pipeline</h1>
+                <h1 class="text-xl font-semibold text-white leading-tight">Rekrutmen Pipeline</h1>
                 <p class="text-sm" style="color: rgba(235,235,245,0.7);">
                     Pantau pergerakan kandidat di setiap tahap proses.
                 </p>
@@ -45,32 +45,32 @@
     <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Aktif</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['total_in_pipeline'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['total_in_pipeline'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Dalam pipeline</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Screening</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['screening'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['screening'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tahap awal</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Testing</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['testing'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['testing'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tes berlangsung</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Interview</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['interview'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['interview'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Jadwal aktif</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Offer</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['offer'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['offer'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tahap penawaran</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Minggu Ini</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['completed_this_week'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['completed_this_week'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Selesai minggu ini</p>
         </div>
     </section>
@@ -149,7 +149,7 @@
                             <tr class="hover:bg-white/5 transition-colors">
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-9 h-9 rounded-full bg-apple-blue bg-opacity-15 text-apple-blue flex items-center justify-center font-semibold">
+                                        <div class="w-9 h-9 rounded-full bg-apple-blue\/15 text-apple-blue flex items-center justify-center font-semibold">
                                             {{ strtoupper(substr($application->full_name, 0, 2)) }}
                                         </div>
                                         <div class="min-w-0">

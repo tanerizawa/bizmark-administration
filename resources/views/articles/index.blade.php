@@ -4,65 +4,74 @@
 @section('page-title', 'Artikel & Berita')
 
 @section('content')
-    {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+    {{-- Compact Hero Section --}}
+    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden mb-4">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-purple opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
+            <div class="w-32 h-32 bg-apple-purple opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
         </div>
-        <div class="relative space-y-5 md:space-y-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Content Management</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Artikel & Berita
-                    </h1>
-                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Kelola konten artikel manual dan auto-generated AI dengan mudah.
-                    </p>
+        <div class="relative space-y-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div class="space-y-1 max-w-3xl">
+                    <p class="admin-label-compact">Content Management</p>
+                    <h1 class="admin-hero-title">Artikel & Berita</h1>
+                    <p class="admin-body" style="color: rgba(235,235,245,0.75);">Kelola konten artikel manual dan auto-generated AI dengan mudah.</p>
                 </div>
-                <div class="space-y-2.5">
-                    <a href="{{ route('articles.create') }}" class="inline-flex items-center px-4 py-2.5 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-apple-blue-dark transition-apple">
-                        <i class="fas fa-plus mr-2"></i>Buat Artikel Baru
+                <div class="space-y-1.5">
+                    <a href="{{ route('articles.create') }}" class="admin-btn inline-flex items-center">
+                        <i class="fas fa-plus mr-1.5"></i>Buat Artikel Baru
                     </a>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">
-                        <i class="fas fa-sync-alt mr-2"></i>Diperbarui: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}
+                    <p class="admin-label-compact">
+                        <i class="fas fa-sync-alt mr-1.5"></i>{{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}
                     </p>
                 </div>
             </div>
 
-            <!-- Summary Statistics -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Artikel</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">
-                        {{ number_format($stats['all']) }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua konten</p>
+            {{-- Compact Stats Cards --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div class="admin-stat-card" style="background: rgba(10,132,255,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
+                            <i class="fas fa-newspaper text-xs" style="color: var(--apple-blue);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: #FFFFFF;">{{ number_format($stats['all']) }}</p>
+                            <p class="admin-label-compact">Total Artikel</p>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Published</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">
-                        {{ number_format($stats['published']) }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Aktif online</p>
+                <div class="admin-stat-card" style="background: rgba(52,199,89,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(52,199,89,0.25);">
+                            <i class="fas fa-check text-xs" style="color: var(--apple-green);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(52,199,89,1);">{{ number_format($stats['published']) }}</p>
+                            <p class="admin-label-compact">Published</p>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Draft</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">
-                        {{ number_format($stats['draft']) }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Belum dipublikasi</p>
+                <div class="admin-stat-card" style="background: rgba(255,159,10,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,159,10,0.25);">
+                            <i class="fas fa-pencil-alt text-xs" style="color: var(--apple-orange);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(255,159,10,1);">{{ number_format($stats['draft']) }}</p>
+                            <p class="admin-label-compact">Draft</p>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(175,82,222,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">AI Generated</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">
-                        {{ number_format($stats['auto_generated']) }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Auto-Post</p>
+                <div class="admin-stat-card" style="background: rgba(175,82,222,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(175,82,222,0.25);">
+                            <i class="fas fa-robot text-xs" style="color: rgba(175,82,222,1);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(175,82,222,1);">{{ number_format($stats['auto_generated']) }}</p>
+                            <p class="admin-label-compact">AI Generated</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,66 +79,73 @@
 
     {{-- Success Message --}}
     @if(session('success'))
-    <div class="mb-5 p-4 rounded-apple-lg" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
-        <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+    <div class="mb-3 p-3 rounded-apple" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+        <i class="fas fa-check-circle mr-1.5"></i><span class="admin-body">{{ session('success') }}</span>
+    </div>
+    @endif
+
+    {{-- Error Message --}}
+    @if(session('error'))
+    <div class="mb-3 p-3 rounded-apple" style="background: rgba(255,69,58,0.12); border: 1px solid rgba(255,69,58,0.3); color: rgba(255,69,58,1);">
+        <i class="fas fa-exclamation-circle mr-1.5"></i><span class="admin-body">{{ session('error') }}</span>
     </div>
     @endif
 
     {{-- Tabs Navigation --}}
-    <div class="mb-5">
-        <div class="card-elevated rounded-apple-xl overflow-hidden">
+    <div class="mb-3">
+        <div class="card-elevated rounded-apple-lg overflow-hidden">
             <div class="flex flex-wrap border-b" style="border-color: var(--dark-separator);">
                 <a href="{{ route('articles.index', ['tab' => 'all'] + request()->except('tab', 'page')) }}" 
                    class="tab-link {{ $tab === 'all' ? 'active' : '' }}">
-                    <i class="fas fa-list mr-2"></i>
-                    Semua Artikel
-                    <span class="ml-2 px-2 py-0.5 rounded-full text-xs" style="background: rgba(255,255,255,0.1);">{{ $stats['all'] }}</span>
+                    <i class="fas fa-list mr-1.5"></i>
+                    Semua
+                    <span class="ml-1.5 px-1.5 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1);">{{ $stats['all'] }}</span>
                 </a>
                 
                 <a href="{{ route('articles.index', ['tab' => 'manual'] + request()->except('tab', 'page')) }}" 
                    class="tab-link {{ $tab === 'manual' ? 'active' : '' }}">
-                    <i class="fas fa-pen mr-2"></i>
-                    Manual Posts
-                    <span class="ml-2 px-2 py-0.5 rounded-full text-xs" style="background: rgba(255,255,255,0.1);">{{ $stats['manual'] }}</span>
+                    <i class="fas fa-pen mr-1.5"></i>
+                    Manual
+                    <span class="ml-1.5 px-1.5 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1);">{{ $stats['manual'] }}</span>
                 </a>
                 
                 <a href="{{ route('articles.index', ['tab' => 'auto-generated'] + request()->except('tab', 'page')) }}" 
                    class="tab-link {{ $tab === 'auto-generated' ? 'active' : '' }}">
-                    <i class="fas fa-robot mr-2"></i>
-                    AI Generated
-                    <span class="ml-2 px-2 py-0.5 rounded-full text-xs" style="background: rgba(255,255,255,0.1);">{{ $stats['auto_generated'] }}</span>
+                    <i class="fas fa-robot mr-1.5"></i>
+                    AI
+                    <span class="ml-1.5 px-1.5 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1);">{{ $stats['auto_generated'] }}</span>
                 </a>
                 
                 <a href="{{ route('articles.index', ['tab' => 'auto-post-settings'] + request()->except('tab', 'page')) }}" 
                    class="tab-link {{ $tab === 'auto-post-settings' ? 'active' : '' }}">
-                    <i class="fas fa-cog mr-2"></i>
-                    Auto-Post Settings
+                    <i class="fas fa-cog mr-1.5"></i>
+                    Auto-Post
                 </a>
             </div>
 
             @if($tab === 'auto-post-settings')
                 {{-- Auto-Post Settings Tab --}}
-                <div class="p-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="p-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {{-- Configuration Card --}}
                         <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold text-dark-text-primary">
-                                    <i class="fas fa-cog mr-2 text-apple-blue"></i>Konfigurasi Auto-Post
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="admin-section text-dark-text-primary">
+                                    <i class="fas fa-cog mr-1.5 text-apple-blue"></i>Konfigurasi Auto-Post
                                 </h3>
-                                <form action="{{ route('auto-post.config.toggle') }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="toggle-switch {{ $autoPostConfig && $autoPostConfig->is_enabled ? 'active' : '' }}">
-                                        <span class="toggle-slider"></span>
-                                    </button>
-                                </form>
+                                <button type="button" id="autoPostToggle" 
+                                    class="toggle-switch {{ $autoPostConfig && $autoPostConfig->is_enabled ? 'active' : '' }}"
+                                    data-url="{{ route('auto-post.config.toggle') }}"
+                                    data-csrf="{{ csrf_token() }}">
+                                    <span class="toggle-slider"></span>
+                                </button>
                             </div>
 
                             @if($autoPostConfig)
                             <div class="space-y-3 text-sm">
                                 <div class="flex justify-between py-2 border-b" style="border-color: var(--dark-separator);">
                                     <span class="text-dark-text-secondary">Status:</span>
-                                    <span class="font-medium {{ $autoPostConfig->is_enabled ? 'text-apple-green' : 'text-apple-red' }}">
+                                    <span data-status-row class="font-medium {{ $autoPostConfig->is_enabled ? 'text-apple-green' : 'text-apple-red' }}">
                                         {{ $autoPostConfig->is_enabled ? '✓ Aktif' : '✗ Non-aktif' }}
                                     </span>
                                 </div>
@@ -139,7 +155,7 @@
                                 </div>
                                 <div class="flex justify-between py-2 border-b" style="border-color: var(--dark-separator);">
                                     <span class="text-dark-text-secondary">Post Times:</span>
-                                    <span class="font-medium text-dark-text-primary">{{ implode(', ', $autoPostConfig->post_times) }}</span>
+                                    <span class="font-medium text-dark-text-primary">{{ implode(', ', $autoPostConfig->post_times ?? []) }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 border-b" style="border-color: var(--dark-separator);">
                                     <span class="text-dark-text-secondary">AI Model:</span>
@@ -179,10 +195,10 @@
                                     <div class="flex items-start justify-between">
                                         <div class="flex-1">
                                             <p class="text-sm font-medium text-dark-text-primary mb-1">
-                                                {{ Str::limit($schedule->topic->title, 50) }}
+                                                {{ $schedule->topic ? Str::limit($schedule->topic->title, 50) : 'Topic tidak ditemukan' }}
                                             </p>
                                             <p class="text-xs text-dark-text-tertiary">
-                                                <i class="far fa-clock mr-1"></i>{{ $schedule->scheduled_at->format('d M Y, H:i') }}
+                                                <i class="far fa-clock mr-1"></i>{{ optional($schedule->scheduled_at ?? $schedule->scheduled_for)->format('d M Y, H:i') ?? '-' }}
                                             </p>
                                         </div>
                                         <span class="px-2 py-1 rounded-full text-xs font-medium" style="background: rgba(255,159,10,0.2); color: rgba(255,159,10,1);">
@@ -310,7 +326,7 @@
                                                         <i class="fas fa-star mr-1"></i>Featured
                                                     </span>
                                                     @endif
-                                                    @if($article->auto_post_schedule_id)
+                                                    @if($article->source_type === 'auto-generated')
                                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-apple-purple/20 text-apple-purple">
                                                         <i class="fas fa-robot mr-1"></i>AI
                                                     </span>
@@ -321,7 +337,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-dark-text-secondary">{{ $article->category_label }}</td>
                                     <td class="px-6 py-4">{!! $article->status_badge !!}</td>
-                                    <td class="px-6 py-4 text-sm text-dark-text-secondary">{{ $article->author->name }}</td>
+                                    <td class="px-6 py-4 text-sm text-dark-text-secondary">{{ $article->author?->name ?? 'System AI' }}</td>
                                     <td class="px-6 py-4 text-sm text-dark-text-secondary">
                                         <i class="fas fa-eye mr-1"></i>{{ number_format($article->views_count) }}
                                     </td>
@@ -395,7 +411,7 @@
                     <!-- Pagination -->
                     @if($articles->hasPages())
                     <div class="mt-5">
-                        {{ $articles->links() }}
+                        {{ $articles->appends(request()->query())->links() }}
                     </div>
                     @endif
                 </div>
@@ -478,5 +494,52 @@
         transform: translateX(22px);
     }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.getElementById('autoPostToggle');
+    if (!toggleBtn) return;
+
+    toggleBtn.addEventListener('click', function () {
+        const url = this.dataset.url;
+        const csrf = this.dataset.csrf;
+        const btn = this;
+
+        btn.style.opacity = '0.5';
+        btn.style.pointerEvents = 'none';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json',
+            },
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                btn.classList.toggle('active', data.is_enabled);
+                // Update the status text in the config card
+                const statusRow = document.querySelector('[data-status-row]');
+                if (statusRow) {
+                    statusRow.className = 'font-medium ' + (data.is_enabled ? 'text-apple-green' : 'text-apple-red');
+                    statusRow.textContent = data.is_enabled ? '✓ Aktif' : '✗ Non-aktif';
+                }
+            }
+        })
+        .catch(() => {
+            // Fallback: reload page on error
+            window.location.reload();
+        })
+        .finally(() => {
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+        });
+    });
+});
+</script>
 @endpush
 

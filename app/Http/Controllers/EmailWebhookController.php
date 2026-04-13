@@ -7,6 +7,7 @@ use App\Models\EmailAccount;
 use App\Models\EmailAssignment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class EmailWebhookController extends Controller
 {
@@ -17,6 +18,18 @@ class EmailWebhookController extends Controller
      */
     public function receive(Request $request)
     {
+        if (!$this->isAuthorizedWebhookRequest($request)) {
+            Log::warning('Rejected email webhook request', [
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Unauthorized webhook request',
+            ], 401);
+        }
+
         try {
             // Log untuk debugging
             Log::info('Email webhook received', [
@@ -36,14 +49,14 @@ class EmailWebhookController extends Controller
             
             // Parse "Name <email@example.com>" format
             if (preg_match('/<(.+?)>/', $fromRaw, $emailMatches)) {
-                $fromEmail = $emailMatches[1];
+                $fromEmail = strtolower(trim($emailMatches[1]));
                 $fromName = trim(preg_replace('/<.+?>/', '', $fromRaw));
             } else {
-                $fromEmail = $fromRaw;
+                $fromEmail = strtolower(trim($fromRaw));
                 $fromName = $fromRaw;
             }
 
-            $toEmail = $request->input('to') ?? 'cs@bizmark.id';
+            $toEmail = $this->resolveRecipientEmail($request->input('to'));
 
             // AUTO-FIND EMAIL ACCOUNT
             $emailAccount = EmailAccount::where('email', $toEmail)
@@ -81,7 +94,7 @@ class EmailWebhookController extends Controller
 
             // Create inbox entry with auto-assignment
             $inbox = EmailInbox::create([
-                'message_id' => $request->input('message_id') ?? 'webhook-' . uniqid(),
+                'message_id' => $request->input('message_id') ?? 'webhook-' . Str::uuid()->toString(),
                 'from_email' => $fromEmail,
                 'from_name' => $fromName,
                 'to_email' => $toEmail,
@@ -243,6 +256,13 @@ class EmailWebhookController extends Controller
      */
     public function test(Request $request)
     {
+        if (app()->environment('production')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Test endpoint is disabled in production.',
+            ], 403);
+        }
+
         $dummyData = [
             'from' => 'Test User <test@example.com>',
             'to' => 'cs@bizmark.id',
@@ -272,6 +292,13 @@ class EmailWebhookController extends Controller
      */
     public function status()
     {
+        if (app()->environment('production')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status endpoint is disabled in production.',
+            ], 403);
+        }
+
         $stats = [
             'webhook_active' => true,
             'total_emails' => EmailInbox::count(),
@@ -286,5 +313,90 @@ class EmailWebhookController extends Controller
             'message' => 'Email webhook is active and working',
             'data' => $stats
         ]);
+    }
+
+    private function isAuthorizedWebhookRequest(Request $request): bool
+    {
+        $allowedIps = array_filter(array_map('trim', (array) config('email_webhook.allowed_ips', [])));
+
+        if (!empty($allowedIps) && !in_array($request->ip(), $allowedIps, true)) {
+            return false;
+        }
+
+        $secret = (string) config('email_webhook.secret', '');
+        $requireSignature = (bool) config('email_webhook.require_signature', app()->environment('production'));
+
+        if (!$requireSignature && $secret === '') {
+            return true;
+        }
+
+        if ($secret === '') {
+            // In production, missing secret means webhook should not be trusted.
+            return false;
+        }
+
+        $signatureHeader = (string) config('email_webhook.signature_header', 'X-Webhook-Signature');
+        $providedSignature = (string) $request->header($signatureHeader, '');
+
+        if ($providedSignature === '') {
+            return false;
+        }
+
+        $payload = (string) $request->getContent();
+        $expectedSignature = hash_hmac('sha256', $payload, $secret);
+
+        return hash_equals($expectedSignature, $providedSignature);
+    }
+
+    private function resolveRecipientEmail(?string $toRaw): string
+    {
+        $toRaw = trim((string) $toRaw);
+
+        if ($toRaw !== '') {
+            if (preg_match('/<(.+?)>/', $toRaw, $emailMatches)) {
+                return strtolower(trim($emailMatches[1]));
+            }
+
+            if (str_contains($toRaw, ',')) {
+                $firstRecipient = trim(explode(',', $toRaw)[0]);
+
+                if (preg_match('/<(.+?)>/', $firstRecipient, $emailMatches)) {
+                    return strtolower(trim($emailMatches[1]));
+                }
+
+                return strtolower($firstRecipient);
+            }
+
+            return strtolower($toRaw);
+        }
+
+        $defaultRecipient = strtolower(trim((string) config('email_webhook.default_recipient', '')));
+
+        if ($defaultRecipient !== '') {
+            Log::warning('Inbound email webhook missing recipient, using configured default recipient', [
+                'default_recipient' => $defaultRecipient,
+            ]);
+
+            return $defaultRecipient;
+        }
+
+        $activeRecipient = EmailAccount::query()
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->value('email');
+
+        if (!empty($activeRecipient)) {
+            $activeRecipient = strtolower(trim((string) $activeRecipient));
+
+            Log::warning('Inbound email webhook missing recipient, using first active email account', [
+                'default_recipient' => $activeRecipient,
+            ]);
+
+            return $activeRecipient;
+        }
+
+        Log::warning('Inbound email webhook missing recipient, falling back to hardcoded info address');
+
+        return 'info@bizmark.id';
     }
 }

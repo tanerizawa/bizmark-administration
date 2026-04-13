@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'version' => '1.0.0',
-    'effective_date' => '2025-11-17',
-    'last_updated' => '2025-11-17',
+    'version' => '2.0.0',
+    'effective_date' => '2026-04-12',
+    'last_updated' => '2026-04-12',
     
     'id' => [
         'title' => 'Syarat dan Ketentuan Layanan',
-        'subtitle' => 'Perjanjian Layanan Perizinan Usaha',
+        'subtitle' => 'Perjanjian Layanan Perizinan Usaha dan Penggunaan Platform Digital',
         
         'sections' => [
             [
@@ -15,11 +15,12 @@ return [
                 'content' => [
                     '1.1. **"Bizmark.ID"** atau **"Kami"** merujuk pada PT Bizmark Indonesia, penyedia layanan konsultasi dan pengurusan perizinan usaha yang beroperasi di Indonesia.',
                     '1.2. **"Klien"** atau **"Anda"** merujuk pada individu atau badan hukum yang mengajukan permohonan layanan melalui platform Bizmark.ID.',
-                    '1.3. **"Layanan"** merujuk pada seluruh jasa konsultasi, pengurusan perizinan, dan layanan terkait yang disediakan oleh Bizmark.ID.',
+                    '1.3. **"Layanan"** merujuk pada seluruh jasa konsultasi, pengurusan perizinan, alat digital gratis, dan layanan terkait yang disediakan oleh Bizmark.ID.',
                     '1.4. **"Permohonan"** merujuk pada pengajuan formal Klien untuk mendapatkan layanan perizinan tertentu.',
                     '1.5. **"Dokumen"** merujuk pada seluruh berkas, data, dan informasi yang diperlukan untuk proses perizinan.',
-                    '1.6. **"Platform"** merujuk pada website, aplikasi mobile, dan sistem digital lainnya yang dioperasikan oleh Bizmark.ID.',
-                    '1.7. **"Instansi Terkait"** merujuk pada lembaga pemerintah, kementerian, atau otoritas yang berwenang dalam penerbitan izin.',
+                    '1.6. **"Platform"** merujuk pada website, aplikasi mobile, alat digital gratis, dan sistem digital lainnya yang dioperasikan oleh Bizmark.ID.',
+                    '1.7. **"Alat Digital"** merujuk pada alat gratis yang tersedia di platform Bizmark.ID, termasuk Polygon SHP Maker, Kalkulator Perizinan, dan alat lainnya yang mungkin ditambahkan.',
+                    '1.8. **"Instansi Terkait"** merujuk pada lembaga pemerintah, kementerian, atau otoritas yang berwenang dalam penerbitan izin.',
                 ]
             ],
             [
@@ -39,7 +40,8 @@ return [
                     '3.3. **Persiapan Dokumen**: Bizmark.ID membantu mempersiapkan dokumen yang diperlukan untuk pengajuan izin.',
                     '3.4. **Koordinasi dengan Instansi**: Bizmark.ID akan berkomunikasi dan berkoordinasi dengan instansi terkait atas nama Klien.',
                     '3.5. **Monitoring & Pelaporan**: Bizmark.ID akan memantau status permohonan dan memberikan update berkala kepada Klien.',
-                    '3.6. **Batas Layanan**: Bizmark.ID tidak menjamin keberhasilan penerbitan izin karena keputusan akhir berada di tangan instansi terkait.',
+                    '3.6. **Alat Digital Gratis**: Bizmark.ID menyediakan alat digital gratis (Polygon SHP Maker, Kalkulator Perizinan) untuk membantu pengguna dalam perencanaan proyek dan estimasi biaya perizinan.',
+                    '3.7. **Batas Layanan**: Bizmark.ID tidak menjamin keberhasilan penerbitan izin karena keputusan akhir berada di tangan instansi terkait.',
                 ]
             ],
             [
@@ -162,6 +164,19 @@ return [
                     '15.5. **Keseluruhan Perjanjian**: Syarat dan Ketentuan ini, bersama dengan quotation yang disetujui, merupakan keseluruhan perjanjian antara para pihak.',
                 ]
             ],
+            [
+                'title' => '16. PENGGUNAAN ALAT DIGITAL DAN PLATFORM',
+                'content' => [
+                    '16.1. **Ketentuan Penggunaan**: Dengan menggunakan alat digital gratis Bizmark.ID, pengguna menyetujui bahwa data yang dimasukkan akan disimpan sebagai data leads untuk tindak lanjut komersial.',
+                    '16.2. **Data yang Dikumpulkan**: Data yang dikumpulkan melalui alat digital meliputi nama perusahaan, contact person, email, nomor telepon, data lokasi/proyek, koordinat geografis, alamat IP, dan user agent.',
+                    '16.3. **Tindak Lanjut**: Bizmark.ID berhak menghubungi pengguna melalui email atau WhatsApp/telepon untuk menawarkan layanan terkait.',
+                    '16.4. **Tanggung Jawab Pengguna**: Pengguna bertanggung jawab atas kebenaran data yang dimasukkan ke dalam alat digital.',
+                    '16.5. **Batasan Hasil**: Hasil dari alat digital bersifat estimasi dan tidak dapat dijadikan dasar hukum.',
+                    '16.6. **Penyimpanan Lokal**: Alat digital menggunakan localStorage browser untuk auto-save. Data ini tersimpan di perangkat pengguna dan dapat dihapus melalui pengaturan browser.',
+                    '16.7. **Penggunaan Terlarang**: Dilarang menggunakan alat digital untuk tujuan ilegal, scraping, reverse engineering, atau eksploitasi otomatis.',
+                    '16.8. **Batasan Tanggung Jawab**: Bizmark.ID tidak bertanggung jawab atas ketidakakuratan hasil, kegagalan teknis, atau kehilangan data lokal pengguna.',
+                ]
+            ],
         ],
         
         'contact' => [
@@ -189,7 +204,7 @@ return [
     
     'en' => [
         'title' => 'Terms and Conditions of Service',
-        'subtitle' => 'Business Licensing Service Agreement',
+        'subtitle' => 'Business Licensing Service Agreement and Digital Platform Usage',
         
         'sections' => [
             [
@@ -197,11 +212,12 @@ return [
                 'content' => [
                     '1.1. **"Bizmark.ID"** or **"We"** refers to PT Bizmark Indonesia, a provider of business licensing consultation and management services operating in Indonesia.',
                     '1.2. **"Client"** or **"You"** refers to an individual or legal entity that submits a service request through the Bizmark.ID platform.',
-                    '1.3. **"Services"** refers to all consultation services, permit management, and related services provided by Bizmark.ID.',
+                    '1.3. **"Services"** refers to all consultation services, permit management, free digital tools, and related services provided by Bizmark.ID.',
                     '1.4. **"Application"** refers to the Client\'s formal submission to obtain specific licensing services.',
                     '1.5. **"Documents"** refers to all files, data, and information required for the licensing process.',
-                    '1.6. **"Platform"** refers to the website, mobile application, and other digital systems operated by Bizmark.ID.',
-                    '1.7. **"Relevant Authorities"** refers to government agencies, ministries, or authorities authorized to issue permits.',
+                    '1.6. **"Platform"** refers to the website, mobile application, free digital tools, and other digital systems operated by Bizmark.ID.',
+                    '1.7. **"Digital Tools"** refers to free tools available on the Bizmark.ID platform, including Polygon SHP Maker, Permit Calculator, and other tools that may be added.',
+                    '1.8. **"Relevant Authorities"** refers to government agencies, ministries, or authorities authorized to issue permits.',
                 ]
             ],
             [
@@ -221,7 +237,8 @@ return [
                     '3.3. **Document Preparation**: Bizmark.ID assists in preparing documents required for permit applications.',
                     '3.4. **Authority Coordination**: Bizmark.ID will communicate and coordinate with relevant authorities on behalf of the Client.',
                     '3.5. **Monitoring & Reporting**: Bizmark.ID will monitor application status and provide periodic updates to the Client.',
-                    '3.6. **Service Limitations**: Bizmark.ID does not guarantee permit issuance success as final decisions rest with relevant authorities.',
+                    '3.6. **Free Digital Tools**: Bizmark.ID provides free digital tools (Polygon SHP Maker, Permit Calculator) to help users with project planning and permit cost estimation.',
+                    '3.7. **Service Limitations**: Bizmark.ID does not guarantee permit issuance success as final decisions rest with relevant authorities.',
                 ]
             ],
             [
@@ -342,6 +359,19 @@ return [
                     '15.3. **Notices**: All notices must be made in writing via email or official platform.',
                     '15.4. **Language**: If there are interpretation differences between Indonesian and English versions, the Indonesian version prevails.',
                     '15.5. **Entire Agreement**: These Terms and Conditions, together with the approved quotation, constitute the entire agreement between the parties.',
+                ]
+            ],
+            [
+                'title' => '16. DIGITAL TOOLS AND PLATFORM USAGE',
+                'content' => [
+                    '16.1. **Terms of Use**: By using Bizmark.ID free digital tools, users agree that data entered will be stored as lead data for commercial follow-up purposes.',
+                    '16.2. **Data Collected**: Data collected through digital tools includes company name, contact person, email, phone number, location/project data, geographic coordinates, IP address, and user agent.',
+                    '16.3. **Follow-up**: Bizmark.ID reserves the right to contact users via email or WhatsApp/phone to offer related services.',
+                    '16.4. **User Responsibility**: Users are responsible for the accuracy of data entered into digital tools.',
+                    '16.5. **Result Limitations**: Results from digital tools are estimates and cannot be used as legal basis.',
+                    '16.6. **Local Storage**: Digital tools use browser localStorage for auto-save. This data is stored on the user\'s device and can be cleared through browser settings.',
+                    '16.7. **Prohibited Uses**: Using digital tools for illegal purposes, scraping, reverse engineering, or automated exploitation is prohibited.',
+                    '16.8. **Limitation of Liability**: Bizmark.ID is not liable for result inaccuracies, technical failures, or loss of user\'s local data.',
                 ]
             ],
         ],

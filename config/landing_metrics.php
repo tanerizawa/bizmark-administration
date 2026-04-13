@@ -55,7 +55,7 @@ return [
      * NOTE: Waktu operasional = factual, bisa dibuktikan
      */
     'experience' => [
-        'years' => 10,                     // Tahun pengalaman (sejak 2015)
+        'years' => (int) date('Y') - 2015, // Dynamic calculation from since_year
         'since_year' => 2015,              // Berdiri sejak tahun
     ],
     
@@ -90,6 +90,7 @@ return [
         'whatsapp' => '6283879602855',
         'whatsapp_link' => 'https://wa.me/6283879602855',  // Use link instead
         'email' => 'info@bizmark.id',
+        'hr_email' => 'hr@bizmark.id',
         'hours' => 'Portal Aktif 24/7',
     ],
     

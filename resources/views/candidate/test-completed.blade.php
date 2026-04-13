@@ -238,14 +238,21 @@
                     <p class="text-gray-600 text-sm mb-3">
                         Jika ada pertanyaan atau kendala, jangan ragu untuk menghubungi tim HR kami:
                     </p>
+                    @php
+                        $contact = config('landing_metrics.contact', []);
+                        $email = $contact['email'] ?? '';
+                        $waBase = $contact['whatsapp_link'] ?? '';
+                        $waText = rawurlencode('Halo, saya butuh bantuan terkait proses rekrutmen.');
+                        $phone = $contact['phone'] ?? '';
+                    @endphp
                     <div class="flex flex-col gap-2 text-sm">
-                        <a href="mailto:cs@bizmark.id" class="text-blue-600 hover:text-blue-700 flex items-center gap-2">
+                        <a href="mailto:{{ $email }}" class="text-blue-600 hover:text-blue-700 flex items-center gap-2">
                             <i class="bi bi-envelope"></i>
-                            cs@bizmark.id
+                            {{ $email }}
                         </a>
-                        <a href="https://wa.me/6283879602855" class="text-green-600 hover:text-green-700 flex items-center gap-2">
+                        <a href="{{ $waBase }}?text={{ $waText }}" target="_blank" rel="noopener noreferrer" class="text-green-600 hover:text-green-700 flex items-center gap-2">
                             <i class="bi bi-whatsapp"></i>
-                            +62 838 7960 2855
+                            {{ $phone }}
                         </a>
                     </div>
                 </div>

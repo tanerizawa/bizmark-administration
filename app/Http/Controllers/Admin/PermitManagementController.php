@@ -34,10 +34,10 @@ class PermitManagementController extends Controller
 
         // Preload all tab data so switching tabs never requires a refresh
         $dashboardData = $this->getDashboardData();
-        $applicationsData = $this->getApplicationsData($request);
-        $typesData = $this->getTypesData($request);
-        $kbliData = $this->getKbliData($request);
-        $paymentsData = $this->getPaymentsData($request);
+        $applicationsData = $this->getApplicationsData($request, $activeTab);
+        $typesData = $this->getTypesData($request, $activeTab);
+        $kbliData = $this->getKbliData($request, $activeTab);
+        $paymentsData = $this->getPaymentsData($request, $activeTab);
 
         return view('admin.permits.index', array_merge(
             $dashboardData,
@@ -125,37 +125,39 @@ class PermitManagementController extends Controller
     /**
      * Get applications tab data
      */
-    private function getApplicationsData(Request $request)
+    private function getApplicationsData(Request $request, string $activeTab = 'applications')
     {
-        $query = PermitApplication::with(['client', 'permitType', 'assignedUser'])
+        $query = PermitApplication::with(['client', 'permitType', 'reviewer'])
             ->latest();
         
-        // Apply filters
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        
-        if ($request->filled('permit_type')) {
-            $query->where('permit_type_id', $request->permit_type);
-        }
-        
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('application_number', 'like', "%{$search}%")
-                  ->orWhereHas('client', function($q) use ($search) {
-                      $q->where('company_name', 'like', "%{$search}%")
-                        ->orWhere('name', 'like', "%{$search}%");
-                  });
-            });
-        }
-        
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-        
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
+        // Only apply filters when on applications tab
+        if ($activeTab === 'applications') {
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+            
+            if ($request->filled('permit_type')) {
+                $query->where('permit_type_id', $request->permit_type);
+            }
+            
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('application_number', 'like', "%{$search}%")
+                      ->orWhereHas('client', function($q) use ($search) {
+                          $q->where('company_name', 'like', "%{$search}%")
+                            ->orWhere('name', 'like', "%{$search}%");
+                      });
+                });
+            }
+            
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->date_from);
+            }
+            
+            if ($request->filled('date_to')) {
+                $query->whereDate('created_at', '<=', $request->date_to);
+            }
         }
         
         // Dedicated pagination parameter prevents clashes with other tabs
@@ -170,17 +172,19 @@ class PermitManagementController extends Controller
     /**
      * Get permit types tab data
      */
-    private function getTypesData(Request $request)
+    private function getTypesData(Request $request, string $activeTab = 'types')
     {
         $query = PermitType::withCount('applications');
         
-        // Apply filters
-        if ($request->filled('search')) {
-            $query->where('name', 'like', "%{$request->search}%");
-        }
-        
-        if ($request->has('is_active')) {
-            $query->where('is_active', $request->is_active);
+        // Only apply filters when on types tab
+        if ($activeTab === 'types') {
+            if ($request->filled('search')) {
+                $query->where('name', 'like', "%{$request->search}%");
+            }
+            
+            if ($request->has('is_active')) {
+                $query->where('is_active', $request->is_active);
+            }
         }
         
         // Dedicated pagination parameter prevents clashes with other tabs
@@ -197,69 +201,195 @@ class PermitManagementController extends Controller
     /**
      * Get KBLI tab data
      */
-    private function getKbliData(Request $request)
+    private function getKbliData(Request $request, string $activeTab = 'kbli')
     {
-        $query = Kbli::orderBy('code');
+        $query = Kbli::orderBy('sector')->orderBy('code');
         
-        if ($request->filled('category')) {
-            $query->where('code', 'like', $request->category . '%');
-        }
-        
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('code', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('sector', 'like', "%{$search}%");
-            });
+        // Only apply filters when on kbli tab
+        if ($activeTab === 'kbli') {
+            if ($request->filled('category')) {
+                $query->where('sector', $request->category);
+            }
+            
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $searchVariants = $this->generateSearchVariants($search);
+                
+                $query->where(function($q) use ($searchVariants) {
+                    foreach ($searchVariants as $variant) {
+                        $q->orWhere('code', 'like', "%{$variant}%")
+                          ->orWhere('description', 'like', "%{$variant}%")
+                          ->orWhere('activities', 'like', "%{$variant}%");
+                    }
+                });
+            }
         }
         
         // Dedicated pagination parameter
         $kbliData = $query->paginate(20, ['*'], 'kbli_page')->withQueryString();
         
-        // Get categories (first character of code - A to U)
-        $categories = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U'];
+        // Get actual sectors from database
+        $categories = Kbli::select('sector')->distinct()->orderBy('sector')->pluck('sector')->toArray();
         
-        return compact('kbliData', 'categories');
+        // Get KBLI stats for display
+        $kbliStats = [
+            'total' => Kbli::count(),
+            'by_sector' => Kbli::selectRaw('sector, count(*) as count')
+                ->groupBy('sector')
+                ->orderBy('sector')
+                ->get(),
+        ];
+        
+        return compact('kbliData', 'categories', 'kbliStats');
     }
     
     /**
+     * Generate search variants for fuzzy matching
+     * Handles common Indonesian/English spelling variations
+     */
+    private function generateSearchVariants(string $search): array
+    {
+        $search = strtolower(trim($search));
+        $variants = [$search];
+        
+        // Common English to Indonesian spelling mappings
+        $mappings = [
+            // Ending variations
+            'estate' => 'estat',
+            'service' => 'servis',
+            'office' => 'ofis',
+            'computer' => 'komputer',
+            'technology' => 'teknologi',
+            'electronic' => 'elektronik',
+            'electric' => 'elektrik',
+            'system' => 'sistem',
+            'industry' => 'industri',
+            'factory' => 'pabrik',
+            'machine' => 'mesin',
+            'chemical' => 'kimia',
+            'pharmacy' => 'farmasi',
+            'textile' => 'tekstil',
+            'plastic' => 'plastik',
+            'metal' => 'logam',
+            'construction' => 'konstruksi',
+            'consultant' => 'konsultan',
+            'transport' => 'transportasi',
+            'communication' => 'komunikasi',
+            'insurance' => 'asuransi',
+            'property' => 'properti',
+            'restaurant' => 'restoran',
+            'hotel' => 'hotel',
+            'education' => 'pendidikan',
+            'health' => 'kesehatan',
+            'hospital' => 'rumah sakit',
+            'agriculture' => 'pertanian',
+            'fishery' => 'perikanan',
+            'mining' => 'pertambangan',
+            'petroleum' => 'minyak',
+            'manufacture' => 'manufaktur',
+            'retail' => 'ritel',
+            'wholesale' => 'grosir',
+            'finance' => 'keuangan',
+            'bank' => 'bank',
+            'security' => 'keamanan',
+            'cleaning' => 'kebersihan',
+            'catering' => 'katering',
+            'printing' => 'percetakan',
+            'advertising' => 'periklanan',
+            'media' => 'media',
+            'software' => 'perangkat lunak',
+            'hardware' => 'perangkat keras',
+            'furniture' => 'furnitur',
+            'fashion' => 'fesyen',
+            'beauty' => 'kecantikan',
+            'salon' => 'salon',
+            'gym' => 'gym',
+            'fitness' => 'kebugaran',
+            'sport' => 'olahraga',
+            'travel' => 'perjalanan',
+            'tour' => 'wisata',
+            'agency' => 'agen',
+            'export' => 'ekspor',
+            'import' => 'impor',
+        ];
+        
+        // Apply mappings in both directions
+        foreach ($mappings as $en => $id) {
+            if (str_contains($search, $en)) {
+                $variants[] = str_replace($en, $id, $search);
+            }
+            if (str_contains($search, $id)) {
+                $variants[] = str_replace($id, $en, $search);
+            }
+        }
+        
+        // Handle trailing 'e' variations (estate/estat, service/servis)
+        if (preg_match('/e$/', $search)) {
+            $variants[] = rtrim($search, 'e');
+        } else {
+            $variants[] = $search . 'e';
+        }
+        
+        // Handle double consonant simplification
+        $variants[] = preg_replace('/([bcdfghjklmnpqrstvwxyz])\1/', '$1', $search);
+        
+        // Handle 'ph' vs 'f' (photo/foto)
+        if (str_contains($search, 'ph')) {
+            $variants[] = str_replace('ph', 'f', $search);
+        }
+        if (str_contains($search, 'f')) {
+            $variants[] = str_replace('f', 'ph', $search);
+        }
+        
+        // Handle 'c' vs 'k' (electric/elektrik)
+        if (str_contains($search, 'c') && !str_contains($search, 'ch')) {
+            $variants[] = str_replace('c', 'k', $search);
+        }
+        
+        // Handle 'y' vs 'i' ending (industry/industri)
+        if (preg_match('/y$/', $search)) {
+            $variants[] = preg_replace('/y$/', 'i', $search);
+        }
+        
+        return array_unique($variants);
+    }
+
+    /**
      * Get payments tab data
      */
-    private function getPaymentsData(Request $request)
+    private function getPaymentsData(Request $request, string $activeTab = 'payments')
     {
-        $query = Payment::with(['application.client', 'application.permitType'])
+        $query = Payment::with(['client', 'quotation'])
             ->latest();
         
-        // Apply filters
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        
-        if ($request->filled('payment_method')) {
-            $query->where('payment_method', $request->payment_method);
-        }
-        
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('payment_reference', 'like', "%{$search}%")
-                  ->orWhereHas('application', function($q) use ($search) {
-                      $q->where('application_number', 'like', "%{$search}%")
-                        ->orWhereHas('client', function($q) use ($search) {
-                            $q->where('company_name', 'like', "%{$search}%")
-                              ->orWhere('name', 'like', "%{$search}%");
-                        });
-                  });
-            });
-        }
-        
-        if ($request->filled('date_from')) {
-            $query->whereDate('payment_date', '>=', $request->date_from);
-        }
-        
-        if ($request->filled('date_to')) {
-            $query->whereDate('payment_date', '<=', $request->date_to);
+        // Only apply filters when on payments tab
+        if ($activeTab === 'payments') {
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+            
+            if ($request->filled('payment_method')) {
+                $query->where('payment_method', $request->payment_method);
+            }
+            
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('payment_number', 'like', "%{$search}%")
+                      ->orWhereHas('client', function($q) use ($search) {
+                          $q->where('company_name', 'like', "%{$search}%")
+                            ->orWhere('name', 'like', "%{$search}%");
+                      });
+                });
+            }
+            
+            if ($request->filled('date_from')) {
+                $query->whereDate('paid_at', '>=', $request->date_from);
+            }
+            
+            if ($request->filled('date_to')) {
+                $query->whereDate('paid_at', '<=', $request->date_to);
+            }
         }
         
         // Dedicated pagination parameter prevents clashes with other tabs

@@ -6,7 +6,7 @@
 <div class="pb-20">
     
     {{-- Header Info --}}
-    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-2xl p-6 mb-4 text-white">
+    <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-2xl p-6 mb-4 text-white">
         <div class="flex items-center gap-3 mb-2">
             <i class="fas fa-sliders text-2xl"></i>
             <div>
@@ -27,8 +27,8 @@
                         <div class="text-xs text-gray-500 mt-0.5">Terima notifikasi push dari aplikasi</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
-                        <input type="checkbox" id="pushNotifications" class="sr-only peer" checked onchange="updatePreference('push_notifications', this.checked)">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0077b5]"></div>
+                        <input type="checkbox" id="pushNotifications" class="sr-only peer" onchange="updatePreference('push_notifications', this.checked)">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0A66C2]"></div>
                     </label>
                 </div>
             </div>
@@ -40,8 +40,8 @@
                         <div class="text-xs text-gray-500 mt-0.5">Terima notifikasi via email</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
-                        <input type="checkbox" id="emailNotifications" class="sr-only peer" checked onchange="updatePreference('email_notifications', this.checked)">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0077b5]"></div>
+                        <input type="checkbox" id="emailNotifications" class="sr-only peer" onchange="updatePreference('email_notifications', this.checked)">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0A66C2]"></div>
                     </label>
                 </div>
             </div>
@@ -53,8 +53,8 @@
                         <div class="text-xs text-gray-500 mt-0.5">Suara dan getar untuk notifikasi</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
-                        <input type="checkbox" id="soundVibration" class="sr-only peer" checked onchange="updatePreference('sound_vibration', this.checked)">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0077b5]"></div>
+                        <input type="checkbox" id="soundVibration" class="sr-only peer" onchange="updatePreference('sound_vibration', this.checked)">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0A66C2]"></div>
                     </label>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                         <input type="checkbox" id="darkMode" class="sr-only peer" onchange="updatePreference('dark_mode', this.checked)">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0077b5]"></div>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0A66C2]"></div>
                     </label>
                 </div>
             </div>
@@ -99,8 +99,8 @@
                         <div class="text-xs text-gray-500 mt-0.5">Simpan data untuk akses offline</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
-                        <input type="checkbox" id="offlineMode" class="sr-only peer" checked onchange="updatePreference('offline_mode', this.checked)">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0077b5]"></div>
+                        <input type="checkbox" id="offlineMode" class="sr-only peer" onchange="updatePreference('offline_mode', this.checked)">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0A66C2]"></div>
                     </label>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                         <input type="checkbox" id="developerMode" class="sr-only peer" onchange="updatePreference('developer_mode', this.checked)">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0077b5]"></div>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0A66C2]"></div>
                     </label>
                 </div>
             </div>
@@ -200,23 +200,29 @@ async function clearCache() {
 document.addEventListener('DOMContentLoaded', () => {
     const preferences = @json(auth()->user()->preferences ?? []);
     
-    if (preferences.push_notifications !== undefined) {
-        document.getElementById('pushNotifications').checked = preferences.push_notifications;
-    }
-    if (preferences.email_notifications !== undefined) {
-        document.getElementById('emailNotifications').checked = preferences.email_notifications;
-    }
-    if (preferences.sound_vibration !== undefined) {
-        document.getElementById('soundVibration').checked = preferences.sound_vibration;
-    }
-    if (preferences.dark_mode !== undefined) {
-        document.getElementById('darkMode').checked = preferences.dark_mode;
-    }
-    if (preferences.offline_mode !== undefined) {
-        document.getElementById('offlineMode').checked = preferences.offline_mode;
-    }
-    if (preferences.developer_mode !== undefined) {
-        document.getElementById('developerMode').checked = preferences.developer_mode;
+    const defaultPrefs = {
+        push_notifications: true,
+        email_notifications: true,
+        sound_vibration: true,
+        dark_mode: false,
+        offline_mode: true,
+        developer_mode: false
+    };
+
+    const fields = {
+        push_notifications: 'pushNotifications',
+        email_notifications: 'emailNotifications',
+        sound_vibration: 'soundVibration',
+        dark_mode: 'darkMode',
+        offline_mode: 'offlineMode',
+        developer_mode: 'developerMode'
+    };
+
+    for (const [key, elId] of Object.entries(fields)) {
+        const el = document.getElementById(elId);
+        if (el) {
+            el.checked = preferences[key] !== undefined ? preferences[key] : defaultPrefs[key];
+        }
     }
 });
 </script>

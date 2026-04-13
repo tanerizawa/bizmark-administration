@@ -18,47 +18,47 @@
         <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
             <button 
                 @click="filter = 'all'" 
-                :class="filter === 'all' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'all' ? 'bg-[#0A66C2] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <span>Semua</span>
                 <span x-show="filter === 'all' && stats.all > 0" 
-                      class="bg-white text-[#0077b5] px-2 py-0.5 rounded-full text-xs font-bold"
+                      class="bg-white text-[#0A66C2] px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.all"></span>
             </button>
             <button 
                 @click="filter = 'tasks'" 
-                :class="filter === 'tasks' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'tasks' ? 'bg-[#0A66C2] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-circle-check text-xs"></i>
                 <span>Task</span>
                 <span x-show="stats.tasks > 0" 
-                      :class="filter === 'tasks' ? 'bg-white text-[#0077b5]' : 'bg-[#e7f3f8] text-[#0077b5]'"
+                      :class="filter === 'tasks' ? 'bg-white text-[#0A66C2]' : 'bg-[#E7F3F8] text-[#0A66C2]'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.tasks"></span>
             </button>
             <button 
                 @click="filter = 'approvals'" 
-                :class="filter === 'approvals' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'approvals' ? 'bg-[#0A66C2] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-clipboard-check text-xs"></i>
                 <span>Approval</span>
                 <span x-show="stats.approvals > 0" 
-                      :class="filter === 'approvals' ? 'bg-white text-[#0077b5]' : 'bg-orange-100 text-orange-600'"
+                      :class="filter === 'approvals' ? 'bg-white text-[#0A66C2]' : 'bg-orange-100 text-orange-600'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.approvals"></span>
             </button>
             <button 
                 @click="filter = 'cash'" 
-                :class="filter === 'cash' ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-600'"
+                :class="filter === 'cash' ? 'bg-[#0A66C2] text-white' : 'bg-gray-100 text-gray-600'"
                 class="px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all 
                        active:scale-95 flex items-center gap-2">
                 <i class="fas fa-money-bill-wave text-xs"></i>
                 <span>Keuangan</span>
                 <span x-show="stats.cash > 0" 
-                      :class="filter === 'cash' ? 'bg-white text-[#0077b5]' : 'bg-green-100 text-green-600'"
+                      :class="filter === 'cash' ? 'bg-white text-[#0A66C2]' : 'bg-green-100 text-green-600'"
                       class="px-2 py-0.5 rounded-full text-xs font-bold"
                       x-text="stats.cash"></span>
             </button>
@@ -84,13 +84,13 @@
 
         <template x-for="notif in filteredNotifications" :key="notif.id">
             <div 
-                :class="!notif.read_at ? 'bg-[#f0f7fa]' : 'bg-white'"
+                :class="!notif.read_at ? 'bg-[#E7F3F8]' : 'bg-white'"
                 class="p-3 hover:bg-gray-50 transition-colors relative border-b border-gray-100"
                 @click="handleNotification(notif)">
                 
                 {{-- Unread Indicator --}}
                 <div x-show="!notif.read_at" 
-                     class="absolute left-1 top-4 w-2 h-2 bg-[#0077b5] rounded-full"></div>
+                     class="absolute left-1 top-4 w-2 h-2 bg-[#0A66C2] rounded-full"></div>
 
                 <div class="flex gap-2 ml-3">
                     {{-- Icon --}}
@@ -135,7 +135,7 @@
                             <template x-for="action in notif.actions" :key="action.label">
                                 <button 
                                     @click.stop="handleAction(notif, action)"
-                                    :class="action.primary ? 'bg-[#0077b5] text-white' : 'bg-gray-100 text-gray-700'"
+                                    :class="action.primary ? 'bg-[#0A66C2] text-white' : 'bg-gray-100 text-gray-700'"
                                     class="px-3 py-1 rounded-lg text-xs font-medium 
                                            active:scale-95 transition-all">
                                     <span x-text="action.label"></span>
@@ -148,7 +148,7 @@
                     <button 
                         x-show="!notif.read_at"
                         @click.stop="markAsRead(notif.id)"
-                        class="text-gray-400 hover:text-[#0077b5] transition-colors">
+                        class="text-gray-400 hover:text-[#0A66C2] transition-colors">
                         <i class="fas fa-check text-sm"></i>
                     </button>
                 </div>

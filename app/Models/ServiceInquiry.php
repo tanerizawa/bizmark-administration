@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 class ServiceInquiry extends Model
 {
@@ -50,18 +51,21 @@ class ServiceInquiry extends Model
     ];
 
     /**
-     * Generate unique inquiry number
+     * Generate unique inquiry number with DB-level locking to prevent race conditions
      */
     public static function generateInquiryNumber(): string
     {
-        $year = now()->year;
-        $lastInquiry = self::whereYear('created_at', $year)
-            ->orderBy('id', 'desc')
-            ->first();
+        return DB::transaction(function () {
+            $year = now()->year;
+            $lastInquiry = self::whereYear('created_at', $year)
+                ->orderBy('id', 'desc')
+                ->lockForUpdate()
+                ->first();
 
-        $sequence = $lastInquiry ? (int) substr($lastInquiry->inquiry_number, -4) + 1 : 1;
+            $sequence = $lastInquiry ? (int) substr($lastInquiry->inquiry_number, -4) + 1 : 1;
 
-        return sprintf('INQ-%d-%04d', $year, $sequence);
+            return sprintf('INQ-%d-%04d', $year, $sequence);
+        });
     }
 
     /**
@@ -100,6 +104,11 @@ class ServiceInquiry extends Model
         return $query->where('status', 'analyzed');
     }
 
+    public function scopeError($query)
+    {
+        return $query->where('status', 'error');
+    }
+
     public function scopeContacted($query)
     {
         return $query->where('status', 'contacted');
@@ -135,8 +144,14 @@ class ServiceInquiry extends Model
         }
 
         $cost = $this->ai_analysis['total_estimated_cost'];
+        
+        // Check grand_total first (AI response format), then fallback to direct min/max
+        if (isset($cost['grand_total']['min'], $cost['grand_total']['max'])) {
+            return (int) (($cost['grand_total']['min'] + $cost['grand_total']['max']) / 2);
+        }
+        
         return isset($cost['min']) && isset($cost['max']) 
-            ? ($cost['min'] + $cost['max']) / 2 
+            ? (int) (($cost['min'] + $cost['max']) / 2)
             : null;
     }
 

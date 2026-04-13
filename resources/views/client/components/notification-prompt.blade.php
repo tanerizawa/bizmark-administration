@@ -3,8 +3,8 @@
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all" @click.away="dismiss()">
         <!-- Icon -->
         <div class="flex justify-center mb-4">
-            <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
-                <i class="fas fa-bell text-3xl text-indigo-600"></i>
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-bell text-3xl text-[#0A66C2]"></i>
             </div>
         </div>
         
@@ -48,7 +48,7 @@
             <button @click="dismiss()" class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition">
                 Nanti Saja
             </button>
-            <button @click="enable()" class="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-blue-700 transition">
+            <button @click="enable()" class="flex-1 px-4 py-3 bg-[#0A66C2] text-white rounded-lg font-medium hover:bg-[#004182] transition">
                 Aktifkan
             </button>
         </div>

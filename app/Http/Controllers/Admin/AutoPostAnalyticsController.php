@@ -23,19 +23,19 @@ class AutoPostAnalyticsController extends Controller
         $stats = [
             'total_articles' => Article::where('created_at', '>=', $startDate)
                 ->where('created_at', '<=', $endDate)
-                ->whereNotNull('auto_post_schedule_id')
+                ->where('source_type', 'auto-generated')
                 ->count(),
             
             'total_topics' => ArticleTopic::count(),
-            'available_topics' => ArticleTopic::where('status', 'available')->count(),
-            'used_topics' => ArticleTopic::where('status', 'used')->count(),
+            'available_topics' => ArticleTopic::where('status', 'pending')->whereNull('scheduled_for')->count(),
+            'used_topics' => ArticleTopic::where('status', 'published')->count(),
             
             'pending_schedules' => AutoPostSchedule::where('status', 'pending')->count(),
             'completed_schedules' => AutoPostSchedule::where('status', 'completed')
-                ->where('processed_at', '>=', $startDate)
+                ->where('completed_at', '>=', $startDate)
                 ->count(),
             'failed_schedules' => AutoPostSchedule::where('status', 'failed')
-                ->where('processed_at', '>=', $startDate)
+                ->where('completed_at', '>=', $startDate)
                 ->count(),
         ];
         
@@ -47,15 +47,15 @@ class AutoPostAnalyticsController extends Controller
         
         // Daily generation chart
         $dailyGeneration = AutoPostSchedule::select(
-                DB::raw('DATE(processed_at) as date'),
+                DB::raw('DATE(completed_at) as date'),
                 DB::raw('COUNT(*) as count'),
                 DB::raw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as success"),
                 DB::raw("SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed")
             )
-            ->whereNotNull('processed_at')
-            ->where('processed_at', '>=', $startDate)
-            ->where('processed_at', '<=', $endDate)
-            ->groupBy(DB::raw('DATE(processed_at)'))
+            ->whereNotNull('completed_at')
+            ->where('completed_at', '>=', $startDate)
+            ->where('completed_at', '<=', $endDate)
+            ->groupBy(DB::raw('DATE(completed_at)'))
             ->orderBy('date')
             ->get();
         
@@ -63,7 +63,7 @@ class AutoPostAnalyticsController extends Controller
         $categoryDistribution = Article::select('category', DB::raw('COUNT(*) as count'))
             ->where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $endDate)
-            ->whereNotNull('auto_post_schedule_id')
+            ->where('source_type', 'auto-generated')
             ->groupBy('category')
             ->get();
         

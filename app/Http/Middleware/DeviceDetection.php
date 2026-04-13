@@ -49,54 +49,28 @@ class DeviceDetection
             }
         }
 
-        // Handle manual preferences via query parameters
+        // Handle manual preference: ?mobile=1 → redirect to mobile landing
         if ($request->has('mobile') && $request->query('mobile') === '1') {
             $request->session()->put('force_device', 'mobile');
-            // Determine locale from route or path
             $locale = $this->determineLocale($request);
             return redirect()->route($locale === 'en' ? 'mobile.landing.en' : 'mobile.landing.id');
         }
 
+        // Handle manual preference: ?desktop=1 → redirect to desktop landing
         if ($request->has('desktop') && $request->query('desktop') === '1') {
             $request->session()->put('force_device', 'desktop');
-            // Determine locale from route or path
             $locale = $this->determineLocale($request);
             return redirect()->route($locale === 'en' ? 'landing.en' : 'landing.id');
         }
 
+        // Share device detection info to views (without redirecting)
         $isMobile = $this->detectMobileDevice($request);
-        $isOnMobilePath = $request->is('m/*') || 
-                         $request->route()?->getName() === 'mobile.landing.id' || 
-                         $request->route()?->getName() === 'mobile.landing.en' ||
-                         $request->route()?->getName() === 'mobile.landing';
-        $isOnLanding = $request->is('/') || 
-                      $request->route()?->getName() === 'landing.id' || 
-                      $request->route()?->getName() === 'landing.en';
+        view()->share('isDeviceMobile', $isMobile);
 
-        // Only auto-redirect from ROOT landing page, not if user directly access mobile landing
-        // Force mobile view for mobile devices on ROOT landing (/)
-        if ($isMobile && $isOnLanding && !$isOnMobilePath) {
-            // Determine locale from route or path
-            $locale = $this->determineLocale($request);
-            return redirect()->route($locale === 'en' ? 'mobile.landing.en' : 'mobile.landing.id');
-        }
-
-        // Only redirect desktop devices from mobile landing if they came from homepage redirect
-        // Allow manual access to mobile landing (useful for testing, manual toggle)
-        // Force desktop view ONLY if no manual preference and coming from auto-redirect
-        if (!$isMobile && $isOnMobilePath && 
-            ($request->route()?->getName() === 'mobile.landing.id' || 
-             $request->route()?->getName() === 'mobile.landing.en')) {
-            // Check if user has manual preference to stay on mobile
-            if (!$request->session()->has('force_device')) {
-                // Only redirect if coming from homepage, not direct access
-                if ($request->headers->get('referer') && str_contains($request->headers->get('referer'), 'bizmark.id')) {
-                    // Determine locale from route or path
-                    $locale = $this->determineLocale($request);
-                    return redirect()->route($locale === 'en' ? 'landing.en' : 'landing.id');
-                }
-            }
-        }
+        // Landing pages (/, /en) are fully responsive — NO auto-redirect.
+        // Mobile landing (/m/landing, /m/en/landing) is still accessible
+        // via ?mobile=1 or direct URL for users who prefer the mobile version.
+        // No force redirect in either direction.
 
         return $next($request);
     }

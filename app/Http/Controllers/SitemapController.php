@@ -51,6 +51,54 @@ class SitemapController extends Controller
             $sitemap .= $this->addUrl("https://bizmark.id/layanan/{$slug}", now()->toAtomString(), 'weekly', '0.8');
         }
         
+        // Programmatic SEO: City Index + Service-Location Pages
+        $pseoConfig = config('programmatic_seo');
+        if ($pseoConfig && ($pseoConfig['enabled'] ?? false)) {
+            $pSeoCities = $pseoConfig['cities'] ?? [];
+            $pSeoServices = $pseoConfig['services'] ?? [];
+            $allSvcs = config('services_data', []);
+
+            foreach ($pSeoCities as $cSlug => $cData) {
+                // City index page
+                $sitemap .= $this->addUrl("https://bizmark.id/layanan/kota/{$cSlug}", now()->toAtomString(), 'weekly', '0.7');
+
+                // Service+City combo pages
+                foreach ($pSeoServices as $sSlug) {
+                    if (isset($allSvcs[$sSlug])) {
+                        $sitemap .= $this->addUrl("https://bizmark.id/layanan/{$sSlug}/{$cSlug}", now()->toAtomString(), 'weekly', '0.7');
+                    }
+                }
+            }
+        }
+        
+        // Service Comparison Pages
+        $comparisonSlugs = [
+            'amdal-vs-ukl-upl', 'perizinan-lb3-vs-amdal', 'pbg-slf-vs-izin-operasional',
+            'oss-nib-vs-izin-operasional', 'ukl-upl-vs-konsultan-lingkungan',
+            'amdal-vs-perizinan-lb3', 'izin-k3-vs-izin-operasional',
+            'perizinan-lb3-vs-monitoring-digital',
+        ];
+        $sitemap .= $this->addUrl("https://bizmark.id/layanan/perbandingan", now()->toAtomString(), 'weekly', '0.7');
+        foreach ($comparisonSlugs as $cmpSlug) {
+            $sitemap .= $this->addUrl("https://bizmark.id/layanan/perbandingan/{$cmpSlug}", now()->toAtomString(), 'weekly', '0.7');
+        }
+
+        // FAQ Aggregation Pages
+        $faqTopics = ['perizinan-lingkungan', 'tips-perizinan', 'regulasi-industri', 'studi-kasus'];
+        $sitemap .= $this->addUrl("https://bizmark.id/faq", now()->toAtomString(), 'weekly', '0.7');
+        foreach ($faqTopics as $faqSlug) {
+            $sitemap .= $this->addUrl("https://bizmark.id/faq/{$faqSlug}", now()->toAtomString(), 'weekly', '0.7');
+        }
+
+        // Pillar / Panduan Pages (dynamic from topic_clusters table)
+        $pillarClusters = \App\Models\TopicCluster::active()->get();
+        if ($pillarClusters->count() > 0) {
+            $sitemap .= $this->addUrl("https://bizmark.id/panduan", now()->toAtomString(), 'weekly', '0.8');
+            foreach ($pillarClusters as $pc) {
+                $sitemap .= $this->addUrl("https://bizmark.id/panduan/{$pc->pillar_slug}", $pc->updated_at->toAtomString(), 'weekly', '0.8');
+            }
+        }
+
         // PMA Inquiry
         $sitemap .= $this->addUrl('https://bizmark.id/en/inquiry', now()->toAtomString(), 'monthly', '0.9');
         
@@ -218,6 +266,9 @@ class SitemapController extends Controller
         
         $robots .= "# Sitemap location" . PHP_EOL;
         $robots .= "Sitemap: https://bizmark.id/sitemap.xml" . PHP_EOL . PHP_EOL;
+        
+        $robots .= "# RSS Feed" . PHP_EOL;
+        $robots .= "# https://bizmark.id/feed/rss" . PHP_EOL . PHP_EOL;
         
         $robots .= "# Crawl-delay for respectful crawling" . PHP_EOL;
         $robots .= "Crawl-delay: 1" . PHP_EOL . PHP_EOL;

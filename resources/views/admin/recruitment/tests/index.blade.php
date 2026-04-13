@@ -19,7 +19,7 @@
                     <span class="text-dark-text-tertiary">/</span>
                     <span>Test</span>
                 </div>
-                <h1 class="text-2xl font-semibold text-white leading-tight">Template & Sesi Tes</h1>
+                <h1 class="text-xl font-semibold text-white leading-tight">Template & Sesi Tes</h1>
                 <p class="text-sm" style="color: rgba(235,235,245,0.7);">
                     Kelola template penilaian dan pantau sesi tes kandidat.
                 </p>
@@ -36,22 +36,22 @@
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-primary); opacity: var(--opacity-text-strong);">Total Template</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['total_templates'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['total_templates'] }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Seluruh template tersedia</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-success); opacity: var(--opacity-text-strong);">Template Aktif</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['active_templates'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['active_templates'] }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Dapat ditugaskan</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-warning); opacity: var(--opacity-text-strong);">Sesi Aktif</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['active_sessions'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['active_sessions'] }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Kandidat sedang tes</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Selesai Hari Ini</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['completed_today'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['completed_today'] }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Tes selesai</p>
         </div>
     </section>

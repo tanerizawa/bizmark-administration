@@ -120,7 +120,7 @@
             <select 
                 x-model="project_id" 
                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl 
-                       focus:border-[#0077b5] focus:ring-2 focus:ring-[#e7f3f8] transition-all">
+                       focus:border-[#0A66C2] focus:ring-2 focus:ring-[#E7F3F8] transition-all">
                 <option value="">Tidak terkait proyek</option>
                 @foreach($projects ?? [] as $project)
                 <option value="{{ $project->id }}">{{ $project->name }}</option>
@@ -138,7 +138,7 @@
                 rows="3"
                 placeholder="Tambahkan catatan atau detail transaksi..."
                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl 
-                       focus:border-[#0077b5] focus:ring-2 focus:ring-[#e7f3f8] transition-all resize-none"></textarea>
+                       focus:border-[#0A66C2] focus:ring-2 focus:ring-[#E7F3F8] transition-all resize-none"></textarea>
         </div>
 
         {{-- Receipt Upload --}}
@@ -192,7 +192,7 @@
                 type="datetime-local" 
                 x-model="transaction_date" 
                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl 
-                       focus:border-[#0077b5] focus:ring-2 focus:ring-[#e7f3f8] transition-all"
+                       focus:border-[#0A66C2] focus:ring-2 focus:ring-[#E7F3F8] transition-all"
                 required>
         </div>
 

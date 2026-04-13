@@ -50,7 +50,7 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
         <div class="card-elevated rounded-apple-lg p-3">
-            <div class="text-2xl font-bold text-white mb-1">{{ $stats['total'] }}</div>
+            <div class="text-lg font-bold text-white mb-1">{{ $stats['total'] }}</div>
             <div class="text-xs text-dark-text-secondary">Total</div>
         </div>
         <div class="card-elevated rounded-apple-lg p-3">
@@ -273,7 +273,7 @@
                     @empty
                         <tr>
                             <td colspan="8" class="px-4 py-8 text-center text-dark-text-secondary">
-                                <i class="fas fa-inbox text-3xl mb-3 block opacity-30"></i>
+                                <i class="fas fa-inbox text-2xl mb-3 block opacity-30"></i>
                                 <p>Tidak ada inquiry ditemukan</p>
                                 @if(request()->hasAny(['search', 'status', 'priority', 'date_from', 'date_to']))
                                     <a href="{{ route('admin.service-inquiries.index') }}" class="text-apple-blue hover:text-blue-400 text-sm mt-2 inline-block">

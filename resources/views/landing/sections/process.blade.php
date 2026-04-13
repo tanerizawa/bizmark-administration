@@ -78,16 +78,16 @@
             <div class="flex flex-col" data-aos="fade-left" data-aos-delay="300" data-aos-duration="800">
                 <figure class="rounded-2xl border border-[#5B8DBE]/10 bg-[#FDFBF8] shadow-soft-lg overflow-hidden h-full flex flex-col sticky top-32">
                     <picture class="flex-1">
-                        <source srcset="https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=600&fm=webp 600w,
-                                        https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=1200&fm=webp 1200w"
+                        <source srcset="/images/landing/process-600.webp 600w,
+                                        /images/landing/process-1200.webp 1200w"
                                 type="image/webp"
                                 sizes="(min-width: 1024px) 480px, 100vw">
-                        <source srcset="https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=600 600w,
-                                        https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=1200 1200w"
+                        <source srcset="/images/landing/process-600.jpg 600w,
+                                        /images/landing/process-1200.jpg 1200w"
                                 type="image/jpeg"
                                 sizes="(min-width: 1024px) 480px, 100vw">
-                        <img src="https://images.pexels.com/photos/3182834/pexels-photo-3182834.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                             alt="Tim konsultan Bizmark.ID sedang berdiskusi"
+                        <img src="/images/landing/process-1200.jpg"
+                             alt="Tim konsultan Bizmark.ID berdiskusi tentang proses perizinan lingkungan"
                              class="w-full h-full object-cover object-center"
                              loading="lazy"
                              decoding="async"

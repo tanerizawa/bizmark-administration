@@ -12,7 +12,7 @@
                 <i class="fas fa-arrow-left"></i>
             </a>
             <div>
-                <h1 class="text-3xl font-bold text-gray-900">Buat Quotation</h1>
+                <h1 class="text-xl font-bold text-gray-900">Buat Quotation</h1>
                 <p class="text-gray-600 mt-1">{{ $application->application_number }} - {{ $application->permitType?->name ?? 'Tipe Izin Tidak Tersedia' }}</p>
             </div>
         </div>

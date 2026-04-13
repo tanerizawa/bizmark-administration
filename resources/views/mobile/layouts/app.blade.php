@@ -18,9 +18,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     {{-- PWA Meta Tags --}}
-    <meta name="theme-color" content="#0077B5">
+    <meta name="theme-color" content="#0A66C2">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Bizmark Admin">
     
@@ -42,19 +41,9 @@
                 extend: {
                     colors: {
                         'bizmark': {
-                            DEFAULT: '#0077B5',
-                            dark: '#005582',
+                            DEFAULT: '#0A66C2',
+                            dark: '#004182',
                             light: '#E7F3F8'
-                        },
-                        'apple-blue': {
-                            DEFAULT: '#007AFF',
-                            dark: '#0051D5',
-                            light: '#E5F3FF'
-                        },
-                        'linkedin': {
-                            DEFAULT: '#0077b5',
-                            dark: '#004d6d',
-                            light: '#e7f3f8'
                         }
                     }
                 }
@@ -101,10 +90,10 @@
             left: 0;
             right: 0;
             z-index: 50;
-            background: linear-gradient(135deg, rgb(0, 119, 181) 0%, rgb(0, 85, 130) 100%);
+            background: linear-gradient(135deg, #0A66C2 0%, #004182 100%);
             height: calc(56px + env(safe-area-inset-top));
             padding-top: env(safe-area-inset-top);
-            box-shadow: 0 2px 8px rgba(0, 119, 181, 0.15);
+            box-shadow: 0 2px 8px rgba(10, 102, 194, 0.15);
             transition: transform 0.3s ease;
         }
         
@@ -294,8 +283,8 @@
             {{-- Home --}}
             <a href="{{ mobile_route('dashboard') }}" 
                class="flex flex-col items-center justify-center gap-0.5
-                      {{ request()->routeIs('mobile.dashboard') ? 'text-[#0077b5]' : 'text-gray-600' }} 
-                      hover:text-[#0077b5] transition-colors">
+                      {{ request()->routeIs('mobile.dashboard') ? 'text-[#0A66C2]' : 'text-gray-600' }} 
+                      hover:text-[#0A66C2] transition-colors">
                 <i class="fas fa-house text-xl"></i>
                 <span class="text-[9px] font-medium">Home</span>
             </a>
@@ -303,8 +292,8 @@
             {{-- Tasks --}}
             <a href="{{ mobile_route('tasks.index') }}" 
                class="flex flex-col items-center justify-center gap-0.5 relative
-                      {{ request()->routeIs('mobile.tasks*') ? 'text-[#0077b5]' : 'text-gray-600' }} 
-                      hover:text-[#0077b5] transition-colors">
+                      {{ request()->routeIs('mobile.tasks*') ? 'text-[#0A66C2]' : 'text-gray-600' }} 
+                      hover:text-[#0A66C2] transition-colors">
                 <i class="fas fa-circle-check text-xl"></i>
                 <span class="text-[9px] font-medium">Tasks</span>
                 @if(isset($myTasksCount) && $myTasksCount > 0)
@@ -319,7 +308,7 @@
             <div class="flex items-center justify-center">
                 <button onclick="showQuickAdd()" 
                         class="flex items-center justify-center w-12 h-12 -mt-5 rounded-full 
-                               bg-[#0077b5] hover:bg-[#004182] text-white shadow-lg hover:shadow-xl 
+                               bg-[#0A66C2] hover:bg-[#004182] text-white shadow-lg hover:shadow-xl 
                                transition-all active:scale-95">
                     <i class="fas fa-plus text-xl"></i>
                 </button>
@@ -328,8 +317,8 @@
             {{-- Notifications --}}
             <a href="{{ mobile_route('notifications.index') }}" 
                class="flex flex-col items-center justify-center gap-0.5 relative
-                      {{ request()->routeIs('mobile.notifications*') ? 'text-[#0077b5]' : 'text-gray-600' }} 
-                      hover:text-[#0077b5] transition-colors">
+                      {{ request()->routeIs('mobile.notifications*') ? 'text-[#0A66C2]' : 'text-gray-600' }} 
+                      hover:text-[#0A66C2] transition-colors">
                 <i class="fas fa-bell text-xl"></i>
                 <span class="text-[9px] font-medium">Notif</span>
                 @if(isset($unreadNotifCount) && $unreadNotifCount > 0)
@@ -343,7 +332,7 @@
             {{-- Menu --}}
             <button onclick="showMenu()" 
                     class="flex flex-col items-center justify-center gap-0.5 text-gray-600 
-                           hover:text-[#0077b5] transition-colors">
+                           hover:text-[#0A66C2] transition-colors">
                 <i class="fas fa-bars text-xl"></i>
                 <span class="text-[9px] font-medium">Menu</span>
             </button>
@@ -449,8 +438,8 @@
                 <a href="{{ mobile_route('profile.show') }}" 
                    class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 bg-[#f0f7fa] rounded-lg flex items-center justify-center">
-                            <i class="fas fa-user text-[#0077b5] text-sm"></i>
+                        <div class="w-9 h-9 bg-[#E7F3F8] rounded-lg flex items-center justify-center">
+                            <i class="fas fa-user text-[#0A66C2] text-sm"></i>
                         </div>
                         <div class="flex-1">
                             <div class="font-medium text-gray-900 text-sm">Profile Saya</div>
@@ -526,8 +515,8 @@
                 <a href="{{ mobile_route('dashboard') }}" 
                    class="block p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 bg-[#f0f7fa] rounded-lg flex items-center justify-center">
-                            <i class="fas fa-house text-[#0077b5] text-sm"></i>
+                        <div class="w-9 h-9 bg-[#E7F3F8] rounded-lg flex items-center justify-center">
+                            <i class="fas fa-house text-[#0A66C2] text-sm"></i>
                         </div>
                         <div class="flex-1">
                             <div class="font-medium text-gray-900 text-sm">Dashboard</div>
@@ -645,16 +634,16 @@
     {{-- Install PWA Prompt --}}
     <div id="installPrompt" class="fixed bottom-20 left-4 right-4 bg-white rounded-2xl shadow-xl p-4 hidden z-50">
         <div class="flex items-start gap-3">
-            <div class="w-12 h-12 bg-[#e7f3f8] rounded-xl flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-mobile-alt text-[#0077b5] text-xl"></i>
+            <div class="w-12 h-12 bg-[#E7F3F8] rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-mobile-alt text-[#0A66C2] text-xl"></i>
             </div>
             <div class="flex-1">
                 <h4 class="font-bold text-gray-900 mb-1">Install Bizmark Admin</h4>
                 <p class="text-sm text-gray-600 mb-3">Tambah ke home screen untuk akses cepat</p>
                 <div class="flex gap-2">
                     <button onclick="installPWA()" 
-                            class="px-4 py-2 bg-[#0077b5] text-white rounded-lg text-sm font-medium 
-                                   hover:bg-[#004d6d] transition-colors">
+                            class="px-4 py-2 bg-[#0A66C2] text-white rounded-lg text-sm font-medium 
+                                   hover:bg-[#004182] transition-colors">
                         Install
                     </button>
                     <button onclick="dismissInstallPrompt()" 

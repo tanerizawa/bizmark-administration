@@ -13,55 +13,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // ========================================
-        // 🤖 AUTOMATED BACKLINK MANAGEMENT
-        // ========================================
-
-        // Daily Backlink Health Check (Every morning at 8 AM)
-        $schedule->command('backlink:monitor --limit=50')
-            ->dailyAt('08:00')
-            ->withoutOverlapping()
-            ->emailOutputOnFailure('cs@bizmark.id');
-
-        // Weekly Backlink Crawler (Every Monday at 9 AM)
-        $schedule->command('backlink:crawl --all --limit=25')
-            ->weeklyOn(1, '09:00')
-            ->withoutOverlapping()
-            ->emailOutputOnFailure('cs@bizmark.id');
-
-        // Daily AI-Powered Outreach (Monday-Friday at 10 AM)
-        $schedule->command('backlink:outreach --ai --priority=high --limit=5 --type=initial')
-            ->weekdays()
-            ->at('10:00')
-            ->withoutOverlapping()
-            ->emailOutputOnFailure('cs@bizmark.id');
-
-        // Weekly Follow-up Emails (Every Wednesday at 10 AM)
-        $schedule->command('backlink:outreach --ai --type=follow_up --limit=10')
-            ->weeklyOn(3, '10:00')
-            ->withoutOverlapping()
-            ->emailOutputOnFailure('cs@bizmark.id');
-
-        // Monthly Content Syndication (First day of month at 11 AM)
-        $schedule->command('content:syndicate --limit=5')
-            ->monthlyOn(1, '11:00')
-            ->withoutOverlapping()
-            ->emailOutputOnFailure('cs@bizmark.id');
-
-        // ========================================
-        // 📊 ANALYTICS & REPORTING
-        // ========================================
-
-        // Weekly Backlink Report (Every Sunday at 18:00)
-        $schedule->call(function () {
-            \Illuminate\Support\Facades\Log::info('Weekly backlink report generated', [
-                'total_targets' => \App\Models\BacklinkTarget::count(),
-                'active_backlinks' => \App\Models\Backlink::where('status', 'active')->count(),
-                'contacted_targets' => \App\Models\BacklinkTarget::where('status', 'contacted')->count(),
-                'response_rate' => \App\Models\BacklinkOutreach::where('status', 'replied')->count(),
-            ]);
-        })->weeklyOn(0, '18:00');
-
-        // ========================================
         // 📝 AUTO-POST ARTICLE MANAGEMENT
         // ========================================
 
@@ -71,16 +22,38 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->emailOutputOnFailure('cs@bizmark.id');
 
-        // Fix log permissions to prevent permission denied errors (Every hour)
+        // Fix storage/cache permissions to prevent permission denied errors (Every 15 minutes)
         $schedule->call(function () {
-            $logPath = storage_path('logs');
-            if (is_dir($logPath)) {
-                @chmod($logPath, 0775);
-                foreach (glob("{$logPath}/*.log") as $logFile) {
-                    @chmod($logFile, 0664);
+            $directories = [
+                storage_path('logs'),
+                storage_path('framework'),
+                storage_path('framework/views'),
+                storage_path('framework/cache'),
+                storage_path('framework/sessions'),
+                bootstrap_path('cache'),
+            ];
+
+            foreach ($directories as $dir) {
+                if (!is_dir($dir)) {
+                    continue;
+                }
+
+                @chmod($dir, 0775);
+
+                $iterator = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
+                    \RecursiveIteratorIterator::SELF_FIRST
+                );
+
+                foreach ($iterator as $item) {
+                    if ($item->isDir()) {
+                        @chmod($item->getPathname(), 0775);
+                    } else {
+                        @chmod($item->getPathname(), 0664);
+                    }
                 }
             }
-        })->hourly()->name('fix-log-permissions');
+        })->everyFifteenMinutes()->name('fix-storage-permissions');
 
         // Process overdue schedules (Every 15 minutes)
         $schedule->command('autopost:process-overdue --limit=10')
@@ -90,6 +63,13 @@ class Kernel extends ConsoleKernel
                 // Skip if command doesn't exist yet
                 return !class_exists(\App\Console\Commands\ProcessOverdueSchedules::class);
             });
+
+        // Generate standalone daily batch at midnight with automatic overflow to next day.
+        $schedule->command('autopost:schedule-nightly --overflow-days=7')
+            ->dailyAt('00:00')
+            ->timezone('Asia/Jakarta')
+            ->withoutOverlapping()
+            ->emailOutputOnFailure('cs@bizmark.id');
 
         // Fix stuck processing schedules (Every 5 minutes) - DEPRECATED, use health-check instead
         // $schedule->command('autopost:fix-stuck --timeout=10')
@@ -108,6 +88,88 @@ class Kernel extends ConsoleKernel
         // Cache cleanup
         $schedule->command('cache:prune-stale-tags')
             ->hourly();
+
+        // ========================================
+        // 🔍 SEO DOMINATION ENGINE
+        // ========================================
+
+        // Submit recent articles to IndexNow (Daily at 6 AM)
+        $schedule->command('seo:index-now --recent=1')
+            ->dailyAt('06:00')
+            ->withoutOverlapping();
+
+        // Full IndexNow re-submission (Weekly Sunday at 3 AM)
+        $schedule->command('seo:index-now --all')
+            ->weeklyOn(0, '03:00')
+            ->withoutOverlapping();
+
+        // Content Refresh: AI-refresh 2 stale articles daily at 4 AM
+        $schedule->command('seo:refresh-content --older-than=90 --limit=2')
+            ->dailyAt('04:00')
+            ->withoutOverlapping();
+
+        // SEO Intelligence: Full pipeline weekly (keywords + clusters + gaps + meta)
+        $schedule->command('seo:intelligence --queue-gaps=3 --meta-limit=5')
+            ->weeklyOn(1, '02:00')
+            ->withoutOverlapping();
+
+        // Meta optimization: Daily optimize 3 articles at 5 AM
+        $schedule->command('seo:optimize-meta --limit=3')
+            ->dailyAt('05:00')
+            ->withoutOverlapping();
+
+        // ========================================
+        // 📤 DISTRIBUTION ENGINE
+        // ========================================
+
+        // Full distribution: syndicate + captions + push (Daily at 7 AM)
+        $schedule->command('seo:distribute --all --limit=3')
+            ->dailyAt('07:00')
+            ->withoutOverlapping();
+
+        // Social captions for new articles (Daily at 11 AM)
+        $schedule->command('content:social-captions --limit=2')
+            ->dailyAt('11:00')
+            ->withoutOverlapping();
+
+        // ========================================
+        // 📊 SEO COMMAND CENTER
+        // ========================================
+
+        // Daily view snapshot for trend tracking (Every night at 23:55)
+        $schedule->command('seo:snapshot-views')
+            ->dailyAt('23:55')
+            ->withoutOverlapping();
+
+        // Daily SEO scoring for 10 articles (at 3 AM)
+        $schedule->command('seo:score-articles --limit=10')
+            ->dailyAt('03:00')
+            ->withoutOverlapping();
+
+        // Weekly SEO report with email (Every Sunday at 20:00)
+        $schedule->command('seo:weekly-report --email')
+            ->weeklyOn(0, '20:00')
+            ->withoutOverlapping();
+
+        // Monthly SEO report (First of month at 20:00)
+        $schedule->command('seo:weekly-report --monthly --email')
+            ->monthlyOn(1, '20:00')
+            ->withoutOverlapping();
+
+        // Competitor analysis (Monday 04:00)
+        $schedule->command('seo:competitor-analyze --limit=5')
+            ->weeklyOn(1, '04:00')
+            ->withoutOverlapping();
+
+        // Meta A/B tests: create + evaluate (Tuesday & Friday 05:00)
+        $schedule->command('seo:meta-ab-test --all --limit=3')
+            ->twiceWeekly(2, 5, '05:00')
+            ->withoutOverlapping();
+
+        // GSC data import (daily 02:00)
+        $schedule->command('seo:gsc-import --days=3')
+            ->dailyAt('02:00')
+            ->withoutOverlapping();
     }
 
     /**

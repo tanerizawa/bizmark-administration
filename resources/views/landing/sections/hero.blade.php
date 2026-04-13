@@ -31,22 +31,22 @@
                 {{-- Main Heading --}}
                 <div class="space-y-6">
                     <h1 class="text-5xl lg:text-6xl font-black leading-tight text-[#1A1410]" style="letter-spacing: -0.02em;">
-                        Arsip, regulasi, dan koordinasi perizinan berpadu dalam satu ekosistem.
+                        Konsultan Perizinan LB3, AMDAL & UKL-UPL Terpercaya di Karawang
                     </h1>
                     <p class="text-xl text-[#6B5D52] leading-relaxed max-w-2xl font-light">
-                        Kami mengelola LB3, AMDAL, UKL-UPL, OSS, dan legalitas lain dengan SOP terdokumentasi sehingga pimpinan selalu punya visibilitas penuh.
+                        Kami mengelola perizinan Limbah B3, AMDAL, UKL-UPL, OSS, dan legalitas industri lainnya dengan SOP terdokumentasi sehingga pimpinan selalu punya visibilitas penuh.
                     </p>
                 </div>
 
                 {{-- Metrics - Reduced from 3 to 2 for cognitive load --}}
                 <div class="grid grid-cols-2 gap-8 pt-4" role="list" aria-label="Ringkasan capaian Bizmark.ID">
                     <div class="metric-card" role="listitem">
-                        <p class="text-4xl font-black text-[#5B8DBE]">{{ $metrics['projects']['completed'] }}</p>
-                        <p class="text-sm font-semibold text-[#6B5D52] mt-2">Project Selesai</p>
+                        <p class="text-4xl font-black text-[#5B8DBE]">{{ $metrics['display']['experience_years'] ?? '10+' }}</p>
+                        <p class="text-sm font-semibold text-[#6B5D52] mt-2">Tahun Pengalaman</p>
                     </div>
                     <div class="metric-card" role="listitem">
-                        <p class="text-4xl font-black text-[#7CB342]">{{ $metrics['display']['sla_rate'] }}</p>
-                        <p class="text-sm font-semibold text-[#6B5D52] mt-2">SLA On-Time</p>
+                        <p class="text-4xl font-black text-[#7CB342]">{{ $metrics['display']['service_types'] ?? '15+ Jenis' }}</p>
+                        <p class="text-sm font-semibold text-[#6B5D52] mt-2">Layanan Perizinan</p>
                     </div>
                 </div>
 
@@ -80,7 +80,7 @@
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#E8956F] to-[#C96535] border-2 border-white flex items-center justify-center text-xs text-white font-semibold">B</div>
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#7CB342] to-[#5A8328] border-2 border-white flex items-center justify-center text-xs text-white font-semibold">C</div>
                             </div>
-                            <span class="font-medium text-[#1A1410]">{{ $metrics['projects']['active_this_month'] }}+ klien aktif bulan ini</span>
+                            <span class="font-medium text-[#1A1410]">{{ $metrics['display']['platform_uptime'] ?? '24/7' }} monitoring aktif</span>
                         </div>
                         <span class="text-[#9B8B7E]">•</span>
                         <a href="tel:{{ str_replace(' ', '', $metrics['contact']['phone']) }}" 
@@ -96,20 +96,21 @@
             <div class="relative" data-aos="fade-left" data-aos-delay="200" data-aos-duration="800">
                 <div class="rounded-3xl border border-[#5B8DBE]/10 bg-white shadow-soft-xl overflow-hidden">
                     <picture>
-                        <source srcset="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp 800w,
-                                        https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200&fm=webp 1200w,
-                                        https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1400&fm=webp 1400w"
+                        <source srcset="/images/landing/hero-800.webp 800w,
+                                        /images/landing/hero-1200.webp 1200w,
+                                        /images/landing/hero-1400.webp 1400w"
                                 type="image/webp"
                                 sizes="(min-width: 1024px) 560px, 100vw">
-                        <source srcset="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800 800w,
-                                        https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200 1200w,
-                                        https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1400 1400w"
+                        <source srcset="/images/landing/hero-800.jpg 800w,
+                                        /images/landing/hero-1200.jpg 1200w,
+                                        /images/landing/hero-1400.jpg 1400w"
                                 type="image/jpeg"
                                 sizes="(min-width: 1024px) 560px, 100vw">
-                        <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1400"
-                             alt="Tim konsultan Bizmark.ID sedang membahas kepatuhan"
+                        <img src="/images/landing/hero-1400.jpg"
+                             alt="Tim konsultan Bizmark.ID sedang membahas kepatuhan regulasi perizinan lingkungan"
                              class="w-full h-full object-cover"
-                             loading="lazy"
+                             loading="eager"
+                             fetchpriority="high"
                              decoding="async"
                              width="560"
                              height="560">

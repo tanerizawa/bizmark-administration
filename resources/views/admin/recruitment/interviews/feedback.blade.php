@@ -29,7 +29,7 @@
                     <span>Feedback</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <h1 class="text-xl md:text-2xl font-semibold text-white leading-tight">{{ $application->full_name }}</h1>
+                    <h1 class="text-xl md:text-xl font-semibold text-white leading-tight">{{ $application->full_name }}</h1>
                     <span class="px-3 py-1 text-xs font-semibold rounded-full" style="{{ $statusStyle }}">
                         {{ $statusText }}
                     </span>

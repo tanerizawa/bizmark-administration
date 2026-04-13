@@ -38,7 +38,7 @@
             <h2 class="text-lg font-semibold text-dark-text-primary mb-4">Foto Profil</h2>
             
             <div class="flex flex-col items-center">
-                <div class="w-32 h-32 rounded-full bg-apple-blue flex items-center justify-center text-white text-3xl font-bold mb-4 overflow-hidden">
+                <div class="w-32 h-32 rounded-full bg-apple-blue flex items-center justify-center text-white text-xl font-bold mb-4 overflow-hidden">
                     @if($user->avatar)
                         <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                     @else

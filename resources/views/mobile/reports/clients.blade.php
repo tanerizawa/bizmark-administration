@@ -62,7 +62,7 @@
                     
                     {{-- Project Count --}}
                     <div class="text-right">
-                        <div class="text-lg font-bold text-[#0077b5]">{{ $client->projects_count }}</div>
+                        <div class="text-lg font-bold text-[#0A66C2]">{{ $client->projects_count }}</div>
                         <div class="text-xs text-gray-500">proyek</div>
                     </div>
                     

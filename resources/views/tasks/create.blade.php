@@ -3,7 +3,7 @@
 @section('title', 'Tambah Tugas Baru')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="space-y-4">
     <!-- Header -->
     <div class="mb-6">
         <div class="flex items-center justify-between mb-2">
@@ -60,7 +60,7 @@
                 <!-- Basic Information Card -->
                 <div class="card-apple p-6">
                     <div class="flex items-center gap-3 mb-6 pb-4 border-b border-dark-separator">
-                        <div class="w-10 h-10 rounded-lg bg-apple-blue bg-opacity-10 flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-lg bg-apple-blue\/10 flex items-center justify-center">
                             <i class="fas fa-info-circle text-apple-blue"></i>
                         </div>
                         <div>

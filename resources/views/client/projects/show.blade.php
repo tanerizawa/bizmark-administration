@@ -411,7 +411,10 @@
                     <p class="text-sm text-gray-700 mb-4">
                         Hubungi tim kami untuk informasi lebih lanjut tentang proyek ini
                     </p>
-                    <a href="https://wa.me/62838796028550" target="_blank" 
+                    @php
+                        $whatsappLink = data_get(config('landing_metrics'), 'contact.whatsapp_link', 'https://wa.me/6283879602855');
+                    @endphp
+                    <a href="{{ $whatsappLink }}" target="_blank" rel="noopener" 
                        class="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                         <i class="fab fa-whatsapp mr-2"></i>Hubungi via WhatsApp
                     </a>

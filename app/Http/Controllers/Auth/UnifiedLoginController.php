@@ -13,7 +13,7 @@ class UnifiedLoginController extends Controller
      * Show the unified login form.
      * Auto-detects user type and redirects accordingly.
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
         // If already logged in as admin, redirect to admin dashboard
         if (Auth::guard('web')->check()) {
@@ -23,6 +23,15 @@ class UnifiedLoginController extends Controller
         // If already logged in as client, redirect to client dashboard
         if (Auth::guard('client')->check()) {
             return redirect()->route('client.dashboard');
+        }
+
+        // Store redirect URL so intended() picks it up after login
+        if ($request->filled('redirect')) {
+            $redirect = $request->input('redirect');
+            // Only allow internal redirects (prevent open redirect)
+            if (str_starts_with($redirect, '/') || str_starts_with($redirect, url('/'))) {
+                session()->put('url.intended', $redirect);
+            }
         }
         
         return view('auth.unified-login');

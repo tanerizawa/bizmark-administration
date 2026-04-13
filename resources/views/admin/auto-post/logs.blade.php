@@ -101,7 +101,7 @@
                     <tr>
                         <td>
                             <div class="text-sm text-dark-text-primary">
-                                {{ $log->processed_at ? $log->processed_at->format('d M Y H:i') : '-' }}
+                                {{ $log->completed_at ? $log->completed_at->format('d M Y H:i') : '-' }}
                             </div>
                         </td>
                         <td>

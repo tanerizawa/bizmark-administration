@@ -6,7 +6,7 @@
 <div class="pb-20">
 
     {{-- Client Header Card --}}
-    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-2xl p-6 mb-4 text-white">
+    <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-2xl p-6 mb-4 text-white">
         <div class="flex items-start gap-4">
             <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold flex-shrink-0">
                 {{ strtoupper(substr($client->name, 0, 1)) }}
@@ -66,7 +66,7 @@
                 </div>
                 <div class="flex-1">
                     <div class="text-xs text-gray-500">Email</div>
-                    <a href="mailto:{{ $client->email }}" class="text-sm font-medium text-[#0077b5]">
+                    <a href="mailto:{{ $client->email }}" class="text-sm font-medium text-[#0A66C2]">
                         {{ $client->email }}
                     </a>
                 </div>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="flex-1">
                     <div class="text-xs text-gray-500">Telepon</div>
-                    <a href="tel:{{ $client->phone }}" class="text-sm font-medium text-[#0077b5]">
+                    <a href="tel:{{ $client->phone }}" class="text-sm font-medium text-[#0A66C2]">
                         {{ $client->phone }}
                     </a>
                 </div>
@@ -94,7 +94,7 @@
                 </div>
                 <div class="flex-1">
                     <div class="text-xs text-gray-500">Mobile</div>
-                    <a href="tel:{{ $client->mobile }}" class="text-sm font-medium text-[#0077b5]">
+                    <a href="tel:{{ $client->mobile }}" class="text-sm font-medium text-[#0A66C2]">
                         {{ $client->mobile }}
                     </a>
                 </div>
@@ -171,7 +171,7 @@
                class="block p-3 bg-gray-50 rounded-lg active:bg-gray-100">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200">
-                        <i class="fas fa-folder text-[#0077b5]"></i>
+                        <i class="fas fa-folder text-[#0A66C2]"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <h4 class="text-sm font-medium text-gray-900 truncate">{{ $project->name }}</h4>

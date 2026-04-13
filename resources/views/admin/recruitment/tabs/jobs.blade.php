@@ -13,17 +13,17 @@
 <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Lowongan Aktif</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($activeCount ?? 0) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($activeCount ?? 0) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sedang tayang untuk publik</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Draft</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($draftCount ?? 0) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($draftCount ?? 0) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Belum dipublikasikan</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditutup</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($closedCount ?? 0) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($closedCount ?? 0) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Lowongan selesai</p>
     </div>
 </section>
@@ -33,7 +33,7 @@
     <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
             <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-            <h2 class="text-lg font-semibold text-white">Susun Daftar Lowongan</h2>
+            <h2 class="text-sm font-semibold text-white">Susun Daftar Lowongan</h2>
         </div>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $jobs->total() }} hasil ditemukan</p>
     </div>

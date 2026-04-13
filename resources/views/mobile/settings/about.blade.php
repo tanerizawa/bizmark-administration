@@ -7,7 +7,7 @@
     
     {{-- App Logo & Name --}}
     <div class="text-center py-8">
-        <div class="w-24 h-24 bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-lg">
+        <div class="w-24 h-24 bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-lg">
             <i class="fas fa-briefcase text-4xl text-white"></i>
         </div>
         <h1 class="text-2xl font-bold text-gray-900 mb-1">Bizmark Admin</h1>
@@ -21,7 +21,7 @@
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-4">
         <div class="p-4 border-b border-gray-100">
             <div class="flex items-center gap-3">
-                <i class="fas fa-info-circle text-[#0077b5] text-xl"></i>
+                <i class="fas fa-info-circle text-[#0A66C2] text-xl"></i>
                 <div class="flex-1">
                     <div class="font-medium text-gray-900">Tentang Aplikasi</div>
                     <div class="text-sm text-gray-600 mt-1">
@@ -33,7 +33,7 @@
         
         <div class="p-4 border-b border-gray-100">
             <div class="flex items-center gap-3">
-                <i class="fas fa-code-branch text-[#0077b5] text-xl"></i>
+                <i class="fas fa-code-branch text-[#0A66C2] text-xl"></i>
                 <div class="flex-1">
                     <div class="font-medium text-gray-900">Build Information</div>
                     <div class="text-xs text-gray-600 mt-1 space-y-0.5">
@@ -47,7 +47,7 @@
         
         <div class="p-4">
             <div class="flex items-center gap-3">
-                <i class="fas fa-clock text-[#0077b5] text-xl"></i>
+                <i class="fas fa-clock text-[#0A66C2] text-xl"></i>
                 <div class="flex-1">
                     <div class="font-medium text-gray-900">Last Updated</div>
                     <div class="text-sm text-gray-600 mt-1">

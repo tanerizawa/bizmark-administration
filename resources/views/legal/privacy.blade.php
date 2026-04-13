@@ -44,10 +44,10 @@
                 <div class="mb-12">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Pendahuluan</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        PT Cangah Pajaratan Mandiri ("Bizmark.ID", "kami", "kita", atau "milik kami") berkomitmen untuk melindungi privasi dan keamanan informasi pribadi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, mengungkapkan, dan melindungi informasi yang Anda berikan saat menggunakan layanan konsultasi perizinan industri kami.
+                        PT Cangah Pajaratan Mandiri ("Bizmark.ID", "kami", "kita", atau "milik kami") berkomitmen untuk melindungi privasi dan keamanan informasi pribadi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, mengungkapkan, dan melindungi informasi yang Anda berikan saat menggunakan layanan konsultasi perizinan industri kami, mengakses platform digital kami, maupun menggunakan alat digital gratis yang tersedia di website kami.
                     </p>
                     <p class="text-gray-700 leading-relaxed mt-4">
-                        Dengan menggunakan layanan kami, Anda menyetujui pengumpulan dan penggunaan informasi sesuai dengan kebijakan ini. Jika Anda tidak setuju dengan kebijakan ini, mohon untuk tidak menggunakan layanan kami.
+                        Dengan menggunakan layanan, platform, atau alat digital kami, Anda menyetujui pengumpulan dan penggunaan informasi sesuai dengan kebijakan ini. Jika Anda tidak setuju dengan kebijakan ini, mohon untuk tidak menggunakan layanan kami.
                     </p>
                 </div>
 
@@ -67,16 +67,37 @@
                         <li><strong>Data Transaksi:</strong> Riwayat pembayaran, invoice, kontrak layanan</li>
                     </ul>
 
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">2. Informasi yang Dikumpulkan Secara Otomatis</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">1.2 Informasi dari Alat Digital Gratis</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Saat Anda menggunakan alat digital gratis kami (seperti Polygon SHP Maker atau Kalkulator Perizinan), kami mengumpulkan:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                        <li><strong>Data Pemohon:</strong> Nama perusahaan, nama kontak (contact person), alamat email, dan nomor WhatsApp/telepon</li>
+                        <li><strong>Data Proyek/Lokasi:</strong> Nama lahan atau proyek, alamat administratif (provinsi, kabupaten/kota, kecamatan, kelurahan), koordinat geografis (latitude/longitude), luas area, dan keterangan proyek</li>
+                        <li><strong>Data Persetujuan:</strong> Timestamp persetujuan Syarat & Ketentuan saat menggunakan alat digital</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">1.3 Informasi yang Dikumpulkan Secara Otomatis</h3>
                     <p class="text-gray-700 leading-relaxed mb-4">
                         Saat Anda mengakses website kami, kami dapat mengumpulkan informasi teknis secara otomatis:
                     </p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>Alamat IP dan lokasi geografis</li>
-                        <li>Jenis browser dan sistem operasi</li>
+                        <li>Jenis browser dan sistem operasi (user agent)</li>
                         <li>Halaman yang dikunjungi dan durasi kunjungan</li>
                         <li>Sumber referral (dari mana Anda menemukan kami)</li>
                         <li>Cookies dan teknologi pelacakan serupa</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">1.4 Penyimpanan Lokal (localStorage)</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Beberapa alat digital kami menggunakan fitur localStorage pada browser Anda untuk menyimpan data sementara secara otomatis (auto-save), seperti data formulir yang sedang Anda isi. Data ini:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                        <li>Tersimpan secara lokal di perangkat Anda, bukan di server kami</li>
+                        <li>Dapat dihapus melalui pengaturan browser atau fitur "Hapus Data" pada alat digital terkait</li>
+                        <li>Digunakan untuk memulihkan pekerjaan Anda jika browser ditutup secara tidak sengaja</li>
+                        <li>Tidak dikirimkan ke server kami sampai Anda secara aktif mengirimkan formulir</li>
                     </ul>
                 </div>
 
@@ -90,9 +111,10 @@
                         <li><strong>Penyediaan Layanan:</strong> Memproses pengajuan perizinan, menyiapkan dokumen, berkomunikasi dengan instansi pemerintah</li>
                         <li><strong>Komunikasi:</strong> Mengirimkan update progress, notifikasi penting, konfirmasi pembayaran, laporan berkala</li>
                         <li><strong>Administrasi:</strong> Mengelola akun Anda, memproses pembayaran, mengirim invoice dan dokumen kontrak</li>
-                        <li><strong>Peningkatan Layanan:</strong> Menganalisis penggunaan website, meningkatkan kualitas layanan, mengembangkan fitur baru</li>
+                        <li><strong>Peningkatan Layanan:</strong> Menganalisis penggunaan website dan alat digital, meningkatkan kualitas layanan, mengembangkan fitur baru</li>
                         <li><strong>Kepatuhan Hukum:</strong> Memenuhi kewajiban hukum, merespons permintaan otoritas, melindungi hak dan keamanan</li>
                         <li><strong>Pemasaran:</strong> Mengirimkan informasi tentang layanan baru, penawaran khusus (dengan persetujuan Anda)</li>
+                        <li><strong>Tindak Lanjut Leads:</strong> Data yang dikumpulkan melalui alat digital gratis (Polygon SHP Maker, Kalkulator Perizinan) akan digunakan untuk menghubungi Anda guna menawarkan layanan konsultasi yang relevan dengan proyek atau kebutuhan Anda</li>
                     </ul>
                 </div>
 
@@ -148,7 +170,13 @@
                         <li><strong>Penarikan Persetujuan:</strong> Menarik persetujuan yang telah diberikan sebelumnya</li>
                     </ul>
                     <p class="text-gray-700 leading-relaxed mt-4">
-                        Untuk menggunakan hak Anda, silakan hubungi kami di <a href="mailto:cs@bizmark.id" class="text-blue-600 hover:text-blue-700 font-semibold">cs@bizmark.id</a>
+                        @php
+                            $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+                            $supportEmail = $contact['email'] ?? 'info@bizmark.id';
+                            $phoneRaw = $contact['phone'] ?? '+62 838 7960 2855';
+                            $phoneHref = 'tel:' . preg_replace('/\s+/', '', $phoneRaw);
+                        @endphp
+                        Untuk menggunakan hak Anda, silakan hubungi kami di <a href="mailto:{{ $supportEmail }}" class="text-blue-600 hover:text-blue-700 font-semibold">{{ $supportEmail }}</a>
                     </p>
                 </div>
 
@@ -222,7 +250,7 @@
                             </svg>
                             <div>
                                 <p class="text-sm text-gray-600">Email</p>
-                                <a href="mailto:cs@bizmark.id" class="text-blue-600 hover:text-blue-700 font-semibold">cs@bizmark.id</a>
+                                <a href="mailto:{{ $supportEmail }}" class="text-blue-600 hover:text-blue-700 font-semibold">{{ $supportEmail }}</a>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
@@ -231,7 +259,7 @@
                             </svg>
                             <div>
                                 <p class="text-sm text-gray-600">Telepon</p>
-                                <a href="tel:+6283879602855" class="text-blue-600 hover:text-blue-700 font-semibold">+62 838 7960 2855</a>
+                                <a href="{{ $phoneHref }}" class="text-blue-600 hover:text-blue-700 font-semibold">{{ $phoneRaw }}</a>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
@@ -264,7 +292,7 @@
                 Tim kami siap membantu menjawab pertanyaan Anda tentang bagaimana kami melindungi data Anda
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="mailto:cs@bizmark.id" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <a href="mailto:{{ $supportEmail }}" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>

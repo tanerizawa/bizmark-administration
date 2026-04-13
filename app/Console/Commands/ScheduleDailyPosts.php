@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\AutoPostConfig;
 use App\Services\ArticleAutoPostService;
+use App\Services\TopicGenerationService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -63,6 +64,28 @@ class ScheduleDailyPosts extends Command
             $this->line("   Markets: " . implode(' + ', $markets));
         }
         
+        $this->newLine();
+
+        // Auto-replenish topic pool if running low
+        $availableTopics = \App\Models\ArticleTopic::available()->count();
+        $this->line("   Available topics: {$availableTopics}");
+
+        if ($availableTopics < $config->posts_per_day) {
+            $this->warn("⚠️  Topic pool is low ({$availableTopics}). Auto-generating new topics...");
+            try {
+                $topicService = app(TopicGenerationService::class);
+                $generated = $topicService->replenishIfNeeded($config->posts_per_day * 3);
+                if ($generated > 0) {
+                    $this->info("   ✅ Generated {$generated} new topics via AI");
+                } else {
+                    $this->warn("   ⚠️  No new topics generated (possible duplicates)");
+                }
+            } catch (\Exception $e) {
+                $this->warn("   ⚠️  Auto-generation failed: {$e->getMessage()}");
+                $this->line("   Continuing with existing topics...");
+            }
+        }
+
         $this->newLine();
 
         // Schedule posts

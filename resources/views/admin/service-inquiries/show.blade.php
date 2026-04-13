@@ -274,16 +274,21 @@
                     <div class="p-4 space-y-4">
                         <!-- Summary Stats -->
                         <div class="grid grid-cols-3 gap-3">
-                            @if(isset($serviceInquiry->ai_analysis['estimated_total_cost']))
+                            @if(isset($serviceInquiry->ai_analysis['total_estimated_cost']['grand_total']))
                                 <div class="text-center">
                                     <div class="text-xs text-dark-text-secondary mb-1">Total Biaya</div>
-                                    <div class="text-lg font-bold text-green-400">Rp {{ number_format($serviceInquiry->ai_analysis['estimated_total_cost'] / 1000000, 0) }}M</div>
+                                    <div class="text-lg font-bold text-green-400">Rp {{ number_format($serviceInquiry->ai_analysis['total_estimated_cost']['grand_total']['min'] / 1000000, 0) }}-{{ number_format($serviceInquiry->ai_analysis['total_estimated_cost']['grand_total']['max'] / 1000000, 0) }}M</div>
                                 </div>
                             @endif
                             @if(isset($serviceInquiry->ai_analysis['estimated_timeline']))
                                 <div class="text-center">
                                     <div class="text-xs text-dark-text-secondary mb-1">Timeline</div>
-                                    <div class="text-lg font-bold text-blue-400">{{ $serviceInquiry->ai_analysis['estimated_timeline'] }}</div>
+                                    <div class="text-lg font-bold text-blue-400">{{ is_array($serviceInquiry->ai_analysis['estimated_timeline']) ? ($serviceInquiry->ai_analysis['estimated_timeline']['summary'] ?? json_encode($serviceInquiry->ai_analysis['estimated_timeline'])) : $serviceInquiry->ai_analysis['estimated_timeline'] }}</div>
+                                </div>
+                            @elseif(isset($serviceInquiry->ai_analysis['total_estimated_timeline']))
+                                <div class="text-center">
+                                    <div class="text-xs text-dark-text-secondary mb-1">Timeline</div>
+                                    <div class="text-lg font-bold text-blue-400">{{ $serviceInquiry->ai_analysis['total_estimated_timeline'] }}</div>
                                 </div>
                             @endif
                             @if(isset($serviceInquiry->ai_analysis['complexity_score']))
@@ -363,7 +368,7 @@
                 </div>
             @else
                 <div class="card-elevated rounded-apple-lg p-4 text-center">
-                    <i class="fas fa-clock text-3xl text-dark-text-secondary opacity-30 mb-2"></i>
+                    <i class="fas fa-clock text-2xl text-dark-text-secondary opacity-30 mb-2"></i>
                     <p class="text-sm text-dark-text-secondary">Analisis AI belum tersedia</p>
                 </div>
             @endif
@@ -447,7 +452,7 @@
 <!-- Convert to Client Modal -->
 <div id="convertModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
     <div class="card-elevated rounded-apple-lg max-w-md w-full p-6">
-        <h3 class="text-xl font-semibold text-white mb-4">Konversi ke Klien</h3>
+        <h3 class="text-base font-semibold text-white mb-4">Konversi ke Klien</h3>
         <form method="POST" action="{{ route('admin.service-inquiries.convert', $serviceInquiry) }}">
             @csrf
             <div class="mb-4">

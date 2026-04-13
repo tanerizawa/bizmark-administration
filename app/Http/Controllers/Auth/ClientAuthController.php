@@ -38,21 +38,38 @@ class ClientAuthController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'company_name' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:clients'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:clients,email,NULL,id,deleted_at,NULL'],
             'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        // Create the client
-        $client = Client::create([
-            'name' => $validated['name'],
-            'company_name' => $validated['company_name'] ?? $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'password' => Hash::make($validated['password']),
-            'status' => 'active',
-            'client_type' => $validated['company_name'] ? 'company' : 'individual',
-        ]);
+        // Check if a soft-deleted client exists with this email — restore and update
+        $existingClient = Client::withTrashed()->where('email', $validated['email'])->first();
+
+        if ($existingClient && $existingClient->trashed()) {
+            $existingClient->restore();
+            $existingClient->update([
+                'name' => $validated['name'],
+                'company_name' => $validated['company_name'] ?? $validated['name'],
+                'phone' => $validated['phone'],
+                'password' => Hash::make($validated['password']),
+                'status' => 'active',
+                'client_type' => $validated['company_name'] ? 'company' : 'individual',
+                'email_verified_at' => null,
+            ]);
+            $client = $existingClient;
+        } else {
+            // Create new client
+            $client = Client::create([
+                'name' => $validated['name'],
+                'company_name' => $validated['company_name'] ?? $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+                'password' => Hash::make($validated['password']),
+                'status' => 'active',
+                'client_type' => $validated['company_name'] ? 'company' : 'individual',
+            ]);
+        }
 
         // Send email verification notification
         $client->sendEmailVerificationNotification();

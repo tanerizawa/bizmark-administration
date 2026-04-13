@@ -3,69 +3,72 @@
 @section('title', 'Klien')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    {{-- Hero Section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
+<div class="space-y-4">
+    {{-- Compact Hero Section --}}
+    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden mb-4">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-purple opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-orange opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
+            <div class="w-48 h-48 bg-apple-purple opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
+            <div class="w-32 h-32 bg-apple-orange opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
         </div>
-        <div class="relative space-y-5 md:space-y-6">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Klien</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
-                        Database Klien Aktif
-                    </h1>
-                    <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
-                        Kelola hubungan klien, tracking proyek, dan riwayat kerja sama dalam satu platform.
-                    </p>
+        <div class="relative space-y-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div class="space-y-1 max-w-3xl">
+                    <p class="admin-label-compact">Manajemen Klien</p>
+                    <h1 class="admin-hero-title">Database Klien Aktif</h1>
+                    <p class="admin-body" style="color: rgba(235,235,245,0.75);">Kelola hubungan klien, tracking proyek, dan riwayat kerja sama dalam satu platform.</p>
                 </div>
-                <div class="space-y-2.5">
-                    <a href="{{ route('clients.create') }}" 
-                       class="inline-flex items-center px-4 py-2 rounded-apple text-sm font-semibold" 
-                       style="background: rgba(175,82,222,0.25); color: rgba(235,235,245,0.9);">
-                        <i class="fas fa-plus mr-2"></i>
-                        Tambah Klien
-                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                <div>
+                    <a href="{{ route('clients.create') }}" class="admin-btn inline-flex items-center" style="background: rgba(175,82,222,0.25);">
+                        <i class="fas fa-plus mr-1.5"></i>Tambah Klien
                     </a>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <!-- Total Klien -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Klien</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">{{ $clients->total() }}</h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akun terdaftar</p>
+            {{-- Compact Stats Cards --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div class="admin-stat-card" style="background: rgba(10,132,255,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
+                            <i class="fas fa-users text-xs" style="color: var(--apple-blue);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: #FFFFFF;">{{ $clients->total() }}</p>
+                            <p class="admin-label-compact">Total Klien</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Aktif -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Aktif</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">
-                        {{ $clients->where('status', 'active')->count() }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Klien berjalan</p>
+                <div class="admin-stat-card" style="background: rgba(52,199,89,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(52,199,89,0.25);">
+                            <i class="fas fa-check text-xs" style="color: var(--apple-green);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(52,199,89,1);">{{ $clients->where('status', 'active')->count() }}</p>
+                            <p class="admin-label-compact">Aktif</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Perusahaan -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(175,82,222,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Perusahaan</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(175,82,222,1);">
-                        {{ $clients->where('client_type', 'company')->count() }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Badan usaha</p>
+                <div class="admin-stat-card" style="background: rgba(175,82,222,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(175,82,222,0.25);">
+                            <i class="fas fa-building text-xs" style="color: rgba(175,82,222,1);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(175,82,222,1);">{{ $clients->where('client_type', 'company')->count() }}</p>
+                            <p class="admin-label-compact">Perusahaan</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Potensial -->
-                <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Potensial</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">
-                        {{ $clients->where('status', 'potential')->count() }}
-                    </h2>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.6);">Prospek baru</p>
+                <div class="admin-stat-card" style="background: rgba(255,159,10,0.12);">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,159,10,0.25);">
+                            <i class="fas fa-star text-xs" style="color: var(--apple-orange);"></i>
+                        </div>
+                        <div>
+                            <p class="admin-stat" style="color: rgba(255,159,10,1);">{{ $clients->where('status', 'potential')->count() }}</p>
+                            <p class="admin-label-compact">Potensial</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,97 +76,68 @@
 
     <!-- Alert Messages -->
     @if(session('success'))
-        <div class="rounded-apple-lg p-4 mb-4" style="background-color: rgba(52, 199, 89, 0.15); border: 1px solid var(--apple-green);">
+        <div class="rounded-apple p-3 mb-3" style="background-color: rgba(52, 199, 89, 0.15); border: 1px solid var(--apple-green);">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <i class="fas fa-check-circle mr-3" style="color: var(--apple-green);"></i>
-                    <span class="text-sm font-medium" style="color: var(--apple-green);">{{ session('success') }}</span>
+                    <i class="fas fa-check-circle mr-2" style="color: var(--apple-green);"></i>
+                    <span class="admin-body" style="color: var(--apple-green);">{{ session('success') }}</span>
                 </div>
-                <button onclick="this.parentElement.parentElement.remove()" class="text-sm" style="color: var(--apple-green); opacity: 0.6;">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button onclick="this.parentElement.parentElement.remove()" style="color: var(--apple-green); opacity: 0.6;"><i class="fas fa-times"></i></button>
             </div>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="rounded-apple-lg p-4 mb-4" style="background-color: rgba(255, 59, 48, 0.15); border: 1px solid var(--apple-red);">
+        <div class="rounded-apple p-3 mb-3" style="background-color: rgba(255, 59, 48, 0.15); border: 1px solid var(--apple-red);">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle mr-3" style="color: var(--apple-red);"></i>
-                    <span class="text-sm font-medium" style="color: var(--apple-red);">{{ session('error') }}</span>
+                    <i class="fas fa-exclamation-circle mr-2" style="color: var(--apple-red);"></i>
+                    <span class="admin-body" style="color: var(--apple-red);">{{ session('error') }}</span>
                 </div>
-                <button onclick="this.parentElement.parentElement.remove()" class="text-sm" style="color: var(--apple-red); opacity: 0.6;">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button onclick="this.parentElement.parentElement.remove()" style="color: var(--apple-red); opacity: 0.6;"><i class="fas fa-times"></i></button>
             </div>
         </div>
     @endif
 
-    <!-- Filter & Search Card -->
-    <div class="card-elevated rounded-apple-lg mb-4">
-        <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-            <h3 class="text-base font-semibold text-white">Pencarian & Filter</h3>
-        </div>
-        <div class="p-4">
-            <form method="GET" action="{{ route('clients.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                <div class="md:col-span-2">
-                    <input type="text" 
-                           name="search" 
-                           class="w-full px-3 py-2 rounded-apple text-sm"
-                           placeholder="Cari nama, perusahaan, email, atau telepon..." 
-                           value="{{ request('search') }}"
-                           style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator); color: var(--dark-text-primary);">
+    {{-- Compact Search and Filter --}}
+    <div class="card-elevated rounded-apple p-3 mb-3">
+        <form method="GET" action="{{ route('clients.index') }}" class="flex flex-wrap gap-2 items-end">
+            <div class="flex-1 min-w-[180px]">
+                <label class="admin-label-compact block">Cari</label>
+                <div class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama, perusahaan, email..." 
+                           class="admin-input w-full pl-7 rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2" style="font-size: 0.625rem; color: rgba(235,235,245,0.3);"></i>
                 </div>
-                <div>
-                    <select name="status" 
-                            class="w-full px-3 py-2 rounded-apple text-sm"
-                            style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator); color: var(--dark-text-primary);">
-                        <option value="">Semua Status</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
-                        <option value="potential" {{ request('status') == 'potential' ? 'selected' : '' }}>Potensial</option>
-                    </select>
-                </div>
-                <div>
-                    <select name="client_type" 
-                            class="w-full px-3 py-2 rounded-apple text-sm"
-                            style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator); color: var(--dark-text-primary);">
-                        <option value="">Semua Tipe</option>
-                        <option value="individual" {{ request('client_type') == 'individual' ? 'selected' : '' }}>Individual</option>
-                        <option value="company" {{ request('client_type') == 'company' ? 'selected' : '' }}>Perusahaan</option>
-                        <option value="government" {{ request('client_type') == 'government' ? 'selected' : '' }}>Pemerintah</option>
-                    </select>
-                </div>
-            </form>
-            <script>
-            // Auto submit form on filter change
-            document.addEventListener('DOMContentLoaded', function() {
-                const form = document.querySelector('form[action="{{ route('clients.index') }}"]');
-                if (!form) return;
-                
-                const searchInput = form.querySelector('input[name="search"]');
-                
-                // Auto-submit for select dropdowns
-                form.querySelectorAll('select[name]').forEach(function(el) {
-                    el.addEventListener('change', function() {
-                        form.submit();
-                    });
-                });
-                
-                // Submit search on Enter key only
-                if (searchInput) {
-                    searchInput.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            form.submit();
-                        }
-                    });
-                }
-            });
-            </script>
-        </div>
+            </div>
+            <div class="w-28">
+                <label class="admin-label-compact block">Status</label>
+                <select name="status" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                    <option value="potential" {{ request('status') == 'potential' ? 'selected' : '' }}>Potensial</option>
+                </select>
+            </div>
+            <div class="w-28">
+                <label class="admin-label-compact block">Tipe</label>
+                <select name="client_type" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
+                    <option value="">Semua</option>
+                    <option value="individual" {{ request('client_type') == 'individual' ? 'selected' : '' }}>Individual</option>
+                    <option value="company" {{ request('client_type') == 'company' ? 'selected' : '' }}>Perusahaan</option>
+                    <option value="government" {{ request('client_type') == 'government' ? 'selected' : '' }}>Pemerintah</option>
+                </select>
+            </div>
+        </form>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action="{{ route('clients.index') }}"]');
+            if (!form) return;
+            form.querySelectorAll('select[name]').forEach(el => el.addEventListener('change', () => form.submit()));
+            const searchInput = form.querySelector('input[name="search"]');
+            if (searchInput) searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); form.submit(); }});
+        });
+        </script>
     </div>
 
     <!-- Clients Table Card -->

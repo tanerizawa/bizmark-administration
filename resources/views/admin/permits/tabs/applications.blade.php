@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between flex-wrap gap-3">
             <div>
                 <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Pencarian</p>
-                <h2 class="text-lg font-semibold text-white">Cari Permohonan Izin</h2>
+                <h2 class="text-sm font-semibold text-white">Cari Permohonan Izin</h2>
             </div>
             <span class="text-xs" style="color: rgba(235,235,245,0.6);">
                 <i class="fas fa-info-circle mr-1"></i>
@@ -83,9 +83,9 @@
                                 <div class="text-sm font-medium text-dark-text-primary">
                                     {{ $app->client->company_name ?? $app->client->name }}
                                 </div>
-                                @if($app->assignedUser)
+                                @if($app->reviewer)
                                     <div class="text-xs text-dark-text-secondary mt-1">
-                                        <i class="fas fa-user-tag mr-1"></i>{{ $app->assignedUser->name }}
+                                        <i class="fas fa-user-tag mr-1"></i>{{ $app->reviewer->name }}
                                     </div>
                                 @endif
                             </td>
@@ -132,8 +132,8 @@
                         <tr>
                             <td colspan="6" class="px-4 py-16 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-inbox text-6xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
-                                    <h3 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Permohonan</h3>
+                                    <i class="fas fa-inbox text-4xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
+                                    <h3 class="text-base font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Permohonan</h3>
                                     <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">
                                         Permohonan izin dari klien akan muncul di sini
                                     </p>

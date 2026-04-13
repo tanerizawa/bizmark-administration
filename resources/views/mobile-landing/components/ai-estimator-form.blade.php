@@ -226,7 +226,7 @@
             
             <!-- Action Buttons -->
             <div class="space-y-3">
-                <a :href="`https://wa.me/6283879602855?text=${getWhatsAppMessage()}`"
+                     <a :href="`${waBase}?text=${getWhatsAppMessage()}`"
                    target="_blank"
                    class="btn-primary-full">
                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -425,6 +425,7 @@
 <script>
 function aiEstimatorForm() {
     return {
+        waBase: @js(config('landing_metrics.contact.whatsapp_link')),
         formData: {
             service: '',
             businessType: '',

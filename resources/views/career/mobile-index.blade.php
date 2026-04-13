@@ -223,14 +223,15 @@
         </p>
         
         <div class="space-y-3">
-            <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20bertanya%20tentang%20lowongan%20pekerjaan" 
+            <a href="{{ config('landing_metrics.contact.whatsapp_link') }}?text={{ rawurlencode('Halo Bizmark.ID, saya ingin bertanya tentang lowongan pekerjaan') }}" 
                target="_blank"
+               rel="noopener noreferrer"
                class="block w-full bg-white text-[#0077B5] font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all">
                 <i class="fab fa-whatsapp mr-2"></i> Chat via WhatsApp
             </a>
-            <a href="mailto:hr@bizmark.id" 
+            <a href="mailto:{{ config('landing_metrics.contact.hr_email') }}" 
                class="block w-full bg-white/10 backdrop-blur text-white font-semibold py-4 px-6 rounded-xl border-2 border-white/30">
-                <i class="fas fa-envelope mr-2"></i> Email: hr@bizmark.id
+                <i class="fas fa-envelope mr-2"></i> Email: {{ config('landing_metrics.contact.hr_email') }}
             </a>
         </div>
     </div>

@@ -11,7 +11,7 @@
     <!-- Breadcrumb Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
+        "@@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
             {
@@ -32,35 +32,121 @@
     
     <style>
         :root {
-            --apple-blue: #007AFF;
-            --apple-blue-dark: #0051D5;
-            --dark-bg: #000000;
-            --dark-bg-secondary: #1C1C1E;
-            --dark-bg-tertiary: #2C2C2E;
-            --dark-separator: rgba(84, 84, 88, 0.35);
+            /* Professional LinkedIn-inspired blue */
+            --color-primary: #0A66C2;
+            --color-primary-dark: #004182;
+            --color-primary-light: #378FE9;
+            
+            /* Professional grays */
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            
+            /* Surface colors */
+            --surface: #FFFFFF;
+            --surface-secondary: #F8F9FA;
+            --surface-tertiary: #E5E5E5;
+            
+            /* Spacing scale */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.5rem;
+            --space-6: 2rem;
+            
+            /* Border radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
         }
         
         body {
-            background: var(--dark-bg);
+            background: white;
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background: var(--color-primary);
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            box-shadow: var(--shadow-md);
         }
         
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(28, 28, 30, 0.9);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--dark-separator);
-            z-index: 1000;
+        .btn-primary:hover {
+            background: var(--color-primary-dark);
+            box-shadow: var(--shadow-lg);
         }
         
+        /* Nav Link Styles */
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s ease;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+        }
+        
+        .nav-link:hover {
+            color: var(--color-primary);
+            background: rgba(10, 102, 194, 0.05);
+        }
+        
+        .nav-link.active {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0.75rem;
+            right: 0.75rem;
+            height: 2px;
+            background: var(--color-primary);
+            border-radius: var(--radius-full);
+        }
+        
+        /* Article Card Styles */
         .article-card {
-            background: var(--dark-bg-tertiary);
-            border-radius: 1rem;
+            background: white;
+            border-radius: var(--radius-xl);
             overflow: hidden;
-            border: 1px solid var(--dark-separator);
+            border: 1px solid var(--surface-tertiary);
             transition: all 0.3s ease;
             height: 100%;
             display: flex;
@@ -69,8 +155,8 @@
         
         .article-card:hover {
             transform: translateY(-8px);
-            border-color: var(--apple-blue);
-            box-shadow: 0 15px 35px rgba(0, 122, 255, 0.2);
+            border-color: var(--color-primary-light);
+            box-shadow: var(--shadow-xl);
         }
         
         .article-image {
@@ -80,46 +166,83 @@
         }
     </style>
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <a href="{{ route('landing.id') }}" class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-shield-alt text-white text-xl"></i>
-                    </div>
-                    <span class="text-xl font-bold">Bizmark.ID</span>
+<body class="font-sans antialiased bg-white text-gray-900" style="min-height: 100vh; display: flex; flex-direction: column;">
+
+<!-- Skip to main content link for accessibility -->
+<a href="#main-content" style="position: fixed; top: -100px; left: 50%; transform: translateX(-50%); z-index: 9999; padding: 0.75rem 1.5rem; background: var(--color-primary); color: white; font-weight: 600; border-radius: var(--radius-lg); text-decoration: none; transition: top 0.2s ease;" onfocus="this.style.top='1rem'" onblur="this.style.top='-100px'">Lewati ke konten utama</a>
+
+<!-- Navbar -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm" role="navigation" aria-label="Navigasi utama">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="{{ route('landing.id') }}" class="text-xl font-bold" style="color: var(--text-primary);">
+                    <i class="fas fa-certificate mr-2" style="color: var(--color-primary);"></i>
+                    Bizmark.ID
                 </a>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-1">
+                <a href="{{ route('landing.id') }}#main-content" class="nav-link">{{ __('landing.nav.home') }}</a>
+                <a href="{{ route('landing.id') }}#services" class="nav-link">{{ __('landing.nav.services') }}</a>
+                <a href="{{ route('landing.id') }}#process" class="nav-link">{{ __('landing.nav.process') }}</a>
+                <a href="{{ route('landing.id') }}#about" class="nav-link">{{ __('landing.nav.about') }}</a>
+                <a href="{{ route('blog.index.id') }}" class="nav-link active">{{ __('landing.nav.blog') }}</a>
                 
-                <div class="flex items-center space-x-8">
-                    <a href="{{ route('landing.id') }}" class="hover:text-blue-400 transition">Beranda</a>
-                    <a href="{{ route('blog.index.id') }}" class="text-blue-400">Artikel</a>
-                </div>
+                <!-- Locale Switcher -->
+                <x-locale-switcher />
+                
+                <a href="{{ route('landing.id') }}#contact" class="btn btn-primary">
+                    {{ __('landing.nav.get_started') }}
+                </a>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center">
+                <button class="text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition" 
+                        style="color: var(--text-secondary);"
+                        onmouseover="this.style.color='var(--color-primary)'"
+                        onmouseout="this.style.color='var(--text-secondary)'"
+                        onclick="toggleMobileMenu()" 
+                        id="mobile-menu-button"
+                        aria-label="Open navigation menu" 
+                        aria-expanded="false"
+                        aria-controls="mobile-menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
+@include('landing.partials.mobile-menu')
+
+<!-- Main Content -->
+<div style="flex: 1; display: flex; flex-direction: column;">
     <!-- Header -->
-    <section class="pt-32 pb-12 px-4" style="background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);">
-        <div class="container mx-auto max-w-7xl">
+    <section id="main-content" class="pt-32 pb-12 px-4" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);">
+        <div class="container mx-auto max-w-7xl text-white">
             <h1 class="text-5xl font-bold mb-4">Artikel & Berita</h1>
-            <p class="text-xl text-gray-400">Update terbaru seputar perizinan, regulasi, dan tips bisnis</p>
+            <p class="text-xl" style="color: rgba(255, 255, 255, 0.9);">Update terbaru seputar perizinan, regulasi, dan tips bisnis</p>
         </div>
     </section>
 
     <!-- Search & Filter -->
-    <section class="py-8 px-4" style="background: var(--dark-bg-secondary);">
+    <section class="py-8 px-4" style="background: var(--surface-secondary);">
         <div class="container mx-auto max-w-7xl">
             <form action="{{ route('blog.index.id') }}" method="GET" class="flex flex-col md:flex-row gap-4">
                 <!-- Search -->
                 <div class="flex-1">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel..." class="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel..." class="w-full px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition">
                 </div>
                 
                 <!-- Category Filter -->
                 <div>
-                    <select name="category" class="w-full md:w-48 px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none">
+                    <select name="category" class="w-full md:w-48 px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition">
                         <option value="">Semua Kategori</option>
                         @foreach($categories as $key => $label)
                         <option value="{{ $key }}" {{ request('category') == $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -129,13 +252,13 @@
                 
                 <!-- Sort -->
                 <div>
-                    <select name="sort" class="w-full md:w-48 px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none">
+                    <select name="sort" class="w-full md:w-48 px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition">
                         <option value="published_at" {{ request('sort') == 'published_at' ? 'selected' : '' }}>Terbaru</option>
                         <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Terpopuler</option>
                     </select>
                 </div>
                 
-                <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition">
+                <button type="submit" class="px-6 py-3 rounded-lg font-semibold transition" style="background: var(--color-primary); color: white;" onmouseover="this.style.background='var(--color-primary-dark)'" onmouseout="this.style.background='var(--color-primary)'">
                     <i class="fas fa-search mr-2"></i>Cari
                 </button>
             </form>
@@ -143,7 +266,7 @@
     </section>
 
     <!-- Articles Grid -->
-    <section class="py-12 px-4">
+    <section class="py-12 px-4 bg-white">
         <div class="container mx-auto max-w-7xl">
             @if($articles->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -152,34 +275,34 @@
                     @if($article->featured_image)
                     <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="article-image">
                     @else
-                    <div class="article-image bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                    <div class="article-image flex items-center justify-center" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);">
                         <i class="fas fa-newspaper text-white text-5xl"></i>
                     </div>
                     @endif
                     
                     <div class="p-6 flex-1 flex flex-col">
                         <div class="mb-3">
-                            <a href="{{ route('blog.category', $article->category) }}" class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-semibold hover:bg-blue-500/30 transition">
+                            <a href="{{ route('blog.category', $article->category) }}" class="inline-block px-3 py-1 rounded-full text-xs font-semibold transition" style="background: rgba(10, 102, 194, 0.1); color: var(--color-primary);" onmouseover="this.style.background='rgba(10, 102, 194, 0.2)'" onmouseout="this.style.background='rgba(10, 102, 194, 0.1)'">
                                 {{ $article->category_label }}
                             </a>
                             @if($article->is_featured)
-                            <span class="inline-block px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-semibold ml-2">
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold ml-2" style="background: rgba(255, 149, 0, 0.1); color: #FF9500;">
                                 <i class="fas fa-star mr-1"></i>Featured
                             </span>
                             @endif
                         </div>
                         
-                        <h3 class="text-xl font-bold mb-3 line-clamp-2">
-                            <a href="{{ route('blog.article', $article->slug) }}" class="hover:text-blue-400 transition">
+                        <h3 class="text-xl font-bold mb-3 line-clamp-2" style="color: var(--text-primary);">
+                            <a href="{{ route('blog.article', $article->slug) }}" class="transition" style="color: var(--text-primary);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-primary)'">
                                 {{ $article->title }}
                             </a>
                         </h3>
                         
-                        <p class="text-gray-400 mb-4 line-clamp-3 text-sm flex-1">
+                        <p class="mb-4 line-clamp-3 text-sm flex-1" style="color: var(--text-secondary);">
                             {{ $article->excerpt }}
                         </p>
                         
-                        <div class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-700 mt-auto">
+                        <div class="flex items-center justify-between text-sm pt-4 border-t mt-auto" style="color: var(--text-tertiary); border-color: var(--surface-tertiary);">
                             <div class="flex items-center gap-4">
                                 <span>
                                     <i class="fas fa-calendar mr-1"></i>
@@ -208,20 +331,39 @@
             @endif
             @else
             <div class="text-center py-20">
-                <i class="fas fa-search text-6xl text-gray-600 mb-4"></i>
-                <p class="text-xl text-gray-400">Tidak ada artikel yang ditemukan</p>
+                <i class="fas fa-search text-6xl mb-4" style="color: var(--text-tertiary);"></i>
+                <p class="text-xl" style="color: var(--text-secondary);">Tidak ada artikel yang ditemukan</p>
             </div>
             @endif
         </div>
     </section>
+</div>
 
     <!-- Footer -->
-    <footer class="py-8 px-4 border-t border-gray-800">
+    <footer class="py-8 px-4 border-t" style="background: var(--surface-secondary); border-color: var(--surface-tertiary); margin-top: auto;">
         <div class="container mx-auto max-w-7xl">
-            <div class="text-center text-gray-500">
+            <div class="text-center" style="color: var(--text-tertiary);">
                 <p>&copy; 2025 Bizmark.ID - PT Cangah Pajaratan Mandiri. All rights reserved.</p>
             </div>
         </div>
     </footer>
+    
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const button = document.getElementById('mobile-menu-button');
+            const isHidden = menu.classList.contains('hidden');
+            
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                button.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+            } else {
+                menu.classList.add('hidden');
+                button.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        }
+    </script>
 </body>
 </html>

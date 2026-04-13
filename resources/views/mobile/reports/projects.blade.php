@@ -45,7 +45,7 @@
             @foreach($byStatus as $status)
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-2 h-2 rounded-full bg-[#0077b5]"></div>
+                    <div class="w-2 h-2 rounded-full bg-[#0A66C2]"></div>
                     <span class="text-sm text-gray-900">{{ $status->name }}</span>
                 </div>
                 <div class="flex items-center gap-2">

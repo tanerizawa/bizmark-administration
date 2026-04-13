@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\AutoPost;
 
+use App\Models\Article;
+use App\Models\ArticleTopic;
 use App\Models\AutoPostSchedule;
 use App\Models\AutoPostLog;
 use Illuminate\Console\Command;
@@ -21,6 +23,37 @@ class FixStuckSchedules extends Command
      * @var string
      */
     protected $description = 'Fix schedules stuck in processing status';
+
+    /**
+     * Resolve article ID from schedule, topic, or logs.
+     */
+    protected function resolveArticleId(AutoPostSchedule $schedule): ?int
+    {
+        if (!empty($schedule->article_id) && Article::find($schedule->article_id)) {
+            return (int) $schedule->article_id;
+        }
+
+        $topic = ArticleTopic::withTrashed()->find($schedule->topic_id);
+        if ($topic && !empty($topic->article_id) && Article::find($topic->article_id)) {
+            return (int) $topic->article_id;
+        }
+
+        $createLog = AutoPostLog::where('schedule_id', $schedule->id)
+            ->whereIn('event', ['article_created', 'article_published'])
+            ->orderByDesc('created_at')
+            ->first();
+
+        if ($createLog) {
+            $candidateId = $createLog->article_id
+                ?? data_get($createLog->context, 'article_id');
+
+            if (!empty($candidateId) && Article::find($candidateId)) {
+                return (int) $candidateId;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Execute the console command.
@@ -44,6 +77,20 @@ class FixStuckSchedules extends Command
         
         foreach ($stuck as $schedule) {
             $this->line("Processing Schedule #{$schedule->id}...");
+
+            $articleId = $this->resolveArticleId($schedule);
+            if ($articleId) {
+                $schedule->update([
+                    'status' => 'completed',
+                    'article_id' => $articleId,
+                    'completed_at' => $schedule->completed_at ?? now(),
+                    'error_message' => null,
+                ]);
+
+                $this->info("  ✓ Schedule #{$schedule->id} reconciled as completed (Article ID: {$articleId})");
+                $fixed++;
+                continue;
+            }
             
             // Check if article was actually created
             $publishLog = AutoPostLog::where('schedule_id', $schedule->id)
@@ -76,7 +123,7 @@ class FixStuckSchedules extends Command
                 $schedule->update([
                     'status' => 'pending',
                     'started_at' => null,
-                    'attempts' => 0,
+                    'completed_at' => null,
                     'error_message' => 'Auto-reset from stuck processing state',
                 ]);
                 

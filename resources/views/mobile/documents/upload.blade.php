@@ -20,7 +20,7 @@
             <select 
                 x-model="formData.project_id"
                 required
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
                 <option value="">Pilih Project...</option>
                 @foreach($projects as $project)
                     <option value="{{ $project->id }}">{{ $project->name }}</option>
@@ -38,7 +38,7 @@
                 type="text" 
                 required
                 placeholder="Misal: Proposal Pendirian PT"
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
         </div>
 
         {{-- Category --}}
@@ -49,7 +49,7 @@
             <select 
                 x-model="formData.category"
                 required
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
                 <option value="">Pilih Kategori...</option>
                 <option value="permit">Perizinan</option>
                 <option value="proposal">Proposal</option>
@@ -84,7 +84,7 @@
                             <button 
                                 type="button"
                                 @click="$('#fileInput').attr('capture', 'environment').click()"
-                                class="px-4 py-2 bg-[#0077b5] text-white rounded-lg text-sm font-medium active:scale-95 transition-all">
+                                class="px-4 py-2 bg-[#0A66C2] text-white rounded-lg text-sm font-medium active:scale-95 transition-all">
                                 <i class="fas fa-camera mr-1"></i> Kamera
                             </button>
                             <button 
@@ -100,7 +100,7 @@
                 
                 <template x-if="fileName">
                     <div>
-                        <i class="fas fa-file text-[#0077b5] text-3xl mb-2"></i>
+                        <i class="fas fa-file text-[#0A66C2] text-3xl mb-2"></i>
                         <p class="text-sm font-medium text-gray-900" x-text="fileName"></p>
                         <p class="text-xs text-gray-500" x-text="fileSize"></p>
                         <button 
@@ -124,7 +124,7 @@
                 rows="3"
                 maxlength="500"
                 placeholder="Catatan tambahan tentang dokumen ini"
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent"></textarea>
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent"></textarea>
             <p class="text-xs text-gray-500 mt-1" x-text="`${formData.description.length}/500`"></p>
         </div>
 
@@ -139,7 +139,7 @@
             <button 
                 type="submit"
                 :disabled="uploading"
-                class="flex-1 px-4 py-3 bg-[#0077b5] hover:bg-[#005582] text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                class="flex-1 px-4 py-3 bg-[#0A66C2] hover:bg-[#005582] text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span x-show="!uploading">
                     <i class="fas fa-upload mr-1"></i> Upload
                 </span>

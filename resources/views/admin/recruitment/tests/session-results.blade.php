@@ -29,7 +29,7 @@
             
             <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                 <div class="space-y-2.5">
-                    <h1 class="text-2xl font-semibold text-white leading-tight">Test Session Results</h1>
+                    <h1 class="text-xl font-semibold text-white leading-tight">Test Session Results</h1>
                     <p class="text-sm" style="color: rgba(235,235,245,0.7);">
                         {{ $session->jobApplication->full_name }} - {{ $session->testTemplate->title }}
                     </p>
@@ -85,7 +85,7 @@
 
     {{-- Candidate Info --}}
     <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
             <i class="fas fa-user" style="color: rgba(10,132,255,1);"></i>
             Candidate Information
         </h2>
@@ -126,7 +126,7 @@
     {{-- Document Editing Test - Submitted Files --}}
     @if($session->testTemplate->isDocumentEditingTest())
     <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
             <i class="fas fa-file-word" style="color: rgba(10,132,255,1);"></i>
             Document Editing Test - Files
         </h2>
@@ -260,7 +260,7 @@
                             </p>
                         </div>
                         <div class="text-right">
-                            <p class="text-3xl font-bold" style="color: rgba(52,199,89,1);">
+                            <p class="text-xl font-bold" style="color: rgba(52,199,89,1);">
                                 {{ $session->evaluation_scores['total_score'] }}
                             </p>
                             <p class="text-sm" style="color: rgba(235,235,245,0.6);">
@@ -283,7 +283,7 @@
                 <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Score</p>
                 <i class="fas fa-star text-lg" style="color: rgba(10,132,255,0.5);"></i>
             </div>
-            <p class="text-3xl font-bold text-white">{{ $session->score !== null ? number_format($session->score, 1) : 'N/A' }}</p>
+            <p class="text-xl font-bold text-white">{{ $session->score !== null ? number_format($session->score, 1) : 'N/A' }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">
                 @if($session->score !== null)
                     Passing: {{ $session->testTemplate->passing_score }}
@@ -298,7 +298,7 @@
                 <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Answered</p>
                 <i class="fas fa-check-double text-lg" style="color: rgba(52,199,89,0.5);"></i>
             </div>
-            <p class="text-3xl font-bold text-white">{{ $session->testAnswers->count() }}</p>
+            <p class="text-xl font-bold text-white">{{ $session->testAnswers->count() }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">
                 Total: {{ count($session->testTemplate->questions_data ?? []) }}
             </p>
@@ -309,7 +309,7 @@
                 <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Duration</p>
                 <i class="fas fa-clock text-lg" style="color: rgba(255,149,0,0.5);"></i>
             </div>
-            <p class="text-3xl font-bold text-white">
+            <p class="text-xl font-bold text-white">
                 {{ $session->time_taken_minutes ?? ($session->started_at && $session->completed_at ? $session->started_at->diffInMinutes($session->completed_at) : 0) }}
             </p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">
@@ -322,7 +322,7 @@
                 <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Tab Switches</p>
                 <i class="fas fa-window-restore text-lg" style="color: rgba(191,90,242,0.5);"></i>
             </div>
-            <p class="text-3xl font-bold text-white">{{ $session->tab_switches }}</p>
+            <p class="text-xl font-bold text-white">{{ $session->tab_switches }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">
                 Anti-cheat
             </p>
@@ -353,7 +353,7 @@
     {{-- Grading Info --}}
     @if($session->score !== null || $session->requires_manual_review)
     <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
             <i class="fas fa-chart-line" style="color: rgba(10,132,255,1);"></i>
             Grading Information
         </h2>
@@ -416,7 +416,7 @@
     {{-- Questions and Answers --}}
     <section class="card-elevated rounded-apple-xl p-5 md:p-6">
         <div class="flex items-center justify-between mb-5">
-            <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white flex items-center gap-2">
                 <i class="fas fa-list-alt" style="color: rgba(52,199,89,1);"></i>
                 Questions & Answers
             </h2>
@@ -576,7 +576,7 @@
     {{-- Evaluator Notes (if manually reviewed) --}}
     @if($session->evaluator_notes || $session->evaluator_id)
     <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
             <i class="fas fa-comment-dots" style="color: rgba(191,90,242,1);"></i>
             Evaluator Notes
         </h2>

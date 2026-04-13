@@ -5,6 +5,15 @@
 
 @section('content')
 
+@php
+    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $whatsappBase = $contact['whatsapp_link'] ?? '';
+    $phoneRaw = $contact['phone'] ?? '';
+    $phoneHref = $phoneRaw !== '' ? ('tel:' . preg_replace('/\s+/', '', $phoneRaw)) : '';
+    $waText = 'Halo Bizmark.ID, saya ingin konsultasi tentang ' . ($service['title'] ?? '');
+    $whatsappHref = $whatsappBase . (str_contains($whatsappBase, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
+@endphp
+
 <!-- Hero Section -->
 <section class="magazine-section bg-gradient-to-br from-blue-50 via-white to-purple-50">
     <div class="content-container">
@@ -39,13 +48,14 @@
         
         <!-- Quick Actions -->
         <div class="space-y-3 mb-6">
-            <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20{{ urlencode($service['title']) }}" 
+            <a href="{{ $whatsappHref }}" 
                target="_blank"
+               rel="noopener"
                class="btn-primary flex items-center justify-center gap-2">
                 <i class="fab fa-whatsapp text-xl"></i>
                 <span>Konsultasi via WhatsApp</span>
             </a>
-            <a href="tel:+6283879602855" 
+            <a href="{{ $phoneHref }}" 
                class="block text-center bg-white border-2 border-[#0077B5] text-[#0077B5] font-semibold py-3.5 px-6 rounded-xl">
                 <i class="fas fa-phone mr-2"></i> Telepon Langsung
             </a>
@@ -187,8 +197,9 @@
             Konsultasikan kebutuhan {{ $service['title'] }} Anda dengan tim ahli kami
         </p>
         
-        <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20{{ urlencode($service['title']) }}" 
+        <a href="{{ $whatsappHref }}" 
            target="_blank"
+           rel="noopener"
            class="inline-block w-full bg-white text-[#0077B5] font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all">
             <i class="fab fa-whatsapp mr-2"></i> Konsultasi Gratis Sekarang
         </a>

@@ -10,24 +10,7 @@ class AutoPostConfigController extends Controller
 {
     public function index()
     {
-        $config = AutoPostConfig::first();
-        
-        if (!$config) {
-            $config = AutoPostConfig::create([
-                'is_enabled' => false,
-                'posts_per_day' => 3,
-                'post_times' => ['08:00', '13:00', '19:00'],
-                'ai_model' => 'anthropic/claude-3.5-sonnet',
-                'min_word_count' => 800,
-                'max_word_count' => 1500,
-                'similarity_threshold' => 0.75,
-                'quality_threshold' => 70,
-                'internal_links_count' => 3,
-                'auto_publish' => true,
-                'auto_add_tags' => true,
-                'auto_schedule_days' => 7,
-            ]);
-        }
+        $config = AutoPostConfig::current();
         
         return view('admin.auto-post.config', compact('config'));
     }
@@ -36,32 +19,60 @@ class AutoPostConfigController extends Controller
     {
         $validated = $request->validate([
             'is_enabled' => 'boolean',
-            'posts_per_day' => 'required|integer|min:1|max:10',
-            'post_times' => 'required|array|min:1',
-            'post_times.*' => 'required|date_format:H:i',
+            'posts_per_day' => 'required|integer|min:1|max:24',
+            'post_times' => 'required|array|min:1|max:24',
+            'post_times.*' => 'required|date_format:H:i|distinct',
             'ai_model' => 'required|string',
-            'temperature' => 'required|numeric|min:0|max:2',
             'min_word_count' => 'required|integer|min:300',
-            'max_word_count' => 'required|integer|min:500',
-            'similarity_threshold' => 'required|numeric|min:0|max:1',
-            'quality_threshold' => 'required|integer|min:0|max:100',
+            'max_word_count' => 'required|integer|min:500|gte:min_word_count',
+            'duplicate_threshold' => 'required|numeric|min:0|max:1',
+            'cooldown_days' => 'nullable|integer|min:1|max:365',
             'internal_links_count' => 'required|integer|min:0|max:10',
             'auto_publish' => 'boolean',
-            'auto_add_tags' => 'boolean',
-            'auto_schedule_days' => 'required|integer|min:1|max:30',
+            'language_distribution' => 'nullable|array',
+            'language_distribution.*' => 'nullable|integer|min:0|max:100',
+            'market_focus' => 'nullable|array',
         ]);
         
-        $config = AutoPostConfig::first();
+        // Ensure boolean fields default to false if not sent
+        $validated['auto_publish'] = $request->boolean('auto_publish');
+        $validated['is_enabled'] = $request->boolean('is_enabled');
+
+        // Normalize post times to unique + sorted values for deterministic scheduling.
+        $validated['post_times'] = collect($validated['post_times'] ?? [])
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+
+        if (count($validated['post_times']) !== (int) $validated['posts_per_day']) {
+            return back()
+                ->withErrors([
+                    'post_times' => 'Jumlah waktu posting harus sama dengan Post Per Hari.',
+                ])
+                ->withInput();
+        }
+        
+        // Handle market_focus checkboxes
+        if (isset($validated['market_focus'])) {
+            $validated['market_focus'] = [
+                'local' => isset($validated['market_focus']['local']),
+                'pma' => isset($validated['market_focus']['pma']),
+            ];
+        }
+        
+        $config = AutoPostConfig::current();
         $config->update($validated);
         
         return redirect()
-            ->route('admin.auto-post.config')
+            ->route('auto-post.config')
             ->with('success', 'Konfigurasi berhasil diperbarui');
     }
     
     public function toggle(Request $request)
     {
-        $config = AutoPostConfig::first();
+        $config = AutoPostConfig::current();
         $config->update(['is_enabled' => !$config->is_enabled]);
         
         $status = $config->is_enabled ? 'diaktifkan' : 'dinonaktifkan';

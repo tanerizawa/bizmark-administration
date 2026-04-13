@@ -98,6 +98,21 @@
         .rounded-apple-lg { border-radius: 12px; }
         .rounded-apple-xl { border-radius: 16px; }
         
+        .card-subtle {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: background 0.2s ease;
+        }
+        .card-subtle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .hover\:bg-dark-elevated-2:hover {
+            background-color: rgba(58, 58, 60, 0.6);
+        }
+        
         .card-elevated {
             background-color: var(--dark-bg-elevated);
             backdrop-filter: blur(20px);
@@ -115,6 +130,21 @@
         .bg-apple-orange { background-color: var(--apple-orange); }
         .bg-apple-red { background-color: var(--apple-red); }
         .bg-apple-purple { background-color: var(--apple-purple); }
+        
+        /* Opacity variants – bg-apple-* + bg-opacity-* doesn't work with Tailwind browser build.
+           Use these dedicated classes instead: bg-{color}/{opacity} */
+        .bg-apple-blue\/10 { background-color: rgba(0,122,255,0.10); }
+        .bg-apple-blue\/15 { background-color: rgba(0,122,255,0.15); }
+        .bg-apple-blue\/20 { background-color: rgba(0,122,255,0.20); }
+        .bg-apple-blue\/25 { background-color: rgba(0,122,255,0.25); }
+        .bg-apple-green\/15 { background-color: rgba(52,199,89,0.15); }
+        .bg-apple-green\/20 { background-color: rgba(52,199,89,0.20); }
+        .bg-apple-red\/15 { background-color: rgba(255,59,48,0.15); }
+        .bg-apple-red\/20 { background-color: rgba(255,59,48,0.20); }
+        .bg-apple-orange\/20 { background-color: rgba(255,149,0,0.20); }
+        .bg-apple-purple\/15 { background-color: rgba(175,82,222,0.15); }
+        .border-apple-red\/30 { border-color: rgba(255,59,48,0.30); }
+        .border-apple-green\/30 { border-color: rgba(52,199,89,0.30); }
         
         .text-apple-blue { color: var(--apple-blue); }
         .text-apple-blue-dark { color: var(--apple-blue-dark); }
@@ -697,9 +727,14 @@
         }
 
         .sidebar-header {
-            padding: 1.25rem 1rem;
+            height: 4rem;
+            min-height: 4rem;
+            padding: 0 1rem;
             border-bottom: 1px solid var(--dark-separator);
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .sidebar-nav {
@@ -957,6 +992,216 @@
                 padding: 0 1rem;
             }
         }
+
+        /* ========================================
+           ADMIN COMPACT DESIGN SYSTEM
+           Dense, professional admin interface
+           ======================================== */
+        
+        /* Typography Scale - Compact */
+        .admin-title { 
+            font-size: 1.125rem; 
+            font-weight: 600; 
+            line-height: 1.3; 
+        }
+        .admin-section { 
+            font-size: 0.8125rem; 
+            font-weight: 600; 
+            line-height: 1.4; 
+        }
+        .admin-body { 
+            font-size: 0.8125rem; 
+            line-height: 1.5; 
+        }
+        .admin-label { 
+            font-size: 0.75rem; 
+            font-weight: 500; 
+        }
+        .admin-small { 
+            font-size: 0.6875rem; 
+            line-height: 1.4; 
+        }
+        .admin-stat { 
+            font-size: 1.125rem; 
+            font-weight: 700; 
+        }
+        .admin-stat-lg { 
+            font-size: 1.25rem; 
+            font-weight: 700; 
+        }
+
+        /* Compact Hero Section */
+        .admin-hero {
+            padding: 0.875rem 1rem;
+        }
+        .admin-hero-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .admin-hero-subtitle {
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            opacity: 0.5;
+            margin-bottom: 0.125rem;
+        }
+        .admin-hero-desc {
+            font-size: 0.8125rem;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+        .admin-hero-meta {
+            font-size: 0.6875rem;
+            opacity: 0.6;
+        }
+
+        /* Compact Cards */
+        .admin-card {
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+        .admin-card-header {
+            padding: 0.625rem 0.75rem;
+        }
+        .admin-card-body {
+            padding: 0.75rem;
+        }
+
+        /* Compact Stat Cards */
+        .admin-stat-card {
+            padding: 0.625rem 0.75rem;
+        }
+        .admin-stat-icon {
+            width: 1.75rem;
+            height: 1.75rem;
+            font-size: 0.75rem;
+        }
+        .admin-stat-icon-lg {
+            width: 2rem;
+            height: 2rem;
+            font-size: 0.875rem;
+        }
+
+        /* Module Cards */
+        .admin-module-card {
+            padding: 0.875rem;
+        }
+        .admin-module-icon {
+            width: 2rem;
+            height: 2rem;
+            font-size: 0.875rem;
+        }
+        .admin-module-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .admin-module-desc {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* Compact Form Elements */
+        .admin-input {
+            padding: 0.375rem 0.625rem !important;
+            font-size: 0.8125rem !important;
+            border-radius: 6px !important;
+        }
+        .admin-select {
+            padding: 0.375rem 2rem 0.375rem 0.625rem !important;
+            font-size: 0.8125rem !important;
+        }
+        .admin-textarea {
+            padding: 0.5rem 0.625rem !important;
+            font-size: 0.8125rem !important;
+        }
+        .admin-label-compact {
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            margin-bottom: 0.25rem !important;
+            color: rgba(235, 235, 245, 0.7) !important;
+        }
+
+        /* Compact Buttons */
+        .admin-btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .admin-btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        .admin-btn-primary {
+            background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-blue-dark) 100%);
+            color: #fff;
+            border: none;
+        }
+
+        /* Tab Navigation - Compact */
+        .tab-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 0.875rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: rgba(235, 235, 245, 0.6);
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tab-button:hover {
+            color: rgba(235, 235, 245, 0.9);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .tab-button.active {
+            color: #fff;
+            background: var(--apple-blue);
+        }
+        .tab-button i {
+            font-size: 0.75rem;
+        }
+
+        /* Compact Tables */
+        .admin-table thead th {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.6875rem;
+        }
+        .admin-table tbody td {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+
+        /* Compact Badges */
+        .admin-badge {
+            padding: 0.125rem 0.375rem;
+            font-size: 0.625rem;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        /* Compact Spacing Utilities */
+        .admin-gap-1 { gap: 0.25rem; }
+        .admin-gap-2 { gap: 0.5rem; }
+        .admin-gap-3 { gap: 0.75rem; }
+        .admin-space-y-2 > * + * { margin-top: 0.5rem; }
+        .admin-space-y-3 > * + * { margin-top: 0.75rem; }
+        .admin-mb-2 { margin-bottom: 0.5rem; }
+        .admin-mb-3 { margin-bottom: 0.75rem; }
+        .admin-p-2 { padding: 0.5rem; }
+        .admin-p-3 { padding: 0.75rem; }
+        .admin-px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .admin-py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+
+        /* Alert Compact */
+        .admin-alert {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8125rem;
+            border-radius: 6px;
+        }
     </style>
     
     @stack('styles')
@@ -1062,17 +1307,10 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Lead Management</div>
                     <div class="nav-links">
-                        <a href="{{ route('admin.service-inquiries.index') }}" class="nav-link {{ request()->routeIs('admin.service-inquiries.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.leads.index') }}" class="nav-link {{ request()->routeIs('admin.leads.*') || request()->routeIs('admin.service-inquiries.*') || request()->routeIs('admin.consultation-leads.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
-                                <i class="fas fa-envelope"></i>
-                                <span>Service Inquiries</span>
-                            </div>
-                        </a>
-                        
-                        <a href="{{ route('admin.consultation-leads.index') }}" class="nav-link {{ request()->routeIs('admin.consultation-leads.*') ? 'active' : '' }}">
-                            <div class="nav-link-content">
-                                <i class="fas fa-calculator"></i>
-                                <span>Consultation Leads</span>
+                                <i class="fas fa-user-tag"></i>
+                                <span>Kelola Lead</span>
                             </div>
                         </a>
                     </div>
@@ -1098,76 +1336,21 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Recruitment</div>
                     <div class="nav-links">
-                        <a href="{{ route('admin.recruitment.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.recruitment.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.*') || request()->routeIs('admin.jobs.*') || request()->routeIs('admin.applications.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
-                                <i class="fas fa-chart-line"></i>
-                                <span>Dashboard</span>
-                            </div>
-                        </a>
-                        
-                        <a href="{{ route('admin.jobs.index') }}" class="nav-link {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}">
-                            <div class="nav-link-content">
-                                <i class="fas fa-briefcase"></i>
-                                <span>Job Vacancies</span>
-                            </div>
-                        </a>
-                        
-                        <a href="{{ route('admin.applications.index') }}" class="nav-link {{ request()->routeIs('admin.applications.*') && !request()->routeIs('admin.applications.show') ? 'active' : '' }}">
-                            <div class="nav-link-content">
-                                <i class="fas fa-users"></i>
-                                <span>Applications</span>
+                                <i class="fas fa-user-tie"></i>
+                                <span>Kelola Rekrutmen</span>
                             </div>
                             @if($otherNotifications['pending_job_apps'] > 0)
                                 <span class="nav-badge badge-alert">{{ $otherNotifications['pending_job_apps'] }}</span>
-                            @endif
-                        </a>
-                        
-                        <a href="{{ route('admin.recruitment.pipeline.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.pipeline.*') ? 'active' : '' }}">
-                            <div class="nav-link-content">
-                                <i class="fas fa-stream"></i>
-                                <span>Pipeline</span>
-                            </div>
-                        </a>
-                        
-                        <a href="{{ route('admin.recruitment.interviews.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.interviews.*') ? 'active' : '' }}">
-                            <div class="nav-link-content">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Interviews</span>
-                            </div>
-                        </a>
-                        
-                        <a href="{{ route('admin.recruitment.tests.index') }}" class="nav-link {{ request()->routeIs('admin.recruitment.tests.*') ? 'active' : '' }}">
-                            <div class="nav-link-content">
-                                <i class="fas fa-clipboard-list"></i>
-                                <span>Tests</span>
-                            </div>
-                        </a>
-                    </div>
-
-                <!-- Beta Testing Program -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Beta Testing</div>
-                    <div class="nav-links">
-                        <a href="{{ route('admin.beta-tester.dashboard') }}" class="nav-link {{ request()->routeIs('admin.beta-tester.dashboard') ? 'active' : '' }}">
-                            <div class="nav-link-content">
-                                <i class="fas fa-chart-line"></i>
-                                <span>Dashboard</span>
-                            </div>
-                        </a>
-                        
-                        <a href="{{ route('admin.beta-tester.index') }}" class="nav-link {{ request()->routeIs('admin.beta-tester.index') || request()->routeIs('admin.beta-tester.show') ? 'active' : '' }}">
-                            <div class="nav-link-content">
-                                <i class="fas fa-users-cog"></i>
-                                <span>Daftar Beta Tester</span>
-                            </div>
-                            @if(isset($betaTesterNotifications['pending_documents']) && $betaTesterNotifications['pending_documents'] > 0)
-                                <span class="nav-badge badge-warning">{{ $betaTesterNotifications['pending_documents'] }}</span>
                             @endif
                         </a>
                     </div>
                 </div>
 
                 <!-- Email Management -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Komunikasi</div>
                     <div class="nav-links">
                         <a href="{{ route('admin.email-management.index') }}" class="nav-link {{ request()->routeIs('admin.email-management.*') || request()->routeIs('admin.inbox.*') || request()->routeIs('admin.campaigns.*') || request()->routeIs('admin.subscribers.*') || request()->routeIs('admin.templates.*') || request()->routeIs('admin.email.settings.*') || request()->routeIs('admin.email-accounts.*') ? 'active' : '' }}">
                             <div class="nav-link-content">
@@ -1179,7 +1362,7 @@
                             @endif
                         </a>
                     </div>
-    
+                </div>
 
                 <!-- Financial Management -->
                 <div class="nav-section">
@@ -1209,72 +1392,22 @@
                         </a>
                         
                         @can('content.manage')
-                        <!-- Auto-Post Submenu -->
-                        <div class="nav-submenu {{ request()->routeIs('auto-post.*') ? 'active' : '' }}">
-                            <button class="nav-link nav-submenu-toggle" onclick="toggleSubmenu(this)">
-                                <div class="nav-link-content">
-                                    <i class="fas fa-robot"></i>
-                                    <span>Auto-Post AI</span>
-                                </div>
-                                <i class="fas fa-chevron-down submenu-icon"></i>
-                            </button>
-                            <div class="nav-submenu-content" style="{{ request()->routeIs('auto-post.*') ? 'display: block;' : '' }}">
-                                <a href="{{ route('auto-post.config') }}" class="nav-sublink {{ request()->routeIs('auto-post.config') ? 'active' : '' }}">
-                                    <i class="fas fa-cog"></i>
-                                    <span>Konfigurasi</span>
-                                </a>
-                                <a href="{{ route('auto-post.topics.index') }}" class="nav-sublink {{ request()->routeIs('auto-post.topics.*') ? 'active' : '' }}">
-                                    <i class="fas fa-lightbulb"></i>
-                                    <span>Topic Pool</span>
-                                </a>
-                                <a href="{{ route('auto-post.schedules.index') }}" class="nav-sublink {{ request()->routeIs('auto-post.schedules.*') ? 'active' : '' }}">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <span>Jadwal</span>
-                                </a>
-                                <a href="{{ route('auto-post.analytics') }}" class="nav-sublink {{ request()->routeIs('auto-post.analytics') ? 'active' : '' }}">
-                                    <i class="fas fa-chart-line"></i>
-                                    <span>Analytics</span>
-                                </a>
+                        <!-- Auto-Post AI -->
+                        <a href="{{ route('auto-post.index') }}" class="nav-link {{ request()->routeIs('auto-post.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-robot"></i>
+                                <span>Auto-Post AI</span>
                             </div>
-                        </div>
+                        </a>
                         @endcan
-                        
-                        <!-- Backlink Builder Submenu -->
-                        <div class="nav-submenu {{ request()->routeIs('admin.backlinks.*') ? 'active' : '' }}">
-                            <button class="nav-link nav-submenu-toggle" onclick="toggleSubmenu(this)">
-                                <div class="nav-link-content">
-                                    <i class="fas fa-link"></i>
-                                    <span>Backlink Builder</span>
-                                </div>
-                                <i class="fas fa-chevron-down submenu-icon"></i>
-                            </button>
-                            <div class="nav-submenu-content" style="{{ request()->routeIs('admin.backlinks.*') ? 'display: block;' : '' }}">
-                                <a href="{{ route('admin.backlinks.index') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.index') ? 'active' : '' }}">
-                                    <i class="fas fa-chart-line"></i>
-                                    <span>Dashboard</span>
-                                </a>
-                                <a href="{{ route('admin.backlinks.targets') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.targets*') ? 'active' : '' }}">
-                                    <i class="fas fa-bullseye"></i>
-                                    <span>Target Websites</span>
-                                </a>
-                                <a href="{{ route('admin.backlinks.list') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.list') || request()->routeIs('admin.backlinks.create') || request()->routeIs('admin.backlinks.edit') ? 'active' : '' }}">
-                                    <i class="fas fa-link"></i>
-                                    <span>Backlinks</span>
-                                </a>
-                                <a href="{{ route('admin.backlinks.analytics') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.analytics') ? 'active' : '' }}">
-                                    <i class="fas fa-chart-bar"></i>
-                                    <span>Analytics</span>
-                                </a>
-                                <a href="{{ route('admin.backlinks.syndication') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.syndication') ? 'active' : '' }}">
-                                    <i class="fas fa-share-alt"></i>
-                                    <span>Syndication</span>
-                                </a>
-                                <a href="{{ route('admin.backlinks.settings') }}" class="nav-sublink {{ request()->routeIs('admin.backlinks.settings') ? 'active' : '' }}">
-                                    <i class="fas fa-robot"></i>
-                                    <span>AI Automation</span>
-                                </a>
+
+                        <!-- SEO Command Center -->
+                        <a href="{{ route('admin.seo.command-center') }}" class="nav-link {{ request()->routeIs('admin.seo.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-search-dollar"></i>
+                                <span>SEO Command</span>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </nav>

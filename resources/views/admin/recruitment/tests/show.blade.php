@@ -25,7 +25,7 @@
             
             <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                 <div class="space-y-2.5">
-                    <h1 class="text-2xl font-semibold text-white leading-tight">{{ $test->title }}</h1>
+                    <h1 class="text-xl font-semibold text-white leading-tight">{{ $test->title }}</h1>
                     <p class="text-sm" style="color: rgba(235,235,245,0.7);">
                         {{ $test->description ?? 'Template tes untuk proses rekrutmen' }}
                     </p>
@@ -67,7 +67,7 @@
                 <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Sesi</p>
                 <i class="fas fa-users text-lg" style="color: rgba(10,132,255,0.5);"></i>
             </div>
-            <p class="text-3xl font-bold text-white">{{ $test->test_sessions_count }}</p>
+            <p class="text-xl font-bold text-white">{{ $test->test_sessions_count }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Kandidat mengikuti</p>
         </div>
         
@@ -76,7 +76,7 @@
                 <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Avg. Score</p>
                 <i class="fas fa-chart-line text-lg" style="color: rgba(52,199,89,0.5);"></i>
             </div>
-            <p class="text-3xl font-bold text-white">{{ number_format($statistics['average_score'] ?? 0, 1) }}</p>
+            <p class="text-xl font-bold text-white">{{ number_format($statistics['average_score'] ?? 0, 1) }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Skor rata-rata</p>
         </div>
         
@@ -85,7 +85,7 @@
                 <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Pass Rate</p>
                 <i class="fas fa-percentage text-lg" style="color: rgba(255,149,0,0.5);"></i>
             </div>
-            <p class="text-3xl font-bold text-white">{{ number_format($statistics['pass_rate'] ?? 0, 1) }}%</p>
+            <p class="text-xl font-bold text-white">{{ number_format($statistics['pass_rate'] ?? 0, 1) }}%</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tingkat kelulusan</p>
         </div>
         
@@ -94,7 +94,7 @@
                 <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Avg. Duration</p>
                 <i class="fas fa-clock text-lg" style="color: rgba(191,90,242,0.5);"></i>
             </div>
-            <p class="text-3xl font-bold text-white">{{ number_format($statistics['average_duration'] ?? 0, 0) }}</p>
+            <p class="text-xl font-bold text-white">{{ number_format($statistics['average_duration'] ?? 0, 0) }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Menit rata-rata</p>
         </div>
     </section>
@@ -102,7 +102,7 @@
     {{-- Test Details --}}
     <section class="card-elevated rounded-apple-xl p-6 space-y-5">
         <div class="border-b border-white/10 pb-4">
-            <h3 class="text-lg font-semibold text-white">Informasi Template</h3>
+            <h3 class="text-sm font-semibold text-white">Informasi Template</h3>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -320,7 +320,7 @@
     {{-- Assign Test to Candidate --}}
     <section class="card-elevated rounded-apple-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-white/10">
-            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+            <h3 class="text-sm font-semibold text-white flex items-center gap-2">
                 <i class="fas fa-user-plus" style="color: rgba(52,199,89,1);"></i>
                 Assign Test to Candidate
             </h3>
@@ -392,7 +392,7 @@
     {{-- Recent Sessions --}}
     <section class="card-elevated rounded-apple-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-white/10">
-            <h3 class="text-lg font-semibold text-white">All Test Sessions</h3>
+            <h3 class="text-sm font-semibold text-white">All Test Sessions</h3>
             <p class="text-xs mt-1" style="color: rgba(235,235,245,0.6);">
                 Semua sesi tes dengan template ini ({{ $recentSessions->count() }} total)
             </p>

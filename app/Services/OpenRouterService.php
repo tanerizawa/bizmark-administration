@@ -10,14 +10,18 @@ class OpenRouterService
 {
     protected string $apiKey;
     protected string $baseUrl = 'https://openrouter.ai/api/v1';
-    protected string $primaryModel = 'anthropic/claude-3.5-sonnet';
-    protected string $fallbackModel = 'google/gemini-pro-1.5';
+    protected string $primaryModel = 'anthropic/claude-sonnet-4';
+    protected string $fallbackModel = 'google/gemini-2.5-flash';
     
     public function __construct()
     {
         $this->apiKey = config('services.openrouter.api_key');
     }
 
+    /**
+     * Generate permit recommendations — delegates to FreeAIAnalysisService (canonical system).
+     * Transforms output to legacy format expected by ConsultationPricingEngine & KbliPermitCacheService.
+     */
     public function generatePermitRecommendations(
         string $kbliCode,
         string $kbliDescription,
@@ -27,73 +31,50 @@ class OpenRouterService
         ?int $clientId = null
     ): ?array {
         $startTime = microtime(true);
-        
+
         try {
-            $prompt = $this->buildPrompt($kbliCode, $kbliDescription, $sector, $businessScale, $locationType);
-            $promptHash = md5($prompt);
-            
-            $response = $this->callAI($prompt, $this->primaryModel);
+            /** @var FreeAIAnalysisService $analysisService */
+            $analysisService = app(FreeAIAnalysisService::class);
+            $analysis = $analysisService->analyzeFromKbli($kbliCode, $kbliDescription, $sector, $businessScale, $locationType);
+
             $responseTime = (int) ((microtime(true) - $startTime) * 1000);
-            
-            if ($response['success']) {
-                $parsedData = $this->parseResponse($response['content']);
-                
-                $this->logQuery([
-                    'client_id' => $clientId,
-                    'kbli_code' => $kbliCode,
-                    'business_context' => ['scale' => $businessScale, 'location' => $locationType],
-                    'prompt_text' => substr($prompt, 0, 5000),
-                    'response_text' => substr($response['content'], 0, 10000),
-                    'tokens_used' => $response['tokens_used'] ?? null,
-                    'response_time_ms' => $responseTime,
-                    'status' => 'success',
-                    'ai_model' => $this->primaryModel,
-                    'api_cost' => $response['cost'] ?? null,
-                ]);
-                
-                return array_merge($parsedData, [
-                    'ai_model' => $this->primaryModel,
-                    'ai_prompt_hash' => $promptHash,
-                    'confidence_score' => $this->calculateConfidence($parsedData),
-                ]);
-            }
-            
-            // Fallback to secondary model
-            Log::warning('Primary AI failed, trying fallback', ['error' => $response['error']]);
-            $fallbackResponse = $this->callAI($prompt, $this->fallbackModel);
-            
-            if ($fallbackResponse['success']) {
-                $parsedData = $this->parseResponse($fallbackResponse['content']);
-                $this->logQuery([
-                    'client_id' => $clientId,
-                    'kbli_code' => $kbliCode,
-                    'business_context' => ['scale' => $businessScale, 'location' => $locationType],
-                    'prompt_text' => substr($prompt, 0, 5000),
-                    'response_text' => substr($fallbackResponse['content'], 0, 10000),
-                    'tokens_used' => $fallbackResponse['tokens_used'] ?? null,
-                    'response_time_ms' => $responseTime,
-                    'status' => 'success',
-                    'ai_model' => $this->fallbackModel,
-                    'api_cost' => $fallbackResponse['cost'] ?? null,
-                ]);
-                
-                return array_merge($parsedData, [
-                    'ai_model' => $this->fallbackModel,
-                    'ai_prompt_hash' => $promptHash,
-                    'confidence_score' => $this->calculateConfidence($parsedData),
-                ]);
-            }
-            
+
+            // Log query for tracking
             $this->logQuery([
                 'client_id' => $clientId,
                 'kbli_code' => $kbliCode,
-                'status' => 'error',
-                'error_message' => $fallbackResponse['error'] ?? 'Unknown error',
+                'business_context' => ['scale' => $businessScale, 'location' => $locationType],
+                'prompt_text' => "Delegated to FreeAIAnalysisService v3.0 (kbli={$kbliCode}, sector={$sector})",
+                'response_text' => substr(json_encode($analysis['recommended_permits'] ?? []), 0, 10000),
+                'tokens_used' => $analysis['ai_tokens_used'] ?? null,
+                'response_time_ms' => $responseTime,
+                'status' => 'success',
+                'ai_model' => $analysis['ai_model_used'] ?? 'unknown',
+                'api_cost' => null,
             ]);
-            
-            return null;
+
+            return [
+                'recommended_permits' => $analysis['recommended_permits'] ?? [],
+                'required_documents' => $analysis['required_documents'] ?? [],
+                'risk_assessment' => $analysis['risk_assessment'] ?? null,
+                'estimated_timeline' => $analysis['estimated_timeline'] ?? null,
+                'additional_notes' => json_encode([
+                    'risk_factors' => $analysis['risk_factors'] ?? [],
+                    'next_steps' => $analysis['next_steps'] ?? [],
+                    'limitations' => $analysis['limitations'] ?? '',
+                ]),
+                'ai_model' => $analysis['ai_model_used'] ?? 'unknown',
+                'ai_prompt_hash' => md5($kbliCode . $sector . ($businessScale ?? '') . ($locationType ?? '')),
+                'confidence_score' => $this->calculateConfidence([
+                    'recommended_permits' => $analysis['recommended_permits'] ?? [],
+                    'required_documents' => $analysis['required_documents'] ?? [],
+                    'risk_assessment' => $analysis['risk_assessment'] ?? null,
+                    'estimated_timeline' => $analysis['estimated_timeline'] ?? null,
+                ]),
+            ];
+
         } catch (\Exception $e) {
-            Log::error('AI generation failed', ['kbli_code' => $kbliCode, 'error' => $e->getMessage()]);
+            Log::error('AI generation failed (delegated)', ['kbli_code' => $kbliCode, 'error' => $e->getMessage()]);
             $this->logQuery([
                 'client_id' => $clientId,
                 'kbli_code' => $kbliCode,
@@ -104,147 +85,14 @@ class OpenRouterService
         }
     }
 
+    /**
+     * @deprecated Prompt logic moved to FreeAIAnalysisService (canonical system).
+     * Kept as stub for reference. See FreeAIAnalysisService::getSystemPrompt().
+     */
     protected function buildPrompt(string $kbliCode, string $description, string $sector, ?string $businessScale, ?string $locationType): string
     {
-        $context = '';
-        if ($businessScale) $context .= "\nSkala Usaha: {$businessScale}";
-        if ($locationType) $context .= "\nTipe Lokasi: {$locationType}";
-
-        return "Anda adalah konsultan perizinan senior Indonesia dengan 15+ tahun pengalaman. Analisis LENGKAP dan MENDETAIL seluruh perizinan.
-
-INFORMASI USAHA:
-Kode KBLI: {$kbliCode}
-Deskripsi Kegiatan: {$description}
-Sektor: {$sector}{$context}
-
-INSTRUKSI PENTING:
-1. **IDENTIFIKASI SEMUA IZIN** - Jangan lewatkan izin pendukung, izin operasional, dan izin teknis
-2. **URUTAN DEPENDENCY** - Jelaskan izin mana yang harus didapat dulu (prerequisites)
-3. **IZIN BERCABANG** - Untuk sektor tertentu (Real Estate, Konstruksi, Industri), identifikasi:
-   - Izin lingkungan (UKL-UPL, AMDAL)
-   - Izin teknis (PBG/IMB, Pertek BPN, PKKPR)
-   - Izin operasional (SLF, Laik Fungsi)
-   - Izin khusus sektor
-4. **BEST PRACTICE** - Ikuti alur perizinan OSS 1.1 dan regulasi terbaru
-
-⚠️ **ATURAN BIAYA PEMERINTAH (PENTING):**
-- **estimated_cost_range** adalah HANYA biaya resmi ke PEMERINTAH (PNBP, retribusi daerah)
-- NIB, NPWP, Sertifikat Standar = Rp 0 (memang gratis dari pemerintah)
-- Izin teknis (IMB/PBG, SLF, dll) = ada biaya pemerintah sesuai perda
-- Izin lingkungan (UKL-UPL, AMDAL) = ada biaya pemerintah
-- Izin sektoral = bervariasi tergantung jenis
-
-⚠️ **ESTIMASI BIAYA PEMERINTAH REALISTIS:**
-- IMB/PBG: Rp 50,000 - 500,000 per m² (tergantung fungsi bangunan & daerah)
-- SLF: Rp 1,000,000 - 5,000,000 (tergantung luas & kompleksitas)
-- UKL-UPL: Rp 2,000,000 - 5,000,000
-- AMDAL: Rp 10,000,000 - 50,000,000 (tergantung skala)
-- Izin Usaha Perdagangan: Rp 250,000 - 1,000,000
-- Izin Lokasi: Rp 500,000 - 2,000,000
-- TDP: Rp 100,000 - 500,000
-- SIUP: Rp 250,000 - 1,000,000
-
-FORMAT OUTPUT (JSON):
-{
-  \"permits\": [
-    {
-      \"name\": \"Nama Izin Lengkap\",
-      \"type\": \"mandatory|recommended|conditional\",
-      \"category\": \"foundational|environmental|technical|operational|sectoral\",
-      \"issuing_authority\": \"Instansi Penerbit\",
-      \"estimated_cost_range\": {\"min\": 0, \"max\": 0},
-      \"estimated_days\": 0,
-      \"priority\": 1,
-      \"description\": \"Penjelasan detail fungsi dan pentingnya izin ini\",
-      \"legal_basis\": \"Undang-undang/Peraturan yang mendasari\",
-      \"prerequisites\": [\"Izin yang harus dimiliki terlebih dahulu\"],
-      \"triggers_next\": [\"Izin yang bisa diurus setelah ini\"],
-      \"exemptions\": \"Kondisi pengecualian jika ada\",
-      \"renewal_period\": \"Masa berlaku dan perpanjangan\",
-      \"compliance_requirements\": [\"Persyaratan berkelanjutan setelah izin terbit\"]
-    }
-  ],
-  \"documents\": [
-    {
-      \"name\": \"Nama Dokumen\",
-      \"type\": \"identity|company|technical|financial|environmental|legal|other\",
-      \"required_for_permits\": [\"List izin yang memerlukan dokumen ini\"],
-      \"format\": \"PDF/JPG\",
-      \"notes\": \"Catatan penting tentang dokumen\",
-      \"validity_period\": \"Masa berlaku dokumen jika ada\",
-      \"legalization_needed\": false
-    }
-  ],
-  \"permit_flow\": {
-    \"phases\": [
-      {
-        \"phase_name\": \"Fase 1: Persiapan Dasar\",
-        \"permits_in_phase\": [\"NIB\", \"NPWP\"],
-        \"estimated_days\": 7,
-        \"notes\": \"Izin dasar yang harus dimiliki dulu\"
-      }
-    ],
-    \"critical_dependencies\": [
-      {
-        \"permit\": \"IMB/PBG\",
-        \"depends_on\": [\"UKL-UPL\", \"Pertek BPN\", \"Pengesahan Siteplan\"],
-        \"reason\": \"Alasan dependency\"
-      }
-    ]
-  },
-  \"risk_assessment\": {
-    \"level\": \"low|medium|high\",
-    \"factors\": [\"Faktor risiko spesifik\"],
-    \"mitigation\": [\"Langkah mitigasi\"],
-    \"common_pitfalls\": [\"Kesalahan umum yang harus dihindari\"]
-  },
-  \"timeline\": {
-    \"minimum_days\": 0,
-    \"maximum_days\": 0,
-    \"realistic_days\": 0,
-    \"critical_path\": [\"Urutan izin di jalur kritis\"],
-    \"parallel_tracks\": [\"Izin yang bisa diurus paralel\"]
-  },
-  \"cost_breakdown\": {
-    \"government_fees\": {\"min\": 0, \"max\": 0},
-    \"consulting_fees_estimate\": {\"min\": 2000000, \"max\": 50000000},
-    \"document_preparation\": {\"min\": 500000, \"max\": 5000000},
-    \"total_estimate\": {\"min\": 2500000, \"max\": 55000000}
-  },
-  \"additional_considerations\": [
-    \"Pertimbangan tambahan khusus untuk usaha ini\"
-  ],
-  \"regional_variations\": \"Perbedaan perizinan antar daerah jika signifikan\"
-}
-
-CONTOH UNTUK REAL ESTATE/PROPERTI (KBLI 68111):
-- FOUNDATIONAL: NIB (Rp 0), NPWP Badan (Rp 0)
-- ENVIRONMENTAL: UKL-UPL (Rp 2-5 juta) atau AMDAL (Rp 10-50 juta)
-- TECHNICAL: 
-  * Pertek BPN (Rp 500 ribu - 2 juta)
-  * PKKPR (Rp 1-3 juta)
-  * Pengesahan Siteplan (Rp 500 ribu - 1,5 juta)
-  * IMB/PBG (Rp 50-500 ribu per m² × luas bangunan)
-- OPERATIONAL:
-  * Sertifikat Standar Real Estate (Rp 0 - via OSS)
-  * SLF (Rp 1-5 juta)
-- SECTORAL:
-  * Izin Prinsip Pemanfaatan Ruang (Rp 1-3 juta)
-  * Izin Lokasi (Rp 500 ribu - 2 juta)
-
-ATURAN KETAT:
-1. Minimal 8-12 izin untuk usaha yang kompleks (Real Estate, Industri, Konstruksi)
-2. Minimal 5-7 izin untuk usaha menengah
-3. Minimal 3-5 izin untuk usaha sederhana
-4. WAJIB menyertakan prerequisites dan triggers_next
-5. **Estimasi biaya PEMERINTAH harus REALISTIS** - jangan semua Rp 0
-6. **estimated_cost_range = biaya ke PEMERINTAH saja** (bukan biaya konsultan)
-7. Sertakan SEMUA izin teknis yang relevan
-8. Gunakan kategori: foundational, environmental, technical, operational, sectoral
-9. **PENTING**: Hanya NIB, NPWP, dan Sertifikat Standar yang benar-benar gratis (Rp 0)
-10. **Izin lainnya hampir selalu ada biaya pemerintah** (PNBP/retribusi daerah)
-
-Berikan HANYA output JSON valid tanpa markdown atau penjelasan tambahan.";
+        // Legacy: this method is no longer called. All prompt logic lives in FreeAIAnalysisService.
+        return "DEPRECATED — see FreeAIAnalysisService";
     }
 
     protected function callAI(string $prompt, string $model): array
@@ -351,59 +199,84 @@ Berikan HANYA output JSON valid tanpa markdown atau penjelasan tambahan.";
     }
 
     /**
-     * Generic chat method for flexible AI interactions
+     * Generic chat method for flexible AI interactions.
+     * Automatically falls back to secondary model on 400/404 errors.
      */
     public function chat(array $messages, array $options = []): array
     {
         $model = $options['model'] ?? $this->primaryModel;
         $temperature = $options['temperature'] ?? 0.7;
         $maxTokens = $options['max_tokens'] ?? 4000;
-        
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'HTTP-Referer' => config('app.url'),
-                'X-Title' => config('app.name'),
-            ])->timeout(120)->post("{$this->baseUrl}/chat/completions", [
-                'model' => $model,
-                'messages' => $messages,
-                'temperature' => $temperature,
-                'max_tokens' => $maxTokens,
-            ]);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                return [
-                    'success' => true,
-                    'content' => $data['choices'][0]['message']['content'] ?? '',
-                    'tokens_used' => $data['usage']['total_tokens'] ?? null,
-                    'prompt_tokens' => $data['usage']['prompt_tokens'] ?? null,
-                    'completion_tokens' => $data['usage']['completion_tokens'] ?? null,
-                    'cost' => $this->calculateCost($data['usage'] ?? [], $model),
-                    'model' => $model,
+        $modelsToTry = [$model];
+        if ($model !== $this->fallbackModel) {
+            $modelsToTry[] = $this->fallbackModel;
+        }
+
+        $lastResult = null;
+
+        foreach ($modelsToTry as $currentModel) {
+            try {
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'HTTP-Referer' => config('app.url'),
+                    'X-Title' => config('app.name'),
+                ])->timeout(120)->post("{$this->baseUrl}/chat/completions", [
+                    'model' => $currentModel,
+                    'messages' => $messages,
+                    'temperature' => $temperature,
+                    'max_tokens' => $maxTokens,
+                ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    return [
+                        'success' => true,
+                        'content' => $data['choices'][0]['message']['content'] ?? '',
+                        'tokens_used' => $data['usage']['total_tokens'] ?? null,
+                        'prompt_tokens' => $data['usage']['prompt_tokens'] ?? null,
+                        'completion_tokens' => $data['usage']['completion_tokens'] ?? null,
+                        'cost' => $this->calculateCost($data['usage'] ?? [], $currentModel),
+                        'model' => $currentModel,
+                    ];
+                }
+
+                $status = $response->status();
+
+                // Model deprecated/removed — try fallback
+                if (in_array($status, [400, 404]) && $currentModel !== end($modelsToTry)) {
+                    Log::warning('OpenRouter model unavailable, trying fallback', [
+                        'failed_model' => $currentModel,
+                        'status' => $status,
+                        'fallback' => $this->fallbackModel,
+                    ]);
+                    continue;
+                }
+
+                Log::error('OpenRouter API error', [
+                    'status' => $status,
+                    'body' => $response->body(),
+                    'model' => $currentModel,
+                ]);
+
+                $lastResult = [
+                    'success' => false,
+                    'error' => 'API request failed: ' . $status,
+                    'details' => $response->json(),
+                ];
+            } catch (\Exception $e) {
+                Log::error('OpenRouter chat exception', [
+                    'error' => $e->getMessage(),
+                    'model' => $currentModel,
+                ]);
+
+                $lastResult = [
+                    'success' => false,
+                    'error' => $e->getMessage(),
                 ];
             }
-
-            Log::error('OpenRouter API error', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'API request failed: ' . $response->status(),
-                'details' => $response->json(),
-            ];
-        } catch (\Exception $e) {
-            Log::error('OpenRouter chat exception', [
-                'error' => $e->getMessage(),
-                'model' => $model,
-            ]);
-
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
         }
+
+        return $lastResult ?? ['success' => false, 'error' => 'All models failed'];
     }
 }

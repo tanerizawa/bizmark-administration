@@ -158,16 +158,21 @@ Contoh output yang benar: 0.75
 ";
         
         try {
-            $response = $this->openRouter->chat([
-                'model' => 'anthropic/claude-3-haiku', // Cheaper model for this task
-                'messages' => [
-                    ['role' => 'user', 'content' => $prompt]
-                ],
-                'temperature' => 0.3, // Lower temperature for consistent scoring
-                'max_tokens' => 10,
-            ]);
+            $response = $this->openRouter->chat(
+                [['role' => 'user', 'content' => $prompt]],
+                [
+                    'model' => 'google/gemini-2.5-flash', // Cheaper model for similarity scoring
+                    'temperature' => 0.3,
+                    'max_tokens' => 10,
+                ]
+            );
             
-            $scoreText = trim($response['choices'][0]['message']['content']);
+            if (!$response['success']) {
+                \Log::warning('⚠️  Similarity API call failed', ['error' => $response['error'] ?? 'unknown']);
+                return $this->calculateSimpleKeywordSimilarity($topicA, $topicB);
+            }
+            
+            $scoreText = trim($response['content'] ?? '');
             
             // Extract number from response
             preg_match('/\d+\.\d+/', $scoreText, $matches);

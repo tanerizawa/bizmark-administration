@@ -16,18 +16,24 @@ class ServiceInquiryRateLimiter
      */
     public function check(string $email, string $ip): array
     {
+        $locale = app()->getLocale();
+        
         // Check email limit
         $emailKey = $this->getEmailKey($email);
         $emailCount = Cache::get($emailKey, 0);
         
         if ($emailCount >= self::EMAIL_LIMIT) {
             $retryAfter = Cache::ttl($emailKey);
+            // Ensure retryAfter is positive (some drivers return -2 for non-existent keys)
+            $retryAfter = max(0, $retryAfter);
             return [
                 'allowed' => false,
                 'reason' => 'email_limit',
-                'message' => 'Anda sudah menggunakan ' . self::EMAIL_LIMIT . 'x analisis gratis hari ini. Daftar untuk unlimited analysis.',
+                'message' => $locale === 'en' 
+                    ? 'You have used ' . self::EMAIL_LIMIT . ' free analyses today. Register for unlimited analysis.'
+                    : 'Anda sudah menggunakan ' . self::EMAIL_LIMIT . 'x analisis gratis hari ini. Daftar untuk akses unlimited.',
                 'retry_after' => $retryAfter,
-                'retry_after_formatted' => $this->formatRetryAfter($retryAfter)
+                'retry_after_formatted' => $this->formatRetryAfter($retryAfter, $locale)
             ];
         }
         
@@ -41,9 +47,11 @@ class ServiceInquiryRateLimiter
             return [
                 'allowed' => false,
                 'reason' => 'ip_limit',
-                'message' => 'Terlalu banyak permintaan dari jaringan Anda. Silakan coba lagi nanti atau daftar untuk akses unlimited.',
+                'message' => $locale === 'en'
+                    ? 'Too many requests from your network. Please try again later or register for unlimited access.'
+                    : 'Terlalu banyak permintaan dari jaringan Anda. Silakan coba lagi nanti atau daftar untuk akses unlimited.',
                 'retry_after' => $retryAfter,
-                'retry_after_formatted' => $this->formatRetryAfter($retryAfter)
+                'retry_after_formatted' => $this->formatRetryAfter($retryAfter, $locale)
             ];
         }
         
@@ -56,15 +64,17 @@ class ServiceInquiryRateLimiter
             return [
                 'allowed' => false,
                 'reason' => 'cooldown',
-                'message' => 'Mohon tunggu ' . $this->formatRetryAfter($retryAfter) . ' sebelum analisis berikutnya.',
+                'message' => $locale === 'en'
+                    ? 'Please wait ' . $this->formatRetryAfter($retryAfter, $locale) . ' before the next analysis.'
+                    : 'Mohon tunggu ' . $this->formatRetryAfter($retryAfter, $locale) . ' sebelum analisis berikutnya.',
                 'retry_after' => $retryAfter,
-                'retry_after_formatted' => $this->formatRetryAfter($retryAfter)
+                'retry_after_formatted' => $this->formatRetryAfter($retryAfter, $locale)
             ];
         }
         
         return [
             'allowed' => true,
-            'remaining_today' => self::EMAIL_LIMIT - $emailCount - 1
+            'remaining_today' => max(0, self::EMAIL_LIMIT - $emailCount - 1)
         ];
     }
     
@@ -118,7 +128,7 @@ class ServiceInquiryRateLimiter
     /**
      * Reset limits for a user (admin function)
      */
-    public function reset(string $email, string $ip = null): void
+    public function reset(string $email, ?string $ip = null): void
     {
         Cache::forget($this->getEmailKey($email));
         Cache::forget($this->getCooldownKey($email));
@@ -149,24 +159,26 @@ class ServiceInquiryRateLimiter
     /**
      * Format retry after seconds to human readable
      */
-    private function formatRetryAfter(int $seconds): string
+    private function formatRetryAfter(int $seconds, string $locale = 'id'): string
     {
         if ($seconds < 60) {
-            return $seconds . ' detik';
+            return $seconds . ($locale === 'en' ? ' seconds' : ' detik');
         }
         
         $minutes = floor($seconds / 60);
         if ($minutes < 60) {
-            return $minutes . ' menit';
+            return $minutes . ($locale === 'en' ? ' minutes' : ' menit');
         }
         
         $hours = floor($minutes / 60);
         $remainingMinutes = $minutes % 60;
         
         if ($remainingMinutes > 0) {
-            return $hours . ' jam ' . $remainingMinutes . ' menit';
+            return $locale === 'en'
+                ? $hours . ' hours ' . $remainingMinutes . ' minutes'
+                : $hours . ' jam ' . $remainingMinutes . ' menit';
         }
         
-        return $hours . ' jam';
+        return $hours . ($locale === 'en' ? ' hours' : ' jam');
     }
 }

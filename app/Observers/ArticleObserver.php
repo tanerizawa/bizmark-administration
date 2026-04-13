@@ -3,7 +3,9 @@
 namespace App\Observers;
 
 use App\Models\Article;
+use App\Events\ArticlePublishedEvent;
 use App\Services\GoogleIndexingService;
+use App\Services\IndexNowService;
 use App\Services\SitemapGeneratorService;
 use Illuminate\Support\Facades\Log;
 
@@ -11,13 +13,16 @@ class ArticleObserver
 {
     protected GoogleIndexingService $indexingService;
     protected SitemapGeneratorService $sitemapGenerator;
+    protected IndexNowService $indexNow;
     
     public function __construct(
         GoogleIndexingService $indexingService,
-        SitemapGeneratorService $sitemapGenerator
+        SitemapGeneratorService $sitemapGenerator,
+        IndexNowService $indexNow
     ) {
         $this->indexingService = $indexingService;
         $this->sitemapGenerator = $sitemapGenerator;
+        $this->indexNow = $indexNow;
     }
     
     /**
@@ -69,6 +74,7 @@ class ArticleObserver
         
         $sitemapGenerator = $this->sitemapGenerator;
         $indexingService = $this->indexingService;
+        $indexNow = $this->indexNow;
         
         // Regenerate sitemap
         dispatch(function () use ($sitemapGenerator) {
@@ -76,12 +82,17 @@ class ArticleObserver
             Log::info('✅ Sitemap regenerated');
         })->afterResponse();
         
-        // Request indexing via Google Indexing API
-        dispatch(function () use ($article, $indexingService, $sitemapGenerator) {
+        // Request indexing via Google Indexing API + IndexNow
+        dispatch(function () use ($article, $indexingService, $indexNow, $sitemapGenerator) {
             $url = config('app.url') . '/blog/' . $article->slug;
             
             if ($indexingService->requestIndexing($url, 'URL_UPDATED')) {
-                Log::info('✅ Indexing requested', ['url' => $url]);
+                Log::info('✅ Google Indexing requested', ['url' => $url]);
+            }
+            
+            // IndexNow — instant indexing for Bing, Yandex, etc.
+            if ($indexNow->submitUrl($url)) {
+                Log::info('✅ IndexNow submitted', ['url' => $url]);
             }
             
             // Ping search engines
@@ -89,6 +100,10 @@ class ArticleObserver
             $indexingService->pingSearchEngines($sitemapUrl);
             
         })->delay(now()->addSeconds(10))->afterResponse();
+
+        // Dispatch ArticlePublishedEvent for distribution engine
+        // (push notifications, syndication, social captions)
+        ArticlePublishedEvent::dispatch($article, true);
     }
     
     /**
@@ -103,6 +118,7 @@ class ArticleObserver
         
         $sitemapGenerator = $this->sitemapGenerator;
         $indexingService = $this->indexingService;
+        $indexNow = $this->indexNow;
         
         // Regenerate sitemap
         dispatch(function () use ($sitemapGenerator) {
@@ -110,9 +126,10 @@ class ArticleObserver
         })->afterResponse();
         
         // Request re-indexing
-        dispatch(function () use ($article, $indexingService) {
+        dispatch(function () use ($article, $indexingService, $indexNow) {
             $url = config('app.url') . '/blog/' . $article->slug;
             $indexingService->requestIndexing($url, 'URL_UPDATED');
+            $indexNow->submitUrl($url);
         })->delay(now()->addSeconds(10))->afterResponse();
     }
     

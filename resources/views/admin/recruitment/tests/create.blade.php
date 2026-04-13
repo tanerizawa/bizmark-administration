@@ -19,7 +19,7 @@
                     <span class="text-dark-text-tertiary">/</span>
                     <span>Template Baru</span>
                 </div>
-                <h1 class="text-xl md:text-2xl font-semibold text-white leading-tight">Buat Template Tes</h1>
+                <h1 class="text-xl md:text-xl font-semibold text-white leading-tight">Buat Template Tes</h1>
                 <p class="text-sm" style="color: rgba(235,235,245,0.7);">
                     Susun template tes dengan pertanyaan terstruktur dan nilai lulus yang jelas.
                 </p>
@@ -149,7 +149,7 @@
                     </div>
 
                     <div id="emptyState" class="text-center py-8" style="color: rgba(235,235,245,0.6);">
-                        <i class="fas fa-clipboard-list text-3xl mb-2"></i>
+                        <i class="fas fa-clipboard-list text-2xl mb-2"></i>
                         <p class="text-sm">Belum ada pertanyaan</p>
                         <p class="text-xs">Klik "Tambah Pertanyaan" untuk memulai</p>
                     </div>

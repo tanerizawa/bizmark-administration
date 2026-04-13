@@ -8,9 +8,9 @@
 return [
     // Meta & SEO
     'meta' => [
-        'title' => 'Bizmark.ID - Jasa Konsultan Perizinan OSS, AMDAL & Legalitas Usaha Jakarta',
-        'description' => 'Konsultan perizinan terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan. Proses cepat, transparan, harga kompetitif.',
-        'keywords' => 'konsultan perizinan jakarta, jasa oss, pengurusan amdal, ukl upl, pbg, slf, izin lingkungan, legalitas usaha',
+        'title' => 'Bizmark.ID - Jasa Konsultan Perizinan LB3, AMDAL, UKL-UPL & Legalitas Usaha Karawang',
+        'description' => 'Konsultan perizinan terpercaya di Karawang & Jawa Barat. Layanan Limbah B3, AMDAL, UKL-UPL, OSS, PBG, SLF, izin lingkungan. Proses cepat, transparan, harga kompetitif.',
+        'keywords' => 'konsultan perizinan karawang, jasa perizinan lb3, pengurusan amdal, ukl upl, pbg, slf, izin lingkungan, legalitas usaha, konsultan lingkungan jawa barat',
         'og_title' => 'Bizmark.ID - Konsultan Perizinan & Bisnis Profesional',
         'og_description' => 'Layanan konsultan perizinan dan bisnis terpercaya di Indonesia. Cepat, transparan, profesional.',
     ],
@@ -38,24 +38,24 @@ return [
         'subtitle' => 'Solusi Lengkap untuk Perizinan & Pengembangan Bisnis Anda',
         'description' => 'Kami membantu pengusaha Indonesia dalam mengurus perizinan dan legalitas usaha. Dari pendaftaran perusahaan hingga pengurusan izin, kami tangani semua dengan profesional dan transparan.',
         'cta_primary' => 'Konsultasi Gratis',
-        'cta_secondary' => 'Unduh Brosur',
-        'trust_badge' => 'Dipercaya oleh 500+ Perusahaan di Indonesia',
+        'cta_secondary' => 'Lihat Layanan',
+        'trust_badge' => 'Dipercaya oleh 138+ Perusahaan di Indonesia',
     ],
 
     // Stats Section
     'stats' => [
         'clients' => [
-            'value' => '500+',
+            'value' => '138+',
             'label' => 'Klien Terlayani',
             'description' => 'Perusahaan Indonesia',
         ],
         'experience' => [
-            'value' => '15+',
+            'value' => '10+',
             'label' => 'Tahun',
             'description' => 'Pengalaman Industri',
         ],
         'success_rate' => [
-            'value' => '98%',
+            'value' => '96%',
             'label' => 'Tingkat Keberhasilan',
             'description' => 'Izin Disetujui',
         ],
@@ -73,7 +73,10 @@ return [
         'subtitle' => 'Solusi lengkap perizinan industri untuk berbagai kebutuhan bisnis Anda',
         'learn_more' => 'Pelajari Lebih Lanjut',
         'starting_from' => 'Mulai dari',
+        'popular' => 'Populer',
         'duration' => 'Durasi',
+        'show_more' => 'Tampilkan Semua Layanan',
+        'show_less' => 'Tampilkan Lebih Sedikit',
     ],
 
     // Process Section
@@ -135,6 +138,7 @@ return [
 
     // Blog Section
     'blog' => [
+        'badge' => 'Blog',
         'title' => 'Artikel & Insight Terbaru',
         'subtitle' => 'Temukan informasi terkini seputar perizinan industri dan regulasi lingkungan',
         'all_articles' => 'Semua Artikel',
@@ -168,12 +172,37 @@ return [
         'subtitle' => 'Hubungi kami sekarang untuk konsultasi gratis dan dapatkan solusi perizinan terbaik untuk bisnis Anda',
         'chat_whatsapp' => 'Chat via WhatsApp',
         'call_us' => 'Hubungi Kami',
+        'button_primary' => 'Mulai Konsultasi Gratis',
+        'button_email' => 'Email Kami',
+        'whatsapp' => 'WhatsApp',
+    ],
+
+    // About Section
+    'about' => [
+        'badge' => 'Tentang Kami',
+        'title' => 'Mitra Terpercaya untuk Kesuksesan Bisnis Anda',
+        'description_1' => 'PT Cangah Pajaratan Mandiri (Bizmark.ID) telah melayani pelaku usaha Indonesia selama lebih dari 10 tahun. Kami spesialis dalam membantu Anda menavigasi kompleksitas regulasi perizinan di Indonesia untuk memastikan bisnis Anda berjalan lancar dan sesuai ketentuan.',
+        'description_2' => 'Tim konsultan bersertifikat kami memiliki pengalaman luas dalam menangani berbagai jenis perizinan untuk berbagai industri di seluruh Indonesia. Kami bekerja sama dengan instansi pemerintah termasuk Kementerian Lingkungan Hidup, BKPM, dan pemerintah daerah untuk memastikan kepatuhan dan kesiapan operasional Anda.',
+        'iso_title' => 'Tersertifikasi ISO',
+        'iso_desc' => 'Sistem manajemen mutu tersertifikasi',
+        'expert_title' => 'Tim Ahli',
+        'expert_desc' => 'Konsultan lingkungan bersertifikat',
+        'clients_title' => '138+ Klien',
+        'clients_desc' => 'Dipercaya perusahaan Indonesia',
+        'nationwide_title' => 'Se-Indonesia',
+        'nationwide_desc' => 'Layanan di seluruh Indonesia',
+        'cta_consult' => 'Konsultasi Gratis',
+        'cta_services' => 'Layanan Kami',
+        'years_title' => '10+ Tahun',
+        'years_desc' => 'Melayani Pengusaha Indonesia',
+        'success_rate_label' => 'Tingkat Keberhasilan',
+        'companies_served_label' => 'Perusahaan Terlayani',
     ],
 
     // Footer
     'footer' => [
         'tagline' => 'Perizinan Industri Terpercaya',
-        'description' => 'PT CANGAH PAJARATAN MANDIRI adalah mitra terpercaya Anda dalam pengurusan perizinan dan legalitas usaha. Dengan pengalaman lebih dari 15 tahun, kami berkomitmen memberikan solusi cepat, transparan, dan profesional.',
+        'description' => 'PT CANGAH PAJARATAN MANDIRI adalah mitra terpercaya Anda dalam pengurusan perizinan dan legalitas usaha. Dengan pengalaman lebih dari 10 tahun sejak 2015, kami berkomitmen memberikan solusi cepat, transparan, dan profesional.',
         'newsletter_title' => 'Newsletter',
         'newsletter_desc' => 'Dapatkan update terbaru seputar regulasi bisnis dan peluang investasi',
         'newsletter_placeholder' => 'Email Anda',
@@ -198,13 +227,16 @@ return [
         'terms_conditions' => 'Syarat & Ketentuan',
         'terms' => 'Syarat & Ketentuan',
         'sitemap' => 'Peta Situs',
-        'copyright' => '© 2025 PT CANGAH PAJARATAN MANDIRI (Bizmark.ID). Hak cipta dilindungi.',
+        'copyright' => '© :year PT CANGAH PAJARATAN MANDIRI (Bizmark.ID). Hak cipta dilindungi.',
         'made_with' => 'Dibuat dengan',
         'in_indonesia' => 'di Indonesia',
         'verified_company' => 'Perusahaan Terverifikasi',
         'iso_certified' => 'Tersertifikasi ISO',
         'navigation' => 'Navigasi',
         'contact_us' => 'Hubungi Kami',
+        'language' => 'Bahasa',
+        'location' => 'Karawang, Jawa Barat',
+        'whatsapp' => 'WhatsApp',
     ],
 
     // Search

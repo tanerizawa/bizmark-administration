@@ -1,37 +1,49 @@
 <div class="space-y-4">
     {{-- Header Section --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="email-panel-header">
         <div>
-            <h2 class="text-xl font-semibold text-white">Email Campaigns</h2>
+            <h2 class="text-base font-semibold text-white">Email Campaigns</h2>
             <p class="text-sm" style="color: rgba(235,235,245,0.6);">
                 Buat dan kelola kampanye email marketing untuk pelanggan Anda
             </p>
         </div>
-        <a href="{{ route('admin.campaigns.create') ?? '#' }}" class="btn-apple-primary-sm px-4 py-2">
+        <a href="{{ route('admin.campaigns.create') ?? '#' }}" class="btn-apple-primary-sm px-3 py-2">
             <i class="fas fa-plus mr-2"></i>New Campaign
         </a>
     </div>
 
     {{-- Filters --}}
-    <div class="flex flex-wrap items-center gap-3">
-        <div class="flex-1 min-w-[200px]">
-            <input type="text" placeholder="Search campaigns..." 
-                   class="input-apple w-full" value="{{ request('search') }}">
+    <form method="GET" action="{{ route('admin.email-management.index') }}" class="email-toolbar">
+        <input type="hidden" name="tab" value="campaigns">
+        <div class="email-toolbar-grid compact-4">
+            <div class="email-filter">
+                <label for="campaign-search">Pencarian</label>
+                <input id="campaign-search" type="text" name="search" placeholder="Nama campaign atau subject..." 
+                       class="input-apple w-full" value="{{ request('tab') === 'campaigns' ? request('search') : '' }}">
+            </div>
+            <div class="email-filter">
+                <label for="campaign-status">Status</label>
+                <select id="campaign-status" name="status" class="input-apple w-full">
+                    <option value="">Semua Status</option>
+                    @foreach(($statuses ?? []) as $status)
+                        <option value="{{ $status }}" {{ request('tab') === 'campaigns' && request('status') === $status ? 'selected' : '' }}>{{ ucfirst($status) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="submit" class="btn-apple-primary-sm px-4 py-2">
+                <i class="fas fa-filter mr-2"></i>Filter
+            </button>
+            <a href="{{ route('admin.email-management.index', ['tab' => 'campaigns']) }}" class="btn-apple-sm px-4 py-2">
+                Reset
+            </a>
         </div>
-        <select class="input-apple min-w-[150px]">
-            <option value="">All Status</option>
-            <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-            <option value="scheduled" {{ request('status') == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-            <option value="sending" {{ request('status') == 'sending' ? 'selected' : '' }}>Sending</option>
-            <option value="sent" {{ request('status') == 'sent' ? 'selected' : '' }}>Sent</option>
-        </select>
-    </div>
+    </form>
 
     {{-- Campaign List --}}
     @if(isset($campaigns) && $campaigns->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-3">
             @foreach($campaigns as $campaign)
-                <div class="card-elevated rounded-apple-lg p-5 hover:bg-opacity-80 transition-apple">
+            <div class="card-elevated rounded-apple-lg p-4 hover:bg-opacity-80 transition-apple email-table-shell">
                     {{-- Status Badge --}}
                     <div class="flex items-center justify-between mb-3">
                         <span class="px-3 py-1 text-xs font-semibold rounded-full {{ 
@@ -42,13 +54,13 @@
                         }}">
                             {{ ucfirst($campaign->status) }}
                         </span>
-                        <button class="text-sm" style="color: rgba(235,235,245,0.6);">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </button>
+                        <span class="text-xs" style="color: rgba(235,235,245,0.5);">
+                            ID #{{ $campaign->id }}
+                        </span>
                     </div>
 
                     {{-- Campaign Info --}}
-                    <h3 class="text-lg font-semibold text-white mb-2">
+                    <h3 class="text-sm font-semibold text-white mb-2">
                         {{ $campaign->name }}
                     </h3>
                     <p class="text-sm mb-3" style="color: rgba(235,235,245,0.7);">
@@ -107,9 +119,9 @@
             </div>
         @endif
     @else
-        <div class="text-center py-12">
-            <i class="fas fa-bullhorn text-5xl mb-4" style="color: rgba(235,235,245,0.3);"></i>
-            <p class="text-lg font-medium text-white mb-2">No Campaigns Yet</p>
+        <div class="email-empty-state">
+            <i class="fas fa-bullhorn"></i>
+            <p class="text-base font-medium text-white mb-2">No Campaigns Yet</p>
             <p class="text-sm mb-4" style="color: rgba(235,235,245,0.6);">
                 Create your first email campaign to reach your subscribers
             </p>

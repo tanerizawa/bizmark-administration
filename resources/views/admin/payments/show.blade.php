@@ -10,7 +10,7 @@
             <a href="{{ route('admin.payments.index') }}" class="text-gray-600 hover:text-gray-900">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
-            <h1 class="text-2xl font-bold text-gray-900">Detail Pembayaran</h1>
+            <h1 class="text-lg font-bold text-gray-900">Detail Pembayaran</h1>
         </div>
     </div>
 
@@ -106,7 +106,7 @@
                         </a>
                     @elseif(strtolower($extension) === 'pdf')
                         <div class="border rounded-lg p-8 text-center bg-gray-50">
-                            <i class="fas fa-file-pdf text-red-500 text-6xl mb-4"></i>
+                            <i class="fas fa-file-pdf text-red-500 text-4xl mb-4"></i>
                             <p class="text-gray-700 mb-4">File PDF</p>
                             <a href="{{ Storage::url($payment->transfer_proof_path) }}" 
                                target="_blank"

@@ -15,7 +15,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                 <div class="space-y-2.5 max-w-3xl">
                     <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Content Management</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                    <h1 class="text-2xl md:text-xl font-bold" style="color: #FFFFFF;">
                         Topic Pool Management
                     </h1>
                     <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.75);">
@@ -36,7 +36,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(10,132,255,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Topics</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">
+                    <h2 class="text-lg font-bold mt-1.5" style="color: #FFFFFF;">
                         {{ number_format($stats['total']) }}
                     </h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua topic</p>
@@ -44,7 +44,7 @@
 
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(52,199,89,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Available</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(52,199,89,1);">
+                    <h2 class="text-lg font-bold mt-1.5" style="color: rgba(52,199,89,1);">
                         {{ number_format($stats['available']) }}
                     </h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Siap digunakan</p>
@@ -52,7 +52,7 @@
 
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(255,159,10,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Scheduled</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: rgba(255,159,10,1);">
+                    <h2 class="text-lg font-bold mt-1.5" style="color: rgba(255,159,10,1);">
                         {{ number_format($stats['scheduled']) }}
                     </h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Terjadwal</p>
@@ -60,7 +60,7 @@
 
                 <div class="rounded-apple-lg p-3.5 md:p-4" style="background: rgba(175,82,222,0.12);">
                     <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Used</p>
-                    <h2 class="text-2xl font-bold mt-1.5" style="color: #FFFFFF;">
+                    <h2 class="text-lg font-bold mt-1.5" style="color: #FFFFFF;">
                         {{ number_format($stats['used']) }}
                     </h2>
                     <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sudah dipakai</p>
@@ -102,9 +102,11 @@
                 <select name="status" class="w-full px-4 py-3 rounded-apple text-sm text-dark-text-primary" 
                         style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
                     <option value="">Semua Status</option>
-                    <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Available</option>
-                    <option value="scheduled" {{ request('status') === 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-                    <option value="used" {{ request('status') === 'used' ? 'selected' : '' }}>Used</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing</option>
+                    <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Published</option>
+                    <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>Failed</option>
+                    <option value="archived" {{ request('status') === 'archived' ? 'selected' : '' }}>Archived</option>
                 </select>
             </div>
             <div>
@@ -204,10 +206,14 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-apple text-xs font-medium 
-                                    @if($topic->status === 'available') 
+                                    @if($topic->status === 'pending') 
                                         " style="background: rgba(52,199,89,0.2); color: rgba(52,199,89,1);
-                                    @elseif($topic->status === 'scheduled') 
+                                    @elseif($topic->status === 'processing') 
                                         " style="background: rgba(255,159,10,0.2); color: rgba(255,159,10,1);
+                                    @elseif($topic->status === 'published') 
+                                        " style="background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);
+                                    @elseif($topic->status === 'failed') 
+                                        " style="background: rgba(255,69,58,0.2); color: rgba(255,69,58,1);
                                     @else 
                                         " style="background: rgba(255,255,255,0.1); color: rgba(235,235,245,0.8);
                                     @endif">
@@ -215,14 +221,14 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-dark-text-tertiary">
-                                {{ $topic->times_used }}x
+                                {{ $topic->views_count }}x
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end space-x-3">
                                     <a href="{{ route('auto-post.topics.edit', $topic) }}" class="text-apple-blue hover:text-apple-blue-dark transition-apple">
                                         <i class="fas fa-edit mr-1"></i>Edit
                                     </a>
-                                    @if($topic->status !== 'scheduled')
+                                    @if($topic->status !== 'processing')
                                         <form action="{{ route('auto-post.topics.destroy', $topic) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')

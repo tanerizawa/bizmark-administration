@@ -49,6 +49,10 @@ class ArticleQualityService
             $issues[] = "Content lacks proper HTML structure";
         }
         
+        // 5.5. SEO structure validation (aligned with SeoScoringService)
+        $seoStructureIssues = $this->validateSeoStructure($articleData);
+        $warnings = array_merge($warnings, $seoStructureIssues);
+        
         // 6. Check for placeholder text
         $placeholders = $this->findPlaceholders($articleData['content']);
         if (!empty($placeholders)) {
@@ -246,5 +250,65 @@ class ArticleQualityService
         } else {
             return "Quality below standards. Manual review recommended.";
         }
+    }
+
+    /**
+     * Validate SEO structure requirements aligned with SeoScoringService.
+     * Returns warnings (not blockers) to help identify potential SEO score losses.
+     */
+    protected function validateSeoStructure(array $articleData): array
+    {
+        $warnings = [];
+        $content = $articleData['content'] ?? '';
+
+        // Check H2 count (SeoScoringService gives +5 for ≥3 H2)
+        $h2Count = substr_count($content, '<h2>') + substr_count($content, '<h2 ');
+        if ($h2Count < 3) {
+            $warnings[] = "SEO: Only {$h2Count} H2 headings (need ≥3 for optimal score)";
+        }
+
+        // Check H3 count (SeoScoringService gives +3 for ≥2 H3)
+        $h3Count = substr_count($content, '<h3>') + substr_count($content, '<h3 ');
+        if ($h3Count < 2) {
+            $warnings[] = "SEO: Only {$h3Count} H3 headings (need ≥2)";
+        }
+
+        // Check lists (SeoScoringService gives +3 for lists)
+        $hasList = (strpos($content, '<ul') !== false || strpos($content, '<ol') !== false);
+        if (!$hasList) {
+            $warnings[] = "SEO: No bullet/numbered lists found";
+        }
+
+        // Check bold/strong (SeoScoringService gives +2 for bold)
+        $hasBold = (strpos($content, '<strong') !== false || strpos($content, '<b>') !== false);
+        if (!$hasBold) {
+            $warnings[] = "SEO: No <strong> emphasis found";
+        }
+
+        // Check meta_title format
+        $metaTitle = $articleData['meta_title'] ?? '';
+        if ($metaTitle && !preg_match('/20\d{2}/', $metaTitle)) {
+            $warnings[] = "SEO: Meta title missing year";
+        }
+        if ($metaTitle && !stripos($metaTitle, 'bizmark') !== false) {
+            $warnings[] = "SEO: Meta title missing 'Bizmark' brand";
+        }
+        if ($metaTitle && mb_strlen($metaTitle) > 60) {
+            $warnings[] = "SEO: Meta title too long (" . mb_strlen($metaTitle) . " chars)";
+        }
+
+        // Check meta_description CTA
+        $metaDesc = $articleData['meta_description'] ?? '';
+        if ($metaDesc && !preg_match('/hubungi|konsultasi|pelajari|baca|dapatkan|gratis/i', $metaDesc)) {
+            $warnings[] = "SEO: Meta description missing CTA";
+        }
+
+        // Check tags count
+        $tags = $articleData['tags'] ?? [];
+        if (count($tags) < 2) {
+            $warnings[] = "SEO: Less than 2 tags (need ≥2 for score)";
+        }
+
+        return $warnings;
     }
 }

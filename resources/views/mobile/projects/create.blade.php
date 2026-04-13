@@ -22,7 +22,7 @@
                 type="text" 
                 required
                 placeholder="Misal: Pendirian PT Maju Jaya"
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
         </div>
 
         {{-- Client Selection --}}
@@ -33,7 +33,7 @@
             <select 
                 x-model="formData.client_id"
                 required
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
                 <option value="">Pilih Klien...</option>
                 @foreach($clients as $client)
                     <option value="{{ $client->id }}">{{ $client->company_name }}</option>
@@ -49,7 +49,7 @@
             <select 
                 x-model="formData.institution_id"
                 required
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
                 <option value="">Pilih Instansi...</option>
                 @foreach($institutions as $institution)
                     <option value="{{ $institution->id }}">{{ $institution->name }}</option>
@@ -67,7 +67,7 @@
                 type="date" 
                 required
                 :min="new Date().toISOString().split('T')[0]"
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
         </div>
 
         {{-- Budget (Optional) --}}
@@ -83,7 +83,7 @@
                     min="0"
                     step="1000"
                     placeholder="0"
-                    class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                    class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
             </div>
         </div>
 
@@ -97,14 +97,14 @@
                 rows="3"
                 maxlength="1000"
                 placeholder="Deskripsi singkat tentang proyek ini"
-                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent"></textarea>
+                class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent"></textarea>
             <p class="text-xs text-gray-500 mt-1" x-text="`${formData.description.length}/1000`"></p>
         </div>
 
         {{-- Info Box --}}
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <div class="flex gap-2">
-                <i class="fas fa-info-circle text-[#0077b5] mt-0.5"></i>
+                <i class="fas fa-info-circle text-[#0A66C2] mt-0.5"></i>
                 <div class="text-sm text-gray-700">
                     <p class="font-medium mb-1">Info Penting:</p>
                     <ul class="text-xs space-y-0.5 list-disc list-inside">
@@ -127,7 +127,7 @@
             <button 
                 type="submit"
                 :disabled="submitting"
-                class="flex-1 px-4 py-3 bg-[#0077b5] hover:bg-[#005582] text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                class="flex-1 px-4 py-3 bg-[#0A66C2] hover:bg-[#005582] text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span x-show="!submitting">
                     <i class="fas fa-folder-plus mr-1"></i> Buat Proyek
                 </span>

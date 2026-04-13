@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="space-y-4">
     <!-- Header -->
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Analytics Auto-Post</h1>
+        <h1 class="text-lg font-bold text-gray-900 dark:text-white">Analytics Auto-Post</h1>
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Monitor performa sistem auto-posting AI</p>
     </div>
 
@@ -26,7 +26,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Artikel Dibuat</p>
-                    <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">{{ $stats['total_articles'] }}</p>
+                    <p class="text-xl font-bold text-gray-900 dark:text-white mt-2">{{ $stats['total_articles'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
                     <i class="fas fa-file-alt text-2xl text-blue-600 dark:text-blue-400"></i>
@@ -38,7 +38,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Success Rate</p>
-                    <p class="text-3xl font-bold text-green-600 mt-2">{{ $stats['success_rate'] }}%</p>
+                    <p class="text-xl font-bold text-green-600 mt-2">{{ $stats['success_rate'] }}%</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
                     <i class="fas fa-check-circle text-2xl text-green-600 dark:text-green-400"></i>
@@ -50,7 +50,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Topics Tersedia</p>
-                    <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">{{ $stats['available_topics'] }}</p>
+                    <p class="text-xl font-bold text-gray-900 dark:text-white mt-2">{{ $stats['available_topics'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
                     <i class="fas fa-lightbulb text-2xl text-purple-600 dark:text-purple-400"></i>
@@ -62,7 +62,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Pending</p>
-                    <p class="text-3xl font-bold text-yellow-600 mt-2">{{ $stats['pending_schedules'] }}</p>
+                    <p class="text-xl font-bold text-yellow-600 mt-2">{{ $stats['pending_schedules'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
                     <i class="fas fa-clock text-2xl text-yellow-600 dark:text-yellow-400"></i>
@@ -76,23 +76,23 @@
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Performance Metrics</h2>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $performanceMetrics['total_attempts'] }}</p>
+                <p class="text-lg font-bold text-gray-900 dark:text-white">{{ $performanceMetrics['total_attempts'] }}</p>
                 <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Total Attempts</p>
             </div>
             <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <p class="text-2xl font-bold text-green-600">{{ $performanceMetrics['successful'] }}</p>
+                <p class="text-lg font-bold text-green-600">{{ $performanceMetrics['successful'] }}</p>
                 <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Successful</p>
             </div>
             <div class="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                <p class="text-2xl font-bold text-red-600">{{ $performanceMetrics['failed'] }}</p>
+                <p class="text-lg font-bold text-red-600">{{ $performanceMetrics['failed'] }}</p>
                 <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Failed</p>
             </div>
             <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                <p class="text-2xl font-bold text-yellow-600">{{ $performanceMetrics['quality_issues'] }}</p>
+                <p class="text-lg font-bold text-yellow-600">{{ $performanceMetrics['quality_issues'] }}</p>
                 <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Quality Issues</p>
             </div>
             <div class="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                <p class="text-2xl font-bold text-orange-600">{{ $performanceMetrics['duplicates'] }}</p>
+                <p class="text-lg font-bold text-orange-600">{{ $performanceMetrics['duplicates'] }}</p>
                 <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Duplicates</p>
             </div>
         </div>
@@ -171,7 +171,7 @@
                                 {{ str_replace('_', ' ', ucfirst($log->event)) }}
                             </td>
                             <td class="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
-                                {{ $log->schedule->topic->title ?? '-' }}
+                                {{ $log->schedule?->topic?->title ?? '-' }}
                             </td>
                             <td class="px-6 py-3 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs rounded-full

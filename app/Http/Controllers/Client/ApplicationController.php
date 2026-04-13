@@ -181,7 +181,7 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Show project information form
+     * Show project information form — pre-fills from business context if available
      */
     public function createPackage()
     {
@@ -191,7 +191,30 @@ class ApplicationController extends Controller
                 ->with('error', 'Silakan pilih izin terlebih dahulu');
         }
 
-        return view('client.applications.create-package');
+        // Retrieve business context from session (collected during analysis step)
+        $businessContext = session('business_context');
+
+        // Also try loading from DB if session expired but user has recent context for this KBLI
+        if (!$businessContext) {
+            $kbliCode = session('permit_selection.kbli_code');
+            $clientId = auth('client')->id();
+            $dbContext = \App\Models\BusinessContext::where('client_id', $clientId)
+                ->where('kbli_code', $kbliCode)
+                ->latest('submitted_at')
+                ->first();
+            if ($dbContext) {
+                $businessContext = $dbContext->only([
+                    'land_area', 'building_area', 'number_of_floors', 'investment_value',
+                    'province', 'city', 'district', 'zone_type', 'location_category',
+                    'business_scale', 'environmental_impact', 'waste_management',
+                    'number_of_employees', 'ownership_status', 'urgency_level',
+                ]);
+            }
+        }
+
+        $client = auth('client')->user();
+
+        return view('client.applications.create-package', compact('businessContext', 'client'));
     }
 
     /**
@@ -228,6 +251,9 @@ class ApplicationController extends Controller
         DB::beginTransaction();
         try {
             // Create SINGLE application with complete package data
+            // Merge business context data from analysis step
+            $businessContext = session('business_context');
+
             $application = PermitApplication::create([
                 'client_id' => $client->id,
                 'permit_type_id' => null, // Package application
@@ -235,6 +261,7 @@ class ApplicationController extends Controller
                 'submitted_at' => now(),
                 'kbli_code' => $permitSelection['kbli_code'],
                 'kbli_description' => $permitSelection['kbli_description'],
+                'business_context' => $businessContext,
                 'form_data' => [
                     // Project Information
                     'project_name' => $validated['project_name'],
@@ -245,6 +272,14 @@ class ApplicationController extends Controller
                     'investment_value' => $validated['investment_value'],
                     'target_completion_date' => $validated['target_completion_date'] ?? null,
                     'project_description' => $validated['project_description'],
+                    
+                    // Business context from analysis (for admin reference)
+                    'business_scale' => $businessContext['business_scale'] ?? null,
+                    'location_category' => $businessContext['location_category'] ?? null,
+                    'environmental_impact' => $businessContext['environmental_impact'] ?? null,
+                    'province' => $businessContext['province'] ?? null,
+                    'city' => $businessContext['city'] ?? null,
+                    'district' => $businessContext['district'] ?? null,
                     
                     // All Selected Permits
                     'selected_permits' => $permitSelection['permits'],
@@ -296,8 +331,8 @@ class ApplicationController extends Controller
 
             DB::commit();
             
-            // Clear permit selection from session
-            session()->forget('permit_selection');
+            // Clear permit selection and business context from session
+            session()->forget(['permit_selection', 'business_context']);
 
             return redirect()->route('client.applications.show', $application->id)
                 ->with('success', 'Permohonan paket izin berhasil diajukan! Tim kami akan segera memproses dan memberikan quotation untuk ' . count($bizmarkPermits) . ' izin yang akan dikelola BizMark.ID.');

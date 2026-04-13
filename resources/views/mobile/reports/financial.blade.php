@@ -112,12 +112,12 @@
     <div class="grid grid-cols-2 gap-3">
         <a href="{{ mobile_route('financial.receivables') }}" 
            class="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-xl p-4 active:bg-gray-50">
-            <i class="fas fa-file-invoice text-[#0077b5]"></i>
+            <i class="fas fa-file-invoice text-[#0A66C2]"></i>
             <span class="text-sm font-medium text-gray-900">Lihat Piutang</span>
         </a>
         <a href="{{ mobile_route('financial.expenses') }}" 
            class="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-xl p-4 active:bg-gray-50">
-            <i class="fas fa-receipt text-[#0077b5]"></i>
+            <i class="fas fa-receipt text-[#0A66C2]"></i>
             <span class="text-sm font-medium text-gray-900">Lihat Expenses</span>
         </a>
     </div>

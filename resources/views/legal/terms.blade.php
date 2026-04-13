@@ -44,7 +44,7 @@
                 <div class="mb-12">
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Pendahuluan</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        Selamat datang di Bizmark.ID. Syarat dan Ketentuan ini mengatur penggunaan layanan konsultasi perizinan industri yang disediakan oleh PT Cangah Pajaratan Mandiri ("Bizmark.ID", "kami", "kita", atau "milik kami"). Dengan menggunakan layanan kami, Anda ("Klien", "Anda", atau "milik Anda") menyetujui untuk terikat dengan syarat dan ketentuan berikut.
+                        Selamat datang di Bizmark.ID. Syarat dan Ketentuan ini mengatur penggunaan seluruh layanan yang disediakan oleh PT Cangah Pajaratan Mandiri ("Bizmark.ID", "kami", "kita", atau "milik kami"), termasuk layanan konsultasi perizinan industri, platform digital (website, aplikasi), serta alat digital gratis yang tersedia di website kami. Dengan menggunakan layanan kami, Anda ("Klien", "Pengguna", "Anda", atau "milik Anda") menyetujui untuk terikat dengan syarat dan ketentuan berikut.
                     </p>
                     <p class="text-gray-700 leading-relaxed mt-4">
                         Harap membaca syarat dan ketentuan ini dengan seksama sebelum menggunakan layanan kami. Jika Anda tidak setuju dengan bagian mana pun dari syarat ini, mohon untuk tidak menggunakan layanan kami.
@@ -60,9 +60,10 @@
                     <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>Anda telah membaca, memahami, dan menyetujui Syarat & Ketentuan ini</li>
                         <li>Anda memiliki kapasitas hukum untuk mengikatkan diri dalam perjanjian ini</li>
-                        <li>Anda mewakili entitas bisnis yang sah dengan dokumen legal yang valid</li>
+                        <li>Anda mewakili entitas bisnis yang sah dengan dokumen legal yang valid (untuk layanan berbayar)</li>
                         <li>Informasi yang Anda berikan adalah akurat dan lengkap</li>
                         <li>Anda akan mematuhi seluruh ketentuan yang berlaku</li>
+                        <li>Penggunaan alat digital gratis di platform kami juga tunduk pada Syarat & Ketentuan ini</li>
                     </ul>
                 </div>
 
@@ -81,7 +82,20 @@
                         <li><strong>IMB & SLF:</strong> Izin mendirikan bangunan dan sertifikat laik fungsi</li>
                         <li><strong>Sertifikasi K3:</strong> Sertifikasi kesehatan dan keselamatan kerja</li>
                         <li><strong>Konsultasi HSE:</strong> Health, Safety, and Environment consultation</li>
+                        <li><strong>Monitoring Lingkungan Digital:</strong> Sistem pemantauan lingkungan berbasis IoT dan real-time dashboard</li>
                     </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">2.2 Alat Digital Gratis</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Selain layanan berbayar, Bizmark.ID menyediakan alat digital gratis yang dapat diakses melalui platform kami, antara lain:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                        <li><strong>Polygon SHP Maker:</strong> Alat pembuatan file Shapefile (.shp) untuk keperluan perizinan OSS, perencanaan lahan, dan pemetaan wilayah proyek</li>
+                        <li><strong>Kalkulator Perizinan:</strong> Alat estimasi biaya dan waktu pengurusan perizinan berdasarkan jenis industri dan izin</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed mt-4">
+                        Alat digital gratis ini disediakan "sebagaimana adanya" (as-is) untuk membantu pengguna. Penggunaan alat digital gratis tunduk pada Syarat & Ketentuan dan Kebijakan Privasi yang berlaku.
+                    </p>
                 </div>
 
                 {{-- Kewajiban Klien --}}
@@ -272,9 +286,61 @@
                     </ol>
                 </div>
 
+                {{-- Penggunaan Alat Digital --}}
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">11. Penggunaan Alat Digital dan Platform</h2>
+                    
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">11.1 Ketentuan Penggunaan Alat Digital Gratis</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Dengan menggunakan alat digital gratis yang tersedia di platform Bizmark.ID (termasuk Polygon SHP Maker, Kalkulator Perizinan, dan alat lainnya yang mungkin ditambahkan), Anda menyetujui bahwa:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                        <li>Anda wajib memberikan data yang akurat saat mengisi formulir yang diperlukan untuk menggunakan alat digital</li>
+                        <li>Data yang Anda masukkan (termasuk nama perusahaan, email, nomor telepon, nama kontak, dan data lokasi/proyek) akan disimpan oleh Bizmark.ID sebagai data leads untuk tujuan tindak lanjut komersial</li>
+                        <li>Bizmark.ID berhak menghubungi Anda melalui email atau WhatsApp/telepon yang Anda berikan untuk menawarkan layanan terkait</li>
+                        <li>Anda bertanggung jawab atas kebenaran dan keakuratan data yang dimasukkan ke dalam alat digital</li>
+                        <li>Hasil yang dihasilkan oleh alat digital bersifat estimasi dan tidak dapat dijadikan dasar hukum</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">11.2 Pengumpulan Data melalui Alat Digital</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Saat menggunakan alat digital gratis, data berikut akan dikumpulkan dan disimpan:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                        <li><strong>Data Pemohon:</strong> Nama perusahaan, nama kontak (contact person), alamat email, dan nomor WhatsApp/telepon</li>
+                        <li><strong>Data Proyek/Lokasi:</strong> Nama lahan/proyek, alamat administratif (provinsi, kabupaten/kota, kecamatan, kelurahan), koordinat geografis, dan keterangan proyek</li>
+                        <li><strong>Data Teknis:</strong> Alamat IP, informasi browser (user agent), dan timestamp persetujuan syarat & ketentuan</li>
+                        <li><strong>Data Penyimpanan Lokal:</strong> Browser Anda mungkin menyimpan data sementara (localStorage) untuk fitur auto-save. Data ini tersimpan di perangkat Anda dan dapat dihapus melalui pengaturan browser</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">11.3 Batasan Tanggung Jawab Alat Digital</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Bizmark.ID tidak bertanggung jawab atas:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                        <li>Ketidakakuratan hasil perhitungan atau output dari alat digital</li>
+                        <li>Kerugian yang timbul dari penggunaan hasil alat digital sebagai dasar keputusan bisnis</li>
+                        <li>Kegagalan teknis, gangguan server, atau ketidaktersediaan alat digital</li>
+                        <li>Kehilangan data yang tersimpan secara lokal di browser pengguna</li>
+                        <li>Penyalahgunaan file atau data yang dihasilkan oleh alat digital oleh pihak ketiga</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">11.4 Penggunaan yang Dilarang</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Pengguna dilarang untuk:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                        <li>Menggunakan alat digital untuk tujuan ilegal atau melanggar hukum</li>
+                        <li>Melakukan scraping, reverse engineering, atau eksploitasi otomatis terhadap alat digital</li>
+                        <li>Memasukkan data palsu atau menyesatkan</li>
+                        <li>Menggunakan alat digital dengan cara yang dapat merusak, melumpuhkan, atau membebani server kami</li>
+                        <li>Mendistribusikan ulang atau memodifikasi alat digital tanpa izin tertulis</li>
+                    </ul>
+                </div>
+
                 {{-- Perubahan Syarat --}}
                 <div class="mb-12">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">11. Perubahan Syarat & Ketentuan</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">12. Perubahan Syarat & Ketentuan</h2>
                     <p class="text-gray-700 leading-relaxed">
                         Kami berhak mengubah atau memperbarui Syarat & Ketentuan ini dari waktu ke waktu. Perubahan akan diposting di website dengan tanggal "Terakhir diperbarui" yang baru. Untuk proyek yang sedang berjalan, syarat yang berlaku adalah syarat saat kontrak ditandatangani. Penggunaan layanan baru setelah perubahan berarti Anda menerima syarat yang diperbarui.
                     </p>
@@ -282,24 +348,24 @@
 
                 {{-- Lain-lain --}}
                 <div class="mb-12">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">12. Ketentuan Lain-lain</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">13. Ketentuan Lain-lain</h2>
                     
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">12.1 Keseluruhan Perjanjian</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">13.1 Keseluruhan Perjanjian</h3>
                     <p class="text-gray-700 leading-relaxed">
                         Syarat & Ketentuan ini, bersama dengan kontrak kerja sama dan dokumen terkait lainnya, merupakan keseluruhan perjanjian antara para pihak dan menggantikan semua perjanjian sebelumnya.
                     </p>
 
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">12.2 Keterpisahan</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">13.2 Keterpisahan</h3>
                     <p class="text-gray-700 leading-relaxed">
                         Jika ada ketentuan yang dinyatakan tidak sah atau tidak dapat dilaksanakan, ketentuan lainnya tetap berlaku sepenuhnya.
                     </p>
 
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">12.3 Pengabaian</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">13.3 Pengabaian</h3>
                     <p class="text-gray-700 leading-relaxed">
                         Kegagalan kami untuk menegakkan suatu hak atau ketentuan tidak dianggap sebagai pengabaian hak atau ketentuan tersebut.
                     </p>
 
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">12.4 Pengalihan</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">13.4 Pengalihan</h3>
                     <p class="text-gray-700 leading-relaxed">
                         Klien tidak dapat mengalihkan hak atau kewajiban berdasarkan perjanjian ini tanpa persetujuan tertulis dari kami. Kami dapat mengalihkan hak dan kewajiban kami kepada pihak ketiga.
                     </p>
@@ -312,13 +378,20 @@
                         Jika Anda memiliki pertanyaan tentang Syarat & Ketentuan ini atau ingin mendiskusikan kerja sama, silakan hubungi kami:
                     </p>
                     <div class="space-y-3">
+                        @php
+                            $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+                            $supportEmail = $contact['email'] ?? 'info@bizmark.id';
+                            $phoneRaw = $contact['phone'] ?? '+62 838 7960 2855';
+                            $phoneHref = 'tel:' . preg_replace('/\s+/', '', $phoneRaw);
+                            $whatsappLink = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+                        @endphp
                         <div class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-orange-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
                             <div>
                                 <p class="text-sm text-gray-600">Email</p>
-                                <a href="mailto:cs@bizmark.id" class="text-orange-600 hover:text-orange-700 font-semibold">cs@bizmark.id</a>
+                                <a href="mailto:{{ $supportEmail }}" class="text-orange-600 hover:text-orange-700 font-semibold">{{ $supportEmail }}</a>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
@@ -327,7 +400,7 @@
                             </svg>
                             <div>
                                 <p class="text-sm text-gray-600">Telepon</p>
-                                <a href="tel:+6283879602855" class="text-orange-600 hover:text-orange-700 font-semibold">+62 838 7960 2855</a>
+                                <a href="{{ $phoneHref }}" class="text-orange-600 hover:text-orange-700 font-semibold">{{ $phoneRaw }}</a>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
@@ -336,7 +409,7 @@
                             </svg>
                             <div>
                                 <p class="text-sm text-gray-600">WhatsApp</p>
-                                <a href="https://wa.me/6283879602855" target="_blank" class="text-orange-600 hover:text-orange-700 font-semibold">+62 838 7960 2855</a>
+                                <a href="{{ $whatsappLink }}" target="_blank" rel="noopener" class="text-orange-600 hover:text-orange-700 font-semibold">{{ $phoneRaw }}</a>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
@@ -369,7 +442,7 @@
                 Konsultasikan kebutuhan perizinan Anda dengan tim ahli kami
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://wa.me/6283879602855" target="_blank" class="inline-flex items-center justify-center px-8 py-4 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <a href="{{ $whatsappLink }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-8 py-4 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl">
                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                     </svg>

@@ -6,8 +6,8 @@ use App\Models\Article;
 use App\Http\Controllers\Traits\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -23,59 +23,84 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
-        // Get tab parameter
-        $tab = $request->get('tab', 'all');
+        // Validate and normalize active tab.
+        $allowedTabs = ['all', 'manual', 'auto-generated', 'auto-post-settings'];
+        $tab = in_array($request->get('tab', 'all'), $allowedTabs, true)
+            ? $request->get('tab', 'all')
+            : 'all';
         
-        $query = Article::with('author');
+        $articles = null;
 
-        // Filter by tab
-        if ($tab === 'manual') {
-            $query->where('source_type', 'manual');
-        } elseif ($tab === 'auto-generated') {
-            $query->where('source_type', 'auto-generated');
+        // Auto-post settings tab does not require article list query.
+        if ($tab !== 'auto-post-settings') {
+            $query = Article::with('author');
+
+            // Filter by tab
+            if ($tab === 'manual') {
+                $query->where(function ($q) {
+                    $q->where('source_type', 'manual')
+                        ->orWhereNull('source_type');
+                });
+            } elseif ($tab === 'auto-generated') {
+                $query->where('source_type', 'auto-generated');
+            }
+
+            // Search
+            $search = trim((string) $request->get('search', ''));
+            if ($search !== '') {
+                $query->search($search);
+            }
+
+            // Filter by status
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Filter by category
+            if ($request->filled('category')) {
+                $query->byCategory($request->category);
+            }
+
+            // Filter by featured
+            if ($request->get('featured') === '1') {
+                $query->featured();
+            }
+
+            // Sort with whitelist to prevent invalid or unsafe columns.
+            $allowedSortColumns = ['created_at', 'published_at', 'title', 'views_count', 'status'];
+            $sortBy = in_array($request->get('sort_by', 'created_at'), $allowedSortColumns, true)
+                ? $request->get('sort_by', 'created_at')
+                : 'created_at';
+            $sortOrder = strtolower((string) $request->get('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
+            $query->orderBy($sortBy, $sortOrder);
+
+            $articles = $query->paginate(15);
         }
-
-        // Search
-        if ($request->has('search') && $request->search != '') {
-            $query->search($request->search);
-        }
-
-        // Filter by status
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
-
-        // Filter by category
-        if ($request->has('category') && $request->category != '') {
-            $query->byCategory($request->category);
-        }
-
-        // Filter by featured
-        if ($request->has('featured') && $request->featured == '1') {
-            $query->featured();
-        }
-
-        // Sort
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-        $query->orderBy($sortBy, $sortOrder);
-
-        $articles = $query->paginate(15);
 
         // Calculate stats for tabs
         $stats = [
             'all' => Article::count(),
-            'manual' => Article::where('source_type', 'manual')->count(),
+            'manual' => Article::where(function ($q) {
+                $q->where('source_type', 'manual')
+                    ->orWhereNull('source_type');
+            })->count(),
             'auto_generated' => Article::where('source_type', 'auto-generated')->count(),
             'published' => Article::where('status', 'published')->count(),
             'draft' => Article::where('status', 'draft')->count(),
         ];
 
         // Get auto-post config and upcoming schedules
-        $autoPostConfig = \App\Models\AutoPostConfig::first();
-        $upcomingSchedules = \App\Models\AutoPostSchedule::where('scheduled_at', '>', now())
+        // Get auto-post config (use current() which auto-creates default if missing)
+        $autoPostConfig = \App\Models\AutoPostConfig::current();
+        $scheduleDateColumn = Schema::hasColumn('auto_post_schedules', 'scheduled_at')
+            ? 'scheduled_at'
+            : 'scheduled_for';
+
+        $upcomingSchedules = \App\Models\AutoPostSchedule::with('topic')
+            ->where($scheduleDateColumn, '>', now())
             ->where('status', 'pending')
-            ->orderBy('scheduled_at', 'asc')
+            ->whereHas('topic') // Only schedules with existing topics
+            ->orderBy($scheduleDateColumn, 'asc')
             ->take(5)
             ->get();
 
@@ -101,6 +126,7 @@ class ArticleController extends Controller
             'excerpt' => 'nullable|string',
             'content' => 'required|string',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'pexels_image_path' => 'nullable|string',
             'category' => 'required|in:general,news,case-study,tips,regulation',
             'tags' => 'nullable|array',
             'status' => 'required|in:draft,published,archived',
@@ -111,8 +137,12 @@ class ArticleController extends Controller
             'is_featured' => 'nullable|boolean',
         ]);
 
-        // Handle image upload
-        if ($request->hasFile('featured_image')) {
+        // Handle image upload (either from file or Pexels)
+        if ($request->filled('pexels_image_path')) {
+            // Use Pexels image
+            $validated['featured_image'] = $request->input('pexels_image_path');
+        } elseif ($request->hasFile('featured_image')) {
+            // Upload from file
             $path = $request->file('featured_image')->store('articles', 'public');
             $validated['featured_image'] = $path;
         }
@@ -127,6 +157,9 @@ class ArticleController extends Controller
 
         // Convert is_featured checkbox
         $validated['is_featured'] = $request->has('is_featured') ? true : false;
+
+        // Remove pexels_image_path from validated data (not in database)
+        unset($validated['pexels_image_path']);
 
         $article = Article::create($validated);
 
@@ -162,6 +195,7 @@ class ArticleController extends Controller
             'excerpt' => 'nullable|string',
             'content' => 'required|string',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'pexels_image_path' => 'nullable|string',
             'category' => 'required|in:general,news,case-study,tips,regulation',
             'tags' => 'nullable|array',
             'status' => 'required|in:draft,published,archived',
@@ -172,12 +206,20 @@ class ArticleController extends Controller
             'is_featured' => 'nullable|boolean',
         ]);
 
-        // Handle image upload
-        if ($request->hasFile('featured_image')) {
+        // Handle image upload (either from file or Pexels)
+        if ($request->filled('pexels_image_path')) {
             // Delete old image
             if ($article->featured_image) {
                 Storage::disk('public')->delete($article->featured_image);
             }
+            // Use Pexels image
+            $validated['featured_image'] = $request->input('pexels_image_path');
+        } elseif ($request->hasFile('featured_image')) {
+            // Delete old image
+            if ($article->featured_image) {
+                Storage::disk('public')->delete($article->featured_image);
+            }
+            // Upload from file
             $path = $request->file('featured_image')->store('articles', 'public');
             $validated['featured_image'] = $path;
         }
@@ -189,6 +231,9 @@ class ArticleController extends Controller
 
         // Convert is_featured checkbox
         $validated['is_featured'] = $request->has('is_featured') ? true : false;
+
+        // Remove pexels_image_path from validated data (not in database)
+        unset($validated['pexels_image_path']);
 
         $article->update($validated);
 

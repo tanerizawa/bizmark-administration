@@ -122,7 +122,10 @@
                     <i class="fas fa-newspaper mr-2"></i>
                     Baca Artikel
                 </a>
-                <a href="https://wa.me/6283879602855" target="_blank" class="btn-secondary">
+                @php
+                    $whatsappLink = data_get(config('landing_metrics'), 'contact.whatsapp_link', 'https://wa.me/6283879602855');
+                @endphp
+                <a href="{{ $whatsappLink }}" target="_blank" rel="noopener" class="btn-secondary">
                     <i class="fab fa-whatsapp mr-2"></i>
                     Hubungi Kami
                 </a>

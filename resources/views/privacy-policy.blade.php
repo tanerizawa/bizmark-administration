@@ -151,15 +151,21 @@
             <section>
                 <h2 class="text-2xl font-bold text-white mb-4">10. Hubungi Kami</h2>
                 <p class="mb-4">Jika Anda memiliki pertanyaan, kekhawatiran, atau permintaan terkait kebijakan privasi ini atau praktik data kami, silakan hubungi kami:</p>
+                @php
+                    $contact = config('landing_metrics.contact', []);
+                    $email = $contact['email'] ?? '';
+                    $waBase = $contact['whatsapp_link'] ?? '';
+                    $phone = $contact['phone'] ?? '';
+                @endphp
                 <div class="bg-gradient-to-br from-apple-blue/10 to-apple-green/10 rounded-xl p-6 border border-white/10">
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <p class="font-bold text-white mb-2">📧 Email</p>
-                            <a href="mailto:cs@bizmark.id" class="text-apple-blue hover:underline">cs@bizmark.id</a>
+                            <a href="mailto:{{ $email }}" class="text-apple-blue hover:underline">{{ $email }}</a>
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">💬 WhatsApp</p>
-                            <a href="https://wa.me/6283879602855" target="_blank" class="text-apple-blue hover:underline">+62 813-8260-5030</a>
+                            <a href="{{ $waBase }}" target="_blank" rel="noopener noreferrer" class="text-apple-blue hover:underline">{{ $phone }}</a>
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">🌐 Website</p>
@@ -304,15 +310,21 @@
             <section>
                 <h2 class="text-2xl font-bold text-white mb-4">10. Contact Us</h2>
                 <p class="mb-4">If you have questions, concerns, or requests related to this privacy policy or our data practices, please contact us:</p>
+                @php
+                    $contact = config('landing_metrics.contact', []);
+                    $email = $contact['email'] ?? '';
+                    $waBase = $contact['whatsapp_link'] ?? '';
+                    $phone = $contact['phone'] ?? '';
+                @endphp
                 <div class="bg-gradient-to-br from-apple-blue/10 to-apple-green/10 rounded-xl p-6 border border-white/10">
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <p class="font-bold text-white mb-2">📧 Email</p>
-                            <a href="mailto:cs@bizmark.id" class="text-apple-blue hover:underline">cs@bizmark.id</a>
+                            <a href="mailto:{{ $email }}" class="text-apple-blue hover:underline">{{ $email }}</a>
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">💬 WhatsApp</p>
-                            <a href="https://wa.me/6283879602855" target="_blank" class="text-apple-blue hover:underline">+62 813-8260-5030</a>
+                            <a href="{{ $waBase }}" target="_blank" rel="noopener noreferrer" class="text-apple-blue hover:underline">{{ $phone }}</a>
                         </div>
                         <div>
                             <p class="font-bold text-white mb-2">🌐 Website</p>

@@ -3,6 +3,39 @@
 @section('title', 'Detail Proyek - BizMark')
 
 @section('content')
+@php
+    // ── Pre-fill from business context (analysis step) ──
+    $ctx = $businessContext ?? [];
+    $hasContext = !empty($ctx);
+
+    // Build pre-filled location from province/city/district
+    $prefilledLocation = '';
+    if (!empty($ctx['district'])) $prefilledLocation .= $ctx['district'] . ', ';
+    if (!empty($ctx['city'])) $prefilledLocation .= $ctx['city'] . ', ';
+    if (!empty($ctx['province'])) $prefilledLocation .= $ctx['province'];
+    $prefilledLocation = rtrim($prefilledLocation, ', ');
+
+    // Map context keys to form fields
+    $prefillLandArea     = old('land_area', $ctx['land_area'] ?? '');
+    $prefillBuildingArea = old('building_area', $ctx['building_area'] ?? '');
+    $prefillFloors       = old('building_floors', $ctx['number_of_floors'] ?? '');
+    $prefillInvestment   = old('investment_value', $ctx['investment_value'] ?? '');
+    $prefillLocation     = old('project_location', $prefilledLocation);
+
+    // Business context summary labels
+    $scaleLabels = [
+        'mikro' => 'Usaha Mikro', 'kecil' => 'Usaha Kecil',
+        'menengah' => 'Usaha Menengah', 'besar' => 'Usaha Besar',
+    ];
+    $impactLabels = [
+        'low' => 'Rendah', 'medium' => 'Menengah', 'high' => 'Tinggi',
+    ];
+    $locationLabels = [
+        'perkotaan' => 'Area Perkotaan', 'pedesaan' => 'Area Pedesaan',
+        'kawasan_industri' => 'Kawasan Industri',
+    ];
+@endphp
+
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <!-- Mobile: Back Button Only -->
     <div class="sm:hidden mb-4">
@@ -39,6 +72,51 @@
         </div>
     </div>
 
+    {{-- ── Auto-fill Banner ── --}}
+    @if($hasContext)
+    <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-200/60 dark:border-blue-800/40 rounded-2xl p-4 sm:p-5 mb-6">
+        <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-8 h-8 bg-[#0a66c2]/10 dark:bg-[#0a66c2]/20 rounded-full flex items-center justify-center mt-0.5">
+                <i class="fas fa-magic text-[#0a66c2] text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-900 dark:text-white mb-1">Data otomatis terisi dari analisis sebelumnya</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                    Beberapa kolom telah diisi berdasarkan informasi yang Anda masukkan saat analisis perizinan. Anda dapat mengubahnya jika perlu.
+                </p>
+
+                {{-- Context summary chips --}}
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    @if(!empty($ctx['business_scale']))
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-chart-bar text-[#0a66c2]"></i>
+                        {{ $scaleLabels[$ctx['business_scale']] ?? $ctx['business_scale'] }}
+                    </span>
+                    @endif
+                    @if(!empty($ctx['location_category']))
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-map-marker-alt text-[#0a66c2]"></i>
+                        {{ $locationLabels[$ctx['location_category']] ?? $ctx['location_category'] }}
+                    </span>
+                    @endif
+                    @if(!empty($ctx['environmental_impact']))
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-leaf text-green-500"></i>
+                        Dampak {{ $impactLabels[$ctx['environmental_impact']] ?? $ctx['environmental_impact'] }}
+                    </span>
+                    @endif
+                    @if(!empty($ctx['number_of_employees']))
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-users text-[#0a66c2]"></i>
+                        {{ $ctx['number_of_employees'] }} Karyawan
+                    </span>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <form action="{{ route('client.applications.store-package') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
@@ -66,30 +144,46 @@
                     @enderror
                 </div>
 
-                <!-- Lokasi Proyek -->
+                <!-- Lokasi Proyek (pre-filled from province/city/district) -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Lokasi Proyek <span class="text-red-500">*</span>
+                        @if($hasContext && $prefilledLocation)
+                        <span class="ml-2 inline-flex items-center gap-1 text-[10px] text-[#0a66c2] font-normal">
+                            <i class="fas fa-check-circle"></i> Terisi otomatis
+                        </span>
+                        @endif
                     </label>
                     <textarea name="project_location" 
                               rows="3"
                               required
                               placeholder="Alamat lengkap lokasi proyek (Jalan, Nomor, Kelurahan, Kecamatan, Kota/Kabupaten, Provinsi)"
-                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">{{ old('project_location') }}</textarea>
+                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">{{ $prefillLocation }}</textarea>
+                    @if($hasContext && $prefilledLocation)
+                    <p class="mt-1 text-[10px] text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Anda dapat menambahkan detail alamat lengkap (jalan, nomor, RT/RW, kelurahan)
+                    </p>
+                    @endif
                     @error('project_location')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Row: Luas Tanah & Luas Bangunan -->
+                <!-- Row: Luas Tanah & Luas Bangunan (pre-filled) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Luas Tanah (m²)
+                            @if($hasContext && !empty($ctx['land_area']))
+                            <span class="ml-2 inline-flex items-center gap-1 text-[10px] text-[#0a66c2] font-normal">
+                                <i class="fas fa-check-circle"></i> Terisi otomatis
+                            </span>
+                            @endif
                         </label>
                         <input type="number" 
                                name="land_area" 
-                               value="{{ old('land_area') }}"
+                               value="{{ $prefillLandArea }}"
                                step="0.01"
                                placeholder="500"
                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
@@ -101,10 +195,15 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Luas Bangunan (m²)
+                            @if($hasContext && !empty($ctx['building_area']))
+                            <span class="ml-2 inline-flex items-center gap-1 text-[10px] text-[#0a66c2] font-normal">
+                                <i class="fas fa-check-circle"></i> Terisi otomatis
+                            </span>
+                            @endif
                         </label>
                         <input type="number" 
                                name="building_area" 
-                               value="{{ old('building_area') }}"
+                               value="{{ $prefillBuildingArea }}"
                                step="0.01"
                                placeholder="300"
                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
@@ -114,15 +213,20 @@
                     </div>
                 </div>
 
-                <!-- Row: Jumlah Lantai & Nilai Investasi -->
+                <!-- Row: Jumlah Lantai & Nilai Investasi (pre-filled) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Jumlah Lantai
+                            @if($hasContext && !empty($ctx['number_of_floors']))
+                            <span class="ml-2 inline-flex items-center gap-1 text-[10px] text-[#0a66c2] font-normal">
+                                <i class="fas fa-check-circle"></i> Terisi otomatis
+                            </span>
+                            @endif
                         </label>
                         <input type="number" 
                                name="building_floors" 
-                               value="{{ old('building_floors') }}"
+                               value="{{ $prefillFloors }}"
                                min="1"
                                placeholder="3"
                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#0a66c2] dark:bg-gray-700 dark:text-white">
@@ -134,10 +238,15 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Nilai Investasi (Rp) <span class="text-red-500">*</span>
+                            @if($hasContext && !empty($ctx['investment_value']))
+                            <span class="ml-2 inline-flex items-center gap-1 text-[10px] text-[#0a66c2] font-normal">
+                                <i class="fas fa-check-circle"></i> Terisi otomatis
+                            </span>
+                            @endif
                         </label>
                         <input type="number" 
                                name="investment_value" 
-                               value="{{ old('investment_value') }}"
+                               value="{{ $prefillInvestment }}"
                                required
                                step="1000000"
                                placeholder="5000000000"
@@ -343,7 +452,7 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <a href="{{ route('client.applications.create', ['kbli_code' => session('permit_selection.kbli_code')]) }}" 
+            <a href="{{ route('client.services.show', session('permit_selection.kbli_code')) }}" 
                class="order-2 sm:order-1 text-center px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors inline-flex items-center justify-center gap-2 font-medium">
                 <i class="fas fa-arrow-left"></i>
                 Kembali

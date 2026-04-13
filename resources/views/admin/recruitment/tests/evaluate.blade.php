@@ -33,7 +33,7 @@
             
             <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                 <div class="space-y-2.5">
-                    <h1 class="text-2xl font-semibold text-white leading-tight">Manual Evaluation</h1>
+                    <h1 class="text-xl font-semibold text-white leading-tight">Manual Evaluation</h1>
                     <p class="text-sm" style="color: rgba(235,235,245,0.7);">
                         Score subjective questions for {{ $session->jobApplication->full_name }}
                     </p>
@@ -94,7 +94,7 @@
 
     {{-- Candidate Info --}}
     <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
             <i class="fas fa-user" style="color: rgba(10,132,255,1);"></i>
             Candidate Information
         </h2>
@@ -118,7 +118,7 @@
     {{-- Document Editing Test - Files & Criteria --}}
     @if($session->testTemplate->isDocumentEditingTest())
     <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
             <i class="fas fa-file-word" style="color: rgba(10,132,255,1);"></i>
             Document Files
         </h2>
@@ -190,7 +190,7 @@
     {{-- Test Summary --}}
     @if($session->score !== null)
     <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
             <i class="fas fa-chart-line" style="color: rgba(52,199,89,1);"></i>
             Auto-Grading Summary
         </h2>
@@ -247,7 +247,7 @@
         {{-- Document Editing Criteria Evaluation --}}
         @if($session->testTemplate->isDocumentEditingTest() && $session->testTemplate->evaluation_criteria)
         <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-            <h2 class="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white mb-5 flex items-center gap-2">
                 <i class="fas fa-clipboard-check" style="color: rgba(255,149,0,1);"></i>
                 Evaluation Criteria
             </h2>
@@ -339,7 +339,7 @@
                             </p>
                         </div>
                         <div class="text-right">
-                            <p class="text-3xl font-bold" style="color: rgba(10,132,255,1);">
+                            <p class="text-xl font-bold" style="color: rgba(10,132,255,1);">
                                 {{ $session->testTemplate->evaluation_criteria['total_points'] ?? 100 }}
                             </p>
                             <p class="text-xs" style="color: rgba(235,235,245,0.6);">points</p>
@@ -351,7 +351,7 @@
         @else
         {{-- Regular Question Evaluation --}}
         <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-            <h2 class="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white mb-5 flex items-center gap-2">
                 <i class="fas fa-clipboard-list" style="color: rgba(255,149,0,1);"></i>
                 Subjective Questions to Evaluate
             </h2>
@@ -453,7 +453,7 @@
 
         {{-- Evaluator Notes --}}
         <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-            <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                 <i class="fas fa-comment-dots" style="color: rgba(191,90,242,1);"></i>
                 Evaluator Notes (Optional)
             </h2>

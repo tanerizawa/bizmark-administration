@@ -1,8 +1,6 @@
-<script type="module">
-// Import Neuroscience Navigation System
-import '/resources/js/navbar.js';
-
-// AOS and Alpine.js are now loaded via Vite (app.js)
+<script>
+// Landing Page Scripts (non-module to ensure onclick handlers work globally)
+// navbar.js features are bundled via Vite in app.js
 
 // Hide Loading Screen
 window.addEventListener('load', function() {
@@ -17,30 +15,61 @@ window.addEventListener('load', function() {
 // Mobile Menu Toggle
 function toggleMobileMenu() {
     const menu = document.getElementById('mobileMenu');
+    if (!menu) {
+        return;
+    }
+
     const menuButton = document.getElementById('mobile-menu-button');
+    const backdrop = menu.querySelector('.mobile-menu-backdrop');
+    const panel = menu.querySelector('.mobile-menu-panel');
     const isHidden = menu.classList.contains('hidden');
-    
+
     if (isHidden) {
+        // Open: show container, then animate in
         menu.classList.remove('hidden');
+        // Force reflow so transitions trigger
+        menu.offsetHeight;
+        menu.classList.add('active');
+        if (backdrop) backdrop.classList.add('active');
+        if (panel) panel.classList.add('active');
         document.body.style.overflow = 'hidden';
         if (menuButton) {
             menuButton.setAttribute('aria-expanded', 'true');
         }
+        // Trap focus inside menu
+        const firstFocusable = menu.querySelector('button, a, input');
+        if (firstFocusable) firstFocusable.focus();
+        // Haptic feedback
+        if (navigator.vibrate) navigator.vibrate(10);
     } else {
-        menu.classList.add('hidden');
+        // Close: animate out, then hide container
+        menu.classList.remove('active');
+        if (backdrop) backdrop.classList.remove('active');
+        if (panel) panel.classList.remove('active');
         document.body.style.overflow = '';
         if (menuButton) {
             menuButton.setAttribute('aria-expanded', 'false');
+            menuButton.focus();
         }
+        // Wait for transition to finish before hiding
+        setTimeout(function() {
+            if (!menu.classList.contains('active')) {
+                menu.classList.add('hidden');
+            }
+        }, 300);
+        if (navigator.vibrate) navigator.vibrate(10);
     }
 }
+
+// Expose for inline onclick handlers
+window.toggleMobileMenu = toggleMobileMenu;
 
 // Close mobile menu when clicking overlay
 document.addEventListener('click', function(e) {
     const menu = document.getElementById('mobileMenu');
     const menuButton = document.getElementById('mobile-menu-button');
-    
-    if (menu.classList.contains('active') && 
+
+    if (menu && menu.classList.contains('active') && 
         !menu.contains(e.target) && 
         menuButton && !menuButton.contains(e.target)) {
         toggleMobileMenu();
@@ -50,14 +79,42 @@ document.addEventListener('click', function(e) {
 // Close mobile menu on ESC key
 document.addEventListener('keydown', function(e) {
     const menu = document.getElementById('mobileMenu');
-    if (e.key === 'Escape' && menu.classList.contains('active')) {
+    if (menu && e.key === 'Escape' && menu.classList.contains('active')) {
         toggleMobileMenu();
+    }
+    // Close locale dropdown on ESC
+    const localeDropdown = document.getElementById('localeDropdown');
+    if (localeDropdown && e.key === 'Escape') {
+        localeDropdown.classList.add('hidden');
+    }
+    // Close tools dropdown on ESC
+    const toolsMenu = document.getElementById('toolsMenu');
+    if (toolsMenu && e.key === 'Escape') {
+        toolsMenu.classList.add('hidden');
+    }
+});
+
+// Close locale dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    const switcher = document.getElementById('localeSwitcher');
+    const dropdown = document.getElementById('localeDropdown');
+    if (switcher && dropdown && !switcher.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+    // Close tools dropdown when clicking outside
+    const toolsDropdown = document.getElementById('toolsDropdown');
+    const toolsMenu = document.getElementById('toolsMenu');
+    if (toolsDropdown && toolsMenu && !toolsDropdown.contains(e.target)) {
+        toolsMenu.classList.add('hidden');
     }
 });
 
 // Back to Top Button
 const backToTopBtn = document.getElementById('backToTop');
 window.addEventListener('scroll', function() {
+    if (!backToTopBtn) {
+        return;
+    }
     if (window.scrollY > 500) {
         backToTopBtn.classList.add('show');
     } else {
@@ -66,12 +123,19 @@ window.addEventListener('scroll', function() {
 });
 
 // Navbar Scroll Effect
-const navbar = document.querySelector('.navbar');
+const navbar = document.querySelector('nav[role="navigation"]');
 window.addEventListener('scroll', function() {
+    if (!navbar) {
+        return;
+    }
     if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
+        navbar.classList.add('shadow-md');
+        navbar.classList.remove('shadow-sm');
+        navbar.style.background = 'rgba(255,255,255,0.98)';
     } else {
-        navbar.classList.remove('scrolled');
+        navbar.classList.remove('shadow-md');
+        navbar.classList.add('shadow-sm');
+        navbar.style.background = '';
     }
 });
 
@@ -79,7 +143,7 @@ window.addEventListener('scroll', function() {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
-        if (href !== '#' && href !== '#contact') {
+        if (href !== '#') {
             e.preventDefault();
             const target = document.querySelector(href);
             if (target) {
@@ -114,13 +178,11 @@ function checkCookieConsent() {
 function acceptCookies() {
     localStorage.setItem('cookieConsent', 'accepted');
     hideCookieBanner();
-    console.log('Cookies accepted');
 }
 
 function rejectCookies() {
     localStorage.setItem('cookieConsent', 'rejected');
     hideCookieBanner();
-    console.log('Cookies rejected');
 }
 
 function hideCookieBanner() {
@@ -141,8 +203,6 @@ window.addEventListener('DOMContentLoaded', function() {
 // Track events (placeholder)
 function trackEvent(category, action, label, value = null) {
     if (localStorage.getItem('cookieConsent') === 'accepted') {
-        console.log('Event:', category, action, label, value);
-        
         // Send to Google Analytics 4
         if (typeof gtag !== 'undefined') {
             gtag('event', action, {
@@ -154,6 +214,9 @@ function trackEvent(category, action, label, value = null) {
     }
 }
 
+// Expose for inline onclick handlers
+window.trackEvent = trackEvent;
+
 // Track WhatsApp clicks
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach(link => {
@@ -164,10 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Track conversion event
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'conversion', {
-                    'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL',
-                    'event_callback': function() {
-                        console.log('Conversion tracked');
-                    }
+                    'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL'
                 });
             }
         });
@@ -351,55 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Device Detection (Auto-redirect disabled to prevent infinite loop)
     // Users can manually switch using the view toggle in header
-    function updateScreenWidth() {
-        const width = window.innerWidth;
-        
-        // Get CSRF token
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-        
-        // Send width to server for analytics (only if CSRF token exists)
-        if (csrfToken) {
-            fetch('/api/set-screen-width', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({ width: width })
-            }).catch(err => console.log('Screen width update failed:', err));
-        }
-    }
     
-    // Update on load
-    updateScreenWidth();
-    
-    // Update on resize (debounced)
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(updateScreenWidth, 1000);
-    });
-    
-    // Clear service worker cache if exists
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for(let registration of registrations) {
-                registration.unregister().then(() => {
-                    console.log('[Landing] Service Worker unregistered');
-                });
-            }
-        });
-        
-        // Clear all caches
-        if ('caches' in window) {
-            caches.keys().then(function(names) {
-                for (let name of names) {
-                    caches.delete(name).then(() => {
-                        console.log('[Landing] Cache cleared:', name);
-                    });
-                }
-            });
-        }
-    }
+    // Screen width tracking removed - unnecessary HTTP requests
 });
 </script>

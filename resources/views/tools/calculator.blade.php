@@ -237,9 +237,15 @@
                 <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-xl p-8 text-white text-center">
                     <h3 class="text-2xl font-bold mb-3">Mulai Konsultasi Gratis</h3>
                     <p class="mb-6 text-blue-100">Diskusikan kebutuhan perizinan Anda dengan expert kami</p>
+                    @php
+                        $whatsappBase = data_get(config('landing_metrics'), 'contact.whatsapp_link', 'https://wa.me/6283879602855');
+                        $whatsappText = 'Halo, saya tertarik untuk konsultasi perizinan';
+                        $whatsappHref = $whatsappBase . (str_contains($whatsappBase, '?') ? '&' : '?') . 'text=' . rawurlencode($whatsappText);
+                    @endphp
                     <a 
-                        href="https://wa.me/62838796028550?text=Halo,%20saya%20tertarik%20untuk%20konsultasi%20perizinan" 
+                        href="{{ $whatsappHref }}" 
                         target="_blank"
+                        rel="noopener"
                         class="inline-block bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-blue-50 transition"
                     >
                         <i class="fab fa-whatsapp mr-2"></i>WhatsApp Kami

@@ -9,7 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
     
     <script>
         tailwind.config = {
@@ -17,16 +18,16 @@
                 extend: {
                     colors: {
                         linkedin: {
-                            50: '#e7f3f8',
-                            100: '#cce7f1',
-                            200: '#99cfe3',
-                            300: '#66b7d5',
-                            400: '#339fc7',
-                            500: '#0077B5', // Official LinkedIn Blue
-                            600: '#005582',
-                            700: '#004161',
-                            800: '#002d41',
-                            900: '#001820',
+                            50: '#EFF6FF',
+                            100: '#DBEAFE',
+                            200: '#BFDBFE',
+                            300: '#93C5FD',
+                            400: '#60A5FA',
+                            500: '#0A66C2',
+                            600: '#084E96',
+                            700: '#063A70',
+                            800: '#042C55',
+                            900: '#021E3A',
                         },
                         gold: {
                             400: '#F2CD49',
@@ -40,10 +41,10 @@
     
     <style>
         body {
-            background: linear-gradient(135deg, #0077B5 0%, #005582 50%, #003d5c 100%);
+            background: linear-gradient(135deg, #0A66C2 0%, #084E96 50%, #063A70 100%);
         }
         .text-gradient {
-            background: linear-gradient(135deg, #0077B5 0%, #005582 100%);
+            background: linear-gradient(135deg, #0A66C2 0%, #084E96 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -138,7 +139,7 @@
                     <span>Periksa folder spam/junk di email Anda</span>
                 </li>
             </ul>
-            <a href="https://wa.me/6283879602855" target="_blank" class="block mt-3 text-white hover:text-gold-400 text-sm font-medium transition-colors">
+            <a href="{{ config('landing_metrics.contact.whatsapp_link') }}" target="_blank" rel="noopener noreferrer" class="block mt-3 text-white hover:text-gold-400 text-sm font-medium transition-colors">
                 <i class="fab fa-whatsapp mr-2"></i>Hubungi Support via WhatsApp
             </a>
         </div>

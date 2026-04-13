@@ -6,6 +6,7 @@
     $blogCategoryRoute = app()->getLocale() === 'en' ? 'blog.category.en' : 'blog.category.id';
     $blogArticleRoute = app()->getLocale() === 'en' ? 'blog.article.en' : 'blog.article.id';
     $blogTagRoute = app()->getLocale() === 'en' ? 'blog.tag.en' : 'blog.tag.id';
+    $whatsappLink = data_get(config('landing_metrics'), 'contact.whatsapp_link', 'https://wa.me/6283879602855');
     $topicFilters = [
         ['label' => __('blog.categories.industrial_permits'), 'slug' => 'perizinan'],
         ['label' => __('blog.categories.environmental_regulations'), 'slug' => 'regulasi'],
@@ -102,7 +103,15 @@
                                 </a>
                             </h3>
                             <p class="text-sm text-gray-600 flex-1">
-                                {{ Str::limit($article->excerpt, 130) }}
+                                @php
+                                    $cleanExcerpt = $article->excerpt ?? '';
+                                    $cleanExcerpt = preg_replace('/\*{1,2}([^*]+?)\*{1,2}/', '$1', $cleanExcerpt);
+                                    $cleanExcerpt = preg_replace('/\[([^\]]+)\]\([^)]+\)/', '$1', $cleanExcerpt);
+                                    $cleanExcerpt = preg_replace('/^#{1,6}\s+.+$/m', '', $cleanExcerpt);
+                                    $cleanExcerpt = preg_replace('/[\r\n]+/', ' ', $cleanExcerpt);
+                                    $cleanExcerpt = preg_replace('/\s+/', ' ', trim($cleanExcerpt));
+                                @endphp
+                                {{ Str::limit($cleanExcerpt, 130) }}
                             </p>
                             @php
                                 $tagList = is_array($article->tags)
@@ -173,7 +182,7 @@
                 <h3 class="text-2xl font-semibold mb-2 text-gray-900">{{ __('blog.cta.title') }}</h3>
                 <p class="text-gray-600 mb-5">{{ __('blog.cta.description') }}</p>
                 <div class="flex flex-wrap gap-3">
-                    <a href="https://wa.me/6283879602855?text={{ urlencode(__('blog.cta.whatsapp_message')) }}" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-white font-semibold shadow-soft hover:-translate-y-0.5 transition">
+                    <a href="{{ $whatsappLink }}?text={{ urlencode(__('blog.cta.whatsapp_message')) }}" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-white font-semibold shadow-soft hover:-translate-y-0.5 transition">
                         <i class="fab fa-whatsapp text-lg"></i>{{ __('blog.cta.whatsapp_button') }}
                     </a>
                     <a href="{{ route('landing.service-inquiry.create') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-primary/30 text-primary font-semibold hover:bg-primary/5 transition">

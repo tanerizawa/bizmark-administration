@@ -19,7 +19,7 @@
         <div class="relative">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $vacancy->title }}</h1>
+                    <h1 class="text-2xl md:text-xl font-bold text-white">{{ $vacancy->title }}</h1>
                     <p class="text-sm mt-1" style="color: rgba(235,235,245,0.7);">
                         Interview Schedule Management
                     </p>
@@ -46,22 +46,22 @@
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['total'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['total'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">All interviews</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Scheduled</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['scheduled'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['scheduled'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Awaiting interview</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Completed</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['completed'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['completed'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Finished</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Upcoming</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['upcoming'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['upcoming'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Next 7 days</p>
         </div>
     </section>

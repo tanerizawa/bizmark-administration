@@ -59,7 +59,8 @@ class ProcessOverdueSchedules extends Command
         
         foreach ($overdue as $schedule) {
             $this->newLine();
-            $this->line("Schedule #{$schedule->id}: {$schedule->topic->title}");
+            $topicTitle = $schedule->topic?->title ?? "[Topic unavailable #{$schedule->topic_id}]";
+            $this->line("Schedule #{$schedule->id}: {$topicTitle}");
             $this->line("  Scheduled: {$schedule->scheduled_at->format('Y-m-d H:i')} ({$schedule->scheduled_at->diffForHumans()})");
             
             try {

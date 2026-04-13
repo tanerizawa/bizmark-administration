@@ -11,15 +11,13 @@ class PublicArticleController extends Controller
      * Display landing page with latest articles
      * Supports multi-locale (ID/EN) and market segmentation (Local/PMA)
      */
-    public function landing()
+    public function landing(?Request $request = null)
     {
         $locale = app()->getLocale();
         $marketSegment = session('market_segment', 'local');
         
-        // Cache latest articles for 10 minutes
-        // Note: Articles table doesn't have language column yet
-        // All articles will be shown for now
-        $latestArticles = cache()->remember("landing.latest_articles", 600, function () {
+        // Cache latest articles for 10 minutes per locale
+        $latestArticles = cache()->remember("landing.latest_articles.{$locale}", 600, function () {
             return Article::published()
                 ->orderBy('published_at', 'desc')
                 ->take(3)

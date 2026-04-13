@@ -36,6 +36,30 @@
         <div class="card-body">
             <form action="{{ route('admin.inbox.send') }}" method="POST">
                 @csrf
+
+                <!-- From Account -->
+                <div class="mb-3">
+                    <label for="from_account_id" class="form-label text-white">
+                        <i class="fas fa-at me-2"></i>From Account
+                    </label>
+                    <select class="form-select bg-dark text-white border-secondary @error('from_account_id') is-invalid @enderror"
+                            id="from_account_id"
+                            name="from_account_id">
+                        <option value="">Default ({{ config('mail.from.address') }})</option>
+                        @foreach(($fromAccounts ?? collect()) as $account)
+                            <option value="{{ $account->id }}" {{ old('from_account_id') == $account->id ? 'selected' : '' }}>
+                                {{ $account->name }} ({{ $account->email }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('from_account_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <div class="form-text text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Pilih akun pengirim untuk korespondensi klien.
+                    </div>
+                </div>
                 
                 <!-- To Email -->
                 <div class="mb-3">

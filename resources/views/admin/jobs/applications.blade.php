@@ -37,7 +37,7 @@
         <div class="relative">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $vacancy->title }}</h1>
+                    <h1 class="text-2xl md:text-xl font-bold text-white">{{ $vacancy->title }}</h1>
                     <p class="text-sm mt-1" style="color: rgba(235,235,245,0.7);">
                         {{ $vacancy->applications_count }} Total Applications
                     </p>

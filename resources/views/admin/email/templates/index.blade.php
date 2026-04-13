@@ -13,7 +13,7 @@
     <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div class="space-y-3 max-w-3xl">
             <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Konten</p>
-            <h1 class="text-2xl md:text-3xl font-bold text-white">Template Email</h1>
+            <h1 class="text-2xl md:text-xl font-bold text-white">Template Email</h1>
             <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
                 Kelola template email yang dapat digunakan kembali untuk kampanye dan komunikasi.
             </p>
@@ -42,22 +42,22 @@
 <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Template</p>
-        <p class="text-3xl font-bold text-white">{{ $stats['total'] }}</p>
+        <p class="text-xl font-bold text-white">{{ $stats['total'] }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua template</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Aktif</p>
-        <p class="text-3xl font-bold text-white">{{ $stats['active'] }}</p>
+        <p class="text-xl font-bold text-white">{{ $stats['active'] }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Siap digunakan</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Newsletter</p>
-        <p class="text-3xl font-bold text-white">{{ $stats['newsletter'] }}</p>
+        <p class="text-xl font-bold text-white">{{ $stats['newsletter'] }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Buletin</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Promosi</p>
-        <p class="text-3xl font-bold text-white">{{ $stats['promotional'] }}</p>
+        <p class="text-xl font-bold text-white">{{ $stats['promotional'] }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Pemasaran</p>
     </div>
     </div>

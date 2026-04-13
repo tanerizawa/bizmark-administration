@@ -30,7 +30,7 @@
             
             <div class="bg-blue-50 border-l-4 border-[#0077B5] p-4 rounded-r-xl mb-6">
                 <p class="text-sm text-gray-700 leading-relaxed">
-                    Dengan menggunakan layanan Bizmark.ID, Anda setuju untuk terikat dengan syarat dan ketentuan berikut. 
+                    Dengan menggunakan layanan atau alat digital Bizmark.ID, Anda setuju untuk terikat dengan syarat dan ketentuan berikut. 
                     Harap membaca dengan seksama sebelum menggunakan layanan kami.
                 </p>
             </div>
@@ -47,7 +47,11 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-gray-700">
                     <i class="fas fa-circle text-[#0077B5] text-xs mt-1.5 flex-shrink-0"></i>
-                    <span><strong>"Layanan"</strong> merujuk pada semua jasa konsultasi dan perizinan yang kami tawarkan</span>
+                    <span><strong>"Layanan"</strong> merujuk pada semua jasa konsultasi, perizinan, serta alat digital gratis yang kami tawarkan</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-circle text-[#0077B5] text-xs mt-1.5 flex-shrink-0"></i>
+                    <span><strong>"Alat Digital"</strong> merujuk pada alat gratis di platform kami seperti Polygon SHP Maker dan Kalkulator Perizinan</span>
                 </li>
             </ul>
 
@@ -98,6 +102,25 @@
                 <li class="flex items-start gap-2 text-sm text-gray-700">
                     <i class="fas fa-briefcase text-[#0077B5] mt-1 flex-shrink-0"></i>
                     <span>Konsultasi lingkungan dan perizinan lainnya</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-briefcase text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span>Monitoring lingkungan digital (IoT)</span>
+                </li>
+            </ul>
+
+            <h2 class="text-xl font-bold text-gray-900 mb-3 mt-6">3.1 Alat Digital Gratis</h2>
+            <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                Kami juga menyediakan alat digital gratis:
+            </p>
+            <ul class="space-y-2 mb-6">
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-tools text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span><strong>Polygon SHP Maker:</strong> Pembuatan file Shapefile untuk OSS dan pemetaan lahan</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-tools text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span><strong>Kalkulator Perizinan:</strong> Estimasi biaya dan waktu pengurusan perizinan</span>
                 </li>
             </ul>
 
@@ -176,7 +199,34 @@
                 Setiap perselisihan akan diselesaikan melalui musyawarah atau melalui jalur hukum yang berlaku.
             </p>
 
-            <h2 class="text-xl font-bold text-gray-900 mb-3 mt-6">9. Perubahan Syarat & Ketentuan</h2>
+            <h2 class="text-xl font-bold text-gray-900 mb-3 mt-6">9. Penggunaan Alat Digital</h2>
+            <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                Dengan menggunakan alat digital gratis kami, Anda menyetujui bahwa:
+            </p>
+            <ul class="space-y-2 mb-6">
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-laptop-code text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span>Data yang Anda masukkan (nama perusahaan, email, telepon, data lokasi) akan disimpan sebagai data leads</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-laptop-code text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span>Kami berhak menghubungi Anda melalui email atau WhatsApp untuk menawarkan layanan terkait</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-laptop-code text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span>Hasil dari alat digital bersifat estimasi dan tidak dapat dijadikan dasar hukum</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-laptop-code text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span>Browser Anda mungkin menyimpan data sementara (auto-save) yang dapat dihapus manual</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-laptop-code text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span>Dilarang menggunakan alat digital untuk tujuan ilegal atau eksploitasi otomatis</span>
+                </li>
+            </ul>
+
+            <h2 class="text-xl font-bold text-gray-900 mb-3 mt-6">10. Perubahan Syarat & Ketentuan</h2>
             <p class="text-sm text-gray-700 leading-relaxed mb-6">
                 Kami berhak untuk mengubah syarat dan ketentuan ini sewaktu-waktu. Perubahan akan berlaku 
                 efektif setelah dipublikasikan di website kami. Penggunaan layanan setelah perubahan berarti 
@@ -199,18 +249,24 @@
                 </p>
             </div>
             <div class="space-y-3">
-                <a href="mailto:cs@bizmark.id" class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
+                @php
+                    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+                    $supportEmail = $contact['email'] ?? 'info@bizmark.id';
+                    $phoneRaw = $contact['phone'] ?? '+62 838 7960 2855';
+                    $phoneHref = 'tel:' . preg_replace('/\s+/', '', $phoneRaw);
+                @endphp
+                <a href="mailto:{{ $supportEmail }}" class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
                     <i class="fas fa-envelope text-[#0077B5] text-xl"></i>
                     <div>
                         <div class="text-xs text-gray-500">Email</div>
-                        <div class="font-semibold text-gray-900">cs@bizmark.id</div>
+                        <div class="font-semibold text-gray-900">{{ $supportEmail }}</div>
                     </div>
                 </a>
-                <a href="tel:+6283879602855" class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
+                <a href="{{ $phoneHref }}" class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
                     <i class="fas fa-phone text-[#0077B5] text-xl"></i>
                     <div>
                         <div class="text-xs text-gray-500">Telepon</div>
-                        <div class="font-semibold text-gray-900">+62 838 7960 2855</div>
+                        <div class="font-semibold text-gray-900">{{ $phoneRaw }}</div>
                     </div>
                 </a>
             </div>

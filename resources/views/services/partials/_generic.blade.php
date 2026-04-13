@@ -1,5 +1,15 @@
 <!-- Generic Service Content - Coming Soon -->
 
+@php
+    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $whatsappBase = $contact['whatsapp_link'] ?? '';
+    $supportEmail = $contact['email'] ?? '';
+    $phoneRaw = $contact['phone'] ?? '';
+    $phoneHref = $phoneRaw !== '' ? ('tel:' . preg_replace('/\s+/', '', $phoneRaw)) : '';
+    $whatsappText = 'Halo, saya ingin tahu lebih lanjut tentang ' . ($service['title'] ?? 'layanan ini');
+    $whatsappHref = $whatsappBase . (str_contains($whatsappBase, '?') ? '&' : '?') . 'text=' . rawurlencode($whatsappText);
+@endphp
+
 <div class="text-center py-12" data-aos="fade-up">
     <div class="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center" style="background: linear-gradient(135deg, {{ $service['color'] }}20 0%, {{ $service['color'] }}40 100%);">
         <i class="fas {{ $service['icon'] }} text-5xl" style="color: {{ $service['color'] }};"></i>
@@ -12,11 +22,11 @@
     </p>
     
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="https://wa.me/6283879602855?text=Halo,%20saya%20ingin%20tahu%20lebih%20lanjut%20tentang%20{{ urlencode($service['title']) }}" target="_blank" class="btn btn-primary px-8 py-3">
+        <a href="{{ $whatsappHref }}" target="_blank" rel="noopener" class="btn btn-primary px-8 py-3">
             <i class="fab fa-whatsapp mr-2"></i>
             Konsultasi via WhatsApp
         </a>
-        <a href="tel:+6283879602855" class="btn bg-white border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary px-8 py-3">
+        <a href="{{ $phoneHref }}" class="btn bg-white border-2 border-gray-300 text-gray-700 hover:border-primary hover:text-primary px-8 py-3">
             <i class="fas fa-phone mr-2"></i>
             Telepon Kami
         </a>
@@ -57,21 +67,21 @@
 
 <!-- Quick Contact -->
 <div class="grid md:grid-cols-3 gap-4" data-aos="fade-up">
-    <a href="https://wa.me/6283879602855" target="_blank" class="card hover:shadow-lg transition text-center group">
+    <a href="{{ $whatsappBase }}" target="_blank" rel="noopener" class="card hover:shadow-lg transition text-center group">
         <i class="fab fa-whatsapp text-4xl text-green-600 mb-3 group-hover:scale-110 transition-transform"></i>
         <h4 class="font-bold text-gray-900 mb-1">WhatsApp</h4>
         <p class="text-sm text-gray-600">Chat langsung dengan tim</p>
     </a>
     
-    <a href="tel:+6283879602855" class="card hover:shadow-lg transition text-center group">
+    <a href="{{ $phoneHref }}" class="card hover:shadow-lg transition text-center group">
         <i class="fas fa-phone text-4xl text-blue-600 mb-3 group-hover:scale-110 transition-transform"></i>
         <h4 class="font-bold text-gray-900 mb-1">Telepon</h4>
-        <p class="text-sm text-gray-600">+62 813-8260-5030</p>
+        <p class="text-sm text-gray-600">{{ $phoneRaw }}</p>
     </a>
     
-    <a href="mailto:cs@bizmark.id" class="card hover:shadow-lg transition text-center group">
+    <a href="mailto:{{ $supportEmail }}" class="card hover:shadow-lg transition text-center group">
         <i class="fas fa-envelope text-4xl text-red-600 mb-3 group-hover:scale-110 transition-transform"></i>
         <h4 class="font-bold text-gray-900 mb-1">Email</h4>
-        <p class="text-sm text-gray-600">cs@bizmark.id</p>
+        <p class="text-sm text-gray-600">{{ $supportEmail }}</p>
     </a>
 </div>

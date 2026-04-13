@@ -5,6 +5,15 @@
 
 @section('content')
 
+@php
+    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $whatsappBase = $contact['whatsapp_link'] ?? '';
+    $phoneRaw = $contact['phone'] ?? '';
+    $phoneHref = $phoneRaw !== '' ? ('tel:' . preg_replace('/\s+/', '', $phoneRaw)) : '';
+    $waText = 'Halo Bizmark.ID, saya ingin konsultasi tentang perizinan';
+    $whatsappHref = $whatsappBase . (str_contains($whatsappBase, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
+@endphp
+
 <!-- Hero Section -->
 <section class="magazine-section bg-gradient-to-br from-blue-50 via-white to-purple-50">
     <div class="content-container text-center">
@@ -106,17 +115,99 @@
         </p>
         
         <div class="space-y-3">
-            <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
+            <a href="{{ $whatsappHref }}" 
                target="_blank"
+               rel="noopener"
                class="block w-full bg-white text-[#0077B5] font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all">
                 <i class="fab fa-whatsapp mr-2"></i> Chat via WhatsApp
             </a>
-            <a href="tel:+6283879602855" 
+            <a href="{{ $phoneHref }}" 
                class="block w-full bg-white/10 backdrop-blur text-white font-semibold py-4 px-6 rounded-xl border-2 border-white/30">
                 <i class="fas fa-phone mr-2"></i> Telepon Langsung
             </a>
         </div>
     </div>
 </section>
+
+{{-- Mobile City Coverage (Collapsible) --}}
+@php
+    $mobileCities = config('programmatic_seo.cities', []);
+    if (count($mobileCities) > 0) {
+        $mByProv = collect($mobileCities)->groupBy('province')->sortKeys();
+        $mProvOrder = ['Jawa Barat', 'DKI Jakarta', 'Banten', 'Jawa Tengah', 'DI Yogyakarta', 'Jawa Timur'];
+        $mSortedProvs = collect($mProvOrder)
+            ->filter(fn($p) => $mByProv->has($p))
+            ->merge($mByProv->keys()->diff($mProvOrder)->sort())
+            ->unique();
+    }
+@endphp
+@if(count($mobileCities) > 0)
+<section class="py-5 bg-gray-50">
+    <div class="content-container">
+        <div class="flex items-center gap-2 mb-3">
+            <i class="fas fa-map-marked-alt text-xs text-blue-600"></i>
+            <span class="text-sm font-bold text-gray-900">Jangkauan Wilayah</span>
+            <span class="text-xs text-gray-500">({{ count($mobileCities) }} kota)</span>
+        </div>
+        <div class="flex flex-wrap gap-1">
+            @foreach($mSortedProvs as $mp)
+            @php $mpCities = $mByProv[$mp]; @endphp
+            <button onclick="toggleMProv(this,'{{ Str::slug($mp) }}')" class="mprov-btn inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-white border border-gray-200 text-gray-800 transition-all duration-200" aria-expanded="false">
+                {{ $mp }} <span class="text-[10px] font-normal text-blue-500">{{ count($mpCities) }}</span>
+                <i class="fas fa-chevron-down text-[8px] text-gray-400 transition-transform duration-200 mprov-chev"></i>
+            </button>
+            @endforeach
+        </div>
+        <div id="mprov-panel" class="overflow-hidden transition-all duration-300" style="max-height: 0;">
+            @foreach($mSortedProvs as $mp)
+            @php $mpCities = $mByProv[$mp]; @endphp
+            <div id="mprov-{{ Str::slug($mp) }}" class="mprov-cities hidden">
+                <div class="mt-1.5 rounded-lg px-3 py-2.5" style="background: #1E1B18;">
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                        <i class="fas fa-map-marker-alt text-[10px]" style="color: #E8956F;"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-wider" style="color: #E8956F;">{{ $mp }}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1">
+                        @foreach($mpCities as $mc)
+                        <a href="{{ url('/layanan/kota/' . $mc['slug']) }}" class="px-2.5 py-1 rounded-full text-xs font-medium transition-colors duration-200" style="background: rgba(255,255,255,.08); color: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.1);">
+                            {{ $mc['name'] }}
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+<script>
+function toggleMProv(btn, slug) {
+    var panel = document.getElementById('mprov-panel');
+    var target = document.getElementById('mprov-' + slug);
+    var wasOpen = btn.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll('.mprov-btn').forEach(function(b) {
+        b.setAttribute('aria-expanded', 'false');
+        b.style.background = '';
+        b.style.color = '';
+        b.style.borderColor = '';
+        b.querySelector('.mprov-chev').style.transform = '';
+        b.querySelector('.mprov-chev').style.color = '';
+    });
+    document.querySelectorAll('.mprov-cities').forEach(function(c) { c.classList.add('hidden'); });
+    if (!wasOpen) {
+        target.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.style.background = '#1E1B18';
+        btn.style.borderColor = '#1E1B18';
+        btn.style.color = '#E8956F';
+        btn.querySelector('.mprov-chev').style.transform = 'rotate(180deg)';
+        btn.querySelector('.mprov-chev').style.color = '#E8956F';
+        panel.style.maxHeight = target.scrollHeight + 12 + 'px';
+    } else {
+        panel.style.maxHeight = '0';
+    }
+}
+</script>
+@endif
 
 @endsection

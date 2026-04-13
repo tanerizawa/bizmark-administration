@@ -30,3 +30,17 @@ Route::prefix('kbli-recommendations')->group(function () {
     Route::post('refresh', [KbliRecommendationController::class, 'refresh'])->middleware('auth:sanctum');
     Route::get('stats', [KbliRecommendationController::class, 'stats'])->middleware('auth:sanctum');
 });
+
+// Shapefile/Polygon Tool (Public with rate limiting + session for client auth)
+Route::prefix('shapefile')->middleware(['throttle:10,1', \Illuminate\Session\Middleware\StartSession::class])->group(function () {
+    Route::post('generate', [App\Http\Controllers\Api\ShapefileApiController::class, 'generate']);
+    Route::post('calculate', [App\Http\Controllers\Api\ShapefileApiController::class, 'calculate'])->middleware('throttle:30,1');
+    Route::post('check-email', [App\Http\Controllers\Api\ShapefileApiController::class, 'checkEmail'])->middleware('throttle:15,1');
+});
+
+// RTRW Spatial Zoning (GISTARU proxy)
+Route::prefix('rtrw')->middleware('throttle:30,1')->group(function () {
+    Route::get('provinces', [App\Http\Controllers\Api\RtrwProxyController::class, 'provinces']);
+    Route::get('zona', [App\Http\Controllers\Api\RtrwProxyController::class, 'zona'])->middleware('throttle:20,1');
+    Route::get('layers/{provinceCode}', [App\Http\Controllers\Api\RtrwProxyController::class, 'layers']);
+});

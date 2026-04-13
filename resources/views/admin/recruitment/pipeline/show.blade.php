@@ -74,7 +74,7 @@
                 <i class="fas fa-chevron-right text-[10px]"></i>
                 <span style="color: var(--text-dark-primary); opacity: var(--opacity-text-strong);">Detail Kandidat</span>
             </nav>
-            <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">{{ $application->full_name }}</h1>
+            <h1 class="text-2xl md:text-xl font-bold text-white mb-1">{{ $application->full_name }}</h1>
             @if($application->jobVacancy)
                 <p class="text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                     <i class="fas fa-briefcase mr-2"></i>{{ $application->jobVacancy->title }}
@@ -145,11 +145,11 @@
                                     <div class="flex items-start gap-3 mb-3">
                                         <div class="stage-icon flex-shrink-0
                                             @if($stage->status == 'passed')
-                                                bg-apple-green bg-opacity-20 text-apple-green
+                                                bg-apple-green\/20 text-apple-green
                                             @elseif($stage->status == 'in-progress')
-                                                bg-apple-blue bg-opacity-20 text-apple-blue
+                                                bg-apple-blue\/20 text-apple-blue
                                             @elseif($stage->status == 'failed')
-                                                bg-apple-red bg-opacity-20 text-apple-red
+                                                bg-apple-red\/20 text-apple-red
                                             @else
                                                 bg-white bg-opacity-10 text-gray-400
                                             @endif">
@@ -290,7 +290,7 @@
                         </div>
                     @else
                         <div class="text-center py-6" style="color: rgba(235,235,245,0.6);">
-                            <i class="fas fa-inbox text-3xl mb-3"></i>
+                            <i class="fas fa-inbox text-2xl mb-3"></i>
                             <p class="text-sm mb-3">Belum ada tahap rekrutmen</p>
                             <form action="{{ route('admin.recruitment.pipeline.initialize', $application) }}" method="POST" class="inline-block">
                                 @csrf

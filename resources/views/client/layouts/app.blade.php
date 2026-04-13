@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#0a66c2">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>@yield('title', 'Client Portal') - Bizmark.id</title>
     
@@ -15,7 +15,7 @@
     
     <!-- External CSS - CDN Only -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <style>
@@ -568,8 +568,9 @@
                     <div class="my-2 border-t border-gray-200"></div>
                     
                     <!-- Support -->
-                    <a href="https://wa.me/6283879602855" 
+                          <a href="{{ config('landing_metrics.contact.whatsapp_link') }}" 
                        target="_blank"
+                              rel="noopener noreferrer"
                        @click="profileOpen = false"
                        class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
                         <i class="fab fa-whatsapp text-gray-600 w-5 text-center"></i>
@@ -824,8 +825,11 @@
             <div class="p-4 border-t border-gray-100 space-y-3">
                 <div class="text-xs text-gray-500">
                     <p class="font-semibold text-gray-600 mb-1">Butuh Bantuan?</p>
-                    <a href="mailto:cs@bizmark.id" class="inline-flex items-center gap-2 text-[#0a66c2] font-semibold hover:text-[#004182]">
-                        <i class="fas fa-headset"></i> cs@bizmark.id
+                    @php
+                        $supportEmail = data_get(config('landing_metrics'), 'contact.email', 'info@bizmark.id');
+                    @endphp
+                    <a href="mailto:{{ $supportEmail }}" class="inline-flex items-center gap-2 text-[#0a66c2] font-semibold hover:text-[#004182]">
+                        <i class="fas fa-headset"></i> {{ $supportEmail }}
                     </a>
                 </div>
                 <form method="POST" action="{{ route('client.logout') }}">

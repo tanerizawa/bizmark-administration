@@ -6,7 +6,7 @@
 <div class="pb-20">
     
     {{-- Header --}}
-    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-2xl p-6 mb-4 text-white">
+    <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-2xl p-6 mb-4 text-white">
         <div class="flex items-center justify-between mb-4">
             <div>
                 <h2 class="text-xl font-bold">Tim</h2>
@@ -44,7 +44,7 @@
 
     {{-- Role Filters --}}
     <div class="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
-        <button class="px-4 py-2 bg-[#0077b5] text-white rounded-lg text-sm font-medium whitespace-nowrap">
+        <button class="px-4 py-2 bg-[#0A66C2] text-white rounded-lg text-sm font-medium whitespace-nowrap">
             Semua
         </button>
         <button class="px-4 py-2 bg-white text-gray-700 rounded-lg text-sm font-medium border border-gray-200 whitespace-nowrap">
@@ -71,7 +71,7 @@
                          alt="{{ $user->name }}"
                          class="w-14 h-14 rounded-full object-cover">
                     @else
-                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#0077b5] to-[#004d6d] flex items-center justify-center text-white font-bold text-lg">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#0A66C2] to-[#004182] flex items-center justify-center text-white font-bold text-lg">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                     </div>
                     @endif
@@ -119,7 +119,7 @@
                         
                         {{-- Projects --}}
                         @if(isset($user->active_projects_count))
-                        <div class="flex items-center gap-1 text-xs text-[#0077b5] font-medium mt-2">
+                        <div class="flex items-center gap-1 text-xs text-[#0A66C2] font-medium mt-2">
                             <i class="fas fa-folder"></i>
                             <span>{{ $user->active_projects_count }} proyek aktif</span>
                         </div>

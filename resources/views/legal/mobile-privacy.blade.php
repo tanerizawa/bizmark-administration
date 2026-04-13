@@ -31,7 +31,8 @@
             <div class="bg-blue-50 border-l-4 border-[#0077B5] p-4 rounded-r-xl mb-6">
                 <p class="text-sm text-gray-700 leading-relaxed">
                     Kami di Bizmark.ID berkomitmen untuk melindungi privasi dan keamanan data pribadi Anda. 
-                    Kebijakan ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda.
+                    Kebijakan ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda, 
+                    termasuk data yang dikumpulkan melalui alat digital gratis kami.
                 </p>
             </div>
 
@@ -51,6 +52,14 @@
                 <li class="flex items-start gap-2 text-sm text-gray-700">
                     <i class="fas fa-check text-[#0077B5] mt-1 flex-shrink-0"></i>
                     <span>Data transaksi dan komunikasi dengan kami</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-check text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span>Data dari alat digital: nama perusahaan, email, telepon, koordinat lokasi, data proyek</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-check text-[#0077B5] mt-1 flex-shrink-0"></i>
+                    <span>Data teknis: alamat IP, browser (user agent), dan timestamp persetujuan</span>
                 </li>
             </ul>
 
@@ -75,6 +84,10 @@
                     <i class="fas fa-check text-green-500 mt-1 flex-shrink-0"></i>
                     <span>Mematuhi persyaratan hukum dan regulasi</span>
                 </li>
+                <li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-check text-green-500 mt-1 flex-shrink-0"></i>
+                    <span>Menindaklanjuti leads dari alat digital gratis untuk penawaran layanan terkait</span>
+                </li>
             </ul>
 
             <h2 class="text-xl font-bold text-gray-900 mb-3 mt-6">3. Keamanan Data</h2>
@@ -82,6 +95,12 @@
                 Kami menerapkan langkah-langkah keamanan teknis dan organisasi yang sesuai untuk melindungi data pribadi Anda 
                 dari akses tidak sah, kehilangan, atau penyalahgunaan. Semua data disimpan dengan enkripsi dan hanya dapat diakses 
                 oleh personel yang berwenang.
+            </p>
+
+            <h2 class="text-xl font-bold text-gray-900 mb-3 mt-6">3.1 Penyimpanan Lokal</h2>
+            <p class="text-sm text-gray-700 leading-relaxed mb-6">
+                Alat digital kami menggunakan localStorage browser untuk menyimpan data sementara (auto-save). 
+                Data ini tersimpan di perangkat Anda dan dapat dihapus melalui pengaturan browser atau fitur "Hapus Data" pada alat digital.
             </p>
 
             <h2 class="text-xl font-bold text-gray-900 mb-3 mt-6">4. Hak Anda</h2>
@@ -135,18 +154,24 @@
                 </p>
             </div>
             <div class="space-y-3">
-                <a href="mailto:cs@bizmark.id" class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
+                @php
+                    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+                    $supportEmail = $contact['email'] ?? 'info@bizmark.id';
+                    $phoneRaw = $contact['phone'] ?? '+62 838 7960 2855';
+                    $phoneHref = 'tel:' . preg_replace('/\s+/', '', $phoneRaw);
+                @endphp
+                <a href="mailto:{{ $supportEmail }}" class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
                     <i class="fas fa-envelope text-[#0077B5] text-xl"></i>
                     <div>
                         <div class="text-xs text-gray-500">Email</div>
-                        <div class="font-semibold text-gray-900">cs@bizmark.id</div>
+                        <div class="font-semibold text-gray-900">{{ $supportEmail }}</div>
                     </div>
                 </a>
-                <a href="tel:+6283879602855" class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
+                <a href="{{ $phoneHref }}" class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
                     <i class="fas fa-phone text-[#0077B5] text-xl"></i>
                     <div>
                         <div class="text-xs text-gray-500">Telepon</div>
-                        <div class="font-semibold text-gray-900">+62 838 7960 2855</div>
+                        <div class="font-semibold text-gray-900">{{ $phoneRaw }}</div>
                     </div>
                 </a>
             </div>

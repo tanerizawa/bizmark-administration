@@ -328,7 +328,7 @@ function insertFooter() {
     <p style="color: #6c757d; margin: 0 0 10px 0;">© ${new Date().getFullYear()} Bizmark.ID. All rights reserved.</p>
     <p style="color: #6c757d; margin: 0;">
         <a href="https://bizmark.id" style="color: #667eea; text-decoration: none;">Visit Website</a> |
-        <a href="https://wa.me/62838796028550" style="color: #667eea; text-decoration: none;">WhatsApp</a>
+        <a href="{{ data_get(config('landing_metrics'), 'contact.whatsapp_link', 'https://wa.me/6283879602855') }}" style="color: #667eea; text-decoration: none;">WhatsApp</a>
     </p>
 </div>
 `;

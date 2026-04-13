@@ -78,7 +78,7 @@ return [
             'target' => 10,
             'suffix' => '+',
             'label' => 'Tahun Pengalaman',
-            'description' => 'Tim konsultan senior dengan pengalaman lintas sektor sejak 2013.',
+            'description' => 'Tim konsultan senior dengan pengalaman lintas sektor sejak 2015.',
             'icon' => 'fas fa-award',
             'color' => '#F97316',
             'soft' => 'rgba(249, 115, 22, 0.18)',
@@ -308,9 +308,9 @@ return [
         ],
         [
             'label' => 'Email',
-            'value' => 'cs@bizmark.id',
+            'value' => 'info@bizmark.id',
             'sub' => 'Respon maksimal 24 jam kerja',
-            'href' => 'mailto:cs@bizmark.id',
+            'href' => 'mailto:info@bizmark.id',
             'icon' => 'fas fa-envelope',
         ],
         [
@@ -329,14 +329,14 @@ return [
 
     'footer_links' => [
         'Navigasi' => [
-            ['label' => 'Layanan', 'href' => '#services'],
+            ['label' => 'Layanan', 'href' => 'services.index.id', 'type' => 'route'],
             ['label' => 'Proses', 'href' => '#process'],
             ['label' => 'FAQ', 'href' => '#faq'],
             ['label' => 'Artikel', 'href' => 'blog.index', 'type' => 'route'],
         ],
         'Kontak' => [
             ['label' => '+62 838 7960 2855', 'href' => 'https://wa.me/6283879602855'],
-            ['label' => 'cs@bizmark.id', 'href' => 'mailto:cs@bizmark.id'],
+            ['label' => 'info@bizmark.id', 'href' => 'mailto:info@bizmark.id'],
             ['label' => 'Jln Lingkar Luar Karawang. Ruko Permata Sari Indah No.2, Karawang, Jawa Barat 41314', 'href' => 'https://maps.google.com/?q=Jln+Lingkar+Luar+Karawang.+Ruko+Permata+Sari+Indah+No.2,+Palumbonsari,+Kec.+Karawang+Tim.,+Karawang,+Jawa+Barat+41314'],
         ],
         'Legal' => [

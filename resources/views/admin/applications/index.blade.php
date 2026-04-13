@@ -38,7 +38,7 @@
     <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div class="space-y-3 max-w-3xl">
             <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Talenta</p>
-            <h1 class="text-2xl md:text-3xl font-bold text-white">Daftar Lamaran Kerja</h1>
+            <h1 class="text-2xl md:text-xl font-bold text-white">Daftar Lamaran Kerja</h1>
             <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
                 Kelola proses rekrutmen kandidat dari tahap peninjauan hingga keputusan penerimaan secara terpusat.
             </p>
@@ -73,22 +73,22 @@
 <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Lamaran</p>
-        <p class="text-3xl font-bold text-white">{{ $totalApplications }}</p>
+        <p class="text-xl font-bold text-white">{{ $totalApplications }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $todayApplications }} hari ini</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Proses Wawancara</p>
-        <p class="text-3xl font-bold text-white">{{ $interviewPipeline }}</p>
+        <p class="text-xl font-bold text-white">{{ $interviewPipeline }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Ditinjau + wawancara</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Menunggu</p>
-        <p class="text-3xl font-bold text-white">{{ $statusCounts['pending'] ?? 0 }}</p>
+        <p class="text-xl font-bold text-white">{{ $statusCounts['pending'] ?? 0 }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu peninjauan</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditolak</p>
-        <p class="text-3xl font-bold text-white">{{ $statusCounts['rejected'] ?? 0 }}</p>
+        <p class="text-xl font-bold text-white">{{ $statusCounts['rejected'] ?? 0 }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Akan dihubungi ulang</p>
     </div>
 </section>
@@ -114,7 +114,7 @@
     <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
             <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-            <h2 class="text-lg font-semibold text-white">Temukan Kandidat</h2>
+            <h2 class="text-sm font-semibold text-white">Temukan Kandidat</h2>
         </div>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $applications->total() }} lamaran ditemukan</p>
     </div>

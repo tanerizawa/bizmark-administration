@@ -4,7 +4,7 @@
    ============================================ */
 
 /* Import CSS Variables */
-@import 'neuroscience-variables.css';
+@import './neuroscience-variables.css';
 
 /* Import Tailwind CSS */
 @import 'tailwindcss';

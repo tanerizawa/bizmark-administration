@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="space-y-4">
     <!-- Header -->
     <div class="card-elevated rounded-apple-xl p-5 md:p-6 mb-6 relative overflow-hidden">
         <!-- Background Gradient Effects -->
@@ -13,7 +13,7 @@
         <div class="relative flex items-center justify-between">
             <div>
                 <p class="text-xs uppercase tracking-[0.4em] mb-1" style="color: rgba(235,235,245,0.5);">AUTOMATION</p>
-                <h1 class="text-2xl font-bold text-white">Konfigurasi Auto-Post</h1>
+                <h1 class="text-lg font-bold text-white">Konfigurasi Auto-Post</h1>
                 <p class="mt-1 text-sm" style="color: rgba(235,235,245,0.6);">
                     Atur sistem posting artikel otomatis dengan AI
                 </p>
@@ -47,7 +47,7 @@
 
         <!-- Scheduling Settings -->
         <div class="card-elevated rounded-lg shadow-sm p-6 border border-gray-700/50">
-            <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                 <i class="fas fa-clock" style="color: rgba(10,132,255,1);"></i>
                 Pengaturan Jadwal
             </h2>
@@ -71,16 +71,16 @@
 
                 <div>
                     <label class="block text-sm font-medium mb-2" style="color: rgba(235,235,245,0.8);">
-                        Auto-Schedule Days
+                        Cooldown Days
                     </label>
                     <input 
                         type="number" 
-                        name="auto_schedule_days" 
-                        value="{{ old('auto_schedule_days', $config->auto_schedule_days) }}" 
+                        name="cooldown_days" 
+                        value="{{ old('cooldown_days', $config->cooldown_days) }}" 
                         min="1" 
-                        max="30"
+                        max="365"
                         class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500">
-                    <p class="mt-1 text-xs" style="color: rgba(235,235,245,0.6);">Berapa hari ke depan untuk auto-schedule</p>
+                    <p class="mt-1 text-xs" style="color: rgba(235,235,245,0.6);">Hari sebelum topik serupa bisa digunakan lagi</p>
                 </div>
             </div>
 
@@ -117,7 +117,7 @@
 
         <!-- AI Settings -->
         <div class="card-elevated rounded-lg shadow-sm p-6 border border-gray-700/50">
-            <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                 <i class="fas fa-brain" style="color: rgba(175,82,222,1);"></i>
                 Pengaturan AI
             </h2>
@@ -141,27 +141,12 @@
                         </option>
                     </select>
                 </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235,235,245,0.8);">
-                        Temperature (0-2)
-                    </label>
-                    <input 
-                        type="number" 
-                        name="temperature" 
-                        value="{{ old('temperature', $config->temperature) }}" 
-                        min="0" 
-                        max="2" 
-                        step="0.1"
-                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500">
-                    <p class="mt-1 text-xs" style="color: rgba(235,235,245,0.6);">0 = Konsisten, 2 = Kreatif</p>
-                </div>
             </div>
         </div>
 
         <!-- Content Quality Settings -->
         <div class="card-elevated rounded-lg shadow-sm p-6 border border-gray-700/50">
-            <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                 <i class="fas fa-check-circle" style="color: rgba(52,199,89,1);"></i>
                 Kualitas Konten
             </h2>
@@ -193,34 +178,21 @@
 
                 <div>
                     <label class="block text-sm font-medium mb-2" style="color: rgba(235,235,245,0.8);">
-                        Quality Threshold (0-100)
+                        Duplicate Threshold (0-1)
                     </label>
                     <input 
                         type="number" 
-                        name="quality_threshold" 
-                        value="{{ old('quality_threshold', $config->quality_threshold) }}" 
-                        min="0" 
-                        max="100"
-                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235,235,245,0.8);">
-                        Similarity Threshold (0-1)
-                    </label>
-                    <input 
-                        type="number" 
-                        name="similarity_threshold" 
-                        value="{{ old('similarity_threshold', $config->similarity_threshold) }}" 
+                        name="duplicate_threshold" 
+                        value="{{ old('duplicate_threshold', $config->duplicate_threshold) }}" 
                         min="0" 
                         max="1" 
                         step="0.01"
                         class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500">
-                    <p class="mt-1 text-xs" style="color: rgba(235,235,245,0.6);">Deteksi duplikat artikel</p>
+                    <p class="mt-1 text-xs" style="color: rgba(235,235,245,0.6);">Deteksi duplikat artikel (0 = no check, 1 = exact match)</p>
                 </div>
+            </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div>
                     <label class="block text-sm font-medium mb-2" style="color: rgba(235,235,245,0.8);">
                         Internal Links Count
@@ -239,7 +211,7 @@
 
         <!-- Language & Market Settings -->
         <div class="card-elevated rounded-lg shadow-sm p-6 border border-gray-700/50">
-            <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                 <i class="fas fa-globe" style="color: rgba(52,199,89,1);"></i>
                 Language & Target Market
             </h2>
@@ -337,7 +309,7 @@
 
         <!-- Publishing Options -->
         <div class="card-elevated rounded-lg shadow-sm p-6 border border-gray-700/50">
-            <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                 <i class="fas fa-rocket" style="color: rgba(255,149,0,1);"></i>
                 Opsi Publishing
             </h2>
@@ -352,18 +324,6 @@
                         class="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500">
                     <span class="ml-2 text-sm" style="color: rgba(235,235,245,0.8);">
                         Auto-publish artikel (langsung published tanpa review)
-                    </span>
-                </label>
-
-                <label class="flex items-center">
-                    <input 
-                        type="checkbox" 
-                        name="auto_add_tags" 
-                        value="1"
-                        {{ $config->auto_add_tags ? 'checked' : '' }}
-                        class="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500">
-                    <span class="ml-2 text-sm" style="color: rgba(235,235,245,0.8);">
-                        Auto-generate tags dari konten
                     </span>
                 </label>
             </div>
@@ -422,7 +382,9 @@ document.getElementById('toggleAutoPost').addEventListener('click', function() {
             button.classList.toggle('dark:bg-gray-700', !data.is_enabled);
             button.querySelector('span:last-child').classList.toggle('translate-x-6', data.is_enabled);
             button.querySelector('span:last-child').classList.toggle('translate-x-1', !data.is_enabled);
-            button.nextElementSibling.nextElementSibling.textContent = data.is_enabled ? 'Aktif' : 'Nonaktif';
+            // Update status text (next sibling span)
+            const statusText = button.nextElementSibling;
+            if (statusText) statusText.textContent = data.is_enabled ? 'Aktif' : 'Nonaktif';
             
             // Show toast
             const toast = document.createElement('div');

@@ -85,8 +85,18 @@ class ArticleGenerationService
      */
     protected function generateTitle(ArticleTopic $topic): string
     {
-        // Use topic title as-is, it's already optimized
-        return $topic->title;
+        $title = $topic->title;
+
+        // Ensure year in title for SEO freshness signal
+        $year = date('Y');
+        if (!preg_match('/20\d{2}/', $title)) {
+            // Add year naturally
+            if (mb_strlen($title) + strlen(" $year") <= 80) {
+                $title .= " $year";
+            }
+        }
+
+        return $title;
     }
 
     /**
@@ -145,6 +155,14 @@ class ArticleGenerationService
     {
         $keywords = $topic->keywords ? implode(', ', $topic->keywords) : ($topic->language === 'en' ? 'business licensing' : 'perizinan usaha');
         
+        // Enforce minimum word count for SEO (content score needs ≥800 for +5, ≥1500 for +8)
+        $minWords = max($config->min_word_count, 800);
+        $maxWords = max($config->max_word_count, $minWords + 500);
+        
+        // Enforce minimum heading counts for SEO (headings score needs ≥3 H2, ≥2 H3)
+        $minHeadings = max($config->min_headings, 3);
+        $maxHeadings = max($config->max_headings, $minHeadings + 2);
+        
         // Language-specific context
         $languageContext = $this->getLanguageContext($topic->language, $topic->target_market);
         
@@ -159,11 +177,13 @@ class ArticleGenerationService
 **{$languageContext['topic_description']}** {$topic->description}
 
 **{$languageContext['content_requirements']}**
-1. **{$languageContext['length']}** {$config->min_word_count}-{$config->max_word_count} {$languageContext['words']}
+1. **{$languageContext['length']}** {$minWords}-{$maxWords} {$languageContext['words']}
 2. **{$languageContext['structure']}**
    - {$languageContext['opening']} (2-3 {$languageContext['paragraphs']}: {$languageContext['pain_point']})
-   - {$config->min_headings}-{$config->max_headings} {$languageContext['sections']}
+   - WAJIB minimal {$minHeadings} heading <h2> dan minimal 2 heading <h3> di bawah h2 yang relevan
    - {$languageContext['minimum']} {$config->min_paragraphs} {$languageContext['substantive_paragraphs']}
+   - WAJIB minimal 1 bullet list (<ul><li>) ATAU numbered list (<ol><li>)
+   - WAJIB gunakan <strong> untuk minimal 5 kata/frasa penting
    - {$languageContext['conclusion_cta']}
 3. **{$languageContext['writing_style']}**
    - {$languageContext['professional_tone']}
@@ -185,6 +205,14 @@ class ArticleGenerationService
 
 **{$languageContext['important']}**
 {$languageContext['important_points']}
+
+**SEO STRUCTURE CHECKLIST (WAJIB DIPENUHI):**
+- Minimal {$minHeadings} heading <h2> (bukan <h1>)
+- Minimal 2 heading <h3> di bawah <h2> yang relevan
+- Minimal 1 <ul> atau <ol> list
+- Minimal 5 penggunaan <strong> untuk kata kunci penting
+- Minimal 7 paragraf <p>
+- Panjang konten: {$minWords}-{$maxWords} kata
 
 {$languageContext['output_instruction']}
 ";
@@ -392,61 +420,124 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
     }
 
     /**
-     * Generate excerpt from content
+     * Generate excerpt from content (SEO: ≥100 chars for excerpt_schema score)
      */
     protected function generateExcerpt(string $content): string
     {
-        // Strip HTML tags
         $text = strip_tags($content);
-        
-        // Get first 200 characters
-        $excerpt = Str::limit($text, 200, '...');
-        
-        return $excerpt;
+        $text = trim(preg_replace('/\s+/', ' ', $text));
+
+        // Target 120-200 chars for optimal SEO score
+        $excerpt = Str::limit($text, 180, '');
+
+        // Ensure minimum 100 chars
+        if (mb_strlen($excerpt) < 100 && mb_strlen($text) >= 100) {
+            $excerpt = Str::limit($text, 180, '');
+        }
+
+        // Append brief CTA
+        $excerpt = trim($excerpt) . '. Selengkapnya di Bizmark.';
+
+        return Str::limit($excerpt, 250, '');
     }
 
     /**
-     * Generate meta title (optimized for SEO)
+     * Generate meta title (SEO-optimized: year + Bizmark + power words, ≤55 chars)
+     * Must differ from article title for +2 SEO score bonus
      */
     protected function generateMetaTitle(ArticleTopic $topic): string
     {
-        // Keep it under 60 characters for SEO
-        $metaTitle = $topic->title;
-        
-        if (strlen($metaTitle) > 60) {
-            $metaTitle = Str::limit($metaTitle, 57, '...');
+        $year = date('Y');
+        $title = $topic->title;
+
+        // Power words that boost CTR and SEO score
+        $powerWords = ['Panduan', 'Tips', 'Lengkap', 'Terbaru', 'Update', 'Cara'];
+        $hasPowerWord = false;
+        foreach ($powerWords as $pw) {
+            if (Str::contains($title, $pw, true)) {
+                $hasPowerWord = true;
+                break;
+            }
         }
-        
+
+        // Build optimized meta title: "Topic Keyword Year | Bizmark"
+        $suffix = " $year | Bizmark";
+        $maxBase = 55 - mb_strlen($suffix); // Reserve space for suffix
+
+        // Extract core topic (remove existing year/brand if present)
+        $base = preg_replace('/\s*20\d{2}\s*/', ' ', $title);
+        $base = preg_replace('/\s*\|?\s*[Bb]izmark\s*/', '', $base);
+        $base = trim($base);
+
+        // Add power word if missing and space allows
+        if (!$hasPowerWord && mb_strlen($base) + 10 <= $maxBase) {
+            $base = 'Panduan ' . $base;
+        }
+
+        // Truncate base to fit within limit
+        if (mb_strlen($base) > $maxBase) {
+            $base = Str::limit($base, $maxBase - 1, '');
+            // Clean trailing partial word
+            $base = preg_replace('/\s+\S*$/', '', $base);
+        }
+
+        $metaTitle = trim($base) . $suffix;
+
         return $metaTitle;
     }
 
     /**
-     * Generate meta description
+     * Generate meta description (SEO-optimized: 130-155 chars, CTA, keywords)
      */
     protected function generateMetaDescription(ArticleTopic $topic): string
     {
-        // Use topic description if available, otherwise generate
-        if ($topic->description) {
-            $description = $topic->description;
+        // Extract keywords from title for SEO relevance matching
+        $titleWords = array_filter(
+            explode(' ', strtolower($topic->title)),
+            fn($w) => mb_strlen($w) > 3 && !in_array($w, ['yang', 'untuk', 'dari', 'dengan', 'dalam'])
+        );
+        $keyPhrase = implode(' ', array_slice($titleWords, 0, 3));
+
+        // CTA phrases that boost meta_description score
+        $ctaPhrases = [
+            'Konsultasi gratis di Bizmark!',
+            'Hubungi Bizmark untuk bantuan profesional!',
+            'Pelajari selengkapnya di Bizmark.',
+        ];
+        $cta = $ctaPhrases[array_rand($ctaPhrases)];
+
+        if ($topic->description && mb_strlen($topic->description) >= 60) {
+            $base = $topic->description;
         } else {
-            $description = "Panduan lengkap tentang {$topic->title}. Informasi terkini dari konsultan perizinan profesional.";
+            $base = "Panduan lengkap tentang {$keyPhrase}. Informasi terkini {$topic->title} dari konsultan perizinan profesional.";
         }
-        
-        // Keep it under 160 characters for SEO
-        if (strlen($description) > 160) {
+
+        // Trim base and append CTA to hit 130-155 chars
+        $targetLen = 150 - mb_strlen($cta) - 2; // -2 for ". " separator
+        if (mb_strlen($base) > $targetLen) {
+            $base = Str::limit($base, $targetLen, '');
+            $base = preg_replace('/\s+\S*$/', '', $base);
+        }
+
+        // Ensure clean sentence end before CTA
+        $base = rtrim(trim($base), '.,;:!?');
+        $description = $base . '. ' . $cta;
+
+        // Final safety: cap at 160
+        if (mb_strlen($description) > 160) {
             $description = Str::limit($description, 157, '...');
         }
-        
+
         return $description;
     }
 
     /**
-     * Generate meta keywords
+     * Generate meta keywords (SEO-optimized: 5-8 keywords with Bizmark)
      */
     protected function generateKeywords(ArticleTopic $topic): string
     {
         $keywords = $topic->keywords ?? [];
-        
+
         // Add category-specific keywords
         $categoryKeywords = [
             'tips' => ['panduan', 'cara', 'tips'],
@@ -455,35 +546,57 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
             'news' => ['berita', 'update', 'terbaru'],
             'general' => ['perizinan', 'konsultan', 'jasa'],
         ];
-        
+
         if (isset($categoryKeywords[$topic->category])) {
             $keywords = array_merge($keywords, $categoryKeywords[$topic->category]);
         }
-        
-        // Add common keywords
+
+        // Add common keywords + brand (required for SEO score)
         $keywords[] = 'perizinan usaha';
+        $keywords[] = 'Bizmark';
         $keywords[] = 'Indonesia';
-        
-        // Remove duplicates and limit to 10 keywords
+
+        // Remove duplicates and target 5-8 keywords
         $keywords = array_unique($keywords);
-        $keywords = array_slice($keywords, 0, 10);
-        
+        $keywords = array_slice($keywords, 0, 8);
+
+        // Ensure minimum 5 keywords
+        if (count($keywords) < 5) {
+            $fillers = ['konsultan perizinan', 'izin usaha', 'dokumen lingkungan', 'OSS', 'NIB'];
+            foreach ($fillers as $filler) {
+                if (count($keywords) >= 5) break;
+                if (!in_array($filler, $keywords)) {
+                    $keywords[] = $filler;
+                }
+            }
+        }
+
         return implode(', ', $keywords);
     }
 
     /**
-     * Generate tags from topic
+     * Generate tags from topic (SEO: minimum 3 tags for excerpt_schema score)
      */
     protected function generateTags(ArticleTopic $topic): array
     {
         $tags = $topic->tags ?? [];
-        
+
         // If no tags, generate from keywords
         if (empty($tags) && !empty($topic->keywords)) {
             $tags = array_slice($topic->keywords, 0, 5);
         }
-        
-        return $tags;
+
+        // Ensure minimum 3 tags for SEO score (excerpt_schema factor needs ≥2)
+        if (count($tags) < 3) {
+            $fillers = [$topic->category, 'Perizinan', 'Bizmark', 'Indonesia'];
+            foreach ($fillers as $filler) {
+                if ($filler && count($tags) < 3 && !in_array($filler, $tags)) {
+                    $tags[] = $filler;
+                }
+            }
+        }
+
+        return array_values(array_unique($tags));
     }
 
     /**

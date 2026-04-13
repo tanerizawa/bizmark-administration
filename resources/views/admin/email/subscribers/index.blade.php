@@ -21,7 +21,7 @@
     <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div class="space-y-3 max-w-3xl">
             <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Audiens</p>
-            <h1 class="text-2xl md:text-3xl font-bold text-white">Pelanggan Newsletter</h1>
+            <h1 class="text-2xl md:text-xl font-bold text-white">Pelanggan Newsletter</h1>
             <p class="text-sm md:text-base" style="color: rgba(235,235,245,0.7);">
                 Kelola daftar pelanggan, status keaktifan, dan kategori audiens secara terpusat.
             </p>
@@ -58,22 +58,22 @@
 <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Pelanggan</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($stats['total']) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($stats['total']) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ number_format($stats['active']) }} aktif</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Aktif</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($stats['active']) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($stats['active']) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Dapat menerima email</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Berhenti</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($stats['unsubscribed']) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($stats['unsubscribed']) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu tindak lanjut</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Gagal</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($stats['bounced']) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($stats['bounced']) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu verifikasi email</p>
     </div>
 </section>
@@ -83,7 +83,7 @@
     <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
             <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-            <h2 class="text-lg font-semibold text-white">Cari Pelanggan</h2>
+            <h2 class="text-sm font-semibold text-white">Cari Pelanggan</h2>
         </div>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $subscribers->total() }} pelanggan ditemukan</p>
     </div>

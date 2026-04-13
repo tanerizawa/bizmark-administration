@@ -53,6 +53,10 @@ class TaskController extends Controller
                 ->whereDate('due_date', now()->toDateString())
                 ->where('status', '!=', 'done')
                 ->count(),
+            'week' => Task::where('assigned_user_id', auth()->id())
+                ->whereBetween('due_date', [now()->startOfDay(), now()->addDays(7)])
+                ->where('status', '!=', 'done')
+                ->count(),
             'overdue' => Task::where('assigned_user_id', auth()->id())
                 ->where('due_date', '<', now())
                 ->where('status', '!=', 'done')
@@ -96,19 +100,19 @@ class TaskController extends Controller
         
         $stats = [
             'all' => Task::where('assigned_user_id', auth()->id())
-                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->where('status', '!=', 'done')
                 ->count(),
             'today' => Task::where('assigned_user_id', auth()->id())
                 ->whereDate('due_date', $today)
-                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->where('status', '!=', 'done')
                 ->count(),
             'week' => Task::where('assigned_user_id', auth()->id())
                 ->whereBetween('due_date', [$today, $weekEnd])
-                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->where('status', '!=', 'done')
                 ->count(),
             'overdue' => Task::where('assigned_user_id', auth()->id())
                 ->where('due_date', '<', $today)
-                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->where('status', '!=', 'done')
                 ->count(),
         ];
         
@@ -147,8 +151,8 @@ class TaskController extends Controller
             'priority_label' => $priorityLabels[$task->priority ?? 'medium'] ?? 'Medium',
             'due_date' => $task->due_date,
             'due_date_formatted' => $this->formatDueDate($dueDate),
-            'is_overdue' => $dueDate->isPast() && $task->status !== 'completed',
-            'is_due_soon' => $dueDate->isToday() || ($dueDate->isTomorrow() && $task->status !== 'completed'),
+            'is_overdue' => $dueDate->isPast() && $task->status !== 'done',
+            'is_due_soon' => $dueDate->isToday() || ($dueDate->isTomorrow() && $task->status !== 'done'),
             'project_id' => $task->project_id,
             'project_name' => $task->project->name ?? null,
             'assigned_to_id' => $task->assigned_user_id,
@@ -227,14 +231,15 @@ class TaskController extends Controller
         $task->update([
             'status' => 'done',
             'completed_at' => now(),
-            'completed_by' => auth()->id()
         ]);
         
-        // Log activity
-        activity()
-            ->performedOn($task)
-            ->causedBy(auth()->user())
-            ->log('task_completed');
+        // Log activity (only if spatie/laravel-activitylog is installed)
+        if (function_exists('activity')) {
+            activity()
+                ->performedOn($task)
+                ->causedBy(auth()->user())
+                ->log('task_completed');
+        }
         
         return response()->json([
             'success' => true,
@@ -258,19 +263,20 @@ class TaskController extends Controller
         if ($request->status === 'done') {
             $task->update([
                 'completed_at' => now(),
-                'completed_by' => auth()->id()
             ]);
         }
         
-        // Log activity
-        activity()
-            ->performedOn($task)
-            ->causedBy(auth()->user())
-            ->withProperties([
-                'old_status' => $oldStatus,
-                'new_status' => $request->status
-            ])
-            ->log('task_status_changed');
+        // Log activity (only if spatie/laravel-activitylog is installed)
+        if (function_exists('activity')) {
+            activity()
+                ->performedOn($task)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'old_status' => $oldStatus,
+                    'new_status' => $request->status
+                ])
+                ->log('task_status_changed');
+        }
         
         return response()->json([
             'success' => true,

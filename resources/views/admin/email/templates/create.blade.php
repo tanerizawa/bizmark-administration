@@ -72,7 +72,7 @@
                             @enderror
                             <div class="form-text text-muted">
                                 <i class="fas fa-info-circle me-1"></i>
-                                Use variables like {{month}}, {{year}}, {{name}} in subject
+                                Use variables like @{{month}}, @{{year}}, @{{name}} in subject
                             </div>
                         </div>
 
@@ -113,7 +113,8 @@
                                       id="content" 
                                       name="content" 
                                       rows="20" 
-                                      required>{{ old('content', '<html>
+@php
+$defaultEmailContent = '<html>
 <head>
     <meta charset="UTF-8">
     <style>
@@ -127,7 +128,9 @@
         <p>Your content here...</p>
     </div>
 </body>
-</html>') }}</textarea>
+</html>';
+@endphp
+                                      required>{{ old('content', $defaultEmailContent) }}</textarea>
                             @error('content')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -198,22 +201,22 @@
                         <p class="text-muted mb-2">Use these variables in your template:</p>
                         <div class="d-flex flex-wrap gap-2">
                             <span class="badge bg-secondary" style="cursor: pointer;" onclick="insertVariable('name')">
-                                {{name}}
+                                @{{name}}
                             </span>
                             <span class="badge bg-secondary" style="cursor: pointer;" onclick="insertVariable('email')">
-                                {{email}}
+                                @{{email}}
                             </span>
                             <span class="badge bg-secondary" style="cursor: pointer;" onclick="insertVariable('phone')">
-                                {{phone}}
+                                @{{phone}}
                             </span>
                             <span class="badge bg-secondary" style="cursor: pointer;" onclick="insertVariable('unsubscribe_url')">
-                                {{unsubscribe_url}}
+                                @{{unsubscribe_url}}
                             </span>
                             <span class="badge bg-secondary" style="cursor: pointer;" onclick="insertVariable('month')">
-                                {{month}}
+                                @{{month}}
                             </span>
                             <span class="badge bg-secondary" style="cursor: pointer;" onclick="insertVariable('year')">
-                                {{year}}
+                                @{{year}}
                             </span>
                         </div>
                         <small class="text-muted mt-2 d-block">
@@ -327,7 +330,7 @@ function insertFooter() {
     <p style="color: #6c757d; margin: 0 0 10px 0;">© ${new Date().getFullYear()} Bizmark.ID. All rights reserved.</p>
     <p style="color: #6c757d; margin: 0;">
         <a href="https://bizmark.id" style="color: #667eea; text-decoration: none;">Visit Website</a> |
-        <a href="https://wa.me/62838796028550" style="color: #667eea; text-decoration: none;">WhatsApp</a>
+        <a href="{{ data_get(config('landing_metrics'), 'contact.whatsapp_link', 'https://wa.me/6283879602855') }}" style="color: #667eea; text-decoration: none;">WhatsApp</a>
     </p>
 </div>
 `;

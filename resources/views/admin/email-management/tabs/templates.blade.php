@@ -1,45 +1,57 @@
 <div class="space-y-4">
     {{-- Header Section --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="email-panel-header">
         <div>
-            <h2 class="text-xl font-semibold text-white">Email Templates</h2>
+            <h2 class="text-base font-semibold text-white">Email Templates</h2>
             <p class="text-sm" style="color: rgba(235,235,245,0.6);">
                 Buat dan kelola template email untuk kampanye marketing
             </p>
         </div>
-        <a href="{{ route('admin.templates.create') ?? '#' }}" class="btn-apple-primary-sm px-4 py-2">
+        <a href="{{ route('admin.templates.create') ?? '#' }}" class="btn-apple-primary-sm px-3 py-2">
             <i class="fas fa-plus mr-2"></i>New Template
         </a>
     </div>
 
     {{-- Filters --}}
-    <div class="flex flex-wrap items-center gap-3">
-        <div class="flex-1 min-w-[200px]">
-            <input type="text" placeholder="Search templates..." 
-                   class="input-apple w-full" value="{{ request('search') }}">
+    <form method="GET" action="{{ route('admin.email-management.index') }}" class="email-toolbar">
+        <input type="hidden" name="tab" value="templates">
+        <div class="email-toolbar-grid compact-4">
+            <div class="email-filter">
+                <label for="template-search">Pencarian</label>
+                <input id="template-search" type="text" placeholder="Nama template atau subject..." name="search"
+                       class="input-apple w-full" value="{{ request('tab') === 'templates' ? request('search') : '' }}">
+            </div>
+            <div class="email-filter">
+                <label for="template-category">Kategori</label>
+                <select id="template-category" name="category" class="input-apple w-full">
+                    <option value="">Semua Kategori</option>
+                    @foreach(($categories ?? []) as $category)
+                        <option value="{{ $category }}" {{ request('tab') === 'templates' && request('category') === $category ? 'selected' : '' }}>{{ ucfirst($category) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="submit" class="btn-apple-primary-sm px-4 py-2">
+                <i class="fas fa-filter mr-2"></i>Filter
+            </button>
+            <a href="{{ route('admin.email-management.index', ['tab' => 'templates']) }}" class="btn-apple-sm px-4 py-2">
+                Reset
+            </a>
         </div>
-        <select class="input-apple min-w-[150px]">
-            <option value="">All Categories</option>
-            <option value="marketing" {{ request('category') == 'marketing' ? 'selected' : '' }}>Marketing</option>
-            <option value="newsletter" {{ request('category') == 'newsletter' ? 'selected' : '' }}>Newsletter</option>
-            <option value="notification" {{ request('category') == 'notification' ? 'selected' : '' }}>Notification</option>
-            <option value="transactional" {{ request('category') == 'transactional' ? 'selected' : '' }}>Transactional</option>
-        </select>
-    </div>
+    </form>
 
     {{-- Template Grid --}}
     @if(isset($templates) && $templates->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             @foreach($templates as $template)
-                <div class="card-elevated rounded-apple-lg overflow-hidden hover:bg-opacity-80 transition-apple">
+            <div class="card-elevated rounded-apple-lg overflow-hidden hover:bg-opacity-80 transition-apple email-table-shell">
                     {{-- Thumbnail --}}
-                    <div class="h-40 overflow-hidden relative" style="background: linear-gradient(135deg, rgba(10,132,255,0.2), rgba(30,86,172,0.2));">
+                        <div class="h-32 overflow-hidden relative" style="background: linear-gradient(135deg, rgba(10,132,255,0.2), rgba(30,86,172,0.2));">
                         @if($template->thumbnail)
                             <img src="{{ asset('storage/' . $template->thumbnail) }}" alt="{{ $template->name }}"
                                  class="w-full h-full object-cover">
                         @else
                             <div class="flex items-center justify-center h-full">
-                                <i class="fas fa-file-code text-5xl" style="color: rgba(235,235,245,0.3);"></i>
+                                <i class="fas fa-file-code text-3xl" style="color: rgba(235,235,245,0.3);"></i>
                             </div>
                         @endif
                         
@@ -107,9 +119,13 @@
                                    class="text-sm" style="color: rgba(10,132,255,1);">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <button class="text-sm" style="color: rgba(52,199,89,1);">
-                                    <i class="fas fa-clone"></i>
-                                </button>
+                                <form action="{{ route('admin.templates.destroy', $template->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus template ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-sm" style="color: rgba(255,69,58,1);">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -124,9 +140,9 @@
             </div>
         @endif
     @else
-        <div class="text-center py-12">
-            <i class="fas fa-file-code text-5xl mb-4" style="color: rgba(235,235,245,0.3);"></i>
-            <p class="text-lg font-medium text-white mb-2">No Templates Yet</p>
+        <div class="email-empty-state">
+            <i class="fas fa-file-code"></i>
+            <p class="text-base font-medium text-white mb-2">No Templates Yet</p>
             <p class="text-sm mb-4" style="color: rgba(235,235,245,0.6);">
                 Create email templates to streamline your campaigns
             </p>

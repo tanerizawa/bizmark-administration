@@ -15,7 +15,7 @@
             <div class="flex items-center justify-between">
                 <div class="space-y-2">
                     <p class="text-sm uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Content Management</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                    <h1 class="text-2xl md:text-xl font-bold" style="color: #FFFFFF;">
                         Edit Topic: {{ $topic->title }}
                     </h1>
                     <p class="text-sm" style="color: rgba(235,235,245,0.75);">
@@ -167,41 +167,45 @@
                 <div class="space-y-6">
                     <div>
                         <label class="block text-sm font-medium text-dark-text-primary mb-3">
-                            Target Audience
+                            Generation Notes
                         </label>
-                        <input 
-                            type="text" 
-                            name="target_audience" 
-                            value="{{ old('target_audience', $topic->target_audience) }}" 
-                            placeholder="Contoh: Pengusaha UMKM, Developer properti"
+                        <textarea 
+                            name="generation_notes" 
+                            rows="3"
+                            placeholder="Instruksi khusus untuk AI: target audience, content angle, gaya penulisan, dll."
                             class="w-full px-4 py-3 rounded-apple text-sm text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-apple-blue" 
-                            style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
+                            style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">{{ old('generation_notes', $topic->generation_notes) }}</textarea>
+                        <p class="mt-2 text-xs text-dark-text-tertiary">
+                            <i class="fas fa-info-circle mr-1"></i>Contoh: Targetkan pengusaha UMKM, fokus panduan praktis, gunakan bahasa sederhana
+                        </p>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-dark-text-primary mb-3">
-                            Content Angle
-                        </label>
-                        <input 
-                            type="text" 
-                            name="content_angle" 
-                            value="{{ old('content_angle', $topic->content_angle) }}" 
-                            placeholder="Contoh: Panduan praktis, Analisis mendalam, Tips hemat biaya"
-                            class="w-full px-4 py-3 rounded-apple text-sm text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-apple-blue" 
-                            style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
-                    </div>
-
-                    <div class="flex items-center space-x-3 p-4 rounded-apple" style="background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.3);">
-                        <input 
-                            type="checkbox" 
-                            name="is_evergreen" 
-                            value="1" 
-                            id="is_evergreen_edit"
-                            {{ old('is_evergreen', $topic->is_evergreen) ? 'checked' : '' }}
-                            class="rounded text-apple-green focus:ring-apple-green">
-                        <label for="is_evergreen_edit" class="text-sm font-medium text-dark-text-primary">
-                            <i class="fas fa-leaf mr-2 text-apple-green"></i>Evergreen Content (dapat digunakan berkali-kali)
-                        </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-dark-text-primary mb-3">
+                                Language
+                            </label>
+                            <select 
+                                name="language"
+                                class="w-full px-4 py-3 rounded-apple text-sm text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-apple-blue" 
+                                style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
+                                <option value="id" {{ old('language', $topic->language ?? 'id') === 'id' ? 'selected' : '' }}>Bahasa Indonesia</option>
+                                <option value="en" {{ old('language', $topic->language) === 'en' ? 'selected' : '' }}>English</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-dark-text-primary mb-3">
+                                Target Market
+                            </label>
+                            <select 
+                                name="target_market"
+                                class="w-full px-4 py-3 rounded-apple text-sm text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-apple-blue" 
+                                style="background: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
+                                <option value="local" {{ old('target_market', $topic->target_market ?? 'local') === 'local' ? 'selected' : '' }}>Local (UMKM, CV, PT Lokal)</option>
+                                <option value="pma" {{ old('target_market', $topic->target_market) === 'pma' ? 'selected' : '' }}>PMA / Foreign Investment</option>
+                                <option value="both" {{ old('target_market', $topic->target_market) === 'both' ? 'selected' : '' }}>Both</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

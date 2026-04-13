@@ -24,7 +24,7 @@
                     <span class="text-dark-text-tertiary">/</span>
                     <span>Interviews</span>
                 </div>
-                <h1 class="text-2xl font-semibold text-white leading-tight">Manajemen Interview</h1>
+                <h1 class="text-xl font-semibold text-white leading-tight">Manajemen Interview</h1>
                 <p class="text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
                     Jadwalkan dan pantau interview kandidat dalam satu panel.
                 </p>
@@ -41,22 +41,22 @@
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Interview Hari Ini</p>
-            <p class="text-2xl font-bold text-white">{{ $todayInterviews->count() }}</p>
+            <p class="text-lg font-bold text-white">{{ $todayInterviews->count() }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Terlaksana hari ini</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Akan Datang</p>
-            <p class="text-2xl font-bold text-white">{{ $upcomingInterviews->count() }}</p>
+            <p class="text-lg font-bold text-white">{{ $upcomingInterviews->count() }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Terjadwal</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Selesai</p>
-            <p class="text-2xl font-bold text-white">{{ $completedCount }}</p>
+            <p class="text-lg font-bold text-white">{{ $completedCount }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Status selesai</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,59,48,0.9);">Dibatalkan</p>
-            <p class="text-2xl font-bold text-white">{{ $cancelledCount }}</p>
+            <p class="text-lg font-bold text-white">{{ $cancelledCount }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Total batal</p>
         </div>
     </section>
@@ -90,8 +90,6 @@
                                     <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $interview->jobApplication?->jobVacancy?->title ?? 'Position Deleted' }}</p>
                                 </div>
                                 <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: {{ $interview->status === 'scheduled' ? 'rgba(10,132,255,0.2)' : 'rgba(142,142,147,0.2)' }};">
-                                <span class="rounded-full font-semibold" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: {{ $interview->status === 'scheduled' ? 'var(--neuro-primary)' : 'var(--text-dark-tertiary)' }}; opacity: var(--opacity-bg-medium); color: {{ $interview->status === 'scheduled' ? 'var(--neuro-primary)' : 'var(--text-dark-tertiary)' }};">
->>>>>>> Stashed changes
                                     {{ ucfirst($interview->status) }}
                                 </span>
                             </div>

@@ -1,0 +1,52 @@
+# SearXNG Settings for Bizmark.id Competitive Intelligence
+# Docs: https://docs.searxng.org/admin/settings/settings.html
+
+use_default_settings: true
+
+general:
+  instance_name: "Bizmark Search"
+  debug: false
+
+search:
+  safe_search: 0
+  default_lang: "id-ID"
+  formats:
+    - html
+    - json
+
+server:
+  secret_key: "bizmark-searxng-secret-change-me"
+  bind_address: "0.0.0.0"
+  port: 8080
+  limiter: false
+  image_proxy: false
+
+ui:
+  static_use_hash: true
+
+engines:
+  # Google
+  - name: google
+    engine: google
+    shortcut: g
+    disabled: false
+
+  # Bing
+  - name: bing
+    engine: bing
+    shortcut: b
+    disabled: false
+
+  # DuckDuckGo
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: false
+
+  # Disable unnecessary engines to keep results fast
+  - name: wikipedia
+    disabled: true
+  - name: wikidata
+    disabled: true
+  - name: currency
+    disabled: true

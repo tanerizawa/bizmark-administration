@@ -188,6 +188,13 @@ class ArticleTopic extends Model
         ]);
     }
 
+    public function markAsScheduled($scheduledAt = null)
+    {
+        $this->update([
+            'scheduled_for' => $scheduledAt ?? now(),
+        ]);
+    }
+
     public function clearScheduling()
     {
         $this->update(['scheduled_for' => null]);

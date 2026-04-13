@@ -29,8 +29,11 @@
             </div>
             <p class="text-xs text-gray-400">
                 Email resmi: 
-                <a href="mailto:cs@bizmark.id" class="text-white font-semibold hover:underline">
-                    cs@bizmark.id
+                @php
+                    $supportEmail = data_get(config('landing_metrics'), 'contact.email', 'info@bizmark.id');
+                @endphp
+                <a href="mailto:{{ $supportEmail }}" class="text-white font-semibold hover:underline">
+                    {{ $supportEmail }}
                 </a>
             </p>
         </div>

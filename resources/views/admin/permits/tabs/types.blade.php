@@ -4,22 +4,22 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Total Jenis</p>
-            <p class="text-3xl font-bold text-white">{{ $totalTypes }}</p>
+            <p class="text-xl font-bold text-white">{{ $totalTypes }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Izin terdaftar</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Aktif</p>
-            <p class="text-3xl font-bold" style="color: rgba(52,199,89,1);">{{ $activeTypes }}</p>
+            <p class="text-xl font-bold" style="color: rgba(52,199,89,1);">{{ $activeTypes }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Bisa digunakan klien</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Permohonan</p>
-            <p class="text-3xl font-bold" style="color: rgba(10,132,255,1);">{{ $totalApplications }}</p>
+            <p class="text-xl font-bold" style="color: rgba(10,132,255,1);">{{ $totalApplications }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Menggunakan jenis ini</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Harga Rata-rata</p>
-            <p class="text-3xl font-bold" style="color: rgba(255,159,10,1);">
+            <p class="text-xl font-bold" style="color: rgba(255,159,10,1);">
                 {{ $avgPrice ? 'Rp '.number_format($avgPrice/1000, 0).'K' : 'N/A' }}
             </p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Base price</p>
@@ -30,7 +30,7 @@
     <div class="flex items-center justify-between gap-3">
         <div>
             <p class="text-xs uppercase tracking-[0.35em]" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Manajemen</p>
-            <h2 class="text-lg font-semibold text-white">Katalog Jenis Izin</h2>
+            <h2 class="text-sm font-semibold text-white">Katalog Jenis Izin</h2>
         </div>
         <a href="{{ route('permit-types.create') }}" class="btn-primary-sm">
             <i class="fas fa-plus mr-2"></i>Tambah Jenis Izin
@@ -138,8 +138,8 @@
                         <tr>
                             <td colspan="5" class="px-4 py-16 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-certificate text-6xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
-                                    <h3 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Jenis Izin</h3>
+                                    <i class="fas fa-certificate text-4xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
+                                    <h3 class="text-base font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Jenis Izin</h3>
                                     <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">
                                         Tambahkan jenis izin untuk memulai
                                     </p>

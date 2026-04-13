@@ -20,22 +20,22 @@
 <section class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-5">
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Pending</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($pendingCount ?? 0) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($pendingCount ?? 0) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu peninjauan</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Interview</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($interviewCount ?? 0) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($interviewCount ?? 0) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Proses wawancara</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(48,209,88,0.9);">Diterima</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($offeredCount ?? 0) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($offeredCount ?? 0) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Kandidat sukses</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
         <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditolak</p>
-        <p class="text-3xl font-bold text-white">{{ number_format($applications->where('status', 'rejected')->count()) }}</p>
+        <p class="text-xl font-bold text-white">{{ number_format($applications->where('status', 'rejected')->count()) }}</p>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tidak sesuai kriteria</p>
     </div>
 </section>
@@ -61,7 +61,7 @@
     <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
             <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-            <h2 class="text-lg font-semibold text-white">Temukan Kandidat</h2>
+            <h2 class="text-sm font-semibold text-white">Temukan Kandidat</h2>
         </div>
         <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $applications->total() }} lamaran ditemukan</p>
     </div>

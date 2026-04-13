@@ -44,7 +44,7 @@ class SecurityHeaders
                 "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.ckeditor.com" . $viteDevServer,
                 "img-src 'self' data: https: blob:",
                 "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.ckeditor.com",
-                "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://wa.me https://cdn.jsdelivr.net https://cloudflareinsights.com https://cdn.ckeditor.com" . $viteDevServer,
+                "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://wa.me https://cdn.jsdelivr.net https://cloudflareinsights.com https://cdn.ckeditor.com https://unpkg.com https://cdnjs.cloudflare.com https://*.tile.openstreetmap.org https://server.arcgisonline.com https://ibnux.github.io" . $viteDevServer,
                 "frame-src 'self' https://www.youtube.com",
                 "object-src 'none'",
                 "base-uri 'self'",

@@ -302,22 +302,115 @@ class EmailMimeParser
      */
     public function extractPreview(string $content, int $length = 150): string
     {
-        // Strip HTML tags
-        $text = strip_tags($content);
-        
-        // Remove extra whitespace
-        $text = preg_replace('/\s+/', ' ', $text);
-        $text = trim($text);
-        
-        // Remove common email signatures
-        $text = preg_split('/(-{2,}|Best regards|Regards|Terima kasih|Salam|Sent from)/i', $text, 2)[0];
-        
-        // Truncate
-        if (mb_strlen($text) > $length) {
-            $text = mb_substr($text, 0, $length) . '...';
+        $text = html_entity_decode(strip_tags($content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = str_replace(["\r\n", "\r"], "\n", $text);
+        $text = preg_replace('/[\x{00A0}\x{200B}-\x{200D}\x{FEFF}]/u', ' ', $text);
+
+        $lines = preg_split('/\n+/', $text) ?: [];
+        $meaningfulLines = [];
+
+        foreach ($lines as $line) {
+            $cleanLine = $this->normalizePreviewLine($line);
+
+            if ($cleanLine === '') {
+                continue;
+            }
+
+            if ($this->isQuotedOrForwardedLine($cleanLine)) {
+                if (!empty($meaningfulLines)) {
+                    break;
+                }
+
+                continue;
+            }
+
+            if ($this->isSignatureLine($cleanLine)) {
+                if (!empty($meaningfulLines)) {
+                    break;
+                }
+
+                continue;
+            }
+
+            if (!empty($meaningfulLines) && $this->isLikelySignatureContinuation($cleanLine)) {
+                break;
+            }
+
+            $meaningfulLines[] = $cleanLine;
+
+            if (mb_strlen(implode(' ', $meaningfulLines)) >= $length + 40) {
+                break;
+            }
         }
-        
-        return $text;
+
+        $preview = trim(implode(' ', $meaningfulLines));
+
+        if ($preview === '') {
+            $preview = $this->normalizePreviewLine($text);
+        }
+
+        $preview = preg_replace('/\s+/', ' ', $preview);
+        $preview = trim((string) $preview, " \t\n\r\0\x0B-_:|>");
+
+        if (mb_strlen($preview) > $length) {
+            $preview = rtrim(mb_substr($preview, 0, $length), " ,.;:-") . '...';
+        }
+
+        return $preview;
+    }
+
+    protected function normalizePreviewLine(string $line): string
+    {
+        $line = html_entity_decode($line, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $line = preg_replace('/\[cid:[^\]]+\]/i', ' ', $line);
+        $line = preg_replace('/https?:\/\/\S+/i', ' ', $line);
+        $line = preg_replace('/\bwww\.\S+/i', ' ', $line);
+        $line = preg_replace('/[*_`~#]+/', '', $line);
+        $line = preg_replace('/(^|\s)[>*_`~#|]+(?=\s|$)/', ' ', $line);
+        $line = preg_replace('/\s*\[[^\]]*\]\([^)]*\)/', ' ', $line);
+        $line = preg_replace('/\s+/', ' ', $line);
+
+        return trim((string) $line, " \t\n\r\0\x0B-_:|>");
+    }
+
+    protected function isQuotedOrForwardedLine(string $line): bool
+    {
+        if (preg_match('/^(from|to|cc|bcc|subject|date|sent|reply-to)\s*:/i', $line)) {
+            return true;
+        }
+
+        if (preg_match('/^(forwarded message|pesan diteruskan|begin forwarded message)/i', $line)) {
+            return true;
+        }
+
+        if (preg_match('/^on .+ wrote\s*:?$/i', $line)) {
+            return true;
+        }
+
+        return preg_match('/^>+/', $line) === 1;
+    }
+
+    protected function isSignatureLine(string $line): bool
+    {
+        if (preg_match('/^(-{2,}|_{2,})$/', $line)) {
+            return true;
+        }
+
+        return preg_match('/^(best regards|regards|kind regards|thanks|thank you|terima kasih|salam|warm regards|sent from)/i', $line) === 1;
+    }
+
+    protected function isLikelySignatureContinuation(string $line): bool
+    {
+        if (preg_match('/[@+]|\b(www|telp|phone|mobile|whatsapp|instagram|linkedin)\b/i', $line)) {
+            return true;
+        }
+
+        $wordCount = str_word_count($line);
+        $hasSentencePunctuation = preg_match('/[.!?]/', $line) === 1;
+        $mostlyTitleWords = preg_match('/^(?:[A-Z][\pL\'-]+\s*){1,6}$/u', $line) === 1;
+        $looksLikeTitle = preg_match('/\b(consultant|manager|director|founder|owner|ceo|coo|permit|property|marketing|sales|team|support)\b/i', $line) === 1;
+
+        return !$hasSentencePunctuation && $wordCount > 0 && $wordCount <= 8 && ($mostlyTitleWords || $looksLikeTitle);
     }
 
     /**

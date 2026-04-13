@@ -53,6 +53,18 @@ return [
             'Application submission and follow-up',
             'Approval and NIB issuance',
         ],
+        'narrative' => [
+            'intro' => 'Establishing your investment presence in Indonesia begins with BKPM (Badan Koordinasi Penanaman Modal) - the Investment Coordinating Board.',
+            'body' => 'For foreign investors, BKPM serves as your primary gateway to Indonesia\'s market. This government agency coordinates investment applications across multiple ministries and sectors, streamlining what would otherwise be a complex, multi-departmental process. Your investment approval from BKPM is not just a formality—it\'s the foundation that determines your legal business structure, operational scope, and access to investment incentives.|The Indonesian government has made significant strides in attracting foreign direct investment through the Online Single Submission (OSS) system. However, navigating this digital platform requires deep understanding of Indonesia\'s investment regulations, the Negative Investment List (DNI), sectoral restrictions, and capital requirements. A single misclassification in your business activities (KBLI codes) can delay your approval by weeks or even lead to rejection.',
+            'highlight' => 'Your BKPM approval determines whether you can access tax holidays (up to 20 years for certain sectors), import duty exemptions, expedited permits, and preferential land rights.',
+            'quote' => 'Our experience shows that well-prepared investment applications with proper KBLI alignment, realistic capital commitments, and complete documentation receive approval 40% faster than those submitted without professional guidance.',
+        ],
+        'faq' => [
+            ['q' => 'How long does BKPM investment registration take?', 'a' => 'The standard processing time is 30-45 business days after complete document submission. With our professional preparation, applications typically receive approval 40% faster than average.'],
+            ['q' => 'What is the minimum investment for PT PMA?', 'a' => 'The minimum total investment for PT PMA is IDR 10 billion (approximately USD 625,000), with minimum paid-up capital of IDR 10 billion. Some sectors have higher thresholds.'],
+            ['q' => 'Can I 100% own my company in Indonesia?', 'a' => 'Many sectors now allow 100% foreign ownership under the Positive Investment List (updated 2024). However, some sectors maintain foreign ownership caps. We verify eligibility before application.'],
+            ['q' => 'What are KBLI codes and why do they matter?', 'a' => 'KBLI (Klasifikasi Baku Lapangan Usaha Indonesia) codes define your permitted business activities. Incorrect codes can limit your operations or cause permit rejection. We ensure proper classification from the start.'],
+        ],
     ],
 
     'company-establishment' => [
@@ -102,6 +114,18 @@ return [
             'Ministry of Law submission',
             'Company registration and seal creation',
         ],
+        'narrative' => [
+            'intro' => 'Incorporating a PT PMA (Perseroan Terbatas Penanaman Modal Asing) is the legal foundation for your foreign investment company in Indonesia.',
+            'body' => 'Unlike company registration in Western jurisdictions, Indonesian company establishment involves multiple critical steps that must be executed in precise sequence. The process begins with a notarized deed of establishment, which must comply with both Indonesian corporate law and your parent company\'s governance requirements.|The Ministry of Law and Human Rights must approve your company structure before you can proceed with any operational activities. This approval process examines your articles of association for compliance with Indonesia\'s Company Law (Law No. 40/2007), foreign ownership regulations, and sector-specific requirements.',
+            'highlight' => 'Your initial capital structure affects not only your BKPM commitments but also your tax obligations, banking relationships, and future fundraising flexibility. Indonesia requires paid-up capital to be deposited and verified.',
+            'quote' => 'We\'ve seen companies delay operations by 2-3 months due to poorly structured articles of association that require post-establishment amendments. Our bilingual legal team ensures your company structure meets both Indonesian compliance standards and international corporate governance best practices from day one.',
+        ],
+        'faq' => [
+            ['q' => 'How long does PT PMA establishment take?', 'a' => 'With complete documents, the process typically takes 14-30 business days from notary deed signing to full registration completion including NIB issuance.'],
+            ['q' => 'What is the minimum capital requirement for PT PMA?', 'a' => 'The minimum authorized capital is IDR 10 billion with minimum paid-up capital of IDR 10 billion. Actual capital needs may be higher depending on your sector and business activities.'],
+            ['q' => 'Do I need a local partner or shareholder?', 'a' => 'Many sectors allow 100% foreign ownership. For sectors with foreign ownership restrictions, we can advise on compliant structuring options including local partner arrangements.'],
+            ['q' => 'Can I serve as director while living abroad?', 'a' => 'At least one director must hold a valid work permit (KITAS) and reside in Indonesia. We coordinate company establishment with immigration processing for seamless setup.'],
+        ],
     ],
 
     'tax-fiscal' => [
@@ -147,6 +171,18 @@ return [
             'PKP assessment and application',
             'E-tax system setup',
             'Tax incentive consultation',
+        ],
+        'narrative' => [
+            'intro' => 'Indonesia\'s tax system for foreign investors operates on both territorial and global taxation principles, requiring strategic structuring from the outset.',
+            'body' => 'Your company NPWP (Tax Identification Number) activates your obligations under Indonesian tax law and determines eligibility for bilateral tax treaties with over 70 countries, potentially reducing withholding tax rates on dividends, interest, and royalties from 20% to as low as 10% or 0%.|PKP (VAT) registration is required once annual revenue exceeds IDR 4.8 billion (~USD 300,000). Many foreign investors voluntarily register earlier to reclaim input VAT on capital expenditures and maintain credibility with enterprise customers.',
+            'highlight' => 'Indonesia offers substantial tax incentives: tax holidays (10-20 years CIT exemption), investment allowances (30% deductible over 6 years), and special economic zone benefits. Missing application windows can cost millions in lost tax benefits.',
+            'quote' => 'Our tax specialists integrate your NPWP/PKP registration with broader tax optimization strategies. We\'ve helped clients secure tax holidays worth USD 5-15 million over project lifecycles by properly structuring applications during the investment registration phase.',
+        ],
+        'faq' => [
+            ['q' => 'How long does NPWP registration take?', 'a' => 'Company NPWP registration typically takes 7-14 business days. We handle the complete process including e-tax system setup and digital certificate activation.'],
+            ['q' => 'When should I register for VAT (PKP)?', 'a' => 'PKP registration is mandatory when annual revenue exceeds IDR 4.8 billion. However, early voluntary registration allows you to reclaim input VAT on equipment imports and construction costs.'],
+            ['q' => 'What tax incentives are available for foreign investors?', 'a' => 'Key incentives include tax holidays (up to 20 years), investment allowances (30% over 6 years), and SEZ benefits. Eligibility depends on sector, investment value, and application timing.'],
+            ['q' => 'Does Indonesia have tax treaties with my country?', 'a' => 'Indonesia has tax treaties with 70+ countries. We analyze applicable treaties to optimize withholding tax rates on cross-border transactions including dividends, royalties, and interest payments.'],
         ],
     ],
 
@@ -195,6 +231,18 @@ return [
             'KITAS application and biometric data',
             'MERP and DP5 registration',
         ],
+        'narrative' => [
+            'intro' => 'Indonesia\'s immigration framework balances foreign expertise needs with local employment protection, requiring careful navigation for expatriate deployment.',
+            'body' => 'The IMTA (Work Permit) system operates on a quota basis—your company receives an allocation of expatriate positions based on investment value and employment creation. Each position requires justification: why it cannot be filled by Indonesian nationals, what skills transfer will occur, and how many local staff will receive training.|KITAS (Limited Stay Permit) processing has become more streamlined, but requires precise documentation sequencing. Your work permit must be approved before KITAS application, and both must align with your employment contract terms.',
+            'highlight' => 'Compliance obligations extend beyond initial approval: monthly MERP submissions, annual DP5 notifications, and DKPTKA payments of USD 1,200 per expatriate per year. Non-compliance results in denial of renewal applications.',
+            'quote' => 'We manage complete immigration lifecycles for clients—from initial RPTKA planning through annual renewals and family dependent processing. Our proactive calendar management has maintained 100% renewal success rates over the past 3 years.',
+        ],
+        'faq' => [
+            ['q' => 'How long does a work permit (IMTA) take?', 'a' => 'IMTA processing typically takes 14-21 business days from complete submission. We expedite by preparing perfect documentation and maintaining direct government coordination.'],
+            ['q' => 'Can my family accompany me to Indonesia?', 'a' => 'Yes, dependent KITAS can be issued for spouse and children. We handle family permits simultaneously with the primary work permit application for efficiency.'],
+            ['q' => 'What is DKPTKA and how much does it cost?', 'a' => 'DKPTKA (Dana Kompensasi Penggunaan Tenaga Kerja Asing) is a mandatory fee of USD 1,200 per expatriate per year, paid to the government as compensation for foreign worker deployment.'],
+            ['q' => 'Do I need to speak Indonesian to work here?', 'a' => 'Indonesian language proficiency requirements vary by position and sector. Some roles require basic Indonesian certification. We advise on specific requirements for your situation.'],
+        ],
     ],
 
     'environmental-compliance' => [
@@ -241,6 +289,18 @@ return [
             'Public consultation (for AMDAL)',
             'Document preparation and submission',
             'Technical assessment and approval',
+        ],
+        'narrative' => [
+            'intro' => 'Environmental compliance in Indonesia has evolved from bureaucratic requirement to strategic business imperative, particularly for foreign investors facing ESG scrutiny from global stakeholders.',
+            'body' => 'AMDAL (Environmental Impact Assessment) is mandatory for 17 categories of large-scale or high-impact projects. This requires comprehensive field surveys, laboratory analysis, public consultation, and expert assessment. Projects cannot commence construction until environmental approval is secured.|For medium-impact projects, UKL-UPL provides a simplified pathway but still demands technical rigor. Your environmental documents must demonstrate compliance with both Indonesian law and international standards if your parent company reports under GRI, TCFD, or SASB frameworks.',
+            'highlight' => 'Your environmental approval establishes ongoing obligations—quarterly monitoring reports, annual evaluations, third-party audits every two years. Non-compliance can result in operational suspensions costing hundreds of thousands per day.',
+            'quote' => 'Our environmental team includes certified AMDAL practitioners across multiple disciplines. We\'ve supported clients in aligning Indonesian environmental permits with ISO 14001 certification and parent company ESG reporting requirements.',
+        ],
+        'faq' => [
+            ['q' => 'Do I need AMDAL or UKL-UPL?', 'a' => 'The requirement depends on your project scale and sector. AMDAL is for high-impact projects (large manufacturing, mining, infrastructure). UKL-UPL covers medium-impact operations. We determine the correct pathway during initial screening.'],
+            ['q' => 'How long does the AMDAL process take?', 'a' => 'Full AMDAL typically takes 60-180 days including field surveys, public consultation, and government review. UKL-UPL is faster at 30-60 days. Timeline depends on project complexity and location.'],
+            ['q' => 'Can I start construction before environmental approval?', 'a' => 'No. Environmental clearance must be obtained before construction begins. Starting without approval can result in project shutdown, fines, and criminal penalties.'],
+            ['q' => 'How does this align with international ESG standards?', 'a' => 'We structure environmental documents to satisfy both Indonesian regulations and international frameworks (GRI, TCFD, SASB, ISO 14001), creating seamless compliance across multiple regulatory systems.'],
         ],
     ],
 
@@ -289,6 +349,18 @@ return [
             'Construction monitoring (optional)',
             'SLF certification after completion',
         ],
+        'narrative' => [
+            'intro' => 'Land acquisition and building development in Indonesia involves navigating complex property rights structures that differ fundamentally from Western freehold systems.',
+            'body' => 'Foreign entities cannot own land under Hak Milik (freehold)—your options are HGB (building rights, 30 years renewable), Hak Pakai (right to use, 25 years), or long-term lease. Each structure affects asset valuation, financing, and exit strategy.|Building permit (PBG) requires coordination across multiple agencies: spatial planning, environmental, fire department, and utilities. International firms often need locally-licensed engineers to certify structural calculations and MEP designs.',
+            'highlight' => 'The SLF (Certificate of Building Worthiness) is often overlooked but critical: without it, your building cannot legally operate, insurance may be void, and you cannot obtain operational licenses.',
+            'quote' => 'We\'ve prevented millions in remediation costs by conducting pre-acquisition land due diligence that uncovered ownership disputes, zoning violations, and environmental contamination.',
+        ],
+        'faq' => [
+            ['q' => 'Can foreigners own land in Indonesia?', 'a' => 'Foreign companies cannot own freehold land, but can hold HGB (Right to Build, 30+20+30 years), Hak Pakai (Right to Use, 25+20+25 years), or long-term lease arrangements. We structure the optimal option for your needs.'],
+            ['q' => 'What is the difference between PBG and SLF?', 'a' => 'PBG (Building Approval) is the construction permit needed before building. SLF (Certificate of Building Worthiness) is issued after construction confirming the building meets approved specifications. Both are legally required.'],
+            ['q' => 'How long does the building permit process take?', 'a' => 'PBG processing takes 30-90 days depending on building size, complexity, and local government. We manage the full coordination across multiple agencies to minimize delays.'],
+            ['q' => 'Do I need environmental clearance for construction?', 'a' => 'Yes, minimum UKL-UPL is required before PBG issuance. For large developments, AMDAL may be required. We coordinate both processes in parallel to save time.'],
+        ],
     ],
 
     'operational-licenses' => [
@@ -336,6 +408,18 @@ return [
             'Facility inspection coordination',
             'License issuance and activation',
         ],
+        'narrative' => [
+            'intro' => 'Operational licensing in Indonesia operates across a fragmented regulatory landscape where sector-specific ministries maintain independent permit systems.',
+            'body' => 'Manufacturing operations require industrial operating permits (IUI) specifying production capacity, materials, and output. Any deviation—changing suppliers, altering formulations, increasing capacity—requires amendments that can take months.|Product registration varies dramatically by sector: BPOM for food/drugs (6-12 months), SDPPI for electronics, separate BPOM protocols for cosmetics, and multi-phase testing for pharmaceuticals.',
+            'highlight' => 'Strategic licensing timing affects market entry: you can often initiate product registration before completing facility construction, running approval timelines in parallel with capital deployment to save 3-6 months.',
+            'quote' => 'Our sector specialists maintain current knowledge across 15+ regulated industries. We\'ve developed regulatory roadmaps that synchronize capital deployment, permit applications, and market entry—helping clients achieve operational status 4-6 months faster than industry averages.',
+        ],
+        'faq' => [
+            ['q' => 'What operational licenses do I need?', 'a' => 'Requirements depend on your sector. Common licenses include manufacturing (IUI), import (API-U/API-P), product registration (BPOM/SNI/Postel), and halal certification. We map all requirements during initial consultation.'],
+            ['q' => 'How long does product registration take?', 'a' => 'Timelines vary: BPOM food registration 3-6 months, electronics certification 1-3 months, pharmaceutical registration 12-24 months. We advise starting early and running in parallel with facility setup.'],
+            ['q' => 'Can I import goods before obtaining API?', 'a' => 'No, import identification number (API) is required before customs clearance. API-U is for general importers, API-P for producer-importers. Processing takes 14-30 days.'],
+            ['q' => 'Do I need halal certification?', 'a' => 'Halal certification is mandatory for food, beverages, cosmetics, and pharmaceuticals sold in Indonesia since 2024. We facilitate the complete process from audit preparation to BPJPH issuance.'],
+        ],
     ],
 
     'ongoing-compliance' => [
@@ -374,6 +458,18 @@ return [
             'Monthly monitoring and reporting',
             'Proactive renewal processing',
             'Continuous regulatory advisory',
+        ],
+        'narrative' => [
+            'intro' => 'Maintaining compliance in Indonesia\'s dynamic regulatory environment requires continuous attention—regulations change, reporting requirements evolve, and renewal windows are unforgiving.',
+            'body' => 'Most foreign investors focus on initial setup but underestimate ongoing obligations: quarterly environmental reports, annual work permit renewals, monthly/quarterly/annual tax filings, and quarterly BKPM investment realization reports (LKPM).|Regulatory changes occur frequently—new decrees with 30-day implementation timelines published in Bahasa Indonesia. Beneficial changes like new tax incentives require proactive application and don\'t automatically apply.',
+            'highlight' => 'The cost of compliance failure extends beyond penalties: lapsed work permits force expatriate departure, environmental reporting gaps block license renewals, and late tax filings can freeze banking transactions—10-100x costlier than direct penalties.',
+            'quote' => 'Our retainer clients receive automated alerts 90, 60, and 30 days before any deadline. We monitor regulatory changes across 12 government agencies—maintaining zero compliance failures for our portfolio over the past 24 months.',
+        ],
+        'faq' => [
+            ['q' => 'What does the monthly retainer include?', 'a' => 'Core services include permit renewal management, annual reporting, regulatory change alerts, quarterly compliance health checks, and priority consultation access. Custom packages available based on permit portfolio size.'],
+            ['q' => 'How many permits does a typical company need to maintain?', 'a' => 'A typical PT PMA maintains 8-15 active permits across BKPM, tax, immigration, environment, and operations. Each has different renewal cycles and reporting obligations. We track all of them.'],
+            ['q' => 'What happens if I miss a permit renewal deadline?', 'a' => 'Consequences vary: expired work permits require expatriates to leave Indonesia immediately. Lapsed environmental permits block operational license renewals. Late LKPM reports can trigger BKPM compliance investigations.'],
+            ['q' => 'Can I start with a basic package and upgrade later?', 'a' => 'Yes, we offer tiered packages from basic (compliance calendar + alerts) to comprehensive (full permit management + regulatory advisory). Most clients upgrade within 6 months as they recognize the value.'],
         ],
     ],
 
@@ -423,6 +519,18 @@ return [
             'Copyright automatic but registration provides legal advantage',
             'Madrid Protocol available for international trademark registration',
             'Patent Cooperation Treaty (PCT) applicable for patents',
+        ],
+        'narrative' => [
+            'intro' => 'Intellectual property protection in Indonesia requires proactive registration—Indonesia follows a first-to-file system where registration establishes rights, not first use.',
+            'body' => 'Trademark protection is critical for foreign brands. If you delay, local actors can file your brand name first ("trademark squatting"), then demand payment or prevent your market entry. Challenging conflicting trademarks takes 2-3 years with uncertain outcomes.|Patent protection covers inventions (20 years) and simple patents (10 years). PCT applications must be nationalized within 31 months—missing this deadline means losing patent rights in Indonesia.',
+            'highlight' => 'Copyright registration, while not mandatory, enables border enforcement—customs can seize counterfeits using your certificate. Without registration, you must prove ownership each time, allowing counterfeiters to continue.',
+            'quote' => 'We\'ve helped clients prevent competitive trademark filings by conducting comprehensive searches and securing registrations before market announcement—costing 5-10% of responding to IP conflicts after they occur.',
+        ],
+        'faq' => [
+            ['q' => 'How long does trademark registration take?', 'a' => 'Trademark registration in Indonesia takes approximately 12-18 months from filing to certificate issuance, including the opposition period. We file immediately to establish your priority date.'],
+            ['q' => 'Should I register my trademark before entering the market?', 'a' => 'Absolutely. Indonesia is a first-to-file jurisdiction. We strongly recommend filing trademark applications before any public announcement of your market entry plans.'],
+            ['q' => 'Can I extend my international patent to Indonesia?', 'a' => 'Yes, through the Patent Cooperation Treaty (PCT). Your international application must be nationalized in Indonesia within 31 months of the priority date. We manage the complete nationalization process.'],
+            ['q' => 'What is the Madrid Protocol and how does it help?', 'a' => 'The Madrid Protocol allows you to register trademarks in multiple countries through a single application. Indonesia joined in 2018, making international trademark protection more efficient and cost-effective.'],
         ],
     ],
 ];

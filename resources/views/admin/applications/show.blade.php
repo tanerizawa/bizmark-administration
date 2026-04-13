@@ -14,7 +14,7 @@
                 <i class="fas fa-chevron-right text-[10px]"></i>
                 <span style="color: rgba(235,235,245,0.9);">Detail Lamaran</span>
             </nav>
-            <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">{{ $application->full_name }}</h1>
+            <h1 class="text-2xl md:text-xl font-bold text-white mb-1">{{ $application->full_name }}</h1>
             <p class="text-sm" style="color: rgba(235,235,245,0.65);">
                 <i class="fas fa-briefcase mr-2"></i>{{ $application->jobVacancy->title ?? 'N/A' }}
             </p>
@@ -53,7 +53,7 @@
         <div class="lg:col-span-2 space-y-6">
             {{-- Personal Information --}}
             <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-                <h2 class="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                <h2 class="text-sm font-semibold text-white mb-5 flex items-center gap-2">
                     <i class="fas fa-user" style="color: rgba(10,132,255,1);"></i>
                     Data Pribadi
                 </h2>
@@ -111,7 +111,7 @@
 
             {{-- Education --}}
             <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-                <h2 class="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                <h2 class="text-sm font-semibold text-white mb-5 flex items-center gap-2">
                     <i class="fas fa-graduation-cap" style="color: rgba(255,149,0,1);"></i>
                     Pendidikan
                 </h2>
@@ -151,7 +151,7 @@
 
             {{-- Experience & Skills --}}
             <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-                <h2 class="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                <h2 class="text-sm font-semibold text-white mb-5 flex items-center gap-2">
                     <i class="fas fa-briefcase" style="color: rgba(175,82,222,1);"></i>
                     Pengalaman & Keahlian
                 </h2>
@@ -235,7 +235,7 @@
             {{-- Cover Letter --}}
             @if($application->cover_letter)
                 <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                         <i class="fas fa-file-alt" style="color: rgba(52,199,89,1);"></i>
                         Surat Lamaran
                     </h2>

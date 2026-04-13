@@ -66,8 +66,29 @@ services:
     depends_on:
       - db
 
+  searxng:
+    image: searxng/searxng:latest
+    container_name: bizmark_searxng
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8888:8080"
+    volumes:
+      - searxng_data:/etc/searxng
+      - ./docker/searxng/settings.yml:/etc/searxng/settings.yml:rw
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8888/
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    networks:
+      - bizmark_network
+
 volumes:
   mysql_data:
+  searxng_data:
 
 networks:
   bizmark_network:

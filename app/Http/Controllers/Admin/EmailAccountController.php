@@ -95,6 +95,11 @@ class EmailAccountController extends Controller
      */
     public function store(Request $request)
     {
+        // Backward compatibility: create form currently posts `assignments`, older API uses `assign_users`.
+        if ($request->filled('assignments') && !$request->filled('assign_users')) {
+            $request->merge(['assign_users' => $request->input('assignments')]);
+        }
+
         $validated = $request->validate([
             'email' => 'required|email|unique:email_accounts,email',
             'name' => 'required|string|max:255',

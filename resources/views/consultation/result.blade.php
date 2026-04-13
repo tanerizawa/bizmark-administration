@@ -307,8 +307,14 @@
 
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID%2C%20saya%20sudah%20dapat%20estimasi%20biaya%20(Request%20ID%3A%20%23{{ $consultation->id }})%20dan%20ingin%20konsultasi%20lebih%20lanjut"
+                @php
+                    $whatsappBase = data_get(config('landing_metrics'), 'contact.whatsapp_link', 'https://wa.me/6283879602855');
+                    $whatsappText = "Halo Bizmark.ID, saya sudah dapat estimasi biaya (Request ID: #{$consultation->id}) dan ingin konsultasi lebih lanjut";
+                    $whatsappHref = $whatsappBase . (str_contains($whatsappBase, '?') ? '&' : '?') . 'text=' . rawurlencode($whatsappText);
+                @endphp
+                <a href="{{ $whatsappHref }}"
                    target="_blank"
+                   rel="noopener"
                    class="flex-1 flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all">
                     <i class="fab fa-whatsapp text-2xl"></i>
                     <span>Hubungi via WhatsApp</span>

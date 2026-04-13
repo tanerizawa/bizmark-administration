@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('interview_schedules', 'reminder_sent_at')) {
+            return;
+        }
+
         Schema::table('interview_schedules', function (Blueprint $table) {
             $table->timestamp('reminder_sent_at')->nullable()->after('notes');
         });

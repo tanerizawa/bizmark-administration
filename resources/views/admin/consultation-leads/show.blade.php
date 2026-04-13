@@ -311,7 +311,7 @@
                             @endif
 
                             <div class="flex justify-between items-center py-3" style="border-top: 2px solid rgba(84, 84, 88, 0.5);">
-                                <span class="text-lg font-semibold text-white">Grand Total</span>
+                                <span class="text-sm font-semibold text-white">Grand Total</span>
                                 <span class="text-lg font-bold text-green-400">{{ $costs['formatted']['grand_total'] ?? '-' }}</span>
                             </div>
                             
@@ -324,7 +324,7 @@
                         </div>
                     @else
                         <div class="text-center text-dark-text-secondary py-8">
-                            <i class="fas fa-calculator text-3xl mb-3 block opacity-30"></i>
+                            <i class="fas fa-calculator text-2xl mb-3 block opacity-30"></i>
                             <p>Tidak ada estimasi biaya</p>
                         </div>
                     @endif

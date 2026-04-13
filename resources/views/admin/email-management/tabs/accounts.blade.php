@@ -1,43 +1,59 @@
 <div class="space-y-4">
     {{-- Header Section --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="email-panel-header">
         <div>
-            <h2 class="text-xl font-semibold text-white">Email Accounts</h2>
+            <h2 class="text-base font-semibold text-white">Email Accounts</h2>
             <p class="text-sm" style="color: rgba(235,235,245,0.6);">
                 Kelola akun email tim untuk sistem multi-user email management
             </p>
         </div>
-        <a href="{{ route('admin.email-accounts.create') ?? '#' }}" class="btn-apple-primary-sm px-4 py-2">
+        <a href="{{ route('admin.email-accounts.create') ?? '#' }}" class="btn-apple-primary-sm px-3 py-2">
             <i class="fas fa-plus mr-2"></i>Add Account
         </a>
     </div>
 
     {{-- Filters --}}
-    <div class="flex flex-wrap items-center gap-3">
-        <div class="flex-1 min-w-[200px]">
-            <input type="text" placeholder="Search accounts..." 
-                   class="input-apple w-full" value="{{ request('search') }}">
+    <form method="GET" action="{{ route('admin.email-management.index') }}" class="email-toolbar">
+        <input type="hidden" name="tab" value="accounts">
+        <div class="email-toolbar-grid">
+            <div class="email-filter">
+                <label for="account-search">Pencarian</label>
+                <input id="account-search" type="text" placeholder="Nama akun atau email..." name="search"
+                       class="input-apple w-full" value="{{ request('tab') === 'accounts' ? request('search') : '' }}">
+            </div>
+            <div class="email-filter">
+                <label for="account-type">Tipe</label>
+                <select id="account-type" name="type" class="input-apple w-full">
+                    <option value="">Semua Tipe</option>
+                    <option value="shared" {{ request('tab') === 'accounts' && request('type') == 'shared' ? 'selected' : '' }}>Shared</option>
+                    <option value="personal" {{ request('tab') === 'accounts' && request('type') == 'personal' ? 'selected' : '' }}>Personal</option>
+                </select>
+            </div>
+            <div class="email-filter">
+                <label for="account-department">Departemen</label>
+                <select id="account-department" name="department" class="input-apple w-full">
+                    <option value="">Semua Departemen</option>
+                    <option value="general" {{ request('tab') === 'accounts' && request('department') == 'general' ? 'selected' : '' }}>General</option>
+                    <option value="cs" {{ request('tab') === 'accounts' && request('department') == 'cs' ? 'selected' : '' }}>Customer Service</option>
+                    <option value="sales" {{ request('tab') === 'accounts' && request('department') == 'sales' ? 'selected' : '' }}>Sales</option>
+                    <option value="support" {{ request('tab') === 'accounts' && request('department') == 'support' ? 'selected' : '' }}>Technical Support</option>
+                    <option value="finance" {{ request('tab') === 'accounts' && request('department') == 'finance' ? 'selected' : '' }}>Finance</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-apple-primary-sm px-4 py-2">
+                <i class="fas fa-filter mr-2"></i>Filter
+            </button>
+            <a href="{{ route('admin.email-management.index', ['tab' => 'accounts']) }}" class="btn-apple-sm px-4 py-2">
+                Reset
+            </a>
         </div>
-        <select class="input-apple min-w-[150px]">
-            <option value="">All Types</option>
-            <option value="shared" {{ request('type') == 'shared' ? 'selected' : '' }}>Shared</option>
-            <option value="personal" {{ request('type') == 'personal' ? 'selected' : '' }}>Personal</option>
-        </select>
-        <select class="input-apple min-w-[150px]">
-            <option value="">All Departments</option>
-            <option value="general">General</option>
-            <option value="cs">Customer Service</option>
-            <option value="sales">Sales</option>
-            <option value="support">Technical Support</option>
-            <option value="finance">Finance</option>
-        </select>
-    </div>
+    </form>
 
     {{-- Account List --}}
     @if(isset($accounts) && $accounts->count() > 0)
         <div class="space-y-3">
             @foreach($accounts as $account)
-                <div class="card-elevated rounded-apple-lg p-5 hover:bg-opacity-80 transition-apple">
+            <div class="card-elevated rounded-apple-lg p-4 hover:bg-opacity-80 transition-apple email-table-shell">
                     <div class="flex flex-col md:flex-row md:items-center gap-4">
                         {{-- Account Icon --}}
                         <div class="flex-shrink-0">
@@ -161,9 +177,9 @@
             </div>
         @endif
     @else
-        <div class="text-center py-12">
-            <i class="fas fa-at text-5xl mb-4" style="color: rgba(235,235,245,0.3);"></i>
-            <p class="text-lg font-medium text-white mb-2">No Email Accounts Yet</p>
+        <div class="email-empty-state">
+            <i class="fas fa-at"></i>
+            <p class="text-base font-medium text-white mb-2">No Email Accounts Yet</p>
             <p class="text-sm mb-4" style="color: rgba(235,235,245,0.6);">
                 Add email accounts to start managing team emails
             </p>

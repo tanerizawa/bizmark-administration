@@ -83,13 +83,21 @@
                     <p class="text-sm text-gray-400">Konsultan Perizinan Industri Terpercaya</p>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="https://wa.me/6283879602855" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition">
+                    @php
+                        $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+                        $whatsappLink = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+                        $phoneRaw = $contact['phone'] ?? '+62 838 7960 2855';
+                        $phoneHref = 'tel:' . preg_replace('/\s+/', '', $phoneRaw);
+                        $email = $contact['email'] ?? 'info@bizmark.id';
+                    @endphp
+
+                    <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition">
                         <i class="fab fa-whatsapp text-xl"></i>
                     </a>
-                    <a href="tel:+6283879602855" class="text-gray-400 hover:text-white transition">
+                    <a href="{{ $phoneHref }}" class="text-gray-400 hover:text-white transition">
                         <i class="fas fa-phone text-xl"></i>
                     </a>
-                    <a href="mailto:info@bizmark.id" class="text-gray-400 hover:text-white transition">
+                    <a href="mailto:{{ $email }}" class="text-gray-400 hover:text-white transition">
                         <i class="fas fa-envelope text-xl"></i>
                     </a>
                 </div>

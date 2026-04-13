@@ -19,7 +19,7 @@
         <div class="relative">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $vacancy->title }}</h1>
+                    <h1 class="text-2xl md:text-xl font-bold text-white">{{ $vacancy->title }}</h1>
                     <p class="text-sm mt-1" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">
                         Recruitment Pipeline Overview
                     </p>
@@ -43,27 +43,22 @@
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">In Pipeline</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['total_in_pipeline'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['total_in_pipeline'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Active candidates</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Screening</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['screening'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['screening'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">In progress</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Interview</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['interview'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['interview'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Scheduled</p>
-        <div class="card-elevated rounded-apple-lg" style="padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-1);">
-            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Interview</p>
-            <p class="text-2xl font-bold" style="color: var(--text-dark-primary);">{{ $stats['interview'] }}</p>
-            <p class="text-xs" style="color: var(--text-dark-secondary);">Scheduled</p>
->>>>>>> Stashed changes
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Passed</p>
-            <p class="text-2xl font-bold text-white">{{ $stats['passed'] }}</p>
+            <p class="text-lg font-bold text-white">{{ $stats['passed'] }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Successful</p>
         </div>
     </section>

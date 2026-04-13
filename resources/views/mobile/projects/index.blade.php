@@ -8,7 +8,7 @@
     <div class="sticky top-14 z-10 bg-white border-b border-gray-200 safe-top">
         <div class="flex overflow-x-auto scrollbar-hide">
             <button @click="filterStatus('active')" 
-                    :class="currentStatus === 'active' ? 'border-[#0077b5] text-[#0077b5]' : 'border-transparent text-gray-500'"
+                    :class="currentStatus === 'active' ? 'border-[#0A66C2] text-[#0A66C2]' : 'border-transparent text-gray-500'"
                     class="flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm transition-colors">
                 Aktif
                 <span class="ml-1" x-text="`(${stats.active || 0})`"></span>
@@ -36,7 +36,7 @@
                    x-model="searchQuery"
                    @input.debounce.300ms="search()"
                    placeholder="Cari project..."
-                   class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0077b5] focus:border-transparent">
+                   class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0A66C2] focus:border-transparent">
         </div>
     </div>
 
@@ -68,8 +68,8 @@
                             <!-- Client Info -->
                             <template x-if="project.client">
                                 <div class="flex items-center gap-1 mt-1">
-                                    <i class="fas fa-building text-[#0077b5] text-xs"></i>
-                                    <p class="text-xs text-[#0077b5] font-medium truncate" x-text="project.client.company_name"></p>
+                                    <i class="fas fa-building text-[#0A66C2] text-xs"></i>
+                                    <p class="text-xs text-[#0A66C2] font-medium truncate" x-text="project.client.company_name"></p>
                                 </div>
                             </template>
                         </div>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                             <div :style="`width: ${project.progress || 0}%`" 
-                                 class="h-full bg-[#0077b5] transition-all duration-300"></div>
+                                 class="h-full bg-[#0A66C2] transition-all duration-300"></div>
                         </div>
                     </div>
 
@@ -233,7 +233,7 @@ function projectsPage() {
 
         getStatusColor(status) {
             const colors = {
-                'Aktif': 'bg-[#e7f3f8] text-[#0077b5]',
+                'Aktif': 'bg-[#E7F3F8] text-[#0A66C2]',
                 'Selesai': 'bg-green-100 text-green-800',
                 'Tertunda': 'bg-yellow-100 text-yellow-800',
                 'Dibatalkan': 'bg-red-100 text-red-800'

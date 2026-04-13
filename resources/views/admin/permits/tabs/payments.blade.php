@@ -4,17 +4,17 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Total Pembayaran</p>
-            <p class="text-3xl font-bold text-white">{{ $totalPayments }}</p>
+            <p class="text-xl font-bold text-white">{{ $totalPayments }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua transaksi</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Pending</p>
-            <p class="text-3xl font-bold" style="color: rgba(255,159,10,1);">{{ $pendingPayments }}</p>
+            <p class="text-xl font-bold" style="color: rgba(255,159,10,1);">{{ $pendingPayments }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu verifikasi</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Terverifikasi</p>
-            <p class="text-3xl font-bold" style="color: rgba(52,199,89,1);">{{ $verifiedPayments }}</p>
+            <p class="text-xl font-bold" style="color: rgba(52,199,89,1);">{{ $verifiedPayments }}</p>
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sudah disetujui</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
@@ -150,9 +150,6 @@
                                         <a href="{{ Storage::url($payment->payment_proof) }}" target="_blank"
                                            class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple" 
                                            style="background-color: rgba(175,82,222,0.15); color: rgba(175,82,222,1); border: 1px solid rgba(175,82,222,0.25);"
-                                           class="inline-flex items-center rounded-apple transition-apple" 
-                                           style="padding: var(--space-1) var(--space-2-5); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--neuro-secondary); opacity: var(--opacity-bg-medium); color: var(--neuro-secondary); border: 1px solid var(--neuro-secondary); opacity: var(--opacity-border-medium);"
->>>>>>> Stashed changes
                                            title="Lihat Bukti">
                                             <i class="fas fa-file-image"></i>
                                         </a>
@@ -164,8 +161,8 @@
                         <tr>
                             <td colspan="7" class="px-4 py-16 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-money-check-alt text-6xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
-                                    <h3 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Pembayaran</h3>
+                                    <i class="fas fa-money-check-alt text-4xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
+                                    <h3 class="text-base font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Pembayaran</h3>
                                     <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">
                                         Transaksi pembayaran akan muncul di sini
                                     </p>

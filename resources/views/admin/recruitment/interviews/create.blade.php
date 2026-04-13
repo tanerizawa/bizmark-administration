@@ -17,7 +17,7 @@
                     <span class="text-dark-text-tertiary">/</span>
                     <span>Jadwal Baru</span>
                 </div>
-                <h1 class="text-xl md:text-2xl font-semibold text-white leading-tight">Jadwalkan Interview</h1>
+                <h1 class="text-xl md:text-xl font-semibold text-white leading-tight">Jadwalkan Interview</h1>
                 <p class="text-sm" style="color: rgba(235,235,245,0.7);">
                     Atur jadwal, format, dan tim pewawancara dalam satu langkah.
                 </p>

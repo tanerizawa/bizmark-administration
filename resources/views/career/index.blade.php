@@ -42,7 +42,7 @@
                     <a href="{{ route('career.index') }}" class="text-blue-600 font-semibold">Karir</a>
                 </nav>
                 
-                <a href="https://wa.me/6283879602855" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition">
+                <a href="{{ config('landing_metrics.contact.whatsapp_link') }}" target="_blank" rel="noopener noreferrer" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition">
                     <i class="fab fa-whatsapp"></i>
                     <span class="hidden sm:inline">Hubungi Kami</span>
                 </a>

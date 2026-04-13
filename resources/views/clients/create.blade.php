@@ -3,7 +3,7 @@
 @section('title', 'Tambah Klien Baru')
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="space-y-4">
     <!-- Header -->
     <div class="mb-6">
         <div class="d-flex justify-content-between align-items-start">

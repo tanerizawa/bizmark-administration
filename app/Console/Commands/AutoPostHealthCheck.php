@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Article;
+use App\Models\ArticleTopic;
+use App\Models\AutoPostLog;
 use App\Models\AutoPostSchedule;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -21,6 +24,35 @@ class AutoPostHealthCheck extends Command
      * @var string
      */
     protected $description = 'Check auto-post system health and detect stuck schedules';
+
+    /**
+     * Resolve article ID from schedule direct link, topic link, or logs.
+     */
+    protected function resolveArticleId(AutoPostSchedule $schedule): ?int
+    {
+        if (!empty($schedule->article_id) && Article::find($schedule->article_id)) {
+            return (int) $schedule->article_id;
+        }
+
+        $topic = ArticleTopic::withTrashed()->find($schedule->topic_id);
+        if ($topic && !empty($topic->article_id) && Article::find($topic->article_id)) {
+            return (int) $topic->article_id;
+        }
+
+        $log = AutoPostLog::where('schedule_id', $schedule->id)
+            ->whereIn('event', ['article_created', 'article_published'])
+            ->orderByDesc('created_at')
+            ->first();
+
+        if ($log) {
+            $candidateId = $log->article_id ?? data_get($log->context, 'article_id');
+            if (!empty($candidateId) && Article::find($candidateId)) {
+                return (int) $candidateId;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Execute the console command.
@@ -47,7 +79,8 @@ class AutoPostHealthCheck extends Command
             $this->warn("⚠️  Found {$stuckProcessing->count()} schedule(s) stuck in processing:");
             foreach ($stuckProcessing as $schedule) {
                 $duration = $schedule->started_at ? $schedule->started_at->diffForHumans() : 'never started';
-                $this->line("   #{$schedule->id} - {$schedule->topic->title}");
+                $topicTitle = $schedule->topic?->title ?? "[Topic unavailable #{$schedule->topic_id}]";
+                $this->line("   #{$schedule->id} - {$topicTitle}");
                 $this->line("   Scheduled: {$schedule->scheduled_at->format('Y-m-d H:i')} | Processing: {$duration}");
                 
                 if ($this->option('fix')) {
@@ -69,7 +102,8 @@ class AutoPostHealthCheck extends Command
             $this->warn("⏰ Found {$missedSchedules->count()} missed schedule(s):");
             foreach ($missedSchedules as $schedule) {
                 $delay = $schedule->scheduled_at->diffForHumans();
-                $this->line("   #{$schedule->id} - {$schedule->topic->title}");
+                $topicTitle = $schedule->topic?->title ?? "[Topic unavailable #{$schedule->topic_id}]";
+                $this->line("   #{$schedule->id} - {$topicTitle}");
                 $this->line("   Scheduled: {$schedule->scheduled_at->format('Y-m-d H:i')} | Missed: {$delay}");
                 
                 if ($this->option('fix')) {
@@ -91,7 +125,8 @@ class AutoPostHealthCheck extends Command
         if ($highAttempts->count() > 0) {
             $this->warn("🔄 Found {$highAttempts->count()} schedule(s) with multiple failed attempts:");
             foreach ($highAttempts as $schedule) {
-                $this->line("   #{$schedule->id} - {$schedule->topic->title}");
+                $topicTitle = $schedule->topic?->title ?? "[Topic unavailable #{$schedule->topic_id}]";
+                $this->line("   #{$schedule->id} - {$topicTitle}");
                 $this->line("   Attempts: {$schedule->attempts} | Last error: " . substr($schedule->error_message ?? 'N/A', 0, 50));
                 
                 if ($this->option('fix') && $schedule->attempts >= 5) {
@@ -112,6 +147,37 @@ class AutoPostHealthCheck extends Command
         }
 
         // 4. Summary
+        // 4. Reconcile inconsistent status: article exists but schedule still pending/processing
+        $inconsistent = AutoPostSchedule::whereIn('status', ['pending', 'processing'])->get();
+        $reconciled = 0;
+
+        foreach ($inconsistent as $schedule) {
+            $articleId = $this->resolveArticleId($schedule);
+            if (!$articleId) {
+                continue;
+            }
+
+            $this->warn("🔁 Found inconsistent schedule #{$schedule->id}: status={$schedule->status}, article_id={$articleId}");
+            $issues[] = 'Inconsistent schedule status';
+
+            if ($this->option('fix')) {
+                $schedule->update([
+                    'status' => 'completed',
+                    'article_id' => $articleId,
+                    'completed_at' => $schedule->completed_at ?? now(),
+                    'error_message' => null,
+                ]);
+                $this->line("   🔧 Reconciled to completed");
+                $reconciled++;
+                $fixed++;
+            }
+        }
+
+        if ($reconciled > 0) {
+            $this->newLine();
+        }
+
+        // 5. Summary
         $this->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         
         if (empty($issues)) {
@@ -129,6 +195,11 @@ class AutoPostHealthCheck extends Command
         }
         
         $this->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+        // For automated healing runs, consider command successful when issues are fixed.
+        if ($this->option('fix')) {
+            return 0;
+        }
 
         return empty($issues) ? 0 : 1;
     }

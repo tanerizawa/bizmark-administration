@@ -2,6 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\Article;
+use App\Models\ArticleTopic;
+use App\Models\AutoPostLog;
 use App\Models\AutoPostSchedule;
 use App\Services\ArticleAutoPostService;
 use Illuminate\Bus\Queueable;
@@ -10,10 +13,16 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Support\Facades\Schema;
 
 class GenerateAutoPostArticle implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * Cache schema check to avoid repeated metadata queries in one job run.
+     */
+    private ?bool $hasArticleIdColumn = null;
 
     /**
      * The number of times the job may be attempted.
@@ -84,6 +93,90 @@ class GenerateAutoPostArticle implements ShouldQueue
     }
 
     /**
+     * Detect whether schedules table supports article linkage.
+     */
+    private function scheduleHasArticleIdColumn(): bool
+    {
+        if ($this->hasArticleIdColumn === null) {
+            try {
+                $this->hasArticleIdColumn = Schema::hasColumn('auto_post_schedules', 'article_id');
+            } catch (\Throwable $e) {
+                $this->hasArticleIdColumn = false;
+            }
+        }
+
+        return $this->hasArticleIdColumn;
+    }
+
+    /**
+     * Resolve an existing article that already belongs to this schedule.
+     */
+    private function resolveExistingArticleId(?AutoPostSchedule $schedule = null): ?int
+    {
+        $schedule = $schedule ?? $this->schedule;
+        if (!$schedule) {
+            return null;
+        }
+
+        // 1) Direct linkage on schedule (if column exists)
+        if ($this->scheduleHasArticleIdColumn() && !empty($schedule->article_id)) {
+            if (Article::find($schedule->article_id)) {
+                return (int) $schedule->article_id;
+            }
+        }
+
+        // 2) Linkage on topic (source of truth for published topics)
+        $topic = ArticleTopic::withTrashed()->find($schedule->topic_id);
+        if ($topic && !empty($topic->article_id) && Article::find($topic->article_id)) {
+            return (int) $topic->article_id;
+        }
+
+        // 3) Fallback from logs
+        $createLog = AutoPostLog::where('schedule_id', $schedule->id)
+            ->whereIn('event', ['article_created', 'article_published'])
+            ->orderByDesc('created_at')
+            ->first();
+
+        if ($createLog) {
+            $candidateId = $createLog->article_id
+                ?? data_get($createLog->context, 'article_id');
+
+            if (!empty($candidateId) && Article::find($candidateId)) {
+                return (int) $candidateId;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Finalize schedule as completed in an idempotent way.
+     */
+    private function finalizeAsCompleted(AutoPostSchedule $schedule, int $articleId, string $source): void
+    {
+        $payload = [
+            'status' => 'completed',
+            'completed_at' => $schedule->completed_at ?? now(),
+            'error_message' => null,
+            'updated_at' => now(),
+        ];
+
+        if ($this->scheduleHasArticleIdColumn()) {
+            $payload['article_id'] = $articleId;
+        }
+
+        \DB::table('auto_post_schedules')
+            ->where('id', $schedule->id)
+            ->update($payload);
+
+        $this->safeLog('warning', '🔁 Reconciled schedule to completed from existing article link', [
+            'schedule_id' => $schedule->id,
+            'article_id' => $articleId,
+            'source' => $source,
+        ]);
+    }
+
+    /**
      * Execute the job.
      */
     public function handle(ArticleAutoPostService $service): void
@@ -114,9 +207,16 @@ class GenerateAutoPostArticle implements ShouldQueue
                 ]);
                 return;
             }
+
+            // Reconcile historical inconsistency: article exists but schedule is not completed yet.
+            $existingArticleId = $this->resolveExistingArticleId($this->schedule);
+            if ($existingArticleId) {
+                $this->finalizeAsCompleted($this->schedule, $existingArticleId, 'pre-flight');
+                return;
+            }
             
             // If already has article_id, just mark as completed
-            if ($this->schedule->article_id) {
+            if ($this->scheduleHasArticleIdColumn() && $this->schedule->article_id) {
                 $this->safeLog('info', '✅ Schedule already has article, marking completed', [
                     'schedule_id' => $this->schedule->id,
                     'article_id' => $this->schedule->article_id,
@@ -147,11 +247,16 @@ class GenerateAutoPostArticle implements ShouldQueue
             }
 
             // Mark as processing with database lock to prevent race conditions
-            $updated = \DB::table('auto_post_schedules')
+            $lockQuery = \DB::table('auto_post_schedules')
                 ->where('id', $this->schedule->id)
-                ->whereIn('status', ['pending', 'processing']) // Allow both pending AND stuck processing
-                ->whereNull('article_id') // Safety: don't process if article already exists
-                ->update([
+                ->whereIn('status', ['pending', 'processing']); // Allow both pending AND stuck processing
+
+            if ($this->scheduleHasArticleIdColumn()) {
+                // Safety: don't process if article already exists
+                $lockQuery->whereNull('article_id');
+            }
+
+            $updated = $lockQuery->update([
                     'status' => 'processing',
                     'started_at' => now(),
                     'attempts' => \DB::raw('attempts + 1'),
@@ -188,15 +293,21 @@ class GenerateAutoPostArticle implements ShouldQueue
                 $startedAt = $this->schedule->started_at ?? now();
                 $generationTime = (int) $startedAt->diffInSeconds(now()); // Cast to int for PostgreSQL
                 
+                $completePayload = [
+                    'status' => 'completed',
+                    'completed_at' => now(),
+                    'generation_time_seconds' => $generationTime,
+                    'error_message' => null,
+                    'updated_at' => now(),
+                ];
+
+                if ($this->scheduleHasArticleIdColumn()) {
+                    $completePayload['article_id'] = $article->id;
+                }
+
                 \DB::table('auto_post_schedules')
                     ->where('id', $this->schedule->id)
-                    ->update([
-                        'article_id' => $article->id,
-                        'status' => 'completed',
-                        'completed_at' => now(),
-                        'generation_time_seconds' => $generationTime,
-                        'updated_at' => now(),
-                    ]);
+                    ->update($completePayload);
                 
                 $this->safeLog('info', '✅ Article created and schedule completed', [
                     'schedule_id' => $this->schedule->id,
@@ -205,6 +316,14 @@ class GenerateAutoPostArticle implements ShouldQueue
                 ]);
                 
             } catch (\Exception $e) {
+                if (str_contains(strtolower($e->getMessage()), 'handled by automatic reassignment')) {
+                    $this->safeLog('warning', '🔁 Schedule processing redirected after duplicate topic reassignment', [
+                        'schedule_id' => $this->schedule->id,
+                        'message' => $e->getMessage(),
+                    ]);
+                    return;
+                }
+
                 // If article was created but linking failed, schedule will be fixed by fix-stuck command
                 $this->safeLog('error', '❌ Article generation or linking failed', [
                     'schedule_id' => $this->schedule->id,
@@ -250,7 +369,17 @@ class GenerateAutoPostArticle implements ShouldQueue
     {
         try {
             $schedule = AutoPostSchedule::find($this->schedule->id);
-            if ($schedule && $schedule->status === 'processing' && !$schedule->article_id) {
+
+            // If article already exists, always finalize to completed (never rollback to pending).
+            $existingArticleId = $this->resolveExistingArticleId($schedule);
+            if ($schedule && $existingArticleId) {
+                $this->finalizeAsCompleted($schedule, $existingArticleId, 'rollback');
+                return;
+            }
+
+            $noArticleLinked = $this->scheduleHasArticleIdColumn() ? !$schedule->article_id : true;
+
+            if ($schedule && $schedule->status === 'processing' && $noArticleLinked) {
                 $this->safeLog('warning', '🔄 Rolling back stuck processing status', [
                     'schedule_id' => $schedule->id,
                 ]);
@@ -287,6 +416,14 @@ class GenerateAutoPostArticle implements ShouldQueue
         try {
             // Update schedule with final failure status
             $schedule = AutoPostSchedule::find($this->schedule->id);
+
+            // Last-resort reconciliation: if article exists, do not mark failed.
+            $existingArticleId = $this->resolveExistingArticleId($schedule);
+            if ($schedule && $existingArticleId) {
+                $this->finalizeAsCompleted($schedule, $existingArticleId, 'failed-handler');
+                return;
+            }
+
             if ($schedule) {
                 $schedule->update([
                     'status' => 'failed',
@@ -305,6 +442,8 @@ class GenerateAutoPostArticle implements ShouldQueue
                 [
                     'schedule_id' => $this->schedule->id,
                     'error' => $exception->getMessage(),
+                    'exception_class' => get_class($exception),
+                    'attempts' => $this->attempts(),
                 ]
             );
         } catch (\Throwable $e) {

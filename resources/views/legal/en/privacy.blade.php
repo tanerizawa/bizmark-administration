@@ -139,8 +139,8 @@
             
             <div id="introduction" class="scroll-mt-24">
                 <h2 class="border-b-2 border-gray-200 pb-4">Introduction</h2>
-                <p class="text-lg leading-relaxed">PT Cangah Pajaratan Mandiri (<strong>"Bizmark.ID"</strong>, <strong>"we"</strong>, <strong>"us"</strong>, or <strong>"our"</strong>) is committed to protecting the privacy and security of your personal information. This Privacy Policy explains how we collect, use, disclose, and protect information you provide when using our industrial permit consultation services.</p>
-                <p>By using our services, you agree to the collection and use of information in accordance with this policy. If you do not agree with this policy, please do not use our services.</p>
+                <p class="text-lg leading-relaxed">PT Cangah Pajaratan Mandiri (<strong>"Bizmark.ID"</strong>, <strong>"we"</strong>, <strong>"us"</strong>, or <strong>"our"</strong>) is committed to protecting the privacy and security of your personal information. This Privacy Policy explains how we collect, use, disclose, and protect information you provide when using our industrial permit consultation services, accessing our digital platform, or using the free digital tools available on our website.</p>
+                <p>By using our services, platform, or digital tools, you agree to the collection and use of information in accordance with this policy. If you do not agree with this policy, please do not use our services.</p>
             </div>
 
             <div id="information-collect" class="scroll-mt-24">
@@ -155,13 +155,30 @@
                 <li><strong>Communication Records:</strong> Emails, messages, meeting notes, and consultation records</li>
             </ul>
 
-            <h3>1.2 Automatically Collected Information</h3>
+            <h3>1.2 Information from Free Digital Tools</h3>
+            <p>When you use our free digital tools (such as the Polygon SHP Maker or Permit Calculator), we collect:</p>
+            <ul>
+                <li><strong>Applicant Data:</strong> Company name, contact person name, email address, and WhatsApp/phone number</li>
+                <li><strong>Project/Location Data:</strong> Land or project name, administrative address (province, city, district, village), geographic coordinates (latitude/longitude), area measurements, and project description</li>
+                <li><strong>Consent Data:</strong> Timestamp of Terms & Conditions acceptance when using the digital tools</li>
+            </ul>
+
+            <h3>1.3 Automatically Collected Information</h3>
             <ul>
                 <li>IP address and browser information</li>
-                <li>Device information and operating system</li>
+                <li>Device information and operating system (user agent)</li>
                 <li>Access time and duration</li>
                 <li>Pages visited on our website</li>
                 <li>Cookies and similar tracking technologies</li>
+            </ul>
+
+            <h3>1.4 Local Storage (localStorage)</h3>
+            <p>Some of our digital tools use the localStorage feature of your browser to automatically save data temporarily (auto-save), such as form data you are filling out. This data:</p>
+            <ul>
+                <li>Is stored locally on your device, not on our servers</li>
+                <li>Can be cleared through browser settings or the "Clear Data" feature in the respective digital tool</li>
+                <li>Is used to recover your work if the browser is closed unexpectedly</li>
+                <li>Is not transmitted to our servers until you actively submit the form</li>
             </ul>
             </div>
 
@@ -173,8 +190,9 @@
                 <li><strong>Client Communication:</strong> Provide updates, answer inquiries, send service notifications</li>
                 <li><strong>Payment Processing:</strong> Issue invoices, process payments, maintain transaction records</li>
                 <li><strong>Legal Compliance:</strong> Fulfill legal obligations, maintain records as required by Indonesian law</li>
-                <li><strong>Service Improvement:</strong> Analyze service usage, improve our offerings, develop new services</li>
+                <li><strong>Service Improvement:</strong> Analyze service usage and digital tools, improve our offerings, develop new services</li>
                 <li><strong>Marketing:</strong> Send relevant information about our services (with your consent)</li>
+                <li><strong>Lead Follow-up:</strong> Data collected through free digital tools (Polygon SHP Maker, Permit Calculator) will be used to contact you to offer consultation services relevant to your project or needs</li>
             </ul>
             </div>
 

@@ -6,7 +6,7 @@
 <div class="pb-20">
     
     {{-- Profile Header --}}
-    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-2xl p-6 mb-4 text-white">
+    <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-2xl p-6 mb-4 text-white">
         <div class="flex items-center gap-4 mb-4">
             @if($user->avatar)
                 <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-20 h-20 rounded-full border-4 border-white/20 object-cover">
@@ -37,7 +37,7 @@
     {{-- Statistics --}}
     <div class="grid grid-cols-3 gap-3 mb-4">
         <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
-            <div class="text-2xl font-bold text-[#0077b5] mb-1">{{ $stats['total_tasks'] }}</div>
+            <div class="text-2xl font-bold text-[#0A66C2] mb-1">{{ $stats['total_tasks'] }}</div>
             <div class="text-xs text-gray-600">Total Tugas</div>
         </div>
         <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
@@ -55,7 +55,7 @@
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <a href="#" onclick="editProfile()" class="flex items-center gap-4 p-4 active:bg-gray-50">
                 <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-user-edit text-[#0077b5]"></i>
+                    <i class="fas fa-user-edit text-[#0A66C2]"></i>
                 </div>
                 <div class="flex-1">
                     <div class="font-medium text-gray-900">Edit Profile</div>

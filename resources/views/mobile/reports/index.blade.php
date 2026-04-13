@@ -6,7 +6,7 @@
 <div class="pb-20">
     
     {{-- Header --}}
-    <div class="bg-gradient-to-br from-[#0077b5] to-[#004d6d] rounded-2xl p-6 mb-4 text-white">
+    <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-2xl p-6 mb-4 text-white">
         <div class="flex items-center justify-between mb-3">
             <div>
                 <h2 class="text-xl font-bold">Laporan</h2>
@@ -22,7 +22,7 @@
             <button class="py-2 bg-white/10 rounded-lg text-sm font-medium border border-white/20">
                 Bulan Ini
             </button>
-            <button class="py-2 bg-white text-[#0077b5] rounded-lg text-sm font-medium">
+            <button class="py-2 bg-white text-[#0A66C2] rounded-lg text-sm font-medium">
                 3 Bulan
             </button>
             <button class="py-2 bg-white/10 rounded-lg text-sm font-medium border border-white/20">

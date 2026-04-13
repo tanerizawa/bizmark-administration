@@ -451,7 +451,7 @@
                         <!-- Contact -->
                         <div class="pt-6 border-t border-gray-200">
                             <p class="text-sm font-semibold text-gray-900 mb-3">Butuh Informasi Lebih?</p>
-                            <a href="https://wa.me/6283879602855?text=Halo, saya ingin bertanya tentang lowongan {{ $vacancy->title }}" target="_blank" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg flex items-center justify-center space-x-2 transition shadow hover:shadow-md">
+                            <a href="{{ config('landing_metrics.contact.whatsapp_link') }}?text={{ rawurlencode('Halo, saya ingin bertanya tentang lowongan ' . $vacancy->title) }}" target="_blank" rel="noopener noreferrer" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg flex items-center justify-center space-x-2 transition shadow hover:shadow-md">
                                 <i class="fab fa-whatsapp text-lg"></i>
                                 <span class="font-semibold">Hubungi HR via WhatsApp</span>
                             </a>

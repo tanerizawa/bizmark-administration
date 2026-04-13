@@ -16,7 +16,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="space-y-2">
                     <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Content Automation</p>
-                    <h1 class="text-2xl md:text-3xl font-bold" style="color: #FFFFFF;">
+                    <h1 class="text-2xl md:text-xl font-bold" style="color: #FFFFFF;">
                         <i class="fas fa-calendar-alt mr-2"></i>Auto-Post Schedules
                     </h1>
                     <p class="text-sm" style="color: rgba(235,235,245,0.75);">
@@ -177,9 +177,9 @@
                     @forelse($schedules as $schedule)
                         <tr class="hover-row" data-status="{{ $schedule->status }}">
                             <td class="px-6 py-4">
-                                <div class="font-medium" style="color: #FFFFFF;">{{ $schedule->topic->title }}</div>
+                                <div class="font-medium" style="color: #FFFFFF;">{{ $schedule->topic?->title ?? 'Topic dihapus' }}</div>
                                 <div class="text-xs mt-1" style="color: rgba(235,235,245,0.6);">
-                                    <i class="fas fa-folder text-xs mr-1"></i>{{ $schedule->topic->category }}
+                                    <i class="fas fa-folder text-xs mr-1"></i>{{ $schedule->topic?->category ?? '-' }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -423,7 +423,7 @@ async function refreshLogs() {
     const content = document.getElementById('logsContent');
     
     try {
-        const response = await fetch('/auto-post/logs/recent?format=json');
+        const response = await fetch('{{ route("auto-post.logs.recent") }}?format=json');
         const data = await response.json();
         
         let html = '';

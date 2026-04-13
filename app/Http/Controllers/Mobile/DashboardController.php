@@ -363,6 +363,7 @@ class DashboardController extends Controller
                 'title' => $project->name,
                 'subtitle' => 'Lewat dari tenggat',
                 'days_overdue' => Carbon::parse($project->deadline)->diffInDays(now()),
+                'link' => route('mobile.projects.show', $project->id),
             ]);
         }
 
@@ -379,6 +380,7 @@ class DashboardController extends Controller
                 'title' => $task->title ?? 'Task',
                 'subtitle' => optional($task->project)->name ?? 'Task terjadwal',
                 'days_overdue' => Carbon::parse($task->due_date)->diffInDays(now()),
+                'link' => route('mobile.tasks.show', $task->id),
             ]);
         }
 

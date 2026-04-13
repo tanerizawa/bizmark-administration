@@ -4,272 +4,247 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-<div class="max-w-7xl mx-auto space-y-6 md:space-y-10">
-    {{-- Hero section --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden" role="region" aria-labelledby="dashboard-hero">
+<style>
+    /* Dashboard contrast overrides – fix low-opacity inline styles */
+    .dashboard-root [style*="rgba(235,235,245,0.5)"] { color: rgba(235,235,245,0.72) !important; }
+    .dashboard-root [style*="rgba(235,235,245,0.65)"] { color: rgba(235,235,245,0.82) !important; }
+    .dashboard-root [style*="color: rgba(255,255,255,0.3)"] { color: rgba(255,255,255,0.52) !important; }
+    .dashboard-root [style*="color: rgba(255,255,255,0.4)"] { color: rgba(255,255,255,0.62) !important; }
+    .dashboard-root [style*="color: rgba(255,255,255,0.5)"] { color: rgba(255,255,255,0.72) !important; }
+    .dashboard-root [style*="color: rgba(255,255,255,0.6)"] { color: rgba(255,255,255,0.8) !important; }
+    .dashboard-root [style*="color: rgba(142,142,147,0.6)"] { color: rgba(210,210,215,0.9) !important; }
+</style>
+<div class="dashboard-root space-y-4">
+    {{-- Compact Hero section --}}
+    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden" role="region" aria-labelledby="dashboard-hero">
         {{-- Decorative Background --}}
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10 animate-pulse"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10 animate-pulse" style="animation-delay: 1s;"></div>
+            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-12 -right-8"></div>
         </div>
         
-        <div class="relative space-y-5 md:space-y-6">
-            {{-- Header --}}
-            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
-                <div class="space-y-2.5 max-w-3xl">
-                    <p class="text-xs uppercase tracking-[0.4em] text-dark-text-tertiary">Pusat Operasional</p>
-                    <h1 id="dashboard-hero" class="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
-                        Ringkasan Eksekutif Operasional
-                    </h1>
-                    <p class="text-sm md:text-base text-dark-text-secondary">
-                        Pantau indikator kinerja utama, arus kas, dan perkembangan proyek secara terpadu dalam satu tampilan.
-                    </p>
-                </div>
-                
-                {{-- Metadata & Actions --}}
-                <div class="space-y-2.5 text-sm text-dark-text-secondary shrink-0">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-clock" aria-hidden="true"></i>
-                        <time datetime="{{ now()->toIso8601String() }}">
-                            Terakhir diperbarui: {{ now()->format('d M Y, H:i') }}
-                        </time>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-user-shield" aria-hidden="true"></i>
-                        <span>Akses: Direksi & Kepala Operasional</span>
-                    </div>
-                    <a href="{{ route('projects.index') }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2 rounded-apple text-xs font-semibold bg-apple-blue bg-opacity-25 text-dark-text-primary hover:bg-opacity-35 transition-all duration-200">
-                        Lihat semua proyek
-                        <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
-                    </a>
+        <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div class="flex-1 min-w-0">
+                <p class="admin-hero-subtitle">Pusat Operasional</p>
+                <h1 id="dashboard-hero" class="admin-hero-title text-white">Ringkasan Eksekutif</h1>
+                <p class="admin-hero-desc">Pantau KPI, arus kas, dan perkembangan proyek</p>
+                <div class="admin-hero-meta flex flex-wrap gap-3">
+                    <span><i class="fas fa-clock mr-1.5"></i>{{ now()->format('d M Y, H:i') }}</span>
+                    <span><i class="fas fa-user-shield mr-1.5"></i>Direksi & Kepala Ops</span>
                 </div>
             </div>
-
-            {{-- KPI Cards --}}
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                {{-- Urgent Actions --}}
-                <article class="card-subtle rounded-apple-lg p-3.5 md:p-4 hover:bg-opacity-10 transition-all duration-200" 
-                         aria-labelledby="kpi-urgent">
-                    <p id="kpi-urgent" class="text-xs uppercase tracking-widest text-apple-red opacity-80">Perlu Tindakan</p>
-                    <p class="text-2xl md:text-3xl font-bold text-white mt-1.5" role="status" aria-live="polite">
-                        {{ $criticalAlerts['total_urgent'] }}
-                    </p>
-                    <p class="text-xs text-dark-text-tertiary mt-1">Butuh penanganan segera</p>
-                </article>
-                
-                {{-- Cash Runway --}}
-                <article class="card-subtle rounded-apple-lg p-3.5 md:p-4 hover:bg-opacity-10 transition-all duration-200" 
-                         aria-labelledby="kpi-cash">
-                    <p id="kpi-cash" class="text-xs uppercase tracking-widest text-apple-blue opacity-90">Proyeksi Kas</p>
-                    <p class="text-2xl md:text-3xl font-bold text-apple-blue mt-1.5" role="status" aria-live="polite">
-                        {{ $cashFlowStatus['runway_months'] }} <span class="text-lg">bln</span>
-                    </p>
-                    <p class="text-xs text-dark-text-tertiary mt-1">
-                        Status: <span class="capitalize">{{ $cashFlowStatus['status'] }}</span>
-                    </p>
-                </article>
-                
-                {{-- Pending Approvals --}}
-                <article class="card-subtle rounded-apple-lg p-3.5 md:p-4 hover:bg-opacity-10 transition-all duration-200" 
-                         aria-labelledby="kpi-approvals">
-                    <p id="kpi-approvals" class="text-xs uppercase tracking-widest text-dark-text-secondary">Dokumen Tertunda</p>
-                    <p class="text-2xl md:text-3xl font-bold text-white mt-1.5" role="status" aria-live="polite">
-                        {{ $pendingApprovals['total_pending'] }}
-                    </p>
-                    <p class="text-xs text-dark-text-tertiary mt-1">Menunggu persetujuan</p>
-                </article>
-                
-                {{-- Upcoming Tasks --}}
-                <article class="card-subtle rounded-apple-lg p-3.5 md:p-4 hover:bg-opacity-10 transition-all duration-200" 
-                         aria-labelledby="kpi-agenda">
-                    <p id="kpi-agenda" class="text-xs uppercase tracking-widest text-apple-green opacity-90">Agenda 30 Hari</p>
-                    <p class="text-2xl md:text-3xl font-bold text-apple-green mt-1.5" role="status" aria-live="polite">
-                        {{ $thisWeek['total_items'] }}
-                    </p>
-                    <p class="text-xs text-dark-text-tertiary mt-1">Tugas & target waktu</p>
-                </article>
+            
+            <div class="flex items-center gap-2">
+                <a href="{{ route('projects.index') }}" 
+                   class="admin-btn admin-btn-sm rounded" style="background: rgba(0,122,255,0.25); color: #fff;">
+                    <i class="fas fa-project-diagram mr-1"></i>Proyek
+                </a>
+                <a href="{{ route('dashboard') }}" 
+                   class="admin-btn admin-btn-sm rounded" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.8);">
+                    <i class="fas fa-arrows-rotate"></i>
+                </a>
             </div>
         </div>
     </section>
 
-    {{-- Critical focus section --}}
-    <section class="space-y-3 md:space-y-4" role="region" aria-labelledby="critical-focus">
-        <div class="flex items-center justify-between flex-wrap gap-2.5">
+    {{-- Compact KPI Cards --}}
+    <div class="grid grid-cols-4 gap-2">
+        {{-- Urgent Actions --}}
+        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
+                 style="background: rgba(255,69,58,0.1); border: 1px solid rgba(255,69,58,0.2);">
+            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,69,58,0.2);">
+                <i class="fas fa-exclamation-triangle text-apple-red" style="font-size: 0.7rem;"></i>
+            </div>
             <div>
-                <p class="text-xs uppercase tracking-[0.4em] text-dark-text-tertiary">Prioritas Tinggi</p>
-                <h2 id="critical-focus" class="text-2xl font-semibold text-white">Fokus Kritis</h2>
-                <p class="text-sm text-dark-text-secondary">Informasi penting mengenai isu mendesak, arus kas, dan persetujuan dokumen.</p>
+                <p class="admin-small text-apple-red uppercase tracking-wider">Urgent</p>
+                <p class="admin-stat text-white">{{ $criticalAlerts['total_urgent'] }}</p>
+            </div>
+        </article>
+        
+        {{-- Cash Runway --}}
+        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
+                 style="background: rgba(10,132,255,0.1); border: 1px solid rgba(10,132,255,0.2);">
+            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(10,132,255,0.2);">
+                <i class="fas fa-wallet text-apple-blue" style="font-size: 0.7rem;"></i>
+            </div>
+            <div>
+                <p class="admin-small text-apple-blue uppercase tracking-wider">Kas</p>
+                <p class="admin-stat text-apple-blue">{{ $cashFlowStatus['runway_months'] }} bln</p>
+            </div>
+        </article>
+        
+        {{-- Pending Approvals --}}
+        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
+                 style="background: rgba(255,149,0,0.1); border: 1px solid rgba(255,149,0,0.2);">
+            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,149,0,0.2);">
+                <i class="fas fa-clock text-apple-orange" style="font-size: 0.7rem;"></i>
+            </div>
+            <div>
+                <p class="admin-small text-apple-orange uppercase tracking-wider">Pending</p>
+                <p class="admin-stat text-white">{{ $pendingApprovals['total_pending'] }}</p>
+            </div>
+        </article>
+        
+        {{-- Upcoming Tasks --}}
+        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
+                 style="background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.2);">
+            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(52,199,89,0.2);">
+                <i class="fas fa-calendar-check text-apple-green" style="font-size: 0.7rem;"></i>
+            </div>
+            <div>
+                <p class="admin-small text-apple-green uppercase tracking-wider">30 Hari</p>
+                <p class="admin-stat text-apple-green">{{ $thisWeek['total_items'] }}</p>
+            </div>
+        </article>
+    </div>
+
+    {{-- Critical focus section --}}
+    <section class="card-elevated rounded-apple-lg p-3" role="region" aria-labelledby="critical-focus">
+        <div class="flex items-center justify-between mb-2">
+            <div>
+                <h2 id="critical-focus" class="admin-section text-white flex items-center gap-2">
+                    <i class="fas fa-exclamation-circle text-apple-red" style="font-size: 0.75rem;"></i>
+                    Fokus Kritis
+                </h2>
+                <p class="admin-body text-dark-text-secondary">Isu mendesak, arus kas, dan persetujuan dokumen</p>
             </div>
             
             {{-- Status Badge --}}
             @if($criticalAlerts['total_urgent'] > 0 || $cashFlowStatus['status'] === 'critical')
-            <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-red bg-opacity-15 text-apple-red flex items-center gap-2" 
-                  role="status" 
-                  aria-live="polite">
+            <span class="px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5" 
+                  style="background: rgba(255,59,48,0.15); color: #FF3B30;">
                 <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-                Memerlukan Perhatian
+                Perhatian
             </span>
             @else
-            <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-green bg-opacity-15 text-apple-green flex items-center gap-2" 
-                  role="status" 
-                  aria-live="polite">
-                <i class="fas fa-check-circle" aria-hidden="true"></i>
-                Kondisi Stabil
+            <span class="px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5" style="background: rgba(52,199,89,0.15); color: #34C759;">
+                <i class="fas fa-check-circle"></i>Stabil
             </span>
             @endif
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-3 md:gap-4">
+        <div class="grid grid-cols-3 gap-2">
             {{-- Urgent board --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 flex flex-col">
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.5);">Tindakan Mendesak</p>
-                        <h3 class="text-xl font-semibold text-white">Memerlukan Penanganan</h3>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9);">
-                        {{ $criticalAlerts['total_urgent'] }} item
+            <div class="card-elevated rounded-apple p-3 flex flex-col">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="admin-section text-white">Memerlukan Penanganan</h3>
+                    <span class="admin-badge" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9);">
+                        {{ $criticalAlerts['total_urgent'] }}
                     </span>
                 </div>
-                <div class="space-y-2.5 overflow-y-auto pr-1" style="max-height: 330px;">
+                <div class="space-y-2 overflow-y-auto flex-1" style="max-height: 240px;">
                     @php $projectsCount = count($criticalAlerts['overdue_projects']); $tasksCount = count($criticalAlerts['overdue_tasks']); @endphp
                     @if($projectsCount)
-                        <p class="text-xs font-semibold uppercase tracking-widest" style="color: rgba(255,255,255,0.5);">Proyek Terlambat</p>
+                        <p class="admin-small uppercase tracking-widest text-dark-text-tertiary">Proyek Terlambat</p>
                         @foreach($criticalAlerts['overdue_projects'] as $project)
-                        <a href="{{ route('projects.show', $project) }}" class="block p-3 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(255,59,48,0.08);">
-                            <div class="flex items-start justify-between">
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-white truncate">{{ $project->name }}</p>
-                                    <p class="text-xs mt-1" style="color: rgba(255,149,0,0.9);">
-                                        <i class="fas fa-exclamation-circle mr-1"></i>
-                                        Terlambat {{ $project->days_overdue }} hari
-                                    </p>
-                                    @if($project->institution)
-                                    <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.5);">{{ $project->institution->name }}</p>
-                                    @endif
-                                </div>
-                                <i class="fas fa-chevron-right text-xs" style="color: rgba(255,255,255,0.3);"></i>
-                            </div>
+                        <a href="{{ route('projects.show', $project) }}" class="block p-2 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(255,59,48,0.08);">
+                            <p class="admin-body font-medium text-white truncate">{{ $project->name }}</p>
+                            <p class="admin-small text-apple-orange">
+                                <i class="fas fa-exclamation-circle mr-1"></i>Terlambat {{ $project->days_overdue }} hari
+                            </p>
+                            @if($project->institution)
+                            <p class="admin-small text-dark-text-tertiary">{{ $project->institution->name }}</p>
+                            @endif
                         </a>
                         @endforeach
                     @endif
 
                     @if($tasksCount)
-                        <p class="text-xs font-semibold uppercase tracking-widest mt-4" style="color: rgba(255,255,255,0.5);">Tugas Terlambat</p>
+                        <p class="admin-small uppercase tracking-widest text-dark-text-tertiary mt-2">Tugas Terlambat</p>
                         @foreach($criticalAlerts['overdue_tasks'] as $task)
-                        <a href="{{ route('tasks.show', $task) }}" class="block p-3 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(255,149,0,0.08);">
-                            <div class="flex items-start justify-between">
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-white truncate">{{ $task->title }}</p>
-                                    <p class="text-xs mt-1" style="color: rgba(255,149,0,1);">
-                                        <i class="fas fa-clock mr-1"></i>Terlambat {{ $task->days_overdue }} hari
-                                    </p>
-                                    <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.5);">Ditugaskan: {{ $task->assignedUser->name ?? 'Belum ditugaskan' }}</p>
-                                </div>
-                            </div>
+                        <a href="{{ route('tasks.show', $task) }}" class="block p-2 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(255,149,0,0.08);">
+                            <p class="admin-body font-medium text-white truncate">{{ $task->title }}</p>
+                            <p class="admin-small text-apple-orange"><i class="fas fa-clock mr-1"></i>Terlambat {{ $task->days_overdue }} hari</p>
+                            <p class="admin-small text-dark-text-tertiary">{{ $task->assignedUser->name ?? 'Belum ditugaskan' }}</p>
                         </a>
                         @endforeach
                     @endif
 
                     @if(!$projectsCount && !$tasksCount)
-                    <div class="text-center py-12">
-                        <i class="fas fa-check-circle text-3xl" style="color: rgba(52,199,89,0.8);"></i>
-                        <p class="mt-3 text-sm font-medium" style="color: rgba(255,255,255,0.8);">Tidak ada isu mendesak</p>
+                    <div class="text-center py-6">
+                        <div class="admin-stat-icon mx-auto mb-2 rounded-full flex items-center justify-center" style="background: rgba(52,199,89,0.12);">
+                            <i class="fas fa-check-circle text-apple-green"></i>
+                        </div>
+                        <p class="admin-body font-medium text-white">Semua Terkendali</p>
+                        <p class="admin-small text-dark-text-tertiary">Tidak ada isu mendesak</p>
                     </div>
                     @endif
                 </div>
             </div>
 
             {{-- Cash flow status --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 space-y-4">
+            <div class="card-elevated rounded-apple p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.5);">Arus Kas</p>
-                        <h3 class="text-xl font-semibold text-white">Kondisi Keuangan</h3>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase" style="background: {{ $cashFlowStatus['status_color'] }}20; color: {{ $cashFlowStatus['status_color'] }};">
+                    <h3 class="admin-section text-white">Kondisi Keuangan</h3>
+                    <span class="admin-badge uppercase" style="background: {{ $cashFlowStatus['status_color'] }}20; color: {{ $cashFlowStatus['status_color'] }};">
                         {{ $cashFlowStatus['status'] }}
                     </span>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <p class="text-xs" style="color: rgba(255,255,255,0.6);">Saldo Saat Ini</p>
-                        <p class="text-3xl font-bold text-white">Rp {{ number_format($cashFlowStatus['current_balance']) }}</p>
-                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.4);">Pengeluaran {{ number_format($cashFlowStatus['monthly_burn_rate']) }}/bulan</p>
+                        <p class="admin-small text-dark-text-tertiary">Saldo</p>
+                        <p class="admin-stat text-white">Rp {{ number_format($cashFlowStatus['current_balance']/1000000, 1) }}M</p>
                     </div>
                     <div>
-                        <p class="text-xs" style="color: rgba(255,255,255,0.6);">Proyeksi Kas</p>
-                        <p class="text-3xl font-bold" style="color: {{ $cashFlowStatus['status_color'] }};">{{ $cashFlowStatus['runway_months'] }} bln</p>
-                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.4);">{{ $cashFlowStatus['runway_label'] ?? 'Pantau berkala' }}</p>
+                        <p class="admin-small text-dark-text-tertiary">Proyeksi</p>
+                        <p class="admin-stat" style="color: {{ $cashFlowStatus['status_color'] }};">{{ $cashFlowStatus['runway_months'] }} bln</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div class="p-3 rounded-xl" style="background: rgba(84,84,88,0.35);">
-                        <p class="text-xs" style="color: rgba(255,255,255,0.6);">Laju Pengeluaran</p>
-                        <p class="text-xl font-bold text-white">{{ number_format($cashFlowStatus['monthly_burn_rate'] / 1000000, 1) }}M</p>
-                        <p class="text-xs" style="color: rgba(255,255,255,0.4);">per bulan</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="p-2 rounded-apple" style="background: rgba(84,84,88,0.35);">
+                        <p class="admin-small text-dark-text-tertiary">Burn Rate</p>
+                        <p class="admin-body font-semibold text-white">{{ number_format($cashFlowStatus['monthly_burn_rate'] / 1000000, 1) }}M/bln</p>
                     </div>
-                    <div class="p-3 rounded-xl" style="background: rgba(84,84,88,0.35);">
-                        <p class="text-xs" style="color: rgba(255,255,255,0.6);">Tagihan Jatuh Tempo</p>
-                        <p class="text-xl font-bold" style="color: {{ $cashFlowStatus['overdue_invoices'] > 0 ? '#FF3B30' : '#34C759' }};">
-                            {{ $cashFlowStatus['overdue_invoices'] > 0 ? 'Rp '.number_format($cashFlowStatus['overdue_invoices']) : '0' }}
+                    <div class="p-2 rounded-apple" style="background: rgba(84,84,88,0.35);">
+                        <p class="admin-small text-dark-text-tertiary">Overdue</p>
+                        <p class="admin-body font-semibold" style="color: {{ $cashFlowStatus['overdue_invoices'] > 0 ? '#FF3B30' : '#34C759' }};">
+                            {{ $cashFlowStatus['overdue_invoices'] > 0 ? number_format($cashFlowStatus['overdue_invoices']/1000000,1).'M' : '0' }}
                         </p>
-                        <p class="text-xs" style="color: rgba(255,255,255,0.4);">Perlu penagihan</p>
                     </div>
                 </div>
-                <div class="rounded-apple-lg p-3" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs" style="color: rgba(255,255,255,0.6);">Catatan</p>
-                    <p class="text-sm" style="color: rgba(255,255,255,0.85);">
-                        Prioritaskan penagihan {{ $cashFlowStatus['top_client'] ?? 'klien utama' }} untuk menjaga proyeksi kas di atas 4 bulan.
+                <div class="rounded-apple p-2" style="background: rgba(10,132,255,0.12);">
+                    <p class="admin-small text-dark-text-secondary">
+                        Prioritaskan penagihan {{ $cashFlowStatus['top_client'] ?? 'klien utama' }} untuk menjaga kas di atas 4 bulan.
                     </p>
                 </div>
             </div>
 
             {{-- Pending approvals --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 flex flex-col">
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.5);">Persetujuan</p>
-                        <h3 class="text-xl font-semibold text-white">Dokumen Tertunda</h3>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(191,90,242,0.15); color: rgba(191,90,242,0.95);">
+            <div class="card-elevated rounded-apple p-3 flex flex-col">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="admin-section text-white">Dokumen Tertunda</h3>
+                    <span class="admin-badge" style="background: rgba(191,90,242,0.15); color: rgba(191,90,242,0.95);">
                         {{ $pendingApprovals['total_pending'] }}
                     </span>
                 </div>
-                <div class="space-y-2.5 overflow-y-auto pr-1" style="max-height: 320px;">
+                <div class="space-y-2 overflow-y-auto flex-1" style="max-height: 200px;">
                     @forelse($pendingApprovals['pending_documents'] as $document)
-                    <div class="p-2.5 rounded-apple" style="background: rgba(191,90,242,0.08);">
-                        <div class="flex items-start justify-between">
-                            <div class="min-w-0 flex-1">
-                                <p class="text-sm font-semibold text-white truncate">{{ $document->name }}</p>
-                                <p class="text-xs mt-0.5" style="color: rgba(191,90,242,1);">
-                                    <i class="fas fa-clock mr-1"></i>Menunggu {{ $document->days_waiting }} hari
-                                </p>
-                                <p class="text-xs" style="color: rgba(255,255,255,0.5);">Pengunggah: {{ $document->uploader->name ?? 'Tidak diketahui' }}</p>
-                                @if($document->project)
-                                <p class="text-xs" style="color: rgba(255,255,255,0.5);">Proyek: {{ $document->project->name }}</p>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="flex gap-2 mt-2.5">
-                            <a href="{{ route('documents.show', $document) }}" class="flex-1 px-3 py-2 rounded-apple text-xs font-semibold text-center" style="background: rgba(52,199,89,0.25); color: rgba(52,199,89,0.95);">
+                    <div class="p-2 rounded-apple" style="background: rgba(191,90,242,0.08);">
+                        <p class="admin-body font-medium text-white truncate">{{ $document->name }}</p>
+                        <p class="admin-small" style="color: rgba(191,90,242,1);">
+                            <i class="fas fa-clock mr-1"></i>Menunggu {{ $document->days_waiting }} hari
+                        </p>
+                        <p class="admin-small text-dark-text-tertiary">{{ $document->uploader->name ?? '-' }}</p>
+                        <div class="flex gap-1 mt-2">
+                            <a href="{{ route('documents.show', $document) }}" class="admin-btn admin-btn-sm flex-1 text-center" style="background: rgba(52,199,89,0.25); color: rgba(52,199,89,0.95);">
                                 <i class="fas fa-check mr-1"></i>Setujui
                             </a>
-                            <a href="{{ route('documents.show', $document) }}" class="px-3 py-2 rounded-apple text-xs font-semibold" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);">
-                                <i class="fas fa-eye mr-1"></i>Tinjau
+                            <a href="{{ route('documents.show', $document) }}" class="admin-btn admin-btn-sm" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);">
+                                <i class="fas fa-eye"></i>
                             </a>
                         </div>
                     </div>
                     @empty
-                    <div class="text-center py-10">
-                        <i class="fas fa-check-circle text-3xl" style="color: rgba(52,199,89,0.9);"></i>
-                        <p class="mt-3 text-sm font-medium" style="color: rgba(255,255,255,0.8);">Tidak ada dokumen tertunda</p>
+                    <div class="text-center py-6">
+                        <div class="admin-stat-icon mx-auto mb-2 rounded-full flex items-center justify-center" style="background: rgba(52,199,89,0.12);">
+                            <i class="fas fa-file-check text-apple-green"></i>
+                        </div>
+                        <p class="admin-body font-medium text-white">Semua Terselesaikan</p>
+                        <p class="admin-small text-dark-text-tertiary">Tidak ada dokumen menunggu</p>
                     </div>
                     @endforelse
                 </div>
                 @if($pendingApprovals['total_pending'] > 0)
-                <a href="{{ route('documents.index') }}?status=review" class="mt-4 text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
+                <a href="{{ route('documents.index') }}?status=review" class="admin-small font-medium mt-2 text-dark-text-secondary hover:text-white">
                     Lihat semua dokumen →
                 </a>
                 @endif
@@ -278,37 +253,38 @@
     </section>
 
     {{-- Financial intelligence section --}}
-    <section class="space-y-3 md:space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-3">
+    <section class="card-elevated rounded-apple-lg p-3 space-y-2">
+        <div class="flex items-center justify-between">
             <div>
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Tinjauan Keuangan</p>
-                <h2 class="text-2xl font-semibold" style="color:#FFFFFF;">Analisis Finansial</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Perbandingan pemasukan dan pengeluaran, umur piutang, serta penggunaan anggaran.</p>
+                <h2 class="admin-section text-white flex items-center gap-2">
+                    <i class="fas fa-chart-line text-apple-blue" style="font-size: 0.75rem;"></i>Tinjauan Keuangan
+                </h2>
+                <p class="admin-body text-dark-text-secondary">Pemasukan, pengeluaran, piutang, dan anggaran</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-3 md:gap-4">
+        <div class="grid grid-cols-3 gap-2">
             {{-- Income vs Expense --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 space-y-4">
+            <div class="card-elevated rounded-apple p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Arus Kas Bulan Ini</h3>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,0.9);">Aktif</span>
+                    <h3 class="admin-section text-white">Arus Kas Bulan Ini</h3>
+                    <span class="admin-badge" style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,0.9);">Aktif</span>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <p class="text-xs" style="color: rgba(255,255,255,0.6);">Pemasukan</p>
-                        <p class="text-2xl font-bold text-white">{{ number_format($cashFlowSummary['payments_this_month'] / 1000000, 1) }}M</p>
+                        <p class="admin-small text-dark-text-tertiary">Pemasukan</p>
+                        <p class="admin-stat text-white">{{ number_format($cashFlowSummary['payments_this_month'] / 1000000, 1) }}M</p>
                         @if($cashFlowSummary['payments_growth'] != 0)
-                        <p class="text-xs" style="color: {{ $cashFlowSummary['payments_growth'] > 0 ? '#34C759' : '#FF3B30' }};">
+                        <p class="admin-small" style="color: {{ $cashFlowSummary['payments_growth'] > 0 ? '#34C759' : '#FF3B30' }};">
                             <i class="fas fa-arrow-{{ $cashFlowSummary['payments_growth'] > 0 ? 'up' : 'down' }} mr-1"></i>{{ abs($cashFlowSummary['payments_growth']) }}%
                         </p>
                         @endif
                     </div>
                     <div>
-                        <p class="text-xs" style="color: rgba(255,255,255,0.6);">Pengeluaran</p>
-                        <p class="text-2xl font-bold text-white">{{ number_format($cashFlowSummary['expenses_this_month'] / 1000000, 1) }}M</p>
+                        <p class="admin-small text-dark-text-tertiary">Pengeluaran</p>
+                        <p class="admin-stat text-white">{{ number_format($cashFlowSummary['expenses_this_month'] / 1000000, 1) }}M</p>
                         @if($cashFlowSummary['expenses_growth'] != 0)
-                        <p class="text-xs" style="color: {{ $cashFlowSummary['expenses_growth'] > 0 ? '#FF3B30' : '#34C759' }};">
+                        <p class="admin-small" style="color: {{ $cashFlowSummary['expenses_growth'] > 0 ? '#FF3B30' : '#34C759' }};">
                             <i class="fas fa-arrow-{{ $cashFlowSummary['expenses_growth'] > 0 ? 'up' : 'down' }} mr-1"></i>{{ abs($cashFlowSummary['expenses_growth']) }}%
                         </p>
                         @endif
@@ -319,59 +295,59 @@
                     $paymentsWidth = ($cashFlowSummary['payments_this_month'] / $maxAmount) * 100;
                     $expensesWidth = ($cashFlowSummary['expenses_this_month'] / $maxAmount) * 100;
                 @endphp
-                <div class="space-y-3">
+                <div class="space-y-2">
                     <div>
-                        <div class="flex items-center justify-between text-xs" style="color: rgba(255,255,255,0.6);">
+                        <div class="flex items-center justify-between admin-small text-dark-text-tertiary">
                             <span>Pemasukan</span>
                             <span>Rp {{ number_format($cashFlowSummary['payments_this_month']) }}</span>
                         </div>
-                        <div class="h-2 rounded-full overflow-hidden" style="background: rgba(52,199,89,0.15);">
+                        <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(52,199,89,0.15);">
                             <div class="h-full" style="width: {{ $paymentsWidth }}%; background: #34C759;"></div>
                         </div>
                     </div>
                     <div>
-                        <div class="flex items-center justify-between text-xs" style="color: rgba(255,255,255,0.6);">
+                        <div class="flex items-center justify-between admin-small text-dark-text-tertiary">
                             <span>Pengeluaran</span>
                             <span>Rp {{ number_format($cashFlowSummary['expenses_this_month']) }}</span>
                         </div>
-                        <div class="h-2 rounded-full overflow-hidden" style="background: rgba(255,59,48,0.15);">
+                        <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,59,48,0.15);">
                             <div class="h-full" style="width: {{ $expensesWidth }}%; background: #FF3B30;"></div>
                         </div>
                     </div>
                 </div>
-                <div class="text-sm font-semibold" style="color: {{ $cashFlowSummary['is_profitable'] ? '#34C759' : '#FF3B30' }};">
+                <div class="admin-body font-semibold" style="color: {{ $cashFlowSummary['is_profitable'] ? '#34C759' : '#FF3B30' }};">
                     {{ $cashFlowSummary['is_profitable'] ? 'Surplus ' : 'Defisit ' }}{{ number_format($cashFlowSummary['net_this_month'] / 1000000, 1) }}M bulan ini
                 </div>
-                <div class="grid grid-cols-2 gap-3 text-xs" style="color: rgba(255,255,255,0.6);">
+                <div class="grid grid-cols-2 gap-2 admin-small text-dark-text-tertiary">
                     <div>
-                        <p>Pemasukan Tahun Ini</p>
-                        <p class="text-lg font-semibold text-white">{{ number_format($cashFlowSummary['payments_ytd'] / 1000000, 1) }}M</p>
+                        <p>Pemasukan YTD</p>
+                        <p class="admin-body font-semibold text-white">{{ number_format($cashFlowSummary['payments_ytd'] / 1000000, 1) }}M</p>
                     </div>
                     <div>
-                        <p>Pengeluaran Tahun Ini</p>
-                        <p class="text-lg font-semibold text-white">{{ number_format($cashFlowSummary['expenses_ytd'] / 1000000, 1) }}M</p>
+                        <p>Pengeluaran YTD</p>
+                        <p class="admin-body font-semibold text-white">{{ number_format($cashFlowSummary['expenses_ytd'] / 1000000, 1) }}M</p>
                     </div>
                 </div>
             </div>
 
             {{-- Receivables --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 space-y-4">
+            <div class="card-elevated rounded-apple p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Umur Piutang</h3>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(255,214,10,0.15); color: rgba(255,214,10,0.9);">
-                        {{ $receivablesAging['invoice_count'] + $receivablesAging['internal_count'] }} item
+                    <h3 class="admin-section text-white">Umur Piutang</h3>
+                    <span class="admin-badge" style="background: rgba(255,214,10,0.15); color: rgba(255,214,10,0.9);">
+                        {{ $receivablesAging['invoice_count'] + $receivablesAging['internal_count'] }}
                     </span>
                 </div>
-                <div class="rounded-apple-lg p-4" style="background: rgba(10,132,255,0.12);">
-                    <p class="text-xs" style="color: rgba(255,255,255,0.6);">Total Piutang</p>
-                    <p class="text-3xl font-bold" style="color: rgba(10,132,255,1);">{{ number_format($receivablesAging['total_receivables'] / 1000000, 1) }}M</p>
-                    <p class="text-xs" style="color: rgba(255,255,255,0.5);">Faktur: Rp {{ number_format($receivablesAging['invoice_receivables']) }} • Kasbon: Rp {{ number_format($receivablesAging['internal_receivables']) }}</p>
+                <div class="rounded-apple p-2" style="background: rgba(10,132,255,0.12);">
+                    <p class="admin-small text-dark-text-tertiary">Total Piutang</p>
+                    <p class="admin-stat text-apple-blue">{{ number_format($receivablesAging['total_receivables'] / 1000000, 1) }}M</p>
+                    <p class="admin-small text-dark-text-tertiary">Faktur {{ number_format($receivablesAging['invoice_receivables']/1000000,1) }}M • Kasbon {{ number_format($receivablesAging['internal_receivables']/1000000,1) }}M</p>
                 </div>
-                <div class="space-y-2 text-sm">
+                <div class="space-y-1">
                     @foreach(['under_30' => '0-30 hari', 'days_30_60' => '30-60 hari', 'days_60_90' => '60-90 hari', 'over_90' => '90+ hari'] as $key => $label)
                         @if($receivablesAging['aging'][$key] > 0)
-                        <div class="p-2 rounded-apple flex items-center justify-between" style="background: rgba(255,255,255,0.04);">
-                            <span style="color: rgba(255,255,255,0.75);">{{ $label }}</span>
+                        <div class="p-1.5 rounded-apple flex items-center justify-between admin-small" style="background: rgba(255,255,255,0.04);">
+                            <span class="text-dark-text-secondary">{{ $label }}</span>
                             <span class="font-semibold" style="color: {{ $key === 'over_90' ? '#FF3B30' : ($key === 'days_60_90' ? '#FF9500' : '#FFFFFF') }};">
                                 {{ number_format($receivablesAging['aging'][$key] / 1000000, 1) }}M
                             </span>
@@ -380,52 +356,54 @@
                     @endforeach
                 </div>
                 @if($receivablesAging['internal_count'] > 0)
-                <div class="space-y-2">
-                    <p class="text-xs uppercase tracking-widest" style="color: rgba(255,255,255,0.5);">Kasbon Internal</p>
+                <div class="space-y-1 max-h-24 overflow-y-auto">
+                    <p class="admin-small uppercase tracking-widest text-dark-text-tertiary">Kasbon Internal</p>
                     @foreach($receivablesAging['internal_list'] as $kasbon)
-                    <div class="p-2 rounded-apple" style="background: rgba(255,255,255,0.03);">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-white">{{ $kasbon['from'] }}</span>
-                            <span class="text-sm font-bold" style="color: rgba(142,142,147,0.6);">Rp {{ number_format($kasbon['remaining']) }}</span>
+                    <div class="p-1.5 rounded-apple" style="background: rgba(255,255,255,0.03);">
+                        <div class="flex items-center justify-between admin-small">
+                            <span class="font-medium text-white">{{ $kasbon['from'] }}</span>
+                            <span class="font-bold text-dark-text-secondary">{{ number_format($kasbon['remaining']/1000000,1) }}M</span>
                         </div>
-                        <p class="text-xs" style="color: rgba(255,255,255,0.5);">{{ $kasbon['description'] }} • {{ \Carbon\Carbon::parse($kasbon['date'])->format('d M Y') }}</p>
                     </div>
                     @endforeach
                 </div>
                 @else
-                <p class="text-xs text-center py-4" style="color: rgba(52,199,89,0.9);">Tidak ada kasbon yang belum diselesaikan</p>
+                <p class="admin-small text-center py-2 text-apple-green">Tidak ada kasbon belum lunas</p>
                 @endif
             </div>
 
             {{-- Budget status --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 space-y-4">
+            <div class="card-elevated rounded-apple p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Pemanfaatan Anggaran</h3>
+                    <h3 class="admin-section text-white">Pemanfaatan Anggaran</h3>
                     <div class="text-right">
-                        <p class="text-xs" style="color: rgba(255,255,255,0.5);">Keseluruhan</p>
-                        <p class="text-2xl font-bold text-white">{{ $budgetStatus['overall_utilization'] }}%</p>
+                        <p class="admin-stat text-white">{{ $budgetStatus['overall_utilization'] }}%</p>
                     </div>
                 </div>
                 @if($budgetStatus['top_projects']->count() > 0)
-                <div class="space-y-3">
+                <div class="space-y-2">
                     @foreach($budgetStatus['top_projects'] as $project)
-                    <a href="{{ route('projects.show', $project) }}" class="block p-3 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: {{ $project->status_color }}15;">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex-1 min-w-0 mr-3">
-                                <p class="text-sm font-semibold text-white truncate">{{ $project->name }}</p>
-                                <p class="text-xs" style="color: rgba(255,255,255,0.5);">Anggaran Rp {{ number_format($project->budget) }} • Realisasi Rp {{ number_format($project->actual_cost) }}</p>
+                    <a href="{{ route('projects.show', $project) }}" class="block p-2 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: {{ $project->status_color }}15;">
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex-1 min-w-0 mr-2">
+                                <p class="admin-body font-medium text-white truncate">{{ $project->name }}</p>
+                                <p class="admin-small text-dark-text-tertiary">{{ number_format($project->budget/1000000,1) }}M → {{ number_format($project->actual_cost/1000000,1) }}M</p>
                             </div>
-                            <span class="text-base font-bold" style="color: {{ $project->status_color }};">{{ $project->variance_percentage }}%</span>
+                            <span class="admin-body font-bold" style="color: {{ $project->status_color }};">{{ $project->variance_percentage }}%</span>
                         </div>
-                        <div class="h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.1);">
+                        <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.1);">
                             <div class="h-full" style="width: {{ min($project->variance_percentage, 100) }}%; background: {{ $project->status_color }};"></div>
                         </div>
                     </a>
                     @endforeach
                 </div>
                 @else
-                <div class="text-center py-8">
-                    <p class="text-sm" style="color: rgba(255,255,255,0.5);">Belum ada data anggaran</p>
+                <div class="text-center py-4">
+                    <div class="admin-stat-icon mx-auto mb-2 rounded-full flex items-center justify-center" style="background: rgba(255,214,10,0.12);">
+                        <i class="fas fa-chart-pie" style="color: #FFD60A; font-size: 0.7rem;"></i>
+                    </div>
+                    <p class="admin-body font-medium text-white">Belum Ada Anggaran</p>
+                    <p class="admin-small text-dark-text-tertiary">Buat anggaran proyek untuk memantau</p>
                 </div>
                 @endif
             </div>
@@ -433,37 +411,36 @@
     </section>
 
     {{-- Operational monitoring section --}}
-    <section class="space-y-3 md:space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2.5">
-            <div>
-                <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Pemantauan Operasional</p>
-                <h2 class="text-2xl font-semibold" style="color:#FFFFFF;">Tinjauan Kegiatan</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Jadwal 30 hari ke depan, distribusi status proyek, dan aktivitas terkini.</p>
-            </div>
+    <section class="card-elevated rounded-apple-lg p-3 space-y-2">
+        <div class="flex items-center justify-between">
+            <h2 class="admin-section text-white flex items-center gap-2">
+                <i class="fas fa-tasks text-apple-green" style="font-size: 0.75rem;"></i>Pemantauan Operasional
+            </h2>
         </div>
+        <p class="admin-body text-dark-text-secondary">Jadwal 30 hari, distribusi proyek, dan aktivitas terkini</p>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-3 md:gap-4">
+        <div class="grid grid-cols-3 gap-2">
             {{-- Timeline --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 space-y-3">
+            <div class="card-elevated rounded-apple p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">30 Hari Mendatang</h3>
-                    <span class="text-xs" style="color: rgba(255,255,255,0.5);">{{ $thisWeek['period_start'] }} – {{ $thisWeek['period_end'] }}</span>
+                    <h3 class="admin-section text-white">30 Hari Mendatang</h3>
+                    <span class="admin-small text-dark-text-tertiary">{{ $thisWeek['period_start'] }} – {{ $thisWeek['period_end'] }}</span>
                 </div>
-                <div class="space-y-1.5 overflow-y-auto pr-1" style="max-height: 340px;">
+                <div class="space-y-1 overflow-y-auto" style="max-height: 220px;">
                     @if($thisWeek['total_items'] > 0)
                         @foreach($thisWeek['tasks'] as $task)
-                        <a href="{{ route('projects.show', $task['project_id']) }}" class="block p-2.5 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba({{ $task['is_past'] ? '255,59,48' : ($task['is_today'] ? '255,204,0' : '52,199,89') }},0.08);">
+                        <a href="{{ route('projects.show', $task['project_id']) }}" class="block p-2 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba({{ $task['is_past'] ? '255,59,48' : ($task['is_today'] ? '255,204,0' : '52,199,89') }},0.08);">
                             <div class="flex items-start gap-2">
-                                <div class="w-2 h-2 rounded-full mt-1.5" style="background: {{ $task['priority_color'] }};"></div>
+                                <div class="w-1.5 h-1.5 rounded-full mt-1.5" style="background: {{ $task['priority_color'] }};"></div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-white truncate">{{ $task['title'] }}</p>
-                                    <p class="text-xs" style="color: rgba(255,255,255,0.5);">{{ $task['project'] }}</p>
-                                    <div class="flex items-center gap-2 mt-1 text-xs">
+                                    <p class="admin-body font-medium text-white truncate">{{ $task['title'] }}</p>
+                                    <p class="admin-small text-dark-text-tertiary">{{ $task['project'] }}</p>
+                                    <div class="flex items-center gap-2 mt-0.5 admin-small">
                                         <span style="color: {{ $task['priority_color'] }};"><i class="fas fa-clock mr-1"></i>{{ $task['deadline_formatted'] }}</span>
                                         @if($task['is_past'])
-                                        <span class="px-2 py-0.5 rounded-full" style="background: rgba(255,59,48,0.2); color: rgba(255,59,48,0.9);">Terlambat {{ $task['days_until'] }} hari</span>
+                                        <span class="px-1.5 py-0.5 rounded-full" style="background: rgba(255,59,48,0.2); color: rgba(255,59,48,0.9); font-size: 10px;">Terlambat {{ $task['days_until'] }}h</span>
                                         @elseif($task['is_today'])
-                                        <span class="px-2 py-0.5 rounded-full" style="background: rgba(255,204,0,0.2); color: rgba(255,204,0,1);">Hari ini</span>
+                                        <span class="px-1.5 py-0.5 rounded-full" style="background: rgba(255,204,0,0.2); color: rgba(255,204,0,1); font-size: 10px;">Hari ini</span>
                                         @endif
                                     </div>
                                 </div>
@@ -471,64 +448,72 @@
                         </a>
                         @endforeach
                         @foreach($thisWeek['projects'] as $project)
-                        <a href="{{ route('projects.show', $project['id']) }}" class="block p-2.5 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(10,132,255,0.08);">
-                            <p class="text-sm font-semibold text-white">{{ $project['name'] }}</p>
-                            <p class="text-xs" style="color: rgba(255,255,255,0.5);">{{ $project['deadline_formatted'] ?? 'Belum ada tenggat' }}</p>
-                            <p class="text-xs mt-1" style="color: rgba(10,132,255,1);"><i class="fas fa-flag mr-1"></i>{{ $project['is_past'] ? 'Terlambat ' . $project['days_until'] . ' hari' : $project['days_until'] . ' hari lagi' }}</p>
+                        <a href="{{ route('projects.show', $project['id']) }}" class="block p-2 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(10,132,255,0.08);">
+                            <p class="admin-body font-medium text-white">{{ $project['name'] }}</p>
+                            <p class="admin-small text-dark-text-tertiary">{{ $project['deadline_formatted'] ?? 'Belum ada tenggat' }}</p>
+                            <p class="admin-small text-apple-blue"><i class="fas fa-flag mr-1"></i>{{ $project['is_past'] ? 'Terlambat ' . $project['days_until'] . ' hari' : $project['days_until'] . ' hari lagi' }}</p>
                         </a>
                         @endforeach
                     @else
-                    <div class="text-center py-10">
-                        <p class="text-sm" style="color: rgba(255,255,255,0.5);">Tidak ada agenda terjadwal</p>
+                    <div class="text-center py-6">
+                        <div class="admin-stat-icon mx-auto mb-2 rounded-full flex items-center justify-center" style="background: rgba(10,132,255,0.12);">
+                            <i class="fas fa-calendar-check text-apple-blue" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <p class="admin-body font-medium text-white">Jadwal Kosong</p>
+                        <p class="admin-small text-dark-text-tertiary">Tidak ada agenda dalam 30 hari</p>
                     </div>
                     @endif
                 </div>
             </div>
 
             {{-- Project status distribution --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 space-y-3">
+            <div class="card-elevated rounded-apple p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Distribusi Proyek</h3>
-                    <span class="text-xs" style="color: rgba(255,255,255,0.5);">{{ $projectStatusDistribution['total'] }} proyek</span>
+                    <h3 class="admin-section text-white">Distribusi Proyek</h3>
+                    <span class="admin-badge" style="background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7);">{{ $projectStatusDistribution['total'] }}</span>
                 </div>
-                    <div class="space-y-2.5">
+                <div class="space-y-2">
                     @forelse($projectStatusDistribution['groups'] as $statusGroup)
                     <div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full" style="background: {{ $statusGroup['color'] }};"></span>
-                                <p class="text-sm font-semibold text-white">{{ $statusGroup['label'] }}</p>
+                                <span class="w-1.5 h-1.5 rounded-full" style="background: {{ $statusGroup['color'] }};"></span>
+                                <p class="admin-body font-medium text-white">{{ $statusGroup['label'] }}</p>
                             </div>
-                            <span class="text-sm font-bold" style="color: rgba(235,235,245,0.7);">{{ $statusGroup['count'] }}</span>
+                            <span class="admin-body font-bold text-dark-text-secondary">{{ $statusGroup['count'] }}</span>
                         </div>
-                        <div class="ml-4 mt-1 space-y-1">
+                        <div class="ml-4 mt-0.5 space-y-0.5 max-h-16 overflow-y-auto">
                             @foreach($statusGroup['projects'] as $project)
-                            <a href="{{ route('projects.show', $project['id']) }}" class="block text-xs" style="color: rgba(255,255,255,0.5);">• {{ $project['name'] }}</a>
+                            <a href="{{ route('projects.show', $project['id']) }}" class="block admin-small text-dark-text-tertiary hover:text-white truncate">• {{ $project['name'] }}</a>
                             @endforeach
                         </div>
                     </div>
                     @empty
-                    <p class="text-xs" style="color: rgba(255,255,255,0.5);">Belum ada proyek aktif</p>
+                    <p class="admin-small text-dark-text-tertiary">Belum ada proyek aktif</p>
                     @endforelse
                 </div>
             </div>
 
             {{-- Recent activity --}}
-            <div class="card-elevated rounded-apple-lg p-4 md:p-5 space-y-3">
+            <div class="card-elevated rounded-apple p-3 space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white">Aktivitas Terkini</h3>
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(191,90,242,0.15); color: rgba(191,90,242,0.95);">{{ $recentActivities['count'] }}</span>
+                    <h3 class="admin-section text-white">Aktivitas Terkini</h3>
+                    <span class="admin-badge" style="background: rgba(191,90,242,0.15); color: rgba(191,90,242,0.95);">{{ $recentActivities['count'] }}</span>
                 </div>
-                <div class="space-y-2 overflow-y-auto pr-1" style="max-height: 360px;">
+                <div class="space-y-1 overflow-y-auto" style="max-height: 200px;">
                     @forelse($recentActivities['activities'] as $activity)
-                    <a href="{{ $activity['link'] }}" class="block p-3 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(255,255,255,0.03);">
-                        <p class="text-sm font-semibold text-white">{{ $activity['title'] }}</p>
-                        <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.5);">{{ $activity['description'] }}</p>
-                        <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.4);"><i class="fas fa-clock mr-1"></i>{{ $activity['time_formatted'] }}</p>
+                    <a href="{{ $activity['link'] }}" class="block p-2 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(255,255,255,0.03);">
+                        <p class="admin-body font-medium text-white truncate">{{ $activity['title'] }}</p>
+                        <p class="admin-small text-dark-text-tertiary truncate">{{ $activity['description'] }}</p>
+                        <p class="admin-small text-dark-text-tertiary"><i class="fas fa-clock mr-1"></i>{{ $activity['time_formatted'] }}</p>
                     </a>
                     @empty
-                    <div class="text-center py-10">
-                        <p class="text-sm" style="color: rgba(255,255,255,0.5);">Belum ada aktivitas terbaru</p>
+                    <div class="text-center py-6">
+                        <div class="admin-stat-icon mx-auto mb-2 rounded-full flex items-center justify-center" style="background: rgba(191,90,242,0.12);">
+                            <i class="fas fa-clock-rotate-left" style="color: rgba(191,90,242,0.95); font-size: 0.7rem;"></i>
+                        </div>
+                        <p class="admin-body font-medium text-white">Belum Ada Aktivitas</p>
+                        <p class="admin-small text-dark-text-tertiary">Akan muncul saat ada perubahan</p>
                     </div>
                     @endforelse
                 </div>

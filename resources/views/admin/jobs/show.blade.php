@@ -26,7 +26,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
                 <div class="space-y-2">
                     <div class="flex flex-wrap items-center gap-2">
-                        <h1 class="text-xl md:text-2xl font-semibold text-white leading-tight">{{ $vacancy->title }}</h1>
+                        <h1 class="text-xl md:text-xl font-semibold text-white leading-tight">{{ $vacancy->title }}</h1>
                         <span class="px-3 py-1 text-xs font-semibold rounded-full" style="background: {{ $statusColor }}; color: {{ $statusTextColor }};">
                             {{ $statusText }}
                         </span>
@@ -51,22 +51,22 @@
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-primary); opacity: var(--opacity-text-strong);">Total Pelamar</p>
-            <p class="text-2xl font-bold text-white">{{ $vacancy->applications_count }}</p>
+            <p class="text-lg font-bold text-white">{{ $vacancy->applications_count }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Akumulasi lamaran</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: {{ $statusTextColor }};">Status Lowongan</p>
-            <p class="text-2xl font-bold text-white">{{ $statusText }}</p>
+            <p class="text-lg font-bold text-white">{{ $statusText }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Update: {{ $vacancy->updated_at->diffForHumans() }}</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-success); opacity: var(--opacity-text-strong);">Dipublikasikan</p>
-            <p class="text-2xl font-bold text-white">{{ $vacancy->created_at->format('d M Y') }}</p>
+            <p class="text-lg font-bold text-white">{{ $vacancy->created_at->format('d M Y') }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Tanggal tayang</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-warning); opacity: var(--opacity-text-strong);">Batas Waktu</p>
-            <p class="text-2xl font-bold text-white">{{ $vacancy->deadline ? $vacancy->deadline->format('d M Y') : 'Tidak ada' }}</p>
+            <p class="text-lg font-bold text-white">{{ $vacancy->deadline ? $vacancy->deadline->format('d M Y') : 'Tidak ada' }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Deadline lamaran</p>
         </div>
     </section>
@@ -182,7 +182,7 @@ Pelamar</p>
                     </div>
                 @else
                     <div class="p-6 text-center" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">
-                        <i class="fas fa-inbox text-3xl mb-2"></i>
+                        <i class="fas fa-inbox text-2xl mb-2"></i>
                         <p class="mb-0">Belum ada pelamar untuk lowongan ini</p>
                     </div>
                 @endif

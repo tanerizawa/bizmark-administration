@@ -33,25 +33,35 @@ class ServiceController extends Controller
         // Get sectors with KBLI counts for filtering/UI
         $sectors = Kbli::select('sector')
             ->selectRaw('COUNT(*) as total_kbli')
+            ->where('is_active', true)
+            ->whereRaw('LENGTH(code) = 5')
+            ->whereNotNull('sector')
+            ->where('sector', '!=', '')
             ->groupBy('sector')
             ->orderBy('sector')
             ->get();
 
         // Get popular KBLI (most used in recommendations)
-        // If no recommendations yet, show random sample
         $popularKbli = Kbli::select('kbli.code', 'kbli.description', 'kbli.sector')
             ->leftJoin('kbli_permit_recommendations', 'kbli.code', '=', 'kbli_permit_recommendations.kbli_code')
+            ->whereRaw('LENGTH(kbli.code) = 5')
+            ->where('kbli.is_active', true)
             ->selectRaw('COALESCE(SUM(kbli_permit_recommendations.cache_hits), 0) as cache_hits')
             ->groupBy('kbli.code', 'kbli.description', 'kbli.sector')
             ->orderByDesc('cache_hits')
             ->orderBy('kbli.code')
-            ->limit(6)
+            ->limit(8)
             ->get();
 
-        // Get total KBLI count
-        $totalKbli = Kbli::count();
+        // Get total active 5-digit KBLI count
+        $totalKbli = Kbli::where('is_active', true)
+            ->whereRaw('LENGTH(code) = 5')
+            ->count();
 
-        return view('client.services.index', compact('sectors', 'popularKbli', 'totalKbli'));
+        // Get total sectors count
+        $totalSectors = $sectors->count();
+
+        return view('client.services.index', compact('sectors', 'popularKbli', 'totalKbli', 'totalSectors'));
     }
 
     /**

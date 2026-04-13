@@ -191,6 +191,15 @@
 
 <!-- Contact Info Cards -->
 <section class="py-20 px-4" style="background: var(--dark-bg);">
+    @php
+        $contact = config('landing_metrics.contact', []);
+        $phone = $contact['phone'] ?? '';
+        $phoneHref = preg_replace('/\s+/', '', $phone);
+        $email = $contact['email'] ?? '';
+        $waBase = $contact['whatsapp_link'] ?? '';
+        $waText = rawurlencode('Halo PT Cangah Pajaratan Mandiri, saya ingin konsultasi tentang perizinan');
+        $hours = $contact['hours'] ?? 'Portal Aktif 24/7';
+    @endphp
     <div class="container mx-auto max-w-6xl">
         <div class="grid md:grid-cols-3 gap-8 mb-16">
             <!-- Phone -->
@@ -199,12 +208,9 @@
                     <i class="fas fa-phone"></i>
                 </div>
                 <h3 class="text-xl font-bold mb-2">Telepon</h3>
-                <p class="mb-4" style="color: var(--dark-text-secondary);">Senin - Jumat: 08:00 - 17:00 WIB</p>
-                <a href="tel:+622112345678" class="text-xl font-semibold hover:text-blue-400 transition block mb-2" style="color: var(--apple-blue);">
-                    +62 21 1234 5678
-                </a>
-                <a href="tel:+6283879602855" class="text-xl font-semibold hover:text-blue-400 transition block" style="color: var(--apple-blue);">
-                    +62 838 7960 2855
+                <p class="mb-4" style="color: var(--dark-text-secondary);">{{ $hours }}</p>
+                <a href="tel:{{ $phoneHref }}" class="text-xl font-semibold hover:text-blue-400 transition block" style="color: var(--apple-blue);">
+                    {{ $phone }}
                 </a>
             </div>
             
@@ -215,9 +221,7 @@
                 </div>
                 <h3 class="text-xl font-bold mb-2">Email</h3>
                 <p class="mb-4" style="color: var(--dark-text-secondary);">Respon dalam 24 jam</p>
-                <a href="mailto:cs@bizmark.id" class="text-xl font-semibold hover:text-blue-400 transition block" style="color: var(--apple-blue);">
-                    cs@bizmark.id
-                </a>
+                <a href="mailto:{{ $email }}" class="text-xl font-semibold hover:text-blue-400 transition block" style="color: var(--apple-blue);">{{ $email }}</a>
             </div>
             
             <!-- WhatsApp -->
@@ -227,9 +231,7 @@
                 </div>
                 <h3 class="text-xl font-bold mb-2">WhatsApp</h3>
                 <p class="mb-4" style="color: var(--dark-text-secondary);">Chat langsung dengan tim kami</p>
-                <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" target="_blank" class="text-xl font-semibold text-green-500 hover:text-green-400 transition">
-                    +62 838 7960 2855
-                </a>
+                <a href="{{ $waBase }}?text={{ $waText }}" target="_blank" rel="noopener noreferrer" class="text-xl font-semibold text-green-500 hover:text-green-400 transition">{{ $phone }}</a>
             </div>
         </div>
     </div>
@@ -417,7 +419,7 @@
             Dapatkan analisis gratis untuk kebutuhan perizinan bisnis Anda
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://wa.me/6283879602855?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" target="_blank" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 px-8 py-4 rounded-xl font-semibold text-lg transition-all hover:scale-105">
+            <a href="{{ config('landing_metrics.contact.whatsapp_link') }}?text={{ rawurlencode('Halo PT Cangah Pajaratan Mandiri, saya ingin konsultasi tentang perizinan') }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 px-8 py-4 rounded-xl font-semibold text-lg transition-all hover:scale-105">
                 <i class="fab fa-whatsapp text-2xl"></i>
                 Chat WhatsApp
             </a>

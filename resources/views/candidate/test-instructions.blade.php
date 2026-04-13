@@ -275,9 +275,15 @@
         <!-- Support -->
         <div class="text-center mt-6">
             <p class="text-gray-600 dark:text-gray-400">
+                @php
+                    $contact = config('landing_metrics.contact', []);
+                    $hrEmail = $contact['hr_email'] ?? '';
+                    $phone = $contact['phone'] ?? '';
+                    $phoneHref = preg_replace('/\s+/', '', $phone);
+                @endphp
                 Need help? Contact us at 
-                <a href="mailto:hr@bizmark.id" class="text-blue-600 dark:text-blue-400 hover:underline">hr@bizmark.id</a> or 
-                <a href="tel:+6281234567890" class="text-blue-600 dark:text-blue-400 hover:underline">+62 812-3456-7890</a>
+                <a href="mailto:{{ $hrEmail }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ $hrEmail }}</a> or 
+                <a href="tel:{{ $phoneHref }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ $phone }}</a>
             </p>
         </div>
     </div>

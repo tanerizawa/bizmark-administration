@@ -294,7 +294,7 @@
                 
                 <div class="hidden md:flex items-center space-x-8 text-white">
                     <a href="#home" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Home' : 'Beranda' }}</a>
-                    <a href="#services" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Services' : 'Layanan' }}</a>
+                    <a href="{{ $isEnglish ? route('services.index.en') : route('services.index.id') }}" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Services' : 'Layanan' }}</a>
                     <a href="#why-us" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Why Us' : 'Keunggulan' }}</a>
                     <a href="#contact" class="hover:text-blue-400 transition">{{ $isEnglish ? 'Contact' : 'Kontak' }}</a>
                     <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition text-white">
@@ -315,7 +315,7 @@
             <a href="#home" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
                 <i class="fas fa-home mr-3"></i>{{ $isEnglish ? 'Home' : 'Beranda' }}
             </a>
-            <a href="#services" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
+            <a href="{{ $isEnglish ? route('services.index.en') : route('services.index.id') }}" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">
                 <i class="fas fa-certificate mr-3"></i>{{ $isEnglish ? 'Services' : 'Layanan' }}
             </a>
             <a href="#why-us" class="block py-3 text-lg font-medium" onclick="toggleMobileMenu()">

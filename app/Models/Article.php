@@ -61,7 +61,7 @@ class Article extends Model
             
             // Auto-generate excerpt if not provided
             if (empty($article->excerpt) && !empty($article->content)) {
-                $article->excerpt = Str::limit(strip_tags($article->content), 200);
+                $article->excerpt = static::generateCleanExcerpt($article->content);
             }
             
             // Calculate reading time (average 200 words per minute)
@@ -83,6 +83,35 @@ class Article extends Model
                 $article->reading_time = ceil($wordCount / 200);
             }
         });
+    }
+
+    /**
+     * Generate a clean excerpt from article content.
+     * Strips HTML tags, Markdown syntax, headings, and extracts body text only.
+     */
+    public static function generateCleanExcerpt(string $content, int $limit = 200): string
+    {
+        // Remove code fence wrappers (```html ... ```)
+        $text = preg_replace('/^```\w*\s*\n?/m', '', $content);
+        $text = preg_replace('/```\s*$/m', '', $text);
+        // Remove HTML headings first (they shouldn't be in excerpts)
+        $text = preg_replace('/<h[1-6][^>]*>.*?<\/h[1-6]>/is', ' ', $text);
+        // Strip all HTML tags
+        $text = strip_tags($text);
+        // Remove Markdown headings (## Heading)
+        $text = preg_replace('/^#{1,6}\s+.+$/m', '', $text);
+        // Remove Markdown bold/italic (**text**, *text*)
+        $text = preg_replace('/\*{1,2}([^*]+?)\*{1,2}/', '$1', $text);
+        // Remove Markdown links [text](url) → text
+        $text = preg_replace('/\[([^\]]+)\]\([^)]+\)/', '$1', $text);
+        // Remove Markdown list markers
+        $text = preg_replace('/^[\-\*]\s+/m', '', $text);
+        // Collapse whitespace and newlines
+        $text = preg_replace('/[\r\n]+/', ' ', $text);
+        $text = preg_replace('/\s+/', ' ', $text);
+        $text = trim($text);
+
+        return Str::limit($text, $limit);
     }
 
     /**
@@ -139,6 +168,31 @@ class Article extends Model
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function syndications()
+    {
+        return $this->hasMany(ContentSyndication::class);
+    }
+
+    public function seoScore()
+    {
+        return $this->hasOne(SeoScore::class);
+    }
+
+    public function viewLogs()
+    {
+        return $this->hasMany(ArticleViewLog::class);
+    }
+
+    public function refreshLogs()
+    {
+        return $this->hasMany(ContentRefreshLog::class);
+    }
+
+    public function metaAbTests()
+    {
+        return $this->hasMany(MetaAbTest::class);
     }
 
     /**

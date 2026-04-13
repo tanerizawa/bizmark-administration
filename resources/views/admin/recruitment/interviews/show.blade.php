@@ -31,7 +31,7 @@
                     <span>Detail</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <h1 class="text-xl md:text-2xl font-semibold text-white leading-tight">{{ $application->full_name }}</h1>
+                    <h1 class="text-xl md:text-xl font-semibold text-white leading-tight">{{ $application->full_name }}</h1>
                     <span class="px-3 py-1 text-xs font-semibold rounded-full" style="{{ $statusStyle }}">
                         {{ $statusText }}
                     </span>
@@ -55,22 +55,22 @@
     <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-primary); opacity: var(--opacity-text-strong);">Tanggal</p>
-            <p class="text-2xl font-bold text-white">{{ $interview->scheduled_at->format('d M Y') }}</p>
+            <p class="text-lg font-bold text-white">{{ $interview->scheduled_at->format('d M Y') }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">{{ $interview->scheduled_at->diffForHumans() }}</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-success); opacity: var(--opacity-text-strong);">Durasi</p>
-            <p class="text-2xl font-bold text-white">{{ $interview->duration_minutes }} mnt</p>
+            <p class="text-lg font-bold text-white">{{ $interview->duration_minutes }} mnt</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">{{ ucfirst($interview->interview_type) }}</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Meeting</p>
-            <p class="text-2xl font-bold text-white">{{ ucfirst(str_replace('-', ' ', $interview->meeting_type)) }}</p>
+            <p class="text-lg font-bold text-white">{{ ucfirst(str_replace('-', ' ', $interview->meeting_type)) }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Tipe pertemuan</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
             <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-warning); opacity: var(--opacity-text-strong);">Status</p>
-            <p class="text-2xl font-bold text-white">{{ $statusText }}</p>
+            <p class="text-lg font-bold text-white">{{ $statusText }}</p>
             <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Update {{ $interview->updated_at->diffForHumans() }}</p>
         </div>
     </section>
@@ -125,7 +125,7 @@
                         @php $interviewers = $interview->interviewers(); @endphp
                         @forelse($interviewers as $interviewer)
                             <div class="card-elevated rounded-apple-lg p-3 flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-apple-blue bg-opacity-15 text-apple-blue flex items-center justify-center font-semibold">
+                                <div class="w-10 h-10 rounded-full bg-apple-blue\/15 text-apple-blue flex items-center justify-center font-semibold">
                                     {{ strtoupper(substr($interviewer->full_name ?? $interviewer->name, 0, 2)) }}
                                 </div>
                                 <div class="min-w-0">
