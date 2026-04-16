@@ -15,7 +15,6 @@ use App\Http\Controllers\PermitTypeController;
 use App\Http\Controllers\PermitTemplateController;
 use App\Http\Controllers\ProjectPermitController;
 use App\Http\Controllers\PermitController;
-use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ArticleController;

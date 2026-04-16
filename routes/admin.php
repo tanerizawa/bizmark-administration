@@ -28,7 +28,12 @@ use App\Http\Controllers\PermitTypeController;
 use App\Http\Controllers\PermitTemplateController;
 use App\Http\Controllers\ProjectPermitController;
 use App\Http\Controllers\PermitController;
-use App\Http\Controllers\FinancialController;
+use App\Http\Controllers\Financial\OverviewController as FinancialOverviewController;
+use App\Http\Controllers\Financial\InvoiceController as FinancialInvoiceController;
+use App\Http\Controllers\Financial\PaymentScheduleController as FinancialPaymentScheduleController;
+use App\Http\Controllers\Financial\ExpenseController as FinancialExpenseController;
+use App\Http\Controllers\Financial\DirectIncomeController as FinancialDirectIncomeController;
+use App\Http\Controllers\Financial\ExportController as FinancialExportController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ArticleController;
 
@@ -241,36 +246,45 @@ use App\Http\Controllers\ArticleController;
 
     // Financial Tab Management Routes (Phase 2A - Sprint 6)
     Route::middleware('permission:invoices.view')->group(function () {
-        Route::get('projects/{project}/financial', [FinancialController::class, 'index'])->name('projects.financial');
-        Route::post('projects/{project}/invoices', [FinancialController::class, 'storeInvoice'])->name('projects.invoices.store');
-        Route::get('invoices/{invoice}', [FinancialController::class, 'showInvoice'])->name('invoices.show');
-        Route::get('invoices/{invoice}/pdf', [FinancialController::class, 'downloadInvoicePDF'])->name('invoices.download-pdf');
-        Route::patch('invoices/{invoice}/status', [FinancialController::class, 'updateInvoiceStatus'])->name('invoices.update-status');
-        Route::post('invoices/{invoice}/payment', [FinancialController::class, 'recordPayment'])->name('invoices.record-payment');
-        Route::delete('invoices/{invoice}', [FinancialController::class, 'destroyInvoice'])->name('invoices.destroy');
-        Route::post('projects/{project}/direct-income', [FinancialController::class, 'storeDirectIncome'])->name('projects.direct-income.store');
-        Route::get('projects/{project}/direct-income/{payment}', [FinancialController::class, 'editDirectIncome'])->name('projects.direct-income.edit');
-        Route::patch('projects/{project}/direct-income/{payment}', [FinancialController::class, 'updateDirectIncome'])->name('projects.direct-income.update');
-        Route::delete('projects/{project}/direct-income/{payment}', [FinancialController::class, 'destroyDirectIncome'])->name('projects.direct-income.destroy');
-        Route::post('projects/{project}/payment-schedules', [FinancialController::class, 'storePaymentSchedule'])->name('projects.payment-schedules.store');
-        Route::patch('payment-schedules/{schedule}/paid', [FinancialController::class, 'markSchedulePaid'])->name('payment-schedules.mark-paid');
-        Route::delete('payment-schedules/{schedule}', [FinancialController::class, 'destroySchedule'])->name('payment-schedules.destroy');
-        Route::post('projects/{project}/financial-expenses', [FinancialController::class, 'storeExpense'])->name('projects.financial-expenses.store');
-        Route::get('financial-expenses/{expense}', [FinancialController::class, 'getExpense'])->name('financial-expenses.show');
-        Route::patch('financial-expenses/{expense}', [FinancialController::class, 'updateExpense'])->name('financial-expenses.update');
-        Route::delete('financial-expenses/{expense}', [FinancialController::class, 'destroyExpense'])->name('financial-expenses.destroy');
-        Route::delete('financial-expenses/{expense}/delete-receipt', [FinancialController::class, 'deleteReceipt'])->name('financial-expenses.delete-receipt');
-        Route::patch('financial-expenses/{expense}/mark-invoiced', [FinancialController::class, 'markExpenseInvoiced'])->name('financial-expenses.mark-invoiced');
-        Route::patch('financial-expenses/{expense}/record-payment', [FinancialController::class, 'recordReceivablePayment'])->name('financial-expenses.record-payment');
-        Route::patch('financial-expenses/{expense}/remove-receivable', [FinancialController::class, 'removeReceivable'])->name('financial-expenses.remove-receivable');
+        // Financial Overview
+        Route::get('projects/{project}/financial', [FinancialOverviewController::class, 'index'])->name('projects.financial');
+
+        // Invoices
+        Route::post('projects/{project}/invoices', [FinancialInvoiceController::class, 'store'])->name('projects.invoices.store');
+        Route::get('invoices/{invoice}', [FinancialInvoiceController::class, 'show'])->name('invoices.show');
+        Route::get('invoices/{invoice}/pdf', [FinancialInvoiceController::class, 'downloadPDF'])->name('invoices.download-pdf');
+        Route::patch('invoices/{invoice}/status', [FinancialInvoiceController::class, 'updateStatus'])->name('invoices.update-status');
+        Route::post('invoices/{invoice}/payment', [FinancialInvoiceController::class, 'recordPayment'])->name('invoices.record-payment');
+        Route::delete('invoices/{invoice}', [FinancialInvoiceController::class, 'destroy'])->name('invoices.destroy');
+
+        // Direct Income (pemasukan tanpa invoice)
+        Route::post('projects/{project}/direct-income', [FinancialDirectIncomeController::class, 'store'])->name('projects.direct-income.store');
+        Route::get('projects/{project}/direct-income/{payment}', [FinancialDirectIncomeController::class, 'edit'])->name('projects.direct-income.edit');
+        Route::patch('projects/{project}/direct-income/{payment}', [FinancialDirectIncomeController::class, 'update'])->name('projects.direct-income.update');
+        Route::delete('projects/{project}/direct-income/{payment}', [FinancialDirectIncomeController::class, 'destroy'])->name('projects.direct-income.destroy');
+
+        // Payment Schedules
+        Route::post('projects/{project}/payment-schedules', [FinancialPaymentScheduleController::class, 'store'])->name('projects.payment-schedules.store');
+        Route::patch('payment-schedules/{schedule}/paid', [FinancialPaymentScheduleController::class, 'markPaid'])->name('payment-schedules.mark-paid');
+        Route::delete('payment-schedules/{schedule}', [FinancialPaymentScheduleController::class, 'destroy'])->name('payment-schedules.destroy');
+
+        // Financial Expenses
+        Route::post('projects/{project}/financial-expenses', [FinancialExpenseController::class, 'store'])->name('projects.financial-expenses.store');
+        Route::get('financial-expenses/{expense}', [FinancialExpenseController::class, 'show'])->name('financial-expenses.show');
+        Route::patch('financial-expenses/{expense}', [FinancialExpenseController::class, 'update'])->name('financial-expenses.update');
+        Route::delete('financial-expenses/{expense}', [FinancialExpenseController::class, 'destroy'])->name('financial-expenses.destroy');
+        Route::delete('financial-expenses/{expense}/delete-receipt', [FinancialExpenseController::class, 'deleteReceipt'])->name('financial-expenses.delete-receipt');
+        Route::patch('financial-expenses/{expense}/mark-invoiced', [FinancialExpenseController::class, 'markInvoiced'])->name('financial-expenses.mark-invoiced');
+        Route::patch('financial-expenses/{expense}/record-payment', [FinancialExpenseController::class, 'recordReceivablePayment'])->name('financial-expenses.record-payment');
+        Route::patch('financial-expenses/{expense}/remove-receivable', [FinancialExpenseController::class, 'removeReceivable'])->name('financial-expenses.remove-receivable');
     });
 
     // Excel Export Routes (Phase 2A - Sprint 7)
     Route::middleware('permission:invoices.view')->group(function () {
-        Route::get('exports/invoices', [FinancialController::class, 'exportInvoices'])->name('exports.invoices');
-        Route::get('exports/invoices/{invoice}', [FinancialController::class, 'exportInvoiceDetail'])->name('exports.invoice-detail');
-        Route::get('exports/expenses', [FinancialController::class, 'exportExpenses'])->name('exports.expenses');
-        Route::get('exports/financial-report', [FinancialController::class, 'exportFinancialReport'])->name('exports.financial-report');
+        Route::get('exports/invoices', [FinancialExportController::class, 'invoices'])->name('exports.invoices');
+        Route::get('exports/invoices/{invoice}', [FinancialExportController::class, 'invoiceDetail'])->name('exports.invoice-detail');
+        Route::get('exports/expenses', [FinancialExportController::class, 'expenses'])->name('exports.expenses');
+        Route::get('exports/financial-report', [FinancialExportController::class, 'financialReport'])->name('exports.financial-report');
     });
 
     // Permit Management Routes (Phase 2A - Sprint 8)
