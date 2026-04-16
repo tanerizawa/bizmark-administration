@@ -4,7 +4,7 @@
 @section('page-title', 'Email Management')
 
 @section('content')
-<div class="space-y-4 email-shell">
+<div id="email-management-shell" class="space-y-4 email-shell">
     {{-- Compact Hero Section --}}
     <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden compact-email-hero">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
@@ -102,8 +102,14 @@
                     <p class="admin-small uppercase tracking-[0.28em] text-dark-text-tertiary">Workspace</p>
                     <p class="text-sm text-white font-semibold">Operasional Email</p>
                 </div>
-                <div class="text-xs" style="color: rgba(235,235,245,0.6);">
-                    Pindah tab tanpa reload penuh dan filter tetap terisolasi per modul.
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="text-xs" style="color: rgba(235,235,245,0.6);">
+                        Pindah tab tanpa reload penuh dan filter tetap terisolasi per modul.
+                    </div>
+                    <button type="button" id="emailContrastToggle" class="btn-apple-sm px-3 py-2 text-xs font-semibold inline-flex items-center gap-2">
+                        <i class="fas fa-circle-half-stroke"></i>
+                        High Contrast
+                    </button>
                 </div>
             </div>
             <div class="flex gap-1.5 overflow-x-auto pb-0.5" role="tablist">
@@ -143,7 +149,7 @@
             </div>
         </div>
 
-        <div class="p-3 md:p-4">
+        <div class="tab-content-shell p-2.5 md:p-3.5">
             <!-- Tab 1: Inbox -->
             <div id="content-inbox" class="tab-content {{ $activeTab !== 'inbox' ? 'hidden' : '' }}">
                 @include('admin.email-management.tabs.inbox')
@@ -179,6 +185,33 @@
 
 @push('styles')
 <style>
+    .email-shell .tab-content-shell {
+        border-top: 1px solid rgba(255,255,255,0.05);
+        background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0));
+    }
+
+    .email-shell .tab-content {
+        min-height: 220px;
+    }
+
+    .email-shell .email-panel-header p {
+        color: rgba(235,235,245,0.72) !important;
+    }
+
+    .email-shell .email-filter label {
+        color: rgba(235,235,245,0.76) !important;
+        font-weight: 600;
+    }
+
+    .email-shell .email-empty-state p[style*='rgba(235,235,245,0.6)'] {
+        color: rgba(235,235,245,0.72) !important;
+    }
+
+    .email-shell .email-toolbar {
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+    }
+
     .email-shell .compact-email-hero {
         padding: 1rem 1.1rem;
     }
@@ -297,6 +330,33 @@
         color: rgba(235,235,245,0.28);
     }
 
+    .email-shell.is-high-contrast .tab-content-shell {
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+        border-top-color: rgba(255,255,255,0.12);
+    }
+
+    .email-shell.is-high-contrast .email-toolbar,
+    .email-shell.is-high-contrast .email-table-shell,
+    .email-shell.is-high-contrast .card-elevated {
+        border-color: rgba(255,255,255,0.14) !important;
+        background: rgba(255,255,255,0.05) !important;
+    }
+
+    .email-shell.is-high-contrast .tab-button {
+        color: rgba(255,255,255,0.86);
+    }
+
+    .email-shell.is-high-contrast .tab-button.active {
+        background-color: rgba(0,122,255,0.28);
+        border-color: rgba(0,122,255,0.5);
+    }
+
+    .email-shell.is-high-contrast .email-panel-header p,
+    .email-shell.is-high-contrast .email-filter label,
+    .email-shell.is-high-contrast .email-empty-state p {
+        color: rgba(255,255,255,0.86) !important;
+    }
+
     @media (max-width: 1024px) {
         .email-shell .email-toolbar-grid,
         .email-shell .email-toolbar-grid.compact-4,
@@ -322,6 +382,45 @@
 
 @push('scripts')
 <script>
+const emailContrastStorageKey = 'email-management-high-contrast';
+
+function getEmailShell() {
+    return document.getElementById('email-management-shell');
+}
+
+function applyEmailContrastState(isHighContrast) {
+    const shell = getEmailShell();
+    const toggle = document.getElementById('emailContrastToggle');
+    if (!shell || !toggle) {
+        return;
+    }
+
+    shell.classList.toggle('is-high-contrast', isHighContrast);
+    toggle.setAttribute('aria-pressed', isHighContrast ? 'true' : 'false');
+    toggle.classList.toggle('bg-white/10', isHighContrast);
+}
+
+function initializeEmailContrastToggle() {
+    const toggle = document.getElementById('emailContrastToggle');
+    if (!toggle) {
+        return;
+    }
+
+    const savedState = window.localStorage.getItem(emailContrastStorageKey) === '1';
+    applyEmailContrastState(savedState);
+
+    toggle.addEventListener('click', () => {
+        const shell = getEmailShell();
+        if (!shell) {
+            return;
+        }
+
+        const nextState = !shell.classList.contains('is-high-contrast');
+        applyEmailContrastState(nextState);
+        window.localStorage.setItem(emailContrastStorageKey, nextState ? '1' : '0');
+    });
+}
+
 function switchTab(tabName, updateHistory = true) {
     if (updateHistory) {
         const url = new URL(window.location);
@@ -350,5 +449,7 @@ window.addEventListener('popstate', function() {
     const tab = urlParams.get('tab') || 'inbox';
     switchTab(tab, false);
 });
+
+initializeEmailContrastToggle();
 </script>
 @endpush

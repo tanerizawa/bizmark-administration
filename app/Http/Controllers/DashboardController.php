@@ -12,6 +12,7 @@ use App\Models\CashAccount;
 use App\Models\ProjectPayment;
 use App\Models\ProjectExpense;
 use App\Models\Invoice;
+use App\Models\ConsultRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -39,7 +40,8 @@ class DashboardController extends Controller
                 'budgetStatus' => $this->getBudgetStatus(),
                 'thisWeek' => $this->getWeeklyTimeline(),
                 'projectStatusDistribution' => $this->getProjectStatusDistribution(),
-                'recentActivities' => $this->getRecentActivities()
+                'recentActivities' => $this->getRecentActivities(),
+                'ragMetrics' => $this->getRagMetrics()
             ];
         });
 
@@ -1028,6 +1030,30 @@ class DashboardController extends Controller
         return [
             'activities' => $activities,
             'count' => $activities->count()
+        ];
+    }
+
+    /**
+     * RAG AI quality metrics for consultation leads
+     */
+    private function getRagMetrics()
+    {
+        $total = ConsultRequest::whereNotNull('rag_processed_at')->count();
+        $avgConfidence = ConsultRequest::whereNotNull('rag_confidence')->avg('rag_confidence') ?? 0;
+        $highConfidence = ConsultRequest::where('rag_confidence', '>=', 0.7)->count();
+        $lowConfidence = ConsultRequest::where('rag_confidence', '<', 0.4)->whereNotNull('rag_confidence')->count();
+
+        $recent = ConsultRequest::whereNotNull('rag_processed_at')
+            ->orderBy('rag_processed_at', 'desc')
+            ->take(5)
+            ->get(['id', 'name', 'company_name', 'rag_confidence', 'rag_processed_at']);
+
+        return [
+            'total_processed' => $total,
+            'avg_confidence' => round($avgConfidence * 100),
+            'high_confidence' => $highConfidence,
+            'low_confidence' => $lowConfidence,
+            'recent' => $recent,
         ];
     }
 }

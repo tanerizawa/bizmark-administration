@@ -15,14 +15,14 @@
     "itemListElement": [
         @foreach($services as $slug => $svc)
         {
-            "@type": "ListItem",
+            "@@type": "ListItem",
             "position": {{ $loop->iteration }},
             "item": {
-                "@type": "Service",
+                "@@type": "Service",
                 "name": "{{ $svc['title'] }}",
                 "description": "{{ $svc['short_description'] }}",
                 "url": "{{ route('services.show.en', $slug) }}",
-                "provider": {"@type": "Organization", "name": "PT Cangah Pajaratan Mandiri (Bizmark.ID)"}
+                "provider": {"@@type": "Organization", "name": "PT Cangah Pajaratan Mandiri (Bizmark.ID)"}
             }
         }@if(!$loop->last),@endif
         @endforeach

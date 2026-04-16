@@ -12,6 +12,7 @@ use App\Http\Controllers\Mobile\ClientController;
 use App\Http\Controllers\Mobile\DocumentController;
 use App\Http\Controllers\Mobile\ReportController;
 use App\Http\Controllers\Mobile\TeamController;
+use App\Http\Controllers\Mobile\PushNotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,37 @@ Route::prefix('m')->group(function () {
         }
         return view('mobile.welcome');
     })->name('mobile.welcome');
+    
+    // Offline page (untuk PWA service worker)
+    Route::get('/offline', function() {
+        return view('mobile.offline');
+    })->name('mobile.offline');
+    
+    // Web Share Target (untuk PWA share)
+    Route::post('/share', function(\Illuminate\Http\Request $request) {
+        // Store shared data in session for processing after login
+        $sharedData = [
+            'title' => $request->input('title'),
+            'text' => $request->input('text'),
+            'url' => $request->input('url'),
+        ];
+        
+        // Handle files if any
+        if ($request->hasFile('files')) {
+            session(['pending_share_files' => true]);
+        }
+        
+        session(['shared_content' => $sharedData]);
+        
+        // Redirect to appropriate handler based on auth status
+        if (auth()->check()) {
+            return redirect()->route('mobile.documents.upload')
+                ->with('shared_content', $sharedData);
+        }
+        
+        return redirect()->route('login')
+            ->with('share_pending', true);
+    })->name('mobile.share');
     
     // Mobile Landing Page (Magazine Style) - Indonesian
     Route::middleware('locale:id')->get('/landing', function() {
@@ -166,6 +198,14 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
     
     // Offline Sync
     Route::post('/sync', [DashboardController::class, 'sync'])->name('sync');
+    
+    // Push Notifications API
+    Route::prefix('push')->name('push.')->group(function () {
+        Route::post('/subscribe', [PushNotificationController::class, 'subscribe'])->name('subscribe');
+        Route::post('/unsubscribe', [PushNotificationController::class, 'unsubscribe'])->name('unsubscribe');
+        Route::get('/status', [PushNotificationController::class, 'status'])->name('status');
+        Route::post('/test', [PushNotificationController::class, 'test'])->name('test');
+    });
     
     // Force Desktop Mode Toggle
     Route::post('/force-desktop', function () {

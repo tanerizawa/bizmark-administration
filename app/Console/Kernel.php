@@ -170,6 +170,43 @@ class Kernel extends ConsoleKernel
         $schedule->command('seo:gsc-import --days=3')
             ->dailyAt('02:00')
             ->withoutOverlapping();
+
+        // ========================================
+        // 💾 DATABASE BACKUP & PROTECTION
+        // ========================================
+
+        // Daily database backup at 1 AM (before other maintenance tasks)
+        $schedule->exec('bash ' . base_path('scripts/db-backup.sh') . ' backup')
+            ->dailyAt('01:00')
+            ->timezone('Asia/Jakarta')
+            ->withoutOverlapping()
+            ->onSuccess(function () {
+                \Illuminate\Support\Facades\Log::info('Daily database backup completed successfully');
+            })
+            ->onFailure(function () {
+                \Illuminate\Support\Facades\Log::error('Daily database backup FAILED!');
+            })
+            ->emailOutputOnFailure('cs@bizmark.id');
+
+        // Weekly full backup on Sunday at 1:30 AM
+        $schedule->exec('bash ' . base_path('scripts/db-backup.sh') . ' full')
+            ->weeklyOn(0, '01:30')
+            ->timezone('Asia/Jakarta')
+            ->withoutOverlapping()
+            ->emailOutputOnFailure('info@bizmark.id');
+
+        // Verify last backup integrity daily at 6 AM
+        $schedule->exec('bash ' . base_path('scripts/db-backup.sh') . ' verify')
+            ->dailyAt('06:00')
+            ->timezone('Asia/Jakarta')
+            ->onFailure(function () {
+                \Illuminate\Support\Facades\Log::critical('Database backup verification FAILED!');
+            });
+
+        // Database health check every 6 hours
+        $schedule->command('db:monitor --alert')
+            ->everySixHours()
+            ->withoutOverlapping();
     }
 
     /**

@@ -162,7 +162,7 @@
                         <a href="{{ route('services.index.en') }}" class="block text-blue-900 hover:text-blue-700 transition">
                             <i class="fas fa-arrow-right mr-2"></i>View All Services
                         </a>
-                        <a href="{{ route('landing.en') }}#process" class="block text-blue-900 hover:text-blue-700 transition">
+                        <a href="{{ route('process.en') }}" class="block text-blue-900 hover:text-blue-700 transition">
                             <i class="fas fa-arrow-right mr-2"></i>Investment Process
                         </a>
                         <a href="{{ route('blog.index.en') }}" class="block text-blue-900 hover:text-blue-700 transition">

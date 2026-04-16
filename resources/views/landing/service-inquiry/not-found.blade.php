@@ -83,9 +83,9 @@
                 </a>
                 <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
                     <a href="{{ $landingUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.home') }}</a>
-                    <a href="{{ $landingUrl }}#services" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.services') }}</a>
-                    <a href="{{ $landingUrl }}#process" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.process') }}</a>
-                    <a href="{{ $landingUrl }}#about" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.about') }}</a>
+                    <a href="{{ $currentLocale === 'en' ? route('services.index.en') : route('services.index.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.services') }}</a>
+                    <a href="{{ $currentLocale === 'en' ? route('process.en') : route('process.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.process') }}</a>
+                    <a href="{{ $currentLocale === 'en' ? route('about.en') : route('about.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.about') }}</a>
                     <a href="{{ $blogUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.blog') }}</a>
                     <!-- Locale Switcher -->
                     <div class="relative inline-block text-left" id="localeSwitcher">

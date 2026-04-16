@@ -115,4 +115,14 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Internal Admin Recipient
+    |--------------------------------------------------------------------------
+    |
+    | Optional recipient used for internal operational notifications.
+    |
+    */
+    'admin_address' => env('MAIL_ADMIN_ADDRESS'),
+
 ];

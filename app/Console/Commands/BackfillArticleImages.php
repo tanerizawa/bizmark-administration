@@ -16,6 +16,7 @@ class BackfillArticleImages extends Command
 
     public function handle(PexelsService $pexels): int
     {
+        // 1. Articles with no featured_image in DB
         $query = Article::where(function ($q) {
             $q->whereNull('featured_image')->orWhere('featured_image', '');
         })->orderBy('id');
@@ -26,6 +27,28 @@ class BackfillArticleImages extends Command
         }
 
         $articles = $query->get();
+
+        // 2. Articles where DB has path but file is missing on disk
+        $orphaned = Article::whereNotNull('featured_image')
+            ->where('featured_image', '!=', '')
+            ->orderBy('id')
+            ->get()
+            ->filter(function (Article $article) {
+                return !\Storage::disk('public')->exists($article->featured_image);
+            });
+
+        if ($orphaned->isNotEmpty()) {
+            $this->warn("Found {$orphaned->count()} articles with missing image files on disk.");
+            // Clear the stale DB path so they are treated as needing a new image
+            foreach ($orphaned as $article) {
+                $article->update(['featured_image' => null]);
+            }
+            // Merge into the articles collection
+            $articles = $articles->merge($orphaned)->unique('id');
+            if ($limit > 0) {
+                $articles = $articles->take($limit);
+            }
+        }
 
         if ($articles->isEmpty()) {
             $this->info('All articles already have featured images.');

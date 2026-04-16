@@ -187,9 +187,9 @@
                 </a>
                 <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
                     <a href="{{ $landingUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.home') }}</a>
-                    <a href="{{ $landingUrl }}#services" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.services') }}</a>
-                    <a href="{{ $landingUrl }}#process" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.process') }}</a>
-                    <a href="{{ $landingUrl }}#about" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.about') }}</a>
+                    <a href="{{ $currentLocale === 'en' ? route('services.index.en') : route('services.index.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.services') }}</a>
+                    <a href="{{ $currentLocale === 'en' ? route('process.en') : route('process.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.process') }}</a>
+                    <a href="{{ $currentLocale === 'en' ? route('about.en') : route('about.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.about') }}</a>
                     <a href="{{ $blogUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.blog') }}</a>
                     <!-- Locale Switcher -->
                     <div class="relative inline-block text-left" id="localeSwitcher">
@@ -232,9 +232,9 @@
         <div class="flex flex-col h-[calc(100%-65px)] overflow-y-auto">
             <div class="p-4 space-y-1 flex-1">
                 <a href="{{ $landingUrl }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-home w-5 text-center text-gray-400"></i>{{ __('landing.nav.home') }}</a>
-                <a href="{{ $landingUrl }}#services" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-briefcase w-5 text-center text-gray-400"></i>{{ __('landing.nav.services') }}</a>
-                <a href="{{ $landingUrl }}#process" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-tasks w-5 text-center text-gray-400"></i>{{ __('landing.nav.process') }}</a>
-                <a href="{{ $landingUrl }}#about" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-info-circle w-5 text-center text-gray-400"></i>{{ __('landing.nav.about') }}</a>
+                <a href="{{ $currentLocale === 'en' ? route('services.index.en') : route('services.index.id') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-briefcase w-5 text-center text-gray-400"></i>{{ __('landing.nav.services') }}</a>
+                <a href="{{ $currentLocale === 'en' ? route('process.en') : route('process.id') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-tasks w-5 text-center text-gray-400"></i>{{ __('landing.nav.process') }}</a>
+                <a href="{{ $currentLocale === 'en' ? route('about.en') : route('about.id') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-info-circle w-5 text-center text-gray-400"></i>{{ __('landing.nav.about') }}</a>
                 <a href="{{ $blogUrl }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-newspaper w-5 text-center text-gray-400"></i>{{ __('landing.nav.blog') }}</a>
             </div>
             <div class="px-4 py-3 border-t border-gray-100">
@@ -372,6 +372,53 @@
                         <div class="mt-4 flex items-center gap-2 text-xs text-gray-400">
                             <i class="fas fa-lock text-xs"></i>
                             Data disimpan terenkripsi & hanya untuk asesmen awal.
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendation Box -->
+                    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-soft animate-fade-in delay-300">
+                        <h4 class="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-compass text-primary-500"></i>
+                            Pilih Layanan yang Tepat
+                        </h4>
+                        
+                        <div class="space-y-3">
+                            <!-- This page recommendation -->
+                            <div class="p-3 rounded-xl bg-primary-50 border border-primary-100">
+                                <div class="flex items-start gap-2.5">
+                                    <span class="w-6 h-6 rounded-lg bg-primary-500 text-white flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-semibold text-primary-600">Anda di halaman yang tepat jika:</p>
+                                        <ul class="text-[11px] text-gray-600 mt-1 space-y-0.5">
+                                            <li>• Belum yakin <strong>izin apa</strong> yang dibutuhkan</li>
+                                            <li>• Ingin AI menganalisis kebutuhan perizinan</li>
+                                            <li>• Butuh rekomendasi instansi & timeline</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Alternative recommendation -->
+                            <div class="p-3 rounded-xl bg-orange-50 border border-orange-100">
+                                <div class="flex items-start gap-2.5">
+                                    <span class="w-6 h-6 rounded-lg bg-orange-500 text-white flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-calculator text-xs"></i>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-semibold text-orange-600">Gunakan Estimasi Biaya jika:</p>
+                                        <ul class="text-[11px] text-gray-600 mt-1 space-y-0.5">
+                                            <li>• Sudah tahu <strong>KBLI / jenis usaha</strong></li>
+                                            <li>• Ingin hitung <strong>berapa biaya</strong> perizinan</li>
+                                            <li>• Butuh estimasi cepat untuk budgeting</li>
+                                        </ul>
+                                        <a href="/estimasi-biaya" class="inline-flex items-center gap-1.5 mt-2 text-xs font-semibold text-orange-600 hover:text-orange-700 transition-colors">
+                                            Estimasi Biaya <i class="fas fa-arrow-right text-[10px]"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </aside>
@@ -759,17 +806,44 @@
                     try { const parsed = JSON.parse(saved); const { _savedAt, ...data } = parsed; this.formData = { ...this.formData, ...data }; this.lastSavedAt = _savedAt || null; this.draftLoaded = true; }
                     catch (error) { console.warn('Failed to load draft', error); }
                 },
+                async parseResponseSafely(response) {
+                    const contentType = response.headers.get('content-type') || '';
+                    if (!contentType.includes('application/json')) {
+                        return {
+                            success: false,
+                            message: response.status >= 500
+                                ? 'Server sedang mengalami gangguan. Silakan coba lagi.'
+                                : 'Respons server tidak valid. Silakan coba lagi.'
+                        };
+                    }
+                    try {
+                        return await response.json();
+                    } catch (error) {
+                        return { success: false, message: 'Gagal membaca respons server.' };
+                    }
+                },
                 clearDraft(resetFields = true) {
                     localStorage.removeItem(this.storageKey); this.draftLoaded = false; this.lastSavedAt = null; this.errorMessage = ''; this.rateLimitWarning = '';
                     if (resetFields) { this.formData = this.getDefaultFormData(); this.step = 1; }
                 },
                 async checkRateLimit() {
-                    if (!this.formData.email) return;
+                    if (!this.formData.email) { this.rateLimitWarning = ''; return; }
+                    const email = String(this.formData.email).trim();
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        this.rateLimitWarning = '';
+                        return;
+                    }
                     try {
-                        const response = await fetch('{{ route("landing.service-inquiry.check-rate-limit") }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ email: this.formData.email }) });
-                        const data = await response.json();
-                        if (!data.allowed) { this.rateLimitWarning = data.limit_info.message; }
-                        else if (data.stats.email_remaining <= 2) { this.rateLimitWarning = 'Anda memiliki ' + data.stats.email_remaining + ' analisis gratis tersisa hari ini.'; }
+                        const response = await fetch('{{ route("landing.service-inquiry.check-rate-limit") }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ email }) });
+                        const data = await this.parseResponseSafely(response);
+
+                        if (!response.ok) {
+                            this.rateLimitWarning = data.message || 'Gagal mengecek batas penggunaan.';
+                            return;
+                        }
+
+                        if (!data.allowed) { this.rateLimitWarning = data.limit_info?.message || 'Batas analisis harian telah tercapai.'; }
+                        else if ((data.stats?.email_remaining ?? 0) <= 2) { this.rateLimitWarning = 'Anda memiliki ' + (data.stats?.email_remaining ?? 0) + ' analisis gratis tersisa hari ini.'; }
                         else { this.rateLimitWarning = ''; }
                     } catch (error) { console.error('Rate limit check failed:', error); }
                 },
@@ -778,9 +852,23 @@
                     this.isSubmitting = true; this.errorMessage = '';
                     try {
                         const response = await fetch('{{ route("landing.service-inquiry.store") }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify(this.formData) });
-                        const data = await response.json();
+                        const data = await this.parseResponseSafely(response);
+
+                        if (!response.ok) {
+                            if (response.status === 429 || data.error === 'rate_limit') {
+                                this.errorMessage = data.message || 'Batas analisis gratis tercapai untuk hari ini.';
+                            } else if (response.status === 422 && data.errors) {
+                                const firstKey = Object.keys(data.errors)[0];
+                                const firstMessage = firstKey ? data.errors[firstKey]?.[0] : null;
+                                this.errorMessage = firstMessage || data.message || 'Data belum lengkap. Mohon periksa kembali.';
+                            } else {
+                                this.errorMessage = data.message || 'Terjadi kesalahan. Silakan coba lagi.';
+                            }
+                            this.isSubmitting = false;
+                            return;
+                        }
+
                         if (data.success) { this.clearDraft(false); this.pollResult(data.inquiry_number); }
-                        else if (data.error === 'rate_limit') { this.errorMessage = data.message || 'Batas analisis gratis tercapai untuk hari ini.'; this.isSubmitting = false; }
                         else { this.errorMessage = data.message || 'Terjadi kesalahan. Silakan coba lagi.'; this.isSubmitting = false; }
                     } catch (error) { console.error('Submit error:', error); this.errorMessage = 'Gagal mengirim data. Periksa koneksi internet Anda.'; this.isSubmitting = false; }
                 },
@@ -825,9 +913,9 @@
                         $footerBlogRoute = app()->getLocale() === 'en' ? route('blog.index.en') : route('blog.index.id');
                     @endphp
                     <ul class="space-y-1 text-sm">
-                        <li><a href="{{ $footerLandingRoute }}#services" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.services') }}</a></li>
-                        <li><a href="{{ $footerLandingRoute }}#process" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.process') }}</a></li>
-                        <li><a href="{{ $footerLandingRoute }}#about" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.about') }}</a></li>
+                        <li><a href="{{ app()->getLocale() === 'en' ? route('services.index.en') : route('services.index.id') }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.services') }}</a></li>
+                        <li><a href="{{ app()->getLocale() === 'en' ? route('process.en') : route('process.id') }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.process') }}</a></li>
+                        <li><a href="{{ app()->getLocale() === 'en' ? route('about.en') : route('about.id') }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.about') }}</a></li>
                         <li><a href="{{ $footerBlogRoute }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.blog') }}</a></li>
                         <li><a href="{{ route('career.index') }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.footer.careers') }}</a></li>
                     </ul>

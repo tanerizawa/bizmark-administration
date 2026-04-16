@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ServiceCostRequest;
 use App\Models\ServiceInquiry;
 use App\Models\ConsultRequest;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
 
 class LeadManagementController extends Controller
 {
@@ -26,10 +29,15 @@ class LeadManagementController extends Controller
         $data['consultationLeadsCount'] = ConsultRequest::where('estimate_status', 'new')
             ->orWhere('contacted', false)
             ->count();
+        $data['serviceCostRequestsCount'] = Schema::hasTable('service_cost_requests')
+            ? ServiceCostRequest::whereIn('status', ['pending', 'reviewing'])->count()
+            : 0;
 
         // Load tab-specific data
         if ($activeTab === 'service-inquiries') {
             $data = array_merge($data, $this->getServiceInquiriesData($request));
+        } elseif ($activeTab === 'service-cost-requests') {
+            $data = array_merge($data, $this->getServiceCostRequestsData($request));
         } else {
             $data = array_merge($data, $this->getConsultationLeadsData($request));
         }
@@ -176,6 +184,81 @@ class LeadManagementController extends Controller
         return [
             'consultations' => $consultations,
             'consultationLeadsStats' => $stats,
+        ];
+    }
+
+    /**
+     * Get Service Cost Requests data
+     */
+    private function getServiceCostRequestsData(Request $request): array
+    {
+        if (!Schema::hasTable('service_cost_requests')) {
+            $emptyPaginator = new LengthAwarePaginator([], 0, 20, 1, [
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]);
+
+            return [
+                'serviceCostRequests' => $emptyPaginator,
+                'serviceCostRequestsStats' => [
+                    'total' => 0,
+                    'pending' => 0,
+                    'reviewing' => 0,
+                    'quoted' => 0,
+                    'accepted' => 0,
+                    'rejected' => 0,
+                    'this_week' => 0,
+                    'this_month' => 0,
+                ],
+            ];
+        }
+
+        $query = ServiceCostRequest::query()->orderByDesc('created_at');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('applicant_type')) {
+            $query->where('applicant_type', $request->applicant_type);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('request_number', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $serviceCostRequests = $query->paginate(20);
+        $serviceCostRequests->appends($request->except('page'));
+
+        $stats = [
+            'total' => ServiceCostRequest::count(),
+            'pending' => ServiceCostRequest::where('status', 'pending')->count(),
+            'reviewing' => ServiceCostRequest::where('status', 'reviewing')->count(),
+            'quoted' => ServiceCostRequest::where('status', 'quoted')->count(),
+            'accepted' => ServiceCostRequest::where('status', 'accepted')->count(),
+            'rejected' => ServiceCostRequest::where('status', 'rejected')->count(),
+            'this_week' => ServiceCostRequest::where('created_at', '>=', now()->startOfWeek())->count(),
+            'this_month' => ServiceCostRequest::where('created_at', '>=', now()->startOfMonth())->count(),
+        ];
+
+        return [
+            'serviceCostRequests' => $serviceCostRequests,
+            'serviceCostRequestsStats' => $stats,
         ];
     }
 }

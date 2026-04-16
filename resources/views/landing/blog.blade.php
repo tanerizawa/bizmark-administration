@@ -12,16 +12,16 @@
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
-        "@type": "BreadcrumbList",
+        "@@type": "BreadcrumbList",
         "itemListElement": [
             {
-                "@type": "ListItem",
+                "@@type": "ListItem",
                 "position": 1,
                 "name": "Beranda",
                 "item": "{{ route('landing.id') }}"
             },
             {
-                "@type": "ListItem",
+                "@@type": "ListItem",
                 "position": 2,
                 "name": "Artikel",
                 "item": "{{ route('blog.index.id') }}"
@@ -185,16 +185,16 @@
             
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-1">
-                <a href="{{ route('landing.id') }}#main-content" class="nav-link">{{ __('landing.nav.home') }}</a>
-                <a href="{{ route('landing.id') }}#services" class="nav-link">{{ __('landing.nav.services') }}</a>
-                <a href="{{ route('landing.id') }}#process" class="nav-link">{{ __('landing.nav.process') }}</a>
-                <a href="{{ route('landing.id') }}#about" class="nav-link">{{ __('landing.nav.about') }}</a>
+                <a href="{{ route('landing.id') }}" class="nav-link">{{ __('landing.nav.home') }}</a>
+                <a href="{{ route('services.index.id') }}" class="nav-link">{{ __('landing.nav.services') }}</a>
+                <a href="{{ route('process.id') }}" class="nav-link">{{ __('landing.nav.process') }}</a>
+                <a href="{{ route('about.id') }}" class="nav-link">{{ __('landing.nav.about') }}</a>
                 <a href="{{ route('blog.index.id') }}" class="nav-link active">{{ __('landing.nav.blog') }}</a>
                 
                 <!-- Locale Switcher -->
                 <x-locale-switcher />
                 
-                <a href="{{ route('landing.id') }}#contact" class="btn btn-primary">
+                <a href="{{ route('landing.service-inquiry.create') }}" class="btn btn-primary">
                     {{ __('landing.nav.get_started') }}
                 </a>
             </div>

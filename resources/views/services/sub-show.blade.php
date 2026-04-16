@@ -11,10 +11,10 @@
     "@@context": "https://schema.org",
     "@@type": "BreadcrumbList",
     "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Beranda", "item": "{{ route('landing.id') }}"},
-        {"@type": "ListItem", "position": 2, "name": "Layanan", "item": "{{ route('services.index.id') }}"},
-        {"@type": "ListItem", "position": 3, "name": "{{ $parentService['title'] }}", "item": "{{ route('services.show.id', $parentSlug) }}"},
-        {"@type": "ListItem", "position": 4, "name": "{{ $subService['title'] }}"}
+        {"@@type": "ListItem", "position": 1, "name": "Beranda", "item": "{{ route('landing.id') }}"},
+        {"@@type": "ListItem", "position": 2, "name": "Layanan", "item": "{{ route('services.index.id') }}"},
+        {"@@type": "ListItem", "position": 3, "name": "{{ $parentService['title'] }}", "item": "{{ route('services.show.id', $parentSlug) }}"},
+        {"@@type": "ListItem", "position": 4, "name": "{{ $subService['title'] }}"}
     ]
 }
 </script>
@@ -26,13 +26,13 @@
     "name": "{{ $subService['title'] }}",
     "description": "{{ $subService['short_description'] }}",
     "provider": {
-        "@type": "Organization",
+        "@@type": "Organization",
         "name": "PT Cangah Pajaratan Mandiri (Bizmark.ID)",
         "url": "https://bizmark.id"
     },
-    "areaServed": {"@type": "Country", "name": "Indonesia"},
+    "areaServed": {"@@type": "Country", "name": "Indonesia"},
     "isRelatedTo": {
-        "@type": "Service",
+        "@@type": "Service",
         "name": "{{ $parentService['title'] }}",
         "url": "{{ route('services.show.id', $parentSlug) }}"
     }
@@ -47,10 +47,10 @@
     "mainEntity": [
         @foreach($parentService['faq'] as $faqItem)
         {
-            "@type": "Question",
+            "@@type": "Question",
             "name": "{{ $faqItem['q'] }}",
             "acceptedAnswer": {
-                "@type": "Answer",
+                "@@type": "Answer",
                 "text": "{{ $faqItem['a'] }}"
             }
         }@if(!$loop->last),@endif

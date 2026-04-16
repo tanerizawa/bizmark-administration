@@ -165,7 +165,10 @@ class ArticleGenerationService
         
         // Language-specific context
         $languageContext = $this->getLanguageContext($topic->language, $topic->target_market);
-        
+
+        // Template-specific structure instructions based on category
+        $templateInstructions = $this->getTemplateInstructions($topic);
+
         return "
 {$languageContext['task_instruction']} \"{$topic->title}\" {$languageContext['for_site']}
 
@@ -175,6 +178,8 @@ class ArticleGenerationService
 **{$languageContext['article_category']}** {$topic->category}
 **{$languageContext['main_keywords']}** {$keywords}
 **{$languageContext['topic_description']}** {$topic->description}
+
+{$templateInstructions}
 
 **{$languageContext['content_requirements']}**
 1. **{$languageContext['length']}** {$minWords}-{$maxWords} {$languageContext['words']}
@@ -216,6 +221,147 @@ class ArticleGenerationService
 
 {$languageContext['output_instruction']}
 ";
+    }
+
+    /**
+     * Get template-specific structure instructions based on article category/type.
+     * Produces differentiated content structure for Pillar, Comparison, Case Study, FAQ, and generic articles.
+     */
+    protected function getTemplateInstructions(\App\Models\ArticleTopic $topic): string
+    {
+        $title = $topic->title;
+        $isId = $topic->language === 'id';
+
+        // Detect template type from category + title patterns
+        $type = $this->detectTemplateType($topic);
+
+        return match ($type) {
+            'pillar' => $isId
+                ? "**TEMPLATE: PILLAR PAGE (Panduan Lengkap)**
+IKUTI STRUKTUR INI DENGAN KETAT:
+1. <h2>Apa itu [Topik]?</h2> — Definisi, dasar hukum, siapa yang wajib
+2. <h2>Mengapa [Topik] Penting?</h2> — 5 alasan, konsekuensi jika tidak memiliki
+3. <h2>Persyaratan Dokumen</h2> — Checklist detail dalam <ul>, tips persiapan
+4. <h2>Proses Pengurusan Step-by-Step</h2> — Numbered list <ol> dengan timeline dan biaya estimasi
+5. <h2>FAQ [Topik]</h2> — Minimal 8 pertanyaan-jawaban, gunakan format <h3> per pertanyaan
+6. <h2>Studi Kasus</h2> — 1-2 contoh nyata (boleh fiktif realistis)
+7. <h2>Tips dari Ahli Bizmark</h2> — Expert insights, kesalahan umum
+8. <h2>Konsultasi Gratis Bizmark</h2> — CTA: WhatsApp, form, telepon
+Target: 2000-3000 kata. Ini adalah halaman pilar — harus sangat komprehensif dan menjadi referensi utama."
+                : "**TEMPLATE: PILLAR PAGE (Comprehensive Guide)**
+FOLLOW THIS STRUCTURE STRICTLY:
+1. <h2>What is [Topic]?</h2> — Definition, legal basis, who needs it
+2. <h2>Why is [Topic] Important?</h2> — 5 reasons, consequences of non-compliance
+3. <h2>Document Requirements</h2> — Detailed <ul> checklist, preparation tips
+4. <h2>Step-by-Step Process</h2> — Numbered <ol> list with timeline and cost estimates
+5. <h2>FAQ [Topic]</h2> — Minimum 8 Q&A items, use <h3> per question
+6. <h2>Case Study</h2> — 1-2 real examples
+7. <h2>Expert Tips from Bizmark</h2> — Common mistakes, pro insights
+8. <h2>Free Consultation</h2> — CTA
+Target: 2000-3000 words. This is a pillar page — must be extremely comprehensive.",
+
+            'comparison' => $isId
+                ? "**TEMPLATE: ARTIKEL PERBANDINGAN**
+IKUTI STRUKTUR INI DENGAN KETAT:
+1. <h2>Tabel Perbandingan Cepat</h2> — Buat tabel HTML <table> dengan kolom: Aspek | Opsi A | Opsi B
+2. <h2>Apa itu [Opsi A]?</h2> — Penjelasan detail
+3. <h2>Apa itu [Opsi B]?</h2> — Penjelasan detail
+4. <h2>Perbedaan Utama</h2> — Bullet list <ul> dengan 5+ poin perbandingan
+5. <h2>Kapan Memilih [Opsi A]</h2> — Kondisi, keuntungan, contoh kasus
+6. <h2>Kapan Memilih [Opsi B]</h2> — Kondisi, keuntungan, contoh kasus
+7. <h2>FAQ Perbandingan</h2> — 5+ pertanyaan, format <h3>
+8. <h2>Konsultasi Gratis Bizmark</h2> — CTA
+WAJIB: Sertakan minimal 1 tabel HTML <table> perbandingan side-by-side."
+                : "**TEMPLATE: COMPARISON ARTICLE**
+FOLLOW THIS STRUCTURE STRICTLY:
+1. <h2>Quick Comparison Table</h2> — HTML <table> with columns: Aspect | Option A | Option B
+2. <h2>What is [Option A]?</h2>
+3. <h2>What is [Option B]?</h2>
+4. <h2>Key Differences</h2> — 5+ bullet points
+5. <h2>When to Choose [Option A]</h2>
+6. <h2>When to Choose [Option B]</h2>
+7. <h2>FAQ</h2> — 5+ questions in <h3>
+8. <h2>Free Consultation</h2> — CTA
+REQUIRED: Include at least 1 HTML <table> for side-by-side comparison.",
+
+            'case-study' => $isId
+                ? "**TEMPLATE: STUDI KASUS**
+IKUTI STRUKTUR INI DENGAN KETAT:
+1. <h2>Latar Belakang</h2> — Profil klien/industri (boleh anonim), situasi awal
+2. <h2>Tantangan yang Dihadapi</h2> — 3-5 masalah spesifik dalam <ul>
+3. <h2>Solusi Bizmark</h2> — Langkah-langkah penyelesaian dalam <ol>, pendekatan strategis
+4. <h2>Hasil & Timeline</h2> — Data kuantitatif: hari penyelesaian, penghematan biaya, metrik sukses
+5. <h2>Pelajaran untuk Anda</h2> — 3-5 takeaways dalam <ul>
+6. <h2>Hubungi Bizmark</h2> — CTA: konsultasi serupa
+Gaya penulisan: Naratif, storytelling, gunakan data spesifik (boleh realistis fiktif)."
+                : "**TEMPLATE: CASE STUDY**
+FOLLOW THIS STRUCTURE STRICTLY:
+1. <h2>Background</h2> — Client/industry profile, initial situation
+2. <h2>Challenges Faced</h2> — 3-5 specific problems in <ul>
+3. <h2>Bizmark's Solution</h2> — Step-by-step resolution in <ol>
+4. <h2>Results & Timeline</h2> — Quantitative data: days to completion, cost savings, success metrics
+5. <h2>Lessons for You</h2> — 3-5 takeaways in <ul>
+6. <h2>Contact Bizmark</h2> — CTA
+Style: Narrative, storytelling, use specific data.",
+
+            'faq' => $isId
+                ? "**TEMPLATE: KOMPILASI FAQ**
+IKUTI STRUKTUR INI DENGAN KETAT:
+1. <h2>Pertanyaan Umum</h2> — 5-8 Q&A umum, setiap pertanyaan dalam <h3>, jawaban dalam <p>
+2. <h2>Pertanyaan Teknis</h2> — 5-8 Q&A teknis dengan detail prosedur
+3. <h2>Pertanyaan Biaya & Waktu</h2> — 5-8 Q&A tentang estimasi biaya dan timeline
+4. <h2>Masih Ada Pertanyaan?</h2> — CTA ke konsultasi Bizmark
+PENTING: Gunakan format konsisten <h3>Pertanyaan?</h3><p>Jawaban lengkap.</p> untuk setiap item.
+Minimal 15 pertanyaan total. Format ini optimal untuk Google Featured Snippets dan Schema FAQPage."
+                : "**TEMPLATE: FAQ COMPILATION**
+FOLLOW THIS STRUCTURE STRICTLY:
+1. <h2>General Questions</h2> — 5-8 Q&A, each question in <h3>, answer in <p>
+2. <h2>Technical Questions</h2> — 5-8 technical Q&A with procedural detail
+3. <h2>Cost & Timeline Questions</h2> — 5-8 Q&A about estimates
+4. <h2>Still Have Questions?</h2> — CTA
+IMPORTANT: Use consistent <h3>Question?</h3><p>Detailed answer.</p> format.
+Minimum 15 questions total. This format is optimal for Google Featured Snippets and Schema FAQPage.",
+
+            default => '', // Generic articles use the base prompt structure
+        };
+    }
+
+    /**
+     * Detect content template type from topic category and title patterns.
+     */
+    protected function detectTemplateType(\App\Models\ArticleTopic $topic): string
+    {
+        $category = $topic->category;
+        $title = mb_strtolower($topic->title);
+
+        // Explicit category matches
+        if ($category === 'case-study') {
+            return 'case-study';
+        }
+
+        // Title pattern detection
+        if (preg_match('/panduan lengkap|complete guide|comprehensive|guide to|langkah.langkah|step.by.step/i', $title)) {
+            return 'pillar';
+        }
+
+        if (preg_match('/\bvs\b|versus|perbandingan|perbedaan|dibanding|comparison|compare|mana yang/i', $title)) {
+            return 'comparison';
+        }
+
+        if (preg_match('/studi kasus|case study|berhasil|sukses.*mendapat|kisah|pengalaman/i', $title)) {
+            return 'case-study';
+        }
+
+        if (preg_match('/\bfaq\b|pertanyaan.*sering|tanya jawab|questions|yang perlu diketahui|hal.*harus.*tahu/i', $title)) {
+            return 'faq';
+        }
+
+        // Category-based fallback for regulation → pillar (comprehensive by nature)
+        if ($category === 'regulation' && mb_strlen($title) > 30) {
+            return 'pillar';
+        }
+
+        return 'generic';
     }
 
     /**

@@ -48,13 +48,14 @@ class ProjectController extends Controller
             $query->whereHas('status', fn($q) => $q->where('is_active', false));
         }
         
-        // Search
+        // Search (database-agnostic case-insensitive)
         if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('project_code', 'ilike', "%{$search}%")
+            $searchLower = strtolower($search);
+            $query->where(function($q) use ($searchLower) {
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('LOWER(project_code) LIKE ?', ["%{$searchLower}%"])
                   ->orWhereHas('institution', fn($iq) => 
-                      $iq->where('name', 'ilike', "%{$search}%")
+                      $iq->whereRaw('LOWER(name) LIKE ?', ["%{$searchLower}%"])
                   );
             });
         }
@@ -118,13 +119,14 @@ class ProjectController extends Controller
             return response()->json(['results' => []]);
         }
         
-        $projects = Project::where('name', 'ilike', "%{$query}%")
-            ->orWhere('project_code', 'ilike', "%{$query}%")
+        $searchLower = strtolower($query);
+        $projects = Project::whereRaw('LOWER(name) LIKE ?', ["%{$searchLower}%"])
+            ->orWhereRaw('LOWER(project_code) LIKE ?', ["%{$searchLower}%"])
             ->orWhereHas('institution', fn($q) => 
-                $q->where('name', 'ilike', "%{$query}%")
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchLower}%"])
             )
             ->orWhereHas('client', fn($q) =>
-                $q->where('company_name', 'ilike', "%{$query}%")
+                $q->whereRaw('LOWER(company_name) LIKE ?', ["%{$searchLower}%"])
             )
             ->with(['status', 'institution', 'client'])
             ->take(10)

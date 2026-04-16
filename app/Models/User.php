@@ -28,6 +28,11 @@ class User extends Authenticatable
         'employee_id',
         'phone',
         'notes',
+        'bio',
+        'expertise',
+        'linkedin_url',
+        'twitter_url',
+        'job_title',
         'password',
         'role_id',
         'is_active',
@@ -221,5 +226,30 @@ class User extends Authenticatable
     public function emailAssignments()
     {
         return $this->hasMany(\App\Models\EmailAssignment::class, 'user_id');
+    }
+
+    /**
+     * Articles authored by this user
+     */
+    public function articles()
+    {
+        return $this->hasMany(Article::class, 'author_id');
+    }
+
+    /**
+     * Get display name for public author attribution
+     */
+    public function getAuthorDisplayNameAttribute(): string
+    {
+        return $this->full_name ?: $this->name;
+    }
+
+    /**
+     * Get expertise as array
+     */
+    public function getExpertiseListAttribute(): array
+    {
+        if (empty($this->expertise)) return [];
+        return array_map('trim', explode(',', $this->expertise));
     }
 }

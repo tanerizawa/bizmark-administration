@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\CompetitorAnalysis;
+use App\Models\KeywordPositionHistory;
+use App\Models\RankingAlert;
 use App\Models\Article;
 use Illuminate\Support\Facades\Log;
 
@@ -298,6 +300,260 @@ PROMPT;
                 ->whereNotNull('content_gaps')
                 ->get()
                 ->sum(fn($a) => count($a->content_gaps ?? [])),
+        ];
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // POSITION TRACKING
+    // ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Track position for a single keyword.
+     * Uses SearXNG for real-time SERP data and creates history + alerts.
+     */
+    public function trackPosition(string $keyword): ?KeywordPositionHistory
+    {
+        try {
+            // Get current SERP data
+            $serp = null;
+            $dataSource = 'ai_estimate';
+
+            if ($this->searxng->isConfigured()) {
+                $serp = $this->searxng->search($keyword);
+                if ($serp['success'] && !empty($serp['results'])) {
+                    $dataSource = 'searxng';
+                }
+            }
+
+            if (!$serp && $this->googleSearch->isConfigured()) {
+                $serp = $this->googleSearch->search($keyword);
+                if ($serp && $serp['success']) {
+                    $dataSource = 'google_serp';
+                }
+            }
+
+            // Extract position data
+            $currentPosition = $serp['our_position'] ?? null;
+            $ourUrl = null;
+            $topCompetitors = [];
+
+            if ($serp && !empty($serp['results'])) {
+                // Find our URL
+                foreach ($serp['results'] as $result) {
+                    if (!empty($result['is_ours'])) {
+                        $ourUrl = $result['url'];
+                        break;
+                    }
+                }
+                // Get top 5 competitors
+                $topCompetitors = array_slice(
+                    array_filter($serp['results'], fn($r) => empty($r['is_ours'])),
+                    0, 5
+                );
+            }
+
+            // Get previous position for comparison
+            $previousRecord = KeywordPositionHistory::forKeyword($keyword)
+                ->latest('tracked_at')
+                ->first();
+
+            $previousPosition = $previousRecord?->position;
+            $positionChange = 0;
+
+            if ($previousPosition !== null && $currentPosition !== null) {
+                // Positive = improvement (lower position number is better)
+                $positionChange = $previousPosition - $currentPosition;
+            } elseif ($previousPosition !== null && $currentPosition === null) {
+                // Lost ranking
+                $positionChange = -$previousPosition;
+            } elseif ($previousPosition === null && $currentPosition !== null) {
+                // New ranking
+                $positionChange = $currentPosition;
+            }
+
+            // Get search intent from keyword cluster if exists
+            $keywordCluster = \App\Models\KeywordCluster::where('seed_keyword', $keyword)->first();
+            $searchIntent = $keywordCluster?->search_intent;
+            $searchVolume = $keywordCluster?->estimated_volume;
+
+            // Create position history record
+            $history = KeywordPositionHistory::create([
+                'keyword' => $keyword,
+                'our_url' => $ourUrl,
+                'position' => $currentPosition,
+                'previous_position' => $previousPosition,
+                'position_change' => $positionChange,
+                'data_source' => $dataSource,
+                'top_competitors' => array_map(fn($c) => [
+                    'position' => $c['position'] ?? null,
+                    'domain' => $c['domain'] ?? '',
+                    'title' => $c['title'] ?? '',
+                ], $topCompetitors),
+                'search_volume' => $searchVolume,
+                'search_intent' => $searchIntent,
+                'tracked_at' => now()->toDateString(),
+            ]);
+
+            // Generate alerts if needed
+            $this->generateAlerts($history);
+
+            Log::info("Position tracked: '{$keyword}' = #{$currentPosition}", [
+                'previous' => $previousPosition,
+                'change' => $positionChange,
+                'source' => $dataSource,
+            ]);
+
+            return $history;
+
+        } catch (\Throwable $e) {
+            Log::error("Position tracking failed for '{$keyword}'", [
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * Batch track positions for all monitored keywords.
+     */
+    public function trackAllPositions(int $limit = 50): array
+    {
+        $results = [
+            'tracked' => 0,
+            'failed' => 0,
+            'skipped' => 0,
+            'alerts_created' => 0,
+            'details' => [],
+        ];
+
+        // Get keywords to track from multiple sources
+        $keywords = collect();
+
+        // 1. From keyword clusters (high priority)
+        $clusterKeywords = \App\Models\KeywordCluster::query()
+            ->active()
+            ->orderByDesc('priority')
+            ->orderByDesc('estimated_volume')
+            ->take($limit)
+            ->pluck('seed_keyword');
+        $keywords = $keywords->merge($clusterKeywords);
+
+        // 2. Core business keywords
+        $coreKeywords = collect([
+            'jasa pengurusan AMDAL',
+            'konsultan AMDAL',
+            'jasa amdal',
+            'konsultan izin limbah B3',
+            'pengurusan UKL-UPL',
+            'jasa perizinan lingkungan',
+            'konsultan OSS NIB',
+            'izin lingkungan',
+            'pertek lingkungan',
+            'TPS limbah B3',
+            'IPAL industri',
+            'dokumen lingkungan',
+        ]);
+        $keywords = $keywords->merge($coreKeywords);
+
+        // 3. From published articles (keywords we should be ranking for)
+        $articleKeywords = Article::published()
+            ->whereNotNull('meta_keywords')
+            ->take(20)
+            ->pluck('meta_keywords')
+            ->flatMap(fn($k) => explode(',', $k))
+            ->map(fn($k) => trim($k))
+            ->filter();
+        $keywords = $keywords->merge($articleKeywords);
+
+        $keywords = $keywords->unique()->take($limit);
+
+        // Skip keywords tracked today
+        $trackedToday = KeywordPositionHistory::today()
+            ->pluck('keyword')
+            ->toArray();
+
+        foreach ($keywords as $keyword) {
+            if (in_array($keyword, $trackedToday)) {
+                $results['skipped']++;
+                continue;
+            }
+
+            $history = $this->trackPosition($keyword);
+            
+            if ($history) {
+                $results['tracked']++;
+                $results['details'][] = [
+                    'keyword' => $keyword,
+                    'position' => $history->position,
+                    'change' => $history->position_change,
+                ];
+
+                if ($history->alerts->count() > 0) {
+                    $results['alerts_created'] += $history->alerts->count();
+                }
+            } else {
+                $results['failed']++;
+            }
+
+            // Rate limiting - wait between requests
+            usleep(500000); // 0.5 second
+        }
+
+        return $results;
+    }
+
+    /**
+     * Generate alerts based on position changes.
+     */
+    protected function generateAlerts(KeywordPositionHistory $history): void
+    {
+        // Lost ranking completely
+        if ($history->previous_position !== null && $history->position === null) {
+            RankingAlert::createLostRankingAlert($history);
+            return;
+        }
+
+        // New ranking
+        if ($history->previous_position === null && $history->position !== null) {
+            RankingAlert::createNewRankingAlert($history);
+            return;
+        }
+
+        // Position change
+        if ($history->position_change < 0) {
+            RankingAlert::createDropAlert($history);
+        } elseif ($history->position_change > 0) {
+            RankingAlert::createGainAlert($history);
+        }
+    }
+
+    /**
+     * Get position tracking summary for dashboard.
+     */
+    public function getPositionTrackingSummary(): array
+    {
+        return [
+            'position_stats' => KeywordPositionHistory::getDashboardStats(),
+            'alert_summary' => RankingAlert::getDashboardSummary(),
+            'at_risk_keywords' => KeywordPositionHistory::getAtRiskKeywords(),
+        ];
+    }
+
+    /**
+     * Get position trend for a specific keyword.
+     */
+    public function getKeywordTrend(string $keyword, int $days = 30): array
+    {
+        return [
+            'keyword' => $keyword,
+            'trend' => KeywordPositionHistory::getTrendFor($keyword, $days),
+            'current' => KeywordPositionHistory::forKeyword($keyword)
+                ->latest('tracked_at')
+                ->first(),
+            'alerts' => RankingAlert::where('keyword', $keyword)
+                ->recent($days)
+                ->orderByDesc('created_at')
+                ->get(),
         ];
     }
 }

@@ -59,8 +59,8 @@
     <!-- Structured Data - Local Business Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "ProfessionalService",
+        "@@context": "https://schema.org",
+        "@@type": "ProfessionalService",
         "name": "Bizmark.ID",
         "image": "https://bizmark.id/images/logo-bizmark.svg",
         "description": "Konsultan perizinan dan bisnis terpercaya di Jakarta. Layanan OSS, AMDAL, UKL-UPL, PBG, SLF, izin lingkungan, dan digitalisasi administrasi perusahaan.",
@@ -68,7 +68,7 @@
         "telephone": "+62-21-1234-5678",
         "email": "cs@bizmark.id",
         "address": {
-            "@type": "PostalAddress",
+            "@@type": "PostalAddress",
             "streetAddress": "Jl. Sudirman No. 123",
             "addressLocality": "Jakarta Selatan",
             "addressRegion": "DKI Jakarta",
@@ -76,19 +76,19 @@
             "addressCountry": "ID"
         },
         "geo": {
-            "@type": "GeoCoordinates",
+            "@@type": "GeoCoordinates",
             "latitude": -6.2088,
             "longitude": 106.8456
         },
         "openingHoursSpecification": [
             {
-                "@type": "OpeningHoursSpecification",
+                "@@type": "OpeningHoursSpecification",
                 "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
                 "opens": "08:00",
                 "closes": "17:00"
             },
             {
-                "@type": "OpeningHoursSpecification",
+                "@@type": "OpeningHoursSpecification",
                 "dayOfWeek": "Saturday",
                 "opens": "08:00",
                 "closes": "12:00"
@@ -96,7 +96,7 @@
         ],
         "priceRange": "$$",
         "aggregateRating": {
-            "@type": "AggregateRating",
+            "@@type": "AggregateRating",
             "ratingValue": "4.9",
             "reviewCount": "500"
         },
@@ -107,7 +107,7 @@
             "https://www.linkedin.com/company/bizmark-id"
         ],
         "areaServed": {
-            "@type": "Country",
+            "@@type": "Country",
             "name": "Indonesia"
         },
         "serviceType": [
@@ -127,13 +127,13 @@
     <!-- Structured Data - Organization Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Organization",
+        "@@context": "https://schema.org",
+        "@@type": "Organization",
         "name": "Bizmark.ID",
         "url": "https://bizmark.id",
         "logo": "https://bizmark.id/images/logo-bizmark.svg",
         "contactPoint": {
-            "@type": "ContactPoint",
+            "@@type": "ContactPoint",
             "telephone": "+62-21-1234-5678",
             "contactType": "customer service",
             "areaServed": "ID",
@@ -145,54 +145,54 @@
     <!-- Structured Data - FAQ Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        "@@context": "https://schema.org",
+        "@@type": "FAQPage",
         "mainEntity": [
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "Apa itu OSS dan mengapa penting untuk bisnis saya?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "OSS (Online Single Submission) adalah sistem perizinan berusaha terintegrasi secara elektronik. OSS penting karena merupakan izin dasar yang wajib dimiliki setiap pelaku usaha di Indonesia. Dengan OSS, Anda bisa mendapatkan NIB (Nomor Induk Berusaha) yang berfungsi sebagai identitas perusahaan untuk berbagai keperluan bisnis dan perizinan lainnya."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "Berapa lama waktu yang dibutuhkan untuk pengurusan izin?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "Waktu pengurusan bervariasi tergantung jenis izin: OSS (1-3 hari kerja), PBG/SLF (14-30 hari kerja), AMDAL (60-90 hari kerja), UKL-UPL (30-45 hari kerja). Kami menjamin proses yang efisien dengan update berkala dan monitoring real-time melalui sistem digital kami."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "Apakah biaya konsultasi sudah termasuk biaya pemerintah?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "Biaya yang kami tawarkan mencakup jasa konsultasi, pengurusan dokumen, dan koordinasi dengan instansi terkait. Biaya resmi pemerintah (PNBP) akan diinformasikan secara transparan dan dibayarkan terpisah. Kami memberikan rincian biaya yang jelas di awal tanpa biaya tersembunyi."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "Bagaimana sistem monitoring digital Bizmark.ID bekerja?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "Sistem kami memungkinkan klien untuk memantau progress perizinan secara real-time melalui dashboard online. Anda dapat melihat status dokumen, timeline proses, upload/download dokumen, dan berkomunikasi langsung dengan tim kami. Semua aktivitas tercatat dan transparan untuk memastikan akuntabilitas."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "Apakah Bizmark.ID melayani klien di luar Jakarta?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "Ya, kami melayani klien di seluruh Indonesia. Dengan jaringan partner di berbagai kota dan sistem digital yang terintegrasi, kami dapat mengurus perizinan di daerah manapun sesuai kebutuhan bisnis Anda. Konsultasi dapat dilakukan secara online maupun offline."
                 }
             },
             {
-                "@type": "Question",
+                "@@type": "Question",
                 "name": "Apa yang membedakan Bizmark.ID dengan konsultan lainnya?",
                 "acceptedAnswer": {
-                    "@type": "Answer",
+                    "@@type": "Answer",
                     "text": "Kami menggabungkan keahlian konsultan profesional dengan teknologi digital modern. Keunggulan kami: (1) Sistem monitoring real-time, (2) Transparansi biaya dan proses, (3) Tim bersertifikat dengan 10+ tahun pengalaman, (4) Jaringan luas dengan instansi pemerintah, (5) Customer support 24/7, (6) Track record 98% kepuasan klien dari 500+ perusahaan."
                 }
             }
@@ -380,7 +380,7 @@
         .feature-card {
             background: var(--dark-bg-tertiary);
             border-radius: 1rem;
-            padding: 2rem;
+            padding: var(--spacing-xl);
             border: 1px solid var(--dark-separator);
             transition: all 0.3s ease;
             height: 100%;
@@ -431,7 +431,7 @@
             border: 1px solid var(--dark-separator);
             color: var(--dark-text-primary);
             border-radius: 0.5rem;
-            padding: 1rem;
+            padding: var(--spacing-md);
             width: 100%;
             transition: all 0.3s ease;
         }
@@ -455,7 +455,7 @@
             background: var(--dark-bg-elevated);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--dark-separator);
-            padding: 1rem;
+            padding: var(--spacing-md);
         }
         
         .mobile-menu.active { display: block; }
@@ -463,7 +463,7 @@
         .testimonial-card {
             background: var(--dark-bg-tertiary);
             border-radius: 1rem;
-            padding: 2rem;
+            padding: var(--spacing-xl);
             border: 1px solid var(--dark-separator);
         }
         
@@ -475,7 +475,7 @@
             display: flex;
             align-items: center;
             justify-center;
-            margin: 0 auto 2rem;
+            margin: 0 auto var(--spacing-xl);
             box-shadow: var(--shadow-primary-2xl);
             animation: pulse 3s infinite;
         }
@@ -568,6 +568,78 @@
         .form-field.invalid .validation-message::before {
             content: '⚠ ';
         }
+        
+        /* ============================================
+           MOBILE STICKY CTA BAR (Thumb Zone)
+           Neuroscience: Bottom 1/3 is natural thumb reach
+           ============================================ */
+        .mobile-sticky-cta {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: var(--dark-bg-elevated);
+            border-top: 1px solid var(--dark-separator);
+            padding: var(--spacing-sm) var(--spacing-md);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-sticky-cta {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--spacing-sm);
+            }
+            
+            /* Hide floating WhatsApp on mobile when sticky bar is present */
+            .wa-floating {
+                bottom: 80px !important;
+            }
+            
+            /* Ensure content doesn't get hidden behind sticky bar */
+            body {
+                padding-bottom: 70px;
+            }
+        }
+        
+        .mobile-sticky-cta .cta-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            text-decoration: none;
+            min-height: 48px;
+            transition: var(--transition-all);
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .mobile-sticky-cta .cta-btn.primary {
+            background: var(--gradient-primary);
+            color: var(--color-text-white);
+        }
+        
+        .mobile-sticky-cta .cta-btn.secondary {
+            background: transparent;
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border-primary);
+        }
+        
+        .mobile-sticky-cta .cta-btn.whatsapp {
+            background: var(--apple-green);
+            color: var(--color-text-white);
+            flex: 0 0 auto;
+            width: 48px;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -601,6 +673,16 @@
                        aria-label="Lihat layanan perizinan">
                         Layanan
                     </a>
+                    <a href="#digital-tools" 
+                       class="transition-colors font-medium inline-flex items-center gap-1" 
+                       style="color: inherit;"
+                       onmouseover="this.style.color='var(--color-primary)'"
+                       onmouseout="this.style.color='inherit'"
+                       data-neural-priority="high"
+                       aria-label="Alat digital gratis">
+                        <span>Tools</span>
+                        <span class="px-1.5 py-0.5 text-[10px] font-bold bg-green-500 text-white rounded">BARU</span>
+                    </a>
                     <a href="#why-us" 
                        class="transition-colors font-medium" 
                        style="color: inherit;"
@@ -610,7 +692,7 @@
                        aria-label="Keunggulan Bizmark">
                         Keunggulan
                     </a>
-                    <a href="#about" 
+                    <a href="{{ route('about.id') }}" 
                        class="transition-colors font-medium" 
                        style="color: inherit;"
                        onmouseover="this.style.color='var(--color-primary)'"
@@ -663,10 +745,15 @@
         <a href="{{ app()->getLocale() === 'en' ? route('services.index.en') : route('services.index.id') }}" class="block py-3 transition font-medium" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="high">
             <i class="fas fa-briefcase mr-2" style="color: var(--color-primary);"></i>Layanan
         </a>
+        <a href="#digital-tools" class="block py-3 transition font-medium flex items-center" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="high">
+            <i class="fas fa-tools mr-2" style="color: var(--color-primary);"></i>
+            <span>Alat Digital</span>
+            <span class="ml-2 px-2 py-0.5 text-[10px] font-bold bg-green-500 text-white rounded">BARU</span>
+        </a>
         <a href="#why-us" class="block py-3 transition font-medium" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="medium">
             <i class="fas fa-trophy mr-2" style="color: var(--color-primary);"></i>Keunggulan
         </a>
-        <a href="#about" class="block py-3 transition font-medium" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="medium">
+        <a href="{{ route('about.id') }}" class="block py-3 transition font-medium" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="medium">
             <i class="fas fa-info-circle mr-2" style="color: var(--color-primary);"></i>Tentang
         </a>
         <a href="#contact" class="block py-3 transition font-medium" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'" role="menuitem" data-neural-priority="medium">
@@ -1053,6 +1140,136 @@
         </div>
     </section>
 
+    <!-- Digital Tools Section -->
+    <!-- ============================================
+         DIGITAL TOOLS SECTION - FREE TOOLS SHOWCASE
+         Neuroscience Optimization:
+         - Value-first presentation (free tools)
+         - Clear visual hierarchy with icons
+         - "NEW" badge for attention capture
+         - 2-column layout for easy scanning
+         ============================================ -->
+    <section id="digital-tools" class="py-20 px-4" style="background: linear-gradient(135deg, var(--dark-bg-secondary) 0%, var(--dark-bg-tertiary) 100%);" aria-labelledby="tools-heading">
+        <div class="container mx-auto max-w-6xl">
+            <!-- Section Header with "NEW" Badge -->
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-2 mb-4">
+                    <span class="px-4 py-2 text-sm font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-lg" style="animation: pulse 2s infinite;">
+                        <i class="fas fa-star mr-1"></i>FITUR BARU
+                    </span>
+                </div>
+                <h2 id="tools-heading" class="text-4xl md:text-5xl font-bold mb-4">
+                    Alat Digital Gratis
+                </h2>
+                <p class="text-xl" style="color: var(--dark-text-secondary);">
+                    Tools digital gratis untuk membantu persiapan perizinan Anda
+                </p>
+            </div>
+            
+            <!-- Tools Grid: 3 Cards -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8" data-neural-group="digital-tools">
+                <!-- Tool 1: Polygon SHP Maker -->
+                <a href="{{ route('polygon.shp.index') }}" 
+                   class="group block transform hover:scale-105 transition-all duration-300 section p-8" 
+                   style="background: var(--dark-bg-primary); border: 2px solid var(--color-border);"
+                   data-neural-priority="highest">
+                    <div class="relative mb-6">
+                        <!-- Tool Icon -->
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-draw-polygon text-3xl text-white"></i>
+                        </div>
+                        <!-- Free Badge -->
+                        <span class="absolute -top-2 -right-2 px-3 py-1 text-xs font-bold bg-green-500 text-white rounded-full shadow-lg">
+                            GRATIS
+                        </span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 group-hover:text-green-400 transition-colors">
+                        Polygon SHP Maker
+                    </h3>
+                    <p style="color: var(--dark-text-secondary);" class="mb-4 text-lg">
+                        Buat file Shapefile (.shp) untuk upload OSS RBA. Gambar poligon di peta interaktif, proyeksi WGS84 standar, unduh langsung dalam ZIP.
+                    </p>
+                    <ul class="space-y-3 text-base mb-6" style="color: var(--dark-text-secondary);">
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-green-500"></i>Peta interaktif untuk gambar poligon</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-green-500"></i>Proyeksi WGS84 standar OSS RBA</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-green-500"></i>Format ESRI Shapefile siap upload</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-green-500"></i>Gratis tanpa batas penggunaan</li>
+                    </ul>
+                    <div class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white group-hover:gap-4 transition-all" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <span>Buat File SHP Sekarang</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+                
+                <!-- Tool 2: Estimasi Biaya Perizinan -->
+                <a href="{{ route('consultation.index') }}" 
+                   class="group block transform hover:scale-105 transition-all duration-300 section p-8" 
+                   style="background: var(--dark-bg-primary); border: 2px solid var(--color-border);"
+                   data-neural-priority="high">
+                    <div class="relative mb-6">
+                        <!-- Tool Icon -->
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                            <i class="fas fa-calculator text-3xl text-white"></i>
+                        </div>
+                        <!-- AI Badge -->
+                        <span class="absolute -top-2 -right-2 px-3 py-1 text-xs font-bold bg-purple-500 text-white rounded-full shadow-lg">
+                            <i class="fas fa-robot mr-1"></i>AI
+                        </span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 group-hover:text-purple-400 transition-colors">
+                        Estimasi Biaya Perizinan
+                    </h3>
+                    <p style="color: var(--dark-text-secondary);" class="mb-4 text-lg">
+                        Dapatkan estimasi biaya perizinan usaha dengan AI analysis. Pilih KBLI usaha, isi informasi bisnis, terima estimasi instan.
+                    </p>
+                    <ul class="space-y-3 text-base mb-6" style="color: var(--dark-text-secondary);">
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-purple-500"></i>AI-powered cost estimation</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-purple-500"></i>Database KBLI terlengkap</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-purple-500"></i>Hasil instan tanpa registrasi</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-purple-500"></i>Rincian biaya transparan</li>
+                    </ul>
+                    <div class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white group-hover:gap-4 transition-all" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <span>Hitung Estimasi Biaya</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+                
+                <!-- Tool 3: Analisis Perizinan Usaha -->
+                <a href="{{ route('client.services.index') }}" 
+                   class="group block transform hover:scale-105 transition-all duration-300 section p-8" 
+                   style="background: var(--dark-bg-primary); border: 2px solid var(--color-border);"
+                   data-neural-priority="high">
+                    <div class="relative mb-6">
+                        <!-- Tool Icon -->
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
+                            <i class="fas fa-search-dollar text-3xl text-white"></i>
+                        </div>
+                        <!-- AI Badge -->
+                        <span class="absolute -top-2 -right-2 px-3 py-1 text-xs font-bold bg-sky-500 text-white rounded-full shadow-lg">
+                            <i class="fas fa-robot mr-1"></i>AI
+                        </span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 group-hover:text-sky-400 transition-colors">
+                        Analisis Perizinan Usaha
+                    </h3>
+                    <p style="color: var(--dark-text-secondary);" class="mb-4 text-lg">
+                        Sistem AI menganalisis kebutuhan bisnis Anda dan merekomendasikan izin yang wajib lengkap dengan estimasi biaya dan waktu proses.
+                    </p>
+                    <ul class="space-y-3 text-base mb-6" style="color: var(--dark-text-secondary);">
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-sky-500"></i>AI-powered recommendation</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-sky-500"></i>Katalog 1000+ layanan KBLI</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-sky-500"></i>Analisis kebutuhan izin lengkap</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-3 text-sky-500"></i>Gratis tanpa registrasi</li>
+                    </ul>
+                    <div class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white group-hover:gap-4 transition-all" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
+                        <span>Analisis Kebutuhan Izin</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Why Us Section -->
     <!-- ============================================
          WHY-US SECTION - NEUROSCIENCE OPTIMIZATION
@@ -1222,6 +1439,13 @@
     </section>
 
     <!-- FAQ Section -->
+    <!-- ============================================
+         FAQ SECTION - NEUROSCIENCE OPTIMIZATION
+         Progressive Disclosure: <details>/<summary> pattern
+         Miller's Law: 6 FAQs (within 7±2 optimal)
+         Cognitive Load: Accordion hides complexity
+         Schema.org: FAQPage structured data
+         ============================================ -->
     <section id="faq" class="py-20 px-4">
         <div class="container mx-auto max-w-4xl">
             <div class="text-center mb-16">
@@ -1615,6 +1839,13 @@
     </section>
 
     <!-- Footer -->
+    <!-- ============================================
+         FOOTER - NEUROSCIENCE OPTIMIZATION
+         Miller's Law: 4 columns (within 7±2 optimal)
+         Visual Hierarchy: Brand → Services → Company → Contact
+         F-Pattern: Grid layout for systematic scanning
+         Trust Signals: Certifications, social proof
+         ============================================ -->
     <footer class="py-12 px-4" style="background: var(--dark-bg); border-top: 1px solid var(--dark-separator);" role="contentinfo">
         <div class="container mx-auto max-w-6xl">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
@@ -1653,8 +1884,8 @@
                 <div>
                     <h3 class="font-bold mb-4">Perusahaan</h3>
                     <ul class="space-y-2" style="color: var(--dark-text-secondary);">
-                        <li><a href="#about" class="transition" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'">Tentang Kami</a></li>
-                        <li><a href="#services" class="transition" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'">Layanan</a></li>
+                        <li><a href="{{ route('about.id') }}" class="transition" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'">Tentang Kami</a></li>
+                        <li><a href="{{ route('services.index.id') }}" class="transition" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'">Layanan</a></li>
                         <li><a href="#why-us" class="transition" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'">Keunggulan</a></li>
                         <li><a href="#faq" class="transition" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'">FAQ</a></li>
                         <li><a href="#contact" class="transition" style="color: inherit;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='inherit'">Kontak</a></li>
@@ -1725,17 +1956,36 @@
         </div>
     </footer>
 
-    <!-- WhatsApp Floating Button -->
+    <!-- WhatsApp Floating Button (Desktop & adjusted on mobile) -->
     <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID,%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
        target="_blank" 
        rel="noopener"
        aria-label="Chat WhatsApp"
-       class="fixed bottom-6 right-6 w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-all z-50"
+       class="wa-floating fixed bottom-6 right-6 w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-all z-50"
        style="background-color: var(--apple-green); animation: pulse 2s infinite;"
        onmouseover="this.style.transform='scale(1.1)'"
        onmouseout="this.style.transform='scale(1)'">
         <i class="fab fa-whatsapp text-white text-3xl" aria-hidden="true"></i>
     </a>
+
+    <!-- Mobile Sticky CTA Bar (Thumb Zone - Bottom 1/3) -->
+    <div class="mobile-sticky-cta" role="navigation" aria-label="Quick actions">
+        <a href="/estimasi-biaya" class="cta-btn primary" data-neural-priority="highest">
+            <i class="fas fa-calculator" aria-hidden="true"></i>
+            <span>Estimasi Biaya</span>
+        </a>
+        <a href="tel:+6283879602855" class="cta-btn secondary">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>Telepon</span>
+        </a>
+        <a href="https://wa.me/6283879602855?text=Halo%20Bizmark.ID" 
+           target="_blank" 
+           rel="noopener" 
+           class="cta-btn whatsapp" 
+           aria-label="WhatsApp">
+            <i class="fab fa-whatsapp text-xl" aria-hidden="true"></i>
+        </a>
+    </div>
 
     <!-- Google Analytics (Replace with your GA4 Measurement ID) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DT71N7BSW9"></script>

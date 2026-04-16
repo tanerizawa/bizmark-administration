@@ -172,7 +172,7 @@
 
                 <template x-if="receipt">
                     <div>
-                        <img :src="receiptPreview" class="max-h-48 mx-auto rounded-lg mb-3">
+                        <img :src="receiptPreview" class="max-h-48 mx-auto rounded-lg mb-3" loading="lazy">
                         <p class="text-sm text-gray-600 mb-2" x-text="receipt.name"></p>
                         <button 
                             type="button"

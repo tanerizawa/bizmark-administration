@@ -26,7 +26,8 @@ class UserSeeder extends Seeder
                 'password' => 'T@n12089',
                 'email_verified_at' => now(),
                 'is_active' => true,
-                'notes' => 'Administrator utama sistem'
+                'notes' => 'Administrator utama sistem',
+                'department' => 'general'
             ],
             [
                 'name' => 'manager',
@@ -38,7 +39,8 @@ class UserSeeder extends Seeder
                 'password' => 'manager123',
                 'email_verified_at' => now(),
                 'is_active' => true,
-                'notes' => 'Manager proyek perizinan'
+                'notes' => 'Manager proyek perizinan',
+                'department' => 'general'
             ],
             [
                 'name' => 'staff1',
@@ -50,7 +52,8 @@ class UserSeeder extends Seeder
                 'password' => 'staff123',
                 'email_verified_at' => now(),
                 'is_active' => true,
-                'notes' => 'Konsultan perizinan lingkungan'
+                'notes' => 'Konsultan perizinan lingkungan',
+                'department' => 'technical'
             ],
             [
                 'name' => 'staff2',
@@ -62,7 +65,8 @@ class UserSeeder extends Seeder
                 'password' => 'staff123',
                 'email_verified_at' => now(),
                 'is_active' => true,
-                'notes' => 'Konsultan perizinan lalu lintas'
+                'notes' => 'Konsultan perizinan lalu lintas',
+                'department' => 'technical'
             ],
             [
                 'name' => 'staff3',
@@ -74,7 +78,8 @@ class UserSeeder extends Seeder
                 'password' => 'staff123',
                 'email_verified_at' => now(),
                 'is_active' => true,
-                'notes' => 'Pengendali dokumen dan administrasi'
+                'notes' => 'Pengendali dokumen dan administrasi',
+                'department' => 'support'
             ]
         ];
 

@@ -40,7 +40,7 @@
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
-        "@type": "LocalBusiness",
+        "@@type": "LocalBusiness",
         "@id": "https://bizmark.id/#organization",
         "name": "Bizmark.ID - PT Cangah Pajaratan Mandiri",
         "alternateName": "Bizmark Indonesia",
@@ -51,18 +51,18 @@
         "telephone": "{{ preg_replace('/\\s+/', '', data_get(config('landing_metrics'), 'contact.phone', '+62 838 7960 2855')) }}",
         "email": "{{ data_get(config('landing_metrics'), 'contact.email', 'info@bizmark.id') }}",
         "address": {
-            "@type": "PostalAddress",
+            "@@type": "PostalAddress",
             "addressLocality": "Karawang",
             "addressRegion": "Jawa Barat",
             "addressCountry": "ID"
         },
         "geo": {
-            "@type": "GeoCoordinates",
+            "@@type": "GeoCoordinates",
             "latitude": "-6.3227",
             "longitude": "107.3376"
         },
         "openingHoursSpecification": {
-            "@type": "OpeningHoursSpecification",
+            "@@type": "OpeningHoursSpecification",
             "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
             "opens": "08:00",
             "closes": "17:00"
@@ -71,7 +71,7 @@
         "currenciesAccepted": "IDR",
         "paymentAccepted": "Cash, Bank Transfer",
         "areaServed": {
-            "@type": "Country",
+            "@@type": "Country",
             "name": "Indonesia"
         },
         "sameAs": [
@@ -80,29 +80,29 @@
             "https://www.instagram.com/bizmark.id"
         ],
         "hasOfferCatalog": {
-            "@type": "OfferCatalog",
+            "@@type": "OfferCatalog",
             "name": "Layanan Perizinan Bisnis",
             "itemListElement": [
                 {
-                    "@type": "Offer",
+                    "@@type": "Offer",
                     "itemOffered": {
-                        "@type": "Service",
+                        "@@type": "Service",
                         "name": "Pendirian PT PMA",
                         "description": "Layanan pendirian perusahaan penanaman modal asing di Indonesia"
                     }
                 },
                 {
-                    "@type": "Offer",
+                    "@@type": "Offer",
                     "itemOffered": {
-                        "@type": "Service",
+                        "@@type": "Service",
                         "name": "Dokumen AMDAL",
                         "description": "Penyusunan dokumen Analisis Mengenai Dampak Lingkungan"
                     }
                 },
                 {
-                    "@type": "Offer",
+                    "@@type": "Offer",
                     "itemOffered": {
-                        "@type": "Service",
+                        "@@type": "Service",
                         "name": "UKL-UPL",
                         "description": "Penyusunan dokumen Upaya Pengelolaan dan Pemantauan Lingkungan"
                     }
@@ -116,10 +116,10 @@
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
-        "@type": "BreadcrumbList",
+        "@@type": "BreadcrumbList",
         "itemListElement": [
             {
-                "@type": "ListItem",
+                "@@type": "ListItem",
                 "position": 1,
                 "name": "Beranda",
                 "item": "https://bizmark.id/"
@@ -297,6 +297,70 @@
             <a href="{{ route('services.index.id') }}" class="btn btn-primary">
                 <i class="fas fa-th-list mr-2"></i>
                 <span>{{ __('landing.services.show_more') }}</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- DIGITAL TOOLS — Free Tools Showcase -->
+<section id="digital-tools" class="section-sm" style="background:var(--surface-warm);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);">
+    <div class="container-wide">
+        <div class="text-center mb-10 animate-fade-in">
+            <span class="section-badge mb-3" style="background:linear-gradient(135deg,#10b981,#0d9488);color:#fff;">FITUR BARU</span>
+            <h2 class="section-title">Alat Digital Gratis</h2>
+            <p class="section-description mx-auto">Tools gratis untuk membantu persiapan perizinan Anda</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <!-- Tool 1: Polygon SHP Maker -->
+            <a href="{{ route('polygon.shp.index') }}" class="group magazine-card flex items-start gap-4 p-5 hover:shadow-lg transition-all">
+                <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#10b981,#0d9488);">
+                    <i class="fas fa-draw-polygon text-xl text-white"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-base font-bold" style="color:var(--text-primary);">Polygon SHP Maker</h3>
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded" style="background:#d1fae5;color:#059669;">GRATIS</span>
+                    </div>
+                    <p class="text-sm mb-2" style="color:var(--text-secondary);">Buat file Shapefile (.shp) untuk upload OSS RBA dengan peta interaktif.</p>
+                    <span class="link-primary text-sm inline-flex items-center group-hover:gap-2 transition-all">
+                        Buat SHP <i class="fas fa-arrow-right ml-1"></i>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Tool 2: Estimasi Biaya Perizinan -->
+            <a href="{{ route('consultation.index') }}" class="group magazine-card flex items-start gap-4 p-5 hover:shadow-lg transition-all">
+                <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);">
+                    <i class="fas fa-calculator text-xl text-white"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-base font-bold" style="color:var(--text-primary);">Estimasi Biaya</h3>
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded" style="background:#ede9fe;color:#7c3aed;"><i class="fas fa-robot mr-0.5"></i>AI</span>
+                    </div>
+                    <p class="text-sm mb-2" style="color:var(--text-secondary);">Estimasi biaya perizinan dengan AI. Pilih KBLI, terima hasil instan.</p>
+                    <span class="link-primary text-sm inline-flex items-center group-hover:gap-2 transition-all">
+                        Hitung Biaya <i class="fas fa-arrow-right ml-1"></i>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Tool 3: Analisis Perizinan Usaha -->
+            <a href="{{ route('client.services.index') }}" class="group magazine-card flex items-start gap-4 p-5 hover:shadow-lg transition-all">
+                <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);">
+                    <i class="fas fa-search-dollar text-xl text-white"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-base font-bold" style="color:var(--text-primary);">Analisis Perizinan</h3>
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded" style="background:#e0f2fe;color:#0284c7;"><i class="fas fa-robot mr-0.5"></i>AI</span>
+                    </div>
+                    <p class="text-sm mb-2" style="color:var(--text-secondary);">AI menganalisis kebutuhan izin usaha Anda dari 1000+ layanan KBLI.</p>
+                    <span class="link-primary text-sm inline-flex items-center group-hover:gap-2 transition-all">
+                        Analisis Sekarang <i class="fas fa-arrow-right ml-1"></i>
+                    </span>
+                </div>
             </a>
         </div>
     </div>

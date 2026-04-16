@@ -9,7 +9,7 @@
     <div class="bg-gradient-to-br from-[#0A66C2] to-[#004182] rounded-2xl p-6 mb-4 text-white">
         <div class="flex items-center gap-4 mb-4">
             @if($user->avatar)
-                <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-20 h-20 rounded-full border-4 border-white/20 object-cover">
+                <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-20 h-20 rounded-full border-4 border-white/20 object-cover" loading="lazy">
             @else
                 <div class="w-20 h-20 rounded-full border-4 border-white/20 bg-white/10 flex items-center justify-center text-2xl font-bold">
                     {{ strtoupper(substr($user->name, 0, 1)) }}

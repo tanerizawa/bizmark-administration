@@ -45,7 +45,7 @@ class ServiceInquiryController extends Controller
             
             // Step 2: Business Info
             'business_activity' => 'required|string|max:1000',
-            'kbli_code' => 'nullable|string|max:10',
+            'kbli_code' => 'nullable|regex:/^\d{5}$/|exists:kbli,code',
             'business_scale' => 'required|in:micro,small,medium,large',
             'location_province' => 'required|string|max:100',
             'location_city' => 'required|string|max:100',
@@ -87,8 +87,8 @@ class ServiceInquiryController extends Controller
             // Create inquiry record
             $kbliDescription = null;
             if (!empty($data['kbli_code'])) {
-                $kbli = \App\Models\Kbli::where('code', $data['kbli_code'])->first();
-                $kbliDescription = $kbli?->title ?? $kbli?->description ?? null;
+                $kbli = \App\Models\Kbli::findByCode($data['kbli_code']);
+                $kbliDescription = $kbli?->description ?? null;
             }
 
             $inquiry = ServiceInquiry::create([
@@ -226,7 +226,19 @@ class ServiceInquiryController extends Controller
      */
     public function checkRateLimit(Request $request)
     {
-        $email = strtolower($request->input('email'));
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'allowed' => false,
+                'message' => 'Email tidak valid.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $email = strtolower(trim($request->input('email')));
         $ip = $request->ip();
 
         $stats = $this->rateLimiter->getStats($email, $ip);

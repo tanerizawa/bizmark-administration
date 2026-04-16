@@ -59,6 +59,7 @@ class PublicArticleController extends Controller
     public function show($slug)
     {
         $article = Article::published()
+            ->with('author')
             ->where('slug', $slug)
             ->firstOrFail();
 

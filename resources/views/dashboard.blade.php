@@ -419,6 +419,44 @@
         </div>
         <p class="admin-body text-dark-text-secondary">Jadwal 30 hari, distribusi proyek, dan aktivitas terkini</p>
 
+        {{-- RAG AI Quality Metrics --}}
+        @if($ragMetrics['total_processed'] > 0)
+        <div class="card-elevated rounded-apple p-3 space-y-2">
+            <div class="flex items-center justify-between">
+                <h3 class="admin-section text-white flex items-center gap-2">
+                    <i class="fas fa-brain" style="color: rgba(191,90,242,0.95); font-size: 0.65rem;"></i>Kualitas RAG AI
+                </h3>
+                <span class="admin-badge" style="background: rgba(191,90,242,0.15); color: rgba(191,90,242,0.95);">{{ $ragMetrics['total_processed'] }} diproses</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="text-center p-2 rounded-apple" style="background: rgba(52,199,89,0.08);">
+                    <p class="admin-stat text-white">{{ $ragMetrics['avg_confidence'] }}%</p>
+                    <p class="admin-small text-dark-text-tertiary">Rata-rata Confidence</p>
+                </div>
+                <div class="text-center p-2 rounded-apple" style="background: rgba(52,199,89,0.08);">
+                    <p class="admin-stat text-apple-green">{{ $ragMetrics['high_confidence'] }}</p>
+                    <p class="admin-small text-dark-text-tertiary">Confidence Tinggi</p>
+                </div>
+                <div class="text-center p-2 rounded-apple" style="background: rgba(255,59,48,0.08);">
+                    <p class="admin-stat" style="color: rgba(255,59,48,0.95);">{{ $ragMetrics['low_confidence'] }}</p>
+                    <p class="admin-small text-dark-text-tertiary">Perlu Review</p>
+                </div>
+            </div>
+            @if($ragMetrics['recent']->count() > 0)
+            <div class="space-y-1 overflow-y-auto" style="max-height: 120px;">
+                @foreach($ragMetrics['recent'] as $lead)
+                <a href="{{ route('admin.consultation-leads.show', $lead->id) }}" class="block p-2 rounded-apple hover:bg-dark-elevated-2 transition-apple" style="background: rgba(255,255,255,0.03);">
+                    <div class="flex items-center justify-between">
+                        <p class="admin-body font-medium text-white truncate">{{ $lead->name }} — {{ $lead->company_name }}</p>
+                        <span class="admin-small px-1.5 py-0.5 rounded-full" style="background: rgba({{ $lead->rag_confidence >= 0.7 ? '52,199,89' : ($lead->rag_confidence >= 0.4 ? '255,204,0' : '255,59,48') }},0.2); color: rgba({{ $lead->rag_confidence >= 0.7 ? '52,199,89' : ($lead->rag_confidence >= 0.4 ? '255,204,0' : '255,59,48') }},0.95);">{{ round($lead->rag_confidence * 100) }}%</span>
+                    </div>
+                </a>
+                @endforeach
+            </div>
+            @endif
+        </div>
+        @endif
+
         <div class="grid grid-cols-3 gap-2">
             {{-- Timeline --}}
             <div class="card-elevated rounded-apple p-3 space-y-2">

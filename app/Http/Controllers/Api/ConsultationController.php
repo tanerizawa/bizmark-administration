@@ -56,22 +56,40 @@ class ConsultationController extends Controller
                 'employee_count' => 'nullable|integer|min:0|max:100000',
                 'target_timeline' => 'nullable|in:urgent,fast,normal,planned,flexible',
                 'business_nature' => 'nullable|in:local_market,export_oriented,import_dependent,b2b_services,b2c_retail,online_marketplace,franchise,government_contractor,high_risk',
+                'additional_activities' => 'nullable|array|max:3',
+                'additional_activities.*.kbli_code' => [
+                    'nullable',
+                    'string',
+                    'regex:/^\d{5}$/',
+                    'exists:kbli,code',
+                ],
+                'additional_activities.*.description' => 'nullable|string|max:255',
                 
                 // Project details (optional - AI will recommend if not provided)
                 'deliverables' => 'nullable|string|max:5000',
             ], [
-                'kbli_code.required' => 'KBLI code is required',
-                'kbli_code.regex' => 'KBLI code must be exactly 5 digits',
-                'kbli_code.exists' => 'Invalid KBLI code',
-                'location_type.required' => 'Zone/kawasan lokasi is required',
-                'geographic_region.required' => 'Geographic region is required',
-                'entity_type.required' => 'Business entity type is required',
+                'applicant_name.required' => 'Nama pengusul wajib diisi.',
+                'contact_phone.required' => 'Nomor WhatsApp wajib diisi.',
+                'contact_phone.max' => 'Nomor WhatsApp maksimal 20 karakter.',
+                'applicant_email.email' => 'Format email tidak valid.',
+                'kbli_code.required' => 'Kode KBLI wajib dipilih.',
+                'kbli_code.regex' => 'Kode KBLI harus terdiri dari 5 digit.',
+                'kbli_code.exists' => 'Kode KBLI tidak ditemukan atau tidak aktif.',
+                'business_size.required' => 'Skala bisnis wajib dipilih.',
+                'location.required' => 'Kota/kabupaten wajib diisi.',
+                'location_type.required' => 'Zona/kawasan lokasi wajib dipilih.',
+                'geographic_region.required' => 'Wilayah geografis wajib dipilih.',
+                'entity_type.required' => 'Jenis badan usaha wajib dipilih.',
+                'investment_level.required' => 'Level investasi wajib dipilih.',
+                'additional_activities.max' => 'Maksimal 3 aktivitas tambahan.',
+                'additional_activities.*.kbli_code.regex' => 'KBLI aktivitas tambahan harus 5 digit.',
+                'additional_activities.*.kbli_code.exists' => 'KBLI aktivitas tambahan tidak valid.',
             ]);
             
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Validation failed',
+                    'message' => 'Validasi gagal. Mohon periksa data Anda.',
                     'errors' => $validator->errors(),
                 ], 422);
             }
@@ -83,7 +101,7 @@ class ConsultationController extends Controller
             if (!$kbli || strlen($kbli->code) !== 5) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Please select a valid 5-digit KBLI code',
+                    'message' => 'Silakan pilih KBLI 5 digit yang valid.',
                 ], 422);
             }
             
@@ -138,54 +156,7 @@ class ConsultationController extends Controller
             $dbLocationType = $locationTypeMap[$validated['location_type']] ?? 'commercial';
             
             // Get RAG regulation context
-            $ragInsights = null;
-            $ragConfidence = null;
-            
-            try {
-                Log::info('Fetching RAG regulation context', [
-                    'entity_type' => $validated['entity_type'],
-                    'location' => $validated['location'],
-                    'kbli_code' => $validated['kbli_code'],
-                ]);
-                
-                $ragStartTime = microtime(true);
-                
-                // Query RAG for business entity regulations
-                $ragContext = $this->ragService->getBusinessTypeRegulations(
-                    $this->getEntityTypeLabel($validated['entity_type']),
-                    $validated['location']
-                );
-                
-                $ragDuration = round((microtime(true) - $ragStartTime) * 1000, 2);
-                
-                // Store RAG insights
-                $ragInsights = json_encode([
-                    'answer' => $ragContext['answer'] ?? null,
-                    'sources' => array_slice($ragContext['sources'] ?? [], 0, 5), // Top 5 sources
-                    'confidence' => $ragContext['confidence_score'] ?? 0,
-                    'query_type' => 'business_type_regulations',
-                    'query_params' => [
-                        'entity_type' => $validated['entity_type'],
-                        'location' => $validated['location'],
-                    ],
-                ], JSON_UNESCAPED_UNICODE);
-                
-                $ragConfidence = $ragContext['confidence_score'] ?? 0;
-                
-                Log::info('RAG query successful', [
-                    'confidence' => $ragConfidence,
-                    'sources_count' => count($ragContext['sources'] ?? []),
-                    'duration_ms' => $ragDuration,
-                ]);
-                
-            } catch (\Exception $e) {
-                // Graceful degradation - continue without RAG
-                Log::warning('RAG query failed during consultation', [
-                    'error' => $e->getMessage(),
-                    'entity_type' => $validated['entity_type'],
-                    'location' => $validated['location'],
-                ]);
-            }
+            [$ragInsights, $ragConfidence] = $this->buildStructuredRagInsights($validated, $kbli);
             
             // Use actual applicant data or fallback to descriptive placeholder
             $applicantName = $validated['applicant_name'];
@@ -238,7 +209,7 @@ class ConsultationController extends Controller
             // Return response with estimate
             return response()->json([
                 'success' => true,
-                'message' => 'Consultation request submitted successfully',
+                'message' => 'Permintaan estimasi berhasil dikirim.',
                 'data' => [
                     'request_id' => $consultRequest->id,
                     'kbli' => [
@@ -257,10 +228,14 @@ class ConsultationController extends Controller
                             'timeline' => $estimate['ai_analysis']['timeline'] ?? null,
                         ] : null,
                     ],
+                    'rag' => $ragInsights ? [
+                        'confidence' => $ragConfidence,
+                        'activity_requirements_count' => count($ragInsights['activity_requirements'] ?? []),
+                    ] : null,
                     'next_steps' => [
-                        'We will review your request and contact you within 24 hours',
-                        'Check your email for detailed consultation report',
-                        'Register in our client portal for full project management access',
+                        'Tim kami akan meninjau permintaan Anda dan menghubungi dalam 24 jam.',
+                        'Periksa email Anda untuk laporan estimasi detail.',
+                        'Daftar ke client portal untuk manajemen proyek lengkap.',
                     ],
                 ],
                 'meta' => [
@@ -272,7 +247,7 @@ class ConsultationController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Validasi gagal. Mohon periksa data Anda.',
                 'errors' => $e->errors(),
             ], 422);
             
@@ -285,7 +260,7 @@ class ConsultationController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to submit consultation request. Please try again.',
+                'message' => 'Gagal mengirim permintaan estimasi. Silakan coba lagi.',
                 'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
@@ -316,6 +291,7 @@ class ConsultationController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
+                    'message' => 'Validasi estimasi cepat gagal.',
                     'errors' => $validator->errors(),
                 ], 422);
             }
@@ -328,7 +304,7 @@ class ConsultationController extends Controller
             if (!$kbli || strlen($kbli->code) !== 5) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid KBLI code',
+                    'message' => 'Kode KBLI tidak valid.',
                 ], 422);
             }
             
@@ -358,7 +334,7 @@ class ConsultationController extends Controller
                         'cost_range' => $estimate['cost_summary']['cost_range'] ?? null,
                         'confidence_score' => $estimate['confidence_score'] ?? 0.5,
                     ],
-                    'note' => 'This is a quick estimate. Submit full form for detailed AI-powered analysis.',
+                    'note' => 'Ini adalah estimasi cepat. Kirim formulir penuh untuk analisis AI yang lebih detail.',
                 ],
             ]);
             
@@ -367,7 +343,7 @@ class ConsultationController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to calculate estimate',
+                'message' => 'Gagal menghitung estimasi cepat.',
             ], 500);
         }
     }
@@ -417,5 +393,122 @@ class ConsultationController extends Controller
         ];
         
         return $labels[$entityType] ?? 'PT';
+    }
+
+    protected function buildStructuredRagInsights(array $validated, Kbli $primaryKbli): array
+    {
+        try {
+            Log::info('Fetching structured RAG regulation context', [
+                'entity_type' => $validated['entity_type'],
+                'location' => $validated['location'],
+                'kbli_code' => $validated['kbli_code'],
+            ]);
+
+            $ragStartTime = microtime(true);
+            $confidenceScores = [];
+
+            $overviewContext = $this->ragService->getBusinessTypeRegulations(
+                $this->getEntityTypeLabel($validated['entity_type']),
+                $validated['location']
+            );
+
+            if (isset($overviewContext['confidence_score'])) {
+                $confidenceScores[] = $overviewContext['confidence_score'];
+            }
+
+            $activityRequirements = [];
+            foreach ($this->collectActivityContexts($validated, $primaryKbli) as $activity) {
+                try {
+                    $kbliContext = $this->ragService->getKBLIRequirements(
+                        $activity['kbli_code'],
+                        $activity['description']
+                    );
+
+                    $activityConfidence = $kbliContext['confidence_score'] ?? 0;
+                    if ($activityConfidence > 0) {
+                        $confidenceScores[] = $activityConfidence;
+                    }
+
+                    $activityRequirements[] = [
+                        'label' => $activity['label'],
+                        'kbli_code' => $activity['kbli_code'],
+                        'description' => $activity['description'],
+                        'answer' => $kbliContext['answer'] ?? null,
+                        'sources' => array_slice($kbliContext['sources'] ?? [], 0, 3),
+                        'confidence' => $activityConfidence,
+                    ];
+                } catch (\Exception $e) {
+                    Log::warning('KBLI-specific RAG query failed during consultation', [
+                        'kbli_code' => $activity['kbli_code'],
+                        'description' => $activity['description'],
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+
+            $ragDuration = round((microtime(true) - $ragStartTime) * 1000, 2);
+            $aggregateConfidence = count($confidenceScores) > 0
+                ? round(array_sum($confidenceScores) / count($confidenceScores), 4)
+                : ($overviewContext['confidence_score'] ?? 0);
+
+            $ragInsights = [
+                'answer' => $overviewContext['answer'] ?? null,
+                'sources' => array_slice($overviewContext['sources'] ?? [], 0, 5),
+                'confidence' => $overviewContext['confidence_score'] ?? 0,
+                'query_type' => 'business_type_with_kbli_requirements',
+                'query_params' => [
+                    'entity_type' => $validated['entity_type'],
+                    'location' => $validated['location'],
+                    'primary_kbli' => $primaryKbli->code,
+                    'activities_count' => count($activityRequirements),
+                ],
+                'activity_requirements' => $activityRequirements,
+            ];
+
+            Log::info('Structured RAG query successful', [
+                'confidence' => $aggregateConfidence,
+                'overview_sources_count' => count($overviewContext['sources'] ?? []),
+                'activities_count' => count($activityRequirements),
+                'duration_ms' => $ragDuration,
+            ]);
+
+            return [$ragInsights, $aggregateConfidence];
+        } catch (\Exception $e) {
+            Log::warning('RAG query failed during consultation', [
+                'error' => $e->getMessage(),
+                'entity_type' => $validated['entity_type'],
+                'location' => $validated['location'],
+            ]);
+
+            return [null, null];
+        }
+    }
+
+    protected function collectActivityContexts(array $validated, Kbli $primaryKbli): array
+    {
+        $activities = [[
+            'label' => 'Aktivitas Utama',
+            'kbli_code' => $primaryKbli->code,
+            'description' => $primaryKbli->description,
+        ]];
+
+        foreach ($validated['additional_activities'] ?? [] as $index => $activity) {
+            $kbliCode = $activity['kbli_code'] ?? null;
+            $description = $activity['description'] ?? null;
+
+            if (!$kbliCode && !$description) {
+                continue;
+            }
+
+            $resolvedKbli = $kbliCode ? Kbli::findByCode($kbliCode) : null;
+
+            $activities[] = [
+                'label' => 'Aktivitas Tambahan ' . ($index + 1),
+                'kbli_code' => $resolvedKbli?->code ?? $kbliCode,
+                'description' => $resolvedKbli?->description ?? $description ?? 'Aktivitas usaha tambahan',
+            ];
+        }
+
+        return array_values(array_filter($activities, fn (array $activity) => !empty($activity['kbli_code']) && !empty($activity['description'])));
     }
 }

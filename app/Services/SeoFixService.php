@@ -637,13 +637,13 @@ PROMPT;
             $section = "---\n\n## Artikel Terkait\n\n";
             $section .= "Baca juga artikel lainnya di Bizmark:\n\n";
             foreach ($articles as $a) {
-                $section .= "- [{$a->title}]({$baseUrl}/artikel/{$a->slug})\n";
+                $section .= "- [{$a->title}]({$baseUrl}/blog/{$a->slug})\n";
             }
         } else {
             $section = '<hr><h2>Artikel Terkait</h2>';
             $section .= '<p>Baca juga artikel lainnya di Bizmark:</p><ul>';
             foreach ($articles as $a) {
-                $url = htmlspecialchars("{$baseUrl}/artikel/{$a->slug}", ENT_QUOTES, 'UTF-8');
+                $url = htmlspecialchars("{$baseUrl}/blog/{$a->slug}", ENT_QUOTES, 'UTF-8');
                 $title = htmlspecialchars($a->title, ENT_QUOTES, 'UTF-8');
                 $section .= "<li><a href=\"{$url}\">{$title}</a></li>";
             }

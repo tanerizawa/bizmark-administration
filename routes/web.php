@@ -87,6 +87,15 @@ Route::middleware('locale:id')->group(function () {
         $view = $isMobile ? 'legal.mobile-terms' : 'legal.terms';
         return view($view);
     })->name('terms.conditions.id');
+    
+    // Static Pages (ID)
+    Route::get('/proses', function() {
+        return view('landing.pages.process', ['locale' => 'id']);
+    })->name('process.id');
+    
+    Route::get('/tentang', function() {
+        return view('landing.pages.about', ['locale' => 'id']);
+    })->name('about.id');
 });
 
 // English/PMA Landing Page (Explicit) - Responsive (No Mobile Redirect)
@@ -117,6 +126,15 @@ Route::prefix('en')->middleware('locale:en')->group(function () {
     Route::get('/terms-conditions', function() {
         return view('legal.en.terms');
     })->name('terms.conditions.en');
+    
+    // Static Pages (EN)
+    Route::get('/process', function() {
+        return view('landing.pages.process', ['locale' => 'en']);
+    })->name('process.en');
+    
+    Route::get('/about', function() {
+        return view('landing.pages.about', ['locale' => 'en']);
+    })->name('about.en');
 });
 
 // Redirect old /id URLs to root for backward compatibility
@@ -131,6 +149,16 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 // Consultation Request / Cost Estimate (Public)
 Route::get('/estimasi-biaya', [App\Http\Controllers\ConsultationPageController::class, 'index'])->name('consultation.index');
 Route::get('/estimasi-biaya/hasil/{requestId}', [App\Http\Controllers\ConsultationPageController::class, 'result'])->name('consultation.result');
+Route::get('/estimasi-biaya/pdf/{requestId}', [App\Http\Controllers\ConsultationPageController::class, 'downloadPdf'])->name('consultation.pdf');
+
+// Permohonan Penghitungan Biaya Jasa (Service Cost Request)
+Route::prefix('permohonan')->group(function() {
+    Route::get('/', [App\Http\Controllers\ServiceCostRequestController::class, 'index'])->name('permohonan.index');
+    Route::post('/', [App\Http\Controllers\ServiceCostRequestController::class, 'store'])->name('permohonan.store');
+    Route::post('/api/generate-letter-draft', [App\Http\Controllers\ServiceCostRequestController::class, 'generateLetterDraft'])->name('permohonan.generate-letter-draft');
+    Route::get('/hasil/{requestNumber}', [App\Http\Controllers\ServiceCostRequestController::class, 'result'])->name('permohonan.result');
+    Route::get('/api/status/{requestNumber}', [App\Http\Controllers\ServiceCostRequestController::class, 'checkStatus'])->name('permohonan.status');
+});
 
 // Landing Page (Public) - Indonesian Default - Responsive (No Mobile Redirect)
 Route::middleware('locale:id')->get('/', function(\Illuminate\Http\Request $request) {
@@ -294,6 +322,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::delete('service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'destroy'])->name('admin.service-inquiries.destroy');
         
         // Consultation Leads routes (kept for detail pages and actions)
+        Route::get('consultation-leads', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'index'])->name('admin.consultation-leads.index');
         Route::get('consultation-leads/export', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'export'])->name('admin.consultation-leads.export');
         Route::get('consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'show'])->name('admin.consultation-leads.show');
         Route::post('consultation-leads/{consultation}/update-status', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'updateStatus'])->name('admin.consultation-leads.update-status');
@@ -302,9 +331,18 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('consultation-leads/{consultation}/note', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'addNote'])->name('admin.consultation-leads.add-note');
         Route::delete('consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'destroy'])->name('admin.consultation-leads.destroy');
         
-        // Backward compatibility redirects
+        // Service Cost Request routes (for detail pages and admin actions)
+        Route::get('service-cost-requests/{requestNumber}', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'show'])->name('admin.service-cost-requests.show');
+        Route::patch('service-cost-requests/{requestNumber}/status', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'updateStatus'])->name('admin.service-cost-requests.update-status');
+        Route::post('service-cost-requests/{requestNumber}/note', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'addNote'])->name('admin.service-cost-requests.add-note');
+        Route::post('service-cost-requests/{requestNumber}/generate-quote', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'generateQuote'])->name('admin.service-cost-requests.generate-quote');
+        Route::post('service-cost-requests/{requestNumber}/regenerate-content', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'regenerateQuoteContent'])->name('admin.service-cost-requests.regenerate-content');
+        Route::post('service-cost-requests/{requestNumber}/send-email', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'sendQuoteEmail'])->name('admin.service-cost-requests.send-email');
+        Route::post('service-cost-requests/{requestNumber}/complete', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'complete'])->name('admin.service-cost-requests.complete');
+        Route::post('service-cost-requests/{requestNumber}/archive', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'archive'])->name('admin.service-cost-requests.archive');
+        
+        // Backward compatibility redirect
         Route::redirect('service-inquiries', '/admin/leads?tab=service-inquiries');
-        Route::redirect('consultation-leads', '/admin/leads?tab=consultation-leads');
     });
 
     // Financial Management Routes (Phase 1)
@@ -631,6 +669,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
             Route::get('/programmatic', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'programmatic'])->name('programmatic');
             Route::post('/programmatic/clear-cache', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'clearProgrammaticCache'])->name('programmatic.clear-cache');
 
+            // Position Tracking (SERP rankings)
+            Route::get('/positions', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'positions'])->name('positions');
+            Route::get('/positions/trend/{keyword}', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'positionTrend'])->name('positions.trend');
+            Route::post('/positions/track', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'trackPositions'])->name('positions.track');
+            Route::get('/alerts', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'rankingAlerts'])->name('alerts');
+            Route::post('/alerts/{id}/read', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'markAlertRead'])->name('alerts.read');
+            Route::post('/alerts/read-all', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'markAllAlertsRead'])->name('alerts.read-all');
+
             // Web-triggered SEO commands (replaces manual artisan commands)
             Route::post('/run/snapshot-views', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'runSnapshotViews'])->name('run-snapshot-views');
             Route::post('/run/generate-report', [App\Http\Controllers\Admin\SeoAnalyticsController::class, 'runGenerateReport'])->name('run-generate-report');
@@ -945,6 +991,14 @@ Route::get('/test-push', function () {
 // Payment Callback API (Phase 4)
 Route::post('/api/payment/callback', [App\Http\Controllers\Api\PaymentCallbackController::class, 'callback'])
     ->name('api.payment.callback');
+
+// Twitter OAuth callback placeholder (used for developer portal app setup)
+Route::get('/auth/twitter/callback', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'Twitter callback endpoint is active.',
+    ]);
+})->name('auth.twitter.callback');
 
 // KBLI API
 Route::prefix('api/kbli')->group(function () {

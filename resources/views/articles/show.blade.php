@@ -28,8 +28,8 @@
         <div class="lg:col-span-2 space-y-6">
             <!-- Article Header -->
             <div class="card-apple p-6">
-                @if($article->featured_image)
-                <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-full rounded-apple mb-6">
+                @if($article->featured_image_url)
+                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full rounded-apple mb-6">
                 @endif
 
                 <div class="flex items-center gap-2 mb-4">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class UnifiedLoginController extends Controller
@@ -28,8 +29,8 @@ class UnifiedLoginController extends Controller
         // Store redirect URL so intended() picks it up after login
         if ($request->filled('redirect')) {
             $redirect = $request->input('redirect');
-            // Only allow internal redirects (prevent open redirect)
-            if (str_starts_with($redirect, '/') || str_starts_with($redirect, url('/'))) {
+            // Only allow local paths or absolute URLs pointing back to this app.
+            if ($this->isSafeRedirect($redirect)) {
                 session()->put('url.intended', $redirect);
             }
         }
@@ -110,5 +111,24 @@ class UnifiedLoginController extends Controller
     protected function guard()
     {
         return Auth::guard();
+    }
+
+    /**
+     * Accept either a local path or an absolute URL for the current app host.
+     */
+    protected function isSafeRedirect(string $redirect): bool
+    {
+        if (Str::startsWith($redirect, '/')) {
+            return true;
+        }
+
+        if (! filter_var($redirect, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $targetHost = parse_url($redirect, PHP_URL_HOST);
+        $appHost = parse_url(url('/'), PHP_URL_HOST);
+
+        return filled($targetHost) && filled($appHost) && hash_equals($appHost, $targetHost);
     }
 }

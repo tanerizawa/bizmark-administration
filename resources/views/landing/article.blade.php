@@ -14,27 +14,27 @@
 <script type="application/ld+json">
 {
     "@@context": "https://schema.org",
-    "@type": "Article",
+    "@@type": "Article",
     "headline": "{{ $article->title }}",
     "description": "{{ $article->meta_description ?? $article->excerpt ?? Str::limit(strip_tags($article->content), 160) }}",
     "image": "{{ $article->featured_image ? asset('storage/' . $article->featured_image) : asset('images/default-article.jpg') }}",
     "datePublished": "{{ ($article->published_at ?? $article->created_at)->toIso8601String() }}",
     "dateModified": "{{ $article->updated_at->toIso8601String() }}",
     "author": {
-        "@type": "Organization",
+        "@@type": "Organization",
         "name": "Bizmark.ID",
         "url": "https://bizmark.id"
     },
     "publisher": {
-        "@type": "Organization",
+        "@@type": "Organization",
         "name": "Bizmark.ID",
         "logo": {
-            "@type": "ImageObject",
+            "@@type": "ImageObject",
             "url": "https://bizmark.id/images/logo.png"
         }
     },
     "mainEntityOfPage": {
-        "@type": "WebPage",
+        "@@type": "WebPage",
         "@id": "{{ url()->current() }}"
     }
 }
@@ -44,30 +44,30 @@
 <script type="application/ld+json">
 {
     "@@context": "https://schema.org",
-    "@type": "BreadcrumbList",
+    "@@type": "BreadcrumbList",
     "itemListElement": [
         {
-            "@type": "ListItem",
+            "@@type": "ListItem",
             "position": 1,
             "name": "Beranda",
             "item": "{{ route('landing.id') }}"
         },
         {
-            "@type": "ListItem",
+            "@@type": "ListItem",
             "position": 2,
             "name": "Artikel",
             "item": "{{ route('blog.index.id') }}"
         },
         @if($article->category)
         {
-            "@type": "ListItem",
+            "@@type": "ListItem",
             "position": 3,
             "name": "{{ $article->category->name }}",
             "item": "{{ route('blog.category', $article->category->slug) }}"
         },
         @endif
         {
-            "@type": "ListItem",
+            "@@type": "ListItem",
             "position": {{ $article->category ? 4 : 3 }},
             "name": "{{ $article->title }}",
             "item": "{{ url()->current() }}"

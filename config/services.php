@@ -65,6 +65,18 @@ return [
         'engine_id' => env('GOOGLE_SEARCH_ENGINE_ID'),
     ],
 
+    // Google Search Console (GSC) — OAuth2 refresh token flow
+    // Setup: Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID
+    // Scopes: https://www.googleapis.com/auth/webmasters.readonly
+    // One-time auth URL: https://accounts.google.com/o/oauth2/auth?...
+    // See docs/GSC_SETUP.md for step-by-step instructions
+    'google' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'refresh_token' => env('GOOGLE_REFRESH_TOKEN'),
+        'gsc_site_url'  => env('GSC_SITE_URL', 'https://bizmark.id/'),  // must match GSC property URL exactly
+    ],
+
     'perizinan_ai' => [
         'url' => env('PERIZINAN_AI_URL', 'https://api.bizmark.id'),
         'username' => env('PERIZINAN_AI_USERNAME'),
@@ -92,6 +104,39 @@ return [
     'linkedin' => [
         'access_token' => env('LINKEDIN_ACCESS_TOKEN'),
         'organization_id' => env('LINKEDIN_ORGANIZATION_ID'),
+    ],
+
+    // Telegram Bot for channel posting
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'channel_id' => env('TELEGRAM_CHANNEL_ID'),
+    ],
+
+    // Twitter/X API v2
+    'twitter' => [
+        'api_key' => env('TWITTER_API_KEY'),
+        'api_secret' => env('TWITTER_API_SECRET'),
+        'access_token' => env('TWITTER_ACCESS_TOKEN'),
+        'access_token_secret' => env('TWITTER_ACCESS_TOKEN_SECRET'),
+        'bearer_token' => env('TWITTER_BEARER_TOKEN'),
+        'client_id' => env('TWITTER_CLIENT_ID'),
+        'client_secret' => env('TWITTER_CLIENT_SECRET'),
+    ],
+
+    // Facebook Page
+    'facebook' => [
+        'page_id' => env('FACEBOOK_PAGE_ID'),
+        'page_access_token' => env('FACEBOOK_PAGE_ACCESS_TOKEN'),
+    ],
+
+    // Google Business Profile
+    'gbp' => [
+        'refresh_token' => env('GBP_REFRESH_TOKEN'),
+        'location_id' => env('GBP_LOCATION_ID'),
+    ],
+
+    'social_posting' => [
+        'free_only' => env('SOCIAL_POSTING_FREE_ONLY', true),
     ],
 
 ];

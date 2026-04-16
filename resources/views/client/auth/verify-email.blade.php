@@ -4,150 +4,211 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifikasi Email - Bizmark.id</title>
-    
-    <!-- Tailwind CSS CDN -->
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        linkedin: {
-                            50: '#EFF6FF',
-                            100: '#DBEAFE',
-                            200: '#BFDBFE',
-                            300: '#93C5FD',
-                            400: '#60A5FA',
-                            500: '#0A66C2',
-                            600: '#084E96',
-                            700: '#063A70',
-                            800: '#042C55',
-                            900: '#021E3A',
-                        },
-                        gold: {
-                            400: '#F2CD49',
-                            500: '#F2CD49',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
+
     <style>
-        body {
-            background: linear-gradient(135deg, #0A66C2 0%, #084E96 50%, #063A70 100%);
+        :root {
+            --brand-primary: #0a66c2;
+            --brand-primary-dark: #084e96;
+            --brand-secondary: #00a0dc;
+            --brand-success: #10b981;
+            --brand-danger: #ef4444;
+            --text-muted: #475569;
+            --surface-strong: rgba(255, 255, 255, 0.95);
+            --border-soft: rgba(148, 163, 184, 0.3);
         }
-        .text-gradient {
-            background: linear-gradient(135deg, #0A66C2 0%, #084E96 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+
+        * {
+            font-family: 'Inter', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(0, 160, 220, 0.15), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(10, 102, 194, 0.12), transparent 24%),
+                linear-gradient(145deg, #eff6ff 0%, #dbeafe 46%, #f8fafc 100%);
+            min-height: 100vh;
+        }
+
+        .page-shell {
+            width: min(430px, 100%);
+            margin: 0 auto;
+            animation: fadeInUp 0.45s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--surface-strong);
+            border: 1px solid var(--border-soft);
+            border-radius: 24px;
+            box-shadow: 0 20px 42px rgba(15, 23, 42, 0.12);
+            overflow: hidden;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .logo-badge {
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(10, 102, 194, 0.12), rgba(0, 160, 220, 0.16));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(10, 102, 194, 0.35);
+        }
+
+        .btn-outline {
+            border: 1.5px solid #d1d5db;
+            color: #374151;
+            background: #ffffff;
+            transition: all 0.25s ease;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            border-left: 4px solid var(--brand-success);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(239, 246, 255, 0.95) 0%, rgba(219, 234, 254, 0.85) 100%);
+            border: 1px solid #bfdbfe;
+        }
+
+        .back-link {
+            color: var(--brand-primary);
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--brand-primary-dark);
+        }
+
+        .decorative-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .decorative-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(8px);
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--brand-primary);
+            top: -140px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 220px;
+            height: 220px;
+            background: var(--brand-secondary);
+            bottom: -110px;
+            left: -110px;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 14px 10px;
+                align-items: flex-start;
+            }
+
+            .px-mobile {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-        <!-- Logo -->
-        <div class="text-center mb-8">
-            <div class="flex items-center justify-center mb-3">
-                <i class="fas fa-building text-gold-400 text-3xl mr-2"></i>
-                <h1 class="text-4xl font-bold text-white">
-                    Bizmark<span class="text-gold-400">.id</span>
-                </h1>
-            </div>
-            <p class="text-white/80 mt-2">Portal Klien - Verifikasi Email</p>
-        </div>
-
-        <!-- Email Verification Card -->
-        <div class="bg-white rounded-2xl shadow-2xl p-8">
-            <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-linkedin-50 rounded-full mb-4">
-                    <i class="fas fa-envelope-open-text text-linkedin-500 text-3xl"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Verifikasi Email Anda</h2>
-                <p class="text-gray-600">
-                    Terima kasih telah mendaftar! Sebelum memulai, mohon verifikasi alamat email Anda dengan mengklik link yang baru saja kami kirimkan.
-                </p>
-            </div>
-
-            @if (session('success'))
-                <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg flex items-start">
-                    <i class="fas fa-check-circle mt-0.5 mr-3 flex-shrink-0 text-green-600"></i>
-                    <div>
-                        <p class="font-semibold">Berhasil!</p>
-                        <p class="text-sm">{{ session('success') }}</p>
-                    </div>
-                </div>
-            @endif
-
-            <div class="bg-linkedin-50 border border-linkedin-200 rounded-lg p-4 mb-6">
-                <div class="flex items-start">
-                    <i class="fas fa-info-circle text-linkedin-600 mt-0.5 mr-3 flex-shrink-0"></i>
-                    <div class="text-sm text-linkedin-800">
-                        <p class="font-semibold mb-1">Cek Email Anda</p>
-                        <p>Link verifikasi dikirim ke: <strong>{{ Auth::guard('client')->user()->email }}</strong></p>
-                        <p class="mt-1 text-xs">Jika tidak menemukan email, cek folder spam atau junk.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Resend Button -->
-            <form method="POST" action="{{ route('client.verification.send') }}">
-                @csrf
-                <button 
-                    type="submit" 
-                    class="w-full bg-gradient-to-r from-linkedin-500 to-linkedin-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-linkedin-600 hover:to-linkedin-700 transition duration-300 shadow-lg mb-4"
-                >
-                    <i class="fas fa-paper-plane mr-2"></i>Kirim Ulang Email Verifikasi
-                </button>
-            </form>
-
-            <!-- Logout -->
-            <form method="POST" action="{{ route('client.logout') }}">
-                @csrf
-                <button 
-                    type="submit" 
-                    class="w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-50 transition duration-300"
-                >
-                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                </button>
-            </form>
-        </div>
-
-        <!-- Help Section -->
-        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-6 border border-white/20">
-            <h3 class="text-white font-semibold mb-2 flex items-center">
-                <i class="fas fa-question-circle mr-2"></i>Butuh Bantuan?
-            </h3>
-            <ul class="text-white/90 text-sm space-y-2">
-                <li class="flex items-start">
-                    <i class="fas fa-check mr-2 mt-0.5 flex-shrink-0 text-gold-400"></i>
-                    <span>Pastikan email yang Anda masukkan sudah benar</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check mr-2 mt-0.5 flex-shrink-0 text-gold-400"></i>
-                    <span>Tunggu beberapa menit untuk email masuk</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check mr-2 mt-0.5 flex-shrink-0 text-gold-400"></i>
-                    <span>Periksa folder spam/junk di email Anda</span>
-                </li>
-            </ul>
-            <a href="{{ config('landing_metrics.contact.whatsapp_link') }}" target="_blank" rel="noopener noreferrer" class="block mt-3 text-white hover:text-gold-400 text-sm font-medium transition-colors">
-                <i class="fab fa-whatsapp mr-2"></i>Hubungi Support via WhatsApp
-            </a>
-        </div>
-
-        <!-- Footer -->
-        <p class="text-center text-white/70 text-sm mt-8">
-            © {{ date('Y') }} Bizmark.id - Platform Perizinan Digital
-        </p>
+<body class="min-h-screen flex items-center justify-center p-3 lg:p-4">
+    <div class="decorative-bg">
+        <div class="decorative-circle circle-1"></div>
+        <div class="decorative-circle circle-2"></div>
     </div>
+
+    <main class="page-shell" role="main">
+        <section class="card">
+            <header class="px-6 py-4 border-b border-slate-100 text-center px-mobile">
+                <div class="logo-badge" aria-hidden="true">
+                    <i class="fas fa-envelope-open-text text-2xl" style="color: var(--brand-primary);"></i>
+                </div>
+                <p class="text-xs uppercase tracking-[0.18em] font-semibold mb-1" style="color: var(--brand-primary);">Portal Klien</p>
+                <h1 class="text-2xl font-bold text-slate-900">Verifikasi Email</h1>
+                <p class="text-sm mt-1" style="color: var(--text-muted);">Aktifkan akun Anda untuk mulai menggunakan portal.</p>
+            </header>
+
+            <div class="px-6 py-4 space-y-3 px-mobile">
+                @if (session('success'))
+                    <div class="alert-success p-3 rounded-lg" role="alert">
+                        <p class="text-sm font-semibold text-green-800">Berhasil!</p>
+                        <p class="text-sm text-green-700">{{ session('success') }}</p>
+                    </div>
+                @endif
+
+                <div class="info-box rounded-lg p-3">
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        Kami telah mengirim link verifikasi ke <strong>{{ Auth::guard('client')->user()->email }}</strong>.
+                        Jika belum masuk, cek folder spam/junk lalu kirim ulang.
+                    </p>
+                </div>
+
+                <form method="POST" action="{{ route('client.verification.send') }}">
+                    @csrf
+                    <button type="submit" class="btn-primary w-full text-white font-semibold py-2.5 px-4 rounded-lg text-sm">
+                        <i class="fas fa-paper-plane mr-2" aria-hidden="true"></i>
+                        Kirim Ulang Email Verifikasi
+                    </button>
+                </form>
+
+                <form method="POST" action="{{ route('client.logout') }}">
+                    @csrf
+                    <button type="submit" class="btn-outline w-full font-semibold py-2.5 px-4 rounded-lg text-sm">
+                        <i class="fas fa-sign-out-alt mr-2" aria-hidden="true"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+
+            <footer class="px-6 py-3 border-t border-slate-100 text-center text-xs px-mobile" style="color: var(--text-muted);">
+                Butuh bantuan?
+                <a href="{{ config('landing_metrics.contact.whatsapp_link', 'https://wa.me/6283879602855') }}" target="_blank" rel="noopener noreferrer" class="back-link font-semibold">WhatsApp</a>
+                atau
+                <a href="mailto:{{ config('landing_metrics.contact.email', 'info@bizmark.id') }}" class="back-link font-semibold">Email</a>
+            </footer>
+        </section>
+
+        <p class="text-center text-xs mt-3" style="color: var(--text-muted);">&copy; {{ date('Y') }} Bizmark.id</p>
+    </main>
 </body>
 </html>

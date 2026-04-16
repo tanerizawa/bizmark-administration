@@ -27,6 +27,7 @@ class SeoIntelligenceCommand extends Command
         ContentGapService $gapService,
         SmartMetaOptimizerService $metaOptimizer
     ): int {
+        try {
         $language = $this->option('language');
         $this->info('🧠 SEO Intelligence Pipeline Starting...');
         $this->newLine();
@@ -89,5 +90,10 @@ class SeoIntelligenceCommand extends Command
         $this->info('🎯 SEO Intelligence Pipeline Complete!');
 
         return 0;
+        } catch (\Exception $e) {
+            \Log::error('SEO Intelligence Pipeline failed: ' . $e->getMessage());
+            $this->error('Pipeline failed: ' . $e->getMessage());
+            return 1;
+        }
     }
 }

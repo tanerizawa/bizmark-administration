@@ -19,11 +19,23 @@
             
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
-                <a href="{{ $isLandingPage ? '#main-content' : $landingUrl . '#main-content' }}" class="nav-link">{{ __('landing.nav.home') }}</a>
+                <a href="{{ $landingUrl }}" class="nav-link">{{ __('landing.nav.home') }}</a>
                 <a href="{{ app()->getLocale() === 'en' ? route('services.index.en') : route('services.index.id') }}" class="nav-link">{{ __('landing.nav.services') }}</a>
-                <a href="{{ $isLandingPage ? '#process' : $landingUrl . '#process' }}" class="nav-link">{{ __('landing.nav.process') }}</a>
-                <a href="{{ $isLandingPage ? '#about' : $landingUrl . '#about' }}" class="nav-link">{{ __('landing.nav.about') }}</a>
+                <a href="{{ app()->getLocale() === 'en' ? route('process.en') : route('process.id') }}" class="nav-link">{{ __('landing.nav.process') }}</a>
+                <a href="{{ app()->getLocale() === 'en' ? route('about.en') : route('about.id') }}" class="nav-link">{{ __('landing.nav.about') }}</a>
                 <a href="{{ $blogUrl }}" class="nav-link{{ $isBlogPage ? ' active' : '' }}">{{ __('landing.nav.blog') }}</a>
+                
+                <!-- Permohonan Button (Prominent CTA) -->
+                <a href="{{ route('permohonan.index') }}" class="nav-link relative group">
+                    <span class="flex items-center gap-1.5">
+                        <i class="fas fa-file-invoice-dollar text-xs text-orange-500"></i>
+                        <span>Permohonan</span>
+                    </span>
+                    <span class="absolute -top-1 -right-1 flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                    </span>
+                </a>
                 
                 <!-- Tools Dropdown -->
                 <div class="relative inline-block" id="toolsDropdown">

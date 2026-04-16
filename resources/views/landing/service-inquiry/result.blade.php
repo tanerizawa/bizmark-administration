@@ -772,6 +772,48 @@
                     </p>
                 </div>
             </div>
+            
+            <!-- Recommendation Box -->
+            <div class="bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 stagger-item no-print">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-thumbs-up text-primary-500"></i>
+                    Rekomendasi Selanjutnya
+                </h3>
+                
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <!-- Recommendation 1: Calculate costs -->
+                    <div class="p-4 rounded-xl bg-orange-50 border border-orange-100">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-orange-500 text-white flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-sm text-gray-900 mb-1">Hitung Biaya Perizinan</h4>
+                                <p class="text-xs text-gray-500 mb-3">Berdasarkan analisis di atas, hitung estimasi biaya detail untuk setiap izin yang direkomendasikan.</p>
+                                <a href="/estimasi-biaya" class="inline-flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700">
+                                    Estimasi Biaya <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendation 2: Start process -->
+                    <div class="p-4 rounded-xl bg-primary-50 border border-primary-100">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-primary-500 text-white flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-sm text-gray-900 mb-1">Mulai Proses Perizinan</h4>
+                                <p class="text-xs text-gray-500 mb-3">Daftar ke portal klien untuk memulai pengurusan izin dengan pendampingan konsultan bersertifikat.</p>
+                                <a href="{{ route('client.register') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary-600 hover:text-primary-700">
+                                    Daftar Sekarang <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Social Proof -->
             <div class="text-center py-4 stagger-item no-print">

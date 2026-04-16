@@ -448,6 +448,13 @@
                             </span>
                         </div>
                         <div class="flex items-center gap-1.5">
+                            <!-- RTRW Overlay Toggle -->
+                            <button @click="toggleRtrwOverlay()" :disabled="!selectedProvinsi"
+                                    class="w-6 h-6 rounded flex items-center justify-center text-[10px] transition disabled:opacity-20"
+                                    :class="rtrwOverlayEnabled ? 'bg-blue-600 text-white' : 'text-blue-600 hover:bg-blue-50'"
+                                    title="Tampilkan/Sembunyikan Peta RTRW">
+                                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                            </button>
 
                             <button @click="queryRtrwZona()" :disabled="rtrwLoading || !selectedProvinsi"
                                     class="w-6 h-6 rounded flex items-center justify-center text-[10px] transition disabled:opacity-20 text-blue-600 hover:bg-blue-50"
@@ -459,6 +466,52 @@
                     </div>
 
                     <div class="p-4">
+                        <!-- Opacity Slider (shown when overlay is active) -->
+                        <div x-show="rtrwOverlayEnabled" x-transition class="mb-3 flex items-center gap-2">
+                            <i class="fas fa-adjust text-[10px] text-gray-400" aria-hidden="true"></i>
+                            <input type="range" min="0" max="1" step="0.05" :value="rtrwOverlayOpacity"
+                                   @input="setRtrwOverlayOpacity($event.target.value)"
+                                   class="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <span class="text-[10px] text-gray-500 w-8 text-right" x-text="Math.round(rtrwOverlayOpacity * 100) + '%'"></span>
+                        </div>
+
+                        <div x-show="selectedProvinsi" class="mb-3 rounded-lg border border-blue-100 bg-blue-50/70 px-3 py-2.5">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="text-[11px] font-semibold text-blue-900">Legenda RTRW Dinamis</p>
+                                    <p class="text-[10px] text-blue-700">Diambil dari service provinsi yang sedang dipakai.</p>
+                                </div>
+                                <button @click="rtrwShowLegend = !rtrwShowLegend; if (rtrwShowLegend) loadRtrwLegend();"
+                                        class="text-[10px] font-semibold text-blue-700 hover:text-blue-900 transition">
+                                    <span x-text="rtrwShowLegend ? 'Sembunyikan' : 'Tampilkan'"></span>
+                                </button>
+                            </div>
+
+                            <div x-show="rtrwShowLegend" x-transition class="mt-3">
+                                <div x-show="rtrwLegendLoading" class="text-[11px] text-blue-600 flex items-center gap-2">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Memuat legenda RTRW...
+                                </div>
+                                <div x-show="rtrwLegendError" class="text-[11px] text-red-600 bg-red-50 border border-red-200 rounded px-2.5 py-2" x-text="rtrwLegendError"></div>
+                                <div x-show="!rtrwLegendLoading && rtrwLegendItems.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+                                    <template x-for="(item, idx) in rtrwLegendItems" :key="'legend-' + idx">
+                                        <div class="flex items-center gap-2 rounded-lg bg-white border border-blue-100 px-2.5 py-2">
+                                            <template x-if="item.image_base64">
+                                                <img :src="`data:${item.content_type};base64,${item.image_base64}`" alt="Legenda RTRW" class="w-6 h-6 object-contain rounded-sm border border-gray-100 bg-white">
+                                            </template>
+                                            <template x-if="!item.image_base64">
+                                                <span class="w-6 h-6 rounded-sm border border-gray-200 bg-gray-100"></span>
+                                            </template>
+                                            <div class="min-w-0">
+                                                <p class="text-[11px] font-medium text-gray-800 truncate" x-text="item.label || item.layer_name || 'Tanpa label'"></p>
+                                                <p class="text-[10px] text-gray-400 truncate" x-text="item.layer_name || 'Layer RTRW'"></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Prompt to select province -->
                         <div x-show="!selectedProvinsi && rtrwZones.length === 0" class="text-center py-4">
                             <i class="fas fa-map-marked-alt text-gray-300 text-2xl mb-2" aria-hidden="true"></i>
@@ -503,6 +556,27 @@
                             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-gray-400 mb-2.5">
                                 <span><i class="fas fa-database mr-0.5" aria-hidden="true"></i> <span x-text="rtrwSource || 'GISTARU ATR/BPN'"></span></span>
                                 <span><i class="fas fa-map-marker-alt mr-0.5" aria-hidden="true"></i> <span x-text="rtrwProvince"></span></span>
+                                <span x-show="rtrwSampleCount > 0"><i class="fas fa-crosshairs mr-0.5" aria-hidden="true"></i> <span x-text="rtrwSampleCount"></span> titik sampel</span>
+                            </div>
+
+                            <div x-show="rtrwZones.length > 0" class="mb-3 rounded-lg border border-blue-100 bg-blue-50/60 px-3 py-3">
+                                <div class="flex items-center justify-between gap-3 mb-2">
+                                    <h4 class="text-[11px] font-bold text-blue-900 uppercase tracking-wider">Ringkasan Coverage Zona</h4>
+                                    <span class="text-[10px] text-blue-700">Agregasi multi-titik poligon</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <template x-for="(zone, idx) in rtrwZones.slice(0, 4)" :key="'coverage-' + idx">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-3 text-[11px] mb-1">
+                                                <span class="font-semibold text-gray-800 truncate" x-text="zone.zona || 'Zona tidak diketahui'"></span>
+                                                <span class="font-bold" :style="'color:' + _getZonaColor(zone.zona)" x-text="(zone.coverage_percent || 0) + '%'">0%</span>
+                                            </div>
+                                            <div class="w-full h-2 rounded-full bg-white overflow-hidden border border-blue-100">
+                                                <div class="h-full rounded-full transition-all duration-500" :style="'width:' + (zone.coverage_percent || 0) + '%; background:' + _getZonaColor(zone.zona)"></div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
 
                             <!-- Zone Detail Cards -->
@@ -513,10 +587,17 @@
                                         <div class="flex items-center gap-2 px-3 py-2" :style="'background:' + _getZonaColor(zone.zona)">
                                             <span class="w-2 h-2 rounded-full bg-white/50 flex-shrink-0"></span>
                                             <span class="font-bold text-xs leading-tight flex-1 min-w-0 truncate" :style="'color:' + _zonaTextColor(_getZonaColor(zone.zona))" x-text="zone.zona || 'Zona tidak diketahui'"></span>
+                                            <span x-show="zone.coverage_percent !== undefined" class="text-[9px] px-1.5 py-px rounded font-bold flex-shrink-0 bg-white/20" :style="'color:' + _zonaTextColor(_getZonaColor(zone.zona))" x-text="(zone.coverage_percent || 0) + '%'">0%</span>
                                             <span class="text-[9px] px-1.5 py-px rounded font-bold flex-shrink-0 bg-black/15" :style="'color:' + _zonaTextColor(_getZonaColor(zone.zona))" x-text="'#' + (idx + 1)"></span>
                                         </div>
                                         <!-- Zone body -->
                                         <div class="px-3 py-2 text-[11px] bg-white space-y-1.5">
+                                            <div class="flex flex-wrap gap-1" x-show="zone.sample_labels && zone.sample_labels.length">
+                                                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                                    <i class="fas fa-crosshairs text-[7px]"></i>
+                                                    <span x-text="(zone.hits || zone.sample_labels.length) + ' / ' + (rtrwSampleCount || zone.sample_labels.length) + ' titik'"></span>
+                                                </span>
+                                            </div>
                                             <!-- Tags row -->
                                             <div class="flex flex-wrap gap-1" x-show="zone.jenis_zona || zone.layer_name">
                                                 <template x-if="zone.jenis_zona">
@@ -566,6 +647,12 @@
                                                 <div class="bg-gray-50 border border-gray-200 rounded px-2.5 py-1.5">
                                                     <span class="text-gray-600 font-semibold"><i class="fas fa-sticky-note text-[9px] mr-0.5" aria-hidden="true"></i> Catatan:</span>
                                                     <span class="text-gray-700" x-text="zone.remark"></span>
+                                                </div>
+                                            </template>
+                                            <template x-if="zone.sample_labels && zone.sample_labels.length">
+                                                <div class="bg-blue-50 border border-blue-100 rounded px-2.5 py-1.5">
+                                                    <span class="text-blue-800 font-semibold"><i class="fas fa-route text-[9px] mr-0.5" aria-hidden="true"></i> Titik Sampel:</span>
+                                                    <span class="text-blue-900" x-text="zone.sample_labels.join(', ')"></span>
                                                 </div>
                                             </template>
                                         </div>
@@ -1027,6 +1114,7 @@
                         <li><i class="fas fa-check mr-2 text-emerald-300"></i>File diunduh dalam format ZIP</li>
                         <li><i class="fas fa-check mr-2 text-emerald-300"></i>Gratis tanpa batas penggunaan</li>
                         <li><i class="fas fa-check mr-2 text-emerald-300"></i>Maks. {{ $maxPoints }} titik per poligon</li>
+                        <li><i class="fas fa-check mr-2 text-emerald-300"></i>Cek zona RTRW dari GISTARU ATR/BPN</li>
                     </ul>
                 </div>
 
@@ -1160,6 +1248,11 @@
                     <h3 class="font-bold text-gray-900 mb-2">Auto-Save di Browser</h3>
                     <p class="text-sm text-gray-600">Data formulir dan poligon tersimpan otomatis di browser. Jika halaman ter-refresh, data dipulihkan secara otomatis.</p>
                 </div>
+                <div class="bg-indigo-50 rounded-xl p-5">
+                    <div class="text-indigo-600 text-2xl mb-3"><i class="fas fa-city" aria-hidden="true"></i></div>
+                    <h3 class="font-bold text-gray-900 mb-2">Cek Zona RTRW Otomatis</h3>
+                    <p class="text-sm text-gray-600">Setelah menggambar poligon dan memilih provinsi, sistem secara otomatis menganalisis zona RTRW (Rencana Tata Ruang Wilayah) dari berbagai titik sampel di dalam poligon menggunakan data GISTARU ATR/BPN.</p>
+                </div>
             </div>
         </section>
 
@@ -1246,17 +1339,28 @@
                         Ya. Data formulir dan poligon otomatis tersimpan sementara di browser (localStorage) selama 24 jam untuk kenyamanan Anda. File SHP yang dihasilkan dihapus dari server secara otomatis setelah proses unduh selesai. Kami tidak menyimpan data geospasial Anda secara permanen di server.
                     </div>
                 </div>
+
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button @click="openFaq = openFaq === 9 ? null : 9" class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition">
+                        <h3 class="font-semibold text-gray-900">Apa itu fitur Cek Zona RTRW?</h3>
+                        <i class="fas text-gray-400" :class="openFaq === 9 ? 'fa-chevron-up' : 'fa-chevron-down'" aria-hidden="true"></i>
+                    </button>
+                    <div x-show="openFaq === 9" x-collapse class="px-5 pb-5 text-gray-600 leading-relaxed">
+                        Fitur Cek Zona RTRW secara otomatis menganalisis zona Rencana Tata Ruang Wilayah (RTRW) dari poligon yang Anda gambar menggunakan data resmi GISTARU ATR/BPN. Sistem mengambil beberapa titik sampel di dalam poligon (bukan hanya titik tengah), sehingga jika lahan mencakup lebih dari satu zona tata ruang, semua zona tersebut akan terdeteksi beserta persentase cakupannya. Data ini berguna untuk memverifikasi kesesuaian peruntukan lahan sebelum mengajukan KKPR di sistem OSS.
+                    </div>
+                </div>
             </div>
         </section>
 
         {{-- Internal Links / Related Services --}}
         <section class="mb-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-6">Layanan Terkait</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <a href="{{ route('consultation.index') }}" class="block bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 hover:shadow-lg transition group">
-                    <div class="text-purple-600 text-2xl mb-3 group-hover:scale-110 transition"><i class="fas fa-headset" aria-hidden="true"></i></div>
-                    <h3 class="font-bold text-gray-900 mb-2">Konsultasi Perizinan</h3>
-                    <p class="text-sm text-gray-600">Butuh bantuan pengurusan OSS, KKPR, atau perizinan usaha lainnya? Konsultasi gratis dengan tim ahli kami.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="{{ route('consultation.index') }}" class="block bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 hover:shadow-lg transition group relative">
+                    <span class="absolute top-3 right-3 px-2 py-0.5 text-xs font-bold bg-purple-500 text-white rounded-full"><i class="fas fa-robot mr-1"></i>AI</span>
+                    <div class="text-purple-600 text-2xl mb-3 group-hover:scale-110 transition"><i class="fas fa-calculator" aria-hidden="true"></i></div>
+                    <h3 class="font-bold text-gray-900 mb-2">Estimasi Biaya Perizinan</h3>
+                    <p class="text-sm text-gray-600">Dapatkan estimasi biaya perizinan usaha Anda dengan AI analysis. Pilih KBLI, isi info bisnis, terima estimasi instan.</p>
                 </a>
                 <a href="{{ route('services.index.id') }}" class="block bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-6 hover:shadow-lg transition group">
                     <div class="text-emerald-600 text-2xl mb-3 group-hover:scale-110 transition"><i class="fas fa-briefcase" aria-hidden="true"></i></div>
@@ -1267,6 +1371,11 @@
                     <div class="text-blue-600 text-2xl mb-3 group-hover:scale-110 transition"><i class="fas fa-newspaper" aria-hidden="true"></i></div>
                     <h3 class="font-bold text-gray-900 mb-2">Artikel & Panduan</h3>
                     <p class="text-sm text-gray-600">Baca artikel terbaru seputar perizinan usaha, OSS, dan tips pengurusan dokumen bisnis di Indonesia.</p>
+                </a>
+                <a href="https://wa.me/6281234567890?text=Halo%20Bizmark,%20saya%20ingin%20konsultasi%20perizinan" target="_blank" class="block bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 hover:shadow-lg transition group">
+                    <div class="text-green-600 text-2xl mb-3 group-hover:scale-110 transition"><i class="fab fa-whatsapp" aria-hidden="true"></i></div>
+                    <h3 class="font-bold text-gray-900 mb-2">Konsultasi via WhatsApp</h3>
+                    <p class="text-sm text-gray-600">Butuh bantuan langsung? Chat dengan tim ahli kami via WhatsApp untuk konsultasi gratis perizinan.</p>
                 </a>
             </div>
         </section>
@@ -1323,6 +1432,16 @@ document.addEventListener('alpine:init', () => {
         rtrwSource: '',
         rtrwProvince: '',
         rtrwShowLegend: false,
+        rtrwLegendItems: [],
+        rtrwLegendLoading: false,
+        rtrwLegendError: '',
+        rtrwSamplePoints: [],
+        rtrwSampleCount: 0,
+
+        // RTRW Map overlay
+        rtrwOverlayEnabled: false,
+        rtrwOverlayLayer: null,
+        rtrwOverlayOpacity: 0.5,
 
         rtrwZonaColors: {
             // Kawasan Lindung
@@ -1677,12 +1796,16 @@ document.addEventListener('alpine:init', () => {
 
             const prov = this.provinsiList.find(p => p.id === this.selectedProvinsi);
             this.form.provinsi = prov ? prov.nama : '';
+            this.rtrwLegendItems = [];
+            this.rtrwLegendError = '';
 
             // Navigate map to province
             const coords = this.provinsiCoords[this.selectedProvinsi];
             if (coords && this.map) {
                 this.map.flyTo(coords, 8, { duration: 1.5 });
             }
+
+            this.loadRtrwLegend();
 
             // Re-query zone if polygon exists
             if (this.coordinates.length >= 3) {
@@ -1993,13 +2116,14 @@ document.addEventListener('alpine:init', () => {
         async queryRtrwZona() {
             if (!this.rtrwEnabled || this.coordinates.length < 3 || !this.selectedProvinsi) return;
 
-            // Calculate centroid of polygon
-            const centroid = this._calcCentroid(this.coordinates);
-            if (!centroid) return;
+            const samplePoints = this._buildRtrwSamplePoints(this.coordinates);
+            if (samplePoints.length === 0) return;
 
             this.rtrwLoading = true;
             this.rtrwError = '';
             this.rtrwZones = [];
+            this.rtrwSamplePoints = samplePoints;
+            this.rtrwSampleCount = samplePoints.length;
 
             // Map Kemendagri province ID to 2-digit BPS code
             const provCode = this._provIdToBpsCode(this.selectedProvinsi);
@@ -2012,17 +2136,17 @@ document.addEventListener('alpine:init', () => {
 
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-                const params = new URLSearchParams({
-                    lat: centroid.lat.toFixed(6),
-                    lng: centroid.lng.toFixed(6),
-                    province_code: provCode,
-                });
-
-                const response = await fetch(`/api/rtrw/zona?${params}`, {
+                const response = await fetch('/api/rtrw/analyze', {
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': csrfToken || '',
                     },
+                    body: JSON.stringify({
+                        province_code: provCode,
+                        points: samplePoints,
+                    }),
                 });
 
                 const data = await response.json();
@@ -2033,14 +2157,19 @@ document.addEventListener('alpine:init', () => {
                     return;
                 }
 
-                this.rtrwZones = data.zones || [];
+                this.rtrwZones = data.aggregated_zones || [];
                 this.rtrwAvailable = data.available ?? true;
                 this.rtrwDisclaimer = data.disclaimer || '';
                 this.rtrwSource = data.source || '';
                 this.rtrwProvince = data.province || '';
+                this.rtrwSampleCount = data.sample_count || samplePoints.length;
+
+                if (this.rtrwLegendItems.length === 0) {
+                    this.loadRtrwLegend();
+                }
 
                 if (this.rtrwZones.length > 0) {
-                    this.showToast(`Ditemukan ${this.rtrwZones.length} zona RTRW`, 'success');
+                    this.showToast(`Analisis RTRW selesai: ${this.rtrwZones.length} zona dari ${this.rtrwSampleCount} titik`, 'success');
                 } else {
                     this.showToast('Tidak ada data zona RTRW di lokasi ini', 'info');
                 }
@@ -2087,11 +2216,166 @@ document.addEventListener('alpine:init', () => {
             return { lng: sumLng / coords.length, lat: sumLat / coords.length };
         },
 
+        _getPolygonBounds(coords) {
+            if (!coords || coords.length === 0) return null;
+            const lngs = coords.map(c => c[0]);
+            const lats = coords.map(c => c[1]);
+            return {
+                minLng: Math.min(...lngs),
+                maxLng: Math.max(...lngs),
+                minLat: Math.min(...lats),
+                maxLat: Math.max(...lats),
+            };
+        },
+
+        _isPointInPolygon(point, polygon) {
+            const x = point.lng;
+            const y = point.lat;
+            let inside = false;
+            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                const xi = polygon[i][0], yi = polygon[i][1];
+                const xj = polygon[j][0], yj = polygon[j][1];
+                const intersects = ((yi > y) !== (yj > y))
+                    && (x < ((xj - xi) * (y - yi)) / ((yj - yi) || Number.EPSILON) + xi);
+                if (intersects) inside = !inside;
+            }
+            return inside;
+        },
+
+        _movePointInsidePolygon(candidate, centroid, polygon) {
+            const steps = [0, 0.25, 0.5, 0.75, 1];
+            for (const step of steps) {
+                const point = {
+                    lng: candidate.lng + (centroid.lng - candidate.lng) * step,
+                    lat: candidate.lat + (centroid.lat - candidate.lat) * step,
+                };
+                if (this._isPointInPolygon(point, polygon)) {
+                    return point;
+                }
+            }
+            return this._isPointInPolygon(centroid, polygon) ? centroid : null;
+        },
+
+        _buildRtrwSamplePoints(coords) {
+            const centroid = this._calcCentroid(coords);
+            const bounds = this._getPolygonBounds(coords);
+            if (!centroid || !bounds) return [];
+
+            const candidates = [
+                { label: 'Centroid', lng: centroid.lng, lat: centroid.lat },
+                { label: 'Barat Laut', lng: bounds.minLng, lat: bounds.maxLat },
+                { label: 'Timur Laut', lng: bounds.maxLng, lat: bounds.maxLat },
+                { label: 'Timur Selatan', lng: bounds.maxLng, lat: bounds.minLat },
+                { label: 'Barat Selatan', lng: bounds.minLng, lat: bounds.minLat },
+                { label: 'Utara', lng: centroid.lng, lat: bounds.maxLat },
+                { label: 'Selatan', lng: centroid.lng, lat: bounds.minLat },
+                { label: 'Timur', lng: bounds.maxLng, lat: centroid.lat },
+                { label: 'Barat', lng: bounds.minLng, lat: centroid.lat },
+            ];
+
+            const unique = new Map();
+            for (const candidate of candidates) {
+                const adjusted = this._movePointInsidePolygon(candidate, centroid, coords);
+                if (!adjusted) continue;
+
+                const key = `${adjusted.lng.toFixed(6)}:${adjusted.lat.toFixed(6)}`;
+                if (unique.has(key)) continue;
+
+                unique.set(key, {
+                    label: candidate.label,
+                    lng: parseFloat(adjusted.lng.toFixed(6)),
+                    lat: parseFloat(adjusted.lat.toFixed(6)),
+                });
+
+                if (unique.size >= 6) break;
+            }
+
+            return Array.from(unique.values());
+        },
+
+        async loadRtrwLegend(force = false) {
+            if (!this.selectedProvinsi) return;
+            if (!force && this.rtrwLegendItems.length > 0) return;
+
+            const provCode = this._provIdToBpsCode(this.selectedProvinsi);
+            if (!provCode) return;
+
+            this.rtrwLegendLoading = true;
+            this.rtrwLegendError = '';
+
+            try {
+                const response = await fetch(`/api/rtrw/legend/${provCode}`, {
+                    headers: { 'Accept': 'application/json' },
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    this.rtrwLegendError = data.error || 'Gagal memuat legenda RTRW.';
+                    return;
+                }
+
+                this.rtrwLegendItems = data.items || [];
+            } catch (e) {
+                this.rtrwLegendError = 'Gagal menghubungi server legenda RTRW.';
+            } finally {
+                this.rtrwLegendLoading = false;
+            }
+        },
+
         _provIdToBpsCode(provId) {
             // Kemendagri API returns province IDs like "11", "12", etc. which match BPS codes
             // But some APIs return longer IDs - extract first 2 digits
             const id = String(provId);
             return id.length >= 2 ? id.substring(0, 2) : null;
+        },
+
+        // --- RTRW Map Overlay ---
+        toggleRtrwOverlay() {
+            this.rtrwOverlayEnabled = !this.rtrwOverlayEnabled;
+            if (this.rtrwOverlayEnabled) {
+                this.loadRtrwOverlay();
+            } else {
+                this.removeRtrwOverlay();
+            }
+        },
+
+        loadRtrwOverlay() {
+            if (!this.selectedProvinsi || !this.map) return;
+            const provCode = this._provIdToBpsCode(this.selectedProvinsi);
+            if (!provCode) return;
+
+            this.loadRtrwLegend();
+
+            this.removeRtrwOverlay();
+
+            this.rtrwOverlayLayer = L.tileLayer('', { opacity: this.rtrwOverlayOpacity });
+
+            // Custom getTileUrl using our proxy
+            const self = this;
+            this.rtrwOverlayLayer.getTileUrl = function(coords) {
+                const map = self.map;
+                const tileSize = this.getTileSize();
+                const nw = map.unproject([coords.x * tileSize.x, coords.y * tileSize.y], coords.z);
+                const se = map.unproject([(coords.x + 1) * tileSize.x, (coords.y + 1) * tileSize.y], coords.z);
+                const bbox = `${nw.lng},${se.lat},${se.lng},${nw.lat}`;
+                return `/api/rtrw/map-export/${provCode}?bbox=${bbox}&width=${tileSize.x}&height=${tileSize.y}`;
+            };
+
+            this.rtrwOverlayLayer.addTo(this.map);
+        },
+
+        removeRtrwOverlay() {
+            if (this.rtrwOverlayLayer && this.map) {
+                this.map.removeLayer(this.rtrwOverlayLayer);
+                this.rtrwOverlayLayer = null;
+            }
+        },
+
+        setRtrwOverlayOpacity(val) {
+            this.rtrwOverlayOpacity = parseFloat(val);
+            if (this.rtrwOverlayLayer) {
+                this.rtrwOverlayLayer.setOpacity(this.rtrwOverlayOpacity);
+            }
         },
 
         resetPolygon() {
@@ -2109,6 +2393,10 @@ document.addEventListener('alpine:init', () => {
             this.rtrwAvailable = false;
             this.rtrwSource = '';
             this.rtrwProvince = '';
+            this.rtrwSamplePoints = [];
+            this.rtrwSampleCount = 0;
+            this.removeRtrwOverlay();
+            this.rtrwOverlayEnabled = false;
         },
 
         confirmResetPolygon() {

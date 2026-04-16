@@ -54,8 +54,8 @@
             @foreach($articles as $article)
             <article class="group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-lg transition-all duration-300">
                 <div class="relative h-48 overflow-hidden">
-                    @if($article->featured_image)
-                    <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    @if($article->featured_image_url)
+                    <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" width="1200" height="630" loading="lazy">
                     @else
                     <div class="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
                         <i class="fas fa-newspaper text-4xl text-gray-200"></i>

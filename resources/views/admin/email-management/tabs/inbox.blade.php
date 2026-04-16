@@ -23,8 +23,40 @@
         ['key' => '1', 'label' => 'Sudah dibaca', 'count' => $statusCounts['read'] ?? 0],
     ];
     $selectedHtmlDocument = null;
+    $selectedHtmlBodyContent = null;
+    $selectedFromPrimary = $selectedEmail ? ($selectedEmail->from_name ?: $selectedEmail->from_email) : null;
+    $selectedFromSecondary = null;
+    $selectedSenderClassification = null;
+    $trackingPixelRemovedCount = 0;
+
+    if ($selectedEmail?->from_email) {
+        $selectedFromDomain = Str::lower((string) Str::after($selectedEmail->from_email, '@'));
+        $selectedFromLocal = (string) Str::before($selectedEmail->from_email, '@');
+
+        $selectedSenderClassification = (
+            preg_match('/^(bounce|bounces|mailer-daemon|no-?reply|noreply)/i', $selectedFromLocal)
+            || preg_match('/[0-9]{6,}/', $selectedFromLocal)
+            || str_contains($selectedFromDomain, 'sender-sib.com')
+            || str_contains($selectedFromDomain, 'amazonses.com')
+            || str_contains($selectedFromDomain, 'mailgun.org')
+        ) ? 'relay' : 'direct';
+    }
+
+    if ($selectedEmail && $selectedEmail->from_email && strcasecmp((string) $selectedFromPrimary, (string) $selectedEmail->from_email) !== 0) {
+        $selectedFromSecondary = $selectedEmail->from_email;
+    }
 
     if ($selectedEmail?->body_html) {
+        $selectedHtmlBodyContent = (string) $selectedEmail->clean_body_html;
+        $selectedHtmlBodyContent = preg_replace('/<!doctype[^>]*>/i', '', $selectedHtmlBodyContent) ?? $selectedHtmlBodyContent;
+        $selectedHtmlBodyContent = preg_replace('/<(?:html|head|body|meta|title|link|base)\b[^>]*>/i', '', $selectedHtmlBodyContent) ?? $selectedHtmlBodyContent;
+        $selectedHtmlBodyContent = preg_replace('/<\/(?:html|head|body)>/i', '', $selectedHtmlBodyContent) ?? $selectedHtmlBodyContent;
+        $trackingPixelRemovedCount = preg_match_all('/<img\b(?=[^>]*\bwidth\s*=\s*["\"]?1["\"]?)(?=[^>]*\bheight\s*=\s*["\"]?1["\"]?)[^>]*>/i', $selectedHtmlBodyContent) ?: 0;
+        $selectedHtmlBodyContent = preg_replace('/<img\b(?=[^>]*\bwidth\s*=\s*["\"]?1["\"]?)(?=[^>]*\bheight\s*=\s*["\"]?1["\"]?)[^>]*>/i', '', $selectedHtmlBodyContent) ?? $selectedHtmlBodyContent;
+        $selectedHtmlBodyContent = preg_replace('/(<[^>]*style="[^"]*background\s*:\s*#0f172a[^"]*?)color\s*:\s*#000000([^\"]*")/i', '$1color: #ffffff$2', $selectedHtmlBodyContent) ?? $selectedHtmlBodyContent;
+        $selectedHtmlBodyContent = preg_replace('/background\s*:\s*#0f172a\s*;\s*color\s*:\s*#000000\s*;/i', 'background: #0f172a; color: #ffffff;', $selectedHtmlBodyContent) ?? $selectedHtmlBodyContent;
+        $selectedHtmlBodyContent = preg_replace('/color\s*:\s*#0ea5e9\s*;/i', 'color: #0b63c7;', $selectedHtmlBodyContent) ?? $selectedHtmlBodyContent;
+
         $selectedHtmlDocument = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
             . '<base target="_blank">'
             . '<style>'
@@ -40,7 +72,7 @@
             . 'a{color:#0a66c2;}'
             . 'pre{white-space:pre-wrap;word-break:break-word;}'
             . '</style></head><body><div class="email-frame-inner">'
-            . $selectedEmail->clean_body_html
+            . $selectedHtmlBodyContent
             . '</div></body></html>';
     }
 @endphp
@@ -189,12 +221,22 @@
                         $isSentCategory = ($activeFolder === 'sent') || $email->category === 'sent';
                         $senderEmail = $isSentCategory ? $email->to_email : $email->from_email;
                         $senderName = $isSentCategory ? null : trim((string) $email->from_name);
+                        $senderLocalPart = $senderEmail ? (string) Str::before($senderEmail, '@') : '';
+                        $senderDomain = $senderEmail ? Str::lower((string) Str::after($senderEmail, '@')) : '';
 
                         if (!$isSentCategory && (!$senderName || strcasecmp($senderName, (string) $senderEmail) === 0 || str_contains($senderName, '@'))) {
                             $senderName = $senderEmail
                                 ? (string) Str::of(strstr($senderEmail, '@', true) ?: $senderEmail)->replace(['.', '_', '-'], ' ')->title()
                                 : null;
                         }
+
+                        $looksRelaySender = !$isSentCategory && $senderEmail && (
+                            preg_match('/^(bounce|bounces|mailer-daemon|no-?reply|noreply)/i', $senderLocalPart)
+                            || preg_match('/[0-9]{6,}/', $senderLocalPart)
+                            || str_contains($senderDomain, 'sender-sib.com')
+                            || str_contains($senderDomain, 'amazonses.com')
+                            || str_contains($senderDomain, 'mailgun.org')
+                        );
 
                         $senderPrimary = $isSentCategory
                             ? ($email->to_email ?: 'Penerima tidak diketahui')
@@ -203,6 +245,15 @@
                         $senderSecondary = !$isSentCategory && $senderEmail && strcasecmp($senderPrimary, $senderEmail) !== 0
                             ? $senderEmail
                             : null;
+
+                        if ($looksRelaySender) {
+                            $senderPrimary = str_contains($senderDomain, 'sender-sib.com')
+                                ? 'Brevo Relay'
+                                : (str_contains($senderDomain, 'amazonses.com')
+                                    ? 'Amazon SES Relay'
+                                    : (str_contains($senderDomain, 'mailgun.org') ? 'Mailgun Relay' : 'System Mailer'));
+                            $senderSecondary = $senderEmail;
+                        }
 
                         $senderInitials = collect(preg_split('/\s+/', trim($senderPrimary)) ?: [])
                             ->filter()
@@ -239,6 +290,9 @@
                                             <h3 class="mailbox-sender-name {{ !$email->is_read ? 'is-unread' : '' }}">
                                                 {{ $senderPrimary }}
                                             </h3>
+                                            @if($looksRelaySender)
+                                                <span class="mailbox-inline-tag mailbox-inline-tag-system">Relay</span>
+                                            @endif
                                             @if(!$email->is_read)
                                                 <span class="mailbox-row-dot"></span>
                                             @endif
@@ -266,7 +320,7 @@
 
                                 <div class="mailbox-secondary-line">
                                     @if($senderSecondary)
-                                        <span class="truncate">{{ $senderSecondary }}</span>
+                                        <span class="mailbox-secondary-address truncate">{{ $senderSecondary }}</span>
                                     @endif
                                     @if($accountEmail)
                                         <span class="mailbox-inline-tag"><i class="fas fa-at"></i>{{ $accountEmail }}</span>
@@ -301,12 +355,15 @@
                     </a>
                     <div>
                         <p class="text-xs uppercase tracking-[0.28em]" style="color: rgba(235,235,245,0.45);">Mailbox Detail</p>
-                        <p class="text-sm font-semibold text-white">Detail email operasional</p>
+                        <p class="text-sm font-semibold text-white">Detail email</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap text-xs">
                     <span class="mailbox-inline-tag mailbox-inline-tag-muted"><i class="fas fa-folder-open"></i>{{ ucfirst($selectedEmail->category) }}</span>
                     <span class="mailbox-inline-tag mailbox-inline-tag-muted"><i class="fas fa-clock"></i>{{ $selectedEmail->received_at?->diffForHumans() }}</span>
+                    @if($selectedSenderClassification === 'relay')
+                        <span class="mailbox-inline-tag mailbox-inline-tag-system"><i class="fas fa-shield"></i>Relay Sender</span>
+                    @endif
                 </div>
             </div>
 
@@ -355,18 +412,25 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div class="p-3 rounded-apple-lg border border-white/8 bg-white/3">
-                        <p class="text-[10px] uppercase tracking-[0.24em] text-white/40 mb-2">From</p>
-                        <p class="text-sm font-semibold text-white break-words">{{ $selectedEmail->from_name ?: $selectedEmail->from_email }}</p>
-                        <p class="text-xs text-white/55 break-all mt-1">{{ $selectedEmail->from_email }}</p>
-                    </div>
-                    <div class="p-3 rounded-apple-lg border border-white/8 bg-white/3">
-                        <p class="text-[10px] uppercase tracking-[0.24em] text-white/40 mb-2">To</p>
-                        <p class="text-sm font-semibold text-white break-words">{{ $selectedEmail->to_email }}</p>
-                        @if($selectedEmail->emailAccount)
-                            <p class="text-xs text-white/55 break-words mt-1">via {{ $selectedEmail->emailAccount->display_name }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mailbox-detail-grid">
+                    <div class="mailbox-detail-card">
+                        <p class="mailbox-detail-label">From</p>
+                        <p class="mailbox-detail-value">{{ $selectedFromPrimary }}</p>
+                        @if($selectedFromSecondary)
+                            <p class="mailbox-detail-subvalue">{{ $selectedFromSecondary }}</p>
                         @endif
+                    </div>
+                    <div class="mailbox-detail-card">
+                        <p class="mailbox-detail-label">To</p>
+                        <p class="mailbox-detail-value">{{ $selectedEmail->to_email }}</p>
+                        @if($selectedEmail->emailAccount)
+                            <p class="mailbox-detail-subvalue">via {{ $selectedEmail->emailAccount->display_name }}</p>
+                        @endif
+                    </div>
+                    <div class="mailbox-detail-card">
+                        <p class="mailbox-detail-label">Received</p>
+                        <p class="mailbox-detail-value">{{ $selectedEmail->received_at?->format('d M Y, H:i') ?: '-' }}</p>
+                        <p class="mailbox-detail-subvalue">{{ $selectedEmail->received_at?->diffForHumans() }}</p>
                     </div>
                 </div>
             </div>
@@ -396,7 +460,14 @@
                             <span class="email-html-badge">
                                 <i class="fas fa-envelope-open-text mr-2"></i>Rendered HTML Email
                             </span>
-                            <span class="text-xs text-slate-500">Preview tetap berada di tab mailbox</span>
+                            <div class="email-html-meta-notes">
+                                @if($trackingPixelRemovedCount > 0)
+                                    <span class="email-html-pixel-note">
+                                        <i class="fas fa-eye-slash"></i>Tracking pixel disembunyikan ({{ $trackingPixelRemovedCount }})
+                                    </span>
+                                @endif
+                                <span class="text-xs text-slate-500">Preview tetap berada di tab mailbox</span>
+                            </div>
                         </div>
                         <iframe
                             id="managementEmailHtmlFrame"
@@ -568,7 +639,8 @@
     border-radius: 1rem;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
-    space-y: 0.75rem;
+    display: grid;
+    gap: 0.75rem;
 }
 
 .mailbox-search-row {
@@ -884,6 +956,11 @@
     min-width: 0;
 }
 
+.mailbox-secondary-address {
+    color: rgba(235,235,245,0.52);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
 .mailbox-inline-tag {
     display: inline-flex;
     align-items: center;
@@ -898,6 +975,14 @@
 .mailbox-inline-tag-muted {
     background: rgba(255,255,255,0.05);
     color: rgba(235,235,245,0.58);
+}
+
+.mailbox-inline-tag-system {
+    background: rgba(255, 159, 10, 0.16);
+    color: rgba(255, 159, 10, 0.95);
+    border: 1px solid rgba(255, 159, 10, 0.26);
+    font-size: 0.62rem;
+    padding: 0.12rem 0.36rem;
 }
 
 #content-inbox {
@@ -915,6 +1000,42 @@
     border: 1px solid rgba(255,255,255,0.06);
 }
 
+.mailbox-detail-grid {
+    align-items: stretch;
+}
+
+.mailbox-detail-card {
+    padding: 0.78rem;
+    border-radius: 0.92rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    min-width: 0;
+}
+
+.mailbox-detail-label {
+    margin: 0 0 0.45rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(235,235,245,0.44);
+}
+
+.mailbox-detail-value {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.28;
+    color: #fff;
+    overflow-wrap: anywhere;
+}
+
+.mailbox-detail-subvalue {
+    margin: 0.3rem 0 0;
+    font-size: 0.72rem;
+    color: rgba(235,235,245,0.58);
+    overflow-wrap: anywhere;
+}
+
 .email-html-shell {
     background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.08);
@@ -929,6 +1050,27 @@
     padding: 14px 18px;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
     background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.email-html-meta-notes {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.email-html-pixel-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.32rem;
+    padding: 0.24rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.67rem;
+    font-weight: 700;
+    color: #92400e;
+    background: rgba(251, 191, 36, 0.22);
+    border: 1px solid rgba(217, 119, 6, 0.28);
 }
 
 .email-html-badge {
@@ -1020,6 +1162,19 @@
         padding-left: 0;
         margin-top: 0.25rem;
         flex-wrap: wrap;
+    }
+
+    .mailbox-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .email-html-meta {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .email-html-meta-notes {
+        justify-content: flex-start;
     }
 }
 </style>

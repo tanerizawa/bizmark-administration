@@ -21,17 +21,17 @@
     "itemListElement": [
         @foreach($services as $slug => $svc)
         {
-            "@type": "OfferCatalog",
+            "@@type": "OfferCatalog",
             "name": "{{ $svc['title'] }}",
             "description": "{{ $svc['short_description'] }}",
             "url": "{{ route($locale === 'en' ? 'services.show.en' : 'services.show.id', $slug) }}",
             "itemOffered": {
-                "@type": "Service",
+                "@@type": "Service",
                 "name": "{{ $svc['title'] }}",
                 "description": "{{ $svc['short_description'] }}",
-                "provider": {"@type": "Organization", "name": "Bizmark.ID"}
+                "provider": {"@@type": "Organization", "name": "Bizmark.ID"}
                 @if(!empty($svc['price_range'])),
-                "offers": {"@type": "Offer", "price": "{{ $svc['price_range'] }}", "priceCurrency": "IDR"}
+                "offers": {"@@type": "Offer", "price": "{{ $svc['price_range'] }}", "priceCurrency": "IDR"}
                 @endif
             }
         }@if(!$loop->last),@endif
@@ -47,9 +47,9 @@
     "mainEntity": [
         @foreach($serviceFaqs as $fIndex => $faq)
         {
-            "@type": "Question",
+            "@@type": "Question",
             "name": "{{ $faq['q'] }}",
-            "acceptedAnswer": {"@type": "Answer", "text": "{{ $faq['a'] }}"}
+            "acceptedAnswer": {"@@type": "Answer", "text": "{{ $faq['a'] }}"}
         }@if(!$loop->last),@endif
         @endforeach
     ]

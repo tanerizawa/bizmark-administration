@@ -87,6 +87,77 @@
         </div>
         @endif
 
+        @if(isset($ragData['activity_requirements']) && count($ragData['activity_requirements']) > 0)
+        <div class="mb-6">
+            <h3 class="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-diagram-project text-fuchsia-600"></i>
+                <span>Persyaratan Per Aktivitas KBLI</span>
+            </h3>
+            <div class="space-y-4">
+                @foreach($ragData['activity_requirements'] as $activity)
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-5 border border-fuchsia-100 dark:border-gray-700 shadow-sm" x-data="{ expanded: false }">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2 mb-2">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/40 dark:text-fuchsia-300">
+                                        {{ $activity['label'] ?? 'Aktivitas' }}
+                                    </span>
+                                    @if(isset($activity['kbli_code']))
+                                        <span class="font-mono text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                                            KBLI {{ $activity['kbli_code'] }}
+                                        </span>
+                                    @endif
+                                    @if(isset($activity['confidence']))
+                                        <span class="text-xs font-semibold {{ $activity['confidence'] >= 0.7 ? 'text-green-600 dark:text-green-400' : ($activity['confidence'] >= 0.5 ? 'text-yellow-600 dark:text-yellow-400' : 'text-orange-600 dark:text-orange-400') }}">
+                                            {{ number_format(($activity['confidence'] ?? 0) * 100, 0) }}% confidence
+                                        </span>
+                                    @endif
+                                </div>
+                                <p class="font-semibold text-gray-900 dark:text-white">{{ $activity['description'] ?? 'Aktivitas usaha' }}</p>
+                            </div>
+                            @if(!empty($activity['answer']))
+                                <button @click="expanded = !expanded" class="inline-flex items-center gap-2 self-start px-3 py-2 rounded-lg bg-fuchsia-50 text-fuchsia-700 hover:bg-fuchsia-100 dark:bg-fuchsia-900/30 dark:text-fuchsia-300 dark:hover:bg-fuchsia-900/50 text-sm font-medium transition-colors">
+                                    <span x-text="expanded ? 'Ringkas' : 'Detail'"></span>
+                                    <i class="fas" :class="expanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                </button>
+                            @endif
+                        </div>
+
+                        @if(!empty($activity['answer']))
+                            <div class="mt-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed" x-show="!expanded">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($activity['answer']), 220) }}
+                            </div>
+                            <div class="mt-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line" x-show="expanded" x-cloak>
+                                {{ $activity['answer'] }}
+                            </div>
+                        @endif
+
+                        @if(isset($activity['sources']) && count($activity['sources']) > 0)
+                            <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">Sumber Aktivitas</p>
+                                <div class="space-y-2">
+                                    @foreach($activity['sources'] as $source)
+                                        <div class="flex items-start justify-between gap-3 rounded-lg bg-gray-50 dark:bg-gray-700/60 px-3 py-2">
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $source['source_name'] ?? $source['title'] ?? 'Sumber regulasi' }}</p>
+                                                @if(isset($source['pasal']) || isset($source['section']))
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $source['section'] ?? ('Pasal ' . ($source['pasal'] ?? '-')) }}</p>
+                                                @endif
+                                            </div>
+                                            @if(isset($source['score']))
+                                                <span class="text-xs font-semibold text-fuchsia-600 dark:text-fuchsia-300 shrink-0">{{ number_format($source['score'] * 100, 0) }}%</span>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Source Documents -->
             @if(isset($ragData['sources']) && count($ragData['sources']) > 0)
@@ -220,6 +291,24 @@
                                 <span class="text-gray-600 dark:text-gray-400">Lokasi</span>
                                 <span class="font-medium text-gray-900 dark:text-white">
                                     {{ $ragData['query_params']['location'] }}
+                                </span>
+                            </div>
+                        @endif
+
+                        @if(isset($ragData['query_params']['primary_kbli']))
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">KBLI Utama</span>
+                                <span class="font-medium font-mono text-gray-900 dark:text-white">
+                                    {{ $ragData['query_params']['primary_kbli'] }}
+                                </span>
+                            </div>
+                        @endif
+
+                        @if(isset($ragData['query_params']['activities_count']))
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Aktivitas Dianalisis</span>
+                                <span class="font-medium text-gray-900 dark:text-white">
+                                    {{ $ragData['query_params']['activities_count'] }}
                                 </span>
                             </div>
                         @endif
