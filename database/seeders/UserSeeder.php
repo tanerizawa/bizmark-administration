@@ -7,80 +7,78 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $users = [
             [
-                'name' => 'hadez',
-                'full_name' => 'Hadez Administrator',
+                'name' => env('SEED_ADMIN_USERNAME', 'admin'),
+                'full_name' => env('SEED_ADMIN_FULLNAME', 'System Administrator'),
                 'position' => 'System Administrator',
-                'email' => 'hadez@bizmark.id',
-                'phone' => '6283879602855',
+                'email' => env('SEED_ADMIN_EMAIL', 'admin@bizmark.id'),
+                'phone' => env('SEED_ADMIN_PHONE', ''),
                 'role' => 'admin',
-                'password' => 'T@n12089',
+                'password' => env('SEED_ADMIN_PASSWORD'),
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Administrator utama sistem',
-                'department' => 'general'
+                'department' => 'general',
             ],
             [
                 'name' => 'manager',
-                'full_name' => 'Budi Santoso',
+                'full_name' => 'Project Manager',
                 'position' => 'Project Manager',
-                'email' => 'manager@bizmark.id',
-                'phone' => '0838796028551',
+                'email' => env('SEED_MANAGER_EMAIL', 'manager@bizmark.id'),
+                'phone' => '',
                 'role' => 'admin',
-                'password' => 'manager123',
+                'password' => env('SEED_MANAGER_PASSWORD'),
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Manager proyek perizinan',
-                'department' => 'general'
+                'department' => 'general',
             ],
             [
                 'name' => 'staff1',
-                'full_name' => 'Siti Aminah',
+                'full_name' => 'Staff Senior',
                 'position' => 'Konsultan Senior',
-                'email' => 'siti@bizmark.id',
-                'phone' => '0838796028552',
+                'email' => env('SEED_STAFF1_EMAIL', 'staff1@bizmark.id'),
+                'phone' => '',
                 'role' => 'staff',
-                'password' => 'staff123',
+                'password' => env('SEED_STAFF1_PASSWORD'),
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Konsultan perizinan lingkungan',
-                'department' => 'technical'
+                'department' => 'technical',
             ],
             [
                 'name' => 'staff2',
-                'full_name' => 'Ahmad Fadli',
+                'full_name' => 'Staff Junior',
                 'position' => 'Konsultan Junior',
-                'email' => 'ahmad@bizmark.id',
-                'phone' => '0838796028553',
+                'email' => env('SEED_STAFF2_EMAIL', 'staff2@bizmark.id'),
+                'phone' => '',
                 'role' => 'staff',
-                'password' => 'staff123',
+                'password' => env('SEED_STAFF2_PASSWORD'),
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Konsultan perizinan lalu lintas',
-                'department' => 'technical'
+                'department' => 'technical',
             ],
             [
                 'name' => 'staff3',
-                'full_name' => 'Maya Dewi',
+                'full_name' => 'Document Controller',
                 'position' => 'Document Controller',
-                'email' => 'maya@bizmark.id',
-                'phone' => '0838796028554',
+                'email' => env('SEED_STAFF3_EMAIL', 'staff3@bizmark.id'),
+                'phone' => '',
                 'role' => 'staff',
-                'password' => 'staff123',
+                'password' => env('SEED_STAFF3_PASSWORD'),
                 'email_verified_at' => now(),
                 'is_active' => true,
                 'notes' => 'Pengendali dokumen dan administrasi',
-                'department' => 'support'
-            ]
+                'department' => 'support',
+            ],
         ];
 
         $roleIds = Role::pluck('id', 'name');
@@ -90,9 +88,20 @@ class UserSeeder extends Seeder
             $roleName = $user['role'] ?? null;
             $roleId = $roleIds[$roleName] ?? $defaultRoleId;
 
+            // Kalau password tidak di-set via .env, generate random 24-char
+            // dan cetak ke console. Jangan pernah hardcode credential di seeder.
+            $plainPassword = $user['password'];
+            $generatedRandom = false;
+            if (empty($plainPassword)) {
+                $plainPassword = Str::random(24);
+                $generatedRandom = true;
+            }
+
             $payload = Arr::except($user, ['role']);
             $payload['role_id'] = $roleId;
-            $payload['password'] = Hash::make($payload['password']);
+            $payload['password'] = Hash::make($plainPassword);
+
+            $existed = User::where('email', $payload['email'])->exists();
 
             User::updateOrCreate(
                 ['email' => $payload['email']],
@@ -101,6 +110,16 @@ class UserSeeder extends Seeder
                     'updated_at' => now(),
                 ])
             );
+
+            if ($generatedRandom && ! $existed) {
+                // Hanya cetak untuk user yang baru dibuat supaya tidak bocor
+                // kalau seeder di-rerun di environment lain.
+                $this->command?->warn(sprintf(
+                    '[UserSeeder] %s password di-generate: %s (simpan sekarang, tidak akan ditampilkan lagi)',
+                    $payload['email'],
+                    $plainPassword
+                ));
+            }
         }
     }
 }

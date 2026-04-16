@@ -248,15 +248,15 @@ class SitemapController extends Controller
      */
     public function robots()
     {
-        $adminSecretPath = trim((string) config('auth.admin_secret_path'), '/');
-        $adminSecretDisallow = $adminSecretPath ? 'Disallow: /'.$adminSecretPath.PHP_EOL : '';
-
+        // CATATAN KEAMANAN:
+        // Admin secret path (config('auth.admin_secret_path')) SENGAJA TIDAK
+        // dimunculkan di robots.txt. Publikasi path tersebut akan membocorkan
+        // URL login tersembunyi dan menggagalkan seluruh tujuan rotasinya.
         $robots = "# Robots.txt for Bizmark.ID" . PHP_EOL;
         $robots .= "# https://bizmark.id/robots.txt" . PHP_EOL . PHP_EOL;
 
         $robots .= "User-agent: *" . PHP_EOL;
         $robots .= "Allow: /" . PHP_EOL;
-        $robots .= $adminSecretDisallow;
         $robots .= "Disallow: /dashboard" . PHP_EOL;
         $robots .= "Disallow: /admin" . PHP_EOL;
         $robots .= "Disallow: /projects" . PHP_EOL;
@@ -279,14 +279,12 @@ class SitemapController extends Controller
         $robots .= "# Specific rules for major search engines" . PHP_EOL;
         $robots .= "User-agent: Googlebot" . PHP_EOL;
         $robots .= "Allow: /" . PHP_EOL;
-        $robots .= $adminSecretDisallow;
         $robots .= "Disallow: /dashboard" . PHP_EOL;
         $robots .= "Disallow: /admin" . PHP_EOL;
         $robots .= "Disallow: /api/" . PHP_EOL . PHP_EOL;
 
         $robots .= "User-agent: Bingbot" . PHP_EOL;
         $robots .= "Allow: /" . PHP_EOL;
-        $robots .= $adminSecretDisallow;
         $robots .= "Disallow: /dashboard" . PHP_EOL;
         $robots .= "Disallow: /admin" . PHP_EOL;
         $robots .= "Disallow: /api/" . PHP_EOL . PHP_EOL;

@@ -13,7 +13,8 @@ Allow: /id/blog/
 Allow: /en/blog/
 
 # Disallow admin and private areas
-Disallow: /__REDACTED_LEGACY_ADMIN_SEGMENT__
+# CATATAN: admin secret path SENGAJA tidak dicantumkan di sini agar tidak
+# membocorkan URL login tersembunyi yang sifatnya rahasia dan rotatable.
 Disallow: /dashboard
 Disallow: /projects
 Disallow: /tasks
@@ -56,13 +57,11 @@ Crawl-delay: 1
 # Specific rules for major search engines
 User-agent: Googlebot
 Allow: /
-Disallow: /__REDACTED_LEGACY_ADMIN_SEGMENT__
 Disallow: /dashboard
 Disallow: /api/
 
 User-agent: Bingbot
 Allow: /
-Disallow: /__REDACTED_LEGACY_ADMIN_SEGMENT__
 Disallow: /dashboard
 Disallow: /api/
 
