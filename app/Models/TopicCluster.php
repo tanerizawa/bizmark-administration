@@ -31,12 +31,27 @@ class TopicCluster extends Model
         return $query->where('status', 'active');
     }
 
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
+
+    public function articleTopics()
+    {
+        return $this->hasMany(ArticleTopic::class);
+    }
+
     public function getArticles()
     {
+        // Prefer FK relationship, fallback to JSON ids
+        $fkArticles = $this->articles()->published()->get();
+        if ($fkArticles->isNotEmpty()) {
+            return $fkArticles;
+        }
         if (empty($this->article_ids)) {
             return collect();
         }
-        return \App\Models\Article::whereIn('id', $this->article_ids)->published()->get();
+        return Article::whereIn('id', $this->article_ids)->published()->get();
     }
 
     public function getKeywordClusters()

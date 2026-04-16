@@ -55,6 +55,9 @@
     {{-- Alpine.js --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    {{-- IndexedDB Manager for Offline Sync --}}
+    <script src="/js/pwa/indexeddb.js"></script>
+    
     <style>
         * {
             -webkit-tap-highlight-color: transparent;
@@ -232,6 +235,16 @@
     {{-- Pull to Refresh Indicator --}}
     <div id="refreshIndicator" class="refresh-indicator">
         <i class="fas fa-sync-alt" style="color: rgb(0, 119, 181);"></i>
+    </div>
+
+    {{-- Offline Indicator Banner --}}
+    <div id="offlineIndicator" class="fixed top-0 left-0 right-0 z-[100] bg-amber-500 text-white text-center py-2 text-sm font-medium transform -translate-y-full transition-transform duration-300" style="padding-top: env(safe-area-inset-top);">
+        <i class="fas fa-wifi-slash mr-2"></i>Anda sedang offline
+    </div>
+
+    {{-- Sync Pending Indicator --}}
+    <div id="syncIndicator" class="hidden fixed top-[calc(56px+env(safe-area-inset-top)+4px)] right-4 z-50 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
+        <i class="fas fa-sync fa-spin mr-1"></i><span id="syncText">Syncing...</span>
     </div>
 
     {{-- Fixed Header --}}
@@ -631,8 +644,8 @@
         </div>
     </div>
 
-    {{-- Install PWA Prompt --}}
-    <div id="installPrompt" class="fixed bottom-20 left-4 right-4 bg-white rounded-2xl shadow-xl p-4 hidden z-50">
+    {{-- Install PWA Prompt - Android & Generic --}}
+    <div id="installPrompt" class="fixed bottom-20 left-4 right-4 bg-white rounded-2xl shadow-xl p-4 hidden z-50 transform transition-transform duration-300 scale-95 opacity-0">
         <div class="flex items-start gap-3">
             <div class="w-12 h-12 bg-[#E7F3F8] rounded-xl flex items-center justify-center flex-shrink-0">
                 <i class="fas fa-mobile-alt text-[#0A66C2] text-xl"></i>
@@ -660,31 +673,132 @@
         </div>
     </div>
 
+    {{-- Install PWA Prompt - iOS Safari --}}
+    <div id="iosInstallPrompt" class="fixed bottom-20 left-4 right-4 bg-white rounded-2xl shadow-xl p-4 hidden z-50 transform transition-transform duration-300 scale-95 opacity-0">
+        <div class="flex items-start gap-3">
+            <div class="w-12 h-12 bg-[#E7F3F8] rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="fab fa-apple text-gray-800 text-2xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-bold text-gray-900 mb-1">Install Bizmark Admin</h4>
+                <p class="text-sm text-gray-600 mb-3">Untuk pengalaman terbaik di iPhone:</p>
+                <div class="space-y-2 text-sm text-gray-700">
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 h-5 bg-gray-100 rounded flex items-center justify-center text-xs font-medium">1</span>
+                        <span>Tap <i class="fas fa-share-from-square text-[#007AFF]"></i> di Safari</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 h-5 bg-gray-100 rounded flex items-center justify-center text-xs font-medium">2</span>
+                        <span>Scroll & tap <strong>"Add to Home Screen"</strong></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 h-5 bg-gray-100 rounded flex items-center justify-center text-xs font-medium">3</span>
+                        <span>Tap <strong>"Add"</strong></span>
+                    </div>
+                </div>
+                <button onclick="dismissIOSInstallPrompt()" 
+                        class="mt-3 w-full py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium 
+                               hover:bg-gray-200 transition-colors">
+                    Mengerti
+                </button>
+            </div>
+            <button onclick="dismissIOSInstallPrompt()" 
+                    class="text-gray-400 hover:text-gray-600 -mt-1 -mr-1">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    {{-- Offline/Sync Indicator --}}
+    <div id="syncIndicator" class="fixed top-[calc(56px+env(safe-area-inset-top)+8px)] right-4 bg-amber-500 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg hidden z-50 flex items-center gap-2">
+        <i class="fas fa-sync fa-spin"></i>
+        <span id="syncText">Syncing...</span>
+    </div>
+
     {{-- Scripts --}}
     <script>
-        // Service Worker Registration
+        // Service Worker Registration (PWA Mobile)
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
+            navigator.serviceWorker.register('/sw-mobile.js')
                 .then(registration => {
-                    console.log('✅ Service Worker registered:', registration);
+                    console.log('✅ Mobile Service Worker registered:', registration.scope);
+                    
+                    // Check for updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New version available
+                                if (confirm('Ada versi baru tersedia. Refresh sekarang?')) {
+                                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    });
                 })
                 .catch(error => {
                     console.log('❌ Service Worker registration failed:', error);
                 });
+            
+            // Listen for SW controller change (after update)
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
+            });
         }
 
-        // PWA Install Prompt
+        // PWA Install Prompt - Enhanced with iOS support and 7-day cool-off
         let deferredPrompt;
-
+        const INSTALL_COOLOFF_DAYS = 7;
+        
+        // Detect iOS Safari
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        
+        // Check if install prompt should be shown
+        function shouldShowInstallPrompt() {
+            if (isInStandaloneMode) return false; // Already installed
+            
+            const dismissedTime = localStorage.getItem('installPromptDismissed');
+            if (dismissedTime) {
+                const daysSinceDismissed = (Date.now() - parseInt(dismissedTime)) / (1000 * 60 * 60 * 24);
+                if (daysSinceDismissed < INSTALL_COOLOFF_DAYS) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        // Show appropriate install prompt
+        function showAppropriateInstallPrompt() {
+            if (!shouldShowInstallPrompt()) return;
+            
+            // Delay showing prompt
+            setTimeout(() => {
+                if (isIOS && isSafari) {
+                    showIOSInstallPrompt();
+                } else if (deferredPrompt) {
+                    showInstallPrompt();
+                }
+            }, 3000);
+        }
+        
+        // Android/Chrome install flow
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            
-            // Show custom install prompt after 3 seconds
-            setTimeout(() => {
-                document.getElementById('installPrompt').classList.remove('hidden');
-            }, 3000);
+            showAppropriateInstallPrompt();
         });
+        
+        function showInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.classList.remove('hidden');
+            setTimeout(() => {
+                prompt.classList.remove('scale-95', 'opacity-0');
+                prompt.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
 
         function installPWA() {
             if (deferredPrompt) {
@@ -692,6 +806,7 @@
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
                         console.log('✅ User accepted PWA install');
+                        localStorage.setItem('pwaInstalled', 'true');
                     }
                     deferredPrompt = null;
                     dismissInstallPrompt();
@@ -700,8 +815,38 @@
         }
 
         function dismissInstallPrompt() {
-            document.getElementById('installPrompt').classList.add('hidden');
-            localStorage.setItem('installPromptDismissed', Date.now());
+            const prompt = document.getElementById('installPrompt');
+            prompt.classList.add('scale-95', 'opacity-0');
+            prompt.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                prompt.classList.add('hidden');
+            }, 300);
+            localStorage.setItem('installPromptDismissed', Date.now().toString());
+        }
+        
+        // iOS Safari install instructions
+        function showIOSInstallPrompt() {
+            const prompt = document.getElementById('iosInstallPrompt');
+            prompt.classList.remove('hidden');
+            setTimeout(() => {
+                prompt.classList.remove('scale-95', 'opacity-0');
+                prompt.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+        
+        function dismissIOSInstallPrompt() {
+            const prompt = document.getElementById('iosInstallPrompt');
+            prompt.classList.add('scale-95', 'opacity-0');
+            prompt.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                prompt.classList.add('hidden');
+            }, 300);
+            localStorage.setItem('installPromptDismissed', Date.now().toString());
+        }
+        
+        // Check for iOS on page load
+        if (isIOS && isSafari && !isInStandaloneMode && shouldShowInstallPrompt()) {
+            setTimeout(showIOSInstallPrompt, 3000);
         }
 
         // Quick Add Bottom Sheet
@@ -981,6 +1126,136 @@
             // Store initial state
             sessionStorage.setItem('wasMobile', (window.innerWidth < 768).toString());
         })();
+        
+        // ============= Offline/Background Sync Integration =============
+        
+        // Handle service worker sync messages
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data.type === 'SYNC_SUCCESS') {
+                    showToast('Data berhasil disinkronkan', 'success');
+                    updateSyncIndicator();
+                }
+            });
+        }
+        
+        // Check and update sync indicator
+        async function updateSyncIndicator() {
+            if (typeof BizmarkDB !== 'undefined') {
+                const count = await BizmarkDB.getPendingRequestsCount();
+                const indicator = document.getElementById('syncIndicator');
+                const text = document.getElementById('syncText');
+                
+                if (count > 0) {
+                    indicator.classList.remove('hidden');
+                    text.textContent = `${count} pending`;
+                } else {
+                    indicator.classList.add('hidden');
+                }
+            }
+        }
+        
+        // Queue a request for offline sync
+        async function queueOfflineRequest(url, method, body, type = 'form') {
+            if (typeof BizmarkDB === 'undefined') {
+                console.error('BizmarkDB not loaded');
+                return false;
+            }
+            
+            try {
+                await BizmarkDB.addPendingRequest(url, method, body, type);
+                
+                // Request background sync if supported
+                if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                    const registration = await navigator.serviceWorker.ready;
+                    await registration.sync.register('sync-pending-data');
+                }
+                
+                updateSyncIndicator();
+                showToast('Data disimpan offline, akan sync otomatis', 'info');
+                return true;
+            } catch (error) {
+                console.error('Failed to queue request:', error);
+                return false;
+            }
+        }
+        
+        // Save form as draft
+        async function saveFormDraft(formType, formData) {
+            if (typeof BizmarkDB !== 'undefined') {
+                try {
+                    await BizmarkDB.saveFormDraft(formType, formData);
+                    showToast('Draft tersimpan', 'info');
+                } catch (error) {
+                    console.error('Failed to save draft:', error);
+                }
+            }
+        }
+        
+        // Check for pending sync on load
+        document.addEventListener('DOMContentLoaded', updateSyncIndicator);
+        
+        // Offline indicator toggle
+        function updateOfflineIndicator(isOnline) {
+            const indicator = document.getElementById('offlineIndicator');
+            if (indicator) {
+                if (isOnline) {
+                    indicator.style.transform = 'translateY(-100%)';
+                } else {
+                    indicator.style.transform = 'translateY(0)';
+                }
+            }
+        }
+        
+        // Check initial online status
+        document.addEventListener('DOMContentLoaded', () => {
+            updateOfflineIndicator(navigator.onLine);
+        });
+        
+        // Attempt sync when coming back online
+        window.addEventListener('online', async () => {
+            updateOfflineIndicator(true);
+            showToast('Kembali online', 'success');
+            
+            if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                const registration = await navigator.serviceWorker.ready;
+                await registration.sync.register('sync-pending-data');
+            }
+        });
+        
+        window.addEventListener('offline', () => {
+            updateOfflineIndicator(false);
+            showToast('Anda sedang offline', 'warning');
+        });
+        
+        // Toast notification helper
+        function showToast(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-amber-500',
+                info: 'bg-blue-500'
+            };
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-24 left-1/2 -translate-x-1/2 ${colors[type]} text-white px-4 py-2 rounded-full shadow-lg z-50 flex items-center gap-2 text-sm font-medium animate-fade-in`;
+            toast.innerHTML = `<i class="fas ${icons[type]}"></i> ${message}`;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('animate-fade-in');
+                toast.classList.add('animate-fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
     </script>
 
     @stack('scripts')

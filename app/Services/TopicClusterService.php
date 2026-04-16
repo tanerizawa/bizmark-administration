@@ -279,6 +279,7 @@ PROMPT;
                 'tags' => [$cluster->service_slug, $subtopic['type'] ?? 'article'],
                 'status' => 'pending',
                 'priority' => $priority,
+                'topic_cluster_id' => $cluster->id,
             ]);
 
             $created[] = [

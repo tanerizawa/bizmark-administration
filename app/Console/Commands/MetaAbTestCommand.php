@@ -12,6 +12,7 @@ class MetaAbTestCommand extends Command
 
     public function handle(MetaAbTestService $service): int
     {
+        try {
         $runAll = $this->option('all');
 
         if ($this->option('evaluate') || $runAll) {
@@ -71,5 +72,10 @@ class MetaAbTestCommand extends Command
         }
 
         return 0;
+        } catch (\Exception $e) {
+            \Log::error('Meta A/B test failed: ' . $e->getMessage());
+            $this->error('A/B test failed: ' . $e->getMessage());
+            return 1;
+        }
     }
 }

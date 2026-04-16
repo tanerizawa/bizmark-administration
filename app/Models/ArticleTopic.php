@@ -28,6 +28,7 @@ class ArticleTopic extends Model
         'generation_notes',
         'views_count',
         'similarity_score',
+        'topic_cluster_id',
     ];
 
     protected $casts = [
@@ -66,6 +67,11 @@ class ArticleTopic extends Model
     public function article()
     {
         return $this->belongsTo(Article::class);
+    }
+
+    public function topicCluster()
+    {
+        return $this->belongsTo(TopicCluster::class);
     }
 
     public function schedules()

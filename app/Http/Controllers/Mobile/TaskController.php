@@ -35,15 +35,16 @@ class TaskController extends Controller
                 break;
         }
         
-        // Order by priority and due date
+        // Order by priority and due date (database-agnostic)
+        $today = now()->toDateString();
         $tasks = $query->orderByRaw("
             CASE 
                 WHEN status = 'done' THEN 3
-                WHEN due_date < NOW() THEN 0
-                WHEN due_date::date = CURRENT_DATE THEN 1
+                WHEN due_date < ? THEN 0
+                WHEN DATE(due_date) = ? THEN 1
                 ELSE 2
             END
-        ")
+        ", [now(), $today])
         ->orderBy('due_date', 'asc')
         ->paginate(20);
         

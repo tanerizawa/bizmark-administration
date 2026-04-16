@@ -65,8 +65,8 @@
                         $careerRoute = route('career.index');
                     @endphp
                     <li><a href="{{ app()->getLocale() === 'en' ? route('services.index.en') : route('services.index.id') }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.services') }}</a></li>
-                    <li><a href="{{ $landingRoute }}#process" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.process') }}</a></li>
-                    <li><a href="{{ $landingRoute }}#about" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.about') }}</a></li>
+                    <li><a href="{{ app()->getLocale() === 'en' ? route('process.en') : route('process.id') }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.process') }}</a></li>
+                    <li><a href="{{ app()->getLocale() === 'en' ? route('about.en') : route('about.id') }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.about') }}</a></li>
                     <li><a href="{{ $blogRoute }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.nav.blog') }}</a></li>
                     <li><a href="{{ $careerRoute }}" class="text-gray-300 hover:text-white transition inline-block py-1.5 min-h-[44px] flex items-center">{{ __('landing.footer.careers') }}</a></li>
                 </ul>

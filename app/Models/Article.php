@@ -26,6 +26,7 @@ class Article extends Model
         'views_count',
         'author_id',
         'source_type',
+        'topic_cluster_id',
         'meta_title',
         'meta_description',
         'meta_keywords',
@@ -81,6 +82,11 @@ class Article extends Model
             if ($article->isDirty('content')) {
                 $wordCount = str_word_count(strip_tags($article->content));
                 $article->reading_time = ceil($wordCount / 200);
+            }
+
+            // Auto-set published_at when status changed to published
+            if ($article->isDirty('status') && $article->status === 'published' && $article->published_at === null) {
+                $article->published_at = now();
             }
         });
     }
@@ -163,11 +169,33 @@ class Article extends Model
     }
 
     /**
+     * Get a validated featured image URL.
+     * Returns null if the file does not exist on disk.
+     */
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        if (empty($this->featured_image)) {
+            return null;
+        }
+
+        if (!\Storage::disk('public')->exists($this->featured_image)) {
+            return null;
+        }
+
+        return \Storage::url($this->featured_image);
+    }
+
+    /**
      * Relationships
      */
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function topicCluster()
+    {
+        return $this->belongsTo(TopicCluster::class);
     }
 
     public function syndications()
@@ -193,6 +221,11 @@ class Article extends Model
     public function metaAbTests()
     {
         return $this->hasMany(MetaAbTest::class);
+    }
+
+    public function socialPosts()
+    {
+        return $this->hasMany(SocialPost::class);
     }
 
     /**

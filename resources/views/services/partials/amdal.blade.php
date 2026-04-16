@@ -743,35 +743,35 @@ $amdalFaqs = [
 <script type="application/ld+json">
 {
     "@@context": "https://schema.org",
-    "@graph": [
+    "@@graph": [
         {
-            "@type": "Service",
+            "@@type": "Service",
             "name": "Jasa Pengurusan AMDAL — Tenaga Ahli Bersertifikat",
             "description": "{{ $service['long_description'] }}",
             "provider": {
-                "@type": "Organization",
+                "@@type": "Organization",
                 "name": "Bizmark.ID",
                 "url": "https://bizmark.id",
                 "telephone": "+6283879602855",
                 "address": {
-                    "@type": "PostalAddress",
+                    "@@type": "PostalAddress",
                     "addressLocality": "Karawang",
                     "addressRegion": "Jawa Barat",
                     "addressCountry": "ID"
                 }
             },
             "areaServed": [
-                {"@type": "City", "name": "Karawang"},
-                {"@type": "City", "name": "Jakarta"},
-                {"@type": "City", "name": "Bekasi"},
-                {"@type": "City", "name": "Tangerang"},
-                {"@type": "City", "name": "Surabaya"},
-                {"@type": "City", "name": "Bogor"}
+                {"@@type": "City", "name": "Karawang"},
+                {"@@type": "City", "name": "Jakarta"},
+                {"@@type": "City", "name": "Bekasi"},
+                {"@@type": "City", "name": "Tangerang"},
+                {"@@type": "City", "name": "Surabaya"},
+                {"@@type": "City", "name": "Bogor"}
             ],
             "serviceType": "Environmental Impact Assessment (AMDAL)",
             "category": "Perizinan Lingkungan",
             "offers": {
-                "@type": "Offer",
+                "@@type": "Offer",
                 "priceCurrency": "IDR",
                 "price": "80000000",
                 "priceValidUntil": "2026-12-31",
@@ -779,28 +779,28 @@ $amdalFaqs = [
             }
         },
         {
-            "@type": "HowTo",
+            "@@type": "HowTo",
             "name": "Proses Pengurusan AMDAL di Indonesia",
             "description": "Langkah-langkah pengurusan AMDAL dari konsultasi langsung dengan tenaga ahli hingga persetujuan lingkungan terbit.",
             "totalTime": "P6M",
             "step": [
-                {"@type": "HowToStep", "position": 1, "name": "Konsultasi & Penapisan", "text": "Konsultasi langsung dengan tenaga ahli bersertifikat: analisis kegiatan, penapisan wajib AMDAL, penetapan batas wilayah studi."},
-                {"@type": "HowToStep", "position": 2, "name": "Penyusunan KA-ANDAL", "text": "Perumusan ruang lingkup, metodologi analisis, rencana pengumpulan data baseline, dan rencana pelibatan masyarakat."},
-                {"@type": "HowToStep", "position": 3, "name": "Survei Baseline & Pengambilan Data", "text": "Survei lapangan multi-parameter, analisis laboratorium terakreditasi KAN, inventarisasi biodiversitas dan data sosial-ekonomi."},
-                {"@type": "HowToStep", "position": 4, "name": "Penyusunan ANDAL, RKL, RPL", "text": "Analisis dampak penting, pemodelan dispersi, evaluasi alternatif, dan penyusunan rencana pengelolaan serta pemantauan lingkungan."},
-                {"@type": "HowToStep", "position": 5, "name": "Konsultasi Publik", "text": "Pelibatan masyarakat terdampak, pengumpulan masukan, dan integrasi tanggapan ke dalam dokumen AMDAL."},
-                {"@type": "HowToStep", "position": 6, "name": "Penilaian & Persetujuan", "text": "Penilaian oleh Komisi Penilai AMDAL, klarifikasi/penyempurnaan, hingga terbit Keputusan Kelayakan Lingkungan."}
+                {"@@type": "HowToStep", "position": 1, "name": "Konsultasi & Penapisan", "text": "Konsultasi langsung dengan tenaga ahli bersertifikat: analisis kegiatan, penapisan wajib AMDAL, penetapan batas wilayah studi."},
+                {"@@type": "HowToStep", "position": 2, "name": "Penyusunan KA-ANDAL", "text": "Perumusan ruang lingkup, metodologi analisis, rencana pengumpulan data baseline, dan rencana pelibatan masyarakat."},
+                {"@@type": "HowToStep", "position": 3, "name": "Survei Baseline & Pengambilan Data", "text": "Survei lapangan multi-parameter, analisis laboratorium terakreditasi KAN, inventarisasi biodiversitas dan data sosial-ekonomi."},
+                {"@@type": "HowToStep", "position": 4, "name": "Penyusunan ANDAL, RKL, RPL", "text": "Analisis dampak penting, pemodelan dispersi, evaluasi alternatif, dan penyusunan rencana pengelolaan serta pemantauan lingkungan."},
+                {"@@type": "HowToStep", "position": 5, "name": "Konsultasi Publik", "text": "Pelibatan masyarakat terdampak, pengumpulan masukan, dan integrasi tanggapan ke dalam dokumen AMDAL."},
+                {"@@type": "HowToStep", "position": 6, "name": "Penilaian & Persetujuan", "text": "Penilaian oleh Komisi Penilai AMDAL, klarifikasi/penyempurnaan, hingga terbit Keputusan Kelayakan Lingkungan."}
             ]
         },
         {
-            "@type": "FAQPage",
+            "@@type": "FAQPage",
             "mainEntity": [
                 @foreach($amdalFaqs as $index => $faq)
                 {
-                    "@type": "Question",
+                    "@@type": "Question",
                     "name": @json($faq['q']),
                     "acceptedAnswer": {
-                        "@type": "Answer",
+                        "@@type": "Answer",
                         "text": @json($faq['a'])
                     }
                 }@if($index < count($amdalFaqs) - 1),@endif

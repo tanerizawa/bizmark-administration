@@ -69,7 +69,8 @@
                     @if($user->avatar_url ?? false)
                     <img src="{{ $user->avatar_url }}" 
                          alt="{{ $user->name }}"
-                         class="w-14 h-14 rounded-full object-cover">
+                         class="w-14 h-14 rounded-full object-cover"
+                         loading="lazy">
                     @else
                     <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#0A66C2] to-[#004182] flex items-center justify-center text-white font-bold text-lg">
                         {{ strtoupper(substr($user->name, 0, 1)) }}

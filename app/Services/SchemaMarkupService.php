@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Article;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class SchemaMarkupService
@@ -14,17 +15,13 @@ class SchemaMarkupService
     {
         $url = config('app.url') . '/blog/' . $article->slug;
 
-        return [
+        $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'Article',
             'headline' => mb_substr($article->meta_title ?? $article->title, 0, 110),
             'description' => mb_substr($article->meta_description ?? $article->excerpt ?? '', 0, 300),
             'image' => $article->featured_image ? asset('storage/' . $article->featured_image) : asset('images/og-image-id.jpg'),
-            'author' => [
-                '@type' => 'Organization',
-                'name' => 'Bizmark.ID',
-                'url' => config('app.url'),
-            ],
+            'author' => $this->buildAuthorSchema($article->author),
             'publisher' => [
                 '@type' => 'Organization',
                 'name' => 'Bizmark.ID',
@@ -45,6 +42,61 @@ class SchemaMarkupService
             'inLanguage' => $article->language === 'en' ? 'en-US' : 'id-ID',
             'wordCount' => str_word_count(strip_tags($article->content ?? '')),
         ];
+
+        return $schema;
+    }
+
+    /**
+     * Build Person or Organization author schema with E-E-A-T signals
+     */
+    protected function buildAuthorSchema(?User $author): array
+    {
+        if (!$author) {
+            return [
+                '@type' => 'Organization',
+                'name' => 'Bizmark.ID',
+                'url' => config('app.url'),
+            ];
+        }
+
+        $authorSchema = [
+            '@type' => 'Person',
+            'name' => $author->author_display_name,
+            'url' => config('app.url') . '/blog',
+        ];
+
+        if ($author->job_title) {
+            $authorSchema['jobTitle'] = $author->job_title;
+        } elseif ($author->position) {
+            $authorSchema['jobTitle'] = $author->position;
+        }
+
+        if ($author->bio) {
+            $authorSchema['description'] = mb_substr($author->bio, 0, 300);
+        }
+
+        if ($author->expertise) {
+            $authorSchema['knowsAbout'] = $author->expertise_list;
+        }
+
+        $sameAs = [];
+        if ($author->linkedin_url) {
+            $sameAs[] = $author->linkedin_url;
+        }
+        if ($author->twitter_url) {
+            $sameAs[] = $author->twitter_url;
+        }
+        if (!empty($sameAs)) {
+            $authorSchema['sameAs'] = $sameAs;
+        }
+
+        $authorSchema['worksFor'] = [
+            '@type' => 'Organization',
+            'name' => 'Bizmark.ID',
+            'url' => config('app.url'),
+        ];
+
+        return $authorSchema;
     }
 
     /**

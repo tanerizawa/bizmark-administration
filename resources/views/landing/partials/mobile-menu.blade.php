@@ -68,6 +68,19 @@
                     <span class="ml-1">{{ __('landing.nav.blog') }}</span>
                 </a>
                 
+                <!-- Permohonan Section (Highlighted) -->
+                <div class="border-t border-white/20 my-2"></div>
+                <a href="{{ route('permohonan.index') }}" 
+                   class="text-white transition px-4 py-3.5 rounded-lg bg-gradient-to-r from-orange-500/30 to-amber-500/30 hover:from-orange-500/40 hover:to-amber-500/40 active:from-orange-500/50 active:to-amber-500/50 flex items-center min-h-[44px] border border-orange-400/30" 
+                   onclick="toggleMobileMenu()">
+                    <i class="fas fa-file-invoice-dollar w-6 inline-block text-orange-300" aria-hidden="true"></i>
+                    <span class="ml-1 font-semibold">Permohonan Biaya</span>
+                    <span class="ml-auto flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-orange-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-400"></span>
+                    </span>
+                </a>
+                
                 <!-- Tools Section -->
                 <div class="border-t border-white/20 my-2"></div>
                 <p class="px-4 py-1 text-white/50 text-xs uppercase tracking-wider font-semibold">Tools</p>

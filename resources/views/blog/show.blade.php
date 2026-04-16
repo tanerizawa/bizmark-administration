@@ -7,7 +7,7 @@
 @section('og_type', 'article')
 @section('og_title', $article->meta_title ?? $article->title)
 @section('og_description', $article->meta_description ?? $article->excerpt ?? '')
-@section('og_image', $article->featured_image ? asset('storage/' . $article->featured_image) : '')
+@section('og_image', $article->featured_image_url ?? '')
 @section('twitter_title', $article->meta_title ?? $article->title)
 @section('twitter_description', $article->meta_description ?? $article->excerpt ?? '')
 @section('article_published_time', ($article->published_at ?? $article->created_at)->toIso8601String())
@@ -186,6 +186,28 @@
                 <span class="text-gray-400 text-sm"><i class="far fa-eye mr-1"></i>{{ number_format($article->views_count) }} views</span>
             </div>
 
+            <!-- Author Byline -->
+            @if($article->author)
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0 overflow-hidden">
+                    @if($article->author->avatar)
+                        <img src="{{ asset('storage/' . $article->author->avatar) }}" alt="{{ $article->author->author_display_name }}" class="w-full h-full object-cover">
+                    @else
+                        {{ strtoupper(substr($article->author->author_display_name, 0, 2)) }}
+                    @endif
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-semibold text-gray-900">{{ $article->author->author_display_name }}</span>
+                        <span class="inline-flex items-center px-2 py-0.5 bg-green-50 text-green-700 rounded text-[10px] font-bold uppercase tracking-wide">
+                            <i class="fas fa-check-circle mr-1 text-[9px]"></i>Verified Expert
+                        </span>
+                    </div>
+                    <span class="text-xs text-gray-500">{{ $article->author->job_title ?: $article->author->position }}</span>
+                </div>
+            </div>
+            @endif
+
             <!-- Title -->
             <h1 class="text-3xl md:text-4xl lg:text-[2.75rem] font-bold mb-5 leading-[1.15] text-gray-900 tracking-tight">
                 {{ $article->title }}
@@ -200,11 +222,11 @@
 </section>
 
 <!-- Featured Image -->
-@if($article->featured_image)
+@if($article->featured_image_url)
 <section class="px-4 pb-8 bg-white">
     <div class="container mx-auto max-w-5xl">
         <div class="rounded-2xl overflow-hidden shadow-lg">
-            <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-auto" loading="eager">
+            <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full h-auto" width="1200" height="630" loading="eager">
         </div>
     </div>
 </section>
@@ -260,6 +282,69 @@
                         </a>
                     </div>
                 </div>
+
+                <!-- Author Bio Box (E-E-A-T) -->
+                @if($article->author)
+                <div class="mt-8 pt-8 border-t border-gray-200">
+                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                        <div class="flex items-start gap-5">
+                            {{-- Avatar --}}
+                            <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl flex-shrink-0 overflow-hidden">
+                                @if($article->author->avatar)
+                                    <img src="{{ asset('storage/' . $article->author->avatar) }}" alt="{{ $article->author->author_display_name }}" class="w-full h-full object-cover">
+                                @else
+                                    {{ strtoupper(substr($article->author->author_display_name, 0, 2)) }}
+                                @endif
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                {{-- Name + credentials --}}
+                                <div class="flex items-center gap-2 flex-wrap mb-1">
+                                    <h4 class="text-lg font-bold text-gray-900">{{ $article->author->author_display_name }}</h4>
+                                    <span class="inline-flex items-center px-2 py-0.5 bg-green-50 text-green-700 rounded text-[10px] font-bold uppercase tracking-wide">
+                                        <i class="fas fa-shield-alt mr-1 text-[9px]"></i>Verified Expert
+                                    </span>
+                                </div>
+
+                                {{-- Job title --}}
+                                @if($article->author->job_title || $article->author->position)
+                                <p class="text-sm font-medium text-primary mb-2">
+                                    {{ $article->author->job_title ?: $article->author->position }} di Bizmark.ID
+                                </p>
+                                @endif
+
+                                {{-- Bio --}}
+                                @if($article->author->bio)
+                                <p class="text-sm text-gray-600 leading-relaxed mb-3">{{ $article->author->bio }}</p>
+                                @endif
+
+                                {{-- Expertise tags --}}
+                                @if($article->author->expertise)
+                                <div class="flex flex-wrap gap-1.5 mb-3">
+                                    @foreach($article->author->expertise_list as $skill)
+                                    <span class="px-2 py-0.5 bg-white text-gray-600 rounded text-xs font-medium border border-gray-200">{{ $skill }}</span>
+                                    @endforeach
+                                </div>
+                                @endif
+
+                                {{-- Social links --}}
+                                <div class="flex items-center gap-3">
+                                    @if($article->author->linkedin_url)
+                                    <a href="{{ $article->author->linkedin_url }}" target="_blank" rel="noopener" class="text-gray-400 hover:text-[#0A66C2] transition" title="LinkedIn">
+                                        <i class="fab fa-linkedin text-lg"></i>
+                                    </a>
+                                    @endif
+                                    @if($article->author->twitter_url)
+                                    <a href="{{ $article->author->twitter_url }}" target="_blank" rel="noopener" class="text-gray-400 hover:text-[#1DA1F2] transition" title="Twitter">
+                                        <i class="fab fa-twitter text-lg"></i>
+                                    </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
 
             <!-- Sticky Sidebar TOC (desktop) -->
@@ -297,8 +382,8 @@
             @foreach($relatedArticles as $related)
             <article class="group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-lg transition-all duration-300">
                 <div class="relative h-44 overflow-hidden bg-gray-100">
-                    @if($related->featured_image)
-                    <img src="{{ Storage::url($related->featured_image) }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    @if($related->featured_image_url)
+                    <img src="{{ $related->featured_image_url }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" width="1200" height="630" loading="lazy">
                     @else
                     <div class="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
                         <i class="fas fa-newspaper text-5xl text-gray-200"></i>

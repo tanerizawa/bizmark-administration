@@ -152,7 +152,20 @@
 </div>
 
 <script>
+// VAPID public key from server
+const VAPID_PUBLIC_KEY = '{{ config("webpush.vapid.public_key") }}';
+
 async function updatePreference(key, value) {
+    // Special handling for push notifications
+    if (key === 'push_notifications') {
+        if (value) {
+            await subscribeToPush();
+        } else {
+            await unsubscribeFromPush();
+        }
+        return;
+    }
+    
     try {
         const response = await fetch('{{ mobile_route("profile.preferences") }}', {
             method: 'POST',
@@ -166,17 +179,114 @@ async function updatePreference(key, value) {
         const data = await response.json();
         
         if (data.success) {
-            // Show success feedback
-            const toast = document.createElement('div');
-            toast.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-            toast.textContent = 'Preferensi disimpan';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+            showToast('Preferensi disimpan', 'success');
         }
     } catch (error) {
         console.error('Error updating preference:', error);
-        alert('Gagal menyimpan preferensi');
+        showToast('Gagal menyimpan preferensi', 'error');
     }
+}
+
+async function subscribeToPush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        showToast('Browser tidak mendukung push notification', 'error');
+        document.getElementById('pushNotifications').checked = false;
+        return;
+    }
+    
+    try {
+        // Request notification permission
+        const permission = await Notification.requestPermission();
+        
+        if (permission !== 'granted') {
+            showToast('Izin notifikasi ditolak', 'error');
+            document.getElementById('pushNotifications').checked = false;
+            return;
+        }
+        
+        // Get service worker registration
+        const registration = await navigator.serviceWorker.ready;
+        
+        // Subscribe to push
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+        
+        // Send subscription to server
+        const response = await fetch('{{ mobile_route("push.subscribe") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(subscription.toJSON())
+        });
+        
+        if (response.ok) {
+            showToast('Push notification aktif', 'success');
+            // Also save preference
+            await savePreference('push_notifications', true);
+        } else {
+            throw new Error('Failed to save subscription');
+        }
+    } catch (error) {
+        console.error('Push subscription error:', error);
+        showToast('Gagal mengaktifkan push notification', 'error');
+        document.getElementById('pushNotifications').checked = false;
+    }
+}
+
+async function unsubscribeFromPush() {
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        
+        if (subscription) {
+            await subscription.unsubscribe();
+            
+            // Notify server
+            await fetch('{{ mobile_route("push.unsubscribe") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ endpoint: subscription.endpoint })
+            });
+        }
+        
+        showToast('Push notification dinonaktifkan', 'success');
+        await savePreference('push_notifications', false);
+    } catch (error) {
+        console.error('Push unsubscribe error:', error);
+        showToast('Gagal menonaktifkan push notification', 'error');
+    }
+}
+
+async function savePreference(key, value) {
+    try {
+        await fetch('{{ mobile_route("profile.preferences") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ [key]: value })
+        });
+    } catch (error) {
+        console.error('Error saving preference:', error);
+    }
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white px-4 py-2 rounded-lg shadow-lg z-50`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
 }
 
 async function clearCache() {
@@ -188,11 +298,48 @@ async function clearCache() {
             await Promise.all(cacheNames.map(name => caches.delete(name)));
         }
         
-        alert('Cache berhasil dihapus. Aplikasi akan dimuat ulang.');
-        window.location.reload();
+        // Also tell service worker to clear cache
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_CACHE' });
+        }
+        
+        showToast('Cache berhasil dihapus', 'success');
+        setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
         console.error('Error clearing cache:', error);
-        alert('Gagal menghapus cache');
+        showToast('Gagal menghapus cache', 'error');
+    }
+}
+
+// Helper function to convert VAPID key
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+    
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+// Check current push subscription status on load
+async function checkPushStatus() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        document.getElementById('pushNotifications').disabled = true;
+        return;
+    }
+    
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        document.getElementById('pushNotifications').checked = !!subscription;
+    } catch (error) {
+        console.error('Error checking push status:', error);
     }
 }
 
@@ -210,7 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const fields = {
-        push_notifications: 'pushNotifications',
         email_notifications: 'emailNotifications',
         sound_vibration: 'soundVibration',
         dark_mode: 'darkMode',
@@ -224,6 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
             el.checked = preferences[key] !== undefined ? preferences[key] : defaultPrefs[key];
         }
     }
+    
+    // Check actual push subscription status
+    checkPushStatus();
 });
 </script>
 @endsection

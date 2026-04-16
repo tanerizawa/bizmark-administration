@@ -9,7 +9,9 @@ use App\Models\CompetitorAnalysis;
 use App\Models\ContentRefreshLog;
 use App\Models\ContentSyndication;
 use App\Models\KeywordCluster;
+use App\Models\KeywordPositionHistory;
 use App\Models\MetaAbTest;
+use App\Models\RankingAlert;
 use App\Models\SearchConsoleData;
 use App\Models\SeoReport;
 use App\Models\SeoScore;
@@ -1065,5 +1067,177 @@ class SeoAnalyticsController extends Controller
             'candidates' => $unscored->values(),
             'total' => $unscored->count(),
         ]);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // POSITION TRACKING (Phase 5: Intelligence)
+    // ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Position tracking dashboard.
+     */
+    public function positions(Request $request, CompetitiveIntelligenceService $intelligence)
+    {
+        $period = $request->get('period', '7days');
+        $days = match ($period) {
+            '7days' => 7,
+            '30days' => 30,
+            '90days' => 90,
+            default => 7,
+        };
+
+        // Get summary stats
+        $summary = $intelligence->getPositionTrackingSummary();
+
+        // Get latest positions per keyword
+        $latestPositions = KeywordPositionHistory::latestPerKeyword()
+            ->orderBy('position')
+            ->orderByDesc('tracked_at')
+            ->paginate(25);
+
+        // Get big movers (significant changes)
+        $bigMovers = KeywordPositionHistory::lastDays($days)
+            ->significantChanges(5)
+            ->orderByDesc('position_change')
+            ->limit(10)
+            ->get();
+
+        // Position tier distribution
+        $tierDistribution = KeywordPositionHistory::latestPerKeyword()
+            ->selectRaw("
+                CASE 
+                    WHEN position <= 3 THEN 'top3'
+                    WHEN position <= 10 THEN 'page1'
+                    WHEN position <= 20 THEN 'page2'
+                    WHEN position <= 30 THEN 'page3'
+                    WHEN position IS NOT NULL THEN 'beyond'
+                    ELSE 'notranking'
+                END as tier,
+                COUNT(*) as cnt
+            ")
+            ->groupBy('tier')
+            ->pluck('cnt', 'tier')
+            ->toArray();
+
+        // Recent tracking count
+        $recentTracking = [
+            'today' => KeywordPositionHistory::today()->count(),
+            'yesterday' => KeywordPositionHistory::whereDate('tracked_at', now()->subDay())->count(),
+            'last_week' => KeywordPositionHistory::lastDays(7)->count(),
+        ];
+
+        // Trend chart data (average position over time)
+        $trendData = KeywordPositionHistory::lastDays($days)
+            ->whereNotNull('position')
+            ->selectRaw('DATE(tracked_at) as date, AVG(position) as avg_position, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->map(fn($r) => [
+                'date' => $r->date,
+                'avg_position' => round($r->avg_position, 1),
+                'count' => $r->count,
+            ])
+            ->toArray();
+
+        return view('admin.seo.positions', compact(
+            'summary', 'latestPositions', 'bigMovers', 'tierDistribution',
+            'recentTracking', 'trendData', 'period', 'days'
+        ));
+    }
+
+    /**
+     * Position trend for a specific keyword.
+     */
+    public function positionTrend(string $keyword, CompetitiveIntelligenceService $intelligence)
+    {
+        $keyword = urldecode($keyword);
+        $trend = $intelligence->getKeywordTrend($keyword, 30);
+
+        return view('admin.seo.position-trend', compact('keyword', 'trend'));
+    }
+
+    /**
+     * Trigger position tracking manually.
+     */
+    public function trackPositions(Request $request, CompetitiveIntelligenceService $intelligence)
+    {
+        $keyword = $request->get('keyword');
+        $limit = (int) $request->get('limit', 20);
+
+        if ($keyword) {
+            // Track single keyword
+            $result = $intelligence->trackPosition($keyword);
+            
+            if ($result) {
+                return back()->with('success', "Position tracked for '{$keyword}': #{$result->position}");
+            }
+            
+            return back()->with('error', "Failed to track position for '{$keyword}'");
+        }
+
+        // Batch tracking
+        $results = $intelligence->trackAllPositions($limit);
+
+        return back()->with('success', 
+            "Tracked {$results['tracked']} keywords. " .
+            "Skipped {$results['skipped']}. " .
+            "Created {$results['alerts_created']} alerts."
+        );
+    }
+
+    /**
+     * Ranking alerts page.
+     */
+    public function rankingAlerts(Request $request)
+    {
+        $filter = $request->get('filter', 'all');
+        $severity = $request->get('severity', 'all');
+
+        $query = RankingAlert::with('positionHistory');
+
+        if ($filter === 'unread') {
+            $query->unread();
+        } elseif ($filter === 'pending') {
+            $query->pending();
+        } elseif ($filter === 'drops') {
+            $query->drops();
+        } elseif ($filter === 'gains') {
+            $query->gains();
+        }
+
+        if ($severity === 'critical') {
+            $query->critical();
+        } elseif ($severity === 'warning') {
+            $query->warnings();
+        }
+
+        $alerts = $query->orderByDesc('created_at')->paginate(25);
+
+        // Summary
+        $summary = RankingAlert::getDashboardSummary();
+
+        return view('admin.seo.alerts', compact('alerts', 'summary', 'filter', 'severity'));
+    }
+
+    /**
+     * Mark alert as read.
+     */
+    public function markAlertRead(int $id)
+    {
+        $alert = RankingAlert::findOrFail($id);
+        $alert->markAsRead();
+
+        return back()->with('success', 'Alert marked as read.');
+    }
+
+    /**
+     * Mark all alerts as read.
+     */
+    public function markAllAlertsRead()
+    {
+        RankingAlert::unread()->update(['is_read' => true]);
+
+        return back()->with('success', 'All alerts marked as read.');
     }
 }

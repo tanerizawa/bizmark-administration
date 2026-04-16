@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Events\ArticlePublishedEvent;
 use App\Services\GoogleIndexingService;
 use App\Services\IndexNowService;
+use App\Services\InternalLinkService;
 use App\Services\SitemapGeneratorService;
 use Illuminate\Support\Facades\Log;
 
@@ -14,15 +15,18 @@ class ArticleObserver
     protected GoogleIndexingService $indexingService;
     protected SitemapGeneratorService $sitemapGenerator;
     protected IndexNowService $indexNow;
+    protected InternalLinkService $internalLink;
     
     public function __construct(
         GoogleIndexingService $indexingService,
         SitemapGeneratorService $sitemapGenerator,
-        IndexNowService $indexNow
+        IndexNowService $indexNow,
+        InternalLinkService $internalLink
     ) {
         $this->indexingService = $indexingService;
         $this->sitemapGenerator = $sitemapGenerator;
         $this->indexNow = $indexNow;
+        $this->internalLink = $internalLink;
     }
     
     /**
@@ -100,6 +104,16 @@ class ArticleObserver
             $indexingService->pingSearchEngines($sitemapUrl);
             
         })->delay(now()->addSeconds(10))->afterResponse();
+
+        // Inject backlinks into existing articles pointing to this new article
+        $internalLink = $this->internalLink;
+        dispatch(function () use ($article, $internalLink) {
+            $updated = $internalLink->injectBacklinks($article, 5);
+            Log::info('🔗 Backlinks injected into existing articles', [
+                'new_article' => $article->slug,
+                'articles_updated' => $updated,
+            ]);
+        })->delay(now()->addSeconds(30))->afterResponse();
 
         // Dispatch ArticlePublishedEvent for distribution engine
         // (push notifications, syndication, social captions)

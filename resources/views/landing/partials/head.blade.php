@@ -1,6 +1,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <!-- Primary Meta Tags -->
 @php
@@ -40,6 +41,26 @@
 <link rel="alternate" hreflang="id" href="{{ url('/') }}">
 <link rel="alternate" hreflang="en" href="{{ url('/en') }}">
 <link rel="alternate" hreflang="x-default" href="{{ url('/') }}">
+
+<!-- WebSite Schema + Sitelinks Searchbox -->
+<script type="application/ld+json">
+{
+    "@@context": "https://schema.org",
+    "@@type": "WebSite",
+    "name": "Bizmark.ID",
+    "alternateName": "{{ $companyName }}",
+    "url": "{{ url('/') }}",
+    "inLanguage": ["id", "en"],
+    "potentialAction": {
+        "@@type": "SearchAction",
+        "target": {
+            "@@type": "EntryPoint",
+            "urlTemplate": "{{ url('/blog') }}?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+    }
+}
+</script>
 
 <!-- Open Graph / Facebook -->
 @php
@@ -98,12 +119,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link rel="preconnect" href="https://www.googletagmanager.com">
-<!-- Preload Hero Image for LCP -->
-<link rel="preload" as="image" type="image/webp" href="/images/landing/hero-1200.webp">
-
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+<!-- Font Awesome (low priority, not render-critical) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
 
 <!-- Google Fonts - Inter -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
@@ -118,20 +136,20 @@
 <script type="application/ld+json">
 {
     "@@context": "https://schema.org",
-    "@type": "Organization",
+    "@@type": "Organization",
     "name": "Bizmark.ID",
     "legalName": "{{ $companyName }}",
     "url": "{{ url('/') }}",
     "logo": "{{ asset('images/logo.png') }}",
     "description": "{{ __('landing.schema_description') }}",
     "address": {
-        "@type": "PostalAddress",
+        "@@type": "PostalAddress",
         "addressCountry": "ID",
         "addressRegion": "West Java",
         "addressLocality": "Karawang"
     },
     "contactPoint": [{
-        "@type": "ContactPoint",
+        "@@type": "ContactPoint",
         "telephone": "{{ $schemaPhone }}",
         "contactType": "customer service",
         "availableLanguage": ["Indonesian", "English"],
@@ -147,7 +165,7 @@
 @stack('head')
 
 <!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DT71N7BSW9"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DT71N7BSW9" fetchpriority="low"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}

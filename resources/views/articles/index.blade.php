@@ -311,8 +311,8 @@
                                 <tr class="hover-apple">
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
-                                            @if($article->featured_image)
-                                            <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-16 h-16 object-cover rounded-apple mr-3">
+                                            @if($article->featured_image_url)
+                                            <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-16 h-16 object-cover rounded-apple mr-3">
                                             @else
                                             <div class="w-16 h-16 bg-dark-bg-tertiary rounded-apple mr-3 flex items-center justify-center">
                                                 <i class="fas fa-image text-dark-text-tertiary text-xl"></i>

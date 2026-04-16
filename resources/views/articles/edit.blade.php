@@ -116,9 +116,9 @@
                 <div class="card-apple p-6">
                     <h3 class="text-lg font-semibold text-dark-text-primary mb-4"><i class="fas fa-image mr-2 text-apple-purple"></i>Featured Image</h3>
                     
-                    @if($article->featured_image)
+                    @if($article->featured_image_url)
                     <div id="current-image" class="mb-4">
-                        <img src="{{ Storage::url($article->featured_image) }}" alt="Current image" class="w-full rounded-apple mb-2">
+                        <img src="{{ $article->featured_image_url }}" alt="Current image" class="w-full rounded-apple mb-2">
                         <p class="text-xs text-dark-text-tertiary">Gambar saat ini</p>
                     </div>
                     @endif

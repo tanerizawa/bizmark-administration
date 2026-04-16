@@ -145,7 +145,7 @@
                         </div>
                     </a>
                     
-                    <a href="/#process" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
+                    <a href="{{ route('process.id') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
                         <div class="w-10 h-10 bg-apple-green/20 rounded-lg flex items-center justify-center">
                             <i class="fas fa-tasks text-apple-green"></i>
                         </div>
@@ -155,7 +155,7 @@
                         </div>
                     </a>
                     
-                    <a href="/#about" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
+                    <a href="{{ route('about.id') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
                         <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
                             <i class="fas fa-info-circle text-purple-400"></i>
                         </div>

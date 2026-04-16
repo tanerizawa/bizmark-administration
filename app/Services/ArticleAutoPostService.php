@@ -217,6 +217,13 @@ class ArticleAutoPostService
                 $topic,
                 $targetLinkCount
             );
+
+            // 7.1 Inject pSEO cross-links (article → city×service pages)
+            $articleData['content'] = $this->linkService->injectPseoLinks(
+                $articleData['content'],
+                null,
+                2
+            );
             
             // Ensure "Baca juga" / "Artikel Terkait" section exists for +3 SEO bonus
             $articleData['content'] = $this->ensureBacaJugaSection($articleData['content'], $topic);
@@ -686,6 +693,7 @@ class ArticleAutoPostService
                 'published_at' => $articleData['published_at'],
                 'author_id' => $author->id,
                 'source_type' => 'auto-generated',
+                'topic_cluster_id' => $topic->topic_cluster_id,
                 'meta_title' => $articleData['meta_title'],
                 'meta_description' => $articleData['meta_description'],
                 'meta_keywords' => $articleData['meta_keywords'],
@@ -954,7 +962,7 @@ class ArticleAutoPostService
         $section = '<hr><h2>Artikel Terkait</h2>';
         $section .= '<p>Baca juga artikel lainnya di Bizmark:</p><ul>';
         foreach ($related as $a) {
-            $url = htmlspecialchars("{$baseUrl}/artikel/{$a->slug}", ENT_QUOTES, 'UTF-8');
+            $url = htmlspecialchars("{$baseUrl}/blog/{$a->slug}", ENT_QUOTES, 'UTF-8');
             $title = htmlspecialchars($a->title, ENT_QUOTES, 'UTF-8');
             $section .= "<li><a href=\"{$url}\">{$title}</a></li>";
         }

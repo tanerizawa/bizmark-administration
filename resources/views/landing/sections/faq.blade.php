@@ -96,14 +96,14 @@
 <script type="application/ld+json">
 {
     "@@context": "https://schema.org",
-    "@type": "FAQPage",
+    "@@type": "FAQPage",
     "mainEntity": [
         @foreach($faqItems as $index => $item)
         {
-            "@type": "Question",
+            "@@type": "Question",
             "name": "{{ $locale === 'id' ? $item['question']['id'] : $item['question']['en'] }}",
             "acceptedAnswer": {
-                "@type": "Answer",
+                "@@type": "Answer",
                 "text": "{{ $locale === 'id' ? $item['answer']['id'] : $item['answer']['en'] }}"
             }
         }@if(!$loop->last),@endif

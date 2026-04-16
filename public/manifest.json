@@ -78,5 +78,25 @@
   "dir": "ltr",
   "prefer_related_applications": false,
   "related_applications": [],
-  "iarc_rating_id": ""
+  "iarc_rating_id": "",
+  "share_target": {
+    "action": "/m/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", "application/pdf"]
+        }
+      ]
+    }
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "handle_links": "preferred"
 }

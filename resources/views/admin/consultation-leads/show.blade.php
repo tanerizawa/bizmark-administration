@@ -482,6 +482,112 @@
             </div>
 
             <!-- Related Information -->
+
+            <!-- RAG AI Insights -->
+            @if($consultation->rag_insights)
+                @php
+                    $ragData = is_array($consultation->rag_insights) ? $consultation->rag_insights : json_decode($consultation->rag_insights, true);
+                @endphp
+                <div class="card-elevated rounded-apple-lg">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-dark-text-primary mb-4 flex items-center">
+                            <i class="fas fa-brain text-purple-600 mr-2"></i>
+                            AI Regulation Insights
+                        </h3>
+
+                        <!-- Confidence Score -->
+                        @if($consultation->rag_confidence)
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Confidence Score</span>
+                                    <span class="text-sm font-semibold {{ $consultation->rag_confidence >= 0.8 ? 'text-green-600' : ($consultation->rag_confidence >= 0.6 ? 'text-yellow-600' : 'text-red-600') }}">
+                                        {{ number_format($consultation->rag_confidence * 100, 0) }}%
+                                    </span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="h-2 rounded-full {{ $consultation->rag_confidence >= 0.8 ? 'bg-green-500' : ($consultation->rag_confidence >= 0.6 ? 'bg-yellow-500' : 'bg-red-500') }}"
+                                         style="width: {{ $consultation->rag_confidence * 100 }}%"></div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- AI Answer -->
+                        @if(isset($ragData['answer']))
+                            <div class="mb-4">
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">Regulatory Context</label>
+                                <div class="mt-1 p-3 bg-purple-50 rounded-apple text-sm text-purple-900 leading-relaxed">
+                                    {{ $ragData['answer'] }}
+                                </div>
+                            </div>
+                        @endif
+
+                        @if(isset($ragData['activity_requirements']) && count($ragData['activity_requirements']) > 0)
+                            <div class="mb-4">
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">KBLI Activity Requirements</label>
+                                <div class="mt-2 space-y-2">
+                                    @foreach($ragData['activity_requirements'] as $activity)
+                                        <div class="p-3 bg-fuchsia-50 rounded-apple border border-fuchsia-100">
+                                            <div class="flex items-center justify-between gap-3 mb-1">
+                                                <div class="min-w-0">
+                                                    <div class="text-sm font-semibold text-gray-900 truncate">
+                                                        {{ $activity['label'] ?? 'Activity' }}
+                                                        @if(isset($activity['kbli_code']))
+                                                            <span class="font-mono text-xs text-fuchsia-700">({{ $activity['kbli_code'] }})</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-xs text-gray-600 truncate">{{ $activity['description'] ?? '-' }}</div>
+                                                </div>
+                                                @if(isset($activity['confidence']))
+                                                    <span class="text-xs font-semibold {{ $activity['confidence'] >= 0.8 ? 'text-green-600' : ($activity['confidence'] >= 0.6 ? 'text-yellow-600' : 'text-red-600') }}">
+                                                        {{ number_format($activity['confidence'] * 100, 0) }}%
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            @if(isset($activity['answer']))
+                                                <div class="text-xs text-gray-700 leading-relaxed">{{ \Illuminate\Support\Str::limit(strip_tags($activity['answer']), 200) }}</div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Source Documents -->
+                        @if(isset($ragData['sources']) && count($ragData['sources']) > 0)
+                            <div>
+                                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Source Documents ({{ count($ragData['sources']) }})
+                                </label>
+                                <div class="mt-2 space-y-2">
+                                    @foreach($ragData['sources'] as $source)
+                                        <div class="flex items-start p-2 bg-gray-50 rounded-apple">
+                                            <i class="fas fa-file-alt text-purple-400 mt-1 mr-2 flex-shrink-0"></i>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="text-sm font-medium text-gray-900 truncate">{{ $source['title'] ?? 'Unknown' }}</div>
+                                                @if(isset($source['section']))
+                                                    <div class="text-xs text-gray-500">{{ $source['section'] }}</div>
+                                                @endif
+                                                @if(isset($source['confidence']))
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium mt-1
+                                                        {{ $source['confidence'] >= 0.8 ? 'bg-green-100 text-green-700' : ($source['confidence'] >= 0.6 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
+                                                        {{ number_format($source['confidence'] * 100, 0) }}% relevan
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($consultation->rag_processed_at)
+                            <div class="mt-3 text-xs text-gray-400">
+                                <i class="fas fa-clock mr-1"></i>Processed {{ \Carbon\Carbon::parse($consultation->rag_processed_at)->diffForHumans() }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
             @if($consultation->converted_to_client && isset($consultation->client_id))
                 <div class="card-elevated rounded-apple-lg">
                     <div class="p-6 border-b border-gray-200">

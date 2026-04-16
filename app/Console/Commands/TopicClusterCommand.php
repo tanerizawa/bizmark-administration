@@ -16,6 +16,7 @@ class TopicClusterCommand extends Command
 
     public function handle(TopicClusterService $service): int
     {
+        try {
         $language = $this->option('language');
 
         $this->info('🏗️  Generating topic clusters for all services...');
@@ -56,5 +57,10 @@ class TopicClusterCommand extends Command
         $this->info('✅ Topic clusters complete.');
 
         return 0;
+        } catch (\Exception $e) {
+            \Log::error('Topic cluster generation failed: ' . $e->getMessage());
+            $this->error('Cluster generation failed: ' . $e->getMessage());
+            return 1;
+        }
     }
 }

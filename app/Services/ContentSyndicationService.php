@@ -238,10 +238,20 @@ PROMPT;
 
     /**
      * Create manual syndication records when no APIs configured
+     * Only creates records for platforms that are still viable
      */
     protected function createManualSyndicationRecords(Article $article): array
     {
-        $platforms = ['medium', 'linkedin', 'devto'];
+        // Only LinkedIn is viable - Medium API deprecated (2023), DevTo irrelevant for Indonesian market
+        $platforms = array_filter(['linkedin'], fn ($p) => !empty(config("services.{$p}.access_token")));
+        
+        if (empty($platforms)) {
+            Log::info('No syndication platforms configured, skipping record creation', [
+                'article_id' => $article->id,
+            ]);
+            return [];
+        }
+
         $results = [];
 
         foreach ($platforms as $platform) {

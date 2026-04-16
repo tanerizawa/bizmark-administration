@@ -153,6 +153,15 @@ class PexelsService
             // Save to storage
             Storage::disk('public')->put($path, $imageContent);
 
+            // Verify the file was actually written to disk
+            if (!Storage::disk('public')->exists($path)) {
+                Log::error('Pexels photo saved but file not found on disk', [
+                    'path' => $path,
+                    'photo_id' => $photoId,
+                ]);
+                return null;
+            }
+
             // Log attribution for compliance
             Log::info('Pexels photo downloaded', [
                 'photo_id' => $photoId,

@@ -16,9 +16,9 @@
     "@@context": "https://schema.org",
     "@@type": "BreadcrumbList",
     "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Beranda", "item": "{{ $homeUrl }}"},
-        {"@type": "ListItem", "position": 2, "name": "Layanan", "item": "{{ $indexUrl }}"},
-        {"@type": "ListItem", "position": 3, "name": "{{ $service['title'] }}", "item": "{{ $serviceUrl }}"}
+        {"@@type": "ListItem", "position": 1, "name": "Beranda", "item": "{{ $homeUrl }}"},
+        {"@@type": "ListItem", "position": 2, "name": "Layanan", "item": "{{ $indexUrl }}"},
+        {"@@type": "ListItem", "position": 3, "name": "{{ $service['title'] }}", "item": "{{ $serviceUrl }}"}
     ]
 }
 </script>
@@ -29,21 +29,21 @@
     "name": "{{ $service['title'] }}",
     "description": "{{ $service['short_description'] }}",
     "provider": {
-        "@type": "Organization",
+        "@@type": "Organization",
         "name": "Bizmark.ID",
         "url": "{{ url('/') }}"
     },
     "url": "{{ $serviceUrl }}"
     @if(!empty($service['sub_services']))
     ,"hasOfferCatalog": {
-        "@type": "OfferCatalog",
+        "@@type": "OfferCatalog",
         "name": "Sub-layanan {{ $service['title'] }}",
         "itemListElement": [
             @foreach($service['sub_services'] as $subSlug => $sub)
             {
-                "@type": "Offer",
+                "@@type": "Offer",
                 "itemOffered": {
-                    "@type": "Service",
+                    "@@type": "Service",
                     "name": "{{ $sub['title'] }}",
                     "description": "{{ $sub['short_description'] }}",
                     "url": "{{ url(($locale === 'en' ? '/en/services' : '/layanan') . '/' . $serviceSlug . '/sub/' . $subSlug) }}"
@@ -63,10 +63,10 @@
     "mainEntity": [
         @foreach($service['faq'] as $faqItem)
         {
-            "@type": "Question",
+            "@@type": "Question",
             "name": "{{ $faqItem['q'] }}",
             "acceptedAnswer": {
-                "@type": "Answer",
+                "@@type": "Answer",
                 "text": "{{ $faqItem['a'] }}"
             }
         }@if(!$loop->last),@endif

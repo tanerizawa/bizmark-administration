@@ -11,7 +11,8 @@ class IndexNowSubmit extends Command
     protected $signature = 'seo:index-now
                             {--all : Submit all published article URLs}
                             {--recent=0 : Submit articles published within N days}
-                            {--url= : Submit a specific URL}';
+                            {--url= : Submit a specific URL}
+                            {--pseo : Submit all pSEO city×service pages}';
 
     protected $description = 'Submit URLs to search engines via IndexNow protocol for instant indexing';
 
@@ -22,6 +23,11 @@ class IndexNowSubmit extends Command
             $result = $indexNow->submitUrl($url);
             $this->info($result ? 'Submitted successfully.' : 'Submission failed.');
             return $result ? 0 : 1;
+        }
+
+        // pSEO pages mode
+        if ($this->option('pseo')) {
+            return $this->submitPseoPages($indexNow);
         }
 
         $appUrl = config('app.url');
@@ -81,6 +87,46 @@ class IndexNowSubmit extends Command
         $bar->finish();
         $this->newLine();
         $this->info("Done. {$success}/" . count($urls) . " URLs submitted.");
+
+        return 0;
+    }
+
+    /**
+     * Submit all pSEO (city×service) pages to IndexNow
+     */
+    protected function submitPseoPages(IndexNowService $indexNow): int
+    {
+        $appUrl = config('app.url');
+        $cities = config('programmatic_seo.cities', []);
+        $serviceKeys = config('programmatic_seo.services', []);
+        $urls = [];
+
+        foreach ($cities as $citySlug => $city) {
+            // City index page
+            $urls[] = $appUrl . '/layanan/kota/' . $citySlug;
+
+            // Service × city combos
+            foreach ($serviceKeys as $serviceSlug) {
+                $urls[] = $appUrl . '/layanan/' . $serviceSlug . '/' . $citySlug;
+            }
+        }
+
+        $this->info("Submitting " . count($urls) . " pSEO pages (" . count($cities) . " cities × " . count($serviceKeys) . " services) to IndexNow...");
+
+        $bar = $this->output->createProgressBar(count($urls));
+        $success = 0;
+
+        $chunks = array_chunk($urls, 100);
+        foreach ($chunks as $chunk) {
+            if ($indexNow->submitBatch($chunk)) {
+                $success += count($chunk);
+            }
+            $bar->advance(count($chunk));
+        }
+
+        $bar->finish();
+        $this->newLine();
+        $this->info("Done. {$success}/" . count($urls) . " pSEO URLs submitted.");
 
         return 0;
     }

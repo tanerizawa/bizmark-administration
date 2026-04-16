@@ -68,7 +68,15 @@ class ConsultRequest extends Model
      */
     public function kbli()
     {
-        return $this->belongsTo(Kbli::class, 'kbli_code', 'code');
+        return $this->belongsTo(Kbli::class, 'kbli_code', 'code')
+            // Keep historical consultation rows renderable even if KBLI is soft-deleted.
+            ->withTrashed()
+            ->withDefault([
+                'code' => $this->kbli_code,
+                'description' => 'KBLI tidak tersedia',
+                'category' => '-',
+                'complexity_level' => 'medium',
+            ]);
     }
 
     /**

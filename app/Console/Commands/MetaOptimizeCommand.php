@@ -16,6 +16,7 @@ class MetaOptimizeCommand extends Command
 
     public function handle(SmartMetaOptimizerService $optimizer): int
     {
+        try {
         if ($articleId = $this->option('article')) {
             $article = \App\Models\Article::find($articleId);
             if (!$article) {
@@ -54,5 +55,10 @@ class MetaOptimizeCommand extends Command
         $this->info("Done. Optimized: {$optimized}/{$limit}");
 
         return 0;
+        } catch (\Exception $e) {
+            \Log::error('Meta optimization failed: ' . $e->getMessage());
+            $this->error('Optimization failed: ' . $e->getMessage());
+            return 1;
+        }
     }
 }

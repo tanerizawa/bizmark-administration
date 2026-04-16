@@ -1,115 +1,215 @@
 <!DOCTYPE html>
-<html lang="id" x-data="{ darkMode: false }" :class="{ 'dark': darkMode }">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <!-- SEO Meta Tags -->
-    <title>@yield('meta_title', 'Bizmark.ID - Konsultan Perizinan')</title>
-    <meta name="description" content="@yield('meta_description', 'Konsultan perizinan industri terpercaya di Indonesia')">
-    <meta name="keywords" content="@yield('meta_keywords', 'perizinan, konsultan, AMDAL, UKL-UPL')">
+    <title>@yield('meta_title', 'Estimasi Biaya Perizinan - Bizmark.ID')</title>
+    <meta name="description" content="@yield('meta_description', 'Hitung estimasi biaya perizinan usaha Anda dengan AI. Gratis, cepat, dan akurat.')">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@yield('meta_title', 'Estimasi Biaya Perizinan - Bizmark.ID')">
+    <meta property="og:description" content="@yield('meta_description', 'Hitung estimasi biaya perizinan usaha Anda dengan AI.')">
+    <meta property="og:image" content="https://bizmark.id/images/og-consultation.jpg">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     
-    <!-- Fonts -->
+    <!-- Performance: Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     
-    <!-- Font Awesome -->
+    <!-- Tailwind CSS (compiled) -->
+    @vite('resources/css/landing.css')
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    <!-- Landing Page Styles (for consistent theming) -->
+    @include('landing.partials.critical-css')
+    @include('landing.partials.styles-modern')
+    
     <style>
         [x-cloak] { display: none !important; }
-        body { font-family: 'Inter', sans-serif; }
+        
+        /* Consultation-specific styles */
+        .consultation-section {
+            background: linear-gradient(180deg, var(--surface-warm) 0%, var(--surface) 100%);
+        }
+        
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            transition: all 0.2s;
+            background: var(--surface);
+            color: var(--text-primary);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+        }
+        
+        .option-card {
+            position: relative;
+            cursor: pointer;
+            padding: 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s;
+            background: var(--surface);
+        }
+        
+        .option-card:hover {
+            border-color: var(--color-accent);
+            background: rgba(14, 165, 233, 0.02);
+        }
+        
+        .option-card.selected {
+            border-color: var(--color-accent);
+            background: rgba(14, 165, 233, 0.05);
+        }
+        
+        .option-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            background: var(--color-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        /* Quick Estimate Preview Card */
+        .estimate-preview {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            border-radius: var(--radius-xl);
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .estimate-preview .label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .estimate-preview .value {
+            font-size: 1.75rem;
+            font-weight: 800;
+        }
+        
+        /* Validation Error Styles */
+        .validation-error {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .validation-error-title {
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .validation-error-list {
+            list-style: disc;
+            list-style-position: inside;
+            color: #dc2626;
+            font-size: 0.875rem;
+        }
     </style>
     
     @stack('styles')
 </head>
-<body class="antialiased">
-    <!-- Simple Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <a href="{{ route('landing.id') }}" class="flex items-center gap-2">
-                    <i class="fas fa-building text-blue-600 text-xl"></i>
-                    <span class="text-xl font-bold text-gray-900 dark:text-white">
-                        Bizmark<span class="text-blue-600">.ID</span>
-                    </span>
-                </a>
-                
-                <!-- Navigation Links -->
-                <div class="hidden md:flex items-center gap-6">
-                    <a href="{{ route('landing.id') }}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">
-                        <i class="fas fa-home mr-2"></i>Beranda
-                    </a>
-                    <a href="{{ route('blog.index.id') }}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">
-                        <i class="fas fa-newspaper mr-2"></i>Artikel
-                    </a>
-                    <a href="{{ route('contact.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">
-                        <i class="fas fa-envelope mr-2"></i>Kontak
-                    </a>
-                </div>
-                
-                <!-- Dark Mode Toggle -->
-                <button @click="darkMode = !darkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-                    <i class="fas fa-moon text-gray-600 dark:text-gray-300" x-show="!darkMode"></i>
-                    <i class="fas fa-sun text-yellow-500" x-show="darkMode" x-cloak></i>
-                </button>
-            </div>
-        </div>
-    </nav>
-    
-    <!-- Main Content -->
-    <main>
-        @yield('content')
-    </main>
-    
-    <!-- Simple Footer -->
-    <footer class="bg-gray-900 text-white py-8">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="text-center md:text-left">
-                    <p class="font-bold mb-1">PT Cangah Pajaratan Mandiri</p>
-                    <p class="text-sm text-gray-400">Konsultan Perizinan Industri Terpercaya</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    @php
-                        $contact = (array) data_get(config('landing_metrics'), 'contact', []);
-                        $whatsappLink = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
-                        $phoneRaw = $contact['phone'] ?? '+62 838 7960 2855';
-                        $phoneHref = 'tel:' . preg_replace('/\s+/', '', $phoneRaw);
-                        $email = $contact['email'] ?? 'info@bizmark.id';
-                    @endphp
+<body class="font-sans antialiased bg-white text-gray-900">
 
-                    <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-whatsapp text-xl"></i>
-                    </a>
-                    <a href="{{ $phoneHref }}" class="text-gray-400 hover:text-white transition">
-                        <i class="fas fa-phone text-xl"></i>
-                    </a>
-                    <a href="mailto:{{ $email }}" class="text-gray-400 hover:text-white transition">
-                        <i class="fas fa-envelope text-xl"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="text-center mt-6 pt-6 border-t border-gray-800">
-                <p class="text-sm text-gray-400">
-                    &copy; {{ date('Y') }} Bizmark.ID. All rights reserved.
-                </p>
-            </div>
-        </div>
-    </footer>
-    
-    @stack('scripts')
+<!-- Skip to main content link for accessibility -->
+<a href="#main-content" class="skip-link">Lewati ke konten utama</a>
+
+<!-- Landing Page Navbar (Consistent) -->
+@include('landing.partials.navbar')
+@include('landing.partials.mobile-menu')
+
+<!-- Main Content -->
+<main id="main-content">
+    @yield('content')
+</main>
+
+<!-- Landing Page Footer (Consistent) -->
+@include('landing.partials.footer')
+
+<!-- Scripts for dropdown handling (vanilla JS - same as landing) -->
+<script>
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        const dropdowns = ['localeDropdown', 'toolsMenu', 'profileMenu'];
+        dropdowns.forEach(function(id) {
+            const dropdown = document.getElementById(id);
+            const wrapper = document.getElementById(id.replace('Dropdown', 'Switcher').replace('Menu', 'Dropdown'));
+            if (dropdown && wrapper && !wrapper.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+@stack('scripts')
 </body>
 </html>

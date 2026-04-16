@@ -1,3 +1,7 @@
+@push('head')
+<link rel="preload" as="image" type="image/webp" href="/images/landing/hero-1200.webp">
+@endpush
+
 @php
     $metrics = config('landing_metrics');
 @endphp

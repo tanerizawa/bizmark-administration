@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\ServiceInquiry;
 use App\Models\ShapefileProject;
 use App\Services\ShapefileService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -193,6 +194,86 @@ class ShapefileApiController extends Controller
 
         return response()->json([
             'registered' => $exists,
+        ]);
+    }
+
+    /**
+     * Generate PDF report for a shapefile project (with RTRW data).
+     */
+    public function generatePdf(Request $request, int $projectId)
+    {
+        $project = ShapefileProject::findOrFail($projectId);
+
+        // Verify access: project must match session token or authenticated user
+        $sessionToken = $request->cookie('shp_session');
+        $clientAuth = auth('client')->user();
+
+        if (
+            !$clientAuth &&
+            $project->session_token !== $sessionToken &&
+            $project->email !== $request->input('email')
+        ) {
+            return response()->json(['error' => 'Akses ditolak'], 403);
+        }
+
+        // Extract coordinates from GeoJSON
+        $coordinates = [];
+        if ($project->geojson && isset($project->geojson['coordinates'][0])) {
+            $coordinates = $project->geojson['coordinates'][0];
+        }
+
+        $pdf = Pdf::loadView('shapefile.project-pdf', [
+            'project' => $project,
+            'coordinates' => $coordinates,
+        ])
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false)
+            ->setOption('defaultFont', 'DejaVu Sans');
+
+        $filename = 'Laporan-Lokasi-' . Str::slug($project->name) . '-' . $project->id . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Store RTRW analysis results for a shapefile project.
+     * Called after polygon analysis to persist zone data for PDF export.
+     */
+    public function storeRtrwAnalysis(Request $request, int $projectId)
+    {
+        $validated = $request->validate([
+            'rtrw_zona' => 'nullable|string|max:200',
+            'rtrw_perda' => 'nullable|string|max:100',
+            'rtrw_remark' => 'nullable|string|max:500',
+            'rtrw_raw' => 'nullable|array',
+        ]);
+
+        $project = ShapefileProject::findOrFail($projectId);
+
+        // Verify access
+        $sessionToken = $request->cookie('shp_session');
+        $clientAuth = auth('client')->user();
+
+        if (
+            !$clientAuth &&
+            $project->session_token !== $sessionToken &&
+            $project->email !== $request->input('email')
+        ) {
+            return response()->json(['error' => 'Akses ditolak'], 403);
+        }
+
+        $project->update([
+            'rtrw_zona' => $validated['rtrw_zona'] ?? $project->rtrw_zona,
+            'rtrw_perda' => $validated['rtrw_perda'] ?? $project->rtrw_perda,
+            'rtrw_remark' => $validated['rtrw_remark'] ?? $project->rtrw_remark,
+            'rtrw_raw' => $validated['rtrw_raw'] ?? $project->rtrw_raw,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data RTRW berhasil disimpan',
+            'project_id' => $project->id,
         ]);
     }
 }

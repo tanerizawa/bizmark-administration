@@ -41,13 +41,17 @@ class TopicSimilarityService
         
         $score = $this->calculateWithAI($topicA, $topicB);
         
-        // Cache result
-        ArticleTopicSimilarity::create([
-            'topic_a_id' => $topicA->id,
-            'topic_b_id' => $topicB->id,
-            'similarity_score' => $score,
-            'calculated_at' => now(),
-        ]);
+        // Cache result - use updateOrCreate to handle duplicates
+        ArticleTopicSimilarity::updateOrCreate(
+            [
+                'topic_a_id' => $topicA->id,
+                'topic_b_id' => $topicB->id,
+            ],
+            [
+                'similarity_score' => $score,
+                'calculated_at' => now(),
+            ]
+        );
         
         \Log::info('✅ Similarity calculated and cached', [
             'topic_a' => $topicA->title,

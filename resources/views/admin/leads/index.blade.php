@@ -13,10 +13,11 @@
             <div class="flex-1 min-w-0">
                 <p class="admin-hero-subtitle">Lead Management</p>
                 <h1 class="admin-hero-title text-white">Kelola Lead & Inquiry</h1>
-                <p class="admin-hero-desc">Pantau leads dari konsultasi AI dan estimasi perizinan</p>
+                <p class="admin-hero-desc">Pantau leads dari inquiry layanan, konsultasi AI, dan permohonan biaya jasa</p>
                 <div class="admin-hero-meta flex flex-wrap gap-3">
                     <span><i class="fas fa-envelope mr-1.5"></i>{{ $serviceInquiriesCount }} inquiry</span>
                     <span><i class="fas fa-calculator mr-1.5"></i>{{ $consultationLeadsCount }} consultation</span>
+                    <span><i class="fas fa-file-signature mr-1.5"></i>{{ $serviceCostRequestsCount ?? 0 }} permohonan</span>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -24,7 +25,7 @@
                     <a href="{{ route('admin.service-inquiries.export', request()->all()) }}" class="admin-btn admin-btn-sm rounded" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.8);">
                         <i class="fas fa-download mr-1"></i>Export
                     </a>
-                @else
+                @elseif($activeTab === 'consultation-leads')
                     <a href="{{ route('admin.consultation-leads.export', request()->all()) }}" class="admin-btn admin-btn-sm rounded" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.8);">
                         <i class="fas fa-download mr-1"></i>Export
                     </a>
@@ -70,6 +71,15 @@
                         </span>
                     @endif
                 </button>
+                <button onclick="switchTab('service-cost-requests')" id="tab-service-cost-requests"
+                        class="tab-button {{ $activeTab == 'service-cost-requests' ? 'active' : '' }}">
+                    <i class="fas fa-file-signature"></i>Permohonan Biaya
+                    @if(($serviceCostRequestsCount ?? 0) > 0)
+                        <span class="admin-badge ml-1 {{ $activeTab == 'service-cost-requests' ? 'bg-white text-apple-blue' : '' }}" style="{{ $activeTab != 'service-cost-requests' ? 'background: rgba(255,149,0,0.25); color: #FF9500;' : '' }}">
+                            {{ $serviceCostRequestsCount }}
+                        </span>
+                    @endif
+                </button>
             </div>
         </div>
 
@@ -82,6 +92,11 @@
             <!-- Consultation Leads Tab Content -->
             <div id="content-consultation-leads" class="tab-content {{ $activeTab != 'consultation-leads' ? 'hidden' : '' }}">
                 @include('admin.leads.tabs.consultation-leads')
+            </div>
+
+            <!-- Service Cost Requests Tab Content -->
+            <div id="content-service-cost-requests" class="tab-content {{ $activeTab != 'service-cost-requests' ? 'hidden' : '' }}">
+                @include('admin.leads.tabs.service-cost-requests')
             </div>
         </div>
     </section>
@@ -163,6 +178,7 @@ function switchTab(tabName) {
     url.searchParams.delete('status');
     url.searchParams.delete('priority');
     url.searchParams.delete('contacted');
+    url.searchParams.delete('applicant_type');
     url.searchParams.delete('date_from');
     url.searchParams.delete('date_to');
     url.searchParams.delete('page');
