@@ -248,12 +248,15 @@ class SitemapController extends Controller
      */
     public function robots()
     {
+        $adminSecretPath = trim((string) config('auth.admin_secret_path'), '/');
+        $adminSecretDisallow = $adminSecretPath ? 'Disallow: /'.$adminSecretPath.PHP_EOL : '';
+
         $robots = "# Robots.txt for Bizmark.ID" . PHP_EOL;
         $robots .= "# https://bizmark.id/robots.txt" . PHP_EOL . PHP_EOL;
-        
+
         $robots .= "User-agent: *" . PHP_EOL;
         $robots .= "Allow: /" . PHP_EOL;
-        $robots .= "Disallow: /__REDACTED_LEGACY_ADMIN_SEGMENT__" . PHP_EOL;
+        $robots .= $adminSecretDisallow;
         $robots .= "Disallow: /dashboard" . PHP_EOL;
         $robots .= "Disallow: /admin" . PHP_EOL;
         $robots .= "Disallow: /projects" . PHP_EOL;
@@ -263,27 +266,27 @@ class SitemapController extends Controller
         $robots .= "Disallow: /clients" . PHP_EOL;
         $robots .= "Disallow: /settings" . PHP_EOL;
         $robots .= "Disallow: /api/" . PHP_EOL . PHP_EOL;
-        
+
         $robots .= "# Sitemap location" . PHP_EOL;
         $robots .= "Sitemap: https://bizmark.id/sitemap.xml" . PHP_EOL . PHP_EOL;
-        
+
         $robots .= "# RSS Feed" . PHP_EOL;
         $robots .= "# https://bizmark.id/feed/rss" . PHP_EOL . PHP_EOL;
-        
+
         $robots .= "# Crawl-delay for respectful crawling" . PHP_EOL;
         $robots .= "Crawl-delay: 1" . PHP_EOL . PHP_EOL;
-        
+
         $robots .= "# Specific rules for major search engines" . PHP_EOL;
         $robots .= "User-agent: Googlebot" . PHP_EOL;
         $robots .= "Allow: /" . PHP_EOL;
-        $robots .= "Disallow: /__REDACTED_LEGACY_ADMIN_SEGMENT__" . PHP_EOL;
+        $robots .= $adminSecretDisallow;
         $robots .= "Disallow: /dashboard" . PHP_EOL;
         $robots .= "Disallow: /admin" . PHP_EOL;
         $robots .= "Disallow: /api/" . PHP_EOL . PHP_EOL;
-        
+
         $robots .= "User-agent: Bingbot" . PHP_EOL;
         $robots .= "Allow: /" . PHP_EOL;
-        $robots .= "Disallow: /__REDACTED_LEGACY_ADMIN_SEGMENT__" . PHP_EOL;
+        $robots .= $adminSecretDisallow;
         $robots .= "Disallow: /dashboard" . PHP_EOL;
         $robots .= "Disallow: /admin" . PHP_EOL;
         $robots .= "Disallow: /api/" . PHP_EOL . PHP_EOL;

@@ -217,7 +217,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ url('/__REDACTED_LEGACY_ADMIN_SEGMENT__') }}" class="space-y-5" novalidate>
+                <form method="POST" action="{{ route('admin.login') }}" class="space-y-5" novalidate>
                     @csrf
 
                     <!-- Email/Username Field -->

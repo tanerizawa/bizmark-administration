@@ -191,10 +191,13 @@ Route::post('/login', [App\Http\Controllers\Auth\UnifiedLoginController::class, 
 Route::post('/logout', [App\Http\Controllers\Auth\UnifiedLoginController::class, 'logout'])->name('logout');
 
 // Admin-only direct login (hidden path for internal use)
-// Can be used by admin staff who know this secret path
-Route::get('/__REDACTED_LEGACY_ADMIN_SEGMENT__', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/__REDACTED_LEGACY_ADMIN_SEGMENT__', [App\Http\Controllers\Auth\LoginController::class, 'login'])
-    ->middleware('throttle:3,1'); // Stricter rate limit for admin path
+// Path didefinisikan via ADMIN_SECRET_PATH di .env. Jika kosong, route nonaktif.
+if ($adminSecretPath = trim((string) config('auth.admin_secret_path'), '/')) {
+    Route::get('/'.$adminSecretPath, [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])
+        ->name('admin.login');
+    Route::post('/'.$adminSecretPath, [App\Http\Controllers\Auth\LoginController::class, 'login'])
+        ->middleware('throttle:3,1');
+}
 
 // ========================================
 // BACKWARD COMPATIBILITY REDIRECTS

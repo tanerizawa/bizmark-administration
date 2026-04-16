@@ -170,7 +170,7 @@ function switchTab(tabName) {
 }
 
 function showConvertModal(consultationId) {
-    document.getElementById('convertForm').action = `/__REDACTED_LEGACY_ADMIN_SEGMENT__/consultation-leads/${consultationId}/convert`;
+    document.getElementById('convertForm').action = `/admin/consultation-leads/${consultationId}/convert`;
     document.getElementById('convertModal').classList.remove('hidden');
 }
 

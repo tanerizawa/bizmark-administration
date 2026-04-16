@@ -118,7 +118,7 @@
             Silakan login terlebih dahulu untuk mengakses mobile admin.
         </div>
         
-        <a href="{{ url('/__REDACTED_LEGACY_ADMIN_SEGMENT__') }}" class="btn">Login Sekarang</a>
+        <a href="{{ route('login') }}" class="btn">Login Sekarang</a>
         
         <div class="features">
             <div class="feature">

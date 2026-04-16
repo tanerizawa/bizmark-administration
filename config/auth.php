@@ -129,4 +129,17 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Secret Login Path
+    |--------------------------------------------------------------------------
+    |
+    | Path rahasia untuk akses admin terpisah (bypass detection /login).
+    | Set ADMIN_SECRET_PATH di .env. Kosong = route /__REDACTED_LEGACY_ADMIN_SEGMENT__ DIMATIKAN
+    | sepenuhnya. Ganti secara periodik untuk keamanan.
+    |
+    */
+
+    'admin_secret_path' => env('ADMIN_SECRET_PATH', ''),
+
 ];
