@@ -22,12 +22,9 @@
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
-        <!-- DB credentials diambil dari .env.testing (copy dari .env.testing.example).
-             JANGAN hardcode password di sini - file ini tercommit di repo. -->
-        <env name="DB_CONNECTION" value="pgsql"/>
-        <env name="DB_HOST" value="127.0.0.1"/>
-        <env name="DB_PORT" value="5432"/>
-        <env name="DB_DATABASE" value="bizmark_test"/>
+        <!-- SQLite in-memory: tidak memerlukan Postgres lokal; selaras .env.testing.example. -->
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="OPENROUTER_API_KEY" value="testing-dummy-key"/>
         <env name="QUEUE_CONNECTION" value="sync"/>

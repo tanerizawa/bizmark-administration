@@ -79,7 +79,7 @@ File `replacements.txt` memakai sintaks yang sama (satu pasangan `literal==>peng
 
 1. `bash scripts/git-audit-sensitive-paths.sh` — pastikan substring path admin yang sudah tidak dipakai tidak lagi muncul berurutan di **blob** ter-track. (Skrip audit membangun pola sensitif lewat `\x2f` agar file sumber tidak menyimpan path utuh.)
 2. `git log -S'<substring_lama>' --oneline --all` — pastikan substring yang baru saja di-scrub tidak lagi muncul di diff histori (ganti placeholder dengan pola audit tim).
-3. Regresi ringan pada tree hasil rewrite — bisa sekaligus dengan `./scripts/verify-post-scrub-local.sh` (audit + contract test dashboard + `route:list`), atau jalankan perintah di dalam skrip secara manual.
+3. Regresi ringan pada tree hasil rewrite — jalankan `./scripts/verify-post-scrub-local.sh` (`config:clear`, audit, **PHPUnit `tests/Unit`** dengan SQLite in-memory, `route:list`). Di Debian/Ubuntu pastikan paket `php8.4-sqlite3` (atau versi PHP Anda) terpasang agar driver `pdo_sqlite` ada.
 4. **Force-push** ke remote kanonikal (tanpa ini, rewrite hanya ada di mesin lokal):
 
    ```bash

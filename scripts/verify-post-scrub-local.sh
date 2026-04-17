@@ -3,11 +3,14 @@
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
+echo "== config:clear (hindari config ter-cache memakai .env produksi saat phpunit) =="
+php artisan config:clear -q
+echo ""
 echo "== git-audit-sensitive-paths =="
 bash scripts/git-audit-sensitive-paths.sh
 echo ""
-echo "== contract test dashboard =="
-vendor/bin/phpunit tests/Unit/Services/Dashboard/DashboardDataServiceContractTest.php --colors=never
+echo "== phpunit tests/Unit =="
+vendor/bin/phpunit tests/Unit --colors=never
 echo ""
 echo "== route:list (count tail) =="
 php artisan route:list --except-vendor 2>&1 | tail -3
