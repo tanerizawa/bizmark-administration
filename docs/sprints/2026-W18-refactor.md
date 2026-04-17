@@ -42,7 +42,7 @@
 | ID | P | Item | Effort | Status |
 |----|---|------|--------|--------|
 | W18-01 | P2 | GitHub Actions `verify.yml` + `make verify` | M | DONE |
-| W18-02 | P3 | Unit test tambahan (modul non-kritis) | M | TODO |
+| W18-02 | P3 | Unit test `SeoDashboardCache` + skrip `verify-admin-route-partials.sh` di alur verify | S | DONE |
 | W18-03 | P0 | Selesaikan W17-05 manual (push remote) bila blokir rilis | S | TODO |
 
 ---

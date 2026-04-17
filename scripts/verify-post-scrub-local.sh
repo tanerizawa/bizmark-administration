@@ -6,6 +6,9 @@ cd "$ROOT"
 echo "== config:clear (hindari config ter-cache memakai .env produksi saat phpunit) =="
 php artisan config:clear -q
 echo ""
+echo "== routes/admin partials (<?php) =="
+bash scripts/verify-admin-route-partials.sh
+echo ""
 echo "== git-audit-sensitive-paths =="
 bash scripts/git-audit-sensitive-paths.sh
 echo ""
