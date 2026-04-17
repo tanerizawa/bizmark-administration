@@ -117,10 +117,10 @@ Menyederhanakan navigasi admin panel Bizmark.ID dengan:
 ## 🔄 BACKWARD COMPATIBILITY
 
 Route redirects telah ditambahkan untuk memastikan URL lama masih berfungsi:
-- `/__REDACTED_LEGACY_ADMIN_SEGMENT__/service-inquiries` → `/__REDACTED_LEGACY_ADMIN_SEGMENT__/leads?tab=service-inquiries`
-- `/__REDACTED_LEGACY_ADMIN_SEGMENT__/consultation-leads` → `/__REDACTED_LEGACY_ADMIN_SEGMENT__/leads?tab=consultation-leads`
-- `/__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post/config` → `/__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post?tab=config`
-- `/__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post/analytics` → `/__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post?tab=analytics`
+- `/{ADMIN_SECRET_PATH}/service-inquiries` → `/{ADMIN_SECRET_PATH}/leads?tab=service-inquiries`
+- `/{ADMIN_SECRET_PATH}/consultation-leads` → `/{ADMIN_SECRET_PATH}/leads?tab=consultation-leads`
+- `/{ADMIN_SECRET_PATH}/auto-post/config` → `/{ADMIN_SECRET_PATH}/auto-post?tab=config`
+- `/{ADMIN_SECRET_PATH}/auto-post/analytics` → `/{ADMIN_SECRET_PATH}/auto-post?tab=analytics`
 
 ---
 
@@ -129,30 +129,30 @@ Route redirects telah ditambahkan untuk memastikan URL lama masih berfungsi:
 ### Auto-Post AI Routes
 | Route | Description |
 |-------|-------------|
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post` | Unified dashboard with tabs |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post?tab=config` | Configuration tab |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post?tab=analytics` | Analytics tab |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post?tab=topics` | Topics management tab |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/auto-post?tab=schedules` | Schedules management tab |
+| `GET /{ADMIN_SECRET_PATH}/auto-post` | Unified dashboard with tabs |
+| `GET /{ADMIN_SECRET_PATH}/auto-post?tab=config` | Configuration tab |
+| `GET /{ADMIN_SECRET_PATH}/auto-post?tab=analytics` | Analytics tab |
+| `GET /{ADMIN_SECRET_PATH}/auto-post?tab=topics` | Topics management tab |
+| `GET /{ADMIN_SECRET_PATH}/auto-post?tab=schedules` | Schedules management tab |
 
 ### SEO Command Center Routes
 | Route | Description |
 |-------|-------------|
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo/command-center` | Unified hub with module cards |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo` | Full analytics dashboard |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo/scores` | SEO scores (existing) |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo/competitors` | Competitor analysis (existing) |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo/ab-tests` | A/B tests (existing) |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo/search-console` | Search Console (existing) |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo/refresh-logs` | Content refresh (existing) |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo/programmatic` | Programmatic SEO (existing) |
-| `GET /__REDACTED_LEGACY_ADMIN_SEGMENT__/seo/reports` | Reports (existing) |
+| `GET /{ADMIN_SECRET_PATH}/seo/command-center` | Unified hub with module cards |
+| `GET /{ADMIN_SECRET_PATH}/seo` | Full analytics dashboard |
+| `GET /{ADMIN_SECRET_PATH}/seo/scores` | SEO scores (existing) |
+| `GET /{ADMIN_SECRET_PATH}/seo/competitors` | Competitor analysis (existing) |
+| `GET /{ADMIN_SECRET_PATH}/seo/ab-tests` | A/B tests (existing) |
+| `GET /{ADMIN_SECRET_PATH}/seo/search-console` | Search Console (existing) |
+| `GET /{ADMIN_SECRET_PATH}/seo/refresh-logs` | Content refresh (existing) |
+| `GET /{ADMIN_SECRET_PATH}/seo/programmatic` | Programmatic SEO (existing) |
+| `GET /{ADMIN_SECRET_PATH}/seo/reports` | Reports (existing) |
 
 ---
 
 *Dokumen ini terakhir diupdate: 2025-01-XX*
 *Status: SELESAI SEMUA*
-- `/__REDACTED_LEGACY_ADMIN_SEGMENT__/consultation-leads` → `/__REDACTED_LEGACY_ADMIN_SEGMENT__/leads?tab=consultation-leads`
+- `/{ADMIN_SECRET_PATH}/consultation-leads` → `/{ADMIN_SECRET_PATH}/leads?tab=consultation-leads`
 
 ---
 
@@ -387,9 +387,9 @@ resources/views/admin/seo/
 
 ```php
 // Contoh untuk Leads
-Route::get('/__REDACTED_LEGACY_ADMIN_SEGMENT__/leads', [LeadManagementController::class, 'index'])->name('admin.leads.index');
-Route::redirect('/__REDACTED_LEGACY_ADMIN_SEGMENT__/service-inquiries', '/__REDACTED_LEGACY_ADMIN_SEGMENT__/leads?tab=service-inquiries');
-Route::redirect('/__REDACTED_LEGACY_ADMIN_SEGMENT__/consultation-leads', '/__REDACTED_LEGACY_ADMIN_SEGMENT__/leads?tab=consultation-leads');
+Route::get('/{ADMIN_SECRET_PATH}/leads', [LeadManagementController::class, 'index'])->name('admin.leads.index');
+Route::redirect('/{ADMIN_SECRET_PATH}/service-inquiries', '/{ADMIN_SECRET_PATH}/leads?tab=service-inquiries');
+Route::redirect('/{ADMIN_SECRET_PATH}/consultation-leads', '/{ADMIN_SECRET_PATH}/leads?tab=consultation-leads');
 ```
 
 ### 3.2 Sidebar Navigation (app.blade.php)

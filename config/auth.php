@@ -135,7 +135,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Path rahasia untuk akses admin terpisah (bypass detection /login).
-    | Set ADMIN_SECRET_PATH di .env. Kosong = route /__REDACTED_LEGACY_ADMIN_SEGMENT__ DIMATIKAN
+    | Set ADMIN_SECRET_PATH di .env. Kosong = route ini DIMATIKAN
     | sepenuhnya. Ganti secara periodik untuk keamanan.
     |
     */

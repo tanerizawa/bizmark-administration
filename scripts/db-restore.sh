@@ -25,7 +25,7 @@ fi
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_PORT="${DB_PORT:-5432}"
 DB_NAME="${DB_DATABASE:-bizmark_db}"
-DB_USER="${DB_USERNAME:-hadez}"
+DB_USER="${DB_USERNAME:-bizmark}"
 DB_PASS="${DB_PASSWORD}"
 
 # Colors
