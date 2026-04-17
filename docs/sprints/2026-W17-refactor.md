@@ -44,7 +44,7 @@
 | W17-01 | P1 | Contract test `DashboardDataService::build()` | S | DONE |
 | W17-02 | P2 | SEO: pusatkan `Cache::forget` KPI dashboard | S | DONE |
 | W17-03 | P3 | Scan `routes/admin` — semua partial diawali `<?php` | S | DONE |
-| W17-04 | P2 | Runbook + skrip audit pembersihan histori Git; trait redirect SEO | M | DONE |
+| W17-04 | P2 | Runbook + skrip audit + `git-history-scrub-execute.sh` (filter-repo blob+pesan) | M | DONE |
 
 ---
 
