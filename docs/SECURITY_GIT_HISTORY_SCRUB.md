@@ -78,16 +78,20 @@ File `replacements.txt` memakai sintaks yang sama (satu pasangan `literal==>peng
 ## 4) Setelah filter-repo
 
 1. `bash scripts/git-audit-sensitive-paths.sh` — pastikan substring path admin yang sudah tidak dipakai tidak lagi muncul berurutan di **blob** ter-track. (Skrip audit membangun pola sensitif lewat `\x2f` agar file sumber tidak menyimpan path utuh.)
-3. `git log -S'...'` — pastikan string target tidak lagi muncul di histori.
-4. Jalankan ulang test / `php artisan route:list` pada tree hasil rewrite.
-5. **Force-push** ke remote yang disepakati (contoh):
+2. `git log -S'<substring_lama>' --oneline --all` — pastikan substring yang baru saja di-scrub tidak lagi muncul di diff histori (ganti placeholder dengan pola audit tim).
+3. Regresi ringan pada tree hasil rewrite — bisa sekaligus dengan `./scripts/verify-post-scrub-local.sh` (audit + contract test dashboard + `route:list`), atau jalankan perintah di dalam skrip secara manual.
+4. **Force-push** ke remote kanonikal (tanpa ini, rewrite hanya ada di mesin lokal):
 
    ```bash
    git push origin --force --all
    git push origin --force --tags
    ```
 
-6. Instruksikan tim: `git fetch origin && git reset --hard origin/main` (atau clone baru).
+   Jika repo memakai remote `upstream` sebagai sumber kebenaran kedua, ulangi perintah yang sama dengan `upstream` setelah koordinasi pemilik organisasi.
+
+   **Autentikasi:** URL `https://github.com/...` membutuhkan kredensial (PAT + credential helper, atau `gh auth login`). Alternatif: `git remote set-url origin git@github.com:ORG/REPO.git` lalu push lewat SSH key.
+
+5. Instruksikan tim: `git fetch origin && git reset --hard origin/main` (ganti `main` jika default branch lain), atau **clone baru** — semua SHA lama tidak lagi valid.
 
 ---
 

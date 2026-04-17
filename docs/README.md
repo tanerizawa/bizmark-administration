@@ -20,7 +20,7 @@ Indeks ringkas untuk navigasi dokumen refactor, sprint, dan panduan operasional.
 | Sprint | Status |
 |--------|--------|
 | [sprints/2026-W16-refactor.md](sprints/2026-W16-refactor.md) | Laporan minggu selesai (delivered batches + retro). |
-| [sprints/2026-W17-refactor.md](sprints/2026-W17-refactor.md) | Rencana minggu berikutnya (draft kerja). |
+| [sprints/2026-W17-refactor.md](sprints/2026-W17-refactor.md) | W17: backlog teknis selesai di lokal; **W17-05** = force-push histori (`SECURITY_GIT_HISTORY_SCRUB` §4). |
 
 **Cara pakai:** duplikasi `WEEKLY_REFACTOR_SPRINT_TEMPLATE.md` ke `docs/sprints/YYYY-WW-refactor.md` setiap awal minggu.
 
@@ -28,7 +28,7 @@ Indeks ringkas untuk navigasi dokumen refactor, sprint, dan panduan operasional.
 
 - Invalidasi cache KPI dashboard: `app/Support/SeoDashboardCache.php`.
 - Redirect + flash: trait `app/Http/Controllers/Admin/Seo/Concerns/SeoAdminFlashRedirect.php` (dipakai semua controller di folder itu).
-- Audit jejak string di Git: `scripts/git-audit-sensitive-paths.sh` — runbook pembersihan histori: `docs/SECURITY_GIT_HISTORY_SCRUB.md`.
+- Audit / verifikasi pasca-scrub: `scripts/git-audit-sensitive-paths.sh`, `scripts/verify-post-scrub-local.sh` — runbook: `docs/SECURITY_GIT_HISTORY_SCRUB.md` (setelah rewrite lokal: **force-push** + re-sync tim, §4).
 
 ---
 

@@ -1,7 +1,7 @@
 # 2026-W17 Refactor Sprint
 ## Perencanaan: Senin, 20 Apr - Jumat, 24 Apr 2026
 
-> Status: **DRAFT KERJA** — isi harian saat sprint berjalan.
+> Status: **kerja teknis selesai di lokal** — sisa operasional: **force-push** ke `origin`/`upstream` (lihat `docs/SECURITY_GIT_HISTORY_SCRUB.md` §4).
 
 ---
 
@@ -45,6 +45,7 @@
 | W17-02 | P2 | SEO: pusatkan `Cache::forget` KPI dashboard | S | DONE |
 | W17-03 | P3 | Scan `routes/admin` — semua partial diawali `<?php` | S | DONE |
 | W17-04 | P2 | Runbook + skrip audit + `git-history-scrub-execute.sh` (filter-repo blob+pesan) | M | DONE |
+| W17-05 | P0 | Publikasi histori: `git push --force --all` + `--tags` ke remote; komunikasi re-sync tim | S | TODO (operator) |
 
 ---
 
@@ -79,7 +80,7 @@ _Plan / Done / Blocker — isi saat sprint._
 
 | Tanggal | Isu | Keputusan |
 |---------|-----|-----------|
-| | | |
+| 2026-04-17 | Histori lokal ditulis ulang (`git filter-repo`); SHA remote belum sinkron sampai force-push | Ikuti §4 `SECURITY_GIT_HISTORY_SCRUB.md`; jangan merge PR berbasis SHA lama |
 
 ---
 
