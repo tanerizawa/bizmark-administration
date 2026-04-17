@@ -25,6 +25,8 @@ Indeks ringkas untuk navigasi dokumen refactor, sprint, dan panduan operasional.
 
 **Cara pakai:** duplikasi `WEEKLY_REFACTOR_SPRINT_TEMPLATE.md` ke `docs/sprints/YYYY-WW-refactor.md` setiap awal minggu.
 
+**CI lokal / GitHub:** `make verify` atau workflow **Verify** di GitHub Actions (`.github/workflows/verify.yml`).
+
 **Kode terkait SEO admin (ringkas):**
 
 - Invalidasi cache KPI dashboard: `app/Support/SeoDashboardCache.php`.

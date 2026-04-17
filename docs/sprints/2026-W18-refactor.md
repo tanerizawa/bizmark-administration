@@ -16,7 +16,7 @@
 
 ## 1) Objective Sprint (maks 3)
 
-1. **Stabilitas CI lokal:** pastikan `./scripts/verify-post-scrub-local.sh` hijau di mesin dev; opsional wiring CI (GitHub Actions) memanggil skrip yang sama.
+1. **Stabilitas CI:** `make verify` / `./scripts/verify-post-scrub-local.sh` lokal + workflow GitHub Actions `verify.yml` (sudah).
 2. **Uji tambahan aman:** tambah/rapikan unit test di area berikutnya (prioritas rendah) tanpa mengubah perilaku produksi.
 3. **Sinkron GitHub (manual):** saat PAT + branch protection siap — force-push histori + komunikasi re-sync (carry-over W17-05).
 
@@ -26,9 +26,9 @@
 
 ### In Scope
 
-- [ ] Dokumentasi carry-over W17 (link ke W18, status push manual).
-- [ ] (Opsional) workflow CI: `php artisan config:clear` + `phpunit tests/Unit` + `route:list`.
-- [ ] Audit cepat `routes/admin` setelah merge dari kontributor lain (regresi FQCN / `<?php`).
+- [x] Dokumentasi carry-over W17 (README + sprint W17/W18).
+- [x] Workflow CI `.github/workflows/verify.yml` + target `make verify`.
+- [ ] Audit cepat `routes/admin` setelah merge dari kontributor lain (regresi FQCN / `<?php`) — ulangi saat ada PR besar.
 
 ### Out of Scope
 
@@ -41,7 +41,7 @@
 
 | ID | P | Item | Effort | Status |
 |----|---|------|--------|--------|
-| W18-01 | P2 | CI atau Makefile target memanggil `verify-post-scrub-local.sh` | M | TODO |
+| W18-01 | P2 | GitHub Actions `verify.yml` + `make verify` | M | DONE |
 | W18-02 | P3 | Unit test tambahan (modul non-kritis) | M | TODO |
 | W18-03 | P0 | Selesaikan W17-05 manual (push remote) bila blokir rilis | S | TODO |
 
