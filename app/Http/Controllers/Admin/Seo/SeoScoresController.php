@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Seo;
 
+use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\CompetitorAnalysis;
@@ -9,11 +10,12 @@ use App\Models\SeoScore;
 use App\Services\SeoFixService;
 use App\Services\SeoReportService;
 use App\Services\SeoScoringService;
+use App\Support\SeoDashboardCache;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class SeoScoresController extends Controller
 {
+    use SeoAdminFlashRedirect;
 
     /**
      * SEO scores list for all articles
@@ -107,7 +109,7 @@ class SeoScoresController extends Controller
             ? "{$aiTag}: {$result['fixes_count']} perbaikan diterapkan. Skor: {$result['old_score']} → {$result['new_score']} ({$result['new_grade']}, +{$result['score_change']}). {$fixList}"
             : "Tidak ada perbaikan ditemukan. Skor tetap: {$result['new_score']} ({$result['new_grade']})";
 
-        return redirect()->back()->with('success', $msg);
+        return $this->seoBackFlash('success', $msg);
     }
 
     /**
@@ -129,7 +131,7 @@ class SeoScoresController extends Controller
              . "📈 Rata-rata skor baru: {$result['avg_new_score']} (perubahan: +{$result['avg_score_change']})\n"
              . ($details ? "\nDetail:\n{$details}" : '');
 
-        return redirect()->route('admin.seo.scores')->with('success', $msg);
+        return $this->seoRouteFlash('admin.seo.scores', 'success', $msg);
     }
 
     /**
@@ -181,14 +183,11 @@ class SeoScoresController extends Controller
     {
         $result = $scorer->scoreAll();
 
-        // Clear dashboard cache so KPIs reflect new scores
-        Cache::forget('seo_dashboard_stats_7days');
-        Cache::forget('seo_dashboard_stats_30days');
-        Cache::forget('seo_dashboard_stats_90days');
+        SeoDashboardCache::forgetStatsCaches();
 
         $msg = "{$result['scored']} artikel di-rescore. Rata-rata: {$result['avg_score']}";
 
-        return redirect()->route('admin.seo.scores')->with('success', $msg);
+        return $this->seoRouteFlash('admin.seo.scores', 'success', $msg);
     }
 
     /**

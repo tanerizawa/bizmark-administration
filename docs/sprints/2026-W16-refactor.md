@@ -39,7 +39,7 @@
 
 | ID | Prioritas | Item | Impact | Effort | Status |
 |----|-----------|------|--------|--------|--------|
-| R-01 | P0 | Security cleanup (`/__REDACTED_LEGACY_ADMIN_SEGMENT__`, credential leak prevention) | High | S | DONE |
+| R-01 | P0 | Security cleanup (legacy admin URL, credential leak prevention) | High | S | DONE |
 | R-02 | P1 | Split SEO analytics monolith | High | L | DONE |
 | R-03 | P1 | Modularize admin routes | High | M | DONE |
 | R-04 | P1 | Split dashboard by domain services | High | M | DONE |

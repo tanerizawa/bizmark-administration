@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Seo;
 
+use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\CompetitorAnalysis;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Artisan;
 
 class SeoCompetitorsController extends Controller
 {
+    use SeoAdminFlashRedirect;
 
     /**
      * Competitive Intelligence dashboard
@@ -85,11 +87,14 @@ class SeoCompetitorsController extends Controller
         $newAnalysis = $ciService->analyzeKeyword($old->keyword);
 
         if ($newAnalysis) {
-            return redirect()->route('admin.seo.competitor-detail', $newAnalysis->id)
-                ->with('success', "🔄 Re-analisis selesai untuk \"{$old->keyword}\".\nPosisi: " . ($old->our_position ? "#{$old->our_position}" : 'N/A') . " → " . ($newAnalysis->our_position ? "#{$newAnalysis->our_position}" : 'N/A'));
+            $msg = "🔄 Re-analisis selesai untuk \"{$old->keyword}\".\nPosisi: "
+                . ($old->our_position ? "#{$old->our_position}" : 'N/A') . ' → '
+                . ($newAnalysis->our_position ? "#{$newAnalysis->our_position}" : 'N/A');
+
+            return $this->seoRouteFlash('admin.seo.competitor-detail', 'success', $msg, $newAnalysis->id);
         }
 
-        return redirect()->back()->with('error', "❌ Gagal re-analisis keyword \"{$old->keyword}\". Cek log untuk detail.");
+        return $this->seoBackFlash('error', "❌ Gagal re-analisis keyword \"{$old->keyword}\". Cek log untuk detail.");
     }
 
     /**
@@ -103,12 +108,10 @@ class SeoCompetitorsController extends Controller
         $analysis = $ciService->analyzeKeyword($keyword);
 
         if ($analysis) {
-            return redirect()->route('admin.seo.competitor-detail', $analysis->id)
-                ->with('success', "🔍 Analisis selesai untuk \"{$keyword}\".");
+            return $this->seoRouteFlash('admin.seo.competitor-detail', 'success', "🔍 Analisis selesai untuk \"{$keyword}\".", $analysis->id);
         }
 
-        return redirect()->route('admin.seo.competitors')
-            ->with('error', "❌ Gagal menganalisis keyword \"{$keyword}\". Cek log untuk detail.");
+        return $this->seoRouteFlash('admin.seo.competitors', 'error', "❌ Gagal menganalisis keyword \"{$keyword}\". Cek log untuk detail.");
     }
 
     /**
@@ -136,7 +139,7 @@ class SeoCompetitorsController extends Controller
         }
 
         if (!$article) {
-            return redirect()->back()->with('error', '❌ Tidak ada artikel terkait yang ditemukan untuk keyword ini.');
+            return $this->seoBackFlash('error', '❌ Tidak ada artikel terkait yang ditemukan untuk keyword ini.');
         }
 
         $result = $fixer->fixArticle($article);
@@ -148,7 +151,7 @@ class SeoCompetitorsController extends Controller
             ? "{$aiTag}: {$result['fixes_count']} perbaikan diterapkan untuk \"{$article->title}\".\nSkor: {$result['old_score']} → {$result['new_score']} ({$result['new_grade']}, +{$result['score_change']})\n{$fixList}"
             : "✅ Artikel \"{$article->title}\" sudah optimal. Skor: {$result['new_score']} ({$result['new_grade']})";
 
-        return redirect()->back()->with('success', $msg);
+        return $this->seoBackFlash('success', $msg);
     }
 
     /**
@@ -175,14 +178,14 @@ class SeoCompetitorsController extends Controller
         }
 
         if (!$article) {
-            return redirect()->back()->with('error', '❌ Tidak ada artikel terkait yang ditemukan untuk keyword ini.');
+            return $this->seoBackFlash('error', '❌ Tidak ada artikel terkait yang ditemukan untuk keyword ini.');
         }
 
         $score = $scorer->scoreArticle($article);
 
         $msg = "✅ Verifikasi selesai untuk \"{$article->title}\".\nSkor: {$score->total_score} ({$score->grade})\nRekomendasi tersisa: " . count($score->recommendations ?? []);
 
-        return redirect()->back()->with('success', $msg);
+        return $this->seoBackFlash('success', $msg);
     }
 
     /**
@@ -284,7 +287,7 @@ class SeoCompetitorsController extends Controller
         Artisan::call('seo:competitor-analyze');
         $output = trim(Artisan::output());
 
-        return redirect()->route('admin.seo.competitors')->with('success', "🔍 Analisis kompetitor selesai.\n{$output}");
+        return $this->seoRouteFlash('admin.seo.competitors', 'success', "🔍 Analisis kompetitor selesai.\n{$output}");
     }
 }
 

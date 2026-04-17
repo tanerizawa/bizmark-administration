@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Seo;
 
+use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\RankingAlert;
 use Illuminate\Http\Request;
 
 class SeoRankingAlertsController extends Controller
 {
+    use SeoAdminFlashRedirect;
 
     /**
      * Ranking alerts page.
@@ -51,7 +53,7 @@ class SeoRankingAlertsController extends Controller
         $alert = RankingAlert::findOrFail($id);
         $alert->markAsRead();
 
-        return back()->with('success', 'Alert marked as read.');
+        return $this->seoBackFlash('success', 'Alert marked as read.');
     }
 
     /**
@@ -61,7 +63,7 @@ class SeoRankingAlertsController extends Controller
     {
         RankingAlert::unread()->update(['is_read' => true]);
 
-        return back()->with('success', 'All alerts marked as read.');
+        return $this->seoBackFlash('success', 'All alerts marked as read.');
     }
 }
 

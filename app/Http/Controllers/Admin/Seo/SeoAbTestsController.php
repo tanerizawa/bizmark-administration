@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Admin\Seo;
 
+use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\MetaAbTest;
 use App\Services\MetaAbTestService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class SeoAbTestsController extends Controller
 {
+    use SeoAdminFlashRedirect;
 
     /**
      * Meta A/B Tests management
@@ -45,12 +48,12 @@ class SeoAbTestsController extends Controller
         $test = MetaAbTest::findOrFail($id);
 
         if ($test->status !== 'running') {
-            return redirect()->route('admin.seo.ab-tests')->with('error', 'Test sudah selesai.');
+            return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Test sudah selesai.');
         }
 
         $totalImpressions = $test->variant_a_impressions + $test->variant_b_impressions;
         if ($totalImpressions < 2) {
-            return redirect()->route('admin.seo.ab-tests')->with('error', 'Data belum cukup untuk evaluasi. Masukkan data impressions & clicks terlebih dahulu.');
+            return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Data belum cukup untuk evaluasi. Masukkan data impressions & clicks terlebih dahulu.');
         }
 
         // Force evaluate this test regardless of age
@@ -74,7 +77,7 @@ class SeoAbTestsController extends Controller
         ]);
 
         $winnerLabel = $winner === 'b' ? 'B (AI)' : ($winner === 'a' ? 'A (Original)' : 'Inconclusive');
-        return redirect()->route('admin.seo.ab-tests')->with('success', "Test #{$test->id} dievaluasi: Winner = {$winnerLabel} (confidence {$confidence}%)");
+        return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "Test #{$test->id} dievaluasi: Winner = {$winnerLabel} (confidence {$confidence}%)");
     }
 
     /**
@@ -85,7 +88,7 @@ class SeoAbTestsController extends Controller
         $test = MetaAbTest::findOrFail($id);
 
         if ($test->status !== 'running') {
-            return redirect()->route('admin.seo.ab-tests')->with('error', 'Test tidak sedang berjalan.');
+            return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Test tidak sedang berjalan.');
         }
 
         $test->update([
@@ -94,7 +97,7 @@ class SeoAbTestsController extends Controller
             'ended_at' => now(),
         ]);
 
-        return redirect()->route('admin.seo.ab-tests')->with('success', "Test #{$test->id} dihentikan.");
+        return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "Test #{$test->id} dihentikan.");
     }
 
     /**
@@ -105,12 +108,12 @@ class SeoAbTestsController extends Controller
         $test = MetaAbTest::with('article')->findOrFail($id);
 
         if ($test->winner !== 'b') {
-            return redirect()->route('admin.seo.ab-tests')->with('error', 'Hanya variant B (AI) yang bisa diterapkan.');
+            return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Hanya variant B (AI) yang bisa diterapkan.');
         }
 
         $article = $test->article;
         if (!$article) {
-            return redirect()->route('admin.seo.ab-tests')->with('error', 'Artikel tidak ditemukan.');
+            return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Artikel tidak ditemukan.');
         }
 
         if ($test->variant_b_title) {
@@ -121,7 +124,7 @@ class SeoAbTestsController extends Controller
         }
         $article->save();
 
-        return redirect()->route('admin.seo.ab-tests')->with('success', "Meta tags variant B berhasil diterapkan ke artikel \"{$article->title}\"");
+        return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "Meta tags variant B berhasil diterapkan ke artikel \"{$article->title}\"");
     }
 
     /**
@@ -132,7 +135,7 @@ class SeoAbTestsController extends Controller
         $test = MetaAbTest::findOrFail($id);
 
         if ($test->status !== 'running') {
-            return redirect()->route('admin.seo.ab-tests')->with('error', 'Hanya test yang running bisa diupdate datanya.');
+            return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Hanya test yang running bisa diupdate datanya.');
         }
 
         $validated = $request->validate([
@@ -145,12 +148,12 @@ class SeoAbTestsController extends Controller
         // Ensure clicks <= impressions
         if ($validated['variant_a_clicks'] > $validated['variant_a_impressions'] ||
             $validated['variant_b_clicks'] > $validated['variant_b_impressions']) {
-            return redirect()->route('admin.seo.ab-tests')->with('error', 'Clicks tidak boleh lebih besar dari impressions.');
+            return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Clicks tidak boleh lebih besar dari impressions.');
         }
 
         $test->update($validated);
 
-        return redirect()->route('admin.seo.ab-tests')->with('success', "Data test #{$test->id} berhasil diupdate.");
+        return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "Data test #{$test->id} berhasil diupdate.");
     }
 
     /**
@@ -162,7 +165,7 @@ class SeoAbTestsController extends Controller
         $testId = $test->id;
         $test->delete();
 
-        return redirect()->route('admin.seo.ab-tests')->with('success', "Test #{$testId} berhasil dihapus.");
+        return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "Test #{$testId} berhasil dihapus.");
     }
 
     /**
@@ -174,10 +177,10 @@ class SeoAbTestsController extends Controller
         $count = count($results);
 
         if ($count === 0) {
-            return redirect()->route('admin.seo.ab-tests')->with('error', 'Tidak ada test yang siap dievaluasi (butuh min 7 hari & 100 impressions).');
+            return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Tidak ada test yang siap dievaluasi (butuh min 7 hari & 100 impressions).');
         }
 
-        return redirect()->route('admin.seo.ab-tests')->with('success', "{$count} test berhasil dievaluasi.");
+        return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "{$count} test berhasil dievaluasi.");
     }
 
     /**
@@ -212,7 +215,7 @@ class SeoAbTestsController extends Controller
         Artisan::call('seo:meta-ab-test', ['--all' => true]);
         $output = trim(Artisan::output());
 
-        return redirect()->route('admin.seo.ab-tests')->with('success', "A/B test generation selesai.\n{$output}");
+        return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "A/B test generation selesai.\n{$output}");
     }
 }
 

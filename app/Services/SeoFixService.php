@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Article;
 use App\Models\SeoScore;
-use Illuminate\Support\Facades\Cache;
+use App\Support\SeoDashboardCache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -123,10 +123,7 @@ class SeoFixService
         $article->refresh();
         $newScore = $this->scorer->scoreArticle($article);
 
-        // Clear dashboard cache
-        Cache::forget('seo_dashboard_stats_7days');
-        Cache::forget('seo_dashboard_stats_30days');
-        Cache::forget('seo_dashboard_stats_90days');
+        SeoDashboardCache::forgetStatsCaches();
 
         return [
             'article_id' => $article->id,

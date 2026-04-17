@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Seo;
 
+use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\KeywordPositionHistory;
 use App\Services\CompetitiveIntelligenceService;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 
 class SeoPositionsController extends Controller
 {
+    use SeoAdminFlashRedirect;
 
     // ─────────────────────────────────────────────────────────────────
     // POSITION TRACKING (Phase 5: Intelligence)
@@ -111,16 +113,17 @@ class SeoPositionsController extends Controller
             $result = $intelligence->trackPosition($keyword);
             
             if ($result) {
-                return back()->with('success', "Position tracked for '{$keyword}': #{$result->position}");
+                return $this->seoBackFlash('success', "Position tracked for '{$keyword}': #{$result->position}");
             }
             
-            return back()->with('error', "Failed to track position for '{$keyword}'");
+            return $this->seoBackFlash('error', "Failed to track position for '{$keyword}'");
         }
 
         // Batch tracking
         $results = $intelligence->trackAllPositions($limit);
 
-        return back()->with('success', 
+        return $this->seoBackFlash(
+            'success',
             "Tracked {$results['tracked']} keywords. " .
             "Skipped {$results['skipped']}. " .
             "Created {$results['alerts_created']} alerts."

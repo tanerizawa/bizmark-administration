@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Seo;
 
+use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\ContentRefreshLog;
 use App\Services\ContentRefreshService;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 
 class SeoRefreshLogsController extends Controller
 {
+    use SeoAdminFlashRedirect;
 
     /**
      * Content Refresh audit logs
@@ -48,7 +50,7 @@ class SeoRefreshLogsController extends Controller
         $stale = $service->getStaleArticles(90, $limit);
 
         if ($stale->isEmpty()) {
-            return redirect()->route('admin.seo.refresh-logs')->with('success', 'Tidak ada artikel stale yang perlu di-refresh (semua sudah diperbarui dalam 90 hari terakhir).');
+            return $this->seoRouteFlash('admin.seo.refresh-logs', 'success', 'Tidak ada artikel stale yang perlu di-refresh (semua sudah diperbarui dalam 90 hari terakhir).');
         }
 
         $results = ['refreshed' => 0, 'errors' => 0];
@@ -57,7 +59,7 @@ class SeoRefreshLogsController extends Controller
             $r['status'] === 'refreshed' ? $results['refreshed']++ : $results['errors']++;
         }
 
-        return redirect()->route('admin.seo.refresh-logs')->with('success', "Content refresh selesai: {$results['refreshed']} berhasil, {$results['errors']} error dari {$stale->count()} artikel.");
+        return $this->seoRouteFlash('admin.seo.refresh-logs', 'success', "Content refresh selesai: {$results['refreshed']} berhasil, {$results['errors']} error dari {$stale->count()} artikel.");
     }
 
     /**
@@ -68,12 +70,12 @@ class SeoRefreshLogsController extends Controller
         $log = ContentRefreshLog::with('article')->findOrFail($id);
 
         if (!$log->article) {
-            return redirect()->route('admin.seo.refresh-logs')->with('error', 'Artikel sudah dihapus, tidak bisa retry.');
+            return $this->seoRouteFlash('admin.seo.refresh-logs', 'error', 'Artikel sudah dihapus, tidak bisa retry.');
         }
 
         $result = $service->refreshArticle($log->article, 'manual');
 
-        return redirect()->route('admin.seo.refresh-logs')->with('success', "Retry untuk \"{$log->article->title}\": status {$result['status']}.");
+        return $this->seoRouteFlash('admin.seo.refresh-logs', 'success', "Retry untuk \"{$log->article->title}\": status {$result['status']}.");
     }
 
     /**
@@ -84,7 +86,7 @@ class SeoRefreshLogsController extends Controller
         $log = ContentRefreshLog::findOrFail($id);
         $log->delete();
 
-        return redirect()->route('admin.seo.refresh-logs')->with('success', 'Log entry berhasil dihapus.');
+        return $this->seoRouteFlash('admin.seo.refresh-logs', 'success', 'Log entry berhasil dihapus.');
     }
 
     /**

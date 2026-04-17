@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Admin\Seo;
 
+use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\SeoReport;
 use App\Services\SeoReportService;
+use App\Support\SeoDashboardCache;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class SeoReportsController extends Controller
 {
+    use SeoAdminFlashRedirect;
 
     /**
      * Reports list
@@ -36,11 +38,9 @@ class SeoReportsController extends Controller
     {
         $count = $reportService->snapshotDailyViews();
 
-        Cache::forget('seo_dashboard_stats_7days');
-        Cache::forget('seo_dashboard_stats_30days');
-        Cache::forget('seo_dashboard_stats_90days');
+        SeoDashboardCache::forgetStatsCaches();
 
-        return redirect()->back()->with('success', "📸 View snapshot selesai: {$count} artikel terekam.");
+        return $this->seoBackFlash('success', "📸 View snapshot selesai: {$count} artikel terekam.");
     }
 
     /**
@@ -57,7 +57,7 @@ class SeoReportsController extends Controller
         $period = ucfirst($report->period);
         $msg = "📋 {$period} report berhasil di-generate ({$report->period_start->format('d M')} — {$report->period_end->format('d M Y')}).";
 
-        return redirect()->route('admin.seo.reports')->with('success', $msg);
+        return $this->seoRouteFlash('admin.seo.reports', 'success', $msg);
     }
 }
 

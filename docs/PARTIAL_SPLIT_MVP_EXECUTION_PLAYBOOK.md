@@ -266,3 +266,13 @@ Dokumen ini dijadikan baseline eksekusi agar semua perubahan besar tetap:
 - aman,
 - dan cepat dikirim ke produksi tanpa chaos.
 
+---
+
+## 13) Indeks dokumen terkait
+
+- [docs/README.md](README.md) — indeks playbook, template sprint, governance route admin, arsip sprint.
+- [docs/ROUTE_ADMIN_GOVERNANCE.md](ROUTE_ADMIN_GOVERNANCE.md) — konvensi `routes/admin/*.php`.
+- [docs/WEEKLY_REFACTOR_SPRINT_TEMPLATE.md](WEEKLY_REFACTOR_SPRINT_TEMPLATE.md) — template sprint mingguan.
+- [docs/sprints/](sprints/) — laporan sprint per minggu (contoh `2026-W16-refactor.md`).
+- [docs/SECURITY_GIT_HISTORY_SCRUB.md](SECURITY_GIT_HISTORY_SCRUB.md) — opsi pembersihan string sensitif di histori Git.
+

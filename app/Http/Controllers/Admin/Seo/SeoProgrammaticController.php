@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Seo;
 
+use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class SeoProgrammaticController extends Controller
 {
+    use SeoAdminFlashRedirect;
 
     /**
      * Programmatic SEO stats page
@@ -74,7 +76,7 @@ class SeoProgrammaticController extends Controller
             }
         }
 
-        return redirect()->route('admin.seo.programmatic')->with('success', "Cache programmatic SEO di-clear. {$cleared} entri dihapus.");
+        return $this->seoRouteFlash('admin.seo.programmatic', 'success', "Cache programmatic SEO di-clear. {$cleared} entri dihapus.");
     }
 }
 
