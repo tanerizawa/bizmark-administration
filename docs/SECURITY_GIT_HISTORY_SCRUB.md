@@ -77,16 +77,17 @@ File `replacements.txt` memakai sintaks yang sama (satu pasangan `literal==>peng
 
 ## 4) Setelah filter-repo
 
-1. `git log -S'...'` — pastikan string target tidak lagi muncul di histori.
-2. Jalankan ulang test / `php artisan route:list` pada tree hasil rewrite.
-3. **Force-push** ke remote yang disepakati (contoh):
+1. `bash scripts/git-audit-sensitive-paths.sh` — pastikan substring path admin yang sudah tidak dipakai tidak lagi muncul berurutan di **blob** ter-track. (Skrip audit membangun pola sensitif lewat `\x2f` agar file sumber tidak menyimpan path utuh.)
+3. `git log -S'...'` — pastikan string target tidak lagi muncul di histori.
+4. Jalankan ulang test / `php artisan route:list` pada tree hasil rewrite.
+5. **Force-push** ke remote yang disepakati (contoh):
 
    ```bash
    git push origin --force --all
    git push origin --force --tags
    ```
 
-4. Instruksikan tim: `git fetch origin && git reset --hard origin/main` (atau clone baru).
+6. Instruksikan tim: `git fetch origin && git reset --hard origin/main` (atau clone baru).
 
 ---
 
