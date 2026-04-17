@@ -18,4 +18,4 @@ echo ""
 echo "== route:list (count tail) =="
 php artisan route:list --except-vendor 2>&1 | tail -3
 echo ""
-echo "OK. Langkah berikutnya: git push origin --force --all && git push origin --force --tags"
+echo "OK. Publikasi Git setelah histori divergen: docs/GIT_PUBLISH_AFTER_REWRITE.md"
