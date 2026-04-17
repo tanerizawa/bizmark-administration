@@ -87,6 +87,10 @@ File `replacements.txt` memakai sintaks yang sama (satu pasangan `literal==>peng
    git push origin --force --tags
    ```
 
+   Alternatif sekali pakai: `./scripts/git-force-push-with-github-token.sh` dengan `GITHUB_TOKEN` / `GH_TOKEN` di environment (token tidak disimpan di `git config`).
+
+   **Jika semua ref ditolak (`remote rejected` / `permission denied`):** PAT fine-grained harus punya **Contents: Read and write** untuk repo ini; untuk org, **Authorize SSO** pada token; ruleset / branch protection pada `main` bisa melarang force-push — butuh penyesuaian sementara oleh admin repo.
+
    Jika repo memakai remote `upstream` sebagai sumber kebenaran kedua, ulangi perintah yang sama dengan `upstream` setelah koordinasi pemilik organisasi.
 
    **Autentikasi:** URL `https://github.com/...` membutuhkan kredensial (PAT + credential helper, atau `gh auth login`). Alternatif: `git remote set-url origin git@github.com:ORG/REPO.git` lalu push lewat SSH key.
