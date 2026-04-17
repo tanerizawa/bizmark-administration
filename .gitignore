@@ -1,4 +1,8 @@
 *.log
+*.sql.gz
+*.sql.gz.md5
+.env.pre-rotate.*
+storage/backups/
 .DS_Store
 .env
 .env.backup
