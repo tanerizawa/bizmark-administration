@@ -8,6 +8,10 @@ use App\Models\AutoPostConfig;
 use App\Models\AutoPostSchedule;
 use App\Models\AutoPostLog;
 use App\Jobs\GenerateAutoPostArticle;
+use App\Services\AutoPost\ArticleAutoPostArticleCreator;
+use App\Services\AutoPost\ArticleAutoPostContentHelper;
+use App\Services\AutoPost\ArticleAutoPostImageHelper;
+use App\Services\AutoPost\ArticleAutoPostSeoHelper;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -15,29 +19,27 @@ use Illuminate\Support\Str;
 class ArticleAutoPostService
 {
     protected ArticleGenerationService $generationService;
+
     protected InternalLinkService $linkService;
+
     protected TopicSimilarityService $similarityService;
+
     protected ArticleQualityService $qualityService;
-    protected PexelsService $pexelsService;
-    protected SeoScoringService $seoScorer;
-    protected SeoFixService $seoFixer;
 
     public function __construct(
         ArticleGenerationService $generationService,
         InternalLinkService $linkService,
         TopicSimilarityService $similarityService,
         ArticleQualityService $qualityService,
-        PexelsService $pexelsService,
-        SeoScoringService $seoScorer,
-        SeoFixService $seoFixer
+        protected ArticleAutoPostImageHelper $imageHelper,
+        protected ArticleAutoPostArticleCreator $articleCreator,
+        protected ArticleAutoPostSeoHelper $seoHelper,
+        protected ArticleAutoPostContentHelper $contentHelper,
     ) {
         $this->generationService = $generationService;
         $this->linkService = $linkService;
         $this->similarityService = $similarityService;
         $this->qualityService = $qualityService;
-        $this->pexelsService = $pexelsService;
-        $this->seoScorer = $seoScorer;
-        $this->seoFixer = $seoFixer;
     }
 
     /**
@@ -226,7 +228,7 @@ class ArticleAutoPostService
             );
             
             // Ensure "Baca juga" / "Artikel Terkait" section exists for +3 SEO bonus
-            $articleData['content'] = $this->ensureBacaJugaSection($articleData['content'], $topic);
+            $articleData['content'] = $this->contentHelper->ensureBacaJugaSection($articleData['content'], $topic);
             
             $linkStats = $this->linkService->validateLinks($articleData['content']);
             
@@ -237,11 +239,11 @@ class ArticleAutoPostService
             
             // 7.5. Fetch featured image from Pexels
             if ($config->include_featured_image) {
-                $articleData['featured_image'] = $this->fetchFeaturedImage($topic, $schedule);
+                $articleData['featured_image'] = $this->imageHelper->fetchFeaturedImage($topic, $schedule);
             }
             
             // 8. Create article
-            $article = $this->createArticle($articleData, $topic);
+            $article = $this->articleCreator->createArticle($articleData, $topic);
             
             \Log::info('📝 Article created in database', [
                 'article_id' => $article->id,
@@ -266,7 +268,7 @@ class ArticleAutoPostService
             ]);
             
             // 8.5. SEO Compliance: Score and auto-fix before publishing
-            $seoResult = $this->applySeoCompliance($article, $schedule);
+            $seoResult = $this->seoHelper->applySeoCompliance($article, $schedule);
             
             // 9. Mark topic as published
             $topic->markAsPublished($article->id);
@@ -399,577 +401,6 @@ class ArticleAutoPostService
         }
     }
 
-    /**
-     * Fetch a relevant featured image from Pexels based on topic context
-     */
-    protected function fetchFeaturedImage(ArticleTopic $topic, AutoPostSchedule $schedule): ?string
-    {
-        AutoPostLog::logInfo('featured_image_search', '🖼️ Searching for featured image on Pexels', [
-            'schedule_id' => $schedule->id,
-            'topic_id' => $topic->id,
-        ]);
-
-        // Build search queries from topic context, ordered by specificity
-        $queries = $this->buildImageSearchQueries($topic);
-
-        $bestPhoto = null;
-        $bestScore = -1;
-        $bestQuery = null;
-
-        foreach ($queries as $query) {
-            try {
-                $results = $this->pexelsService->searchPhotos($query, 10, 1, [
-                    'orientation' => 'landscape',
-                    'size' => 'large',
-                    'locale' => 'id-ID',
-                ]);
-
-                if (!empty($results['photos'])) {
-                    foreach ($results['photos'] as $photo) {
-                        $score = $this->scorePhotoCandidate($photo, $query, $topic);
-                        if ($score > $bestScore) {
-                            $bestScore = $score;
-                            $bestPhoto = $photo;
-                            $bestQuery = $query;
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-                \Log::warning('Pexels search failed for query', [
-                    'query' => $query,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
-
-        // Last-resort fallback to curated image if all query results are too weak.
-        if (!$bestPhoto) {
-            try {
-                $curated = $this->pexelsService->getCuratedPhotos(10, 1);
-                foreach ($curated['photos'] ?? [] as $photo) {
-                    $score = $this->scorePhotoCandidate($photo, '', $topic);
-                    if ($score > $bestScore) {
-                        $bestScore = $score;
-                        $bestPhoto = $photo;
-                        $bestQuery = 'curated_fallback';
-                    }
-                }
-            } catch (\Exception $e) {
-                \Log::warning('Pexels curated fallback failed', [
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
-
-        if ($bestPhoto) {
-            $imageUrl = $bestPhoto['src']['large2x'] ?? $bestPhoto['src']['large'] ?? $bestPhoto['src']['original'];
-            $path = $this->pexelsService->downloadAndSavePhoto(
-                $imageUrl,
-                $bestPhoto['photographer'] ?? 'Unknown',
-                $bestPhoto['id']
-            );
-
-            if ($path) {
-                AutoPostLog::logSuccess('featured_image_found', '🖼️ Featured image downloaded from Pexels', [
-                    'schedule_id' => $schedule->id,
-                    'topic_id' => $topic->id,
-                    'context' => [
-                        'query' => $bestQuery,
-                        'photo_id' => $bestPhoto['id'],
-                        'photographer' => $bestPhoto['photographer'] ?? 'Unknown',
-                        'path' => $path,
-                        'relevance_score' => $bestScore,
-                    ],
-                ]);
-
-                return $path;
-            }
-        }
-
-        AutoPostLog::logWarning('featured_image_not_found', '⚠️ No suitable featured image found', [
-            'schedule_id' => $schedule->id,
-            'topic_id' => $topic->id,
-        ]);
-
-        return null;
-    }
-
-    /**
-     * Build prioritized search queries for Pexels from topic context
-     */
-    protected function buildImageSearchQueries(ArticleTopic $topic): array
-    {
-        $queries = [];
-
-        $title = trim((string) $topic->title);
-        $keywords = collect($topic->keywords ?? [])->filter()->map(fn ($k) => trim((string) $k))->values();
-
-        // 1) Prioritize first two meaningful keywords
-        if ($keywords->isNotEmpty()) {
-            $queries[] = $keywords->take(2)->implode(' ');
-            $queries[] = $keywords->take(3)->implode(' ');
-        }
-
-        // 2) Main title + Indonesia business context
-        if ($title !== '') {
-            $queries[] = $title;
-            $queries[] = $title . ' Indonesia bisnis';
-        }
-
-        // 3) Simplified title without year/noise words
-        $cleanTitle = preg_replace('/\b\d{4}\b/', '', $topic->title);
-        $cleanTitle = preg_replace('/\b\d+\b/', '', $cleanTitle);
-        $cleanTitle = preg_replace('/[^\w\s]/u', '', $cleanTitle);
-        $stopWords = ['dan', 'yang', 'untuk', 'dengan', 'dalam', 'cara', 'panduan', 'lengkap'];
-        $words = array_values(array_filter(explode(' ', Str::lower(trim($cleanTitle))), function ($w) use ($stopWords) {
-            return strlen($w) > 2 && !in_array($w, $stopWords, true);
-        }));
-        if (count($words) > 4) {
-            $words = array_slice($words, 0, 4);
-        }
-        if (!empty($words)) {
-            $queries[] = implode(' ', $words);
-        }
-
-        // 4) Category-based fallback queries for better semantic match
-        $categoryMap = [
-            'tips' => ['konsultasi bisnis kantor', 'dokumen perizinan usaha indonesia'],
-            'regulation' => ['regulasi pemerintah dokumen legal', 'izin usaha dokumen resmi'],
-            'general' => ['bisnis indonesia kantor profesional', 'dokumen usaha indonesia'],
-            'case-study' => ['tim bisnis meeting sukses', 'analisis bisnis indonesia'],
-            'news' => ['berita bisnis indonesia', 'perkembangan usaha indonesia'],
-        ];
-
-        foreach (($categoryMap[$topic->category] ?? ['dokumen perizinan bisnis indonesia']) as $fallbackQuery) {
-            $queries[] = $fallbackQuery;
-        }
-
-        // 5) Hard fallback
-        $queries[] = 'perizinan usaha indonesia';
-        $queries[] = 'business office document';
-
-        return array_unique(array_filter($queries));
-    }
-
-    /**
-     * Score candidate photos by text relevance and visual suitability.
-     */
-    protected function scorePhotoCandidate(array $photo, string $query, ArticleTopic $topic): int
-    {
-        $score = 0;
-
-        $queryTokens = $this->extractSearchTokens($query);
-        $topicTokens = $this->extractSearchTokens($topic->title . ' ' . implode(' ', $topic->keywords ?? []));
-        $categoryHints = $this->extractSearchTokens(implode(' ', $this->getCategoryImageHints($topic->category)));
-
-        $alt = Str::lower((string) ($photo['alt'] ?? ''));
-        $url = Str::lower((string) ($photo['url'] ?? ''));
-        $photographer = Str::lower((string) ($photo['photographer'] ?? ''));
-        $haystack = $alt . ' ' . $url . ' ' . $photographer;
-
-        foreach ($queryTokens as $token) {
-            if (Str::contains($haystack, $token)) {
-                $score += 8;
-            }
-        }
-
-        foreach ($topicTokens as $token) {
-            if (Str::contains($haystack, $token)) {
-                $score += 4;
-            }
-        }
-
-        foreach ($categoryHints as $hint) {
-            if (Str::contains($haystack, $hint)) {
-                $score += 3;
-            }
-        }
-
-        // Prefer landscape-like ratio and larger image width when available.
-        $width = (int) ($photo['width'] ?? 0);
-        $height = (int) ($photo['height'] ?? 1);
-        if ($width > 0 && $height > 0) {
-            $ratio = $width / max(1, $height);
-            if ($ratio >= 1.3 && $ratio <= 2.2) {
-                $score += 6;
-            }
-            if ($width >= 1600) {
-                $score += 4;
-            }
-        }
-
-        return $score;
-    }
-
-    protected function extractSearchTokens(string $text): array
-    {
-        $normalized = Str::lower(preg_replace('/[^\pL\pN\s]/u', ' ', $text));
-        $parts = preg_split('/\s+/', $normalized) ?: [];
-        $stop = ['dan', 'yang', 'untuk', 'dengan', 'dalam', 'atau', 'the', 'for', 'from'];
-
-        return array_values(array_unique(array_filter($parts, function ($token) use ($stop) {
-            return mb_strlen($token) > 2 && !in_array($token, $stop, true);
-        })));
-    }
-
-    protected function getCategoryImageHints(?string $category): array
-    {
-        $hints = [
-            'tips' => ['business', 'office', 'document', 'consulting', 'planning'],
-            'regulation' => ['legal', 'government', 'regulation', 'law', 'document'],
-            'general' => ['business', 'office', 'meeting', 'document'],
-            'case-study' => ['success', 'teamwork', 'strategy', 'meeting'],
-            'news' => ['news', 'media', 'business', 'analysis'],
-        ];
-
-        return $hints[$category] ?? ['business', 'office', 'document'];
-    }
-
-    /**
-     * Create article in database with proper duplicate handling
-     */
-    protected function createArticle(array $articleData, ArticleTopic $topic): Article
-    {
-        // Get the first admin user as author (or use a specific bot user)
-        $author = \App\Models\User::where('role_id', 1)->first();
-        
-        if (!$author) {
-            $author = \App\Models\User::first();
-        }
-        
-        // Check if article with same title already exists (INCLUDING soft deleted)
-        $existingArticle = Article::withTrashed()->where('title', $articleData['title'])->first();
-        
-        if ($existingArticle) {
-            \Log::warning('⚠️ Article with same title already exists', [
-                'existing_id' => $existingArticle->id,
-                'title' => $articleData['title'],
-                'is_deleted' => $existingArticle->trashed(),
-            ]);
-            
-            // If soft deleted, restore it and update
-            if ($existingArticle->trashed()) {
-                $existingArticle->restore();
-                $existingArticle->update([
-                    'content' => $articleData['content'],
-                    'excerpt' => $articleData['excerpt'],
-                    'status' => $articleData['status'],
-                    'published_at' => $articleData['published_at'],
-                    'meta_title' => $articleData['meta_title'],
-                    'meta_description' => $articleData['meta_description'],
-                    'source_type' => 'auto-generated',
-                ]);
-                \Log::info('✅ Restored and updated soft-deleted article', [
-                    'article_id' => $existingArticle->id,
-                ]);
-            } elseif ($existingArticle->status === 'draft') {
-                // Update existing draft
-                $existingArticle->update([
-                    'content' => $articleData['content'],
-                    'excerpt' => $articleData['excerpt'],
-                    'status' => $articleData['status'],
-                    'published_at' => $articleData['published_at'],
-                    'source_type' => 'auto-generated',
-                ]);
-            }
-            
-            return $existingArticle;
-        }
-        
-        // Generate unique slug BEFORE create to avoid constraint violation
-        $slug = Article::generateUniqueSlug($articleData['title']);
-        
-        // Use database transaction to ensure atomicity
-        return \DB::transaction(function () use ($articleData, $topic, $author, $slug) {
-            return Article::create([
-                'title' => $articleData['title'],
-                'slug' => $slug, // Explicitly set unique slug
-                'content' => $articleData['content'],
-                'excerpt' => $articleData['excerpt'],
-                'category' => $articleData['category'],
-                'language' => $topic->language ?? 'id',
-                'tags' => $articleData['tags'],
-                'status' => $articleData['status'],
-                'published_at' => $articleData['published_at'],
-                'author_id' => $author->id,
-                'source_type' => 'auto-generated',
-                'topic_cluster_id' => $topic->topic_cluster_id,
-                'meta_title' => $articleData['meta_title'],
-                'meta_description' => $articleData['meta_description'],
-                'meta_keywords' => $articleData['meta_keywords'],
-                'reading_time' => $articleData['reading_time'],
-                'featured_image' => $articleData['featured_image'] ?? null,
-                'is_featured' => false,
-            ]);
-        });
-    }
-
-    /**
-     * SEO Compliance: Score the article and auto-fix if below target
-     * This saves OpenRouter API costs by fixing issues immediately 
-     * instead of requiring separate SeoFixService runs later.
-     */
-    protected function applySeoCompliance(Article $article, AutoPostSchedule $schedule): array
-    {
-        $targetScore = 80;
-
-        try {
-            // Score the article with our 10-factor SEO scoring algorithm
-            $initialScore = $this->seoScorer->scoreArticle($article);
-
-            \Log::info('📊 SEO Score check', [
-                'article_id' => $article->id,
-                'score' => $initialScore->total_score,
-                'grade' => $initialScore->grade,
-                'issues' => count($initialScore->recommendations ?? []),
-            ]);
-
-            AutoPostLog::create([
-                'schedule_id' => $schedule->id,
-                'article_id' => $article->id,
-                'level' => 'info',
-                'event' => 'seo_score_initial',
-                'message' => "📊 SEO Score: {$initialScore->total_score}/100 (Grade {$initialScore->grade})",
-                'context' => [
-                    'score' => $initialScore->total_score,
-                    'grade' => $initialScore->grade,
-                    'recommendations' => count($initialScore->recommendations ?? []),
-                    'factors' => $initialScore->factors,
-                ],
-            ]);
-
-            // If score is already good, no fix needed — API cost saved!
-            if ($initialScore->total_score >= $targetScore) {
-                \Log::info('✅ SEO Score already meets target, no fix needed', [
-                    'score' => $initialScore->total_score,
-                ]);
-                return [
-                    'initial_score' => $initialScore->total_score,
-                    'final_score' => $initialScore->total_score,
-                    'grade' => $initialScore->grade,
-                    'fixes_count' => 0,
-                    'api_saved' => true,
-                ];
-            }
-
-            // Score below target: apply rule-based fixes only (no extra API call)
-            // This uses the same logic as SeoFixService but skips the AI API calls
-            $fixResult = $this->applyRuleBasedSeoFixes($article, $initialScore);
-
-            // Re-score after fixes
-            $article->refresh();
-            $finalScore = $this->seoScorer->scoreArticle($article);
-
-            $scoreChange = $finalScore->total_score - $initialScore->total_score;
-
-            AutoPostLog::create([
-                'schedule_id' => $schedule->id,
-                'article_id' => $article->id,
-                'level' => $finalScore->total_score >= $targetScore ? 'success' : 'warning',
-                'event' => 'seo_compliance_result',
-                'message' => "🔧 SEO Fix: {$initialScore->total_score} → {$finalScore->total_score} (+" . max(0, $scoreChange) . ") Grade {$finalScore->grade}",
-                'context' => [
-                    'initial_score' => $initialScore->total_score,
-                    'final_score' => $finalScore->total_score,
-                    'score_change' => $scoreChange,
-                    'grade' => $finalScore->grade,
-                    'fixes' => $fixResult['fixes'],
-                    'remaining_issues' => count($finalScore->recommendations ?? []),
-                ],
-            ]);
-
-            \Log::info('🔧 SEO Compliance applied', [
-                'article_id' => $article->id,
-                'score' => $initialScore->total_score . ' → ' . $finalScore->total_score,
-                'fixes' => count($fixResult['fixes']),
-            ]);
-
-            return [
-                'initial_score' => $initialScore->total_score,
-                'final_score' => $finalScore->total_score,
-                'grade' => $finalScore->grade,
-                'fixes_count' => count($fixResult['fixes']),
-                'fixes' => $fixResult['fixes'],
-                'api_saved' => true,
-            ];
-
-        } catch (\Exception $e) {
-            \Log::warning('⚠️ SEO compliance check failed (non-fatal)', [
-                'article_id' => $article->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'initial_score' => 0,
-                'final_score' => 0,
-                'grade' => '?',
-                'fixes_count' => 0,
-                'error' => $e->getMessage(),
-            ];
-        }
-    }
-
-    /**
-     * Apply rule-based SEO fixes (no extra AI API calls) to save costs.
-     * Fixes: meta_title (year, Bizmark, length), meta_description (CTA), 
-     * tags, excerpt, reading_time, slug — all deterministic.
-     */
-    protected function applyRuleBasedSeoFixes(Article $article, $seoScore): array
-    {
-        $fixes = [];
-        $changed = false;
-        $factors = $seoScore->factors ?? [];
-
-        // Fix meta_title: ensure year + Bizmark + ≤55 chars
-        $titleScore = $factors['title']['score'] ?? 0;
-        if ($titleScore < 15 && $article->meta_title) {
-            $metaTitle = $article->meta_title;
-            $year = date('Y');
-
-            // Add year if missing
-            if (!preg_match('/20\d{2}/', $metaTitle)) {
-                if (mb_strlen($metaTitle) + strlen(" $year") <= 55) {
-                    $metaTitle .= " $year";
-                } elseif (mb_strlen($metaTitle) > 45) {
-                    $metaTitle = Str::limit($metaTitle, 45, '') . " $year";
-                }
-            }
-
-            // Add Bizmark if missing
-            if (!Str::contains($metaTitle, ['Bizmark', 'bizmark'], true)) {
-                if (mb_strlen($metaTitle) + 10 <= 55) {
-                    $metaTitle .= ' | Bizmark';
-                } elseif (mb_strlen($metaTitle) > 40) {
-                    $metaTitle = Str::limit($metaTitle, 40, '') . ' | Bizmark';
-                }
-            }
-
-            if ($metaTitle !== $article->meta_title) {
-                $article->meta_title = $metaTitle;
-                $fixes[] = '⚙️ Meta title optimized for SEO';
-                $changed = true;
-            }
-        }
-
-        // Ensure meta_title differs from title (for +2 bonus)
-        if ($article->meta_title === $article->title && $article->meta_title) {
-            $year = date('Y');
-            $suffix = " $year | Bizmark";
-            $base = preg_replace('/\s*20\d{2}\s*/', ' ', $article->title);
-            $base = preg_replace('/\s*\|?\s*[Bb]izmark\s*/', '', $base);
-            $base = trim(Str::limit(trim($base), 55 - mb_strlen($suffix), ''));
-            $article->meta_title = $base . $suffix;
-            $fixes[] = '⚙️ Meta title differentiated from title';
-            $changed = true;
-        }
-
-        // Fix meta_description: ensure CTA
-        $descScore = $factors['meta_description']['score'] ?? 0;
-        if ($descScore < 12 && $article->meta_description) {
-            $desc = $article->meta_description;
-            $hasCta = preg_match('/hubungi|konsultasi|pelajari|baca|dapatkan|gratis/i', $desc);
-            if (!$hasCta) {
-                $cta = ' Konsultasi gratis di Bizmark!';
-                if (mb_strlen($desc) + mb_strlen($cta) <= 160) {
-                    $article->meta_description = trim($desc) . $cta;
-                } else {
-                    $article->meta_description = Str::limit($desc, 160 - mb_strlen($cta), '') . $cta;
-                }
-                $fixes[] = '⚙️ CTA added to meta description';
-                $changed = true;
-            }
-        }
-
-        // Ensure meta_keywords has Bizmark
-        if ($article->meta_keywords && !Str::contains($article->meta_keywords, 'Bizmark', true)) {
-            $article->meta_keywords .= ', Bizmark';
-            $fixes[] = '⚙️ Bizmark added to meta keywords';
-            $changed = true;
-        }
-
-        // Fix tags: ensure ≥2
-        $tags = $article->tags ?? [];
-        if (count($tags) < 2) {
-            $fillers = [$article->category, 'Perizinan', 'Bizmark'];
-            foreach ($fillers as $filler) {
-                if ($filler && count($tags) < 3 && !in_array($filler, $tags)) {
-                    $tags[] = $filler;
-                }
-            }
-            $article->tags = array_values(array_unique($tags));
-            $fixes[] = '⚙️ Tags added for SEO';
-            $changed = true;
-        }
-
-        // Fix reading_time if missing
-        if (!$article->reading_time && $article->content) {
-            $article->reading_time = max(1, ceil(str_word_count(strip_tags($article->content)) / 200));
-            $fixes[] = '⚙️ Reading time calculated';
-            $changed = true;
-        }
-
-        // Fix excerpt if too short
-        if (!$article->excerpt || mb_strlen($article->excerpt) < 50) {
-            $text = strip_tags($article->content ?? '');
-            $article->excerpt = Str::limit(trim(preg_replace('/\s+/', ' ', $text)), 180, '') . '. Selengkapnya di Bizmark.';
-            $fixes[] = '⚙️ Excerpt generated for SEO';
-            $changed = true;
-        }
-
-        if ($changed) {
-            $article->updated_at = now();
-            $article->saveQuietly();
-        }
-
-        return ['fixes' => $fixes, 'changed' => $changed];
-    }
-
-    /**
-     * Ensure content has "Baca juga" / "Artikel Terkait" section for SEO scoring bonus (+3)
-     */
-    protected function ensureBacaJugaSection(string $content, ArticleTopic $topic): string
-    {
-        // Check if already has the section (from InternalLinkService or prior processing)
-        if (Str::contains($content, ['Baca juga', 'Baca Juga', 'Artikel Terkait', 'artikel terkait'])) {
-            return $content;
-        }
-
-        $baseUrl = rtrim(config('app.url'), '/');
-
-        // Find related published articles
-        $relatedArticles = Article::where('status', 'published')
-            ->select('id', 'title', 'slug');
-
-        if ($topic->category) {
-            $related = (clone $relatedArticles)
-                ->where('category', $topic->category)
-                ->inRandomOrder()
-                ->limit(5)
-                ->get();
-        } else {
-            $related = collect();
-        }
-
-        if ($related->isEmpty()) {
-            $related = $relatedArticles->inRandomOrder()->limit(5)->get();
-        }
-
-        if ($related->isEmpty()) {
-            return $content;
-        }
-
-        // Build "Artikel Terkait" section in HTML (auto-post always generates HTML)
-        $section = '<hr><h2>Artikel Terkait</h2>';
-        $section .= '<p>Baca juga artikel lainnya di Bizmark:</p><ul>';
-        foreach ($related as $a) {
-            $url = htmlspecialchars("{$baseUrl}/blog/{$a->slug}", ENT_QUOTES, 'UTF-8');
-            $title = htmlspecialchars($a->title, ENT_QUOTES, 'UTF-8');
-            $section .= "<li><a href=\"{$url}\">{$title}</a></li>";
-        }
-        $section .= '</ul>';
-
-        return $content . "\n\n" . $section;
-    }
 
     /**
      * Schedule next batch of posts for a given date
