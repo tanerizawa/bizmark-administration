@@ -99,7 +99,7 @@ File `replacements.txt` memakai sintaks yang sama (satu pasangan `literal==>peng
 
 6. **Diagnostik jika `git push origin main` ditolak ("fetch first" / non-fast-forward):** jalankan `git fetch origin`, lalu `git merge-base main origin/main`. Jika **tidak ada output** (exit code bukan nol), kedua cabang **tidak berbagi nenek moyang** — tipikal setelah `git filter-repo` lokal sementara remote masih histori lama.
    - **Jangan** `git pull` lalu push biasa: risiko merge dua pohon yang tidak kompatibel.
-   - Jika **lokal** yang harus menang: `git push --force-with-lease origin main` (setelah aturan branch protection / PAT memungkinkan). Skrip bantu: `./scripts/git-push-main-force-with-lease.sh`.
+   - Jika **lokal** yang harus menang: ikuti **`docs/GIT_PUBLISH_AFTER_REWRITE.md`** (PAT/SSH, `--force-with-lease`). Skrip: `CONFIRM_FORCE_PUSH_MAIN=YES ./scripts/git-push-main-force-with-lease.sh` (dukung `GITHUB_TOKEN` untuk HTTPS).
    - Jika **remote** yang harus menang: `git reset --hard origin/main` (menghapus commit yang hanya ada di lokal — pastikan tidak ada kerja hilang).
 
 ---

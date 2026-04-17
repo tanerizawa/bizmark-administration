@@ -45,7 +45,7 @@
 | W17-02 | P2 | SEO: pusatkan `Cache::forget` KPI dashboard | S | DONE |
 | W17-03 | P3 | Scan `routes/admin` — semua partial diawali `<?php` | S | DONE |
 | W17-04 | P2 | Runbook + skrip audit + `git-history-scrub-execute.sh` (filter-repo blob+pesan) | M | DONE |
-| W17-05 | P0 | Publikasi histori Git (force-push + re-sync tim) | S | **MANUAL** (pemilik repo; lihat `SECURITY_GIT_HISTORY_SCRUB` §4) |
+| W17-05 | P0 | Publikasi histori Git (force-push + re-sync tim) | S | **MANUAL** — `docs/GIT_PUBLISH_AFTER_REWRITE.md` + `SECURITY_GIT_HISTORY_SCRUB` §4 |
 
 ---
 

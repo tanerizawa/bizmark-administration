@@ -18,7 +18,7 @@
 
 1. **Stabilitas CI:** `make verify` / `./scripts/verify-post-scrub-local.sh` lokal + workflow GitHub Actions `verify.yml` (sudah).
 2. **Uji tambahan aman:** tambah/rapikan unit test di area berikutnya (prioritas rendah) tanpa mengubah perilaku produksi.
-3. **Sinkron GitHub (manual):** saat PAT + branch protection siap — force-push histori + komunikasi re-sync (carry-over W17-05).
+3. **Sinkron GitHub (manual):** `docs/GIT_PUBLISH_AFTER_REWRITE.md` — PAT/SSH + `--force-with-lease`; carry-over W17-05 / W18-03.
 
 ---
 
@@ -43,7 +43,7 @@
 |----|---|------|--------|--------|
 | W18-01 | P2 | GitHub Actions `verify.yml` + `make verify` | M | DONE |
 | W18-02 | P3 | Unit test `SeoDashboardCache` + skrip `verify-admin-route-partials.sh` di alur verify | S | DONE |
-| W18-03 | P0 | Selesaikan W17-05 manual (push remote) bila blokir rilis | S | TODO |
+| W18-03 | P0 | Publikasi `main` ke GitHub (operator + PAT/SSH) | S | **MANUAL** — ikuti `docs/GIT_PUBLISH_AFTER_REWRITE.md` |
 
 ---
 

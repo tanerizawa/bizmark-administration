@@ -12,6 +12,7 @@ Indeks ringkas untuk navigasi dokumen refactor, sprint, dan panduan operasional.
 | [WEEKLY_REFACTOR_SPRINT_TEMPLATE.md](WEEKLY_REFACTOR_SPRINT_TEMPLATE.md) | Template sprint mingguan (objective, backlog, daily board, retro). |
 | [ROUTE_ADMIN_GOVERNANCE.md](ROUTE_ADMIN_GOVERNANCE.md) | Aturan penempatan dan konvensi `routes/admin/*.php`. |
 | [SECURITY_GIT_HISTORY_SCRUB.md](SECURITY_GIT_HISTORY_SCRUB.md) | Runbook audit/pembersihan string sensitif di histori Git (`git filter-repo`). |
+| [GIT_PUBLISH_AFTER_REWRITE.md](GIT_PUBLISH_AFTER_REWRITE.md) | Push `main` / semua ref setelah histori divergen (PAT, SSH, branch protection). |
 
 ---
 
