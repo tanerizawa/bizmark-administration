@@ -4,6 +4,7 @@ namespace Tests\Unit\Services;
 
 use Tests\TestCase;
 use App\Services\NeuroscienceService;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * NeuroscienceService Unit Tests
@@ -21,7 +22,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->service = new NeuroscienceService();
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_cognitive_load_for_empty_elements()
     {
         $result = $this->service->analyzeCognitiveLoad([]);
@@ -31,7 +32,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertIsArray($result['recommendations']);
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_cognitive_load_for_simple_elements()
     {
         $elements = [
@@ -66,7 +67,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertEquals(2, $result['total_elements']);
     }
 
-    /** @test */
+    #[Test]
     public function it_classifies_cognitive_load_status_correctly()
     {
         // Low load scenario
@@ -91,7 +92,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertGreaterThan(30, $highResult['score']);
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_visual_weight_correctly()
     {
         // Large, high-contrast, animated element = high weight
@@ -122,7 +123,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertGreaterThan($lightWeight * 2, $heavyWeight);
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_correct_color_contrast_weights()
     {
         // High attention colors
@@ -141,7 +142,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertGreaterThan(0, $cssVarWeight);
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_correct_position_weights_based_on_f_pattern()
     {
         // F-Pattern Zone 1 (top-left) = highest
@@ -164,7 +165,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertGreaterThan($bottomRightWeight, $topLeftWeight);
     }
 
-    /** @test */
+    #[Test]
     public function it_optimizes_attention_flow()
     {
         $elements = [
@@ -184,7 +185,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertArrayHasKey('calculated_weight', $optimized[0]);
     }
 
-    /** @test */
+    #[Test]
     public function it_simplifies_decisions_within_millers_law()
     {
         // 5 options (within Miller's Law 7±2)
@@ -204,7 +205,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertEquals(0, $result['decision_time_saved_ms']);
     }
 
-    /** @test */
+    #[Test]
     public function it_simplifies_excessive_decisions()
     {
         // 12 options (exceeds Miller's Law)
@@ -222,7 +223,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertCount(5, $result['removed_options']); // 12 - 7 = 5
     }
 
-    /** @test */
+    #[Test]
     public function it_prioritizes_options_by_priority_value()
     {
         $options = [
@@ -247,7 +248,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertContains(20, $priorities);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_recommendations_for_high_cognitive_load()
     {
         // Create scenario with high cognitive load
@@ -271,7 +272,7 @@ class NeuroscienceServiceTest extends TestCase
         $this->assertMatchesRegularExpression('/reduce|simplify|progressive/i', $recommendations);
     }
 
-    /** @test */
+    #[Test]
     public function it_provides_detailed_breakdown()
     {
         $elements = [
