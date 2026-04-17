@@ -29,7 +29,7 @@ Indeks ringkas untuk navigasi dokumen refactor, sprint, dan panduan operasional.
 
 - Invalidasi cache KPI dashboard: `app/Support/SeoDashboardCache.php`.
 - Redirect + flash: trait `app/Http/Controllers/Admin/Seo/Concerns/SeoAdminFlashRedirect.php` (dipakai semua controller di folder itu).
-- Audit / verifikasi pasca-scrub: `scripts/git-audit-sensitive-paths.sh`, `scripts/verify-post-scrub-local.sh` — runbook: `docs/SECURITY_GIT_HISTORY_SCRUB.md` (setelah rewrite lokal: **force-push** + re-sync tim, §4). Push dengan PAT: `scripts/git-force-push-with-github-token.sh` (set `GITHUB_TOKEN`).
+- Audit / verifikasi pasca-scrub: `scripts/git-audit-sensitive-paths.sh`, `scripts/verify-post-scrub-local.sh` — runbook: `docs/SECURITY_GIT_HISTORY_SCRUB.md` §4–§4 butir 6 (push ditolak “fetch first” = histori divergen; **jangan** `git pull` sembarangan). Push: `scripts/git-force-push-with-github-token.sh` atau `scripts/git-push-main-force-with-lease.sh` (set `CONFIRM_FORCE_PUSH_MAIN=YES`).
 
 ---
 

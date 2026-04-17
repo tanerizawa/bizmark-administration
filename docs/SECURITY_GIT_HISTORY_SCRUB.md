@@ -97,6 +97,11 @@ File `replacements.txt` memakai sintaks yang sama (satu pasangan `literal==>peng
 
 5. Instruksikan tim: `git fetch origin && git reset --hard origin/main` (ganti `main` jika default branch lain), atau **clone baru** — semua SHA lama tidak lagi valid.
 
+6. **Diagnostik jika `git push origin main` ditolak ("fetch first" / non-fast-forward):** jalankan `git fetch origin`, lalu `git merge-base main origin/main`. Jika **tidak ada output** (exit code bukan nol), kedua cabang **tidak berbagi nenek moyang** — tipikal setelah `git filter-repo` lokal sementara remote masih histori lama.
+   - **Jangan** `git pull` lalu push biasa: risiko merge dua pohon yang tidak kompatibel.
+   - Jika **lokal** yang harus menang: `git push --force-with-lease origin main` (setelah aturan branch protection / PAT memungkinkan). Skrip bantu: `./scripts/git-push-main-force-with-lease.sh`.
+   - Jika **remote** yang harus menang: `git reset --hard origin/main` (menghapus commit yang hanya ada di lokal — pastikan tidak ada kerja hilang).
+
 ---
 
 ## 5) Alternatif tanpa rewrite histori
