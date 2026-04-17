@@ -71,6 +71,10 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "verify": [
+            "@php artisan config:clear --ansi",
+            "bash scripts/verify-post-scrub-local.sh"
         ]
     },
     "extra": {

@@ -1,7 +1,7 @@
 # 2026-W18 Refactor Sprint
 ## Perencanaan: Senin, 27 Apr - Jumat, 1 Mei 2026
 
-> Status: **DRAFT** — lanjutan pasca-W17 (push GitHub manual tidak wajib untuk mulai batch di bawah).
+> Status: **batch otomasi selesai** (CI verify, unit tambahan, cek route admin). **W18-03** tetap manual (publikasi Git). Lihat **W19** untuk carry-over.
 
 ---
 
@@ -50,5 +50,14 @@
 ## 4) Referensi
 
 - `docs/sprints/2026-W17-refactor.md`
+- `docs/sprints/2026-W19-refactor.md` (carry-over)
 - `docs/SECURITY_GIT_HISTORY_SCRUB.md`
+- `docs/GIT_PUBLISH_AFTER_REWRITE.md`
 - `docs/PARTIAL_SPLIT_MVP_EXECUTION_PLAYBOOK.md`
+
+---
+
+## 5) Ringkas pengiriman (retro ringkas)
+
+- **Shipped:** workflow Verify, `make verify` / `composer verify`, unit `SeoDashboardCache`, skrip cek `routes/admin` `<?php`, panduan `GIT_PUBLISH_AFTER_REWRITE`, skrip force-with-lease + PAT.
+- **Manual:** push `main` ke origin (operator).

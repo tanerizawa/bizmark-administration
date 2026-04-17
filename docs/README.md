@@ -22,11 +22,12 @@ Indeks ringkas untuk navigasi dokumen refactor, sprint, dan panduan operasional.
 |--------|--------|
 | [sprints/2026-W16-refactor.md](sprints/2026-W16-refactor.md) | Laporan minggu selesai (delivered batches + retro). |
 | [sprints/2026-W17-refactor.md](sprints/2026-W17-refactor.md) | W17 selesai di lokal; **W17-05 push GitHub = manual** (tim). |
-| [sprints/2026-W18-refactor.md](sprints/2026-W18-refactor.md) | W18 draft: CI/verify, uji tambahan, carry-over push. |
+| [sprints/2026-W18-refactor.md](sprints/2026-W18-refactor.md) | W18: CI verify + uji tambahan selesai; push manual (W18-03). |
+| [sprints/2026-W19-refactor.md](sprints/2026-W19-refactor.md) | W19 draft: carry-over publikasi Git + backlog berikutnya. |
 
 **Cara pakai:** duplikasi `WEEKLY_REFACTOR_SPRINT_TEMPLATE.md` ke `docs/sprints/YYYY-WW-refactor.md` setiap awal minggu.
 
-**CI lokal / GitHub:** `make verify` atau workflow **Verify** (`.github/workflows/verify.yml`) — termasuk cek `routes/admin/*.php` baris pertama `<?php` dan PHPUnit `tests/Unit`.
+**CI lokal / GitHub:** `composer verify` atau `make verify` atau workflow **Verify** (`.github/workflows/verify.yml`) — cek `routes/admin/*.php` (`<?php`) + PHPUnit `tests/Unit` + `route:list`.
 
 **Kode terkait SEO admin (ringkas):**
 

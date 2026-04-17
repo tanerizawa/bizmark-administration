@@ -273,7 +273,7 @@ Dokumen ini dijadikan baseline eksekusi agar semua perubahan besar tetap:
 - [docs/README.md](README.md) — indeks playbook, template sprint, governance route admin, arsip sprint.
 - [docs/ROUTE_ADMIN_GOVERNANCE.md](ROUTE_ADMIN_GOVERNANCE.md) — konvensi `routes/admin/*.php`.
 - [docs/WEEKLY_REFACTOR_SPRINT_TEMPLATE.md](WEEKLY_REFACTOR_SPRINT_TEMPLATE.md) — template sprint mingguan.
-- [docs/sprints/](sprints/) — laporan sprint per minggu (contoh `2026-W16-refactor.md`).
+- [docs/sprints/](sprints/) — laporan sprint per minggu (`2026-W16` … `2026-W19-refactor.md`).
 - [docs/SECURITY_GIT_HISTORY_SCRUB.md](SECURITY_GIT_HISTORY_SCRUB.md) — opsi pembersihan string sensitif di histori Git.
 - [docs/GIT_PUBLISH_AFTER_REWRITE.md](GIT_PUBLISH_AFTER_REWRITE.md) — menerbitkan `main` / semua ref setelah histori divergen.
 

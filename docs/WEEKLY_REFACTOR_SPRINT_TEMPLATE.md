@@ -3,7 +3,7 @@
 
 > Gunakan template ini setiap awal minggu untuk menjaga refactor tetap terstruktur, terukur, dan aman.
 >
-> **Indeks dokumen:** [README.md](README.md) (playbook, governance route admin, arsip sprint).
+> **Indeks dokumen:** [README.md](README.md) (playbook, governance route admin, arsip sprint). Publikasi Git setelah rewrite: [GIT_PUBLISH_AFTER_REWRITE.md](GIT_PUBLISH_AFTER_REWRITE.md).
 
 ---
 
