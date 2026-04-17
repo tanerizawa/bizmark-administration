@@ -20,7 +20,8 @@ Indeks ringkas untuk navigasi dokumen refactor, sprint, dan panduan operasional.
 | Sprint | Status |
 |--------|--------|
 | [sprints/2026-W16-refactor.md](sprints/2026-W16-refactor.md) | Laporan minggu selesai (delivered batches + retro). |
-| [sprints/2026-W17-refactor.md](sprints/2026-W17-refactor.md) | W17: backlog teknis selesai di lokal; **W17-05** = force-push histori (`SECURITY_GIT_HISTORY_SCRUB` §4). |
+| [sprints/2026-W17-refactor.md](sprints/2026-W17-refactor.md) | W17 selesai di lokal; **W17-05 push GitHub = manual** (tim). |
+| [sprints/2026-W18-refactor.md](sprints/2026-W18-refactor.md) | W18 draft: CI/verify, uji tambahan, carry-over push. |
 
 **Cara pakai:** duplikasi `WEEKLY_REFACTOR_SPRINT_TEMPLATE.md` ke `docs/sprints/YYYY-WW-refactor.md` setiap awal minggu.
 
