@@ -28,7 +28,7 @@
 
 - [x] Dokumentasi carry-over W17 (README + sprint W17/W18).
 - [x] Workflow CI `.github/workflows/verify.yml` + target `make verify`.
-- [ ] Audit cepat `routes/admin` setelah merge dari kontributor lain (regresi FQCN / `<?php`) — ulangi saat ada PR besar.
+- [x] Cek otomatis baris pertama `<?php` pada `routes/admin/*.php` (`verify-admin-route-partials.sh`, dipanggil dari `verify-post-scrub-local.sh`). Audit FQCN tetap manual saat review PR.
 
 ### Out of Scope
 
