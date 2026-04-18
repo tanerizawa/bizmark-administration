@@ -31,11 +31,13 @@ return new class extends Migration
             $table->integer('reading_time')->nullable(); // in minutes
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index(['status', 'published_at']);
             $table->index('category');
             $table->index('is_featured');
-            $table->fullText(['title', 'content']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->fullText(['title', 'content']);
+            }
         });
     }
 

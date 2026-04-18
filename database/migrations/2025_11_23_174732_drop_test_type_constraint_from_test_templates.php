@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::getConnection()->getDriverName() !== 'pgsql') {
+            return;
+        }
+
         // Drop the ENUM constraint from test_type column
         DB::statement("ALTER TABLE test_templates DROP CONSTRAINT IF EXISTS test_templates_test_type_check");
     }
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::getConnection()->getDriverName() !== 'pgsql') {
+            return;
+        }
+
         // Recreate the original ENUM constraint
         DB::statement("ALTER TABLE test_templates ADD CONSTRAINT test_templates_test_type_check CHECK (test_type::text = ANY (ARRAY['psychology'::character varying, 'psychometric'::character varying, 'technical'::character varying, 'aptitude'::character varying, 'personality'::character varying]::text[]))");
     }

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -24,9 +25,10 @@ return new class extends Migration
             }
         });
 
-        // Change department from enum to string for more flexibility
-        DB::statement("ALTER TABLE users ALTER COLUMN department TYPE varchar(255) USING department::varchar");
-        DB::statement("ALTER TABLE users ALTER COLUMN department DROP DEFAULT");
+        if (Schema::getConnection()->getDriverName() === 'pgsql') {
+            DB::statement("ALTER TABLE users ALTER COLUMN department TYPE varchar(255) USING department::varchar");
+            DB::statement("ALTER TABLE users ALTER COLUMN department DROP DEFAULT");
+        }
     }
 
     /**
@@ -43,8 +45,9 @@ return new class extends Migration
             }
         });
 
-        // Revert department back to enum
-        DB::statement("ALTER TABLE users ALTER COLUMN department TYPE varchar(255)");
-        DB::statement("ALTER TABLE users ALTER COLUMN department SET DEFAULT 'general'");
+        if (Schema::getConnection()->getDriverName() === 'pgsql') {
+            DB::statement("ALTER TABLE users ALTER COLUMN department TYPE varchar(255)");
+            DB::statement("ALTER TABLE users ALTER COLUMN department SET DEFAULT 'general'");
+        }
     }
 };

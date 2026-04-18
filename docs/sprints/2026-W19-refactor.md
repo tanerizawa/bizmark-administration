@@ -33,7 +33,9 @@
 
 | ID | P | Item | Status |
 |----|---|------|--------|
-| W19-01 | P2 | _TBD_ | TODO |
+| W19-01 | P2 | Unit test `SeoAdminFlashRedirect` (nama route `login` + `blog.article.id`) | DONE |
+| W19-02 | P2 | Unit test `SeoReportsController` (snapshot views + generate report weekly/monthly) | DONE |
+| W19-03 | P2 | Unit test `SeoRefreshLogsController::runContentRefresh` (mock service, tanpa RefreshDatabase SQLite) | DONE |
 
 ---
 

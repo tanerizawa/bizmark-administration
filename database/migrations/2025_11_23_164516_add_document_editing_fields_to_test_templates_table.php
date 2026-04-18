@@ -18,8 +18,9 @@ return new class extends Migration
             $table->json('evaluation_criteria')->nullable()->after('template_file_path')->comment('Checklist/rubrik penilaian untuk document editing');
         });
         
-        // Change column type for PostgreSQL
-        DB::statement("ALTER TABLE test_templates ALTER COLUMN test_type TYPE VARCHAR(50)");
+        if (Schema::getConnection()->getDriverName() === 'pgsql') {
+            DB::statement("ALTER TABLE test_templates ALTER COLUMN test_type TYPE VARCHAR(50)");
+        }
     }
 
     /**

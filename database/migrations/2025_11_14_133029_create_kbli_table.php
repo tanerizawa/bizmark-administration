@@ -25,7 +25,9 @@ return new class extends Migration
             $table->index('sector');
             $table->index('category');
             // Full-text search index for PostgreSQL
-            $table->rawIndex('to_tsvector(\'indonesian\', description)', 'kbli_description_fulltext');
+            if (Schema::getConnection()->getDriverName() === 'pgsql') {
+                $table->rawIndex('to_tsvector(\'indonesian\', description)', 'kbli_description_fulltext');
+            }
         });
     }
 

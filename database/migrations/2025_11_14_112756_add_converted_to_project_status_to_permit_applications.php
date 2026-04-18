@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::getConnection()->getDriverName() !== 'pgsql') {
+            return;
+        }
+
         // Drop the existing check constraint
         DB::statement('ALTER TABLE permit_applications DROP CONSTRAINT IF EXISTS permit_applications_status_check');
         
@@ -33,6 +37,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::getConnection()->getDriverName() !== 'pgsql') {
+            return;
+        }
+
         // Drop the new constraint
         DB::statement('ALTER TABLE permit_applications DROP CONSTRAINT IF EXISTS permit_applications_status_check');
         

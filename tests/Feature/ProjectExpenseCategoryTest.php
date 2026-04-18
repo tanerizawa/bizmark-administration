@@ -6,12 +6,21 @@ use App\Models\Project;
 use App\Models\ProjectExpense;
 use App\Models\ProjectStatus;
 use App\Models\User;
+use App\Models\ExpenseCategory;
+use App\Models\PaymentMethod;
+use App\Http\Middleware\CheckPermission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ProjectExpenseCategoryTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->withoutMiddleware(CheckPermission::class);
+    }
 
     public function test_new_category_can_be_stored_via_project_expense_controller(): void
     {
@@ -23,11 +32,30 @@ class ProjectExpenseCategoryTest extends TestCase
         ]);
 
         $project = Project::forceCreate([
-            'code' => 'PRJ-TEST-001',
             'name' => 'Project Pengujian',
             'client_name' => 'Klien Uji',
-            'permit_type' => 'environmental',
-            'current_status_id' => $status->id,
+            'client_contact' => '081234567890',
+            'status_id' => $status->id,
+        ]);
+
+        ExpenseCategory::create([
+            'slug' => 'communication',
+            'name' => 'Komunikasi & Internet',
+            'group' => 'Operasional',
+            'icon' => '📞',
+            'is_default' => true,
+            'is_active' => true,
+            'sort_order' => 100,
+        ]);
+
+        PaymentMethod::create([
+            'code' => 'transfer',
+            'name' => 'Transfer Bank',
+            'description' => 'Transfer via rekening bank',
+            'requires_cash_account' => false,
+            'is_default' => true,
+            'is_active' => true,
+            'sort_order' => 10,
         ]);
 
         $payload = [

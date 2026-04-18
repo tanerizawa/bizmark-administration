@@ -3,15 +3,15 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\ProjectPermitController;
-use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\PermitType;
 use App\Models\Project;
 use App\Models\ProjectPermit;
 use App\Models\ProjectPermitDependency;
 use App\Models\ProjectStatus;
 use App\Models\User;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Tests\TestCase;
 
 class ProjectPermitStatusTest extends TestCase
@@ -24,11 +24,17 @@ class ProjectPermitStatusTest extends TestCase
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
 
-        Route::post('testing/projects/{project}/permits', [ProjectPermitController::class, 'store'])
+        $this->app['router']->post('testing/projects/{project}/permits', [ProjectPermitController::class, 'store'])
+            ->middleware(SubstituteBindings::class)
             ->name('testing.projects.permits.store');
 
-        Route::patch('testing/permits/{permit}/status', [ProjectPermitController::class, 'updateStatus'])
+        $this->app['router']->patch('testing/permits/{permit}/status', [ProjectPermitController::class, 'updateStatus'])
+            ->middleware(SubstituteBindings::class)
             ->name('testing.permits.update-status');
+
+        $routes = $this->app['router']->getRoutes();
+        $routes->refreshNameLookups();
+        $routes->refreshActionLookups();
     }
 
     public function test_store_persists_uppercase_status(): void
@@ -154,13 +160,10 @@ class ProjectPermitStatusTest extends TestCase
         ]);
 
         $project = Project::forceCreate([
-            'code' => 'PRJ-001',
             'name' => 'Proyek Pengujian',
             'client_name' => 'Klien Uji',
-            'permit_type' => 'environmental',
-            'current_status_id' => $projectStatus->id,
-            'is_urgent' => false,
-            'is_archived' => false,
+            'client_contact' => '081234567890',
+            'status_id' => $projectStatus->id,
         ]);
 
         $permitType = PermitType::create([

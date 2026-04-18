@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
         // PostgreSQL: Change category column from ENUM to VARCHAR
         Schema::table('project_expenses', function (Blueprint $table) {
             $table->dropColumn('category');
@@ -26,6 +30,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
         Schema::table('project_expenses', function (Blueprint $table) {
             $table->dropColumn('category');
         });
