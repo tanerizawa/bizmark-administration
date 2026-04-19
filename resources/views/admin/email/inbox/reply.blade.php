@@ -48,11 +48,7 @@
                 </div>
                 <hr class="border-secondary">
                 <div class="text-muted" style="max-height: 300px; overflow-y: auto;">
-                    @if($email->body_html)
-                        {!! $email->body_html !!}
-                    @else
-                        <div style="white-space: pre-wrap;">{{ $email->body_text }}</div>
-                    @endif
+                    <div style="white-space: pre-wrap;">{{ $email->body_text ?: strip_tags($email->body_html ?? '') }}</div>
                 </div>
             </div>
         </div>

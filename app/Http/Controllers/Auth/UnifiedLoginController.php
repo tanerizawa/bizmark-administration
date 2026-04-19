@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\TwoFactorTrustedDevice;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -54,6 +55,37 @@ class UnifiedLoginController extends Controller
         // Try to authenticate as admin first (web guard)
         if (Auth::guard('web')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
+
+            $user = \App\Models\User::query()->findOrFail(Auth::guard('web')->id());
+            $sessionKey = (string) config('two_factor.session_key', 'two_factor_verified_at');
+            $request->session()->forget($sessionKey);
+
+            if ((bool) config('two_factor.enabled', true)) {
+                if (!$user->two_factor_enabled_at && !$user->two_factor_grace_until) {
+                    $user->forceFill([
+                        'two_factor_grace_until' => now()->addDays((int) config('two_factor.grace_days', 7)),
+                    ])->save();
+                }
+
+                if ($user->two_factor_enabled_at) {
+                    $cookieName = (string) config('two_factor.cookie_name', 'two_factor_trust');
+                    $token = (string) $request->cookie($cookieName, '');
+                    if ($token !== '') {
+                        $trusted = TwoFactorTrustedDevice::query()
+                            ->where('user_id', $user->id)
+                            ->where('token_hash', hash('sha256', $token))
+                            ->where('expires_at', '>', now())
+                            ->exists();
+                        if ($trusted) {
+                            $request->session()->put($sessionKey, now()->toIso8601String());
+                        }
+                    }
+
+                    if (!$request->session()->has($sessionKey)) {
+                        return redirect()->route('admin.security.2fa.challenge');
+                    }
+                }
+            }
             
             return redirect()->intended('/dashboard')
                 ->with('success', 'Selamat datang kembali, Admin!');
@@ -118,6 +150,10 @@ class UnifiedLoginController extends Controller
      */
     protected function isSafeRedirect(string $redirect): bool
     {
+        if (Str::startsWith($redirect, '//')) {
+            return false;
+        }
+
         if (Str::startsWith($redirect, '/')) {
             return true;
         }

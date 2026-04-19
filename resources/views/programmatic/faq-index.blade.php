@@ -6,59 +6,54 @@
 @section('meta_keywords', 'faq perizinan, pertanyaan perizinan lingkungan, tanya jawab amdal, faq limbah b3, pertanyaan ukl upl')
 
 @section('content')
+@php
+    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $whatsapp = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+    $waText = 'Halo Bizmark, saya memiliki pertanyaan tentang perizinan';
+    $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
+@endphp
 
-{{-- Breadcrumbs --}}
-<section class="pt-24 pb-4 px-4 bg-white border-b border-gray-100">
-    <div class="container mx-auto max-w-6xl">
-        <nav class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-            <a href="/" class="hover:text-primary transition"><i class="fas fa-home"></i></a>
-            <span class="text-gray-300">/</span>
-            <span class="text-gray-900 font-medium">FAQ</span>
-        </nav>
+<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+    <div class="container-wide text-center">
+        <span class="section-badge mb-4">FAQ</span>
+        <h1 class="section-title mb-4">Pusat Bantuan &amp; FAQ</h1>
+        <p class="section-description mb-8">Temukan jawaban untuk pertanyaan umum seputar perizinan lingkungan dan industri di Indonesia.</p>
+        <a href="{{ route('contact.index') }}" class="btn btn-outline-primary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
     </div>
 </section>
 
-{{-- Hero --}}
-<section class="py-12 md:py-16 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-    <div class="container mx-auto max-w-4xl px-4 text-center">
-        <h1 class="text-3xl md:text-4xl font-extrabold mb-4">Pusat Bantuan & FAQ</h1>
-        <p class="text-lg text-gray-300 max-w-2xl mx-auto">Temukan jawaban untuk pertanyaan umum seputar perizinan lingkungan dan industri di Indonesia.</p>
-    </div>
-</section>
-
-{{-- Topic Cards --}}
-<section class="py-12 md:py-16 bg-white">
-    <div class="container mx-auto max-w-6xl px-4">
+<section class="section">
+    <div class="container-wide">
         <div class="grid sm:grid-cols-2 gap-6">
             @foreach($topics as $slug => $topic)
-            <a href="{{ url('/faq/' . $topic['slug']) }}"
-               class="group block bg-white rounded-xl border border-gray-200 p-6 hover:border-sky-300 hover:shadow-lg transition">
-                <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-4 group-hover:bg-sky-100 transition">
-                    <i class="fas {{ $topic['icon'] }} text-xl"></i>
-                </div>
-                <h2 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition">{{ $topic['title'] }}</h2>
-                <p class="text-sm text-gray-600 mb-3">{{ $topic['description'] }}</p>
-                <div class="flex items-center justify-between">
-                    <span class="text-xs text-gray-400">{{ $topic['faq_count'] }} artikel terkait</span>
-                    <span class="text-sm font-medium text-sky-600 group-hover:text-sky-700">
-                        Lihat FAQ <i class="fas fa-arrow-right ml-1 group-hover:translate-x-1 transition-transform"></i>
-                    </span>
-                </div>
-            </a>
+                <a href="{{ url('/faq/' . $topic['slug']) }}" class="card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(14,165,233,.12);color:var(--color-accent);">
+                            <i class="fas {{ $topic['icon'] ?? 'fa-circle-question' }}"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h2 class="text-lg font-bold mb-2 card-title" style="color:var(--text-primary);">{{ $topic['title'] }}</h2>
+                            <p class="text-sm mb-3" style="color:var(--text-secondary);">{{ $topic['description'] }}</p>
+                            <div class="flex items-center justify-between gap-4">
+                                <span class="text-xs" style="color:var(--text-tertiary);">{{ $topic['faq_count'] }} artikel terkait</span>
+                                <span class="link-primary text-sm">Lihat FAQ <i class="fas fa-arrow-right ml-2"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             @endforeach
         </div>
     </div>
 </section>
 
-{{-- CTA --}}
-<section class="py-16 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-center">
-    <div class="container mx-auto max-w-3xl px-4">
-        <h2 class="text-2xl md:text-3xl font-bold mb-4">Tidak Menemukan Jawaban?</h2>
-        <p class="text-gray-300 mb-8">Hubungi tim kami untuk konsultasi langsung. Kami siap membantu menjawab semua pertanyaan Anda.</p>
-        <a href="https://wa.me/6283879602855?text={{ urlencode('Halo Bizmark, saya memiliki pertanyaan tentang perizinan') }}" target="_blank" rel="noopener"
-           class="inline-flex items-center px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold rounded-xl transition shadow-lg shadow-green-500/20">
-            <i class="fab fa-whatsapp mr-3 text-xl"></i> Tanya Langsung
-        </a>
+<section class="section-sm" style="background:var(--surface-dark);">
+    <div class="container-wide text-center">
+        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Tidak Menemukan Jawaban?</h2>
+        <p class="mb-7" style="color:rgba(255,255,255,.74);">Tanya langsung, tim kami siap membantu.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-success"><i class="fab fa-whatsapp"></i> Tanya via WhatsApp</a>
+            <a href="{{ route('contact.index') }}" class="btn btn-secondary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
+        </div>
     </div>
 </section>
 

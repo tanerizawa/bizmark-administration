@@ -58,6 +58,12 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name' => 'documents.view', 'display_name' => 'View Documents', 'group' => 'documents'],
             ['name' => 'documents.upload', 'display_name' => 'Upload Documents', 'group' => 'documents'],
             ['name' => 'documents.delete', 'display_name' => 'Delete Documents', 'group' => 'documents'],
+
+            // Permits
+            ['name' => 'permits.manage', 'display_name' => 'Manage Permit Applications', 'group' => 'permits'],
+
+            // AI Settings
+            ['name' => 'ai.manage_settings', 'display_name' => 'Manage AI Settings', 'group' => 'ai'],
             
             // Recruitment
             ['name' => 'recruitment.view', 'display_name' => 'View Recruitment', 'group' => 'recruitment'],
@@ -96,6 +102,9 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name' => 'users.delete', 'display_name' => 'Delete Users', 'group' => 'users'],
             ['name' => 'settings.manage', 'display_name' => 'Manage Settings', 'group' => 'settings'],
             ['name' => 'roles.manage', 'display_name' => 'Manage Roles', 'group' => 'settings'],
+
+            ['name' => 'security.view', 'display_name' => 'View Security Dashboard', 'group' => 'security'],
+            ['name' => 'security.manage', 'display_name' => 'Manage Security Settings', 'group' => 'security'],
         ];
 
         foreach ($permissions as $permission) {
@@ -140,7 +149,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Manager: Most permissions except sensitive settings
         $managerPermissions = Permission::whereIn('group', [
-            'projects', 'clients', 'invoices', 'tasks', 'documents'
+            'projects', 'clients', 'invoices', 'tasks', 'documents', 'permits', 'security', 'ai'
         ])->pluck('id');
         $manager->permissions()->sync($managerPermissions);
         $manager->grantPermission('finances.view');

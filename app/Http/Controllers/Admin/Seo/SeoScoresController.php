@@ -97,8 +97,14 @@ class SeoScoresController extends Controller
     /**
      * Fix SEO issues for a single article (AI-powered)
      */
-    public function fixSingle(int $articleId, SeoFixService $fixer)
+    public function fixSingle(int $articleId, SeoFixService $fixer, \Illuminate\Http\Request $request)
     {
+        // GET requests (e.g. cached links) should redirect to score detail page
+        if ($request->isMethod('get')) {
+            return redirect()->route('admin.seo.score-detail', $articleId)
+                ->with('info', 'Gunakan tombol "Auto-Fix SEO" di halaman ini untuk menjalankan perbaikan.');
+        }
+
         $article = Article::findOrFail($articleId);
         $result = $fixer->fixArticle($article);
 

@@ -91,15 +91,17 @@
                 @if($payment->transfer_proof_path)
                     @php
                         $extension = pathinfo($payment->transfer_proof_path, PATHINFO_EXTENSION);
+                        $proofUrl = route('admin.payments.proof', $payment->id);
+                        $proofDownloadUrl = route('admin.payments.proof', ['id' => $payment->id, 'download' => 1]);
                     @endphp
                     
                     @if(in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']))
                         <div class="border rounded-lg overflow-hidden">
-                            <img src="{{ Storage::url($payment->transfer_proof_path) }}" 
+                            <img src="{{ $proofUrl }}" 
                                  alt="Bukti Transfer" 
                                  class="w-full h-auto">
                         </div>
-                        <a href="{{ Storage::url($payment->transfer_proof_path) }}" 
+                        <a href="{{ $proofUrl }}" 
                            target="_blank"
                            class="mt-3 inline-flex items-center text-purple-600 hover:text-purple-800">
                             <i class="fas fa-external-link-alt mr-2"></i>Buka di tab baru
@@ -108,12 +110,17 @@
                         <div class="border rounded-lg p-8 text-center bg-gray-50">
                             <i class="fas fa-file-pdf text-red-500 text-4xl mb-4"></i>
                             <p class="text-gray-700 mb-4">File PDF</p>
-                            <a href="{{ Storage::url($payment->transfer_proof_path) }}" 
+                            <a href="{{ $proofUrl }}" 
                                target="_blank"
                                class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
                                 <i class="fas fa-download mr-2"></i>Download / Preview
                             </a>
                         </div>
+                    @else
+                        <a href="{{ $proofDownloadUrl }}"
+                           class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                            <i class="fas fa-download mr-2"></i>Unduh Bukti Transfer
+                        </a>
                     @endif
                 @else
                     <p class="text-gray-500">Tidak ada bukti transfer</p>

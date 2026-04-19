@@ -81,7 +81,7 @@ return [
     'locale' => env('APP_LOCALE', 'id'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'id'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Available Locales
@@ -91,7 +91,7 @@ return [
     | Used by locale middleware and language switcher.
     |
     */
-    
+
     'available_locales' => ['id', 'en'],
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),

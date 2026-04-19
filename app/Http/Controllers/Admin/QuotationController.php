@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PermitApplication;
 use App\Models\Quotation;
 use App\Models\ApplicationStatusLog;
+use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -59,15 +60,17 @@ class QuotationController extends Controller
             'notes' => 'nullable|string|max:2000',
         ]);
         
-        $application = PermitApplication::findOrFail($request->application_id);
-        
-        // Check if quotation already exists
-        if ($application->quotation) {
-            return back()->with('error', 'Quotation sudah ada untuk aplikasi ini');
-        }
-        
         DB::beginTransaction();
         try {
+            $application = PermitApplication::whereKey($request->application_id)->lockForUpdate()->firstOrFail();
+
+            if ($application->quotation) {
+                DB::rollBack();
+                return back()->with('error', 'Quotation sudah ada untuk aplikasi ini');
+            }
+
+            $previousStatus = $application->status;
+
             // Calculate totals
             $basePrice = $request->base_price;
             $additionalFeesTotal = 0;
@@ -101,24 +104,20 @@ class QuotationController extends Controller
                 'created_by' => Auth::id(),
             ]);
             
-            // Update application
             $application->update([
-                'status' => 'quoted',
                 'quoted_price' => $totalPrice,
                 'quoted_at' => now(),
                 'quotation_expires_at' => $quotation->valid_until,
                 'quotation_notes' => $request->notes,
             ]);
             
-            // Log status change
-            ApplicationStatusLog::create([
-                'application_id' => $application->id,
-                'from_status' => 'under_review',
-                'to_status' => 'quoted',
-                'changed_by_type' => 'user',
-                'changed_by_id' => Auth::id(),
-                'notes' => 'Quotation dibuat dengan total Rp ' . number_format($totalPrice, 0, ',', '.'),
-            ]);
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'quoted',
+                'Quotation dibuat dengan total Rp ' . number_format($totalPrice, 0, ',', '.'),
+                'user',
+                Auth::id()
+            );
             
             DB::commit();
             

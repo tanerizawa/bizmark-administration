@@ -248,8 +248,8 @@ PROMPT;
             $count += Article::published()
                 ->where('language', $cluster->language)
                 ->where(function ($q) use ($keyword) {
-                    $q->where('title', 'ILIKE', "%{$keyword}%")
-                      ->orWhere('meta_keywords', 'ILIKE', "%{$keyword}%");
+                    $q->where('title', 'LIKE', "%{$keyword}%")
+                      ->orWhere('meta_keywords', 'LIKE', "%{$keyword}%");
                 })
                 ->count();
         }

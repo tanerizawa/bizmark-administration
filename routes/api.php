@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\KbliController;
 use App\Http\Controllers\Api\KbliRecommendationController;
 use App\Http\Controllers\Api\ConsultationController;
+use App\Http\Controllers\Api\PaymentCallbackController;
+use App\Http\Controllers\Api\OpsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,9 +29,14 @@ Route::prefix('consultation')->middleware('throttle:10,1')->group(function () {
 // KBLI AI Recommendations
 Route::prefix('kbli-recommendations')->group(function () {
     Route::post('/', [KbliRecommendationController::class, 'getRecommendations']);
-    Route::post('refresh', [KbliRecommendationController::class, 'refresh'])->middleware('auth:sanctum');
-    Route::get('stats', [KbliRecommendationController::class, 'stats'])->middleware('auth:sanctum');
+    Route::post('refresh', [KbliRecommendationController::class, 'refresh'])->middleware(['internal.api', 'throttle:30,1']);
+    Route::get('stats', [KbliRecommendationController::class, 'stats'])->middleware(['internal.api', 'throttle:30,1']);
 });
+
+// Payment callback endpoint (Midtrans)
+Route::post('payment/callback', [PaymentCallbackController::class, 'callback'])
+    ->middleware('throttle:120,1')
+    ->name('api.payment.callback');
 
 // Shapefile/Polygon Tool (Public with rate limiting + session for client auth)
 Route::prefix('shapefile')->middleware(['throttle:10,1', \Illuminate\Session\Middleware\StartSession::class])->group(function () {
@@ -48,4 +55,8 @@ Route::prefix('rtrw')->middleware('throttle:30,1')->group(function () {
     Route::get('layers/{provinceCode}', [App\Http\Controllers\Api\RtrwProxyController::class, 'layers']);
     Route::get('legend/{provinceCode}', [App\Http\Controllers\Api\RtrwProxyController::class, 'legend']);
     Route::get('map-export/{provinceCode}', [App\Http\Controllers\Api\RtrwProxyController::class, 'mapExport'])->middleware('throttle:60,1');
+});
+
+Route::prefix('internal/ops')->middleware(['internal.api', 'throttle:30,1'])->group(function () {
+    Route::get('permissions', [OpsController::class, 'permissions']);
 });

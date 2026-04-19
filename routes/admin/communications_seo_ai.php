@@ -1,43 +1,90 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
     // Email Management Routes
     Route::name('admin.')->middleware(['auth', 'email.access'])->group(function () {
         // Email Management Hub (Unified Tab Interface)
-        Route::get('email-management', [App\Http\Controllers\Admin\EmailManagementController::class, 'index'])->name('email-management.index');
+        Route::get('email-management', [App\Http\Controllers\Admin\EmailManagementController::class, 'index'])
+            ->middleware('permission:email.view_inbox')
+            ->name('email-management.index');
         
         // Email Campaigns
-        Route::resource('campaigns', App\Http\Controllers\Admin\EmailCampaignController::class);
-        Route::get('campaigns/{id}/send', [App\Http\Controllers\Admin\EmailCampaignController::class, 'send'])->name('campaigns.send');
-        Route::post('campaigns/{id}/process-send', [App\Http\Controllers\Admin\EmailCampaignController::class, 'processSend'])->name('campaigns.process-send');
-        Route::post('campaigns/{id}/cancel', [App\Http\Controllers\Admin\EmailCampaignController::class, 'cancel'])->name('campaigns.cancel');
+        Route::resource('campaigns', App\Http\Controllers\Admin\EmailCampaignController::class)
+            ->middleware('permission:email.manage_campaigns');
+        Route::get('campaigns/{id}/send', [App\Http\Controllers\Admin\EmailCampaignController::class, 'send'])
+            ->middleware('permission:email.manage_campaigns')
+            ->name('campaigns.send');
+        Route::post('campaigns/{id}/process-send', [App\Http\Controllers\Admin\EmailCampaignController::class, 'processSend'])
+            ->middleware('permission:email.manage_campaigns')
+            ->name('campaigns.process-send');
+        Route::post('campaigns/{id}/cancel', [App\Http\Controllers\Admin\EmailCampaignController::class, 'cancel'])
+            ->middleware('permission:email.manage_campaigns')
+            ->name('campaigns.cancel');
         
         // Email Inbox
-        Route::get('inbox', [App\Http\Controllers\Admin\EmailInboxController::class, 'index'])->name('inbox.index');
-        Route::get('inbox/compose', [App\Http\Controllers\Admin\EmailInboxController::class, 'compose'])->name('inbox.compose');
-        Route::post('inbox/send', [App\Http\Controllers\Admin\EmailInboxController::class, 'send'])->name('inbox.send');
-        Route::delete('inbox/batch-delete', [App\Http\Controllers\Admin\EmailInboxController::class, 'batchDelete'])->name('inbox.batch-delete');
-        Route::get('inbox/{id}', [App\Http\Controllers\Admin\EmailInboxController::class, 'show'])->name('inbox.show');
-        Route::get('inbox/{id}/reply', [App\Http\Controllers\Admin\EmailInboxController::class, 'reply'])->name('inbox.reply');
-        Route::post('inbox/{id}/reply', [App\Http\Controllers\Admin\EmailInboxController::class, 'sendReply'])->name('inbox.send-reply');
-        Route::post('inbox/{id}/read', [App\Http\Controllers\Admin\EmailInboxController::class, 'markAsRead'])->name('inbox.mark-read');
-        Route::post('inbox/{id}/unread', [App\Http\Controllers\Admin\EmailInboxController::class, 'markAsUnread'])->name('inbox.mark-unread');
-        Route::post('inbox/{id}/star', [App\Http\Controllers\Admin\EmailInboxController::class, 'toggleStar'])->name('inbox.toggle-star');
-        Route::post('inbox/{id}/trash', [App\Http\Controllers\Admin\EmailInboxController::class, 'moveToTrash'])->name('inbox.trash');
-        Route::delete('inbox/{id}', [App\Http\Controllers\Admin\EmailInboxController::class, 'delete'])->name('inbox.delete');
-        Route::post('inbox/empty-trash', [App\Http\Controllers\Admin\EmailInboxController::class, 'emptyTrash'])->name('inbox.empty-trash');
+        Route::get('inbox', [App\Http\Controllers\Admin\EmailInboxController::class, 'index'])
+            ->middleware('permission:email.view_inbox')
+            ->name('inbox.index');
+        Route::get('inbox/compose', [App\Http\Controllers\Admin\EmailInboxController::class, 'compose'])
+            ->middleware('permission:email.send_email')
+            ->name('inbox.compose');
+        Route::post('inbox/send', [App\Http\Controllers\Admin\EmailInboxController::class, 'send'])
+            ->middleware('permission:email.send_email')
+            ->name('inbox.send');
+        Route::delete('inbox/batch-delete', [App\Http\Controllers\Admin\EmailInboxController::class, 'batchDelete'])
+            ->middleware('permission:email.manage')
+            ->name('inbox.batch-delete');
+        Route::get('inbox/{id}', [App\Http\Controllers\Admin\EmailInboxController::class, 'show'])
+            ->middleware('permission:email.view_inbox')
+            ->name('inbox.show');
+        Route::get('inbox/{id}/reply', [App\Http\Controllers\Admin\EmailInboxController::class, 'reply'])
+            ->middleware('permission:email.send_email')
+            ->name('inbox.reply');
+        Route::post('inbox/{id}/reply', [App\Http\Controllers\Admin\EmailInboxController::class, 'sendReply'])
+            ->middleware('permission:email.send_email')
+            ->name('inbox.send-reply');
+        Route::post('inbox/{id}/read', [App\Http\Controllers\Admin\EmailInboxController::class, 'markAsRead'])
+            ->middleware('permission:email.view_inbox')
+            ->name('inbox.mark-read');
+        Route::post('inbox/{id}/unread', [App\Http\Controllers\Admin\EmailInboxController::class, 'markAsUnread'])
+            ->middleware('permission:email.view_inbox')
+            ->name('inbox.mark-unread');
+        Route::post('inbox/{id}/star', [App\Http\Controllers\Admin\EmailInboxController::class, 'toggleStar'])
+            ->middleware('permission:email.view_inbox')
+            ->name('inbox.toggle-star');
+        Route::post('inbox/{id}/trash', [App\Http\Controllers\Admin\EmailInboxController::class, 'moveToTrash'])
+            ->middleware('permission:email.manage')
+            ->name('inbox.trash');
+        Route::delete('inbox/{id}', [App\Http\Controllers\Admin\EmailInboxController::class, 'delete'])
+            ->middleware('permission:email.manage')
+            ->name('inbox.delete');
+        Route::post('inbox/empty-trash', [App\Http\Controllers\Admin\EmailInboxController::class, 'emptyTrash'])
+            ->middleware('permission:email.manage')
+            ->name('inbox.empty-trash');
         
         // Email Subscribers
-        Route::resource('subscribers', App\Http\Controllers\Admin\EmailSubscriberController::class);
+        Route::resource('subscribers', App\Http\Controllers\Admin\EmailSubscriberController::class)
+            ->middleware('permission:email.manage_subscribers');
         
         // Email Templates
-        Route::resource('templates', App\Http\Controllers\Admin\EmailTemplateController::class);
+        Route::resource('templates', App\Http\Controllers\Admin\EmailTemplateController::class)
+            ->middleware('permission:email.manage_templates');
         
         // Email Settings
-        Route::get('email/settings', [App\Http\Controllers\Admin\EmailSettingsController::class, 'index'])->name('email.settings.index');
-        Route::put('email/settings', [App\Http\Controllers\Admin\EmailSettingsController::class, 'update'])->name('email.settings.update');
-        Route::post('email/settings/test', [App\Http\Controllers\Admin\EmailSettingsController::class, 'test'])->name('email.settings.test');
-        
-        // KBLI Settings
+        Route::get('email/settings', [App\Http\Controllers\Admin\EmailSettingsController::class, 'index'])
+            ->middleware('permission:email.manage_settings')
+            ->name('email.settings.index');
+        Route::put('email/settings', [App\Http\Controllers\Admin\EmailSettingsController::class, 'update'])
+            ->middleware('permission:email.manage_settings')
+            ->name('email.settings.update');
+        Route::post('email/settings/test', [App\Http\Controllers\Admin\EmailSettingsController::class, 'test'])
+            ->middleware('permission:email.manage_settings')
+            ->name('email.settings.test');
+    });
+
+    // KBLI Settings
+    Route::name('admin.')->middleware(['auth', 'permission:master_data.manage'])->group(function () {
         Route::prefix('settings/kbli')->name('settings.kbli.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\KbliSettingsController::class, 'index'])->name('index');
             Route::post('import', [App\Http\Controllers\Admin\KbliSettingsController::class, 'import'])->name('import');
@@ -45,8 +92,10 @@
             Route::get('export', [App\Http\Controllers\Admin\KbliSettingsController::class, 'export'])->name('export');
             Route::delete('clear', [App\Http\Controllers\Admin\KbliSettingsController::class, 'clear'])->name('clear');
         });
+    });
 
-        // SEO Command Center (Unified Hub)
+    // SEO Command Center (Unified Hub)
+    Route::name('admin.')->middleware(['auth', 'permission:content.manage'])->group(function () {
         Route::prefix('seo')->name('seo.')->group(function () {
             // Unified Command Center (main entry point)
             Route::get('/command-center', [App\Http\Controllers\Admin\SeoCommandCenterController::class, 'index'])->name('command-center');
@@ -64,7 +113,7 @@
             Route::post('/scores/fix-single-ajax/{articleId}', [App\Http\Controllers\Admin\Seo\SeoScoresController::class, 'fixSingleAjax'])->name('fix-single-ajax');
 
             Route::get('/scores/{articleId}', [App\Http\Controllers\Admin\Seo\SeoScoresController::class, 'scoreDetail'])->name('score-detail');
-            Route::post('/scores/{articleId}/fix', [App\Http\Controllers\Admin\Seo\SeoScoresController::class, 'fixSingle'])->name('fix-single');
+            Route::match(['GET', 'POST'], '/scores/{articleId}/fix', [App\Http\Controllers\Admin\Seo\SeoScoresController::class, 'fixSingle'])->name('fix-single');
 
             Route::get('/reports', [App\Http\Controllers\Admin\Seo\SeoReportsController::class, 'reports'])->name('reports');
             Route::get('/reports/{reportId}', [App\Http\Controllers\Admin\Seo\SeoReportsController::class, 'reportDetail'])->name('report-detail');

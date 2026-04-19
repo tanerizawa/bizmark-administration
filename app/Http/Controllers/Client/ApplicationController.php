@@ -7,13 +7,16 @@ use App\Models\PermitType;
 use App\Models\PermitApplication;
 use App\Models\ApplicationDocument;
 use App\Models\PermitDocument;
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 use App\Notifications\ApplicationSubmittedNotification;
 use App\Notifications\NewApplicationNotification;
+use App\Services\PermitApplicationWorkflowService;
 
 class ApplicationController extends Controller
 {
@@ -111,7 +114,7 @@ class ApplicationController extends Controller
         ]);
 
         $client = auth('client')->user();
-        $isDraft = $request->boolean('save_as_draft');
+        $isDraft = $request->boolean('save_as_draft', true);
 
         DB::beginTransaction();
         try {
@@ -119,8 +122,8 @@ class ApplicationController extends Controller
                 'client_id' => $client->id,
                 'permit_type_id' => $validated['permit_type_id'],
                 'form_data' => $validated['form_data'],
-                'status' => $isDraft ? 'draft' : 'submitted',
-                'submitted_at' => $isDraft ? null : now(),
+                'status' => 'draft',
+                'submitted_at' => null,
                 'kbli_code' => $validated['kbli_code'] ?? null,
                 'kbli_description' => $validated['kbli_description'] ?? null,
             ]);
@@ -132,15 +135,8 @@ class ApplicationController extends Controller
                     ->with('success', 'Draft permohonan berhasil disimpan. Anda dapat melanjutkan nanti.');
             }
 
-            // Send notifications
-            $client->notify(new ApplicationSubmittedNotification($application));
-            
-            // Notify all admins
-            $admins = User::where('is_active', true)->get();
-            Notification::send($admins, new NewApplicationNotification($application));
-
             return redirect()->route('client.applications.show', $application->id)
-                ->with('success', 'Permohonan berhasil diajukan! Silakan upload dokumen pendukung.');
+                ->with('success', 'Permohonan berhasil dibuat. Silakan upload dokumen pendukung lalu ajukan permohonan dari halaman preview.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -257,8 +253,8 @@ class ApplicationController extends Controller
             $application = PermitApplication::create([
                 'client_id' => $client->id,
                 'permit_type_id' => null, // Package application
-                'status' => 'submitted',
-                'submitted_at' => now(),
+                'status' => 'draft',
+                'submitted_at' => null,
                 'kbli_code' => $permitSelection['kbli_code'],
                 'kbli_description' => $permitSelection['kbli_description'],
                 'business_context' => $businessContext,
@@ -303,10 +299,18 @@ class ApplicationController extends Controller
                 'notes' => "Paket {$validated['project_name']} dengan " . count($permitSelection['permits']) . " izin (BizMark.ID: " . count($bizmarkPermits) . ", Sudah Ada: " . count($ownedPermits) . ", Dikerjakan Sendiri: " . count($selfPermits) . ")",
             ]);
 
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'submitted',
+                'Permohonan paket diajukan oleh klien',
+                'App\Models\Client',
+                $client->id
+            );
+
             // Handle document uploads
             if ($request->hasFile('supporting_documents')) {
                 foreach ($request->file('supporting_documents') as $file) {
-                    $path = $file->store('permit-documents', 'public');
+                    $path = $file->store('permit-documents', 'private');
                     
                     PermitDocument::create([
                         'permit_application_id' => $application->id,
@@ -377,8 +381,8 @@ class ApplicationController extends Controller
                     $application = PermitApplication::create([
                         'client_id' => $client->id,
                         'permit_type_id' => null, // No specific permit type, based on AI recommendation
-                        'status' => 'submitted',
-                        'submitted_at' => now(),
+                        'status' => 'draft',
+                        'submitted_at' => null,
                         'kbli_code' => $validated['kbli_code'],
                         'kbli_description' => $validated['kbli_description'],
                         'form_data' => [
@@ -392,6 +396,13 @@ class ApplicationController extends Controller
                         ],
                         'notes' => "Permohonan izin {$permitData['name']} berdasarkan rekomendasi KBLI {$validated['kbli_code']}",
                     ]);
+                    app(PermitApplicationWorkflowService::class)->transition(
+                        $application,
+                        'submitted',
+                        'Permohonan diajukan oleh klien',
+                        'App\Models\Client',
+                        $client->id
+                    );
                     $bizmarkApplications[] = $application;
                 } else {
                     // Store reference data for permits already owned or self-managed
@@ -407,7 +418,7 @@ class ApplicationController extends Controller
 
             // Send notifications only if there are BizMark applications
             if (count($bizmarkApplications) > 0) {
-                $client->notify(new ApplicationSubmittedNotification($bizmarkApplications[0]));
+                Client::findOrFail($client->id)->notify(new ApplicationSubmittedNotification($bizmarkApplications[0]));
                 
                 $admins = User::where('is_active', true)->get();
                 foreach ($bizmarkApplications as $app) {
@@ -510,12 +521,11 @@ class ApplicationController extends Controller
             'save_as_draft' => 'boolean',
         ]);
 
-        $isDraft = $request->boolean('save_as_draft');
+        $isDraft = $request->boolean('save_as_draft', true);
 
         $application->update([
             'form_data' => $validated['form_data'],
-            'status' => $isDraft ? 'draft' : 'submitted',
-            'submitted_at' => $isDraft ? $application->submitted_at : now(),
+            'status' => 'draft',
         ]);
 
         if ($isDraft) {
@@ -524,7 +534,7 @@ class ApplicationController extends Controller
         }
 
         return redirect()->route('client.applications.show', $id)
-            ->with('success', 'Permohonan berhasil diperbarui dan diajukan!');
+            ->with('success', 'Perubahan berhasil disimpan. Silakan ajukan permohonan dari halaman preview.');
     }
 
     /**
@@ -543,8 +553,8 @@ class ApplicationController extends Controller
 
         try {
             $file = $request->file('file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('applications/' . $application->id, $filename, 'private');
+            $safeFileName = (string) Str::uuid() . '.' . $file->extension();
+            $path = $file->storeAs('applications/' . $application->id, $safeFileName, 'private');
 
             ApplicationDocument::create([
                 'application_id' => $application->id,
@@ -636,7 +646,6 @@ class ApplicationController extends Controller
         DB::beginTransaction();
         try {
             $application->update([
-                'status' => 'submitted',
                 'submitted_at' => now(),
                 'terms_accepted_at' => now(),
                 'terms_version' => $validated['terms_version'],
@@ -645,17 +654,16 @@ class ApplicationController extends Controller
                 'terms_user_agent' => $request->userAgent(),
             ]);
 
-            // Log status change
-            $application->statusLogs()->create([
-                'from_status' => 'draft',
-                'to_status' => 'submitted',
-                'notes' => 'Permohonan diajukan oleh klien dengan persetujuan Syarat & Ketentuan versi ' . $validated['terms_version'],
-                'changed_by_type' => 'App\Models\Client',
-                'changed_by_id' => auth('client')->id(),
-            ]);
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'submitted',
+                'Permohonan diajukan oleh klien dengan persetujuan Syarat & Ketentuan versi ' . $validated['terms_version'],
+                'App\Models\Client',
+                auth('client')->id()
+            );
 
             // Send notifications
-            $client = auth('client')->user();
+            $client = \App\Models\Client::query()->findOrFail(auth('client')->id());
             $client->notify(new ApplicationSubmittedNotification($application));
             
             // Notify all admins
@@ -687,18 +695,13 @@ class ApplicationController extends Controller
 
         $oldStatus = $application->status;
 
-        $application->update([
-            'status' => 'cancelled',
-        ]);
-
-        // Log status change
-        $application->statusLogs()->create([
-            'from_status' => $oldStatus,
-            'to_status' => 'cancelled',
-            'notes' => 'Permohonan dibatalkan oleh klien',
-            'changed_by_type' => 'App\Models\Client',
-            'changed_by_id' => auth('client')->id(),
-        ]);
+        app(PermitApplicationWorkflowService::class)->transition(
+            $application,
+            'cancelled',
+            'Permohonan dibatalkan oleh klien',
+            'App\Models\Client',
+            auth('client')->id()
+        );
 
         return redirect()->route('client.applications.index')
             ->with('success', 'Permohonan berhasil dibatalkan.');

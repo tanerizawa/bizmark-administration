@@ -4,11 +4,11 @@ return [
     'version' => '2.0.0',
     'effective_date' => '2026-04-12',
     'last_updated' => '2026-04-12',
-    
+
     'id' => [
         'title' => 'Syarat dan Ketentuan Layanan',
         'subtitle' => 'Perjanjian Layanan Perizinan Usaha dan Penggunaan Platform Digital',
-        
+
         'sections' => [
             [
                 'title' => '1. DEFINISI',
@@ -21,7 +21,7 @@ return [
                     '1.6. **"Platform"** merujuk pada website, aplikasi mobile, alat digital gratis, dan sistem digital lainnya yang dioperasikan oleh Bizmark.ID.',
                     '1.7. **"Alat Digital"** merujuk pada alat gratis yang tersedia di platform Bizmark.ID, termasuk Polygon SHP Maker, Kalkulator Perizinan, dan alat lainnya yang mungkin ditambahkan.',
                     '1.8. **"Instansi Terkait"** merujuk pada lembaga pemerintah, kementerian, atau otoritas yang berwenang dalam penerbitan izin.',
-                ]
+                ],
             ],
             [
                 'title' => '2. PENERIMAAN SYARAT DAN KETENTUAN',
@@ -30,7 +30,7 @@ return [
                     '2.2. Jika Anda tidak setuju dengan sebagian atau seluruh ketentuan ini, Anda tidak diperkenankan menggunakan layanan Bizmark.ID.',
                     '2.3. Bizmark.ID berhak mengubah Syarat dan Ketentuan ini sewaktu-waktu. Perubahan akan diberitahukan melalui platform dan berlaku setelah publikasi.',
                     '2.4. Penggunaan layanan setelah perubahan Syarat dan Ketentuan dianggap sebagai penerimaan terhadap perubahan tersebut.',
-                ]
+                ],
             ],
             [
                 'title' => '3. RUANG LINGKUP LAYANAN',
@@ -42,7 +42,7 @@ return [
                     '3.5. **Monitoring & Pelaporan**: Bizmark.ID akan memantau status permohonan dan memberikan update berkala kepada Klien.',
                     '3.6. **Alat Digital Gratis**: Bizmark.ID menyediakan alat digital gratis (Polygon SHP Maker, Kalkulator Perizinan) untuk membantu pengguna dalam perencanaan proyek dan estimasi biaya perizinan.',
                     '3.7. **Batas Layanan**: Bizmark.ID tidak menjamin keberhasilan penerbitan izin karena keputusan akhir berada di tangan instansi terkait.',
-                ]
+                ],
             ],
             [
                 'title' => '4. KEWAJIBAN KLIEN',
@@ -53,7 +53,7 @@ return [
                     '4.4. **Pembayaran**: Klien wajib melakukan pembayaran sesuai dengan jadwal dan jumlah yang tercantum dalam quotation.',
                     '4.5. **Kepatuhan Hukum**: Klien wajib memastikan bahwa usaha dan aktivitas bisnis yang diajukan sesuai dengan peraturan perundang-undangan yang berlaku.',
                     '4.6. **Kerja Sama**: Klien wajib bekerja sama dengan Bizmark.ID dalam proses pengurusan izin, termasuk menghadiri meeting atau verifikasi jika diperlukan.',
-                ]
+                ],
             ],
             [
                 'title' => '5. HARGA DAN PEMBAYARAN',
@@ -65,7 +65,7 @@ return [
                     '5.5. **Metode Pembayaran**: Pembayaran dapat dilakukan melalui transfer bank, virtual account, atau metode lain yang disediakan.',
                     '5.6. **Bukti Pembayaran**: Klien wajib mengunggah bukti pembayaran melalui platform untuk verifikasi.',
                     '5.7. **Perubahan Biaya**: Jika terjadi perubahan regulasi atau persyaratan dari instansi yang mengakibatkan perubahan biaya, Bizmark.ID akan memberitahukan dan meminta persetujuan Klien.',
-                ]
+                ],
             ],
             [
                 'title' => '6. KEBIJAKAN PENGEMBALIAN DANA (REFUND)',
@@ -76,7 +76,7 @@ return [
                     '6.4. **Force Majeure**: Dalam kondisi force majeure (bencana alam, perubahan regulasi mendadak, dll), kebijakan refund akan dievaluasi kasus per kasus.',
                     '6.5. **Proses Refund**: Refund akan diproses dalam waktu 14-30 hari kerja sejak persetujuan pembatalan.',
                     '6.6. **Kegagalan Pembayaran Instansi**: Jika ada biaya yang sudah dibayarkan ke instansi terkait, biaya tersebut tidak dapat dikembalikan.',
-                ]
+                ],
             ],
             [
                 'title' => '7. WAKTU PENYELESAIAN',
@@ -85,7 +85,7 @@ return [
                     '7.2. **Tidak Mengikat**: Estimasi waktu bersifat tidak mengikat karena proses penerbitan izin sepenuhnya berada di tangan instansi terkait.',
                     '7.3. **Keterlambatan**: Bizmark.ID tidak bertanggung jawab atas keterlambatan yang disebabkan oleh instansi terkait, perubahan regulasi, atau kondisi di luar kendali Bizmark.ID.',
                     '7.4. **Percepatan**: Bizmark.ID akan berupaya maksimal untuk mempercepat proses, namun tidak dapat menjamin percepatan jika tidak didukung oleh instansi terkait.',
-                ]
+                ],
             ],
             [
                 'title' => '8. BATASAN TANGGUNG JAWAB',
@@ -96,7 +96,7 @@ return [
                     '8.4. **Perubahan Regulasi**: Bizmark.ID tidak bertanggung jawab atas perubahan regulasi atau kebijakan pemerintah yang mempengaruhi proses perizinan.',
                     '8.5. **Ganti Rugi**: Tanggung jawab maksimal Bizmark.ID terbatas pada pengembalian biaya sesuai dengan kebijakan refund yang berlaku.',
                     '8.6. **Konsekuensi Bisnis**: Bizmark.ID tidak bertanggung jawab atas kerugian bisnis, kehilangan keuntungan, atau dampak tidak langsung lainnya.',
-                ]
+                ],
             ],
             [
                 'title' => '9. KERAHASIAAN DAN PERLINDUNGAN DATA',
@@ -107,7 +107,7 @@ return [
                     '9.4. **Keamanan**: Bizmark.ID menerapkan langkah keamanan teknis dan organisatoris untuk melindungi data Klien.',
                     '9.5. **Hak Akses**: Klien memiliki hak untuk mengakses, mengubah, atau menghapus data pribadi sesuai dengan peraturan perlindungan data yang berlaku.',
                     '9.6. **Penyimpanan**: Data akan disimpan selama diperlukan untuk kepentingan layanan dan kewajiban hukum.',
-                ]
+                ],
             ],
             [
                 'title' => '10. HAK KEKAYAAN INTELEKTUAL',
@@ -116,7 +116,7 @@ return [
                     '10.2. **Dokumen Template**: Template dokumen yang digunakan oleh Bizmark.ID adalah hak milik Bizmark.ID.',
                     '10.3. **Dokumen Klien**: Dokumen asli yang disediakan oleh Klien tetap menjadi hak milik Klien.',
                     '10.4. **Lisensi Penggunaan**: Klien diberikan lisensi terbatas untuk menggunakan platform sesuai dengan ketentuan layanan.',
-                ]
+                ],
             ],
             [
                 'title' => '11. FORCE MAJEURE',
@@ -124,7 +124,7 @@ return [
                     '11.1. Bizmark.ID tidak bertanggung jawab atas kegagalan atau keterlambatan pelaksanaan layanan yang disebabkan oleh peristiwa force majeure.',
                     '11.2. Force majeure termasuk namun tidak terbatas pada: bencana alam, perang, kerusuhan, pandemi, perubahan mendadak regulasi pemerintah, gangguan sistem pemerintah, atau kondisi lain di luar kendali wajar Bizmark.ID.',
                     '11.3. Dalam kondisi force majeure, Bizmark.ID akan segera memberitahukan Klien dan berupaya menyelesaikan situasi sesegera mungkin.',
-                ]
+                ],
             ],
             [
                 'title' => '12. PENGAKHIRAN LAYANAN',
@@ -133,7 +133,7 @@ return [
                     '12.2. **Oleh Bizmark.ID**: Bizmark.ID dapat mengakhiri layanan jika Klien melanggar Syarat dan Ketentuan, memberikan informasi palsu, atau tidak kooperatif.',
                     '12.3. **Penyelesaian Kewajiban**: Pengakhiran tidak menghilangkan kewajiban pembayaran yang sudah jatuh tempo.',
                     '12.4. **Pengembalian Dokumen**: Setelah pengakhiran, Bizmark.ID akan mengembalikan dokumen asli Klien dalam waktu 14 hari kerja.',
-                ]
+                ],
             ],
             [
                 'title' => '13. PENYELESAIAN PERSELISIHAN',
@@ -143,7 +143,7 @@ return [
                     '13.3. **Arbitrase**: Jika mediasi gagal, perselisihan akan diselesaikan melalui arbitrase di Badan Arbitrase Nasional Indonesia (BANI).',
                     '13.4. **Hukum yang Berlaku**: Perjanjian ini tunduk pada hukum negara Republik Indonesia.',
                     '13.5. **Yurisdiksi**: Pengadilan Negeri Jakarta Selatan memiliki yurisdiksi eksklusif jika penyelesaian melalui arbitrase tidak dimungkinkan.',
-                ]
+                ],
             ],
             [
                 'title' => '14. KOMUNIKASI',
@@ -152,7 +152,7 @@ return [
                     '14.2. **Update Status**: Klien akan menerima update status permohonan melalui platform dan notifikasi.',
                     '14.3. **Respon Bizmark.ID**: Bizmark.ID akan merespon pertanyaan atau keluhan Klien dalam waktu maksimal 2x24 jam kerja.',
                     '14.4. **Bahasa**: Komunikasi dapat dilakukan dalam Bahasa Indonesia atau Bahasa Inggris.',
-                ]
+                ],
             ],
             [
                 'title' => '15. KETENTUAN LAIN-LAIN',
@@ -162,7 +162,7 @@ return [
                     '15.3. **Pemberitahuan**: Semua pemberitahuan harus dilakukan secara tertulis melalui email atau platform resmi.',
                     '15.4. **Bahasa**: Jika terdapat perbedaan interpretasi antara versi Bahasa Indonesia dan Bahasa Inggris, versi Bahasa Indonesia yang berlaku.',
                     '15.5. **Keseluruhan Perjanjian**: Syarat dan Ketentuan ini, bersama dengan quotation yang disetujui, merupakan keseluruhan perjanjian antara para pihak.',
-                ]
+                ],
             ],
             [
                 'title' => '16. PENGGUNAAN ALAT DIGITAL DAN PLATFORM',
@@ -175,10 +175,10 @@ return [
                     '16.6. **Penyimpanan Lokal**: Alat digital menggunakan localStorage browser untuk auto-save. Data ini tersimpan di perangkat pengguna dan dapat dihapus melalui pengaturan browser.',
                     '16.7. **Penggunaan Terlarang**: Dilarang menggunakan alat digital untuk tujuan ilegal, scraping, reverse engineering, atau eksploitasi otomatis.',
                     '16.8. **Batasan Tanggung Jawab**: Bizmark.ID tidak bertanggung jawab atas ketidakakuratan hasil, kegagalan teknis, atau kehilangan data lokal pengguna.',
-                ]
+                ],
             ],
         ],
-        
+
         'contact' => [
             'title' => 'INFORMASI KONTAK',
             'company' => 'PT Bizmark Indonesia',
@@ -187,7 +187,7 @@ return [
             'phone' => '+62 838 7960 2855',
             'website' => 'https://bizmark.id',
         ],
-        
+
         'acceptance' => [
             'title' => 'PERNYATAAN PERSETUJUAN',
             'text' => 'Dengan mencentang kotak di bawah dan mengklik tombol "Saya Setuju dan Ajukan Permohonan", saya menyatakan bahwa:',
@@ -201,11 +201,11 @@ return [
             'checkbox' => 'Saya telah membaca, memahami, dan menyetujui Syarat dan Ketentuan Layanan Bizmark.ID',
         ],
     ],
-    
+
     'en' => [
         'title' => 'Terms and Conditions of Service',
         'subtitle' => 'Business Licensing Service Agreement and Digital Platform Usage',
-        
+
         'sections' => [
             [
                 'title' => '1. DEFINITIONS',
@@ -218,7 +218,7 @@ return [
                     '1.6. **"Platform"** refers to the website, mobile application, free digital tools, and other digital systems operated by Bizmark.ID.',
                     '1.7. **"Digital Tools"** refers to free tools available on the Bizmark.ID platform, including Polygon SHP Maker, Permit Calculator, and other tools that may be added.',
                     '1.8. **"Relevant Authorities"** refers to government agencies, ministries, or authorities authorized to issue permits.',
-                ]
+                ],
             ],
             [
                 'title' => '2. ACCEPTANCE OF TERMS AND CONDITIONS',
@@ -227,7 +227,7 @@ return [
                     '2.2. If you do not agree with any part of these terms, you are not permitted to use Bizmark.ID services.',
                     '2.3. Bizmark.ID reserves the right to modify these Terms and Conditions at any time. Changes will be notified through the platform and become effective upon publication.',
                     '2.4. Use of services after changes to the Terms and Conditions constitutes acceptance of those changes.',
-                ]
+                ],
             ],
             [
                 'title' => '3. SCOPE OF SERVICES',
@@ -239,7 +239,7 @@ return [
                     '3.5. **Monitoring & Reporting**: Bizmark.ID will monitor application status and provide periodic updates to the Client.',
                     '3.6. **Free Digital Tools**: Bizmark.ID provides free digital tools (Polygon SHP Maker, Permit Calculator) to help users with project planning and permit cost estimation.',
                     '3.7. **Service Limitations**: Bizmark.ID does not guarantee permit issuance success as final decisions rest with relevant authorities.',
-                ]
+                ],
             ],
             [
                 'title' => '4. CLIENT OBLIGATIONS',
@@ -250,7 +250,7 @@ return [
                     '4.4. **Payment**: Clients must make payments according to the schedule and amount stated in the quotation.',
                     '4.5. **Legal Compliance**: Clients must ensure that the business and activities submitted comply with applicable laws and regulations.',
                     '4.6. **Cooperation**: Clients must cooperate with Bizmark.ID in the permit management process, including attending meetings or verification if required.',
-                ]
+                ],
             ],
             [
                 'title' => '5. PRICING AND PAYMENT',
@@ -262,7 +262,7 @@ return [
                     '5.5. **Payment Methods**: Payment can be made via bank transfer, virtual account, or other provided methods.',
                     '5.6. **Payment Proof**: Clients must upload payment proof through the platform for verification.',
                     '5.7. **Cost Changes**: If regulatory or authority requirement changes result in cost changes, Bizmark.ID will notify and request Client approval.',
-                ]
+                ],
             ],
             [
                 'title' => '6. REFUND POLICY',
@@ -273,7 +273,7 @@ return [
                     '6.4. **Force Majeure**: In force majeure conditions (natural disasters, sudden regulatory changes, etc.), refund policy will be evaluated case by case.',
                     '6.5. **Refund Process**: Refunds will be processed within 14-30 working days from cancellation approval.',
                     '6.6. **Authority Payment Failures**: If costs have been paid to relevant authorities, those costs cannot be refunded.',
-                ]
+                ],
             ],
             [
                 'title' => '7. COMPLETION TIME',
@@ -282,7 +282,7 @@ return [
                     '7.2. **Non-Binding**: Time estimates are non-binding as permit issuance processes are entirely under the control of relevant authorities.',
                     '7.3. **Delays**: Bizmark.ID is not responsible for delays caused by relevant authorities, regulatory changes, or conditions beyond Bizmark.ID\'s control.',
                     '7.4. **Acceleration**: Bizmark.ID will make maximum efforts to expedite processes but cannot guarantee acceleration if not supported by relevant authorities.',
-                ]
+                ],
             ],
             [
                 'title' => '8. LIMITATION OF LIABILITY',
@@ -293,7 +293,7 @@ return [
                     '8.4. **Regulatory Changes**: Bizmark.ID is not responsible for regulatory or government policy changes affecting licensing processes.',
                     '8.5. **Compensation**: Bizmark.ID\'s maximum liability is limited to cost refunds according to applicable refund policy.',
                     '8.6. **Business Consequences**: Bizmark.ID is not responsible for business losses, lost profits, or other indirect impacts.',
-                ]
+                ],
             ],
             [
                 'title' => '9. CONFIDENTIALITY AND DATA PROTECTION',
@@ -304,7 +304,7 @@ return [
                     '9.4. **Security**: Bizmark.ID implements technical and organizational security measures to protect Client data.',
                     '9.5. **Access Rights**: Clients have the right to access, modify, or delete personal data in accordance with applicable data protection regulations.',
                     '9.6. **Storage**: Data will be stored as long as necessary for service purposes and legal obligations.',
-                ]
+                ],
             ],
             [
                 'title' => '10. INTELLECTUAL PROPERTY RIGHTS',
@@ -313,7 +313,7 @@ return [
                     '10.2. **Document Templates**: Document templates used by Bizmark.ID are property of Bizmark.ID.',
                     '10.3. **Client Documents**: Original documents provided by Clients remain Client property.',
                     '10.4. **Usage License**: Clients are granted limited license to use the platform in accordance with service terms.',
-                ]
+                ],
             ],
             [
                 'title' => '11. FORCE MAJEURE',
@@ -321,7 +321,7 @@ return [
                     '11.1. Bizmark.ID is not responsible for service failures or delays caused by force majeure events.',
                     '11.2. Force majeure includes but is not limited to: natural disasters, war, riots, pandemics, sudden government regulatory changes, government system disruptions, or other conditions beyond Bizmark.ID\'s reasonable control.',
                     '11.3. In force majeure conditions, Bizmark.ID will immediately notify Clients and attempt to resolve the situation as soon as possible.',
-                ]
+                ],
             ],
             [
                 'title' => '12. SERVICE TERMINATION',
@@ -330,7 +330,7 @@ return [
                     '12.2. **By Bizmark.ID**: Bizmark.ID may terminate services if Client violates Terms and Conditions, provides false information, or is uncooperative.',
                     '12.3. **Settlement of Obligations**: Termination does not eliminate payment obligations that are already due.',
                     '12.4. **Document Return**: After termination, Bizmark.ID will return Client\'s original documents within 14 working days.',
-                ]
+                ],
             ],
             [
                 'title' => '13. DISPUTE RESOLUTION',
@@ -340,7 +340,7 @@ return [
                     '13.3. **Arbitration**: If mediation fails, disputes will be resolved through arbitration at the Indonesian National Arbitration Board (BANI).',
                     '13.4. **Governing Law**: This agreement is governed by the laws of the Republic of Indonesia.',
                     '13.5. **Jurisdiction**: South Jakarta District Court has exclusive jurisdiction if arbitration resolution is not possible.',
-                ]
+                ],
             ],
             [
                 'title' => '14. COMMUNICATION',
@@ -349,7 +349,7 @@ return [
                     '14.2. **Status Updates**: Clients will receive application status updates through the platform and notifications.',
                     '14.3. **Bizmark.ID Response**: Bizmark.ID will respond to Client questions or complaints within a maximum of 2x24 working hours.',
                     '14.4. **Language**: Communication can be conducted in Indonesian or English.',
-                ]
+                ],
             ],
             [
                 'title' => '15. OTHER PROVISIONS',
@@ -359,7 +359,7 @@ return [
                     '15.3. **Notices**: All notices must be made in writing via email or official platform.',
                     '15.4. **Language**: If there are interpretation differences between Indonesian and English versions, the Indonesian version prevails.',
                     '15.5. **Entire Agreement**: These Terms and Conditions, together with the approved quotation, constitute the entire agreement between the parties.',
-                ]
+                ],
             ],
             [
                 'title' => '16. DIGITAL TOOLS AND PLATFORM USAGE',
@@ -372,10 +372,10 @@ return [
                     '16.6. **Local Storage**: Digital tools use browser localStorage for auto-save. This data is stored on the user\'s device and can be cleared through browser settings.',
                     '16.7. **Prohibited Uses**: Using digital tools for illegal purposes, scraping, reverse engineering, or automated exploitation is prohibited.',
                     '16.8. **Limitation of Liability**: Bizmark.ID is not liable for result inaccuracies, technical failures, or loss of user\'s local data.',
-                ]
+                ],
             ],
         ],
-        
+
         'contact' => [
             'title' => 'CONTACT INFORMATION',
             'company' => 'PT Bizmark Indonesia',
@@ -384,7 +384,7 @@ return [
             'phone' => '+62 838 7960 2855',
             'website' => 'https://bizmark.id',
         ],
-        
+
         'acceptance' => [
             'title' => 'ACCEPTANCE STATEMENT',
             'text' => 'By checking the box below and clicking the "I Agree and Submit Application" button, I declare that:',

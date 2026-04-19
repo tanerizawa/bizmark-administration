@@ -10,6 +10,7 @@ use App\Models\ApplicationStatusLog;
 use App\Models\Project;
 use App\Models\ProjectPermit;
 use App\Models\ProjectPermitDependency;
+use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -42,9 +43,9 @@ class ApplicationManagementController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('application_number', 'ILIKE', '%' . $search . '%')
+                $q->where('application_number', 'LIKE', '%' . $search . '%')
                   ->orWhereHas('client', function($q) use ($search) {
-                      $q->where('name', 'ILIKE', '%' . $search . '%');
+                      $q->where('name', 'LIKE', '%' . $search . '%');
                   });
             });
         }
@@ -58,8 +59,22 @@ class ApplicationManagementController extends Controller
         }
         
         // Sort
+        $allowedSortBy = [
+            'submitted_at',
+            'created_at',
+            'application_number',
+            'status',
+        ];
+
         $sortBy = $request->get('sort_by', 'submitted_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+        if (!in_array($sortBy, $allowedSortBy, true)) {
+            $sortBy = 'submitted_at';
+        }
+
+        $sortOrder = strtolower((string) $request->get('sort_order', 'desc'));
+        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+            $sortOrder = 'desc';
+        }
         
         // Handle null submitted_at for drafts
         if ($sortBy === 'submitted_at') {
@@ -75,13 +90,22 @@ class ApplicationManagementController extends Controller
         $clients = Client::orderBy('name')->get();
         
         // Statistics
+        $statsRow = PermitApplication::query()
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN status = 'submitted' THEN 1 ELSE 0 END) as submitted")
+            ->selectRaw("SUM(CASE WHEN status = 'under_review' THEN 1 ELSE 0 END) as under_review")
+            ->selectRaw("SUM(CASE WHEN status = 'quoted' THEN 1 ELSE 0 END) as quoted")
+            ->selectRaw("SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress")
+            ->selectRaw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed")
+            ->first();
+
         $stats = [
-            'total' => PermitApplication::count(),
-            'submitted' => PermitApplication::where('status', 'submitted')->count(),
-            'under_review' => PermitApplication::where('status', 'under_review')->count(),
-            'quoted' => PermitApplication::where('status', 'quoted')->count(),
-            'in_progress' => PermitApplication::where('status', 'in_progress')->count(),
-            'completed' => PermitApplication::where('status', 'completed')->count(),
+            'total' => (int) ($statsRow->total ?? 0),
+            'submitted' => (int) ($statsRow->submitted ?? 0),
+            'under_review' => (int) ($statsRow->under_review ?? 0),
+            'quoted' => (int) ($statsRow->quoted ?? 0),
+            'in_progress' => (int) ($statsRow->in_progress ?? 0),
+            'completed' => (int) ($statsRow->completed ?? 0),
         ];
         
         // Status options for filter
@@ -141,37 +165,34 @@ class ApplicationManagementController extends Controller
      */
     public function startReview($id)
     {
-        $application = PermitApplication::with('client')->findOrFail($id);
-        
-        // Only submitted applications can be reviewed
-        if ($application->status !== 'submitted') {
-            return back()->with('error', 'Hanya aplikasi yang sudah disubmit yang bisa direview');
-        }
-        
         DB::beginTransaction();
         try {
+            $application = PermitApplication::with('client')->whereKey($id)->lockForUpdate()->firstOrFail();
+
+            if ($application->status !== 'submitted') {
+                DB::rollBack();
+                return back()->with('error', 'Hanya aplikasi yang sudah disubmit yang bisa direview');
+            }
+
             $previousStatus = $application->status;
-            
+
             $application->update([
-                'status' => 'under_review',
                 'reviewed_by' => Auth::id(),
                 'reviewed_at' => now(),
             ]);
-            
-            // Log status change
-            ApplicationStatusLog::create([
-                'application_id' => $application->id,
-                'from_status' => 'submitted',
-                'to_status' => 'under_review',
-                'changed_by_type' => 'user',
-                'changed_by_id' => Auth::id(),
-                'notes' => 'Review dimulai oleh admin',
-            ]);
+
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'under_review',
+                'Review dimulai oleh admin',
+                'user',
+                Auth::id()
+            );
             
             // Send email notification to client
             if ($application->client && $application->client->email) {
                 try {
-                    \Mail::to($application->client->email)->send(
+                    \Illuminate\Support\Facades\Mail::to($application->client->email)->send(
                         new \App\Mail\ApplicationStatusChanged(
                             $application,
                             $previousStatus,
@@ -181,7 +202,7 @@ class ApplicationManagementController extends Controller
                         )
                     );
                 } catch (\Exception $emailException) {
-                    \Log::warning('Failed to send review start email', [
+                    \Illuminate\Support\Facades\Log::warning('Failed to send review start email', [
                         'application_id' => $application->id,
                         'error' => $emailException->getMessage()
                     ]);
@@ -205,34 +226,26 @@ class ApplicationManagementController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:under_review,document_incomplete,quoted,payment_pending,in_progress,completed,cancelled',
+            'status' => 'required|in:draft,submitted,under_review,document_incomplete,quoted,quotation_accepted,payment_pending,payment_verified,converted_to_project,in_progress,completed,cancelled',
             'notes' => 'nullable|string|max:1000',
         ]);
         
-        $application = PermitApplication::with('client')->findOrFail($id);
-        $previousStatus = $application->status;
-        
         DB::beginTransaction();
         try {
+            $application = PermitApplication::with('client')->whereKey($id)->lockForUpdate()->firstOrFail();
+            $previousStatus = $application->status;
+
+            $workflow = app(PermitApplicationWorkflowService::class);
+            $workflow->transition($application, $request->status, $request->notes, 'user', Auth::id());
+
             $application->update([
-                'status' => $request->status,
                 'admin_notes' => $request->notes,
-            ]);
-            
-            // Log status change
-            ApplicationStatusLog::create([
-                'application_id' => $application->id,
-                'from_status' => $previousStatus,
-                'to_status' => $request->status,
-                'changed_by_type' => 'user',
-                'changed_by_id' => Auth::id(),
-                'notes' => $request->notes,
             ]);
             
             // Send email notification to client
             if ($application->client && $application->client->email) {
                 try {
-                    \Mail::to($application->client->email)->send(
+                    \Illuminate\Support\Facades\Mail::to($application->client->email)->send(
                         new \App\Mail\ApplicationStatusChanged(
                             $application,
                             $previousStatus,
@@ -243,7 +256,7 @@ class ApplicationManagementController extends Controller
                     );
                 } catch (\Exception $emailException) {
                     // Log email failure but don't fail the status update
-                    \Log::warning('Failed to send status change email', [
+                    \Illuminate\Support\Facades\Log::warning('Failed to send status change email', [
                         'application_id' => $application->id,
                         'client_email' => $application->client->email,
                         'error' => $emailException->getMessage()
@@ -256,6 +269,9 @@ class ApplicationManagementController extends Controller
             return back()->with('success', 'Status aplikasi berhasil diupdate dan notifikasi email telah dikirim ke client');
         } catch (\Exception $e) {
             DB::rollBack();
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+                throw $e;
+            }
             return back()->with('error', 'Gagal mengupdate status: ' . $e->getMessage());
         }
     }
@@ -352,30 +368,27 @@ class ApplicationManagementController extends Controller
             'notes' => 'required|string|max:1000',
         ]);
         
-        $application = PermitApplication::with('client')->findOrFail($id);
-        $previousStatus = $application->status;
-        
         DB::beginTransaction();
         try {
+            $application = PermitApplication::with('client')->whereKey($id)->lockForUpdate()->firstOrFail();
+            $previousStatus = $application->status;
+
             $application->update([
-                'status' => 'document_incomplete',
                 'admin_notes' => $request->notes,
             ]);
-            
-            // Log status change
-            ApplicationStatusLog::create([
-                'application_id' => $application->id,
-                'from_status' => $previousStatus,
-                'to_status' => 'document_incomplete',
-                'changed_by_type' => 'user',
-                'changed_by_id' => Auth::id(),
-                'notes' => 'Dokumen tidak lengkap: ' . $request->notes,
-            ]);
+
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'document_incomplete',
+                'Dokumen tidak lengkap: ' . $request->notes,
+                'user',
+                Auth::id()
+            );
             
             // Send email notification to client
             if ($application->client && $application->client->email) {
                 try {
-                    \Mail::to($application->client->email)->send(
+                    \Illuminate\Support\Facades\Mail::to($application->client->email)->send(
                         new \App\Mail\ApplicationStatusChanged(
                             $application,
                             $previousStatus,
@@ -385,7 +398,7 @@ class ApplicationManagementController extends Controller
                         )
                     );
                 } catch (\Exception $emailException) {
-                    \Log::warning('Failed to send document revision email', [
+                    \Illuminate\Support\Facades\Log::warning('Failed to send document revision email', [
                         'application_id' => $application->id,
                         'error' => $emailException->getMessage()
                     ]);
@@ -490,23 +503,20 @@ class ApplicationManagementController extends Controller
             $application->update([
                 'project_id' => $project->id,
                 'converted_at' => now(),
-                'status' => 'in_progress',
             ]);
-            
-            // Log status change
-            ApplicationStatusLog::create([
-                'application_id' => $application->id,
-                'from_status' => 'payment_verified',
-                'to_status' => 'in_progress',
-                'changed_by_type' => 'user',
-                'changed_by_id' => Auth::id(),
-                'notes' => 'Aplikasi dikonversi menjadi proyek: ' . $project->project_name . ' dengan ' . count($bizmarkPermits) . ' izin',
-            ]);
+
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'in_progress',
+                'Aplikasi dikonversi menjadi proyek dengan ' . count($bizmarkPermits) . ' izin',
+                'user',
+                Auth::id()
+            );
             
             DB::commit();
             
             return redirect()
-                ->route('client.projects.show', $project->id)
+                ->route('projects.show', $project->id)
                 ->with('success', 'Berhasil mengkonversi aplikasi menjadi proyek dengan ' . count($bizmarkPermits) . ' izin. Proyek sekarang dapat dikelola.');
         } catch (\Exception $e) {
             DB::rollBack();

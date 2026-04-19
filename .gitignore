@@ -85,3 +85,4 @@ cookies.txt
 *-phase[0-9].*
 *-v[0-9].*
 *-copy.*
+!scripts/db-backup.sh

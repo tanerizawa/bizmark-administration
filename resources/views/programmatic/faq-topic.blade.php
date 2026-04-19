@@ -36,90 +36,81 @@ $breadcrumbSchema = [
 ];
 @endphp
 <script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@php
+    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $whatsapp = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+    $waText = 'Halo Bizmark, saya memiliki pertanyaan tentang ' . ($topic['title'] ?? '');
+    $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
+@endphp
 
-{{-- Breadcrumbs --}}
-<section class="pt-24 pb-4 px-4 bg-white border-b border-gray-100">
-    <div class="container mx-auto max-w-6xl">
-        <nav class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-            <a href="/" class="hover:text-primary transition"><i class="fas fa-home"></i></a>
-            <span class="text-gray-300">/</span>
-            <a href="{{ url('/faq') }}" class="hover:text-primary transition">FAQ</a>
-            <span class="text-gray-300">/</span>
-            <span class="text-gray-900 font-medium">{{ $topic['title'] }}</span>
-        </nav>
-    </div>
-</section>
-
-{{-- Hero --}}
-<section class="py-12 md:py-16 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-    <div class="container mx-auto max-w-4xl px-4 text-center">
-        <div class="w-14 h-14 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center mx-auto mb-4">
-            <i class="fas {{ $topic['icon'] }} text-2xl"></i>
+<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+    <div class="container-wide">
+        <a href="{{ route('faq.index') }}" class="link-primary text-sm inline-flex items-center mb-5"><i class="fas fa-arrow-left mr-2"></i>Kembali ke FAQ</a>
+        <div class="max-w-4xl">
+            <span class="section-badge mb-4">FAQ</span>
+            <h1 class="section-title mb-4">FAQ: {{ $topic['title'] }}</h1>
+            <p class="section-description" style="margin-left:0;">{{ $topic['description'] }}</p>
         </div>
-        <h1 class="text-3xl md:text-4xl font-extrabold mb-4">FAQ: {{ $topic['title'] }}</h1>
-        <p class="text-lg text-gray-300 max-w-2xl mx-auto">{{ $topic['description'] }}</p>
     </div>
 </section>
 
-{{-- FAQ List --}}
-<section class="py-12 md:py-16 bg-white">
-    <div class="container mx-auto max-w-4xl px-4">
+<section class="section">
+    <div class="container-wide">
         @if(count($faqs) > 0)
-        <div class="space-y-3">
-            @foreach($faqs as $i => $faq)
-            <details class="group bg-white rounded-xl border border-gray-200 overflow-hidden" {{ $i < 3 ? 'open' : '' }}>
-                <summary class="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition">
-                    <h2 class="font-semibold text-gray-900 pr-4 text-base">{{ $faq['question'] }}</h2>
-                    <i class="fas fa-chevron-down text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
-                </summary>
-                <div class="px-5 pb-5 border-t border-gray-100 pt-4">
-                    <p class="text-gray-600 leading-relaxed mb-3">{{ $faq['answer'] }}</p>
-                    @if(!empty($faq['source_article']))
-                    <a href="{{ $faq['source_article']['url'] }}" class="inline-flex items-center text-sm text-sky-600 hover:text-sky-700 font-medium">
-                        <i class="fas fa-book-open mr-1.5"></i> Baca selengkapnya: {{ Str::limit($faq['source_article']['title'], 60) }}
-                    </a>
-                    @endif
-                </div>
-            </details>
-            @endforeach
-        </div>
+            <div class="max-w-4xl space-y-3">
+                @foreach($faqs as $i => $faq)
+                    <details class="faq-item" {{ $i < 3 ? 'open' : '' }}>
+                        <summary class="faq-toggle">
+                            <span>{{ $faq['question'] }}</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </summary>
+                        <div class="faq-content">
+                            <div class="faq-content-inner content-prose">
+                                <p>{{ $faq['answer'] }}</p>
+                                @if(!empty($faq['source_article']))
+                                    <p><a href="{{ $faq['source_article']['url'] }}">Baca selengkapnya: {{ Str::limit($faq['source_article']['title'], 60) }}</a></p>
+                                @endif
+                            </div>
+                        </div>
+                    </details>
+                @endforeach
+            </div>
         @else
-        <div class="text-center py-12">
-            <i class="fas fa-question-circle text-gray-300 text-4xl mb-4"></i>
-            <p class="text-gray-500">Belum ada FAQ untuk topik ini. Hubungi kami untuk bertanya langsung.</p>
-        </div>
+            <div class="card text-center">
+                <h2 class="text-lg font-bold mb-2" style="color:var(--text-primary);">Belum ada FAQ untuk topik ini</h2>
+                <p class="mb-0" style="color:var(--text-secondary);">Hubungi kami untuk bertanya langsung.</p>
+            </div>
         @endif
     </div>
 </section>
 
-{{-- Other Topics --}}
-<section class="py-12 md:py-16 bg-gray-50">
-    <div class="container mx-auto max-w-6xl px-4">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Topik FAQ Lainnya</h2>
-        <div class="grid sm:grid-cols-3 gap-4">
+<section class="section-sm" style="background:var(--surface-secondary);">
+    <div class="container-wide">
+        <h2 class="section-title mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Topik FAQ Lainnya</h2>
+        <div class="grid sm:grid-cols-3 gap-6">
             @foreach($otherTopics as $slug => $other)
-            <a href="{{ url('/faq/' . $other['slug']) }}"
-               class="block bg-white rounded-xl border border-gray-200 p-5 hover:border-sky-300 hover:shadow-md transition">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fas {{ $other['icon'] }} text-sky-500"></i>
-                    <h3 class="font-semibold text-gray-900">{{ $other['title'] }}</h3>
-                </div>
-                <p class="text-sm text-gray-500">{{ Str::limit($other['description'], 80) }}</p>
-            </a>
+                <a href="{{ url('/faq/' . $other['slug']) }}" class="card">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(14,165,233,.12);color:var(--color-accent);">
+                            <i class="fas {{ $other['icon'] ?? 'fa-circle-question' }}"></i>
+                        </span>
+                        <h3 class="text-base font-bold mb-0" style="color:var(--text-primary);">{{ $other['title'] }}</h3>
+                    </div>
+                    <p class="text-sm mb-0" style="color:var(--text-secondary);">{{ Str::limit($other['description'], 96) }}</p>
+                </a>
             @endforeach
         </div>
     </div>
 </section>
 
-{{-- CTA --}}
-<section class="py-16 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-center">
-    <div class="container mx-auto max-w-3xl px-4">
-        <h2 class="text-2xl md:text-3xl font-bold mb-4">Punya Pertanyaan Lain?</h2>
-        <p class="text-gray-300 mb-8">Konsultasi gratis dengan tim ahli kami. Kami siap membantu menjawab semua pertanyaan seputar perizinan.</p>
-        <a href="https://wa.me/6283879602855?text={{ urlencode('Halo Bizmark, saya memiliki pertanyaan tentang ' . $topic['title']) }}" target="_blank" rel="noopener"
-           class="inline-flex items-center px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold rounded-xl transition shadow-lg shadow-green-500/20">
-            <i class="fab fa-whatsapp mr-3 text-xl"></i> Tanya Langsung
-        </a>
+<section class="section-sm" style="background:var(--surface-dark);">
+    <div class="container-wide text-center">
+        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Punya Pertanyaan Lain?</h2>
+        <p class="mb-7" style="color:rgba(255,255,255,.74);">Konsultasi gratis dengan tim ahli kami.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-success"><i class="fab fa-whatsapp"></i> Tanya via WhatsApp</a>
+            <a href="{{ route('contact.index') }}" class="btn btn-secondary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
+        </div>
     </div>
 </section>
 

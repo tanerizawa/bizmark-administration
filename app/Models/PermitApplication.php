@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PermitApplication extends Model
 {
+    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
@@ -200,6 +202,7 @@ class PermitApplication extends Model
             'quotation_accepted' => '#10B981',
             'payment_pending' => '#F59E0B',
             'payment_verified' => '#059669',
+            'converted_to_project' => '#2563EB',
             'in_progress' => '#06B6D4',
             'completed' => '#22C55E',
             'cancelled' => '#6B7280',
@@ -218,6 +221,7 @@ class PermitApplication extends Model
             'quotation_accepted' => 'Quotation Diterima',
             'payment_pending' => 'Menunggu Pembayaran',
             'payment_verified' => 'Pembayaran Terverifikasi',
+            'converted_to_project' => 'Dikonversi ke Project',
             'in_progress' => 'Sedang Diproses',
             'completed' => 'Selesai',
             'cancelled' => 'Dibatalkan',

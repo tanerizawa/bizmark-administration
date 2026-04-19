@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ArticleTopic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ArticleTopicController extends Controller
@@ -22,7 +23,7 @@ class ArticleTopicController extends Controller
         }
         
         if ($request->filled('search')) {
-            $query->where('title', 'ILIKE', '%' . $request->search . '%');
+            $query->where('title', 'LIKE', '%' . $request->search . '%');
         }
         
         $topics = $query->orderBy('priority', 'desc')
@@ -154,10 +155,24 @@ class ArticleTopicController extends Controller
                 $topics->where('target_market', $validated['market']);
             }
             if (!empty($validated['search'])) {
-                $topics->where(function ($q) use ($validated) {
-                    $q->where('title', 'ILIKE', '%' . $validated['search'] . '%')
-                        ->orWhere('description', 'ILIKE', '%' . $validated['search'] . '%')
-                        ->orWhereRaw("COALESCE(keywords::text, '') ILIKE ?", ['%' . $validated['search'] . '%']);
+                $driver = DB::connection()->getDriverName();
+                $like = '%' . $validated['search'] . '%';
+
+                $topics->where(function ($q) use ($validated, $driver, $like) {
+                    $q->where('title', 'LIKE', '%' . $validated['search'] . '%')
+                        ->orWhere('description', 'LIKE', '%' . $validated['search'] . '%');
+
+                    if ($driver === 'pgsql') {
+                        $q->orWhereRaw('CAST(keywords AS TEXT) ILIKE ?', [$like]);
+                        return;
+                    }
+
+                    if ($driver === 'mysql' || $driver === 'mariadb') {
+                        $q->orWhereRaw('CAST(keywords AS CHAR) LIKE ?', [$like]);
+                        return;
+                    }
+
+                    $q->orWhereRaw('keywords LIKE ?', [$like]);
                 });
             }
         } else {

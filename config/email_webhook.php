@@ -18,4 +18,16 @@ return [
         'trim',
         explode(',', (string) env('EMAIL_WEBHOOK_ALLOWED_IPS', ''))
     )),
+
+    // Replay protection (timestamp + nonce). Recommended to enable in production.
+    'replay_protection_enabled' => (bool) env('EMAIL_WEBHOOK_REPLAY_PROTECTION_ENABLED', false),
+    'timestamp_header' => env('EMAIL_WEBHOOK_TIMESTAMP_HEADER', 'X-Timestamp'),
+    'nonce_header' => env('EMAIL_WEBHOOK_NONCE_HEADER', 'X-Nonce'),
+    'max_age_seconds' => (int) env('EMAIL_WEBHOOK_MAX_AGE_SECONDS', 300),
+    'max_future_skew_seconds' => (int) env('EMAIL_WEBHOOK_MAX_FUTURE_SKEW_SECONDS', 30),
+    'nonce_ttl_seconds' => (int) env('EMAIL_WEBHOOK_NONCE_TTL_SECONDS', 86400),
+    'cache_store' => env('EMAIL_WEBHOOK_CACHE_STORE', env('CACHE_STORE', 'database')),
+    'response_cache_ttl_seconds' => (int) env('EMAIL_WEBHOOK_RESPONSE_CACHE_TTL_SECONDS', 86400),
+    'cache_latency_warn_ms' => (int) env('EMAIL_WEBHOOK_CACHE_LATENCY_WARN_MS', 50),
+    'alert_threshold_per_hour' => (int) env('EMAIL_WEBHOOK_ALERT_THRESHOLD_PER_HOUR', 10),
 ];

@@ -20,7 +20,7 @@ class ClientController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Client::query()->with('projects');
+        $query = Client::query()->withCount('projects');
 
         // Search
         if ($request->has('search') && $request->search != '') {
@@ -44,13 +44,29 @@ class ClientController extends Controller
         }
 
         // Sorting
+        $allowedSortBy = ['name', 'company_name', 'email', 'phone', 'status', 'client_type', 'created_at'];
         $sortBy = $request->get('sort_by', 'name');
-        $sortOrder = $request->get('sort_order', 'asc');
+        if (!in_array($sortBy, $allowedSortBy, true)) {
+            $sortBy = 'name';
+        }
+
+        $sortOrder = strtolower((string) $request->get('sort_order', 'asc'));
+        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+            $sortOrder = 'asc';
+        }
+
         $query->orderBy($sortBy, $sortOrder);
+
+        $stats = [
+            'total' => (clone $query)->count(),
+            'active' => (clone $query)->where('status', 'active')->count(),
+            'company' => (clone $query)->where('client_type', 'company')->count(),
+            'potential' => (clone $query)->where('status', 'potential')->count(),
+        ];
 
         $clients = $query->paginate(15);
 
-        return view('clients.index', compact('clients'));
+        return view('clients.index', compact('clients', 'stats'));
     }
 
     /**

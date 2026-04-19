@@ -2,7 +2,7 @@
 
 /**
  * PMA (Foreign Investment) Services Configuration
- * 
+ *
  * Services specifically designed for foreign investors and multinational companies
  * operating in Indonesia. Pricing in USD, international standards compliance.
  */
@@ -534,4 +534,3 @@ return [
         ],
     ],
 ];
-

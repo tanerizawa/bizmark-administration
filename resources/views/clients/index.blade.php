@@ -43,7 +43,7 @@
                             <i class="fas fa-check text-xs" style="color: var(--apple-green);"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(52,199,89,1);">{{ $clients->where('status', 'active')->count() }}</p>
+                            <p class="admin-stat" style="color: rgba(52,199,89,1);">{{ $stats['active'] ?? 0 }}</p>
                             <p class="admin-label-compact">Aktif</p>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                             <i class="fas fa-building text-xs" style="color: rgba(175,82,222,1);"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(175,82,222,1);">{{ $clients->where('client_type', 'company')->count() }}</p>
+                            <p class="admin-stat" style="color: rgba(175,82,222,1);">{{ $stats['company'] ?? 0 }}</p>
                             <p class="admin-label-compact">Perusahaan</p>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                             <i class="fas fa-star text-xs" style="color: var(--apple-orange);"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(255,159,10,1);">{{ $clients->where('status', 'potential')->count() }}</p>
+                            <p class="admin-stat" style="color: rgba(255,159,10,1);">{{ $stats['potential'] ?? 0 }}</p>
                             <p class="admin-label-compact">Potensial</p>
                         </div>
                     </div>
@@ -207,7 +207,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(0, 122, 255, 0.15); color: var(--apple-blue);">
-                                    <i class="fas fa-folder mr-1"></i>{{ $client->projects->count() }}
+                                    <i class="fas fa-folder mr-1"></i>{{ $client->projects_count ?? 0 }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center" onclick="event.stopPropagation()">

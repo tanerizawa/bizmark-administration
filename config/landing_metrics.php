@@ -2,15 +2,15 @@
 
 /**
  * Landing Page Metrics - Single Source of Truth
- * 
+ *
  * Semua angka statistik untuk landing page (desktop & mobile) harus menggunakan
  * data dari file ini untuk memastikan konsistensi.
- * 
+ *
  * Last Updated: November 20, 2025
  */
 
 return [
-    
+
     /**
      * Client Statistics
      * NOTE: Hindari angka spesifik yang sulit diverifikasi
@@ -21,7 +21,7 @@ return [
         'satisfaction_rate' => null,       // Unverifiable claim
         'industries' => 6,                 // Jumlah sektor industri yang dilayani
     ],
-    
+
     /**
      * Project Statistics
      * NOTE: Fokus pada kapabilitas, bukan klaim angka
@@ -31,7 +31,7 @@ return [
         'sla_success_rate' => null,        // Unverifiable claim
         'active_this_month' => null,       // Don't advertise
     ],
-    
+
     /**
      * Coverage Area
      * NOTE: "Berbagai kota" lebih humble dan tidak defensive
@@ -40,7 +40,7 @@ return [
         'provinces' => null,               // Don't specify (sounds defensive)
         'cities' => 'berbagai',            // "Berbagai kota" - humble approach
     ],
-    
+
     /**
      * Permits & Licenses
      * NOTE: Fokus pada jenis layanan, bukan volume
@@ -49,7 +49,7 @@ return [
         'total_processed' => null,         // Don't show inflated numbers
         'types_available' => 15,           // Jenis perizinan yang ditangani (factual)
     ],
-    
+
     /**
      * Company Experience
      * NOTE: Waktu operasional = factual, bisa dibuktikan
@@ -58,7 +58,7 @@ return [
         'years' => (int) date('Y') - 2015, // Dynamic calculation from since_year
         'since_year' => 2015,              // Berdiri sejak tahun
     ],
-    
+
     /**
      * Performance Metrics
      * NOTE: Timeline proses adalah faktual, bukan klaim kepuasan
@@ -69,7 +69,7 @@ return [
         'sla_percentage' => null,          // Unverifiable
         'success_rate' => null,            // Unverifiable
     ],
-    
+
     /**
      * Certifications & Awards
      * NOTE: REMOVE - sounds defensive and unverifiable
@@ -79,7 +79,7 @@ return [
         'award' => null,                   // Don't claim
         'government_partner' => false,     // Don't mention unless critical
     ],
-    
+
     /**
      * Contact Information
      * NOTE: Hide WA number from direct display to prevent spam
@@ -93,7 +93,7 @@ return [
         'hr_email' => 'hr@bizmark.id',
         'hours' => 'Portal Aktif 24/7',
     ],
-    
+
     /**
      * Trust Badges (untuk display)
      * NOTE: REMOVE defensive badges, focus on platform capabilities
@@ -110,7 +110,7 @@ return [
             'color' => 'blue',
         ],
     ],
-    
+
     /**
      * Statistics untuk Display (formatted)
      * NOTE: Remove all unverifiable claims, focus on capabilities
@@ -129,5 +129,5 @@ return [
         'service_types' => '15+ Jenis Layanan',
         'platform_uptime' => '24/7',
     ],
-    
+
 ];

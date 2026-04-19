@@ -60,12 +60,12 @@ class TopicClusterService
         $articles = Article::published()
             ->where('language', $language)
             ->where(function ($q) use ($service) {
-                $q->where('title', 'ILIKE', "%{$service['title']}%")
-                  ->orWhere('meta_keywords', 'ILIKE', "%{$service['slug']}%");
+                $q->where('title', 'LIKE', "%{$service['title']}%")
+                  ->orWhere('meta_keywords', 'LIKE', "%{$service['slug']}%");
                 foreach (explode(',', $service['meta_keywords'] ?? '') as $kw) {
                     $kw = trim($kw);
                     if (strlen($kw) > 3) {
-                        $q->orWhere('title', 'ILIKE', "%{$kw}%");
+                        $q->orWhere('title', 'LIKE', "%{$kw}%");
                     }
                 }
             })

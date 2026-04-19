@@ -40,7 +40,12 @@ class EmailWebhookController extends Controller
 
             // Validate required fields
             if (!$request->filled('from') || !$request->filled('subject')) {
-                Log::error('Invalid email webhook data - missing required fields', $request->all());
+                Log::error('Invalid email webhook data - missing required fields', [
+                    'from' => $request->input('from'),
+                    'to' => $request->input('to'),
+                    'subject' => $request->input('subject'),
+                    'message_id' => $request->input('message_id'),
+                ]);
                 return response()->json(['error' => 'Missing required fields: from, subject'], 400);
             }
 
@@ -92,9 +97,29 @@ class EmailWebhookController extends Controller
                 $bodyText = strip_tags($bodyHtml);
             }
 
+            $messageId = $request->input('message_id') ?? 'webhook-' . Str::uuid()->toString();
+
+            $existing = EmailInbox::query()->where('message_id', $messageId)->first();
+            if ($existing) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Email already processed',
+                    'data' => [
+                        'id' => $existing->id,
+                        'from' => $existing->from_email,
+                        'to' => $existing->to_email,
+                        'subject' => $existing->subject,
+                        'email_account' => $emailAccount ? $emailAccount->email : null,
+                        'assigned_to' => $primaryHandler ? $primaryHandler->email : null,
+                        'priority' => $existing->priority,
+                        'status' => $existing->status,
+                    ],
+                ], 200);
+            }
+
             // Create inbox entry with auto-assignment
             $inbox = EmailInbox::create([
-                'message_id' => $request->input('message_id') ?? 'webhook-' . Str::uuid()->toString(),
+                'message_id' => $messageId,
                 'from_email' => $fromEmail,
                 'from_name' => $fromName,
                 'to_email' => $toEmail,
@@ -158,8 +183,10 @@ class EmailWebhookController extends Controller
         } catch (\Exception $e) {
             Log::error('Email webhook processing error', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'request' => $request->all()
+                'from' => $request->input('from'),
+                'to' => $request->input('to'),
+                'subject' => $request->input('subject'),
+                'message_id' => $request->input('message_id'),
             ]);
             
             return response()->json([
@@ -234,7 +261,7 @@ class EmailWebhookController extends Controller
 
             foreach ($usersToNotify as $assignment) {
                 Log::info('Notification would be sent to user', [
-                    'user' => $assignment->user->email,
+                    'user' => optional($assignment->user)->email,
                     'email_account' => $emailAccount->email,
                     'inbox_id' => $inbox->id
                 ]);

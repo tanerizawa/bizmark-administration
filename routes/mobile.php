@@ -1,18 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Mobile\DashboardController;
-use App\Http\Controllers\Mobile\ProjectController;
-use App\Http\Controllers\Mobile\TaskController;
 use App\Http\Controllers\Mobile\ApprovalController;
+use App\Http\Controllers\Mobile\ClientController;
+use App\Http\Controllers\Mobile\DashboardController;
+use App\Http\Controllers\Mobile\DocumentController;
 use App\Http\Controllers\Mobile\FinancialController;
 use App\Http\Controllers\Mobile\NotificationController;
 use App\Http\Controllers\Mobile\ProfileController;
-use App\Http\Controllers\Mobile\ClientController;
-use App\Http\Controllers\Mobile\DocumentController;
-use App\Http\Controllers\Mobile\ReportController;
-use App\Http\Controllers\Mobile\TeamController;
+use App\Http\Controllers\Mobile\ProjectController;
 use App\Http\Controllers\Mobile\PushNotificationController;
+use App\Http\Controllers\Mobile\ReportController;
+use App\Http\Controllers\Mobile\TaskController;
+use App\Http\Controllers\Mobile\TeamController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,57 +28,59 @@ use App\Http\Controllers\Mobile\PushNotificationController;
 
 // Mobile welcome page (tidak perlu auth)
 Route::prefix('m')->group(function () {
-    Route::get('/welcome', function() {
-        if (auth()->check()) {
+    Route::get('/welcome', function () {
+        if (Auth::check()) {
             return redirect()->route('mobile.dashboard');
         }
+
         return view('mobile.welcome');
     })->name('mobile.welcome');
-    
+
     // Offline page (untuk PWA service worker)
-    Route::get('/offline', function() {
+    Route::get('/offline', function () {
         return view('mobile.offline');
     })->name('mobile.offline');
-    
+
     // Web Share Target (untuk PWA share)
-    Route::post('/share', function(\Illuminate\Http\Request $request) {
+    Route::post('/share', function (\Illuminate\Http\Request $request) {
         // Store shared data in session for processing after login
         $sharedData = [
             'title' => $request->input('title'),
             'text' => $request->input('text'),
             'url' => $request->input('url'),
         ];
-        
+
         // Handle files if any
         if ($request->hasFile('files')) {
             session(['pending_share_files' => true]);
         }
-        
+
         session(['shared_content' => $sharedData]);
-        
+
         // Redirect to appropriate handler based on auth status
-        if (auth()->check()) {
+        if (Auth::check()) {
             return redirect()->route('mobile.documents.upload')
                 ->with('shared_content', $sharedData);
         }
-        
+
         return redirect()->route('login')
             ->with('share_pending', true);
     })->name('mobile.share');
-    
+
     // Mobile Landing Page (Magazine Style) - Indonesian
-    Route::middleware('locale:id')->get('/landing', function() {
-        return view('mobile-landing.index');
+    Route::middleware('locale:id')->get('/landing', function () {
+        return redirect()->route('landing.id');
     })->name('mobile.landing.id');
-    
+
     // Mobile Landing Page - English
-    Route::middleware('locale:en')->get('/en/landing', function() {
-        return view('mobile-landing.index');
+    Route::middleware('locale:en')->get('/en/landing', function () {
+        return redirect()->route('landing.en');
     })->name('mobile.landing.en');
-    
+
     // Fallback route for old mobile.landing (redirect based on locale)
-    Route::get('/landing-redirect', function() {
+    Route::get('/landing-redirect', function () {
         $locale = app()->getLocale();
+
         return redirect()->route($locale === 'en' ? 'mobile.landing.en' : 'mobile.landing.id');
     })->name('mobile.landing');
 });
@@ -85,11 +88,11 @@ Route::prefix('m')->group(function () {
 // Protected mobile routes (perlu auth)
 // DetectMobile middleware sudah global, tidak perlu ditambahkan lagi
 Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
-    
+
     // Dashboard Mobile
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/refresh', [DashboardController::class, 'refresh'])->name('dashboard.refresh');
-    
+
     // Projects
     Route::prefix('projects')->name('projects.')->group(function () {
         Route::get('/', [ProjectController::class, 'index'])->name('index');
@@ -101,7 +104,7 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::patch('/{project}/status', [ProjectController::class, 'updateStatus'])->name('status');
         Route::get('/{project}/timeline', [ProjectController::class, 'timeline'])->name('timeline');
     });
-    
+
     // Tasks
     Route::prefix('tasks')->name('tasks.')->group(function () {
         Route::get('/', [TaskController::class, 'index'])->name('index');
@@ -112,7 +115,7 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::patch('/{task}/status', [TaskController::class, 'updateStatus'])->name('status');
         Route::post('/{task}/comment', [TaskController::class, 'addComment'])->name('comment');
     });
-    
+
     // Approvals (Critical for Mobile)
     Route::prefix('approvals')->name('approvals.')->group(function () {
         Route::get('/', [ApprovalController::class, 'index'])->name('index');
@@ -123,7 +126,7 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::post('/bulk-approve', [ApprovalController::class, 'bulkApprove'])->name('bulk-approve');
         Route::post('/bulk-reject', [ApprovalController::class, 'bulkReject'])->name('bulk-reject');
     });
-    
+
     // Financial
     Route::prefix('financial')->name('financial.')->group(function () {
         Route::get('/', [FinancialController::class, 'index'])->name('index');
@@ -134,7 +137,7 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::get('/expenses', [FinancialController::class, 'expenses'])->name('expenses');
         Route::get('/invoices/{invoice}', [FinancialController::class, 'showInvoice'])->name('invoice');
     });
-    
+
     // Notifications
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
@@ -142,7 +145,7 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::post('/read-all', [NotificationController::class, 'markAllRead'])->name('read-all');
         Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
     });
-    
+
     // Profile & Settings
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'show'])->name('show');
@@ -150,23 +153,23 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::post('/avatar', [ProfileController::class, 'uploadAvatar'])->name('avatar');
         Route::post('/preferences', [ProfileController::class, 'updatePreferences'])->name('preferences');
     });
-    
+
     // Settings
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('/preferences', function() {
+        Route::get('/preferences', function () {
             return view('mobile.settings.preferences');
         })->name('preferences');
-        Route::get('/about', function() {
+        Route::get('/about', function () {
             return view('mobile.settings.about');
         })->name('about');
     });
-    
+
     // Clients
     Route::prefix('clients')->name('clients.')->group(function () {
         Route::get('/', [ClientController::class, 'index'])->name('index');
         Route::get('/{client}', [ClientController::class, 'show'])->name('show');
     });
-    
+
     // Documents
     Route::prefix('documents')->name('documents.')->group(function () {
         Route::get('/', [DocumentController::class, 'index'])->name('index');
@@ -175,7 +178,7 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::get('/{document}', [DocumentController::class, 'show'])->name('show');
         Route::get('/{document}/download', [DocumentController::class, 'download'])->name('download');
     });
-    
+
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', [ReportController::class, 'index'])->name('index');
@@ -184,21 +187,21 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::get('/team', [ReportController::class, 'team'])->name('team');
         Route::get('/clients', [ReportController::class, 'clients'])->name('clients');
     });
-    
+
     // Team
     Route::prefix('team')->name('team.')->group(function () {
         Route::get('/', [TeamController::class, 'index'])->name('index');
         Route::get('/{user}', [TeamController::class, 'show'])->name('show');
     });
-    
+
     // Quick Actions (untuk bottom sheet)
     Route::post('/quick/project', [ProjectController::class, 'quickCreate'])->name('quick.project');
     Route::post('/quick/task', [TaskController::class, 'quickCreate'])->name('quick.task');
     Route::post('/quick/expense', [FinancialController::class, 'quickExpense'])->name('quick.expense');
-    
+
     // Offline Sync
     Route::post('/sync', [DashboardController::class, 'sync'])->name('sync');
-    
+
     // Push Notifications API
     Route::prefix('push')->name('push.')->group(function () {
         Route::post('/subscribe', [PushNotificationController::class, 'subscribe'])->name('subscribe');
@@ -206,15 +209,17 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::get('/status', [PushNotificationController::class, 'status'])->name('status');
         Route::post('/test', [PushNotificationController::class, 'test'])->name('test');
     });
-    
+
     // Force Desktop Mode Toggle
     Route::post('/force-desktop', function () {
         session(['force_desktop' => true]);
+
         return redirect('/dashboard');
     })->name('force-desktop');
-    
+
     Route::post('/force-mobile', function () {
         session()->forget('force_desktop');
+
         return redirect()->route('mobile.dashboard');
     })->name('force-mobile');
 });

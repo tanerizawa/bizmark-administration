@@ -8,6 +8,7 @@ use App\Models\PermitApplication;
 use App\Models\Quotation;
 use App\Models\ApplicationStatusLog;
 use App\Models\User;
+use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -80,9 +81,9 @@ class PaymentController extends Controller
             return back()->with('error', 'Quotation tidak valid');
         }
 
-        // Check if there's already a pending payment
+            // Check if there's already an active payment
         $pendingPayment = Payment::where('quotation_id', $quotation->id)
-            ->where('status', 'processing')
+                ->whereIn('status', ['pending', 'processing'])
             ->exists();
 
         if ($pendingPayment) {
@@ -101,7 +102,7 @@ class PaymentController extends Controller
 
             // Create payment record
             $payment = Payment::create([
-                'payment_number' => $this->generatePaymentNumber(),
+                'payment_number' => Payment::generatePaymentNumber(),
                 'payable_type' => PermitApplication::class,
                 'payable_id' => $application->id,
                 'client_id' => $application->client_id,
@@ -213,11 +214,11 @@ class PaymentController extends Controller
                 : $quotation->total_amount;
 
             // Upload transfer proof
-            $proofPath = $request->file('transfer_proof')->store('payment-proofs', 'public');
+            $proofPath = $request->file('transfer_proof')->store('payment-proofs', 'private');
 
             // Create payment record
             $payment = Payment::create([
-                'payment_number' => $this->generatePaymentNumber(),
+                'payment_number' => Payment::generatePaymentNumber(),
                 'payable_type' => PermitApplication::class,
                 'payable_id' => $application->id,
                 'client_id' => $application->client_id,
@@ -233,18 +234,13 @@ class PaymentController extends Controller
 
             // Update application status
             if ($application->status === 'quotation_accepted') {
-                $previousStatus = $application->status;
-                $application->update(['status' => 'payment_pending']);
-
-                // Log status change
-                ApplicationStatusLog::create([
-                    'application_id' => $application->id,
-                    'from_status' => $previousStatus,
-                    'to_status' => 'payment_pending',
-                    'changed_by_type' => 'client',
-                    'changed_by_id' => Auth::guard('client')->id(),
-                    'notes' => 'Client mengunggah bukti pembayaran manual',
-                ]);
+                app(PermitApplicationWorkflowService::class)->transition(
+                    $application,
+                    'payment_pending',
+                    'Client mengunggah bukti pembayaran manual',
+                    'client',
+                    Auth::guard('client')->id()
+                );
             }
 
             DB::commit();
@@ -272,28 +268,13 @@ class PaymentController extends Controller
             ->where('client_id', Auth::guard('client')->id())
             ->findOrFail($applicationId);
 
-        $payment = Payment::where('quotation_id', $application->quotation->id)
-            ->findOrFail($paymentId);
+        if (!$application->quotation) {
+            abort(404, 'Quotation tidak ditemukan.');
+        }
+
+        $payment = Payment::where('quotation_id', $application->quotation->id)->findOrFail($paymentId);
 
         return view('client.payments.success', compact('application', 'payment'));
     }
 
-    /**
-     * Generate payment number
-     */
-    private function generatePaymentNumber(): string
-    {
-        $year = date('Y');
-        $month = date('m');
-        
-        $lastPayment = Payment::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->orderBy('id', 'desc')
-            ->first();
-        
-        $nextNumber = $lastPayment ? 
-            intval(substr($lastPayment->payment_number, -4)) + 1 : 1;
-        
-        return sprintf('PAY-%s%s-%04d', $year, $month, $nextNumber);
-    }
 }

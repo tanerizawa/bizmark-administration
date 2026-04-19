@@ -25,10 +25,10 @@ Schedule::command('topics:replenish --threshold=30 --count=50')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Topic pool replenishment check completed');
+        \Illuminate\Support\Facades\Log::info('✅ Topic pool replenishment check completed');
     })
     ->onFailure(function () {
-        \Log::error('❌ Topic pool replenishment failed');
+        \Illuminate\Support\Facades\Log::error('❌ Topic pool replenishment failed');
     });
 
 // Daily at midnight - Schedule posts for the day
@@ -37,10 +37,10 @@ Schedule::command('articles:schedule-daily')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Daily article scheduling completed');
+        \Illuminate\Support\Facades\Log::info('✅ Daily article scheduling completed');
     })
     ->onFailure(function () {
-        \Log::error('❌ Daily article scheduling failed');
+        \Illuminate\Support\Facades\Log::error('❌ Daily article scheduling failed');
     });
 
 // Every 15 minutes - Check and process pending schedules
@@ -49,46 +49,28 @@ Schedule::command('articles:process-pending')
     ->withoutOverlapping()
     ->runInBackground();
 
+// Every 15 minutes - Process overdue autopost schedules
+Schedule::command('autopost:process-overdue --limit=10')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+// Every 30 minutes - Health check and auto-fix stuck schedules
+Schedule::command('articles:health-check --fix')
+    ->everyThirtyMinutes()
+    ->withoutOverlapping();
+
+// Daily midnight - Generate standalone daily batch with overflow handling
+Schedule::command('autopost:schedule-nightly --overflow-days=7')
+    ->dailyAt('00:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping();
+
 // Every hour - Backfill missing featured images via Pexels for newly generated articles
 Schedule::command('articles:backfill-images --limit=8')
     ->hourly()
     ->withoutOverlapping()
     ->runInBackground();
-
-// Every 15 minutes - Repair storage/cache permissions to avoid Blade compile permission errors
-Schedule::call(function () {
-    $directories = [
-        storage_path('logs'),
-        storage_path('framework'),
-        storage_path('framework/views'),
-        storage_path('framework/cache'),
-        storage_path('framework/sessions'),
-        base_path('bootstrap/cache'),
-    ];
-
-    foreach ($directories as $dir) {
-        if (!is_dir($dir)) {
-            continue;
-        }
-
-        @chmod($dir, 0775);
-
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
-
-        foreach ($iterator as $item) {
-            if ($item->isDir()) {
-                @chmod($item->getPathname(), 0775);
-            } else {
-                @chmod($item->getPathname(), 0664);
-            }
-        }
-    }
-})
-    ->everyFifteenMinutes()
-    ->name('fix-storage-permissions');
 
 // Weekly cleanup - Keep last 90 days of logs
 Schedule::command('articles:cleanup-logs')
@@ -96,6 +78,50 @@ Schedule::command('articles:cleanup-logs')
     ->sundays()
     ->at('02:00')
     ->timezone('Asia/Jakarta');
+
+// Monthly model pruning
+Schedule::command('model:prune')
+    ->monthly()
+    ->at('02:00');
+
+// Hourly stale cache tags cleanup
+Schedule::command('cache:prune-stale-tags')
+    ->hourly();
+
+// Every 10 minutes - Runtime permissions check (storage/* + bootstrap/cache)
+Schedule::command('ops:permissions-check --create')
+    ->everyTenMinutes()
+    ->withoutOverlapping()
+    ->onFailure(function () {
+        \Illuminate\Support\Facades\Log::error('❌ Runtime permissions check failed (storage/bootstrap/cache not writable)');
+    });
+
+// Hourly email webhook security metrics report
+Schedule::command('email-webhook:metrics-report --hours=1')
+    ->hourly()
+    ->withoutOverlapping();
+
+// ========================================
+// Database Backup
+// ========================================
+
+// Daily backup at 01:00 with verification
+Schedule::command('db:backup daily --verify')
+    ->dailyAt('01:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping();
+
+// Weekly full backup on Sunday 01:30
+Schedule::command('db:backup full --verify')
+    ->weeklyOn(0, '01:30')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping();
+
+// Daily integrity check for latest backup at 06:00
+Schedule::exec('bash ' . base_path('scripts/db-backup.sh') . ' verify')
+    ->dailyAt('06:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping();
 
 // ========================================
 // Shapefile Cleanup
@@ -106,8 +132,13 @@ Schedule::command('shapefiles:cleanup --hours=24')
     ->everySixHours()
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Shapefile cleanup completed');
+        \Illuminate\Support\Facades\Log::info('✅ Shapefile cleanup completed');
     });
+
+// Every 6 hours - Database health monitor
+Schedule::command('db:monitor --alert')
+    ->everySixHours()
+    ->withoutOverlapping();
 
 // ========================================
 // SEO Domination Engine v2 — Automation
@@ -123,10 +154,10 @@ Schedule::command('seo:intelligence --queue-gaps=20 --meta-limit=5')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ SEO intelligence pipeline completed');
+        \Illuminate\Support\Facades\Log::info('✅ SEO intelligence pipeline completed');
     })
     ->onFailure(function () {
-        \Log::error('❌ SEO intelligence pipeline failed');
+        \Illuminate\Support\Facades\Log::error('❌ SEO intelligence pipeline failed');
     });
 
 // Daily 03:00 - Queue top content gaps as article topics (feeds auto-post)
@@ -135,7 +166,7 @@ Schedule::command('seo:orchestrate --phase=content --queue-gaps=10 --convert-clu
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Content gap queuing completed');
+        \Illuminate\Support\Facades\Log::info('✅ Content gap queuing completed');
     });
 
 // Weekly Sunday 04:00 - Competitor SERP analysis
@@ -146,7 +177,7 @@ Schedule::command('seo:competitor-analyze --limit=15')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Competitor analysis completed');
+        \Illuminate\Support\Facades\Log::info('✅ Competitor analysis completed');
     });
 
 // Daily 05:00 - Position tracking (track keyword rankings via SearXNG)
@@ -155,7 +186,7 @@ Schedule::command('seo:track-positions --limit=50')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Position tracking completed');
+        \Illuminate\Support\Facades\Log::info('✅ Position tracking completed');
     });
 
 // Daily 05:30 - Trending topic discovery via SearXNG
@@ -164,7 +195,7 @@ Schedule::command('seo:trending-topics')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Trending topic discovery completed');
+        \Illuminate\Support\Facades\Log::info('✅ Trending topic discovery completed');
     });
 
 // Weekly Sunday 03:00 - Cleanup expired trending topics
@@ -181,7 +212,7 @@ Schedule::command('seo:trending-topics --convert --min-score=60 --limit=3')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Trending topics converted to article topics');
+        \Illuminate\Support\Facades\Log::info('✅ Trending topics converted to article topics');
     });
 
 // ─── OPTIMIZATION LAYER ─────────────────────────────────────
@@ -194,7 +225,7 @@ Schedule::command('seo:optimize-meta --limit=10')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Meta optimization completed');
+        \Illuminate\Support\Facades\Log::info('✅ Meta optimization completed');
     });
 
 // Weekly Wednesday 05:00 - Create A/B tests for top articles
@@ -219,7 +250,7 @@ Schedule::command('seo:refresh-content --older-than=90 --limit=5')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Content refresh completed');
+        \Illuminate\Support\Facades\Log::info('✅ Content refresh completed');
     });
 
 // Weekly Saturday 04:00 - Bidirectional backlink scan (inject cross-links in existing articles)
@@ -230,7 +261,7 @@ Schedule::command('seo:backlink-scan --limit=50')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Backlink scan completed');
+        \Illuminate\Support\Facades\Log::info('✅ Backlink scan completed');
     });
 
 // Daily 01:00 - Score all unscored articles
@@ -246,13 +277,13 @@ Schedule::command('seo:score-articles --limit=20')
 Schedule::call(function () {
     $available = \App\Models\ArticleTopic::where('status', 'pending')->count();
     if ($available < 20) {
-        \Log::warning("⚠️ Topic pool critically low ({$available}). Running emergency intelligence replenish...");
+        \Illuminate\Support\Facades\Log::warning("⚠️ Topic pool critically low ({$available}). Running emergency intelligence replenish...");
         \Illuminate\Support\Facades\Artisan::call('seo:orchestrate', [
             '--phase' => 'content',
             '--convert-clusters' => true,
             '--queue-gaps' => 30,
         ]);
-        \Log::info('✅ Emergency topic replenish completed. Pool: ' . \App\Models\ArticleTopic::where('status', 'pending')->count());
+        \Illuminate\Support\Facades\Log::info('✅ Emergency topic replenish completed. Pool: ' . \App\Models\ArticleTopic::where('status', 'pending')->count());
     }
 })
     ->everyFourHours()
@@ -295,8 +326,20 @@ Schedule::command('content:syndicate --limit=3')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Content syndication completed');
+        \Illuminate\Support\Facades\Log::info('✅ Content syndication completed');
     });
+
+// Daily 07:00 - Full distribution pipeline (legacy command)
+Schedule::command('seo:distribute --all --limit=3')
+    ->dailyAt('07:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping();
+
+// Daily 11:00 - Generate social captions for recent content
+Schedule::command('content:social-captions --limit=2')
+    ->dailyAt('11:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping();
 
 // Daily 14:30 - Post to social media platforms (Telegram, Twitter, Facebook, LinkedIn, GBP)
 // Guard in SocialPostingService checks for non-empty tokens before posting
@@ -305,7 +348,7 @@ Schedule::command('content:social-post --limit=3')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Social media posting completed');
+        \Illuminate\Support\Facades\Log::info('✅ Social media posting completed');
     });
 
 // Every 30 minutes - Process scheduled social posts
@@ -325,8 +368,14 @@ Schedule::command('seo:weekly-report --email')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ SEO weekly report generated and emailed');
+        \Illuminate\Support\Facades\Log::info('✅ SEO weekly report generated and emailed');
     });
+
+// Daily 23:55 - Snapshot article views for trend tracking
+Schedule::command('seo:snapshot-views')
+    ->dailyAt('23:55')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping();
 
 // Weekly Monday 07:30 - Position tracking summary report
 Schedule::command('seo:track-positions --summary')
@@ -336,7 +385,7 @@ Schedule::command('seo:track-positions --summary')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ Position tracking summary generated');
+        \Illuminate\Support\Facades\Log::info('✅ Position tracking summary generated');
     });
 
 // Daily 04:45 - Import Google Search Console data (falls back to simulation when credentials absent)
@@ -345,10 +394,10 @@ Schedule::command('seo:gsc-import --days=7')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ GSC data import completed');
+        \Illuminate\Support\Facades\Log::info('✅ GSC data import completed');
     })
     ->onFailure(function () {
-        \Log::error('❌ GSC data import failed');
+        \Illuminate\Support\Facades\Log::error('❌ GSC data import failed');
     });
 
 // Weekly Sunday 04:30 - GSC import + cross-reference AI estimates vs real GSC data (28-day window)
@@ -359,7 +408,7 @@ Schedule::command('seo:gsc-import --days=28 --crossref --crossref-days=28')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ GSC weekly cross-reference completed');
+        \Illuminate\Support\Facades\Log::info('✅ GSC weekly cross-reference completed');
     });
 
 // ─── PHASE 7: E-E-A-T & pSEO OPTIMIZATION ──────────────────
@@ -383,8 +432,8 @@ Schedule::command('rag:sync-regulations')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->onSuccess(function () {
-        \Log::info('✅ RAG regulation sync completed');
+        \Illuminate\Support\Facades\Log::info('✅ RAG regulation sync completed');
     })
     ->onFailure(function () {
-        \Log::error('❌ RAG regulation sync failed');
+        \Illuminate\Support\Facades\Log::error('❌ RAG regulation sync failed');
     });

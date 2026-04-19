@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Payment extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'payment_number',
         'payable_type',
@@ -52,14 +56,22 @@ class Payment extends Model
     public static function generatePaymentNumber(): string
     {
         $year = date('Y');
+        $month = date('m');
+
         $lastPayment = self::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
             ->orderBy('id', 'desc')
             ->first();
         
-        $nextNumber = $lastPayment ? 
-            intval(substr($lastPayment->payment_number, -3)) + 1 : 1;
+        $nextNumber = 1;
+
+        if ($lastPayment && is_string($lastPayment->payment_number)) {
+            if (preg_match('/(\d+)$/', $lastPayment->payment_number, $m)) {
+                $nextNumber = (int) $m[1] + 1;
+            }
+        }
         
-        return sprintf('PAY-%s-%03d', $year, $nextNumber);
+        return sprintf('PAY-%s%s-%04d', $year, $month, $nextNumber);
     }
 
     public function payable(): MorphTo
@@ -95,5 +107,30 @@ class Payment extends Model
     public function isFailed(): bool
     {
         return $this->status === 'failed';
+    }
+
+    /**
+     * Resolve transfer proof storage disk/path with backward compatibility.
+     * New uploads use private disk, old records may still exist on public.
+     *
+     * @return array{0:string,1:string}|null
+     */
+    public function resolveTransferProofLocation(): ?array
+    {
+        if (blank($this->transfer_proof_path)) {
+            return null;
+        }
+
+        $path = ltrim($this->transfer_proof_path, '/');
+
+        if (Storage::disk('private')->exists($path)) {
+            return ['private', $path];
+        }
+
+        if (Storage::disk('public')->exists($path)) {
+            return ['public', $path];
+        }
+
+        return null;
     }
 }

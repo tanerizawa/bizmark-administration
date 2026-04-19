@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
     // Lead Management Routes (Unified with Tabs)
     Route::middleware('permission:clients.view')->group(function () {
         // Unified Lead Management Page with Tabs
@@ -8,52 +10,92 @@
         // Service Inquiry routes (kept for detail pages and actions)
         Route::get('service-inquiries/export', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'export'])->name('admin.service-inquiries.export');
         Route::get('service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'show'])->name('admin.service-inquiries.show');
-        Route::patch('service-inquiries/{serviceInquiry}/status', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updateStatus'])->name('admin.service-inquiries.update-status');
-        Route::patch('service-inquiries/{serviceInquiry}/priority', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updatePriority'])->name('admin.service-inquiries.update-priority');
-        Route::post('service-inquiries/{serviceInquiry}/note', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])->name('admin.service-inquiries.add-note');
-        Route::post('service-inquiries/{serviceInquiry}/convert', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'convertToProject'])->name('admin.service-inquiries.convert');
-        Route::delete('service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'destroy'])->name('admin.service-inquiries.destroy');
+        Route::patch('service-inquiries/{serviceInquiry}/status', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updateStatus'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.service-inquiries.update-status');
+        Route::patch('service-inquiries/{serviceInquiry}/priority', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'updatePriority'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.service-inquiries.update-priority');
+        Route::post('service-inquiries/{serviceInquiry}/note', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'addNote'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.service-inquiries.add-note');
+        Route::post('service-inquiries/{serviceInquiry}/convert', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'convertToProject'])
+            ->middleware('permission:projects.create')
+            ->name('admin.service-inquiries.convert');
+        Route::delete('service-inquiries/{serviceInquiry}', [App\Http\Controllers\Admin\ServiceInquiryController::class, 'destroy'])
+            ->middleware('permission:clients.delete')
+            ->name('admin.service-inquiries.destroy');
         
         // Consultation Leads routes (kept for detail pages and actions)
         Route::get('consultation-leads', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'index'])->name('admin.consultation-leads.index');
         Route::get('consultation-leads/export', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'export'])->name('admin.consultation-leads.export');
         Route::get('consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'show'])->name('admin.consultation-leads.show');
-        Route::post('consultation-leads/{consultation}/update-status', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'updateStatus'])->name('admin.consultation-leads.update-status');
-        Route::post('consultation-leads/{consultation}/mark-contacted', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'markContacted'])->name('admin.consultation-leads.mark-contacted');
-        Route::post('consultation-leads/{consultation}/convert', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'convertToClient'])->name('admin.consultation-leads.convert-to-client');
-        Route::post('consultation-leads/{consultation}/note', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'addNote'])->name('admin.consultation-leads.add-note');
-        Route::delete('consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'destroy'])->name('admin.consultation-leads.destroy');
+        Route::post('consultation-leads/{consultation}/update-status', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'updateStatus'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.consultation-leads.update-status');
+        Route::post('consultation-leads/{consultation}/mark-contacted', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'markContacted'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.consultation-leads.mark-contacted');
+        Route::post('consultation-leads/{consultation}/convert', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'convertToClient'])
+            ->middleware('permission:clients.create')
+            ->name('admin.consultation-leads.convert-to-client');
+        Route::post('consultation-leads/{consultation}/note', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'addNote'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.consultation-leads.add-note');
+        Route::delete('consultation-leads/{consultation}', [App\Http\Controllers\Admin\ConsultationLeadController::class, 'destroy'])
+            ->middleware('permission:clients.delete')
+            ->name('admin.consultation-leads.destroy');
         
         // Service Cost Request routes (for detail pages and admin actions)
         Route::get('service-cost-requests/{requestNumber}', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'show'])->name('admin.service-cost-requests.show');
-        Route::patch('service-cost-requests/{requestNumber}/status', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'updateStatus'])->name('admin.service-cost-requests.update-status');
-        Route::post('service-cost-requests/{requestNumber}/note', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'addNote'])->name('admin.service-cost-requests.add-note');
-        Route::post('service-cost-requests/{requestNumber}/generate-quote', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'generateQuote'])->name('admin.service-cost-requests.generate-quote');
-        Route::post('service-cost-requests/{requestNumber}/regenerate-content', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'regenerateQuoteContent'])->name('admin.service-cost-requests.regenerate-content');
-        Route::post('service-cost-requests/{requestNumber}/send-email', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'sendQuoteEmail'])->name('admin.service-cost-requests.send-email');
-        Route::post('service-cost-requests/{requestNumber}/complete', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'complete'])->name('admin.service-cost-requests.complete');
-        Route::post('service-cost-requests/{requestNumber}/archive', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'archive'])->name('admin.service-cost-requests.archive');
+        Route::patch('service-cost-requests/{requestNumber}/status', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'updateStatus'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.service-cost-requests.update-status');
+        Route::post('service-cost-requests/{requestNumber}/note', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'addNote'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.service-cost-requests.add-note');
+        Route::post('service-cost-requests/{requestNumber}/generate-quote', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'generateQuote'])
+            ->middleware('permission:invoices.create')
+            ->name('admin.service-cost-requests.generate-quote');
+        Route::post('service-cost-requests/{requestNumber}/regenerate-content', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'regenerateQuoteContent'])
+            ->middleware('permission:invoices.edit')
+            ->name('admin.service-cost-requests.regenerate-content');
+        Route::post('service-cost-requests/{requestNumber}/send-email', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'sendQuoteEmail'])
+            ->middleware('permission:email.send_email')
+            ->name('admin.service-cost-requests.send-email');
+        Route::post('service-cost-requests/{requestNumber}/complete', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'complete'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.service-cost-requests.complete');
+        Route::post('service-cost-requests/{requestNumber}/archive', [App\Http\Controllers\Admin\ServiceCostRequestController::class, 'archive'])
+            ->middleware('permission:clients.edit')
+            ->name('admin.service-cost-requests.archive');
         
         // Backward compatibility redirect
         Route::redirect('service-inquiries', '/admin/leads?tab=service-inquiries');
     });
 
     // Financial Management Routes (Phase 1)
-    // Read-only routes (auth required)
-    Route::middleware('auth')->group(function () {
-        Route::get('cash-accounts', [App\Http\Controllers\CashAccountController::class, 'index'])->name('cash-accounts.index');
-        Route::get('cash-accounts/create', [App\Http\Controllers\CashAccountController::class, 'create'])->name('cash-accounts.create');
-        Route::get('cash-accounts/{cash_account}', [App\Http\Controllers\CashAccountController::class, 'show'])->name('cash-accounts.show');
-    });
+    Route::get('cash-accounts', [App\Http\Controllers\CashAccountController::class, 'index'])
+        ->middleware('permission:finances.view')
+        ->name('cash-accounts.index');
+    Route::get('cash-accounts/{cash_account}', [App\Http\Controllers\CashAccountController::class, 'show'])
+        ->middleware('permission:finances.view')
+        ->name('cash-accounts.show');
+    Route::get('cash-accounts/create', [App\Http\Controllers\CashAccountController::class, 'create'])
+        ->middleware('permission:finances.manage_accounts')
+        ->name('cash-accounts.create');
     
-    // Write routes (require permission)
-    Route::middleware('permission:finances.view')->group(function () {
+    Route::middleware(['permission:finances.manage_payments', '2fa'])->group(function () {
         Route::post('projects/{project}/payments', [App\Http\Controllers\ProjectPaymentController::class, 'store'])->name('projects.payments.store');
         Route::delete('payments/{payment}', [App\Http\Controllers\ProjectPaymentController::class, 'destroy'])->name('payments.destroy');
+    });
+
+    Route::middleware(['permission:finances.manage_expenses', '2fa'])->group(function () {
         Route::post('projects/{project}/expenses', [App\Http\Controllers\ProjectExpenseController::class, 'store'])->name('projects.expenses.store');
         Route::delete('expenses/{expense}', [App\Http\Controllers\ProjectExpenseController::class, 'destroy'])->name('expenses.destroy');
-        
-        // Cash accounts write operations
+    });
+
+    Route::middleware(['permission:finances.manage_accounts', '2fa'])->group(function () {
         Route::post('cash-accounts', [App\Http\Controllers\CashAccountController::class, 'store'])->name('cash-accounts.store');
         Route::get('cash-accounts/{cash_account}/edit', [App\Http\Controllers\CashAccountController::class, 'edit'])->name('cash-accounts.edit');
         Route::put('cash-accounts/{cash_account}', [App\Http\Controllers\CashAccountController::class, 'update'])->name('cash-accounts.update');
@@ -74,38 +116,69 @@
             Route::put('expense/{id}', [App\Http\Controllers\GeneralTransactionController::class, 'updateExpense'])->name('expense.update');
             Route::delete('expense/{id}', [App\Http\Controllers\GeneralTransactionController::class, 'destroyExpense'])->name('expense.destroy');
         });
+    });
 
-        // Bank Reconciliation Routes (Phase 1B)
-        Route::resource('reconciliations', App\Http\Controllers\BankReconciliationController::class);
-        Route::get('reconciliations/{reconciliation}/match', [App\Http\Controllers\BankReconciliationController::class, 'match'])->name('reconciliations.match');
-        Route::post('reconciliations/{reconciliation}/auto-match', [App\Http\Controllers\BankReconciliationController::class, 'autoMatch'])->name('reconciliations.auto-match');
-        Route::post('reconciliations/{reconciliation}/manual-match', [App\Http\Controllers\BankReconciliationController::class, 'manualMatch'])->name('reconciliations.manual-match');
-        Route::post('reconciliations/{reconciliation}/unmatch', [App\Http\Controllers\BankReconciliationController::class, 'unmatch'])->name('reconciliations.unmatch');
-        Route::post('reconciliations/{reconciliation}/complete', [App\Http\Controllers\BankReconciliationController::class, 'complete'])->name('reconciliations.complete');
-    });
+    Route::resource('reconciliations', App\Http\Controllers\BankReconciliationController::class)
+        ->only(['index', 'show'])
+        ->middleware('permission:finances.view');
+    Route::resource('reconciliations', App\Http\Controllers\BankReconciliationController::class)
+        ->except(['index', 'show'])
+        ->middleware(['permission:finances.manage_accounts', '2fa']);
+    Route::get('reconciliations/{reconciliation}/match', [App\Http\Controllers\BankReconciliationController::class, 'match'])
+        ->middleware(['permission:finances.manage_accounts', '2fa'])
+        ->name('reconciliations.match');
+    Route::post('reconciliations/{reconciliation}/auto-match', [App\Http\Controllers\BankReconciliationController::class, 'autoMatch'])
+        ->middleware(['permission:finances.manage_accounts', '2fa'])
+        ->name('reconciliations.auto-match');
+    Route::post('reconciliations/{reconciliation}/manual-match', [App\Http\Controllers\BankReconciliationController::class, 'manualMatch'])
+        ->middleware(['permission:finances.manage_accounts', '2fa'])
+        ->name('reconciliations.manual-match');
+    Route::post('reconciliations/{reconciliation}/unmatch', [App\Http\Controllers\BankReconciliationController::class, 'unmatch'])
+        ->middleware(['permission:finances.manage_accounts', '2fa'])
+        ->name('reconciliations.unmatch');
+    Route::post('reconciliations/{reconciliation}/complete', [App\Http\Controllers\BankReconciliationController::class, 'complete'])
+        ->middleware(['permission:finances.manage_accounts', '2fa'])
+        ->name('reconciliations.complete');
     
-    // API endpoints for AJAX calls (requires auth only, no specific permission)
-    Route::middleware('auth')->group(function () {
-        Route::get('api/cash-accounts/active', [App\Http\Controllers\CashAccountController::class, 'getActiveCashAccounts'])->name('api.cash-accounts.active');
-    });
+    Route::get('api/cash-accounts/active', [App\Http\Controllers\CashAccountController::class, 'getActiveCashAccounts'])
+        ->middleware('permission:finances.view')
+        ->name('api.cash-accounts.active');
 
     // Article Management Routes
-    Route::middleware('permission:content.manage')->group(function () {
-        Route::resource('articles', App\Http\Controllers\ArticleController::class);
-        Route::post('articles/{article}/publish', [App\Http\Controllers\ArticleController::class, 'publish'])->name('articles.publish');
-        Route::post('articles/{article}/unpublish', [App\Http\Controllers\ArticleController::class, 'unpublish'])->name('articles.unpublish');
-        Route::post('articles/{article}/archive', [App\Http\Controllers\ArticleController::class, 'archive'])->name('articles.archive');
-        Route::post('articles/upload-image', [App\Http\Controllers\ArticleController::class, 'uploadImage'])->name('articles.upload-image');
+    Route::resource('articles', App\Http\Controllers\ArticleController::class)
+        ->only(['index', 'show'])
+        ->middleware('permission:content.view_articles');
+    Route::resource('articles', App\Http\Controllers\ArticleController::class)
+        ->only(['create', 'store'])
+        ->middleware('permission:content.create_articles');
+    Route::resource('articles', App\Http\Controllers\ArticleController::class)
+        ->only(['edit', 'update'])
+        ->middleware('permission:content.edit_articles');
+    Route::resource('articles', App\Http\Controllers\ArticleController::class)
+        ->only(['destroy'])
+        ->middleware('permission:content.delete_articles');
+    Route::post('articles/{article}/publish', [App\Http\Controllers\ArticleController::class, 'publish'])
+        ->middleware('permission:content.publish_articles')
+        ->name('articles.publish');
+    Route::post('articles/{article}/unpublish', [App\Http\Controllers\ArticleController::class, 'unpublish'])
+        ->middleware('permission:content.publish_articles')
+        ->name('articles.unpublish');
+    Route::post('articles/{article}/archive', [App\Http\Controllers\ArticleController::class, 'archive'])
+        ->middleware('permission:content.edit_articles')
+        ->name('articles.archive');
+    Route::post('articles/upload-image', [App\Http\Controllers\ArticleController::class, 'uploadImage'])
+        ->middleware('permission:content.edit_articles')
+        ->name('articles.upload-image');
         
         // Pexels API Routes
-        Route::prefix('pexels')->name('pexels.')->group(function () {
+        Route::prefix('pexels')->name('pexels.')->middleware('permission:content.manage')->group(function () {
             Route::get('search', [App\Http\Controllers\Admin\PexelsController::class, 'search'])->name('search');
             Route::get('curated', [App\Http\Controllers\Admin\PexelsController::class, 'curated'])->name('curated');
             Route::post('download', [App\Http\Controllers\Admin\PexelsController::class, 'download'])->name('download');
         });
         
         // Auto-Post Management Routes (Unified Dashboard)
-        Route::prefix('auto-post')->name('auto-post.')->group(function () {
+        Route::prefix('auto-post')->name('auto-post.')->middleware('permission:content.manage')->group(function () {
             // Unified Dashboard with Tabs
             Route::get('/', [App\Http\Controllers\Admin\AutoPostController::class, 'index'])->name('index');
             
@@ -132,7 +205,6 @@
             Route::get('logs', [App\Http\Controllers\Admin\AutoPostLogController::class, 'index'])->name('logs.index');
             Route::get('logs/recent', [App\Http\Controllers\Admin\AutoPostLogController::class, 'recent'])->name('logs.recent');
         });
-    });
 
     // Master Data - Permit Management Routes (Phase 2A)
     Route::middleware('permission:master_data.manage')->group(function () {
@@ -159,37 +231,79 @@
 
     // Financial Tab Management Routes (Phase 2A - Sprint 6)
     // Refactored: FinancialController (1089 LOC) dipecah ke per-domain controller di App\Http\Controllers\Financial\*
-    Route::middleware('permission:invoices.view')->group(function () {
-        Route::get('projects/{project}/financial', [App\Http\Controllers\Financial\OverviewController::class, 'index'])->name('projects.financial');
+    Route::get('projects/{project}/financial', [App\Http\Controllers\Financial\OverviewController::class, 'index'])
+        ->middleware('permission:invoices.view')
+        ->name('projects.financial');
 
-        Route::post('projects/{project}/invoices', [App\Http\Controllers\Financial\InvoiceController::class, 'store'])->name('projects.invoices.store');
-        Route::get('invoices/{invoice}', [App\Http\Controllers\Financial\InvoiceController::class, 'show'])->name('invoices.show');
-        Route::get('invoices/{invoice}/pdf', [App\Http\Controllers\Financial\InvoiceController::class, 'downloadPDF'])->name('invoices.download-pdf');
-        Route::patch('invoices/{invoice}/status', [App\Http\Controllers\Financial\InvoiceController::class, 'updateStatus'])->name('invoices.update-status');
-        Route::post('invoices/{invoice}/payment', [App\Http\Controllers\Financial\InvoiceController::class, 'recordPayment'])->name('invoices.record-payment');
-        Route::delete('invoices/{invoice}', [App\Http\Controllers\Financial\InvoiceController::class, 'destroy'])->name('invoices.destroy');
+    Route::post('projects/{project}/invoices', [App\Http\Controllers\Financial\InvoiceController::class, 'store'])
+        ->middleware(['permission:invoices.create', '2fa'])
+        ->name('projects.invoices.store');
+    Route::get('invoices/{invoice}', [App\Http\Controllers\Financial\InvoiceController::class, 'show'])
+        ->middleware('permission:invoices.view')
+        ->name('invoices.show');
+    Route::get('invoices/{invoice}/pdf', [App\Http\Controllers\Financial\InvoiceController::class, 'downloadPDF'])
+        ->middleware('permission:invoices.view')
+        ->name('invoices.download-pdf');
+    Route::patch('invoices/{invoice}/status', [App\Http\Controllers\Financial\InvoiceController::class, 'updateStatus'])
+        ->middleware(['permission:invoices.edit', '2fa'])
+        ->name('invoices.update-status');
+    Route::post('invoices/{invoice}/payment', [App\Http\Controllers\Financial\InvoiceController::class, 'recordPayment'])
+        ->middleware(['permission:finances.manage_payments', '2fa'])
+        ->name('invoices.record-payment');
+    Route::delete('invoices/{invoice}', [App\Http\Controllers\Financial\InvoiceController::class, 'destroy'])
+        ->middleware(['permission:invoices.delete', '2fa'])
+        ->name('invoices.destroy');
 
-        Route::post('projects/{project}/direct-income', [App\Http\Controllers\Financial\DirectIncomeController::class, 'store'])->name('projects.direct-income.store');
-        Route::get('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'edit'])->name('projects.direct-income.edit');
-        Route::patch('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'update'])->name('projects.direct-income.update');
-        Route::delete('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'destroy'])->name('projects.direct-income.destroy');
+    Route::post('projects/{project}/direct-income', [App\Http\Controllers\Financial\DirectIncomeController::class, 'store'])
+        ->middleware(['permission:finances.manage_payments', '2fa'])
+        ->name('projects.direct-income.store');
+    Route::get('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'edit'])
+        ->middleware(['permission:finances.manage_payments', '2fa'])
+        ->name('projects.direct-income.edit');
+    Route::patch('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'update'])
+        ->middleware(['permission:finances.manage_payments', '2fa'])
+        ->name('projects.direct-income.update');
+    Route::delete('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'destroy'])
+        ->middleware(['permission:finances.manage_payments', '2fa'])
+        ->name('projects.direct-income.destroy');
 
-        Route::post('projects/{project}/payment-schedules', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'store'])->name('projects.payment-schedules.store');
-        Route::patch('payment-schedules/{schedule}/paid', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'markPaid'])->name('payment-schedules.mark-paid');
-        Route::delete('payment-schedules/{schedule}', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'destroy'])->name('payment-schedules.destroy');
+    Route::post('projects/{project}/payment-schedules', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'store'])
+        ->middleware(['permission:finances.manage_payments', '2fa'])
+        ->name('projects.payment-schedules.store');
+    Route::patch('payment-schedules/{schedule}/paid', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'markPaid'])
+        ->middleware(['permission:finances.manage_payments', '2fa'])
+        ->name('payment-schedules.mark-paid');
+    Route::delete('payment-schedules/{schedule}', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'destroy'])
+        ->middleware(['permission:finances.manage_payments', '2fa'])
+        ->name('payment-schedules.destroy');
 
-        Route::post('projects/{project}/financial-expenses', [App\Http\Controllers\Financial\ExpenseController::class, 'store'])->name('projects.financial-expenses.store');
-        Route::get('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'show'])->name('financial-expenses.show');
-        Route::patch('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'update'])->name('financial-expenses.update');
-        Route::delete('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'destroy'])->name('financial-expenses.destroy');
-        Route::delete('financial-expenses/{expense}/delete-receipt', [App\Http\Controllers\Financial\ExpenseController::class, 'deleteReceipt'])->name('financial-expenses.delete-receipt');
-        Route::patch('financial-expenses/{expense}/mark-invoiced', [App\Http\Controllers\Financial\ExpenseController::class, 'markInvoiced'])->name('financial-expenses.mark-invoiced');
-        Route::patch('financial-expenses/{expense}/record-payment', [App\Http\Controllers\Financial\ExpenseController::class, 'recordReceivablePayment'])->name('financial-expenses.record-payment');
-        Route::patch('financial-expenses/{expense}/remove-receivable', [App\Http\Controllers\Financial\ExpenseController::class, 'removeReceivable'])->name('financial-expenses.remove-receivable');
-    });
+    Route::post('projects/{project}/financial-expenses', [App\Http\Controllers\Financial\ExpenseController::class, 'store'])
+        ->middleware(['permission:finances.manage_expenses', '2fa'])
+        ->name('projects.financial-expenses.store');
+    Route::get('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'show'])
+        ->middleware('permission:finances.view')
+        ->name('financial-expenses.show');
+    Route::patch('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'update'])
+        ->middleware(['permission:finances.manage_expenses', '2fa'])
+        ->name('financial-expenses.update');
+    Route::delete('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'destroy'])
+        ->middleware(['permission:finances.manage_expenses', '2fa'])
+        ->name('financial-expenses.destroy');
+    Route::delete('financial-expenses/{expense}/delete-receipt', [App\Http\Controllers\Financial\ExpenseController::class, 'deleteReceipt'])
+        ->middleware(['permission:finances.manage_expenses', '2fa'])
+        ->name('financial-expenses.delete-receipt');
+    Route::patch('financial-expenses/{expense}/mark-invoiced', [App\Http\Controllers\Financial\ExpenseController::class, 'markInvoiced'])
+        ->middleware(['permission:finances.manage_expenses', '2fa'])
+        ->name('financial-expenses.mark-invoiced');
+    Route::patch('financial-expenses/{expense}/record-payment', [App\Http\Controllers\Financial\ExpenseController::class, 'recordReceivablePayment'])
+        ->middleware(['permission:finances.manage_expenses', '2fa'])
+        ->name('financial-expenses.record-payment');
+    Route::patch('financial-expenses/{expense}/remove-receivable', [App\Http\Controllers\Financial\ExpenseController::class, 'removeReceivable'])
+        ->middleware(['permission:finances.manage_expenses', '2fa'])
+        ->name('financial-expenses.remove-receivable');
 
     // Excel Export Routes (Phase 2A - Sprint 7)
-    Route::middleware('permission:invoices.view')->group(function () {
+    Route::middleware(['permission:finances.view_reports', '2fa'])->group(function () {
         Route::get('exports/invoices', [App\Http\Controllers\Financial\ExportController::class, 'invoices'])->name('exports.invoices');
         Route::get('exports/invoices/{invoice}', [App\Http\Controllers\Financial\ExportController::class, 'invoiceDetail'])->name('exports.invoice-detail');
         Route::get('exports/expenses', [App\Http\Controllers\Financial\ExportController::class, 'expenses'])->name('exports.expenses');

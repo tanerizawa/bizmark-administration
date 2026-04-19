@@ -20,9 +20,9 @@ class EmailAccountController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('email', 'ILIKE', "%{$search}%")
-                  ->orWhere('name', 'ILIKE', "%{$search}%")
-                  ->orWhere('department', 'ILIKE', "%{$search}%");
+                $q->where('email', 'LIKE', "%{$search}%")
+                  ->orWhere('name', 'LIKE', "%{$search}%")
+                  ->orWhere('department', 'LIKE', "%{$search}%");
             });
         }
 

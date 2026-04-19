@@ -55,27 +55,27 @@ return [
             'primary_darker' => 'var(--color-primary-darker)',
             'primary_light' => 'var(--color-primary-light)',
             'primary_lighter' => 'var(--color-primary-lighter)',
-            
+
             'success' => 'var(--color-success)',
             'success_dark' => 'var(--color-success-dark)',
             'success_light' => 'var(--color-success-light)',
             'success_lighter' => 'var(--color-success-lighter)',
-            
+
             'warning' => 'var(--color-warning)',
             'warning_dark' => 'var(--color-warning-dark)',
             'warning_light' => 'var(--color-warning-light)',
             'warning_lighter' => 'var(--color-warning-lighter)',
-            
+
             'danger' => 'var(--color-danger)',
             'danger_dark' => 'var(--color-danger-dark)',
             'danger_light' => 'var(--color-danger-light)',
             'danger_lighter' => 'var(--color-danger-lighter)',
-            
+
             'neutral' => 'var(--color-neutral)',
             'neutral_dark' => 'var(--color-neutral-dark)',
             'neutral_light' => 'var(--color-neutral-light)',
             'neutral_lighter' => 'var(--color-neutral-lighter)',
-            
+
             'text_primary' => 'var(--color-text-primary)',
             'text_secondary' => 'var(--color-text-secondary)',
             'text_tertiary' => 'var(--color-text-tertiary)',
@@ -90,27 +90,27 @@ return [
             'primary_darker' => '#003161',
             'primary_light' => '#378FE9',
             'primary_lighter' => '#E7F3FF',
-            
+
             'success' => '#057642',
             'success_dark' => '#045D34',
             'success_light' => '#E8F5E9',
             'success_lighter' => '#F1F8F4',
-            
+
             'warning' => '#B86B00',
             'warning_dark' => '#8F5500',
             'warning_light' => '#FFF3E0',
             'warning_lighter' => '#FFF8F0',
-            
+
             'danger' => '#C5221F',
             'danger_dark' => '#9E1B19',
             'danger_light' => '#FFEBEE',
             'danger_lighter' => '#FFF5F5',
-            
+
             'neutral' => '#5E6D7A',
             'neutral_dark' => '#3D4852',
             'neutral_light' => '#E8ECEF',
             'neutral_lighter' => '#F3F6F8',
-            
+
             'text_primary' => '#1D2226',
             'text_secondary' => '#5E6D7A',
             'text_tertiary' => '#8B9196',
@@ -157,7 +157,7 @@ return [
         'max_breadcrumb_depth' => 4,        // Breadcrumb levels
         'max_tabs' => 6,                    // Tab items
         'max_bullet_points' => 7,           // List items before grouping
-        
+
         // Scoring thresholds
         'thresholds' => [
             'excellent' => 15,
@@ -185,7 +185,7 @@ return [
         'immediate' => 300,    // ms - Optimal neural response
         'acceptable' => 1000,  // ms - Noticeable delay
         'slow' => 3000,        // ms - Requires progress indicator
-        
+
         // Classifications
         'classifications' => [
             'instant' => ['label' => 'Instant', 'color' => 'success'],
@@ -193,7 +193,7 @@ return [
             'acceptable' => ['label' => 'Acceptable', 'color' => 'warning'],
             'slow' => ['label' => 'Slow', 'color' => 'danger'],
         ],
-        
+
         // Monitoring
         'enable_monitoring' => env('NEUROSCIENCE_MONITORING', true),
         'log_slow_responses' => env('LOG_SLOW_RESPONSES', true),
@@ -278,7 +278,7 @@ return [
         'ideal_spacing' => 8,           // px - Between targets
         'desktop_target' => 32,         // px - Mouse target
         'mobile_target' => 44,          // px - Touch target
-        
+
         // Button sizes (by importance)
         'button_sizes' => [
             'primary' => ['width' => 160, 'height' => 48],    // Main CTA
@@ -300,7 +300,7 @@ return [
     'typography' => [
         'scale' => 1.25,
         'base_size' => 16,      // px
-        
+
         'sizes' => [
             'xs' => 12,         // 16 / 1.25
             'sm' => 14,         // 16 / 1.14
@@ -312,20 +312,20 @@ return [
             '4xl' => 36,        // 16 * 2.25
             '5xl' => 48,        // 16 * 3
         ],
-        
+
         'line_heights' => [
             'tight' => 1.25,
             'normal' => 1.5,
             'relaxed' => 1.75,
         ],
-        
+
         'weights' => [
             'normal' => 400,
             'medium' => 500,
             'semibold' => 600,
             'bold' => 700,
         ],
-        
+
         // Readability
         'max_line_length' => 75,        // characters for optimal readability
         'paragraph_spacing' => 1.5,     // em
@@ -348,14 +348,14 @@ return [
             'slow' => 350,          // ms - Complex animations
             'slower' => 500,        // ms - Page transitions
         ],
-        
+
         'easing' => [
             'ease_in_out' => 'cubic-bezier(0.4, 0, 0.2, 1)',
             'ease_out' => 'cubic-bezier(0, 0, 0.2, 1)',
             'ease_in' => 'cubic-bezier(0.4, 0, 1, 1)',
             'bounce' => 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
         ],
-        
+
         // Accessibility
         'respect_prefers_reduced_motion' => true,
     ],
@@ -374,13 +374,13 @@ return [
             'show_progress_indicator' => true,
             'allow_step_navigation' => true,
         ],
-        
+
         'content' => [
             'initial_visible_items' => 3,
             'load_more_increment' => 6,
             'use_skeleton_screens' => true,
         ],
-        
+
         'accordion' => [
             'allow_multiple_open' => false,     // Force focus
             'auto_collapse_siblings' => true,   // Reduce clutter
@@ -399,7 +399,7 @@ return [
         'track_attention' => env('TRACK_ATTENTION', true),
         'heatmap_enabled' => env('HEATMAP_ENABLED', false),
         'session_recording' => env('SESSION_RECORDING', false),
-        
+
         'metrics' => [
             'cognitive_load_score',
             'attention_pattern',        // F-Pattern, Z-Pattern, Scattered
@@ -422,7 +422,7 @@ return [
     */
     'ab_testing' => [
         'enabled' => env('AB_TESTING_ENABLED', false),
-        
+
         'variants' => [
             'cta_position' => ['top_left', 'middle_left', 'bottom_left'],
             'cta_color' => ['primary', 'success', 'warning'],
@@ -447,11 +447,11 @@ return [
         'skip_to_content' => true,
         'aria_labels' => true,
         'keyboard_navigation' => true,
-        
+
         // Motion
         'prefers_reduced_motion' => true,
         'disable_parallax_on_reduce_motion' => true,
-        
+
         // Color blindness
         'never_use_color_alone' => true,    // Always combine with icons/text
     ],

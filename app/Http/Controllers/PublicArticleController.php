@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class PublicArticleController extends Controller
 {
@@ -15,25 +17,38 @@ class PublicArticleController extends Controller
     {
         $locale = app()->getLocale();
         $marketSegment = session('market_segment', 'local');
-        
-        // Cache latest articles for 10 minutes per locale
-        $latestArticles = cache()->remember("landing.latest_articles.{$locale}", 600, function () {
-            return Article::published()
+
+        // Cache latest articles for 10 minutes per locale.
+        // If cache store is not writable, gracefully fallback to direct query.
+        try {
+            $latestArticles = cache()->remember("landing.latest_articles.{$locale}", 600, function () {
+                return Article::published()
+                    ->orderBy('published_at', 'desc')
+                    ->take(3)
+                    ->get();
+            });
+        } catch (Throwable $e) {
+            Log::warning('Landing articles cache unavailable, using direct query', [
+                'locale' => $locale,
+                'error' => $e->getMessage(),
+            ]);
+
+            $latestArticles = Article::published()
                 ->orderBy('published_at', 'desc')
                 ->take(3)
                 ->get();
-        });
-        
+        }
+
         // Load appropriate config based on market segment
-        $services = $marketSegment === 'pma' 
-            ? config('services_pma') 
+        $services = $marketSegment === 'pma'
+            ? config('services_pma')
             : config('services_data');
-        
+
         // Select appropriate view based on locale
-        $view = $locale === 'en' 
-            ? 'landing.en.index' 
+        $view = $locale === 'en'
+            ? 'landing.en.index'
             : 'landing.id.index';
-        
+
         return view($view, compact('latestArticles', 'services', 'locale', 'marketSegment'));
     }
 
@@ -44,7 +59,7 @@ class PublicArticleController extends Controller
     public function index()
     {
         $locale = app()->getLocale();
-        
+
         $articles = Article::published()
             ->byLanguage($locale)
             ->orderBy('published_at', 'desc')
@@ -85,7 +100,7 @@ class PublicArticleController extends Controller
     public function category($category)
     {
         $locale = app()->getLocale();
-        
+
         $articles = Article::published()
             ->byLanguage($locale)
             ->where('category', $category)
@@ -93,7 +108,7 @@ class PublicArticleController extends Controller
             ->paginate(12);
 
         $categoryLabel = Article::getCategoryLabel($category);
-        
+
         // Route names based on locale
         $blogIndexRoute = $locale === 'en' ? 'blog.index.en' : 'blog.index.id';
         $blogArticleRoute = $locale === 'en' ? 'blog.article.en' : 'blog.article.id';
@@ -110,7 +125,7 @@ class PublicArticleController extends Controller
     public function tag($tag)
     {
         $locale = app()->getLocale();
-        
+
         $articles = Article::published()
             ->byLanguage($locale)
             ->whereJsonContains('tags', $tag)

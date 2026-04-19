@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
     // Settings Management Routes (Phase 2A - Sprint 9)
-    Route::middleware('permission:settings.manage')->group(function () {
+    Route::middleware(['permission:settings.manage', '2fa'])->group(function () {
         Route::get('settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
         Route::put('settings/general', [App\Http\Controllers\SettingsController::class, 'updateGeneral'])->name('settings.general.update');
         
@@ -41,7 +43,10 @@
     // Career Management Routes (Admin)
     Route::name('admin.')->middleware('permission:recruitment.view')->group(function () {
         // Job Vacancy Management
-        Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class);
+        Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class)->only(['index', 'show']);
+        Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class)
+            ->only(['create', 'store', 'edit', 'update', 'destroy'])
+            ->middleware('permission:recruitment.manage_jobs');
         
         // Tab Views for Job Detail Hub
         Route::get('jobs/{id}/applications', [App\Http\Controllers\Admin\JobVacancyController::class, 'applications'])->name('jobs.applications');
@@ -52,8 +57,12 @@
         // Job Application Management
         Route::get('applications', [App\Http\Controllers\Admin\JobApplicationController::class, 'index'])->name('applications.index');
         Route::get('applications/{id}', [App\Http\Controllers\Admin\JobApplicationController::class, 'show'])->name('applications.show');
-        Route::patch('applications/{id}/status', [App\Http\Controllers\Admin\JobApplicationController::class, 'updateStatus'])->name('applications.update-status');
+        Route::patch('applications/{id}/status', [App\Http\Controllers\Admin\JobApplicationController::class, 'updateStatus'])
+            ->middleware('permission:recruitment.process_applications')
+            ->name('applications.update-status');
         Route::get('applications/{id}/download-cv', [App\Http\Controllers\Admin\JobApplicationController::class, 'downloadCv'])->name('applications.download-cv');
         Route::get('applications/{id}/download-portfolio', [App\Http\Controllers\Admin\JobApplicationController::class, 'downloadPortfolio'])->name('applications.download-portfolio');
-        Route::delete('applications/{id}', [App\Http\Controllers\Admin\JobApplicationController::class, 'destroy'])->name('applications.destroy');
+        Route::delete('applications/{id}', [App\Http\Controllers\Admin\JobApplicationController::class, 'destroy'])
+            ->middleware('permission:recruitment.process_applications')
+            ->name('applications.destroy');
     });

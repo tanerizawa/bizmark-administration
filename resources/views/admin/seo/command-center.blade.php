@@ -280,10 +280,12 @@
                         <span class="admin-badge {{ $score->total_score < 40 ? 'bg-apple-red' : 'bg-apple-orange' }} text-white">
                             {{ round($score->total_score) }}
                         </span>
-                        <a href="{{ route('admin.seo.fix-single', $score->article_id) }}" 
-                           class="admin-btn admin-btn-sm bg-apple-blue text-white hover:bg-blue-700 transition-apple">
-                            <i class="fas fa-wrench mr-1"></i>Fix
-                        </a>
+                        <form action="{{ route('admin.seo.fix-single', $score->article_id) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="admin-btn admin-btn-sm bg-apple-blue text-white hover:bg-blue-700 transition-apple">
+                                <i class="fas fa-wrench mr-1"></i>Fix
+                            </button>
+                        </form>
                     </div>
                 </div>
             @endforeach

@@ -13,14 +13,14 @@ return [
     'server_key' => env('MIDTRANS_SERVER_KEY', ''),
     'client_key' => env('MIDTRANS_CLIENT_KEY', ''),
     'merchant_id' => env('MIDTRANS_MERCHANT_ID', ''),
-    
+
     'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
     'is_sanitized' => env('MIDTRANS_IS_SANITIZED', true),
     'is_3ds' => env('MIDTRANS_IS_3DS', true),
-    
+
     // Notification URL for callback
-    'notification_url' => env('APP_URL') . '/api/payment/callback',
-    
+    'notification_url' => env('APP_URL').'/api/payment/callback',
+
     // Payment methods enabled
     'enabled_payments' => [
         'credit_card',
@@ -43,10 +43,10 @@ return [
         'akulaku',
         'kredivo',
     ],
-    
+
     // Payment expiry time (in minutes)
     'expiry_duration' => env('MIDTRANS_EXPIRY_DURATION', 1440), // 24 hours
-    
+
     // Default currency
     'currency' => 'IDR',
 ];

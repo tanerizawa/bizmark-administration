@@ -264,6 +264,10 @@ class SeoCompetitorsController extends Controller
                 ->values();
 
             if ($words->isNotEmpty()) {
+                $orderBindings = $words
+                    ->map(fn ($w) => '%' . $w . '%')
+                    ->all();
+
                 $article = Article::published()
                     ->where(function ($q) use ($words) {
                         foreach ($words as $word) {
@@ -271,7 +275,10 @@ class SeoCompetitorsController extends Controller
                               ->orWhere('slug', 'LIKE', "%{$word}%");
                         }
                     })
-                    ->orderByRaw('(' . $words->map(fn($w) => "CASE WHEN LOWER(title) LIKE '%{$w}%' THEN 1 ELSE 0 END")->implode(' + ') . ') DESC')
+                    ->orderByRaw(
+                        '(' . $words->map(fn () => 'CASE WHEN LOWER(title) LIKE ? THEN 1 ELSE 0 END')->implode(' + ') . ') DESC',
+                        $orderBindings
+                    )
                     ->first();
             }
         }
@@ -290,4 +297,3 @@ class SeoCompetitorsController extends Controller
         return $this->seoRouteFlash('admin.seo.competitors', 'success', "🔍 Analisis kompetitor selesai.\n{$output}");
     }
 }
-

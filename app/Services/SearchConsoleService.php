@@ -283,7 +283,7 @@ class SearchConsoleService
             $agg = SearchConsoleData::where('date', '>=', now()->subDays($days))
                 ->where(function ($q) use ($terms) {
                     foreach ($terms as $term) {
-                        $q->orWhere('query', 'ILIKE', "%{$term}%");
+                        $q->orWhere('query', 'LIKE', "%{$term}%");
                     }
                 })
                 ->selectRaw('

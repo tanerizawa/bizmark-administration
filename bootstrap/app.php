@@ -33,6 +33,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
             'locale' => \App\Http\Middleware\SetLocale::class,
             'email.access' => \App\Http\Middleware\CheckEmailManagementAccess::class,
+            'internal.api' => \App\Http\Middleware\EnsureInternalApiKey::class,
+            'email.webhook.replay' => \App\Http\Middleware\EnsureEmailWebhookReplayProtection::class,
+            '2fa' => \App\Http\Middleware\EnsureTwoFactorVerified::class,
         ]);
         
         // Exclude webhook endpoints from CSRF verification

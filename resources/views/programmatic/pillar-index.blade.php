@@ -7,52 +7,36 @@
 
 @section('content')
 
-{{-- Breadcrumbs --}}
-<section class="pt-24 pb-4 px-4 bg-white border-b border-gray-100">
-    <div class="container mx-auto max-w-6xl">
-        <nav class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-            <a href="/" class="hover:text-primary transition"><i class="fas fa-home"></i></a>
-            <span class="text-gray-300">/</span>
-            <span class="text-gray-900 font-medium">Panduan</span>
-        </nav>
+<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+    <div class="container-wide">
+        <span class="section-badge mb-4">Panduan</span>
+        <h1 class="section-title mb-4">Panduan Lengkap Perizinan {{ $year }}</h1>
+        <p class="section-description mb-8" style="margin-left:0;">Koleksi panduan mendalam (pillar guide) untuk setiap jenis perizinan. Dari dasar hukum hingga tips praktis.</p>
+        <a href="{{ route('services.index.id') }}" class="btn btn-outline-primary"><i class="fas fa-layer-group"></i> Lihat Layanan</a>
     </div>
 </section>
 
-{{-- Hero --}}
-<section class="py-12 md:py-16 bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white">
-    <div class="container mx-auto max-w-4xl px-4 text-center">
-        <h1 class="text-3xl md:text-4xl font-extrabold mb-4">Panduan Lengkap Perizinan {{ $year }}</h1>
-        <p class="text-lg text-emerald-100 max-w-2xl mx-auto">Koleksi panduan mendalam (pillar guide) untuk setiap jenis perizinan. Dari dasar hukum hingga tips praktis.</p>
-    </div>
-</section>
-
-{{-- Pillar Cards --}}
-<section class="py-12 md:py-16 bg-white">
-    <div class="container mx-auto max-w-6xl px-4">
+<section class="section">
+    <div class="container-wide">
         @if($clusters->isEmpty())
-            <div class="text-center py-12">
-                <p class="text-gray-500 text-lg">Panduan sedang dalam tahap persiapan. Kunjungi kembali nanti.</p>
+            <div class="card text-center">
+                <h2 class="text-lg font-bold mb-2" style="color:var(--text-primary);">Panduan sedang disiapkan</h2>
+                <p class="mb-0" style="color:var(--text-secondary);">Kunjungi kembali nanti untuk melihat pembaruan.</p>
             </div>
         @else
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($clusters as $cluster)
-                <a href="{{ url('/panduan/' . $cluster['slug']) }}" class="group block bg-white rounded-xl border border-gray-200 p-6 hover:border-emerald-300 hover:shadow-lg transition">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                            {{ $cluster['subtopics_count'] }} subtopik
-                        </span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                            {{ $cluster['articles_count'] }} artikel
-                        </span>
-                    </div>
-                    <h2 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition">
-                        {{ $cluster['title'] }}
-                    </h2>
-                    <p class="text-sm text-gray-600 line-clamp-2 mb-3">{{ $cluster['description'] }}</p>
-                    <div class="flex items-center text-sm text-gray-400">
-                        <i class="fas fa-eye mr-1"></i> {{ number_format($cluster['total_views']) }} views
-                    </div>
-                </a>
+                    <a href="{{ url('/panduan/' . $cluster['slug']) }}" class="card h-full flex flex-col">
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="chip"><i class="fas fa-sitemap"></i> {{ $cluster['subtopics_count'] }} subtopik</span>
+                            <span class="chip"><i class="fas fa-file-alt"></i> {{ $cluster['articles_count'] }} artikel</span>
+                        </div>
+                        <h2 class="text-lg font-bold mb-2 card-title" style="color:var(--text-primary);">{{ $cluster['title'] }}</h2>
+                        <p class="text-sm mb-4" style="color:var(--text-secondary);">{{ $cluster['description'] }}</p>
+                        <div class="mt-auto pt-3 border-t" style="border-color:var(--border-light);">
+                            <span class="text-xs" style="color:var(--text-tertiary);"><i class="fas fa-eye mr-1"></i>{{ number_format($cluster['total_views']) }} views</span>
+                        </div>
+                    </a>
                 @endforeach
             </div>
         @endif

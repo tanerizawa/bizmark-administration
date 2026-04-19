@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\File;
 use App\View\Composers\NavigationComposer;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        File::ensureDirectoryExists((string) config('view.compiled'));
+
         // Force HTTPS in production
         if (app()->environment('production')) {
             URL::forceScheme('https');
@@ -47,5 +50,17 @@ class AppServiceProvider extends ServiceProvider
         
         // Register ProjectObserver for auto-status and progress logic
         \App\Models\Project::observe(\App\Observers\ProjectObserver::class);
+
+        $auditObserver = \App\Observers\AdminAuditObserver::class;
+        \App\Models\User::observe($auditObserver);
+        \App\Models\Role::observe($auditObserver);
+        \App\Models\Permission::observe($auditObserver);
+        \App\Models\BusinessSetting::observe($auditObserver);
+        \App\Models\SecuritySetting::observe($auditObserver);
+        \App\Models\PermitApplication::observe($auditObserver);
+        \App\Models\Quotation::observe($auditObserver);
+        \App\Models\Payment::observe($auditObserver);
+        \App\Models\Project::observe($auditObserver);
+        \App\Models\Task::observe($auditObserver);
     }
 }

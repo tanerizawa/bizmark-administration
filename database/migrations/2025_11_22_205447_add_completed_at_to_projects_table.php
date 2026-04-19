@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('projects', function (Blueprint $table) {
             $table->timestamp('completed_at')->nullable()->after('deadline')
                 ->comment('Tanggal aktual proyek selesai (untuk tracking on-time/late)');
-            
+
             $table->text('completion_notes')->nullable()->after('completed_at')
                 ->comment('Catatan saat proyek selesai');
         });

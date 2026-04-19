@@ -37,140 +37,121 @@ $faqSchema = [
 ];
 @endphp
 <script type="application/ld+json">{!! json_encode($faqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@php
+    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $whatsapp = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+    $waText = 'Halo Bizmark, saya ingin konsultasi tentang perbedaan ' . ($serviceA['title'] ?? '') . ' dan ' . ($serviceB['title'] ?? '');
+    $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
+@endphp
 
-{{-- Breadcrumbs --}}
-<section class="pt-24 pb-4 px-4 bg-white border-b border-gray-100">
-    <div class="container mx-auto max-w-6xl">
-        <nav class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-            <a href="/" class="hover:text-primary transition"><i class="fas fa-home"></i></a>
-            <span class="text-gray-300">/</span>
-            <a href="{{ route('services.index.id') }}" class="hover:text-primary transition">Layanan</a>
-            <span class="text-gray-300">/</span>
-            <a href="{{ url('/layanan/perbandingan') }}" class="hover:text-primary transition">Perbandingan</a>
-            <span class="text-gray-300">/</span>
-            <span class="text-gray-900 font-medium">{{ $serviceA['title'] }} vs {{ $serviceB['title'] }}</span>
-        </nav>
-    </div>
-</section>
-
-{{-- Hero --}}
-<section class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16 md:py-20 overflow-hidden">
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-sky-500 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
-    </div>
-    <div class="container mx-auto max-w-4xl px-4 relative z-10 text-center">
+<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+    <div class="container-wide text-center">
+        <a href="{{ url('/layanan/perbandingan') }}" class="link-primary text-sm inline-flex items-center mb-5"><i class="fas fa-arrow-left mr-2"></i>Kembali ke Perbandingan</a>
         <div class="flex items-center justify-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xl" style="background-color: {{ $serviceA['color'] ?? '#0ea5e9' }}">
+            <div class="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xl" style="background-color: {{ $serviceA['color'] ?? '#0f172a' }}">
                 <i class="fas {{ $serviceA['icon'] ?? 'fa-file-alt' }}"></i>
             </div>
-            <span class="text-2xl font-bold text-gray-400">VS</span>
-            <div class="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xl" style="background-color: {{ $serviceB['color'] ?? '#f97316' }}">
+            <span class="text-sm" style="color:var(--text-tertiary);font-weight:900;letter-spacing:.12em;">VS</span>
+            <div class="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xl" style="background-color: {{ $serviceB['color'] ?? '#0f172a' }}">
                 <i class="fas {{ $serviceB['icon'] ?? 'fa-file-alt' }}"></i>
             </div>
         </div>
-        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4">{{ $pageData['h1'] }}</h1>
-        <p class="text-lg text-gray-300 max-w-2xl mx-auto">{{ $pageData['intro'] }}</p>
+        <h1 class="section-title mb-4">{{ $pageData['h1'] }}</h1>
+        <p class="section-description" style="margin-left:auto;margin-right:auto;">{{ $pageData['intro'] }}</p>
     </div>
 </section>
 
-{{-- Quick Summary Cards --}}
-<section class="py-12 md:py-16 bg-white">
-    <div class="container mx-auto max-w-6xl px-4">
-        <div class="grid md:grid-cols-2 gap-6 mb-12">
-            {{-- Service A --}}
-            <div class="bg-white rounded-2xl border-2 p-6" style="border-color: {{ $serviceA['color'] ?? '#0ea5e9' }}20">
+<section class="section">
+    <div class="container-wide">
+        <div class="grid md:grid-cols-2 gap-6 mb-10">
+            <div class="card" style="border-color: {{ $serviceA['color'] ?? '#0f172a' }}35;">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background-color: {{ $serviceA['color'] ?? '#0ea5e9' }}">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background-color: {{ $serviceA['color'] ?? '#0f172a' }}">
                         <i class="fas {{ $serviceA['icon'] ?? 'fa-file-alt' }}"></i>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-900">{{ $serviceA['title'] }}</h2>
+                    <h2 class="text-xl font-bold mb-0" style="color:var(--text-primary);">{{ $serviceA['title'] }}</h2>
                 </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ $serviceA['long_description'] ?? $serviceA['short_description'] ?? '' }}</p>
-                <a href="{{ route('services.show.id', $slugA) }}" class="text-sm font-medium text-sky-600 hover:text-sky-700">
-                    Detail Layanan <i class="fas fa-arrow-right ml-1"></i>
-                </a>
+                <p class="text-sm mb-4" style="color:var(--text-secondary);">{{ $serviceA['long_description'] ?? $serviceA['short_description'] ?? '' }}</p>
+                <a href="{{ route('services.show.id', $slugA) }}" class="link-primary text-sm inline-flex items-center">Detail Layanan <i class="fas fa-arrow-right ml-2"></i></a>
             </div>
 
-            {{-- Service B --}}
-            <div class="bg-white rounded-2xl border-2 p-6" style="border-color: {{ $serviceB['color'] ?? '#f97316' }}20">
+            <div class="card" style="border-color: {{ $serviceB['color'] ?? '#0f172a' }}35;">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background-color: {{ $serviceB['color'] ?? '#f97316' }}">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background-color: {{ $serviceB['color'] ?? '#0f172a' }}">
                         <i class="fas {{ $serviceB['icon'] ?? 'fa-file-alt' }}"></i>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-900">{{ $serviceB['title'] }}</h2>
+                    <h2 class="text-xl font-bold mb-0" style="color:var(--text-primary);">{{ $serviceB['title'] }}</h2>
                 </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ $serviceB['long_description'] ?? $serviceB['short_description'] ?? '' }}</p>
-                <a href="{{ route('services.show.id', $slugB) }}" class="text-sm font-medium text-sky-600 hover:text-sky-700">
-                    Detail Layanan <i class="fas fa-arrow-right ml-1"></i>
-                </a>
+                <p class="text-sm mb-4" style="color:var(--text-secondary);">{{ $serviceB['long_description'] ?? $serviceB['short_description'] ?? '' }}</p>
+                <a href="{{ route('services.show.id', $slugB) }}" class="link-primary text-sm inline-flex items-center">Detail Layanan <i class="fas fa-arrow-right ml-2"></i></a>
             </div>
         </div>
 
-        {{-- Comparison Table --}}
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Tabel Perbandingan</h2>
-        <div class="overflow-x-auto mb-12">
-            <table class="w-full border-collapse rounded-xl overflow-hidden">
-                <thead>
-                    <tr class="bg-slate-900 text-white">
-                        <th class="px-6 py-4 text-left text-sm font-semibold">Aspek</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold">{{ $serviceA['title'] }}</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold">{{ $serviceB['title'] }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($pageData['comparison_table'] as $i => $row)
-                    <tr class="{{ $i % 2 === 0 ? 'bg-gray-50' : 'bg-white' }}">
-                        <td class="px-6 py-4 font-medium text-gray-900 text-sm">{{ $row['aspect'] }}</td>
-                        <td class="px-6 py-4 text-gray-600 text-sm">{{ $row['a'] }}</td>
-                        <td class="px-6 py-4 text-gray-600 text-sm">{{ $row['b'] }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="card mb-10">
+            <h2 class="text-xl font-bold mb-4" style="color:var(--text-primary);">Tabel Perbandingan</h2>
+            <div class="content-prose">
+                <div style="overflow:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspek</th>
+                                <th>{{ $serviceA['title'] }}</th>
+                                <th>{{ $serviceB['title'] }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pageData['comparison_table'] as $row)
+                                <tr>
+                                    <td><strong>{{ $row['aspect'] }}</strong></td>
+                                    <td>{{ $row['a'] }}</td>
+                                    <td>{{ $row['b'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        {{-- When to Choose --}}
-        <div class="grid md:grid-cols-2 gap-6 mb-12">
-            <div class="bg-sky-50 rounded-2xl p-6 border border-sky-100">
-                <h3 class="text-lg font-bold text-gray-900 mb-3">
-                    <i class="fas fa-check-circle text-sky-600 mr-2"></i> Pilih {{ $serviceA['title'] }} Jika:
-                </h3>
-                <ul class="space-y-2 text-sm text-gray-700">
-                    <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-sky-500 mt-1 text-xs"></i> Usaha Anda memerlukan {{ strtolower($serviceA['short_description'] ?? 'perizinan khusus') }}</li>
-                    <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-sky-500 mt-1 text-xs"></i> Kategori usaha termasuk {{ strtolower($serviceA['category'] ?? 'perizinan') }}</li>
-                    <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-sky-500 mt-1 text-xs"></i> Anda membutuhkan dokumen resmi untuk operasional</li>
-                </ul>
+        <div class="grid md:grid-cols-2 gap-6 mb-10">
+            <div class="card">
+                <h3 class="text-lg font-bold mb-3" style="color:var(--text-primary);">Pilih {{ $serviceA['title'] }} Jika:</h3>
+                <div class="content-prose">
+                    <ul>
+                        <li>Usaha Anda memerlukan {{ strtolower($serviceA['short_description'] ?? 'perizinan khusus') }}</li>
+                        <li>Kategori usaha termasuk {{ strtolower($serviceA['category'] ?? 'perizinan') }}</li>
+                        <li>Anda membutuhkan dokumen resmi untuk operasional</li>
+                    </ul>
+                </div>
             </div>
-            <div class="bg-orange-50 rounded-2xl p-6 border border-orange-100">
-                <h3 class="text-lg font-bold text-gray-900 mb-3">
-                    <i class="fas fa-check-circle text-orange-600 mr-2"></i> Pilih {{ $serviceB['title'] }} Jika:
-                </h3>
-                <ul class="space-y-2 text-sm text-gray-700">
-                    <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-orange-500 mt-1 text-xs"></i> Usaha Anda memerlukan {{ strtolower($serviceB['short_description'] ?? 'perizinan khusus') }}</li>
-                    <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-orange-500 mt-1 text-xs"></i> Kategori usaha termasuk {{ strtolower($serviceB['category'] ?? 'perizinan') }}</li>
-                    <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-orange-500 mt-1 text-xs"></i> Anda membutuhkan dokumen resmi untuk operasional</li>
-                </ul>
+            <div class="card">
+                <h3 class="text-lg font-bold mb-3" style="color:var(--text-primary);">Pilih {{ $serviceB['title'] }} Jika:</h3>
+                <div class="content-prose">
+                    <ul>
+                        <li>Usaha Anda memerlukan {{ strtolower($serviceB['short_description'] ?? 'perizinan khusus') }}</li>
+                        <li>Kategori usaha termasuk {{ strtolower($serviceB['category'] ?? 'perizinan') }}</li>
+                        <li>Anda membutuhkan dokumen resmi untuk operasional</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-{{-- FAQ --}}
-<section class="py-12 md:py-16 bg-gray-50">
-    <div class="container mx-auto max-w-4xl px-4">
-        <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">FAQ: {{ $serviceA['title'] }} vs {{ $serviceB['title'] }}</h2>
-        <div class="space-y-3">
+<section class="section-sm" style="background:var(--surface-secondary);">
+    <div class="container-wide">
+        <h2 class="section-title mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">FAQ: {{ $serviceA['title'] }} vs {{ $serviceB['title'] }}</h2>
+        <div class="max-w-4xl space-y-3">
             @foreach($pageData['faqs'] as $i => $faq)
-            <details class="group bg-white rounded-xl border border-gray-200 overflow-hidden" {{ $i === 0 ? 'open' : '' }}>
-                <summary class="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition">
-                    <h3 class="font-semibold text-gray-900 pr-4">{{ $faq['question'] }}</h3>
-                    <i class="fas fa-chevron-down text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
-                </summary>
-                <div class="px-5 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
-                    {{ $faq['answer'] }}
-                </div>
-            </details>
+                <details class="faq-item" {{ $i === 0 ? 'open' : '' }}>
+                    <summary class="faq-toggle">
+                        <span>{{ $faq['question'] }}</span>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </summary>
+                    <div class="faq-content">
+                        <div class="faq-content-inner">{{ $faq['answer'] }}</div>
+                    </div>
+                </details>
             @endforeach
         </div>
     </div>
@@ -178,22 +159,20 @@ $faqSchema = [
 
 {{-- Related Articles --}}
 @if($relatedArticles->count() > 0)
-<section class="py-12 md:py-16 bg-white">
-    <div class="container mx-auto max-w-6xl px-4">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Artikel Terkait</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+<section class="section-sm">
+    <div class="container-wide">
+        <h2 class="section-title mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Artikel Terkait</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($relatedArticles as $article)
-            <a href="{{ route('blog.article.id', $article->slug) }}" class="group block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition">
-                @if($article->featured_image)
-                <div class="aspect-video overflow-hidden">
-                    <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-                </div>
-                @endif
-                <div class="p-4">
-                    <h3 class="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 group-hover:text-primary transition">{{ $article->title }}</h3>
-                    <p class="text-xs text-gray-500 mt-2">{{ $article->reading_time }} menit baca</p>
-                </div>
-            </a>
+                <a href="{{ route('blog.article.id', $article->slug) }}" class="card overflow-hidden p-0">
+                    @if($article->featured_image)
+                        <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" class="w-full" style="height:160px;object-fit:cover;" loading="lazy">
+                    @endif
+                    <div style="padding:1.25rem;">
+                        <h3 class="text-sm font-bold mb-2 card-title" style="color:var(--text-primary);">{{ $article->title }}</h3>
+                        <p class="text-xs mb-0" style="color:var(--text-tertiary);">{{ $article->reading_time }} menit baca</p>
+                    </div>
+                </a>
             @endforeach
         </div>
     </div>
@@ -202,35 +181,33 @@ $faqSchema = [
 
 {{-- Other Comparisons --}}
 @if($otherComparisons->count() > 0)
-<section class="py-12 md:py-16 bg-gray-50">
-    <div class="container mx-auto max-w-6xl px-4">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Perbandingan Lainnya</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<section class="section-sm" style="background:var(--surface-secondary);">
+    <div class="container-wide">
+        <h2 class="section-title mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Perbandingan Lainnya</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($otherComparisons as $slug => $comp)
-            <a href="{{ url('/layanan/perbandingan/' . $slug) }}"
-               class="block bg-white rounded-xl border border-gray-200 p-4 hover:border-sky-300 hover:shadow-md transition text-center">
-                <div class="flex items-center justify-center gap-2 mb-2">
-                    <i class="fas {{ $comp['a']['icon'] ?? 'fa-file-alt' }} text-gray-500"></i>
-                    <span class="text-xs font-bold text-gray-400">VS</span>
-                    <i class="fas {{ $comp['b']['icon'] ?? 'fa-file-alt' }} text-gray-500"></i>
-                </div>
-                <p class="text-sm font-medium text-gray-900">{{ $comp['a']['title'] }} vs {{ $comp['b']['title'] }}</p>
-            </a>
+                <a href="{{ url('/layanan/perbandingan/' . $slug) }}" class="card text-center">
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <i class="fas {{ $comp['a']['icon'] ?? 'fa-file-alt' }}" style="color:var(--text-tertiary);"></i>
+                        <span class="text-xs" style="color:var(--text-tertiary);font-weight:800;letter-spacing:.08em;">VS</span>
+                        <i class="fas {{ $comp['b']['icon'] ?? 'fa-file-alt' }}" style="color:var(--text-tertiary);"></i>
+                    </div>
+                    <p class="text-sm font-semibold mb-0" style="color:var(--text-primary);">{{ $comp['a']['title'] }} vs {{ $comp['b']['title'] }}</p>
+                </a>
             @endforeach
         </div>
     </div>
 </section>
 @endif
 
-{{-- CTA --}}
-<section class="py-16 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-center">
-    <div class="container mx-auto max-w-3xl px-4">
-        <h2 class="text-2xl md:text-3xl font-bold mb-4">Butuh Bantuan Memilih?</h2>
-        <p class="text-gray-300 mb-8">Tim ahli kami siap membantu menentukan perizinan yang tepat untuk usaha Anda. Konsultasi gratis!</p>
-        <a href="https://wa.me/6283879602855?text={{ urlencode('Halo Bizmark, saya ingin konsultasi tentang perbedaan ' . $serviceA['title'] . ' dan ' . $serviceB['title']) }}" target="_blank" rel="noopener"
-           class="inline-flex items-center px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold rounded-xl transition shadow-lg shadow-green-500/20">
-            <i class="fab fa-whatsapp mr-3 text-xl"></i> Konsultasi Gratis
-        </a>
+<section class="section-sm" style="background:var(--surface-dark);">
+    <div class="container-wide text-center">
+        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Butuh Bantuan Memilih?</h2>
+        <p class="mb-7" style="color:rgba(255,255,255,.74);">Tim ahli kami siap membantu menentukan perizinan yang tepat untuk usaha Anda.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-success"><i class="fab fa-whatsapp"></i> Konsultasi via WhatsApp</a>
+            <a href="{{ route('contact.index') }}" class="btn btn-secondary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
+        </div>
     </div>
 </section>
 

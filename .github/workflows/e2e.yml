@@ -1,0 +1,56 @@
+name: E2E
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, fileinfo, openssl, pdo, pdo_sqlite, sqlite3, tokenizer, xml, curl, intl
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Composer install
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install Playwright browsers
+        run: npx -y @playwright/test@1.54.0 install --with-deps chromium
+
+      - name: Laravel .env (e2e)
+        run: |
+          cp .env.testing.example .env
+          php artisan key:generate --force --no-interaction
+
+      - name: Migrate & seed (e2e)
+        run: |
+          php artisan migrate:fresh --seed --no-interaction
+          php artisan db:seed --class=Database\\Seeders\\E2ESeeder --no-interaction
+
+      - name: Start server
+        run: php artisan serve --host=127.0.0.1 --port=8000 &
+
+      - name: Run E2E
+        env:
+          E2E_BASE_URL: http://127.0.0.1:8000
+        run: npx -y @playwright/test@1.54.0 test

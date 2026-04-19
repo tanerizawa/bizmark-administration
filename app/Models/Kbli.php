@@ -66,15 +66,15 @@ class Kbli extends Model
         return self::whereRaw('LENGTH(code) = 5')  // Only 5-digit codes
             ->where('is_active', true)
             ->where(function ($query) use ($keyword) {
-                $query->where('code', 'ILIKE', "%{$keyword}%")
-                      ->orWhere('description', 'ILIKE', "%{$keyword}%")
-                      ->orWhere('activities', 'ILIKE', "%{$keyword}%")
-                      ->orWhere('category', 'ILIKE', "%{$keyword}%");
+                $query->where('code', 'LIKE', "%{$keyword}%")
+                      ->orWhere('description', 'LIKE', "%{$keyword}%")
+                      ->orWhere('activities', 'LIKE', "%{$keyword}%")
+                      ->orWhere('category', 'LIKE', "%{$keyword}%");
             })
             ->orderByRaw("
                 CASE 
-                    WHEN code ILIKE ? THEN 1
-                    WHEN description ILIKE ? THEN 2
+                    WHEN code LIKE ? THEN 1
+                    WHEN description LIKE ? THEN 2
                     ELSE 3
                 END
             ", ["{$keyword}%", "{$keyword}%"])
@@ -100,7 +100,7 @@ class Kbli extends Model
         
         // Warn if not 5-digit
         if ($kbli && strlen($code) !== 5) {
-            \Log::warning('KBLI code is not 5-digit', ['code' => $code]);
+            \Illuminate\Support\Facades\Log::warning('KBLI code is not 5-digit', ['code' => $code]);
         }
         
         return $kbli;
@@ -227,4 +227,3 @@ class Kbli extends Model
         return max(0.3, min(0.95, $score));
     }
 }
-

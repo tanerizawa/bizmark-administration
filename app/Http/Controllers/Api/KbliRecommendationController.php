@@ -85,8 +85,6 @@ class KbliRecommendationController extends Controller
      */
     public function refresh(Request $request): JsonResponse
     {
-        $this->authorize('admin'); // Only admins can force refresh
-
         $validated = $request->validate([
             'kbli_code' => 'required|string|exists:kbli,code',
             'business_scale' => 'nullable|in:micro,small,medium,large',
@@ -118,8 +116,6 @@ class KbliRecommendationController extends Controller
      */
     public function stats(): JsonResponse
     {
-        $this->authorize('admin');
-
         $stats = $this->cacheService->getCacheStats();
 
         return response()->json([

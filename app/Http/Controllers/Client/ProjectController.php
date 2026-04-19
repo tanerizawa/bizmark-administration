@@ -25,7 +25,7 @@ class ProjectController extends Controller
         
         // Search by name
         if ($request->filled('search')) {
-            $query->where('name', 'ILIKE', '%' . $request->search . '%');
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
         
         // Filter by status
@@ -34,8 +34,17 @@ class ProjectController extends Controller
         }
         
         // Sort
+        $allowedSortBy = ['created_at', 'name', 'deadline', 'progress_percentage'];
         $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+        if (!in_array($sortBy, $allowedSortBy, true)) {
+            $sortBy = 'created_at';
+        }
+
+        $sortOrder = strtolower((string) $request->get('sort_order', 'desc'));
+        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+            $sortOrder = 'desc';
+        }
+
         $query->orderBy($sortBy, $sortOrder);
         
         $projects = $query->paginate(12);
@@ -44,15 +53,16 @@ class ProjectController extends Controller
         $statuses = \App\Models\ProjectStatus::active()->ordered()->get();
         
         // Statistics
+        $baseProjectsQuery = Project::where('client_id', $client->id);
         $stats = [
-            'total' => $client->projects()->count(),
-            'active' => $client->projects()->whereHas('status', function ($q) {
+            'total' => (clone $baseProjectsQuery)->count(),
+            'active' => (clone $baseProjectsQuery)->whereHas('status', function ($q) {
                 $q->where('is_final', false);
             })->count(),
-            'completed' => $client->projects()->whereHas('status', function ($q) {
+            'completed' => (clone $baseProjectsQuery)->whereHas('status', function ($q) {
                 $q->where('is_final', true);
             })->count(),
-            'total_value' => $client->projects()->sum('contract_value'),
+            'total_value' => (clone $baseProjectsQuery)->sum('contract_value'),
         ];
         
         return view('client.projects.index', compact('projects', 'statuses', 'stats'));

@@ -76,36 +76,46 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Close mobile menu on ESC key
+function closeAllNavDropdowns() {
+    document.querySelectorAll('[data-dropdown-trigger]').forEach(function(trigger) {
+        const menuId = trigger.getAttribute('data-dropdown-trigger');
+        const menu = menuId ? document.getElementById(menuId) : null;
+        if (menu) {
+            menu.classList.add('hidden');
+        }
+        trigger.setAttribute('aria-expanded', 'false');
+    });
+}
+
+document.addEventListener('click', function(e) {
+    const trigger = e.target.closest('[data-dropdown-trigger]');
+    if (trigger) {
+        const menuId = trigger.getAttribute('data-dropdown-trigger');
+        const menu = menuId ? document.getElementById(menuId) : null;
+        if (!menu) {
+            return;
+        }
+
+        const isHidden = menu.classList.contains('hidden');
+        closeAllNavDropdowns();
+        if (isHidden) {
+            menu.classList.remove('hidden');
+            trigger.setAttribute('aria-expanded', 'true');
+        }
+        return;
+    }
+
+    closeAllNavDropdowns();
+});
+
+// Close mobile menu and dropdowns on ESC
 document.addEventListener('keydown', function(e) {
     const menu = document.getElementById('mobileMenu');
     if (menu && e.key === 'Escape' && menu.classList.contains('active')) {
         toggleMobileMenu();
     }
-    // Close locale dropdown on ESC
-    const localeDropdown = document.getElementById('localeDropdown');
-    if (localeDropdown && e.key === 'Escape') {
-        localeDropdown.classList.add('hidden');
-    }
-    // Close tools dropdown on ESC
-    const toolsMenu = document.getElementById('toolsMenu');
-    if (toolsMenu && e.key === 'Escape') {
-        toolsMenu.classList.add('hidden');
-    }
-});
-
-// Close locale dropdown when clicking outside
-document.addEventListener('click', function(e) {
-    const switcher = document.getElementById('localeSwitcher');
-    const dropdown = document.getElementById('localeDropdown');
-    if (switcher && dropdown && !switcher.contains(e.target)) {
-        dropdown.classList.add('hidden');
-    }
-    // Close tools dropdown when clicking outside
-    const toolsDropdown = document.getElementById('toolsDropdown');
-    const toolsMenu = document.getElementById('toolsMenu');
-    if (toolsDropdown && toolsMenu && !toolsDropdown.contains(e.target)) {
-        toolsMenu.classList.add('hidden');
+    if (e.key === 'Escape') {
+        closeAllNavDropdowns();
     }
 });
 

@@ -186,10 +186,10 @@ $faqSchema = [
                     <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">Butuh {{ $service['title'] }}?</h3>
                     <p class="text-sm mb-5" style="color: var(--text-secondary);">Hubungi kami sekarang untuk konsultasi gratis tentang {{ $service['title'] }} di {{ $city['name'] }}.</p>
                     <a href="{{ $pageData['cta_whatsapp'] }}" target="_blank" rel="noopener"
-                       class="btn btn-success w-full mb-3" style="border-radius: var(--radius-lg);">
+                       class="btn btn-success mb-3" style="border-radius: var(--radius-lg); width: 100%;">
                         <i class="fab fa-whatsapp"></i> WhatsApp Kami
                     </a>
-                    <a href="/kontak" class="btn btn-outline-primary w-full" style="border-radius: var(--radius-lg);">
+                    <a href="{{ route('contact.index') }}" class="btn btn-outline-primary" style="border-radius: var(--radius-lg); width: 100%;">
                         <i class="fas fa-envelope"></i> Formulir Kontak
                     </a>
 
@@ -200,8 +200,7 @@ $faqSchema = [
                             @foreach($relatedServices as $slug => $rs)
                             <li>
                                 <a href="{{ url('/layanan/' . $slug . '/' . $citySlug) }}"
-                                   class="flex items-center gap-3 text-sm group transition" style="color: var(--text-secondary);"
-                                   onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+                                   class="link-primary text-sm flex items-center gap-3">
                                     <i class="fas {{ $rs['icon'] ?? 'fa-file-alt' }}" style="color: {{ $rs['color'] ?? '#0ea5e9' }};"></i>
                                     <span>{{ $rs['title'] }}</span>
                                 </a>
@@ -216,8 +215,7 @@ $faqSchema = [
                         <div class="flex flex-wrap gap-2">
                             @foreach($otherCities as $cSlug => $c)
                             <a href="{{ url('/layanan/' . $serviceSlug . '/' . $cSlug) }}"
-                               class="px-3 py-1.5 text-xs font-medium rounded-full transition" style="background: var(--surface); border: 1px solid var(--border-light); color: var(--text-secondary);"
-                               onmouseover="this.style.borderColor='{{ $svcColor }}'; this.style.color='{{ $svcColor }}'" onmouseout="this.style.borderColor='var(--border-light)'; this.style.color='var(--text-secondary)'">
+                               class="chip">
                                 {{ $c['name'] }}
                             </a>
                             @endforeach
@@ -242,15 +240,15 @@ $faqSchema = [
         </div>
         <div class="space-y-3">
             @foreach($pageData['faqs'] as $i => $faq)
-            <details class="faq-item group" {{ $i === 0 ? 'open' : '' }}>
-                <summary class="flex items-center justify-between p-5 cursor-pointer transition" style="color: var(--text-primary);">
-                    <h3 class="font-semibold pr-4">{{ $faq['question'] }}</h3>
-                    <i class="fas fa-chevron-down group-open:rotate-180 transition-transform flex-shrink-0" style="color: var(--text-tertiary);"></i>
-                </summary>
-                <div class="px-5 pb-5 leading-relaxed pt-4" style="color: var(--text-secondary); border-top: 1px solid var(--border-light);">
-                    {{ $faq['answer'] }}
-                </div>
-            </details>
+                <details class="faq-item" {{ $i === 0 ? 'open' : '' }}>
+                    <summary class="faq-toggle">
+                        <span>{{ $faq['question'] }}</span>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </summary>
+                    <div class="faq-content">
+                        <div class="faq-content-inner">{{ $faq['answer'] }}</div>
+                    </div>
+                </details>
             @endforeach
         </div>
     </div>

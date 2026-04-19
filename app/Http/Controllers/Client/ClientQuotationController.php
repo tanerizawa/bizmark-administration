@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PermitApplication;
 use App\Models\Quotation;
 use App\Models\ApplicationStatusLog;
+use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,27 +68,31 @@ class ClientQuotationController extends Controller
         
         DB::beginTransaction();
         try {
+            $application = PermitApplication::with('quotation')
+                ->where('client_id', Auth::guard('client')->id())
+                ->whereKey($applicationId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $quotation = $application->quotation;
+            if (!$quotation) {
+                DB::rollBack();
+                return back()->with('error', 'Quotation tidak ditemukan');
+            }
+
             // Update quotation status
             $quotation->update([
                 'status' => 'accepted',
                 'accepted_at' => now(),
             ]);
             
-            // Update application status
-            $previousStatus = $application->status;
-            $application->update([
-                'status' => 'quotation_accepted',
-            ]);
-            
-            // Log status change
-            ApplicationStatusLog::create([
-                'application_id' => $application->id,
-                'from_status' => $previousStatus,
-                'to_status' => 'quotation_accepted',
-                'changed_by_type' => 'client',
-                'changed_by_id' => Auth::guard('client')->id(),
-                'notes' => 'Client menerima quotation',
-            ]);
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'quotation_accepted',
+                'Client menerima quotation',
+                'client',
+                Auth::guard('client')->id()
+            );
             
             // TODO: Send email notification to admin
             
@@ -132,6 +137,18 @@ class ClientQuotationController extends Controller
         
         DB::beginTransaction();
         try {
+            $application = PermitApplication::with('quotation')
+                ->where('client_id', Auth::guard('client')->id())
+                ->whereKey($applicationId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $quotation = $application->quotation;
+            if (!$quotation) {
+                DB::rollBack();
+                return back()->with('error', 'Quotation tidak ditemukan');
+            }
+
             // Update quotation status
             $quotation->update([
                 'status' => 'rejected',
@@ -139,22 +156,17 @@ class ClientQuotationController extends Controller
                 'rejection_reason' => $request->rejection_reason,
             ]);
             
-            // Update application status
-            $previousStatus = $application->status;
             $application->update([
-                'status' => 'under_review',
                 'admin_notes' => 'Quotation ditolak oleh client. Alasan: ' . $request->rejection_reason,
             ]);
-            
-            // Log status change
-            ApplicationStatusLog::create([
-                'application_id' => $application->id,
-                'from_status' => $previousStatus,
-                'to_status' => 'under_review',
-                'changed_by_type' => 'client',
-                'changed_by_id' => Auth::guard('client')->id(),
-                'notes' => 'Client menolak quotation: ' . $request->rejection_reason,
-            ]);
+
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'under_review',
+                'Client menolak quotation: ' . $request->rejection_reason,
+                'client',
+                Auth::guard('client')->id()
+            );
             
             // TODO: Send email notification to admin
             

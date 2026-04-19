@@ -48,9 +48,9 @@ class SearchController extends Controller
 
     private function searchProjects($query)
     {
-        return Project::where('name', 'ILIKE', "%{$query}%")
-            ->orWhere('description', 'ILIKE', "%{$query}%")
-            ->orWhere('client_name', 'ILIKE', "%{$query}%")
+        return Project::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('description', 'LIKE', "%{$query}%")
+            ->orWhere('client_name', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'name', 'client_name'])
             ->map(function($project) {
@@ -68,8 +68,8 @@ class SearchController extends Controller
 
     private function searchTasks($query)
     {
-        return Task::where('title', 'ILIKE', "%{$query}%")
-            ->orWhere('description', 'ILIKE', "%{$query}%")
+        return Task::where('title', 'LIKE', "%{$query}%")
+            ->orWhere('description', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'title', 'status'])
             ->map(function($task) {
@@ -87,8 +87,8 @@ class SearchController extends Controller
 
     private function searchDocuments($query)
     {
-        return Document::where('title', 'ILIKE', "%{$query}%")
-            ->orWhere('description', 'ILIKE', "%{$query}%")
+        return Document::where('title', 'LIKE', "%{$query}%")
+            ->orWhere('description', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'title', 'category'])
             ->map(function($document) {
@@ -106,9 +106,9 @@ class SearchController extends Controller
 
     private function searchClients($query)
     {
-        return Client::where('name', 'ILIKE', "%{$query}%")
-            ->orWhere('email', 'ILIKE', "%{$query}%")
-            ->orWhere('phone', 'ILIKE', "%{$query}%")
+        return Client::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('email', 'LIKE', "%{$query}%")
+            ->orWhere('phone', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'name', 'email'])
             ->map(function($client) {
@@ -126,8 +126,8 @@ class SearchController extends Controller
 
     private function searchInstitutions($query)
     {
-        return Institution::where('name', 'ILIKE', "%{$query}%")
-            ->orWhere('address', 'ILIKE', "%{$query}%")
+        return Institution::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('address', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'name', 'type'])
             ->map(function($institution) {
@@ -145,9 +145,9 @@ class SearchController extends Controller
 
     private function searchPermits($query)
     {
-        return PermitApplication::where('application_number', 'ILIKE', "%{$query}%")
+        return PermitApplication::where('application_number', 'LIKE', "%{$query}%")
             ->orWhereHas('client', function($q) use ($query) {
-                $q->where('name', 'ILIKE', "%{$query}%");
+                $q->where('name', 'LIKE', "%{$query}%");
             })
             ->limit(5)
             ->with('client:id,name')

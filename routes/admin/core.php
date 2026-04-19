@@ -1,9 +1,13 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
     // Dashboard - desktop version (mobile auto-redirects handled in DetectMobile middleware)
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     
-    Route::post('/dashboard/clear-cache', [App\Http\Controllers\DashboardController::class, 'clearCache'])->name('dashboard.clear-cache');
+    Route::post('/dashboard/clear-cache', [App\Http\Controllers\DashboardController::class, 'clearCache'])
+        ->middleware('permission:settings.manage')
+        ->name('dashboard.clear-cache');
     Route::get('/home', function () {
         return redirect()->route('dashboard');
     })->name('home');
@@ -28,34 +32,97 @@
     });
 
     // Project Management Routes
-    Route::middleware('permission:projects.view')->group(function () {
-        Route::resource('projects', App\Http\Controllers\ProjectController::class);
-        Route::patch('projects/{project}/status', [App\Http\Controllers\ProjectController::class, 'updateStatus'])->name('projects.update-status');
-    });
+    Route::resource('projects', App\Http\Controllers\ProjectController::class)
+        ->only(['index', 'show'])
+        ->whereNumber('project')
+        ->middleware('permission:projects.view');
+    Route::resource('projects', App\Http\Controllers\ProjectController::class)
+        ->only(['create', 'store'])
+        ->middleware('permission:projects.create');
+    Route::resource('projects', App\Http\Controllers\ProjectController::class)
+        ->only(['edit', 'update'])
+        ->middleware('permission:projects.edit');
+    Route::resource('projects', App\Http\Controllers\ProjectController::class)
+        ->only(['destroy'])
+        ->middleware('permission:projects.delete');
+    Route::patch('projects/{project}/status', [App\Http\Controllers\ProjectController::class, 'updateStatus'])
+        ->middleware('permission:projects.edit')
+        ->name('projects.update-status');
 
     // Task Management Routes
-    Route::middleware('permission:tasks.view')->group(function () {
-        Route::resource('tasks', App\Http\Controllers\TaskController::class);
-        Route::patch('tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.update-status');
-        Route::patch('tasks/{task}/assignment', [App\Http\Controllers\TaskController::class, 'updateAssignment'])->name('tasks.update-assignment');
-        Route::patch('projects/{project}/tasks/reorder', [App\Http\Controllers\TaskController::class, 'reorder'])->name('projects.tasks.reorder');
-    });
+    Route::resource('tasks', App\Http\Controllers\TaskController::class)
+        ->only(['index', 'show'])
+        ->whereNumber('task')
+        ->middleware('permission:tasks.view');
+    Route::resource('tasks', App\Http\Controllers\TaskController::class)
+        ->only(['create', 'store'])
+        ->middleware('permission:tasks.create');
+    Route::resource('tasks', App\Http\Controllers\TaskController::class)
+        ->only(['edit', 'update'])
+        ->middleware('permission:tasks.edit');
+    Route::resource('tasks', App\Http\Controllers\TaskController::class)
+        ->only(['destroy'])
+        ->middleware('permission:tasks.delete');
+    Route::patch('tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])
+        ->middleware('permission:tasks.edit')
+        ->name('tasks.update-status');
+    Route::patch('tasks/{task}/assignment', [App\Http\Controllers\TaskController::class, 'updateAssignment'])
+        ->middleware('permission:tasks.assign')
+        ->name('tasks.update-assignment');
+    Route::patch('projects/{project}/tasks/reorder', [App\Http\Controllers\TaskController::class, 'reorder'])
+        ->middleware('permission:tasks.edit')
+        ->name('projects.tasks.reorder');
 
     // Document Management Routes
-    Route::middleware('permission:documents.view')->group(function () {
-        Route::resource('documents', App\Http\Controllers\DocumentController::class);
-        Route::get('documents/{document}/download', [App\Http\Controllers\DocumentController::class, 'download'])->name('documents.download');
-        Route::get('api/tasks-by-project', [App\Http\Controllers\DocumentController::class, 'getTasksByProject'])->name('api.tasks-by-project');
-    });
+    Route::resource('documents', App\Http\Controllers\DocumentController::class)
+        ->only(['index', 'show'])
+        ->whereNumber('document')
+        ->middleware('permission:documents.view');
+    Route::resource('documents', App\Http\Controllers\DocumentController::class)
+        ->only(['create', 'store', 'edit', 'update'])
+        ->middleware('permission:documents.upload');
+    Route::resource('documents', App\Http\Controllers\DocumentController::class)
+        ->only(['destroy'])
+        ->middleware('permission:documents.delete');
+    Route::get('documents/{document}/download', [App\Http\Controllers\DocumentController::class, 'download'])
+        ->middleware('permission:documents.view')
+        ->name('documents.download');
+    Route::get('api/tasks-by-project', [App\Http\Controllers\DocumentController::class, 'getTasksByProject'])
+        ->middleware('permission:documents.view')
+        ->name('api.tasks-by-project');
 
     // Institution Management Routes
-    Route::middleware('permission:institutions.view')->group(function () {
-        Route::resource('institutions', App\Http\Controllers\InstitutionController::class);
-        Route::get('api/institutions', [App\Http\Controllers\InstitutionController::class, 'apiIndex'])->name('api.institutions');
-    });
+    Route::resource('institutions', App\Http\Controllers\InstitutionController::class)
+        ->only(['index', 'show'])
+        ->whereNumber('institution')
+        ->middleware('permission:institutions.view');
+    Route::resource('institutions', App\Http\Controllers\InstitutionController::class)
+        ->only(['create', 'store'])
+        ->middleware('permission:institutions.create');
+    Route::resource('institutions', App\Http\Controllers\InstitutionController::class)
+        ->only(['edit', 'update'])
+        ->middleware('permission:institutions.edit');
+    Route::resource('institutions', App\Http\Controllers\InstitutionController::class)
+        ->only(['destroy'])
+        ->middleware('permission:institutions.delete');
+    Route::get('api/institutions', [App\Http\Controllers\InstitutionController::class, 'apiIndex'])
+        ->middleware('permission:institutions.view')
+        ->name('api.institutions');
 
     // Client Management Routes
-    Route::middleware('permission:clients.view')->group(function () {
-        Route::resource('clients', App\Http\Controllers\ClientController::class);
-        Route::get('api/clients', [App\Http\Controllers\ClientController::class, 'apiIndex'])->name('api.clients');
-    });
+    Route::resource('clients', App\Http\Controllers\ClientController::class)
+        ->only(['index', 'show'])
+        ->whereNumber('client')
+        ->middleware('permission:clients.view');
+    Route::resource('clients', App\Http\Controllers\ClientController::class)
+        ->only(['create', 'store'])
+        ->middleware('permission:clients.create');
+    Route::resource('clients', App\Http\Controllers\ClientController::class)
+        ->only(['edit', 'update'])
+        ->middleware('permission:clients.edit');
+    Route::resource('clients', App\Http\Controllers\ClientController::class)
+        ->only(['destroy'])
+        ->middleware('permission:clients.delete');
+    Route::get('api/clients', [App\Http\Controllers\ClientController::class, 'apiIndex'])
+        ->middleware('permission:clients.view')
+        ->name('api.clients');

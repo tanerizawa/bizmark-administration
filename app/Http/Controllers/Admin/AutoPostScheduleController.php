@@ -241,7 +241,7 @@ class AutoPostScheduleController extends Controller
             if (!empty($validated['schedule_search'])) {
                 $search = $validated['schedule_search'];
                 $query->whereHas('topic', function ($q) use ($search) {
-                    $q->withTrashed()->where('title', 'ILIKE', "%{$search}%");
+                    $q->withTrashed()->where('title', 'LIKE', "%{$search}%");
                 });
             }
 

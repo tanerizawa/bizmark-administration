@@ -74,7 +74,7 @@
 
                 <!-- Expanded view (full formatted content) -->
                 <div x-show="expanded" x-cloak class="rag-content">
-                    {!! $answer !!}
+                    {!! \App\Support\HtmlSanitizer::clean($answer) !!}
                     @if(strlen(strip_tags($answer)) > 400)
                         <button @click="expanded = false" 
                                 class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium text-sm transition-colors">

@@ -111,10 +111,24 @@ class AutoPostController extends Controller
         $query = ArticleTopic::query();
         
         if ($search = $request->get('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'ILIKE', "%{$search}%")
-                    ->orWhere('description', 'ILIKE', "%{$search}%")
-                    ->orWhereRaw("COALESCE(keywords::text, '') ILIKE ?", ["%{$search}%"]);
+            $driver = DB::connection()->getDriverName();
+            $like = "%{$search}%";
+
+            $query->where(function ($q) use ($search, $driver, $like) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%");
+
+                if ($driver === 'pgsql') {
+                    $q->orWhereRaw('CAST(keywords AS TEXT) ILIKE ?', [$like]);
+                    return;
+                }
+
+                if ($driver === 'mysql' || $driver === 'mariadb') {
+                    $q->orWhereRaw('CAST(keywords AS CHAR) LIKE ?', [$like]);
+                    return;
+                }
+
+                $q->orWhereRaw('keywords LIKE ?', [$like]);
             });
         }
         
@@ -168,7 +182,7 @@ class AutoPostController extends Controller
 
         if ($search = $request->get('schedule_search')) {
             $query->whereHas('topic', function ($q) use ($search) {
-                $q->withTrashed()->where('title', 'ILIKE', "%{$search}%");
+                $q->withTrashed()->where('title', 'LIKE', "%{$search}%");
             });
         }
 

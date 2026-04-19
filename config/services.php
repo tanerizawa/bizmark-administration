@@ -43,12 +43,12 @@ return [
 
         // ── Free tier (konsultasi-gratis, public landing page) ──
         // Cost-optimized: good quality at minimal cost per request
-        'free_primary_model'    => env('OPENROUTER_FREE_PRIMARY_MODEL', 'google/gemini-2.5-flash'),
-        'free_fallback_model'   => env('OPENROUTER_FREE_FALLBACK_MODEL', 'deepseek/deepseek-v3.2'),
+        'free_primary_model' => env('OPENROUTER_FREE_PRIMARY_MODEL', 'google/gemini-2.5-flash'),
+        'free_fallback_model' => env('OPENROUTER_FREE_FALLBACK_MODEL', 'deepseek/deepseek-v3.2'),
 
         // ── Premium tier (client portal, authenticated users) ──
         // Quality-optimized: best reasoning accuracy for paying clients
-        'premium_primary_model'  => env('OPENROUTER_PREMIUM_PRIMARY_MODEL', 'anthropic/claude-3.5-sonnet'),
+        'premium_primary_model' => env('OPENROUTER_PREMIUM_PRIMARY_MODEL', 'anthropic/claude-3.5-sonnet'),
         'premium_fallback_model' => env('OPENROUTER_PREMIUM_FALLBACK_MODEL', 'google/gemini-2.5-flash'),
     ],
 
@@ -71,10 +71,10 @@ return [
     // One-time auth URL: https://accounts.google.com/o/oauth2/auth?...
     // See docs/GSC_SETUP.md for step-by-step instructions
     'google' => [
-        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'refresh_token' => env('GOOGLE_REFRESH_TOKEN'),
-        'gsc_site_url'  => env('GSC_SITE_URL', 'https://bizmark.id/'),  // must match GSC property URL exactly
+        'gsc_site_url' => env('GSC_SITE_URL', 'https://bizmark.id/'),  // must match GSC property URL exactly
     ],
 
     'perizinan_ai' => [

@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\ProjectStatus;
 use App\Models\Client;
 use App\Models\Quotation;
+use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -66,8 +67,11 @@ class ProjectConversionService
             }
 
             // Create Project
+            $permitTypeName = $application->permitType?->name ?? 'Package';
+            $processingDays = $application->permitType?->avg_processing_days ?? 30;
+
             $project = Project::create([
-                'name' => "{$application->permitType->name} - {$client->name}",
+                'name' => "{$permitTypeName} - {$client->name}",
                 'description' => "Project created from permit application {$application->application_number}",
                 'client_id' => $client->id,
                 'permit_application_id' => $application->id,
@@ -76,9 +80,9 @@ class ProjectConversionService
                 'client_address' => $client->address ?? '-',
                 'status_id' => $projectStatus?->id,
                 'start_date' => now(),
-                'deadline' => now()->addDays($application->permitType->processing_days ?? 30),
+                'deadline' => now()->addDays($processingDays),
                 'progress_percentage' => 0,
-                'notes' => "Auto-generated from permit application system\n\nOriginal Application: {$application->application_number}\nPermit Type: {$application->permitType->name}",
+                'notes' => "Auto-generated from permit application system\n\nOriginal Application: {$application->application_number}\nPermit Type: {$permitTypeName}",
                 
                 // Financial data from quotation
                 'contract_value' => $quotation->total_amount,
@@ -93,18 +97,16 @@ class ProjectConversionService
             // Update PermitApplication
             $application->update([
                 'project_id' => $project->id,
-                'status' => 'converted_to_project',
                 'converted_at' => now(),
             ]);
 
-            // Create status log
-            $application->statusLogs()->create([
-                'from_status' => 'payment_verified',
-                'to_status' => 'converted_to_project',
-                'notes' => "Converted to project: {$project->name}",
-                'changed_by_type' => 'system',
-                'changed_by_id' => null,
-            ]);
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'converted_to_project',
+                "Converted to project: {$project->name}",
+                'system',
+                null
+            );
 
             // Log conversion
             Log::info("PermitApplication converted to Project", [

@@ -7,6 +7,7 @@ use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DocumentController extends Controller
 {
@@ -24,7 +25,7 @@ class DocumentController extends Controller
         
         // Search by title
         if ($request->filled('search')) {
-            $query->where('title', 'ILIKE', '%' . $request->search . '%');
+            $query->where('title', 'LIKE', '%' . $request->search . '%');
         }
         
         // Filter by document category
@@ -38,14 +39,23 @@ class DocumentController extends Controller
         }
         
         // Sort
+        $allowedSortBy = ['created_at', 'title', 'category'];
         $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+        if (!in_array($sortBy, $allowedSortBy, true)) {
+            $sortBy = 'created_at';
+        }
+
+        $sortOrder = strtolower((string) $request->get('sort_order', 'desc'));
+        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+            $sortOrder = 'desc';
+        }
+
         $query->orderBy($sortBy, $sortOrder);
         
         $documents = $query->paginate(15);
         
         // Get client's projects for filter
-        $projects = $client->projects()->get();
+        $projects = \App\Models\Project::where('client_id', $client->id)->get();
         
         // Get unique document categories
         $documentTypes = Document::whereHas('project', function ($q) use ($client) {
@@ -88,8 +98,8 @@ class DocumentController extends Controller
         // Upload file
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('documents/' . $project->id, $fileName, 'public');
+            $safeFileName = (string) Str::uuid() . '.' . $file->extension();
+            $filePath = $file->storeAs('documents/' . $project->id, $safeFileName, 'private');
             
             // Create document record
             $document = Document::create([
@@ -137,11 +147,14 @@ class DocumentController extends Controller
         }
         
         // Check if file exists
-        if (!Storage::disk('public')->exists($document->file_path)) {
-            return back()->with('error', 'File tidak ditemukan');
+        if (Storage::disk('private')->exists($document->file_path)) {
+            return response()->download(Storage::disk('private')->path($document->file_path), $document->file_name);
         }
-        
-        // Download file
-        return Storage::disk('public')->download($document->file_path, $document->file_name);
+
+        if (Storage::disk('public')->exists($document->file_path)) {
+            return response()->download(Storage::disk('public')->path($document->file_path), $document->file_name);
+        }
+
+        return back()->with('error', 'File tidak ditemukan');
     }
 }

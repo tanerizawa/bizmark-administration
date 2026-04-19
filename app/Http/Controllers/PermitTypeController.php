@@ -41,8 +41,17 @@ class PermitTypeController extends Controller
         }
 
         // Sorting
+        $allowedSortBy = ['name', 'code', 'category', 'avg_processing_days', 'is_active', 'created_at'];
         $sortBy = $request->get('sort_by', 'name');
-        $sortOrder = $request->get('sort_order', 'asc');
+        if (!in_array($sortBy, $allowedSortBy, true)) {
+            $sortBy = 'name';
+        }
+
+        $sortOrder = strtolower((string) $request->get('sort_order', 'asc'));
+        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+            $sortOrder = 'asc';
+        }
+
         $query->orderBy($sortBy, $sortOrder);
 
         $permitTypes = $query->paginate(20)->withQueryString();
@@ -61,7 +70,7 @@ class PermitTypeController extends Controller
     {
         $institutions = Institution::orderBy('name')->get();
         $categories = ['environmental', 'land', 'building', 'transportation', 'business', 'other'];
-        
+
         return view('permit-types.create', compact('institutions', 'categories'));
     }
 
@@ -104,7 +113,7 @@ class PermitTypeController extends Controller
     public function show(PermitType $permitType)
     {
         $permitType->load('institution', 'templateItems', 'projectPermits');
-        
+
         return view('permit-types.show', compact('permitType'));
     }
 
@@ -115,7 +124,7 @@ class PermitTypeController extends Controller
     {
         $institutions = Institution::orderBy('name')->get();
         $categories = ['environmental', 'land', 'building', 'transportation', 'business', 'other'];
-        
+
         return view('permit-types.edit', compact('permitType', 'institutions', 'categories'));
     }
 
@@ -159,7 +168,7 @@ class PermitTypeController extends Controller
     {
         // Check if permit type is being used
         $usageCount = $permitType->templateItems()->count() + $permitType->projectPermits()->count();
-        
+
         if ($usageCount > 0) {
             return redirect()
                 ->route('permit-types.index')

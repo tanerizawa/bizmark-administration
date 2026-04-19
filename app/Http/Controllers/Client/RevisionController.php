@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PermitApplication;
 use App\Models\ApplicationRevision;
 use App\Models\ApplicationStatusLog;
+use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -71,18 +72,15 @@ class RevisionController extends Controller
                     ]
                 ),
                 'quoted_price' => $revision->total_cost,
-                'status' => 'quotation_accepted',
             ]);
-            
-            // Create status log
-            ApplicationStatusLog::create([
-                'application_id' => $application->id,
-                'from_status' => $application->status,
-                'to_status' => 'quotation_accepted',
-                'notes' => "Client menyetujui revisi paket #{$revision->revision_number}",
-                'changed_by_type' => 'client',
-                'changed_by_id' => $clientId,
-            ]);
+
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'quotation_accepted',
+                "Client menyetujui revisi paket #{$revision->revision_number}",
+                'client',
+                $clientId
+            );
             
             // TODO: Send notification to admin
             // User::role('admin')->each(function($admin) use ($revision) {

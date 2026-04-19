@@ -1,21 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\PublicArticleController;
-use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\LocaleController;
-use App\Http\Controllers\SitemapController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\Admin\PermitManagementController;
 use App\Http\Controllers\Admin\RecruitmentController;
-use App\Http\Controllers\RssFeedController;
-use App\Http\Controllers\ProgrammaticSeoController;
-use App\Http\Controllers\ServiceComparisonController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FaqAggregationController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\PillarPageController;
+use App\Http\Controllers\ProgrammaticSeoController;
+use App\Http\Controllers\PublicArticleController;
+use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\ServiceComparisonController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SitemapController;
+use Illuminate\Support\Facades\Route;
 
 // SEO Routes
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -25,10 +21,14 @@ Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 Route::get('/feed/rss', [RssFeedController::class, 'rss'])->name('feed.rss');
 Route::get('/feed/atom', [RssFeedController::class, 'atom'])->name('feed.atom');
 
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+})->name('health');
+
 // IndexNow key verification
 Route::get('/{key}.txt', function (string $key) {
     $indexNowKey = config('services.indexnow.key', '');
-    if ($key === $indexNowKey && !empty($indexNowKey)) {
+    if ($key === $indexNowKey && ! empty($indexNowKey)) {
         return response($indexNowKey, 200)->header('Content-Type', 'text/plain');
     }
     abort(404);
@@ -56,35 +56,29 @@ Route::middleware('locale:id')->group(function () {
     Route::get('/blog/kategori/{category}', [PublicArticleController::class, 'category'])->name('blog.category.id');
     Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag.id');
     Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('blog.article.id');
-    
+
     // Legal Pages (ID)
-    Route::get('/kebijakan-privasi', function(\Illuminate\Http\Request $request) {
-        $isMobile = $request->header('User-Agent') && 
-                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
-        $view = $isMobile ? 'legal.mobile-privacy' : 'legal.privacy';
-        return view($view);
+    Route::get('/kebijakan-privasi', function () {
+        return view('legal.privacy');
     })->name('privacy.policy.id');
-    
-    Route::get('/syarat-ketentuan', function(\Illuminate\Http\Request $request) {
-        $isMobile = $request->header('User-Agent') && 
-                   (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
-        $view = $isMobile ? 'legal.mobile-terms' : 'legal.terms';
-        return view($view);
+
+    Route::get('/syarat-ketentuan', function () {
+        return view('legal.terms');
     })->name('terms.conditions.id');
-    
+
     // Static Pages (ID)
-    Route::get('/proses', function() {
+    Route::get('/proses', function () {
         return view('landing.pages.process', ['locale' => 'id']);
     })->name('process.id');
-    
-    Route::get('/tentang', function() {
+
+    Route::get('/tentang', function () {
         return view('landing.pages.about', ['locale' => 'id']);
     })->name('about.id');
 });
 
 // English/PMA Landing Page (Explicit) - Responsive (No Mobile Redirect)
 Route::prefix('en')->middleware('locale:en')->group(function () {
-    Route::get('/', function(\Illuminate\Http\Request $request) {
+    Route::get('/', function (\Illuminate\Http\Request $request) {
         // Fully responsive landing page — serves all devices
         // Manual mobile override handled by DeviceDetection middleware (?mobile=1)
         return app(PublicArticleController::class)->landing($request);
@@ -96,27 +90,27 @@ Route::prefix('en')->middleware('locale:en')->group(function () {
     Route::get('/blog/category/{category}', [PublicArticleController::class, 'category'])->name('blog.category.en');
     Route::get('/blog/tag/{tag}', [PublicArticleController::class, 'tag'])->name('blog.tag.en');
     Route::get('/blog/{slug}', [PublicArticleController::class, 'show'])->name('blog.article.en');
-    
+
     // PMA Inquiry Form (English)
     Route::get('/inquiry', [App\Http\Controllers\PMAInquiryController::class, 'create'])->name('pma.inquiry.create');
     Route::post('/inquiry', [App\Http\Controllers\PMAInquiryController::class, 'store'])->name('pma.inquiry.store');
     Route::get('/inquiry/result/{inquiryNumber}', [App\Http\Controllers\PMAInquiryController::class, 'result'])->name('pma.inquiry.result');
-    
+
     // Legal Pages (EN)
-    Route::get('/privacy-policy', function() {
+    Route::get('/privacy-policy', function () {
         return view('legal.en.privacy');
     })->name('privacy.policy.en');
-    
-    Route::get('/terms-conditions', function() {
+
+    Route::get('/terms-conditions', function () {
         return view('legal.en.terms');
     })->name('terms.conditions.en');
-    
+
     // Static Pages (EN)
-    Route::get('/process', function() {
+    Route::get('/process', function () {
         return view('landing.pages.process', ['locale' => 'en']);
     })->name('process.en');
-    
-    Route::get('/about', function() {
+
+    Route::get('/about', function () {
         return view('landing.pages.about', ['locale' => 'en']);
     })->name('about.en');
 });
@@ -136,7 +130,7 @@ Route::get('/estimasi-biaya/hasil/{requestId}', [App\Http\Controllers\Consultati
 Route::get('/estimasi-biaya/pdf/{requestId}', [App\Http\Controllers\ConsultationPageController::class, 'downloadPdf'])->name('consultation.pdf');
 
 // Permohonan Penghitungan Biaya Jasa (Service Cost Request)
-Route::prefix('permohonan')->group(function() {
+Route::prefix('permohonan')->group(function () {
     Route::get('/', [App\Http\Controllers\ServiceCostRequestController::class, 'index'])->name('permohonan.index');
     Route::post('/', [App\Http\Controllers\ServiceCostRequestController::class, 'store'])->name('permohonan.store');
     Route::post('/api/generate-letter-draft', [App\Http\Controllers\ServiceCostRequestController::class, 'generateLetterDraft'])->name('permohonan.generate-letter-draft');
@@ -145,14 +139,14 @@ Route::prefix('permohonan')->group(function() {
 });
 
 // Landing Page (Public) - Indonesian Default - Responsive (No Mobile Redirect)
-Route::middleware('locale:id')->get('/', function(\Illuminate\Http\Request $request) {
+Route::middleware('locale:id')->get('/', function (\Illuminate\Http\Request $request) {
     // Fully responsive landing page — serves all devices
     // Manual mobile override handled by DeviceDetection middleware (?mobile=1)
     return app(PublicArticleController::class)->landing($request);
 })->name('landing.id');
 
 // Service Inquiry - Free AI Analysis (Landing Page Lead Generation)
-Route::prefix('konsultasi-gratis')->group(function() {
+Route::prefix('konsultasi-gratis')->group(function () {
     Route::get('/', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'create'])
         ->name('landing.service-inquiry.create');
     Route::post('/', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'store'])
@@ -184,11 +178,12 @@ Route::get('/unsubscribe/{email}/{token}', [App\Http\Controllers\SubscriberContr
 Route::get('/email/track/{tracking_id}', [App\Http\Controllers\SubscriberController::class, 'trackOpen'])->name('email.track');
 
 // Screen Width Detection API (for responsive mobile detection)
-Route::post('/api/set-screen-width', function(\Illuminate\Http\Request $request) {
+Route::post('/api/set-screen-width', function (\Illuminate\Http\Request $request) {
     $width = $request->input('width');
     if ($width && is_numeric($width)) {
-        session(['screen_width' => (int)$width]);
+        session(['screen_width' => (int) $width]);
     }
+
     return response()->json(['success' => true, 'width' => session('screen_width')]);
 })->name('api.screen-width');
 
@@ -238,45 +233,44 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     require __DIR__.'/web_admin.php';
 });
 
-
 // Client Portal Routes
 Route::prefix('client')->name('client.')->group(function () {
     // Guest routes (login, register, password reset)
     Route::middleware('guest:client')->group(function () {
         // Redirect old client login to unified login
-        Route::get('/login', fn() => redirect('/login'))->name('legacy.login');
-        
+        Route::get('/login', fn () => redirect('/login'))->name('legacy.login');
+
         // Keep legacy POST for backwards compatibility (will be deprecated)
         Route::post('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'login'])
             ->middleware('throttle:5,1'); // Max 5 attempts per minute
-        
+
         Route::get('/register', [App\Http\Controllers\Auth\ClientAuthController::class, 'showRegistrationForm'])->name('register');
         Route::post('/register', [App\Http\Controllers\Auth\ClientAuthController::class, 'register'])
             ->middleware('throttle:10,1'); // Max 10 registrations per minute
-        
+
         Route::get('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'showForgotPasswordForm'])->name('password.request');
         Route::post('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'sendResetLinkEmail'])
             ->middleware('throttle:5,1') // Max 5 attempts per minute
             ->name('password.email');
-        
+
         Route::get('/reset-password/{token}', [App\Http\Controllers\Auth\ClientAuthController::class, 'showResetPasswordForm'])->name('password.reset');
         Route::post('/reset-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'resetPassword'])
             ->middleware('throttle:3,1') // Max 3 attempts per minute
             ->name('password.update');
     });
-    
+
     // Protected routes (requires authentication)
     Route::middleware('auth:client')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Client\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [App\Http\Controllers\Auth\ClientAuthController::class, 'logout'])->name('logout');
-        
+
         // Service Catalog Routes (KBLI-based AI System)
         Route::get('/services', [App\Http\Controllers\Client\ServiceController::class, 'index'])->name('services.index');
         Route::get('/services/{kbliCode}/context', [App\Http\Controllers\Client\ServiceController::class, 'context'])->name('services.context');
         Route::post('/services/{kbliCode}/context', [App\Http\Controllers\Client\ServiceController::class, 'storeContext'])->name('services.storeContext');
         Route::get('/services/{kbliCode}/download-summary', [App\Http\Controllers\Client\ServiceController::class, 'downloadSummary'])->name('services.downloadSummary');
         Route::get('/services/{kbliCode}', [App\Http\Controllers\Client\ServiceController::class, 'show'])->name('services.show');
-        
+
         // Application Routes
         Route::get('/applications', [App\Http\Controllers\Client\ApplicationController::class, 'index'])->name('applications.index');
         Route::get('/applications/create', [App\Http\Controllers\Client\ApplicationController::class, 'create'])->name('applications.create');
@@ -292,12 +286,12 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::post('/applications/{id}/cancel', [App\Http\Controllers\Client\ApplicationController::class, 'cancel'])->name('applications.cancel');
         Route::post('/applications/{id}/documents', [App\Http\Controllers\Client\ApplicationController::class, 'uploadDocument'])->name('applications.documents.upload');
         Route::delete('/applications/{applicationId}/documents/{documentId}', [App\Http\Controllers\Client\ApplicationController::class, 'deleteDocument'])->name('applications.documents.delete');
-        
+
         // Quotation Routes (Phase 3.4)
         Route::get('/applications/{id}/quotation', [App\Http\Controllers\Client\ClientQuotationController::class, 'show'])->name('quotations.show');
         Route::post('/applications/{id}/quotation/accept', [App\Http\Controllers\Client\ClientQuotationController::class, 'accept'])->name('quotations.accept');
         Route::post('/applications/{id}/quotation/reject', [App\Http\Controllers\Client\ClientQuotationController::class, 'reject'])->name('quotations.reject');
-        
+
         // Payment Routes (Phase 4)
         Route::get('/applications/{id}/payment', [App\Http\Controllers\Client\PaymentController::class, 'show'])->name('payments.show');
         Route::post('/applications/{id}/payment/initiate', [App\Http\Controllers\Client\PaymentController::class, 'initiate'])->name('payments.initiate');
@@ -313,16 +307,16 @@ Route::prefix('client')->name('client.')->group(function () {
         // Project Routes
         Route::get('/projects', [App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
         Route::get('/projects/{id}', [App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
-        
+
         // Document Routes
         Route::get('/documents', [App\Http\Controllers\Client\DocumentController::class, 'index'])->name('documents.index');
         Route::post('/documents', [App\Http\Controllers\Client\DocumentController::class, 'store'])->name('documents.store');
         Route::get('/documents/{id}/download', [App\Http\Controllers\Client\DocumentController::class, 'download'])->name('documents.download');
-        
+
         // Profile Routes
         Route::get('/profile', [App\Http\Controllers\Client\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
-        
+
         // Email Verification Routes
         Route::get('/verify-email', [App\Http\Controllers\Auth\ClientAuthController::class, 'showVerifyEmailNotice'])
             ->name('verification.notice');
@@ -330,7 +324,7 @@ Route::prefix('client')->name('client.')->group(function () {
             ->middleware('throttle:3,1')
             ->name('verification.send');
     });
-    
+
     // Email verification callback (accessible without auth to allow verification)
     Route::get('/verify-email/{id}/{hash}', [App\Http\Controllers\Auth\ClientAuthController::class, 'verifyEmail'])
         ->middleware(['signed', 'throttle:6,1'])
@@ -341,14 +335,14 @@ Route::prefix('client')->name('client.')->group(function () {
 Route::prefix('webhook/email')->name('webhook.email.')->group(function () {
     // Receive incoming email
     Route::post('/receive', [App\Http\Controllers\EmailWebhookController::class, 'receive'])
-        ->middleware('throttle:60,1')
+        ->middleware(['throttle:60,1', 'email.webhook.replay'])
         ->name('receive');
-    
+
     // Test webhook dengan data dummy
     Route::post('/test', [App\Http\Controllers\EmailWebhookController::class, 'test'])
         ->middleware(['auth', 'role:admin'])
         ->name('test');
-    
+
     // Check webhook status
     Route::get('/status', [App\Http\Controllers\EmailWebhookController::class, 'status'])
         ->middleware(['auth', 'role:admin'])
@@ -356,7 +350,7 @@ Route::prefix('webhook/email')->name('webhook.email.')->group(function () {
 });
 
 // AI Settings Management Routes
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'permission:ai.manage_settings', '2fa'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('ai-settings', [App\Http\Controllers\Admin\AISettingsController::class, 'index'])
         ->name('ai-settings.index');
     Route::get('ai-settings/recent-changes', [App\Http\Controllers\Admin\AISettingsController::class, 'recentChanges'])
@@ -379,7 +373,7 @@ Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('a
         ->name('email-accounts.available-users');
     Route::get('email-accounts-stats', [App\Http\Controllers\Admin\EmailAccountController::class, 'stats'])
         ->name('email-accounts.stats');
-    
+
     // Email Assignments
     Route::post('email-accounts/{emailAccount}/assign', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'assign'])
         ->name('email-accounts.assign');
@@ -391,7 +385,7 @@ Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('a
         ->name('email-accounts.bulk-assign');
     Route::post('email-accounts/{emailAccount}/transfer-primary', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'transferPrimary'])
         ->name('email-accounts.transfer-primary');
-    
+
     // User's Email Accounts
     Route::get('users/{user}/emails', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'userEmails'])
         ->name('users.emails');
@@ -401,92 +395,100 @@ Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('a
 Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function () {
     // Unified Permit Management Interface (New Tabbed Interface)
     Route::get('permits', [App\Http\Controllers\Admin\PermitManagementController::class, 'index'])
+        ->middleware(['permission:permits.manage'])
         ->name('permits.index');
-    
+
     // Unified Recruitment Management Interface (Tabbed Interface)
     Route::get('recruitment', [RecruitmentController::class, 'index'])
         ->name('recruitment.index');
-    
-    // Permit Application List & Detail
-    Route::get('permit-applications', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'index'])
-        ->name('permit-applications.index');
-    Route::get('permit-applications/{id}', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'show'])
-        ->name('permit-applications.show');
-    
-    // Review Actions
-    Route::post('permit-applications/{id}/start-review', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'startReview'])
-        ->name('permit-applications.start-review');
-    Route::post('permit-applications/{id}/update-status', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'updateStatus'])
-        ->name('permit-applications.update-status');
-    Route::post('permit-applications/{id}/add-notes', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'addNotes'])
-        ->name('permit-applications.add-notes');
-    
-    // Document Verification
-    Route::post('permit-applications/{application}/documents/{document}/verify', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'verifyDocument'])
-        ->name('permit-applications.documents.verify');
-    Route::post('permit-applications/{id}/verify-all-documents', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'verifyAllDocuments'])
-        ->name('permit-applications.verify-all-documents');
-    Route::post('permit-applications/{id}/request-document-revision', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'requestDocumentRevision'])
-        ->name('permit-applications.request-document-revision');
-    Route::post('permit-applications/{id}/convert-to-project', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'convertToProject'])
-        ->name('permit-applications.convert-to-project');
-    
-    // Package Revision Management
-    Route::get('permit-applications/{id}/revise', [App\Http\Controllers\Admin\PackageRevisionController::class, 'create'])
-        ->name('permit-applications.revise');
-    Route::post('permit-applications/{id}/revisions', [App\Http\Controllers\Admin\PackageRevisionController::class, 'store'])
-        ->name('permit-applications.revisions.store');
-    Route::get('permit-applications/{applicationId}/revisions/{revisionId}', [App\Http\Controllers\Admin\PackageRevisionController::class, 'show'])
-        ->name('permit-applications.revisions.show');
-    
-    // Quotation Management
-    Route::get('quotations/create', [App\Http\Controllers\Admin\QuotationController::class, 'create'])
-        ->name('quotations.create');
-    Route::post('quotations', [App\Http\Controllers\Admin\QuotationController::class, 'store'])
-        ->name('quotations.store');
-    Route::get('quotations/{id}/edit', [App\Http\Controllers\Admin\QuotationController::class, 'edit'])
-        ->name('quotations.edit');
-    Route::put('quotations/{id}', [App\Http\Controllers\Admin\QuotationController::class, 'update'])
-        ->name('quotations.update');
-    Route::get('quotations/{id}/pdf', [App\Http\Controllers\Admin\QuotationController::class, 'generatePdf'])
-        ->name('quotations.pdf');
-    Route::post('quotations/{id}/send-email', [App\Http\Controllers\Admin\QuotationController::class, 'sendEmail'])
-        ->name('quotations.send-email');
-    
+
+    Route::middleware(['permission:permits.manage'])->group(function () {
+        // Permit Application List & Detail
+        Route::get('permit-applications', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'index'])
+            ->name('permit-applications.index');
+        Route::get('permit-applications/{id}', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'show'])
+            ->name('permit-applications.show');
+
+        // Review Actions
+        Route::post('permit-applications/{id}/start-review', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'startReview'])
+            ->name('permit-applications.start-review');
+        Route::post('permit-applications/{id}/update-status', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'updateStatus'])
+            ->name('permit-applications.update-status');
+        Route::post('permit-applications/{id}/add-notes', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'addNotes'])
+            ->name('permit-applications.add-notes');
+
+        // Document Verification
+        Route::post('permit-applications/{application}/documents/{document}/verify', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'verifyDocument'])
+            ->name('permit-applications.documents.verify');
+        Route::post('permit-applications/{id}/verify-all-documents', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'verifyAllDocuments'])
+            ->name('permit-applications.verify-all-documents');
+        Route::post('permit-applications/{id}/request-document-revision', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'requestDocumentRevision'])
+            ->name('permit-applications.request-document-revision');
+        Route::post('permit-applications/{id}/convert-to-project', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'convertToProject'])
+            ->name('permit-applications.convert-to-project');
+
+        // Package Revision Management
+        Route::get('permit-applications/{id}/revise', [App\Http\Controllers\Admin\PackageRevisionController::class, 'create'])
+            ->name('permit-applications.revise');
+        Route::post('permit-applications/{id}/revisions', [App\Http\Controllers\Admin\PackageRevisionController::class, 'store'])
+            ->name('permit-applications.revisions.store');
+        Route::get('permit-applications/{applicationId}/revisions/{revisionId}', [App\Http\Controllers\Admin\PackageRevisionController::class, 'show'])
+            ->name('permit-applications.revisions.show');
+
+        // Quotation Management
+        Route::get('quotations/create', [App\Http\Controllers\Admin\QuotationController::class, 'create'])
+            ->name('quotations.create');
+        Route::post('quotations', [App\Http\Controllers\Admin\QuotationController::class, 'store'])
+            ->name('quotations.store');
+        Route::get('quotations/{id}/edit', [App\Http\Controllers\Admin\QuotationController::class, 'edit'])
+            ->name('quotations.edit');
+        Route::put('quotations/{id}', [App\Http\Controllers\Admin\QuotationController::class, 'update'])
+            ->name('quotations.update');
+        Route::get('quotations/{id}/pdf', [App\Http\Controllers\Admin\QuotationController::class, 'generatePdf'])
+            ->name('quotations.pdf');
+        Route::post('quotations/{id}/send-email', [App\Http\Controllers\Admin\QuotationController::class, 'sendEmail'])
+            ->name('quotations.send-email');
+
+        // Document Review (Phase 3)
+        Route::post('documents/{document}/approve', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approve'])
+            ->name('documents.approve');
+        Route::post('documents/{document}/reject', [App\Http\Controllers\Admin\DocumentReviewController::class, 'reject'])
+            ->name('documents.reject');
+        Route::post('documents/bulk-approve', [App\Http\Controllers\Admin\DocumentReviewController::class, 'bulkApprove'])
+            ->name('documents.bulk-approve');
+        Route::post('applications/{application}/documents/approve-all', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approveAll'])
+            ->name('applications.documents.approve-all');
+
+        // Application Notes/Communication (Phase 4)
+        Route::post('applications/{application}/notes', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'store'])
+            ->name('applications.notes.store');
+        Route::delete('applications/{application}/notes/{note}', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'destroy'])
+            ->name('applications.notes.destroy');
+        Route::post('notes/{note}/mark-read', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'markAsRead'])
+            ->name('notes.mark-read');
+    });
+
     // Payment Verification (Phase 4)
-    Route::get('payments', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'index'])
-        ->name('payments.index');
-    Route::get('payments/{id}', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'show'])
-        ->name('payments.show');
-    Route::post('payments/{id}/verify', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'verify'])
-        ->name('payments.verify');
-    Route::post('payments/{id}/reject', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'reject'])
-        ->name('payments.reject');
-    
-    // Document Review (Phase 3)
-    Route::post('documents/{document}/approve', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approve'])
-        ->name('documents.approve');
-    Route::post('documents/{document}/reject', [App\Http\Controllers\Admin\DocumentReviewController::class, 'reject'])
-        ->name('documents.reject');
-    Route::post('documents/bulk-approve', [App\Http\Controllers\Admin\DocumentReviewController::class, 'bulkApprove'])
-        ->name('documents.bulk-approve');
-    Route::post('applications/{application}/documents/approve-all', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approveAll'])
-        ->name('applications.documents.approve-all');
-    
-    // Application Notes/Communication (Phase 4)
-    Route::post('applications/{application}/notes', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'store'])
-        ->name('applications.notes.store');
-    Route::delete('applications/{application}/notes/{note}', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'destroy'])
-        ->name('applications.notes.destroy');
-    Route::post('notes/{note}/mark-read', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'markAsRead'])
-        ->name('notes.mark-read');
+    Route::middleware(['permission:finances.manage_payments', '2fa'])->group(function () {
+        Route::get('payments', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'index'])
+            ->name('payments.index');
+        Route::get('payments/{id}', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'show'])
+            ->name('payments.show');
+        Route::get('payments/{id}/proof', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'proof'])
+            ->name('payments.proof');
+        Route::post('payments/{id}/verify', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'verify'])
+            ->name('payments.verify');
+        Route::post('payments/{id}/reject', [App\Http\Controllers\Admin\PaymentVerificationController::class, 'reject'])
+            ->name('payments.reject');
+    });
+
 });
 
 // Client: Application Notes (Phase 4)
 Route::prefix('client')->name('client.')->middleware(['auth:client'])->group(function () {
     Route::post('applications/{application}/notes', [App\Http\Controllers\Client\ApplicationNoteController::class, 'store'])
         ->name('applications.notes.store');
-    
+
     // Package Revision Management for Client
     Route::get('applications/{applicationId}/revisions/{revisionId}', [App\Http\Controllers\Client\RevisionController::class, 'show'])
         ->name('applications.revisions.show');
@@ -509,10 +511,6 @@ Route::get('/test-push', function () {
     return view('test-push');
 })->middleware(['auth:client'])->name('test.push');
 
-// Payment Callback API (Phase 4)
-Route::post('/api/payment/callback', [App\Http\Controllers\Api\PaymentCallbackController::class, 'callback'])
-    ->name('api.payment.callback');
-
 // Twitter OAuth callback placeholder (used for developer portal app setup)
 Route::get('/auth/twitter/callback', function () {
     return response()->json([
@@ -534,14 +532,14 @@ Route::prefix('api/kbli')->group(function () {
 
 // Admin: Recruitment Management
 Route::prefix('admin/recruitment')->name('admin.recruitment.')->middleware(['auth:web', 'permission:recruitment.manage'])->group(function () {
-    
+
     // Interview Scheduling (Calendar-based)
     Route::resource('interviews', App\Http\Controllers\Admin\InterviewScheduleController::class);
     Route::get('interviews/{interview}/feedback', [App\Http\Controllers\Admin\InterviewScheduleController::class, 'feedback'])
         ->name('interviews.feedback');
     Route::post('interviews/{interview}/feedback', [App\Http\Controllers\Admin\InterviewScheduleController::class, 'storeFeedback'])
         ->name('interviews.feedback.store');
-    
+
     // Test Management
     Route::resource('tests', App\Http\Controllers\Admin\TestManagementController::class);
     Route::post('tests/assign', [App\Http\Controllers\Admin\TestManagementController::class, 'assign'])
@@ -552,13 +550,13 @@ Route::prefix('admin/recruitment')->name('admin.recruitment.')->middleware(['aut
         ->name('tests.sessions.results');
     Route::delete('tests/sessions/{session}/cancel', [App\Http\Controllers\Admin\TestManagementController::class, 'cancelSession'])
         ->name('tests.sessions.cancel');
-    
+
     // Manual Evaluation Routes (Essay/Rating Questions)
     Route::get('tests/sessions/{session}/evaluate-manual', [App\Http\Controllers\Admin\TestManagementController::class, 'showEvaluationForm'])
         ->name('tests.sessions.evaluate-manual');
     Route::post('tests/sessions/{session}/evaluate-manual', [App\Http\Controllers\Admin\TestManagementController::class, 'submitEvaluation'])
         ->name('tests.sessions.submit-evaluation-manual');
-    
+
     // Document Editing Test Routes
     Route::post('tests/{test}/upload-template', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'uploadTemplate'])
         ->name('tests.upload-template');
@@ -570,7 +568,7 @@ Route::prefix('admin/recruitment')->name('admin.recruitment.')->middleware(['aut
         ->name('tests.sessions.submit-evaluation');
     Route::get('tests/sessions/{session}/download-submission', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'downloadSubmission'])
         ->name('tests.sessions.download-submission');
-    
+
     // Recruitment Pipeline Dashboard
     Route::get('pipeline', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'index'])
         ->name('pipeline.index');
@@ -583,8 +581,8 @@ Route::prefix('admin/recruitment')->name('admin.recruitment.')->middleware(['aut
 });
 
 // Candidate: Interview Portal (ID-based access, no auth required)
-Route::prefix('candidate')->name('candidate.')->group(function () {
-    
+Route::prefix('candidate')->name('candidate.')->middleware('throttle:60,1')->group(function () {
+
     // Interview Access
     Route::get('interview/{interview}', [App\Http\Controllers\Candidate\InterviewController::class, 'show'])
         ->name('interview.show');
@@ -592,7 +590,7 @@ Route::prefix('candidate')->name('candidate.')->group(function () {
         ->name('interview.reschedule');
     Route::get('interview/{interview}/join', [App\Http\Controllers\Candidate\InterviewController::class, 'join'])
         ->name('interview.join');
-    
+
     // Test Portal
     Route::get('test/{token}', [App\Http\Controllers\Candidate\TestController::class, 'show'])
         ->name('test.show');
@@ -602,18 +600,16 @@ Route::prefix('candidate')->name('candidate.')->group(function () {
         ->name('test.answer');
     Route::post('test/{token}/complete', [App\Http\Controllers\Candidate\TestController::class, 'complete'])
         ->name('test.complete');
-    
+
     // Document Editing Test - Candidate Routes
     Route::get('test/{token}/download-template', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'downloadTemplate'])
         ->name('test.download-template');
     Route::post('test/{token}/submit-document', [App\Http\Controllers\Admin\DocumentEditingTestController::class, 'submitDocument'])
         ->name('test.submit-document');
-    
+
     // AJAX endpoints for test interface
     Route::post('test/{token}/track-tab', [App\Http\Controllers\Candidate\TestController::class, 'trackTabSwitch'])
         ->name('test.track-tab');
     Route::get('test/{token}/time', [App\Http\Controllers\Candidate\TestController::class, 'getRemainingTime'])
         ->name('test.time');
 });
-
-

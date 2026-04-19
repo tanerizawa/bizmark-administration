@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('generation_time_seconds')->nullable(); // Performance tracking
             $table->json('metadata')->nullable(); // Job details, model used, etc.
             $table->timestamps();
-            
+
             $table->index(['scheduled_at', 'status']);
             $table->index('status');
         });

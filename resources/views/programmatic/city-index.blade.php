@@ -18,7 +18,10 @@ $breadcrumbSchema = [
         ['@type' => 'ListItem', 'position' => 3, 'name' => $city['name'], 'item' => config('app.url') . '/layanan/kota/' . $citySlug],
     ],
 ];
-$waLink = 'https://wa.me/6283879602855?text=' . urlencode('Halo Bizmark, saya tertarik dengan layanan perizinan di ' . $city['name']);
+$contact = (array) data_get(config('landing_metrics'), 'contact', []);
+$whatsapp = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+$waText = 'Halo Bizmark, saya tertarik dengan layanan perizinan di ' . ($city['name'] ?? '');
+$waLink = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
 @endphp
 <script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 
@@ -133,14 +136,15 @@ $waLink = 'https://wa.me/6283879602855?text=' . urlencode('Halo Bizmark, saya te
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             @foreach($services as $slug => $svc)
             <a href="{{ url('/layanan/' . $slug . '/' . $citySlug) }}"
-               class="group card block hover:border-color" style="--hover-color: {{ $svc['color'] ?? '#0ea5e9' }};">
+               class="card block">
                 <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition" style="background: {{ $svc['color'] ?? '#0ea5e9' }}12; color: {{ $svc['color'] ?? '#0ea5e9' }};">
                     <i class="fas {{ $svc['icon'] ?? 'fa-file-alt' }} text-lg"></i>
                 </div>
                 <h3 class="text-lg font-semibold mb-2 card-title" style="color: var(--text-primary);">{{ $svc['title'] }}</h3>
                 <p class="text-sm leading-relaxed line-clamp-3" style="color: var(--text-secondary);">{{ $svc['short_description'] ?? $svc['description'] ?? '' }}</p>
-                <div class="mt-4 text-sm font-semibold flex items-center gap-1" style="color: {{ $svc['color'] ?? '#0ea5e9' }};">
-                    Selengkapnya <i class="fas fa-arrow-right text-xs ml-1 group-hover:translate-x-1 transition-transform"></i>
+                <div class="mt-4 pt-3 border-t flex items-center justify-between" style="border-color:var(--border-light);">
+                    <span class="link-primary text-sm">Selengkapnya <i class="fas fa-arrow-right ml-2"></i></span>
+                    <span class="text-xs" style="color:var(--text-tertiary);">di {{ $city['name'] }}</span>
                 </div>
             </a>
             @endforeach
@@ -193,8 +197,7 @@ $waLink = 'https://wa.me/6283879602855?text=' . urlencode('Halo Bizmark, saya te
         <div class="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
             @foreach($otherCities as $cSlug => $c)
             <a href="{{ url('/layanan/kota/' . $cSlug) }}"
-               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all hover:shadow-md" style="background: var(--surface); border: 1px solid var(--border-light); color: var(--text-primary);"
-               onmouseover="this.style.borderColor='var(--color-accent)'" onmouseout="this.style.borderColor='var(--border-light)'">
+               class="chip">
                 <i class="fas fa-map-marker-alt text-xs" style="color: var(--color-accent);"></i> {{ $c['name'] }}
             </a>
             @endforeach

@@ -73,10 +73,14 @@ class DatabaseMonitor extends Command
         $this->info('');
 
         $alerts = [];
+        $connectionName = (string) config('database.default');
+        $connectionConfig = (array) config("database.connections.{$connectionName}", []);
         $report = [
             'timestamp' => now()->toIso8601String(),
             'environment' => app()->environment(),
-            'database' => config('database.connections.pgsql.database'),
+            'connection_name' => $connectionName,
+            'driver' => $connectionConfig['driver'] ?? null,
+            'database' => $connectionConfig['database'] ?? null,
         ];
 
         // 1. Check database connectivity
@@ -180,8 +184,12 @@ class DatabaseMonitor extends Command
     protected function getTableCounts(): array
     {
         $counts = [];
-        
-        foreach ($this->criticalTables as $table) {
+
+        $tables = $this->option('report')
+            ? $this->listTables()
+            : $this->criticalTables;
+
+        foreach ($tables as $table) {
             try {
                 $counts[$table] = DB::table($table)->count();
             } catch (\Exception $e) {
@@ -190,6 +198,33 @@ class DatabaseMonitor extends Command
         }
 
         return $counts;
+    }
+
+    protected function listTables(): array
+    {
+        $driver = DB::connection()->getDriverName();
+
+        try {
+            if ($driver === 'sqlite') {
+                $rows = DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name");
+                return array_values(array_filter(array_map(fn ($r) => $r->name ?? null, $rows)));
+            }
+
+            if ($driver === 'pgsql') {
+                $rows = DB::select("SELECT tablename AS name FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename");
+                return array_values(array_filter(array_map(fn ($r) => $r->name ?? null, $rows)));
+            }
+
+            $rows = DB::select('SHOW TABLES');
+            $tables = [];
+            foreach ($rows as $row) {
+                $arr = (array) $row;
+                $tables[] = array_values($arr)[0] ?? null;
+            }
+            return array_values(array_filter($tables));
+        } catch (\Exception $e) {
+            return $this->criticalTables;
+        }
     }
 
     /**
@@ -260,12 +295,13 @@ class DatabaseMonitor extends Command
      */
     protected function checkBackupStatus(): array
     {
-        $backupDir = storage_path('backups/daily');
+        $backupDir = storage_path('app/backups');
         $status = [
             'healthy' => false,
             'last_backup' => null,
             'age_hours' => null,
             'size' => null,
+            'path' => null,
             'issue' => null,
         ];
 
@@ -274,8 +310,8 @@ class DatabaseMonitor extends Command
             return $status;
         }
 
-        $files = glob("{$backupDir}/bizmark_daily_*.sql.gz");
-        
+        $files = array_values(array_filter(glob("{$backupDir}/*") ?: [], fn ($p) => is_file($p)));
+
         if (empty($files)) {
             $status['issue'] = 'No backups found';
             return $status;
@@ -292,6 +328,7 @@ class DatabaseMonitor extends Command
         $status['last_backup'] = $backupTime->format('Y-m-d H:i:s');
         $status['age_hours'] = $ageHours;
         $status['size'] = $size;
+        $status['path'] = $latestBackup;
 
         if ($ageHours > $this->thresholds['backup_age_hours']) {
             $status['issue'] = "Backup is {$ageHours} hours old (threshold: {$this->thresholds['backup_age_hours']}h)";
@@ -299,7 +336,9 @@ class DatabaseMonitor extends Command
         }
 
         // Verify backup is not suspiciously small
-        if (filesize($latestBackup) < 10000) { // Less than 10KB
+        $driver = DB::connection()->getDriverName();
+        $minBytes = ($driver === 'sqlite') ? 1024 : 10000;
+        if (filesize($latestBackup) < $minBytes) {
             $status['issue'] = 'Latest backup is suspiciously small';
             return $status;
         }
@@ -314,28 +353,59 @@ class DatabaseMonitor extends Command
     protected function getDatabaseSize(): array
     {
         try {
-            $dbName = config('database.connections.pgsql.database');
-            
-            $total = DB::selectOne("
-                SELECT pg_size_pretty(pg_database_size(?)) as size
-            ", [$dbName])->size;
+            $conn = DB::connection();
+            $driver = $conn->getDriverName();
+            $connectionName = (string) config('database.default');
+            $connectionConfig = (array) config("database.connections.{$connectionName}", []);
 
-            $tables = DB::selectOne("
-                SELECT pg_size_pretty(sum(pg_table_size(quote_ident(tablename)::regclass))) as size
-                FROM pg_tables 
-                WHERE schemaname = 'public'
-            ")->size ?? '0 bytes';
+            if ($driver === 'sqlite') {
+                $path = (string) ($connectionConfig['database'] ?? '');
+                $bytes = (is_string($path) && $path !== '' && file_exists($path)) ? filesize($path) : 0;
 
-            $indexes = DB::selectOne("
-                SELECT pg_size_pretty(sum(pg_indexes_size(quote_ident(tablename)::regclass))) as size
-                FROM pg_tables 
-                WHERE schemaname = 'public'
-            ")->size ?? '0 bytes';
+                return [
+                    'total' => $this->formatBytes((int) $bytes),
+                    'tables' => 'unknown',
+                    'indexes' => 'unknown',
+                ];
+            }
+
+            if ($driver === 'pgsql') {
+                $dbName = (string) ($connectionConfig['database'] ?? '');
+                $total = DB::selectOne("SELECT pg_size_pretty(pg_database_size(?)) as size", [$dbName])->size;
+
+                $tables = DB::selectOne("
+                    SELECT pg_size_pretty(sum(pg_table_size(quote_ident(tablename)::regclass))) as size
+                    FROM pg_tables
+                    WHERE schemaname = 'public'
+                ")->size ?? '0 bytes';
+
+                $indexes = DB::selectOne("
+                    SELECT pg_size_pretty(sum(pg_indexes_size(quote_ident(tablename)::regclass))) as size
+                    FROM pg_tables
+                    WHERE schemaname = 'public'
+                ")->size ?? '0 bytes';
+
+                return [
+                    'total' => $total,
+                    'tables' => $tables,
+                    'indexes' => $indexes,
+                ];
+            }
+
+            $dbName = (string) ($connectionConfig['database'] ?? '');
+            $row = DB::selectOne("
+                SELECT
+                    COALESCE(SUM(data_length),0) AS tables_bytes,
+                    COALESCE(SUM(index_length),0) AS indexes_bytes,
+                    COALESCE(SUM(data_length + index_length),0) AS total_bytes
+                FROM information_schema.tables
+                WHERE table_schema = ?
+            ", [$dbName]);
 
             return [
-                'total' => $total,
-                'tables' => $tables,
-                'indexes' => $indexes,
+                'total' => $this->formatBytes((int) ($row->total_bytes ?? 0)),
+                'tables' => $this->formatBytes((int) ($row->tables_bytes ?? 0)),
+                'indexes' => $this->formatBytes((int) ($row->indexes_bytes ?? 0)),
             ];
         } catch (\Exception $e) {
             return [
@@ -352,15 +422,41 @@ class DatabaseMonitor extends Command
     protected function getConnectionPoolStatus(): array
     {
         try {
-            $active = DB::selectOne("SELECT count(*) as count FROM pg_stat_activity")->count;
-            $max = DB::selectOne("SHOW max_connections")->max_connections;
-            $usage = round(($active / $max) * 100, 1);
+            $driver = DB::connection()->getDriverName();
+
+            if ($driver === 'pgsql') {
+                $active = (int) (DB::selectOne("SELECT count(*) as count FROM pg_stat_activity")->count ?? 0);
+                $max = (int) (DB::selectOne("SHOW max_connections")->max_connections ?? 0);
+                $usage = ($max > 0) ? round(($active / $max) * 100, 1) : 0;
+
+                return [
+                    'active' => $active,
+                    'max' => $max,
+                    'usage_percent' => $usage,
+                ];
+            }
+
+            if ($driver === 'mysql' || $driver === 'mariadb') {
+                $activeRow = DB::selectOne("SHOW STATUS LIKE 'Threads_connected'");
+                $maxRow = DB::selectOne("SHOW VARIABLES LIKE 'max_connections'");
+
+                $active = (int) (($activeRow->Value ?? $activeRow->value ?? 0));
+                $max = (int) (($maxRow->Value ?? $maxRow->value ?? 0));
+                $usage = ($max > 0) ? round(($active / $max) * 100, 1) : 0;
+
+                return [
+                    'active' => $active,
+                    'max' => $max,
+                    'usage_percent' => $usage,
+                ];
+            }
 
             return [
-                'active' => $active,
-                'max' => $max,
-                'usage_percent' => $usage,
+                'active' => 'n/a',
+                'max' => 'n/a',
+                'usage_percent' => 0,
             ];
+
         } catch (\Exception $e) {
             return [
                 'active' => 'unknown',

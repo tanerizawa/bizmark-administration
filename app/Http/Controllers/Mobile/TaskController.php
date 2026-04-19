@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
 use App\Models\Task;
-use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class TaskController extends Controller
@@ -19,6 +17,7 @@ class TaskController extends Controller
         $filter = $request->get('filter', 'all'); // all, today, week, overdue
         
         $query = Task::with(['project', 'assignedUser'])
+            ->where('assigned_user_id', auth()->id())
             ->select('id', 'title', 'description', 'status', 'due_date', 'project_id', 'assigned_user_id', 'priority');
         
         // Apply filters
@@ -48,21 +47,7 @@ class TaskController extends Controller
         ->orderBy('due_date', 'asc')
         ->paginate(20);
         
-        $stats = [
-            'all' => Task::where('assigned_user_id', auth()->id())->where('status', '!=', 'done')->count(),
-            'today' => Task::where('assigned_user_id', auth()->id())
-                ->whereDate('due_date', now()->toDateString())
-                ->where('status', '!=', 'done')
-                ->count(),
-            'week' => Task::where('assigned_user_id', auth()->id())
-                ->whereBetween('due_date', [now()->startOfDay(), now()->addDays(7)])
-                ->where('status', '!=', 'done')
-                ->count(),
-            'overdue' => Task::where('assigned_user_id', auth()->id())
-                ->where('due_date', '<', now())
-                ->where('status', '!=', 'done')
-                ->count(),
-        ];
+        $stats = $this->buildTaskStats(auth()->id());
         
         if ($request->expectsJson()) {
             return response()->json([
@@ -94,28 +79,7 @@ class TaskController extends Controller
             return $this->transformTask($task);
         });
         
-        // Calculate stats
-        $now = Carbon::now();
-        $today = $now->copy()->startOfDay();
-        $weekEnd = $today->copy()->addDays(7);
-        
-        $stats = [
-            'all' => Task::where('assigned_user_id', auth()->id())
-                ->where('status', '!=', 'done')
-                ->count(),
-            'today' => Task::where('assigned_user_id', auth()->id())
-                ->whereDate('due_date', $today)
-                ->where('status', '!=', 'done')
-                ->count(),
-            'week' => Task::where('assigned_user_id', auth()->id())
-                ->whereBetween('due_date', [$today, $weekEnd])
-                ->where('status', '!=', 'done')
-                ->count(),
-            'overdue' => Task::where('assigned_user_id', auth()->id())
-                ->where('due_date', '<', $today)
-                ->where('status', '!=', 'done')
-                ->count(),
-        ];
+        $stats = $this->buildTaskStats(auth()->id());
         
         if ($request->expectsJson()) {
             return response()->json([
@@ -206,9 +170,12 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
+        $this->authorizeTaskAccess($task);
+
         $task->load(['project.status', 'assignedUser']);
         
         $relatedTasks = Task::where('project_id', $task->project_id)
+            ->where('assigned_user_id', auth()->id())
             ->where('id', '!=', $task->id)
             ->take(5)
             ->get();
@@ -221,13 +188,7 @@ class TaskController extends Controller
      */
     public function complete(Request $request, Task $task)
     {
-        // Check permission - hanya assigned user yang bisa complete
-        if ($task->assigned_user_id !== auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 403);
-        }
+        $this->authorizeTaskAccess($task);
         
         $task->update([
             'status' => 'done',
@@ -254,6 +215,8 @@ class TaskController extends Controller
      */
     public function updateStatus(Request $request, Task $task)
     {
+        $this->authorizeTaskAccess($task);
+
         $request->validate([
             'status' => 'required|in:todo,in_progress,done'
         ]);
@@ -291,6 +254,8 @@ class TaskController extends Controller
      */
     public function addComment(Request $request, Task $task)
     {
+        $this->authorizeTaskAccess($task);
+
         $request->validate([
             'comment' => 'required|string|max:1000'
         ]);
@@ -336,5 +301,34 @@ class TaskController extends Controller
             'redirect' => route('mobile.tasks.show', $task->id),
             'message' => 'Task berhasil dibuat'
         ], 201);
+    }
+
+    private function buildTaskStats(int $userId): array
+    {
+        $now = now();
+        $today = $now->toDateString();
+        $weekEnd = $now->copy()->addDays(7)->endOfDay();
+
+        $stats = Task::query()
+            ->where('assigned_user_id', $userId)
+            ->selectRaw("SUM(CASE WHEN status != 'done' THEN 1 ELSE 0 END) as all_count")
+            ->selectRaw("SUM(CASE WHEN status != 'done' AND DATE(due_date) = ? THEN 1 ELSE 0 END) as today_count", [$today])
+            ->selectRaw("SUM(CASE WHEN status != 'done' AND due_date BETWEEN ? AND ? THEN 1 ELSE 0 END) as week_count", [$now->copy()->startOfDay(), $weekEnd])
+            ->selectRaw("SUM(CASE WHEN status != 'done' AND due_date < ? THEN 1 ELSE 0 END) as overdue_count", [$now])
+            ->first();
+
+        return [
+            'all' => (int) ($stats->all_count ?? 0),
+            'today' => (int) ($stats->today_count ?? 0),
+            'week' => (int) ($stats->week_count ?? 0),
+            'overdue' => (int) ($stats->overdue_count ?? 0),
+        ];
+    }
+
+    private function authorizeTaskAccess(Task $task): void
+    {
+        if ($task->assigned_user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
     }
 }

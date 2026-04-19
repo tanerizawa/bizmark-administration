@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\ExpenseCategory;
 use App\Models\PaymentMethod;
 use App\Http\Middleware\CheckPermission;
+use App\Http\Middleware\EnsureTwoFactorVerified;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,6 +21,7 @@ class ProjectExpenseCategoryTest extends TestCase
     {
         parent::setUp();
         $this->withoutMiddleware(CheckPermission::class);
+        $this->withoutMiddleware(EnsureTwoFactorVerified::class);
     }
 
     public function test_new_category_can_be_stored_via_project_expense_controller(): void

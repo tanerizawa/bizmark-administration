@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\ApplicationStatusLog;
 use App\Services\ProjectConversionService;
+use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -27,6 +28,15 @@ class PaymentCallbackController extends Controller
     public function callback(Request $request)
     {
         try {
+            if (!$this->isValidMidtransSignature($request)) {
+                Log::warning('Midtrans callback rejected: invalid signature', [
+                    'ip' => $request->ip(),
+                    'order_id' => $request->input('order_id'),
+                ]);
+
+                return response()->json(['message' => 'Invalid callback signature'], 403);
+            }
+
             $notification = new Notification();
 
             $transactionStatus = $notification->transaction_status;
@@ -39,21 +49,25 @@ class PaymentCallbackController extends Controller
                 'fraud_status' => $fraudStatus,
             ]);
 
-            $payment = Payment::where('payment_number', $paymentNumber)->first();
-
-            if (!$payment) {
-                Log::error('Payment not found', ['order_id' => $paymentNumber]);
-                return response()->json(['message' => 'Payment not found'], 404);
-            }
-
             DB::beginTransaction();
             try {
-                // Update payment with gateway response
+                $payment = Payment::where('payment_number', $paymentNumber)->lockForUpdate()->first();
+
+                if (!$payment) {
+                    DB::rollBack();
+                    Log::error('Payment not found', ['order_id' => $paymentNumber]);
+                    return response()->json(['message' => 'Payment not found'], 404);
+                }
+
+                if (in_array($payment->status, ['success', 'failed'], true)) {
+                    DB::commit();
+                    return response()->json(['message' => 'Callback already processed']);
+                }
+
                 $payment->update([
                     'gateway_response' => json_encode($notification->getResponse()),
                 ]);
 
-                // Handle transaction status
                 if ($transactionStatus == 'capture') {
                     if ($fraudStatus == 'accept') {
                         $this->handleSuccessfulPayment($payment);
@@ -62,14 +76,13 @@ class PaymentCallbackController extends Controller
                     $this->handleSuccessfulPayment($payment);
                 } elseif ($transactionStatus == 'pending') {
                     $payment->update(['status' => 'pending']);
-                } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+                } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'], true)) {
                     $payment->update(['status' => 'failed']);
                 }
 
                 DB::commit();
 
                 return response()->json(['message' => 'Callback processed successfully']);
-
             } catch (\Exception $e) {
                 DB::rollBack();
                 Log::error('Error processing callback', [
@@ -82,13 +95,33 @@ class PaymentCallbackController extends Controller
         } catch (\Exception $e) {
             Log::error('Midtrans Callback Error', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'order_id' => $request->input('order_id'),
             ]);
 
             return response()->json([
                 'message' => 'Error processing callback: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Validate Midtrans callback signature.
+     */
+    private function isValidMidtransSignature(Request $request): bool
+    {
+        $serverKey = (string) config('midtrans.server_key');
+        $signature = (string) $request->input('signature_key', '');
+        $orderId = (string) $request->input('order_id', '');
+        $statusCode = (string) $request->input('status_code', '');
+        $grossAmount = (string) $request->input('gross_amount', '');
+
+        if ($serverKey === '' || $signature === '' || $orderId === '' || $statusCode === '' || $grossAmount === '') {
+            return false;
+        }
+
+        $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+
+        return hash_equals($expectedSignature, $signature);
     }
 
     /**
@@ -101,23 +134,27 @@ class PaymentCallbackController extends Controller
             'paid_at' => now(),
         ]);
 
-        // Update application status
-        $application = $payment->quotation->application;
-        $previousStatus = $application->status;
-        
-        $application->update([
-            'status' => 'payment_verified',
-            'payment_status' => 'paid',
-        ]);
+        $quotation = $payment->quotation;
+        $application = $quotation?->application;
+        if (!$application) {
+            throw new \RuntimeException('Application not found for payment.');
+        }
 
-        // Log status change
-        ApplicationStatusLog::create([
-            'application_id' => $application->id,
-            'from_status' => $previousStatus,
-            'to_status' => 'payment_verified',
-            'changed_by_type' => 'system',
-            'changed_by_id' => null,
-            'notes' => 'Pembayaran berhasil melalui ' . $payment->gateway_provider . ': ' . $payment->payment_number,
+        $previousStatus = $application->status;
+
+        $paymentStatus = $payment->payment_type === 'down_payment' ? 'down_paid' : 'fully_paid';
+
+        $workflow = app(PermitApplicationWorkflowService::class);
+        $workflow->transition(
+            $application,
+            'payment_verified',
+            'Pembayaran berhasil melalui ' . $payment->gateway_provider . ': ' . $payment->payment_number,
+            'system',
+            null
+        );
+
+        $application->update([
+            'payment_status' => $paymentStatus,
         ]);
 
         // Auto-convert to project
