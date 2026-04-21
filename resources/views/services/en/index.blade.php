@@ -5,11 +5,10 @@
 
 @section('content')
 @php
-    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $contact = data_get(config('landing_metrics'), 'contact', []);
     $whatsapp = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
     $waText = 'Hello, I want to discuss permit services for my business';
     $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
-    $groupedServices = collect($services)->groupBy(fn($service) => $service['category'] ?? 'Other');
 @endphp
 
 <section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
@@ -46,8 +45,8 @@
                                 @endif
                             </div>
 
-                            <h3 class="text-lg font-bold mb-2 card-title" style="color:var(--text-primary);">{{ $service['title'] }}</h3>
-                            <p class="text-sm mb-4" style="color:var(--text-secondary);">{{ $service['short_description'] }}</p>
+                            <h3 class="text-lg font-bold mb-2 card-title" style="color:var(--text-primary);">{{ $service['title'] ?? '' }}</h3>
+                            <p class="text-sm mb-4" style="color:var(--text-secondary);">{{ $service['short_description'] ?? '' }}</p>
 
                             @if(!empty($service['duration']) || !empty($service['pricing']['display']))
                                 <div class="flex flex-wrap gap-2 mb-4">

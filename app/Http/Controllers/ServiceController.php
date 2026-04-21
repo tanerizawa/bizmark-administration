@@ -14,8 +14,16 @@ class ServiceController extends Controller
         // Load appropriate services config based on locale first, then market segment
         // Indonesian locale always uses services_data
         $services = $locale === 'id'
-            ? config('services_data')
-            : ($marketSegment === 'pma' ? config('services_pma') : config('services_data'));
+            ? config('services_data', [])
+            : ($marketSegment === 'pma' ? config('services_pma', []) : config('services_data', []));
+
+        // Group services by category (locale-aware fallback label)
+        $defaultCategory = $locale === 'en' ? 'Other' : 'Lainnya';
+        $groupedServices = [];
+        foreach ($services as $slug => $service) {
+            $category = $service['category'] ?? $defaultCategory;
+            $groupedServices[$category][$slug] = $service;
+        }
 
         // Select view based on locale and device
         if ($locale === 'en') {
@@ -35,6 +43,7 @@ class ServiceController extends Controller
 
         return view($view, [
             'services' => $services,
+            'groupedServices' => $groupedServices,
             'title' => $title,
             'meta_description' => $meta_description,
             'locale' => $locale,
@@ -50,8 +59,8 @@ class ServiceController extends Controller
         // Load appropriate services config based on locale first
         // Indonesian locale always uses services_data
         $services = $locale === 'id'
-            ? config('services_data')
-            : ($marketSegment === 'pma' ? config('services_pma') : config('services_data'));
+            ? config('services_data', [])
+            : ($marketSegment === 'pma' ? config('services_pma', []) : config('services_data', []));
 
         if (! isset($services[$slug])) {
             abort(404);
