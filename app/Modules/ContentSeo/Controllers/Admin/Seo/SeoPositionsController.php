@@ -5,7 +5,7 @@ namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\KeywordPositionHistory;
-use App\Modules\ContentSeo\Services\CompetitiveIntelligenceService;
+use App\Services\CompetitiveIntelligenceService;
 use Illuminate\Http\Request;
 
 class SeoPositionsController extends Controller

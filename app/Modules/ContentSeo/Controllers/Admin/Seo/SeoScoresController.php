@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\CompetitorAnalysis;
 use App\Models\SeoScore;
-use App\Modules\ContentSeo\Services\SeoFixService;
-use App\Modules\ContentSeo\Services\SeoReportService;
-use App\Modules\ContentSeo\Services\SeoScoringService;
+use App\Services\SeoFixService;
+use App\Services\SeoReportService;
+use App\Services\SeoScoringService;
 use App\Support\SeoDashboardCache;
 use Illuminate\Http\Request;
 

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Http\Controllers\Admin\Seo;
 
-use App\Http\Controllers\Admin\Seo\SeoRefreshLogsController;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoRefreshLogsController;
 use App\Models\Article;
 use App\Services\ContentRefreshService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;

@@ -5,7 +5,7 @@ namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\MetaAbTest;
-use App\Modules\ContentSeo\Services\MetaAbTestService;
+use App\Services\MetaAbTestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 

@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
         taskSelect.innerHTML = '<option value="">Loading...</option>';
         
         if (projectId) {
-            fetch(`/api/projects/${projectId}/tasks`)
+            fetch(`{{ route('api.tasks-by-project') }}?project_id=${projectId}`)
                 .then(response => response.json())
                 .then(data => {
                     taskSelect.innerHTML = '<option value="">Pilih Tugas</option>';

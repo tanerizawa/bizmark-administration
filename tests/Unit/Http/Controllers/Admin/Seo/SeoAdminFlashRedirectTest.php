@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Http\Controllers\Admin\Seo;
 
-use App\Http\Controllers\Admin\Seo\Concerns\SeoAdminFlashRedirect;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Tests\TestCase;

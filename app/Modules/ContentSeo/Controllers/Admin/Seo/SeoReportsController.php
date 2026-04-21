@@ -5,7 +5,7 @@ namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\SeoReport;
-use App\Modules\ContentSeo\Services\SeoReportService;
+use App\Services\SeoReportService;
 use App\Support\SeoDashboardCache;
 use Illuminate\Http\Request;
 

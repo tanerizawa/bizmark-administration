@@ -154,7 +154,6 @@ class EmailWebhookController extends Controller
                 $this->sendAutoReply($emailAccount, $fromEmail, $inbox);
             }
 
-            // TODO: Send notification to assigned users
             if ($emailAccount) {
                 $this->notifyAssignedUsers($emailAccount, $inbox);
             }

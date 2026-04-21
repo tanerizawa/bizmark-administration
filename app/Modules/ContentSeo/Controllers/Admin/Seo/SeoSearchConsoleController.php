@@ -5,7 +5,7 @@ namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\SearchConsoleData;
-use App\Modules\ContentSeo\Services\SearchConsoleService;
+use App\Services\SearchConsoleService;
 use Illuminate\Http\Request;
 
 class SeoSearchConsoleController extends Controller

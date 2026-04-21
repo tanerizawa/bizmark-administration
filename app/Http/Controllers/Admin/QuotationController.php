@@ -214,8 +214,8 @@ class QuotationController extends Controller
                 'quotation_notes' => $request->notes,
             ]);
             
-            // TODO: Send email notification to client
-            
+            $quotation->application->client?->notify(new QuotationCreatedNotification($quotation));
+
             DB::commit();
             
             return redirect()

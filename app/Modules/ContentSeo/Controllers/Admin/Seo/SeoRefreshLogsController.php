@@ -5,7 +5,7 @@ namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\ContentRefreshLog;
-use App\Modules\ContentSeo\Services\ContentRefreshService;
+use App\Services\ContentRefreshService;
 use Illuminate\Http\Request;
 
 class SeoRefreshLogsController extends Controller

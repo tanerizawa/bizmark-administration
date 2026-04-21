@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\CompetitorAnalysis;
 use App\Models\SeoScore;
-use App\Modules\ContentSeo\Services\CompetitiveIntelligenceService;
-use App\Modules\ContentSeo\Services\SeoFixService;
-use App\Modules\ContentSeo\Services\SeoScoringService;
+use App\Services\CompetitiveIntelligenceService;
+use App\Services\SeoFixService;
+use App\Services\SeoScoringService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 

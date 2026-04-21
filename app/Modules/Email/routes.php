@@ -88,4 +88,26 @@ Route::name('admin.')->middleware(['web', 'auth', 'email.access'])->prefix('admi
     Route::post('email/settings/test', [EmailSettingsController::class, 'test'])
         ->middleware('permission:email.manage_settings')
         ->name('email.settings.test');
+
+    // Email Accounts Management
+    Route::middleware('permission:email.manage')->group(function () {
+        Route::resource('email-accounts', EmailAccountController::class);
+        Route::get('email-accounts/{emailAccount}/available-users', [EmailAccountController::class, 'availableUsers'])
+            ->name('email-accounts.available-users');
+        Route::get('email-accounts-stats', [EmailAccountController::class, 'stats'])
+            ->name('email-accounts.stats');
+
+        Route::post('email-accounts/{emailAccount}/assign', [EmailAssignmentController::class, 'assign'])
+            ->name('email-accounts.assign');
+        Route::delete('email-accounts/{emailAccount}/unassign/{user}', [EmailAssignmentController::class, 'unassign'])
+            ->name('email-accounts.unassign');
+        Route::patch('email-accounts/{emailAccount}/permissions/{user}', [EmailAssignmentController::class, 'updatePermissions'])
+            ->name('email-accounts.permissions.update');
+        Route::post('email-accounts/{emailAccount}/bulk-assign', [EmailAssignmentController::class, 'bulkAssign'])
+            ->name('email-accounts.bulk-assign');
+        Route::post('email-accounts/{emailAccount}/transfer-primary', [EmailAssignmentController::class, 'transferPrimary'])
+            ->name('email-accounts.transfer-primary');
+        Route::get('users/{user}/emails', [EmailAssignmentController::class, 'userEmails'])
+            ->name('users.emails');
+    });
 });

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Http\Controllers\Admin\Seo;
 
-use App\Http\Controllers\Admin\Seo\SeoReportsController;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoReportsController;
 use App\Models\SeoReport;
 use App\Services\SeoReportService;
 use Illuminate\Http\Request;

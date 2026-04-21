@@ -10,7 +10,7 @@ use App\Models\MetaAbTest;
 use App\Models\SearchConsoleData;
 use App\Models\ContentRefreshLog;
 use App\Models\SeoReport;
-use App\Modules\ContentSeo\Services\SeoReportService;
+use App\Services\SeoReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 

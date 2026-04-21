@@ -365,31 +365,7 @@ Route::middleware(['auth', 'permission:ai.manage_settings', '2fa'])->prefix('adm
         ->name('ai-settings.clear-cache');
 });
 
-// Multi-User Email System Routes
-Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('admin.')->group(function () {
-    // Email Accounts Management
-    Route::resource('email-accounts', App\Http\Controllers\Admin\EmailAccountController::class);
-    Route::get('email-accounts/{emailAccount}/available-users', [App\Http\Controllers\Admin\EmailAccountController::class, 'availableUsers'])
-        ->name('email-accounts.available-users');
-    Route::get('email-accounts-stats', [App\Http\Controllers\Admin\EmailAccountController::class, 'stats'])
-        ->name('email-accounts.stats');
-
-    // Email Assignments
-    Route::post('email-accounts/{emailAccount}/assign', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'assign'])
-        ->name('email-accounts.assign');
-    Route::delete('email-accounts/{emailAccount}/unassign/{user}', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'unassign'])
-        ->name('email-accounts.unassign');
-    Route::patch('email-accounts/{emailAccount}/permissions/{user}', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'updatePermissions'])
-        ->name('email-accounts.permissions.update');
-    Route::post('email-accounts/{emailAccount}/bulk-assign', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'bulkAssign'])
-        ->name('email-accounts.bulk-assign');
-    Route::post('email-accounts/{emailAccount}/transfer-primary', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'transferPrimary'])
-        ->name('email-accounts.transfer-primary');
-
-    // User's Email Accounts
-    Route::get('users/{user}/emails', [App\Http\Controllers\Admin\EmailAssignmentController::class, 'userEmails'])
-        ->name('users.emails');
-});
+// Multi-User Email System Routes dipindah ke App\Modules\Email\routes.php (EmailServiceProvider)
 
 // Admin: Permit Application Management (Phase 3)
 Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function () {
