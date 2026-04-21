@@ -1,0 +1,526 @@
+<?php
+
+namespace App\Modules\Proyek\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\PermitApplication;
+use App\Models\PermitType;
+use App\Models\Client;
+use App\Models\ApplicationStatusLog;
+use App\Models\Project;
+use App\Models\ProjectPermit;
+use App\Models\ProjectPermitDependency;
+use App\Services\PermitApplicationWorkflowService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ApplicationManagementController extends Controller
+{
+    /**
+     * Display a listing of all permit applications.
+     */
+    public function index(Request $request)
+    {
+        $query = PermitApplication::with(['client', 'permitType', 'reviewedBy']);
+        
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter by permit type
+        if ($request->filled('permit_type_id')) {
+            $query->where('permit_type_id', $request->permit_type_id);
+        }
+        
+        // Filter by client
+        if ($request->filled('client_id')) {
+            $query->where('client_id', $request->client_id);
+        }
+        
+        // Search by application number or client name
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('application_number', 'LIKE', '%' . $search . '%')
+                  ->orWhereHas('client', function($q) use ($search) {
+                      $q->where('name', 'LIKE', '%' . $search . '%');
+                  });
+            });
+        }
+        
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->whereDate('submitted_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('submitted_at', '<=', $request->date_to);
+        }
+        
+        // Sort
+        $allowedSortBy = [
+            'submitted_at',
+            'created_at',
+            'application_number',
+            'status',
+        ];
+
+        $sortBy = $request->get('sort_by', 'submitted_at');
+        if (!in_array($sortBy, $allowedSortBy, true)) {
+            $sortBy = 'submitted_at';
+        }
+
+        $sortOrder = strtolower((string) $request->get('sort_order', 'desc'));
+        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+            $sortOrder = 'desc';
+        }
+        
+        // Handle null submitted_at for drafts
+        if ($sortBy === 'submitted_at') {
+            $query->orderByRaw('submitted_at IS NULL, submitted_at ' . $sortOrder);
+        } else {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+        
+        $applications = $query->paginate(20);
+        
+        // Get filter options
+        $permitTypes = PermitType::orderBy('name')->get();
+        $clients = Client::orderBy('name')->get();
+        
+        // Statistics
+        $statsRow = PermitApplication::query()
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN status = 'submitted' THEN 1 ELSE 0 END) as submitted")
+            ->selectRaw("SUM(CASE WHEN status = 'under_review' THEN 1 ELSE 0 END) as under_review")
+            ->selectRaw("SUM(CASE WHEN status = 'quoted' THEN 1 ELSE 0 END) as quoted")
+            ->selectRaw("SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress")
+            ->selectRaw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed")
+            ->first();
+
+        $stats = [
+            'total' => (int) ($statsRow->total ?? 0),
+            'submitted' => (int) ($statsRow->submitted ?? 0),
+            'under_review' => (int) ($statsRow->under_review ?? 0),
+            'quoted' => (int) ($statsRow->quoted ?? 0),
+            'in_progress' => (int) ($statsRow->in_progress ?? 0),
+            'completed' => (int) ($statsRow->completed ?? 0),
+        ];
+        
+        // Status options for filter
+        $statusOptions = [
+            'draft' => 'Draft',
+            'submitted' => 'Submitted',
+            'under_review' => 'Under Review',
+            'document_incomplete' => 'Document Incomplete',
+            'quoted' => 'Quoted',
+            'quotation_accepted' => 'Quotation Accepted',
+            'quotation_rejected' => 'Quotation Rejected',
+            'payment_pending' => 'Payment Pending',
+            'payment_verified' => 'Payment Verified',
+            'in_progress' => 'In Progress',
+            'completed' => 'Completed',
+            'cancelled' => 'Cancelled',
+        ];
+        
+        return view('admin.permit-applications.index', compact(
+            'applications',
+            'permitTypes',
+            'clients',
+            'stats',
+            'statusOptions'
+        ));
+    }
+    
+    /**
+     * Display the specified application.
+     */
+    public function show($id)
+    {
+        $application = PermitApplication::with([
+            'client',
+            'permitType',
+            'documents.uploadedBy',
+            'statusLogs.user',
+            'reviewedBy',
+            'quotation',
+            'project'
+        ])->findOrFail($id);
+        
+        // Mark all unread client notes as read
+        \App\Models\ApplicationNote::where('application_id', $id)
+            ->where('author_type', 'client')
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
+        
+        return view('admin.permit-applications.show', compact('application'));
+    }
+    
+    /**
+     * Start reviewing an application.
+     */
+    public function startReview($id)
+    {
+        DB::beginTransaction();
+        try {
+            $application = PermitApplication::with('client')->whereKey($id)->lockForUpdate()->firstOrFail();
+
+            if ($application->status !== 'submitted') {
+                DB::rollBack();
+                return back()->with('error', 'Hanya aplikasi yang sudah disubmit yang bisa direview');
+            }
+
+            $previousStatus = $application->status;
+
+            $application->update([
+                'reviewed_by' => Auth::id(),
+                'reviewed_at' => now(),
+            ]);
+
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'under_review',
+                'Review dimulai oleh admin',
+                'user',
+                Auth::id()
+            );
+            
+            // Send email notification to client
+            if ($application->client && $application->client->email) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($application->client->email)->send(
+                        new \App\Mail\ApplicationStatusChanged(
+                            $application,
+                            $previousStatus,
+                            'under_review',
+                            Auth::user(),
+                            'Review dimulai oleh admin'
+                        )
+                    );
+                } catch (\Exception $emailException) {
+                    \Illuminate\Support\Facades\Log::warning('Failed to send review start email', [
+                        'application_id' => $application->id,
+                        'error' => $emailException->getMessage()
+                    ]);
+                }
+            }
+            
+            DB::commit();
+            
+            return redirect()
+                ->route('admin.permit-applications.show', $application->id)
+                ->with('success', 'Review dimulai. Notifikasi email telah dikirim ke client. Silakan verifikasi dokumen dan buat quotation.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal memulai review: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Update application status.
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:draft,submitted,under_review,document_incomplete,quoted,quotation_accepted,payment_pending,payment_verified,converted_to_project,in_progress,completed,cancelled',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+        
+        DB::beginTransaction();
+        try {
+            $application = PermitApplication::with('client')->whereKey($id)->lockForUpdate()->firstOrFail();
+            $previousStatus = $application->status;
+
+            $workflow = app(PermitApplicationWorkflowService::class);
+            $workflow->transition($application, $request->status, $request->notes, 'user', Auth::id());
+
+            $application->update([
+                'admin_notes' => $request->notes,
+            ]);
+            
+            // Send email notification to client
+            if ($application->client && $application->client->email) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($application->client->email)->send(
+                        new \App\Mail\ApplicationStatusChanged(
+                            $application,
+                            $previousStatus,
+                            $request->status,
+                            Auth::user(),
+                            $request->notes
+                        )
+                    );
+                } catch (\Exception $emailException) {
+                    // Log email failure but don't fail the status update
+                    \Illuminate\Support\Facades\Log::warning('Failed to send status change email', [
+                        'application_id' => $application->id,
+                        'client_email' => $application->client->email,
+                        'error' => $emailException->getMessage()
+                    ]);
+                }
+            }
+            
+            DB::commit();
+            
+            return back()->with('success', 'Status aplikasi berhasil diupdate dan notifikasi email telah dikirim ke client');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+                throw $e;
+            }
+            return back()->with('error', 'Gagal mengupdate status: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Add admin notes to application.
+     */
+    public function addNotes(Request $request, $id)
+    {
+        $request->validate([
+            'notes' => 'required|string|max:2000',
+        ]);
+        
+        $application = PermitApplication::findOrFail($id);
+        
+        $existingNotes = $application->admin_notes;
+        $timestamp = now()->format('Y-m-d H:i:s');
+        $userName = Auth::user()->name;
+        $newNote = "[{$timestamp}] {$userName}: {$request->notes}";
+        
+        if ($existingNotes) {
+            $application->admin_notes = $existingNotes . "\n\n" . $newNote;
+        } else {
+            $application->admin_notes = $newNote;
+        }
+        
+        $application->save();
+        
+        return back()->with('success', 'Catatan berhasil ditambahkan');
+    }
+    
+    /**
+     * Verify or reject a document.
+     */
+    public function verifyDocument(Request $request, $applicationId, $documentId)
+    {
+        $request->validate([
+            'action' => 'required|in:approve,reject',
+            'notes' => 'nullable|string|max:500',
+        ]);
+        
+        $application = PermitApplication::findOrFail($applicationId);
+        $document = $application->documents()->findOrFail($documentId);
+        
+        $isApproved = $request->action === 'approve';
+        
+        $document->update([
+            'is_verified' => $isApproved,
+            'verified_by' => Auth::id(),
+            'verified_at' => now(),
+            'verification_notes' => $request->notes,
+        ]);
+        
+        $message = $isApproved 
+            ? 'Dokumen berhasil diverifikasi' 
+            : 'Dokumen ditolak. Client perlu upload ulang.';
+        
+        return back()->with('success', $message);
+    }
+    
+    /**
+     * Bulk verify all documents.
+     */
+    public function verifyAllDocuments($id)
+    {
+        $application = PermitApplication::findOrFail($id);
+        
+        $unverifiedCount = $application->documents()
+            ->where('is_verified', false)
+            ->count();
+        
+        if ($unverifiedCount === 0) {
+            return back()->with('info', 'Semua dokumen sudah diverifikasi');
+        }
+        
+        $application->documents()
+            ->where('is_verified', false)
+            ->update([
+                'is_verified' => true,
+                'verified_by' => Auth::id(),
+                'verified_at' => now(),
+                'verification_notes' => 'Bulk verification oleh admin',
+            ]);
+        
+        return back()->with('success', "{$unverifiedCount} dokumen berhasil diverifikasi");
+    }
+    
+    /**
+     * Mark application as document incomplete.
+     */
+    public function requestDocumentRevision(Request $request, $id)
+    {
+        $request->validate([
+            'notes' => 'required|string|max:1000',
+        ]);
+        
+        DB::beginTransaction();
+        try {
+            $application = PermitApplication::with('client')->whereKey($id)->lockForUpdate()->firstOrFail();
+            $previousStatus = $application->status;
+
+            $application->update([
+                'admin_notes' => $request->notes,
+            ]);
+
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'document_incomplete',
+                'Dokumen tidak lengkap: ' . $request->notes,
+                'user',
+                Auth::id()
+            );
+            
+            // Send email notification to client
+            if ($application->client && $application->client->email) {
+                try {
+                    \Illuminate\Support\Facades\Mail::to($application->client->email)->send(
+                        new \App\Mail\ApplicationStatusChanged(
+                            $application,
+                            $previousStatus,
+                            'document_incomplete',
+                            Auth::user(),
+                            $request->notes
+                        )
+                    );
+                } catch (\Exception $emailException) {
+                    \Illuminate\Support\Facades\Log::warning('Failed to send document revision email', [
+                        'application_id' => $application->id,
+                        'error' => $emailException->getMessage()
+                    ]);
+                }
+            }
+            
+            DB::commit();
+            
+            return back()->with('success', 'Client diminta untuk melengkapi dokumen. Notifikasi email telah dikirim.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal request revision: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Convert permit package application to Project with ProjectPermits
+     */
+    public function convertToProject($id)
+    {
+        $application = PermitApplication::with(['client'])->findOrFail($id);
+        
+        // Check if already converted
+        if ($application->project_id) {
+            return back()->with('error', 'Aplikasi ini sudah dikonversi menjadi proyek');
+        }
+        
+        // Check status - should be payment_verified
+        if ($application->status !== 'payment_verified') {
+            return back()->with('error', 'Hanya aplikasi dengan status "Payment Verified" yang bisa dikonversi menjadi proyek');
+        }
+        
+        $formData = is_string($application->form_data) 
+            ? json_decode($application->form_data, true) 
+            : $application->form_data;
+        
+        $isPackage = isset($formData['package_type']) && $formData['package_type'] === 'multi_permit';
+        
+        if (!$isPackage) {
+            return back()->with('error', 'Hanya aplikasi paket izin yang bisa dikonversi menjadi proyek');
+        }
+        
+        DB::beginTransaction();
+        try {
+            // Create Project
+            $project = \App\Models\Project::create([
+                'permit_application_id' => $application->id,
+                'client_id' => $application->client_id,
+                'project_name' => $formData['project_name'] ?? 'Untitled Project',
+                'project_location' => $formData['project_location'] ?? null,
+                'land_area' => $formData['land_area'] ?? null,
+                'building_area' => $formData['building_area'] ?? null,
+                'building_floors' => $formData['building_floors'] ?? null,
+                'project_budget' => $formData['investment_value'] ?? 0,
+                'target_completion_date' => isset($formData['target_completion_date']) 
+                    ? \Carbon\Carbon::parse($formData['target_completion_date']) 
+                    : null,
+                'description' => $formData['project_description'] ?? null,
+                'status' => 'active',
+            ]);
+            
+            // Create ProjectPermits (only for BizMark.ID permits)
+            $bizmarkPermits = $formData['bizmark_permits'] ?? [];
+            $sequenceOrder = 1;
+            $permitIdMap = []; // Map permit names to ProjectPermit IDs
+            
+            foreach ($bizmarkPermits as $permit) {
+                $projectPermit = \App\Models\ProjectPermit::create([
+                    'project_id' => $project->id,
+                    'permit_type_id' => null, // Custom permit from KBLI
+                    'custom_permit_name' => $permit['name'],
+                    'sequence_order' => $sequenceOrder++,
+                    'is_goal_permit' => false, // Can be updated later
+                    'status' => \App\Models\ProjectPermit::STATUS_NOT_STARTED,
+                    'estimated_cost' => isset($permit['estimated_cost_min']) && isset($permit['estimated_cost_max'])
+                        ? ($permit['estimated_cost_min'] + $permit['estimated_cost_max']) / 2
+                        : 0,
+                    'estimated_days' => $permit['estimated_days'] ?? null,
+                ]);
+                
+                $permitIdMap[$permit['name']] = $projectPermit->id;
+            }
+            
+            // Create ProjectPermitDependencies based on AI recommendations
+            foreach ($bizmarkPermits as $permit) {
+                if (!empty($permit['dependencies']) && isset($permitIdMap[$permit['name']])) {
+                    foreach ($permit['dependencies'] as $dependencyName) {
+                        // Find if dependency is in our BizMark permits
+                        if (isset($permitIdMap[$dependencyName])) {
+                            \App\Models\ProjectPermitDependency::create([
+                                'project_permit_id' => $permitIdMap[$permit['name']],
+                                'depends_on_permit_id' => $permitIdMap[$dependencyName],
+                                'dependency_type' => 'MANDATORY', // Default to mandatory
+                                'can_proceed_without' => false,
+                            ]);
+                        }
+                    }
+                }
+            }
+            
+            // Update application with project_id and status
+            $application->update([
+                'project_id' => $project->id,
+                'converted_at' => now(),
+            ]);
+
+            app(PermitApplicationWorkflowService::class)->transition(
+                $application,
+                'in_progress',
+                'Aplikasi dikonversi menjadi proyek dengan ' . count($bizmarkPermits) . ' izin',
+                'user',
+                Auth::id()
+            );
+            
+            DB::commit();
+            
+            return redirect()
+                ->route('projects.show', $project->id)
+                ->with('success', 'Berhasil mengkonversi aplikasi menjadi proyek dengan ' . count($bizmarkPermits) . ' izin. Proyek sekarang dapat dikelola.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal konversi ke proyek: ' . $e->getMessage());
+        }
+    }
+}

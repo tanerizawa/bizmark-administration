@@ -252,10 +252,11 @@ class QuotationController extends Controller
     public function sendEmail($id)
     {
         $quotation = Quotation::with(['application.client'])->findOrFail($id);
-        
-        // TODO: Implement email sending
-        
-        return back()->with('success', 'Quotation telah dikirim ke email client');
+
+        $client = $quotation->application->client;
+        $client->notify(new QuotationCreatedNotification($quotation));
+
+        return back()->with('success', 'Quotation telah dikirim ke email client: ' . $client->email);
     }
     
     /**

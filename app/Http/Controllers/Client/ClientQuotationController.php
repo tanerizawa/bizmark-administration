@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\PermitApplication;
 use App\Models\Quotation;
 use App\Models\ApplicationStatusLog;
+use App\Models\User;
+use App\Notifications\AdminClientActionNotification;
 use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -94,10 +96,19 @@ class ClientQuotationController extends Controller
                 Auth::guard('client')->id()
             );
             
-            // TODO: Send email notification to admin
-            
+            $notification = new AdminClientActionNotification(
+                'quotation_accepted',
+                $application->application_number,
+                $application->id,
+                Auth::guard('client')->user()->name
+            );
+            User::where('is_active', true)
+                ->whereHas('role', fn ($q) => $q->where('name', 'admin'))
+                ->get()
+                ->each->notify($notification);
+
             DB::commit();
-            
+
             return redirect()
                 ->route('client.applications.show', $applicationId)
                 ->with('success', 'Quotation berhasil diterima. Silakan lakukan pembayaran.');
@@ -168,10 +179,20 @@ class ClientQuotationController extends Controller
                 Auth::guard('client')->id()
             );
             
-            // TODO: Send email notification to admin
-            
+            $notification = new AdminClientActionNotification(
+                'quotation_rejected',
+                $application->application_number,
+                $application->id,
+                Auth::guard('client')->user()->name,
+                $request->rejection_reason
+            );
+            User::where('is_active', true)
+                ->whereHas('role', fn ($q) => $q->where('name', 'admin'))
+                ->get()
+                ->each->notify($notification);
+
             DB::commit();
-            
+
             return redirect()
                 ->route('client.applications.show', $applicationId)
                 ->with('success', 'Quotation ditolak. Admin akan menghubungi Anda.');

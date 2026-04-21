@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ConsultRequest;
 use App\Models\Client;
 use App\Models\PermitApplication;
+use App\Notifications\ClientWelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -214,7 +215,9 @@ class ConsultationLeadController extends Controller
                 // Update consultation
                 $consultation->convertToClient($client->id);
 
-                // TODO: Send welcome email to client with login credentials if new account
+                if ($request->create_client_account && $request->password) {
+                    $client->notify(new ClientWelcomeNotification($client, $request->password));
+                }
 
                 DB::commit();
 

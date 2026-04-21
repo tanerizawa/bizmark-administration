@@ -32,62 +32,62 @@ use Illuminate\Support\Facades\Route;
     });
 
     // Project Management Routes
-    Route::resource('projects', App\Http\Controllers\ProjectController::class)
+    Route::resource('projects', App\Modules\Proyek\Controllers\Public\ProjectController::class)
         ->only(['index', 'show'])
         ->whereNumber('project')
         ->middleware('permission:projects.view');
-    Route::resource('projects', App\Http\Controllers\ProjectController::class)
+    Route::resource('projects', App\Modules\Proyek\Controllers\Public\ProjectController::class)
         ->only(['create', 'store'])
         ->middleware('permission:projects.create');
-    Route::resource('projects', App\Http\Controllers\ProjectController::class)
+    Route::resource('projects', App\Modules\Proyek\Controllers\Public\ProjectController::class)
         ->only(['edit', 'update'])
         ->middleware('permission:projects.edit');
-    Route::resource('projects', App\Http\Controllers\ProjectController::class)
+    Route::resource('projects', App\Modules\Proyek\Controllers\Public\ProjectController::class)
         ->only(['destroy'])
         ->middleware('permission:projects.delete');
-    Route::patch('projects/{project}/status', [App\Http\Controllers\ProjectController::class, 'updateStatus'])
+    Route::patch('projects/{project}/status', [App\Modules\Proyek\Controllers\Public\ProjectController::class, 'updateStatus'])
         ->middleware('permission:projects.edit')
         ->name('projects.update-status');
 
     // Task Management Routes
-    Route::resource('tasks', App\Http\Controllers\TaskController::class)
+    Route::resource('tasks', App\Modules\Proyek\Controllers\Public\TaskController::class)
         ->only(['index', 'show'])
         ->whereNumber('task')
         ->middleware('permission:tasks.view');
-    Route::resource('tasks', App\Http\Controllers\TaskController::class)
+    Route::resource('tasks', App\Modules\Proyek\Controllers\Public\TaskController::class)
         ->only(['create', 'store'])
         ->middleware('permission:tasks.create');
-    Route::resource('tasks', App\Http\Controllers\TaskController::class)
+    Route::resource('tasks', App\Modules\Proyek\Controllers\Public\TaskController::class)
         ->only(['edit', 'update'])
         ->middleware('permission:tasks.edit');
-    Route::resource('tasks', App\Http\Controllers\TaskController::class)
+    Route::resource('tasks', App\Modules\Proyek\Controllers\Public\TaskController::class)
         ->only(['destroy'])
         ->middleware('permission:tasks.delete');
-    Route::patch('tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])
+    Route::patch('tasks/{task}/status', [App\Modules\Proyek\Controllers\Public\TaskController::class, 'updateStatus'])
         ->middleware('permission:tasks.edit')
         ->name('tasks.update-status');
-    Route::patch('tasks/{task}/assignment', [App\Http\Controllers\TaskController::class, 'updateAssignment'])
+    Route::patch('tasks/{task}/assignment', [App\Modules\Proyek\Controllers\Public\TaskController::class, 'updateAssignment'])
         ->middleware('permission:tasks.assign')
         ->name('tasks.update-assignment');
-    Route::patch('projects/{project}/tasks/reorder', [App\Http\Controllers\TaskController::class, 'reorder'])
+    Route::patch('projects/{project}/tasks/reorder', [App\Modules\Proyek\Controllers\Public\TaskController::class, 'reorder'])
         ->middleware('permission:tasks.edit')
         ->name('projects.tasks.reorder');
 
     // Document Management Routes
-    Route::resource('documents', App\Http\Controllers\DocumentController::class)
+    Route::resource('documents', App\Modules\Proyek\Controllers\Public\DocumentController::class)
         ->only(['index', 'show'])
         ->whereNumber('document')
         ->middleware('permission:documents.view');
-    Route::resource('documents', App\Http\Controllers\DocumentController::class)
+    Route::resource('documents', App\Modules\Proyek\Controllers\Public\DocumentController::class)
         ->only(['create', 'store', 'edit', 'update'])
         ->middleware('permission:documents.upload');
-    Route::resource('documents', App\Http\Controllers\DocumentController::class)
+    Route::resource('documents', App\Modules\Proyek\Controllers\Public\DocumentController::class)
         ->only(['destroy'])
         ->middleware('permission:documents.delete');
-    Route::get('documents/{document}/download', [App\Http\Controllers\DocumentController::class, 'download'])
+    Route::get('documents/{document}/download', [App\Modules\Proyek\Controllers\Public\DocumentController::class, 'download'])
         ->middleware('permission:documents.view')
         ->name('documents.download');
-    Route::get('api/tasks-by-project', [App\Http\Controllers\DocumentController::class, 'getTasksByProject'])
+    Route::get('api/tasks-by-project', [App\Modules\Proyek\Controllers\Public\DocumentController::class, 'getTasksByProject'])
         ->middleware('permission:documents.view')
         ->name('api.tasks-by-project');
 

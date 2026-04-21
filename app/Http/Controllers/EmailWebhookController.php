@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\EmailInbox;
 use App\Models\EmailAccount;
 use App\Models\EmailAssignment;
+use App\Notifications\NewEmailReceivedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class EmailWebhookController extends Controller
@@ -228,14 +230,20 @@ class EmailWebhookController extends Controller
     protected function sendAutoReply($emailAccount, $recipientEmail, $inbox)
     {
         try {
-            // TODO: Implement actual email sending via Brevo
-            Log::info('Auto-reply would be sent', [
+            $replyMessage = $emailAccount->auto_reply_message ?? 'Terima kasih atas pesan Anda. Tim kami akan segera menghubungi Anda.';
+            $fromName = $emailAccount->display_name ?? config('mail.from.name');
+
+            Mail::raw($replyMessage, function ($message) use ($emailAccount, $recipientEmail, $fromName, $inbox) {
+                $message->to($recipientEmail)
+                    ->from($emailAccount->email, $fromName)
+                    ->subject('Re: ' . ($inbox->subject ?? 'Pesan Anda'));
+            });
+
+            Log::info('Auto-reply sent', [
                 'from' => $emailAccount->email,
                 'to' => $recipientEmail,
-                'message' => $emailAccount->auto_reply_message
             ]);
 
-            // Mark that auto-reply was sent
             $inbox->update(['tags' => ['auto_reply_sent']]);
 
         } catch (\Exception $e) {
@@ -252,7 +260,6 @@ class EmailWebhookController extends Controller
     protected function notifyAssignedUsers($emailAccount, $inbox)
     {
         try {
-            // Get users who should be notified
             $usersToNotify = EmailAssignment::where('email_account_id', $emailAccount->id)
                 ->where('is_active', true)
                 ->where('notify_on_receive', true)
@@ -260,14 +267,15 @@ class EmailWebhookController extends Controller
                 ->get();
 
             foreach ($usersToNotify as $assignment) {
-                Log::info('Notification would be sent to user', [
-                    'user' => optional($assignment->user)->email,
-                    'email_account' => $emailAccount->email,
-                    'inbox_id' => $inbox->id
-                ]);
+                if (!$assignment->user) continue;
 
-                // TODO: Implement actual notification
-                // Notification::send($assignment->user, new NewEmailReceived($inbox, $emailAccount));
+                $assignment->user->notify(new NewEmailReceivedNotification($inbox, $emailAccount));
+
+                Log::info('Email notification sent to user', [
+                    'user' => $assignment->user->email,
+                    'email_account' => $emailAccount->email,
+                    'inbox_id' => $inbox->id,
+                ]);
             }
 
         } catch (\Exception $e) {

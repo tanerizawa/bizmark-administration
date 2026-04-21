@@ -86,13 +86,13 @@ use Illuminate\Support\Facades\Route;
         ->name('cash-accounts.create');
     
     Route::middleware(['permission:finances.manage_payments', '2fa'])->group(function () {
-        Route::post('projects/{project}/payments', [App\Http\Controllers\ProjectPaymentController::class, 'store'])->name('projects.payments.store');
-        Route::delete('payments/{payment}', [App\Http\Controllers\ProjectPaymentController::class, 'destroy'])->name('payments.destroy');
+        Route::post('projects/{project}/payments', [App\Modules\Proyek\Controllers\Public\ProjectPaymentController::class, 'store'])->name('projects.payments.store');
+        Route::delete('payments/{payment}', [App\Modules\Proyek\Controllers\Public\ProjectPaymentController::class, 'destroy'])->name('payments.destroy');
     });
 
     Route::middleware(['permission:finances.manage_expenses', '2fa'])->group(function () {
-        Route::post('projects/{project}/expenses', [App\Http\Controllers\ProjectExpenseController::class, 'store'])->name('projects.expenses.store');
-        Route::delete('expenses/{expense}', [App\Http\Controllers\ProjectExpenseController::class, 'destroy'])->name('expenses.destroy');
+        Route::post('projects/{project}/expenses', [App\Modules\Proyek\Controllers\Public\ProjectExpenseController::class, 'store'])->name('projects.expenses.store');
+        Route::delete('expenses/{expense}', [App\Modules\Proyek\Controllers\Public\ProjectExpenseController::class, 'destroy'])->name('expenses.destroy');
     });
 
     Route::middleware(['permission:finances.manage_accounts', '2fa'])->group(function () {
@@ -208,123 +208,126 @@ use Illuminate\Support\Facades\Route;
 
     // Master Data - Permit Management Routes (Phase 2A)
     Route::middleware('permission:master_data.manage')->group(function () {
-        Route::resource('permit-types', App\Http\Controllers\PermitTypeController::class);
-        Route::patch('permit-types/{permitType}/toggle-status', [App\Http\Controllers\PermitTypeController::class, 'toggleStatus'])->name('permit-types.toggle-status');
+        Route::resource('permit-types', App\Modules\Perizinan\Controllers\Public\PermitTypeController::class);
+        Route::patch('permit-types/{permitType}/toggle-status', [App\Modules\Perizinan\Controllers\Public\PermitTypeController::class, 'toggleStatus'])->name('permit-types.toggle-status');
 
-        Route::resource('permit-templates', App\Http\Controllers\PermitTemplateController::class);
-        Route::post('permit-templates/{permitTemplate}/apply', [App\Http\Controllers\PermitTemplateController::class, 'applyToProject'])->name('permit-templates.apply');
+        Route::resource('permit-templates', App\Modules\Perizinan\Controllers\Public\PermitTemplateController::class);
+        Route::post('permit-templates/{permitTemplate}/apply', [App\Modules\Perizinan\Controllers\Public\PermitTemplateController::class, 'applyToProject'])->name('permit-templates.apply');
     });
 
     // Project Permit Management Routes (Phase 2A - Sprint 3)
     Route::middleware('permission:projects.view')->group(function () {
         // Individual permit status update (used by permits tab)
-        Route::patch('permits/{permit}/status', [App\Http\Controllers\ProjectPermitController::class, 'updateStatus'])->name('permits.update-status');
+        Route::patch('permits/{permit}/status', [App\Modules\Perizinan\Controllers\Public\ProjectPermitController::class, 'updateStatus'])->name('permits.update-status');
     });
     
     // Note: These routes are legacy and might overlap with PermitController routes below
-    // Route::post('projects/{project}/permits', [App\Http\Controllers\ProjectPermitController::class, 'store'])->name('projects.permits.store');
-    // Route::post('projects/{project}/permits/apply-template', [App\Http\Controllers\ProjectPermitController::class, 'applyTemplate'])->name('projects.permits.apply-template');
-    // Route::patch('projects/{project}/permits/reorder', [App\Http\Controllers\ProjectPermitController::class, 'reorder'])->name('projects.permits.reorder.old');
-    // Route::post('permits/{permit}/dependencies', [App\Http\Controllers\ProjectPermitController::class, 'addDependency'])->name('permits.add-dependency');
-    // Route::delete('permits/{permit}/dependencies/{dependency}', [App\Http\Controllers\ProjectPermitController::class, 'removeDependency'])->name('permits.remove-dependency');
-    // Route::delete('permits/{permit}', [App\Http\Controllers\ProjectPermitController::class, 'destroy'])->name('permits.destroy');
+    // Route::post('projects/{project}/permits', [App\Modules\Perizinan\Controllers\Public\ProjectPermitController::class, 'store'])->name('projects.permits.store');
+    // Route::post('projects/{project}/permits/apply-template', [App\Modules\Perizinan\Controllers\Public\ProjectPermitController::class, 'applyTemplate'])->name('projects.permits.apply-template');
+    // Route::patch('projects/{project}/permits/reorder', [App\Modules\Perizinan\Controllers\Public\ProjectPermitController::class, 'reorder'])->name('projects.permits.reorder.old');
+    // Route::post('permits/{permit}/dependencies', [App\Modules\Perizinan\Controllers\Public\ProjectPermitController::class, 'addDependency'])->name('permits.add-dependency');
+    // Route::delete('permits/{permit}/dependencies/{dependency}', [App\Modules\Perizinan\Controllers\Public\ProjectPermitController::class, 'removeDependency'])->name('permits.remove-dependency');
+    // Route::delete('permits/{permit}', [App\Modules\Perizinan\Controllers\Public\ProjectPermitController::class, 'destroy'])->name('permits.destroy');
 
     // Financial Tab Management Routes (Phase 2A - Sprint 6)
-    // Refactored: FinancialController (1089 LOC) dipecah ke per-domain controller di App\Http\Controllers\Financial\*
-    Route::get('projects/{project}/financial', [App\Http\Controllers\Financial\OverviewController::class, 'index'])
+    // Refactored: FinancialController (1089 LOC) dipecah ke per-domain controller di App\Modules\Finansial\Controllers\*
+    Route::get('projects/{project}/financial', [App\Modules\Finansial\Controllers\OverviewController::class, 'index'])
         ->middleware('permission:invoices.view')
         ->name('projects.financial');
 
-    Route::post('projects/{project}/invoices', [App\Http\Controllers\Financial\InvoiceController::class, 'store'])
+    Route::post('projects/{project}/invoices', [App\Modules\Finansial\Controllers\InvoiceController::class, 'store'])
         ->middleware(['permission:invoices.create', '2fa'])
         ->name('projects.invoices.store');
-    Route::get('invoices/{invoice}', [App\Http\Controllers\Financial\InvoiceController::class, 'show'])
+    Route::get('invoices/{invoice}', [App\Modules\Finansial\Controllers\InvoiceController::class, 'show'])
         ->middleware('permission:invoices.view')
         ->name('invoices.show');
-    Route::get('invoices/{invoice}/pdf', [App\Http\Controllers\Financial\InvoiceController::class, 'downloadPDF'])
+    Route::get('invoices/{invoice}/pdf', [App\Modules\Finansial\Controllers\InvoiceController::class, 'downloadPDF'])
         ->middleware('permission:invoices.view')
         ->name('invoices.download-pdf');
-    Route::patch('invoices/{invoice}/status', [App\Http\Controllers\Financial\InvoiceController::class, 'updateStatus'])
+    Route::patch('invoices/{invoice}/status', [App\Modules\Finansial\Controllers\InvoiceController::class, 'updateStatus'])
         ->middleware(['permission:invoices.edit', '2fa'])
         ->name('invoices.update-status');
-    Route::post('invoices/{invoice}/payment', [App\Http\Controllers\Financial\InvoiceController::class, 'recordPayment'])
+    Route::post('invoices/{invoice}/payment', [App\Modules\Finansial\Controllers\InvoiceController::class, 'recordPayment'])
         ->middleware(['permission:finances.manage_payments', '2fa'])
         ->name('invoices.record-payment');
-    Route::delete('invoices/{invoice}', [App\Http\Controllers\Financial\InvoiceController::class, 'destroy'])
+    Route::post('invoices/{invoice}/send', [App\Modules\Finansial\Controllers\InvoiceController::class, 'send'])
+        ->middleware(['permission:invoices.edit'])
+        ->name('invoices.send');
+    Route::delete('invoices/{invoice}', [App\Modules\Finansial\Controllers\InvoiceController::class, 'destroy'])
         ->middleware(['permission:invoices.delete', '2fa'])
         ->name('invoices.destroy');
 
-    Route::post('projects/{project}/direct-income', [App\Http\Controllers\Financial\DirectIncomeController::class, 'store'])
+    Route::post('projects/{project}/direct-income', [App\Modules\Finansial\Controllers\DirectIncomeController::class, 'store'])
         ->middleware(['permission:finances.manage_payments', '2fa'])
         ->name('projects.direct-income.store');
-    Route::get('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'edit'])
+    Route::get('projects/{project}/direct-income/{payment}', [App\Modules\Finansial\Controllers\DirectIncomeController::class, 'edit'])
         ->middleware(['permission:finances.manage_payments', '2fa'])
         ->name('projects.direct-income.edit');
-    Route::patch('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'update'])
+    Route::patch('projects/{project}/direct-income/{payment}', [App\Modules\Finansial\Controllers\DirectIncomeController::class, 'update'])
         ->middleware(['permission:finances.manage_payments', '2fa'])
         ->name('projects.direct-income.update');
-    Route::delete('projects/{project}/direct-income/{payment}', [App\Http\Controllers\Financial\DirectIncomeController::class, 'destroy'])
+    Route::delete('projects/{project}/direct-income/{payment}', [App\Modules\Finansial\Controllers\DirectIncomeController::class, 'destroy'])
         ->middleware(['permission:finances.manage_payments', '2fa'])
         ->name('projects.direct-income.destroy');
 
-    Route::post('projects/{project}/payment-schedules', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'store'])
+    Route::post('projects/{project}/payment-schedules', [App\Modules\Finansial\Controllers\PaymentScheduleController::class, 'store'])
         ->middleware(['permission:finances.manage_payments', '2fa'])
         ->name('projects.payment-schedules.store');
-    Route::patch('payment-schedules/{schedule}/paid', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'markPaid'])
+    Route::patch('payment-schedules/{schedule}/paid', [App\Modules\Finansial\Controllers\PaymentScheduleController::class, 'markPaid'])
         ->middleware(['permission:finances.manage_payments', '2fa'])
         ->name('payment-schedules.mark-paid');
-    Route::delete('payment-schedules/{schedule}', [App\Http\Controllers\Financial\PaymentScheduleController::class, 'destroy'])
+    Route::delete('payment-schedules/{schedule}', [App\Modules\Finansial\Controllers\PaymentScheduleController::class, 'destroy'])
         ->middleware(['permission:finances.manage_payments', '2fa'])
         ->name('payment-schedules.destroy');
 
-    Route::post('projects/{project}/financial-expenses', [App\Http\Controllers\Financial\ExpenseController::class, 'store'])
+    Route::post('projects/{project}/financial-expenses', [App\Modules\Finansial\Controllers\ExpenseController::class, 'store'])
         ->middleware(['permission:finances.manage_expenses', '2fa'])
         ->name('projects.financial-expenses.store');
-    Route::get('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'show'])
+    Route::get('financial-expenses/{expense}', [App\Modules\Finansial\Controllers\ExpenseController::class, 'show'])
         ->middleware('permission:finances.view')
         ->name('financial-expenses.show');
-    Route::patch('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'update'])
+    Route::patch('financial-expenses/{expense}', [App\Modules\Finansial\Controllers\ExpenseController::class, 'update'])
         ->middleware(['permission:finances.manage_expenses', '2fa'])
         ->name('financial-expenses.update');
-    Route::delete('financial-expenses/{expense}', [App\Http\Controllers\Financial\ExpenseController::class, 'destroy'])
+    Route::delete('financial-expenses/{expense}', [App\Modules\Finansial\Controllers\ExpenseController::class, 'destroy'])
         ->middleware(['permission:finances.manage_expenses', '2fa'])
         ->name('financial-expenses.destroy');
-    Route::delete('financial-expenses/{expense}/delete-receipt', [App\Http\Controllers\Financial\ExpenseController::class, 'deleteReceipt'])
+    Route::delete('financial-expenses/{expense}/delete-receipt', [App\Modules\Finansial\Controllers\ExpenseController::class, 'deleteReceipt'])
         ->middleware(['permission:finances.manage_expenses', '2fa'])
         ->name('financial-expenses.delete-receipt');
-    Route::patch('financial-expenses/{expense}/mark-invoiced', [App\Http\Controllers\Financial\ExpenseController::class, 'markInvoiced'])
+    Route::patch('financial-expenses/{expense}/mark-invoiced', [App\Modules\Finansial\Controllers\ExpenseController::class, 'markInvoiced'])
         ->middleware(['permission:finances.manage_expenses', '2fa'])
         ->name('financial-expenses.mark-invoiced');
-    Route::patch('financial-expenses/{expense}/record-payment', [App\Http\Controllers\Financial\ExpenseController::class, 'recordReceivablePayment'])
+    Route::patch('financial-expenses/{expense}/record-payment', [App\Modules\Finansial\Controllers\ExpenseController::class, 'recordReceivablePayment'])
         ->middleware(['permission:finances.manage_expenses', '2fa'])
         ->name('financial-expenses.record-payment');
-    Route::patch('financial-expenses/{expense}/remove-receivable', [App\Http\Controllers\Financial\ExpenseController::class, 'removeReceivable'])
+    Route::patch('financial-expenses/{expense}/remove-receivable', [App\Modules\Finansial\Controllers\ExpenseController::class, 'removeReceivable'])
         ->middleware(['permission:finances.manage_expenses', '2fa'])
         ->name('financial-expenses.remove-receivable');
 
     // Excel Export Routes (Phase 2A - Sprint 7)
     Route::middleware(['permission:finances.view_reports', '2fa'])->group(function () {
-        Route::get('exports/invoices', [App\Http\Controllers\Financial\ExportController::class, 'invoices'])->name('exports.invoices');
-        Route::get('exports/invoices/{invoice}', [App\Http\Controllers\Financial\ExportController::class, 'invoiceDetail'])->name('exports.invoice-detail');
-        Route::get('exports/expenses', [App\Http\Controllers\Financial\ExportController::class, 'expenses'])->name('exports.expenses');
-        Route::get('exports/financial-report', [App\Http\Controllers\Financial\ExportController::class, 'financialReport'])->name('exports.financial-report');
+        Route::get('exports/invoices', [App\Modules\Finansial\Controllers\ExportController::class, 'invoices'])->name('exports.invoices');
+        Route::get('exports/invoices/{invoice}', [App\Modules\Finansial\Controllers\ExportController::class, 'invoiceDetail'])->name('exports.invoice-detail');
+        Route::get('exports/expenses', [App\Modules\Finansial\Controllers\ExportController::class, 'expenses'])->name('exports.expenses');
+        Route::get('exports/financial-report', [App\Modules\Finansial\Controllers\ExportController::class, 'financialReport'])->name('exports.financial-report');
     });
 
     // Permit Management Routes (Phase 2A - Sprint 8)
     Route::middleware('permission:projects.view')->group(function () {
-        Route::get('projects/{project}/permits', [App\Http\Controllers\PermitController::class, 'index'])->name('projects.permits');
-        Route::post('projects/{project}/permits', [App\Http\Controllers\PermitController::class, 'store'])->name('projects.permits.store');
-        Route::patch('permits/{permit}', [App\Http\Controllers\PermitController::class, 'update'])->name('permits.update');
-        Route::delete('permits/{permit}', [App\Http\Controllers\PermitController::class, 'destroy'])->name('permits.destroy');
-        Route::post('projects/{project}/permits/apply-template', [App\Http\Controllers\PermitController::class, 'applyTemplate'])->name('projects.permits.apply-template');
-        Route::post('permits/{permit}/dependencies', [App\Http\Controllers\PermitController::class, 'addDependency'])->name('permits.add-dependency');
-        Route::post('projects/{project}/permits/reorder', [App\Http\Controllers\PermitController::class, 'reorder'])->name('projects.permits.reorder');
+        Route::get('projects/{project}/permits', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'index'])->name('projects.permits');
+        Route::post('projects/{project}/permits', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'store'])->name('projects.permits.store');
+        Route::patch('permits/{permit}', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'update'])->name('permits.update');
+        Route::delete('permits/{permit}', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'destroy'])->name('permits.destroy');
+        Route::post('projects/{project}/permits/apply-template', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'applyTemplate'])->name('projects.permits.apply-template');
+        Route::post('permits/{permit}/dependencies', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'addDependency'])->name('permits.add-dependency');
+        Route::post('projects/{project}/permits/reorder', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'reorder'])->name('projects.permits.reorder');
         // Bulk operations
-        Route::post('projects/{project}/permits/bulk-update-status', [App\Http\Controllers\PermitController::class, 'bulkUpdateStatus'])->name('projects.permits.bulk-update-status');
-        Route::post('projects/{project}/permits/bulk-delete', [App\Http\Controllers\PermitController::class, 'bulkDelete'])->name('projects.permits.bulk-delete');
+        Route::post('projects/{project}/permits/bulk-update-status', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'bulkUpdateStatus'])->name('projects.permits.bulk-update-status');
+        Route::post('projects/{project}/permits/bulk-delete', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'bulkDelete'])->name('projects.permits.bulk-delete');
         // Document management
-        Route::post('projects/{project}/permits/{permit}/documents/upload', [App\Http\Controllers\PermitController::class, 'uploadDocument'])->name('permits.documents.upload');
-        Route::get('projects/{project}/permits/documents/{document}/download', [App\Http\Controllers\PermitController::class, 'downloadDocument'])->name('permits.documents.download');
-        Route::delete('projects/{project}/permits/documents/{document}', [App\Http\Controllers\PermitController::class, 'deleteDocument'])->name('permits.documents.delete');
-        Route::post('permits/documents/{document}/delete', [App\Http\Controllers\PermitController::class, 'deleteDocumentPost'])->name('permits.documents.delete-post');
+        Route::post('projects/{project}/permits/{permit}/documents/upload', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'uploadDocument'])->name('permits.documents.upload');
+        Route::get('projects/{project}/permits/documents/{document}/download', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'downloadDocument'])->name('permits.documents.download');
+        Route::delete('projects/{project}/permits/documents/{document}', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'deleteDocument'])->name('permits.documents.delete');
+        Route::post('permits/documents/{document}/delete', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'deleteDocumentPost'])->name('permits.documents.delete-post');
     });

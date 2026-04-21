@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ServiceInquiry;
+use App\Models\User;
+use App\Notifications\PMAInquiryReceivedNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -95,8 +98,15 @@ class PMAInquiryController extends Controller
                 'utm_campaign' => $request->input('utm_campaign'),
             ]);
 
-            // Send notification email (async in production)
-            // TODO: Dispatch job to send welcome email and notify admin
+            Mail::raw(
+                "Dear {$request->full_name},\n\nThank you for your PMA inquiry (Ref: {$inquiryNumber}). Our team will contact you within 1 business day.\n\nBest regards,\nBizmark.id Team",
+                fn ($msg) => $msg->to($request->email)->subject('PMA Inquiry Received — ' . $inquiryNumber)
+            );
+            $notification = new PMAInquiryReceivedNotification($inquiry);
+            User::where('is_active', true)
+                ->whereHas('role', fn ($q) => $q->where('name', 'admin'))
+                ->get()
+                ->each->notify($notification);
 
             return response()->json([
                 'success' => true,

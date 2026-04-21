@@ -7,6 +7,7 @@ use App\Models\ProjectExpense;
 use App\Models\Document;
 use App\Models\Invoice;
 use App\Models\Project;
+use App\Notifications\ApprovalDecisionNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -438,8 +439,25 @@ class ApprovalController extends Controller
      */
     private function sendApprovalNotification($item, $action)
     {
-        // TODO: Implement notification system
-        // This would send push notification via service worker
-        // notification()->send($item->user, new ApprovalNotification($item, $action));
+        $notifiable = null;
+        $itemType = 'item';
+        $itemLabel = '#' . $item->id;
+
+        if ($item instanceof ProjectExpense) {
+            $notifiable = $item->creator ?? null;
+            $itemType = 'expense';
+            $itemLabel = $item->description ?? $itemLabel;
+        } elseif ($item instanceof Document) {
+            $notifiable = $item->project?->manager ?? null;
+            $itemType = 'document';
+            $itemLabel = $item->title ?? $itemLabel;
+        } elseif ($item instanceof Invoice) {
+            $itemType = 'invoice';
+            $itemLabel = $item->invoice_number ?? $itemLabel;
+        }
+
+        if ($notifiable && method_exists($notifiable, 'notify')) {
+            $notifiable->notify(new ApprovalDecisionNotification($itemType, $itemLabel, $action));
+        }
     }
 }

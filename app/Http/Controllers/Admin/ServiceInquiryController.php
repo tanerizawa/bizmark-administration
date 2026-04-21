@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ServiceInquiry;
 use App\Models\Client;
 use App\Models\PermitApplication;
+use App\Notifications\ClientWelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -51,17 +52,21 @@ class ServiceInquiryController extends Controller
 
         $inquiries = $query->paginate(20);
 
-        // Stats for dashboard cards
-        $stats = [
-            'total' => ServiceInquiry::count(),
-            'new' => ServiceInquiry::where('status', 'new')->count(),
-            'analyzed' => ServiceInquiry::where('status', 'analyzed')->count(),
-            'contacted' => ServiceInquiry::where('status', 'contacted')->count(),
-            'converted' => ServiceInquiry::where('status', 'converted')->count(),
-            'high_priority' => ServiceInquiry::where('priority', 'high')->count(),
-            'this_week' => ServiceInquiry::where('created_at', '>=', now()->startOfWeek())->count(),
-            'this_month' => ServiceInquiry::where('created_at', '>=', now()->startOfMonth())->count(),
-        ];
+        // Stats for dashboard cards — single aggregated query instead of 8 separate counts
+        $startOfWeek = now()->startOfWeek();
+        $startOfMonth = now()->startOfMonth();
+        $statsRow = DB::table('service_inquiries')->selectRaw("
+            COUNT(*) as total,
+            SUM(status = 'new') as new,
+            SUM(status = 'analyzed') as analyzed,
+            SUM(status = 'contacted') as contacted,
+            SUM(status = 'converted') as converted,
+            SUM(priority = 'high') as high_priority,
+            SUM(created_at >= ?) as this_week,
+            SUM(created_at >= ?) as this_month
+        ", [$startOfWeek, $startOfMonth])->first();
+
+        $stats = (array) $statsRow;
 
         return view('admin.service-inquiries.index', compact('inquiries', 'stats'));
     }
@@ -183,7 +188,9 @@ class ServiceInquiryController extends Controller
                     'converted_at' => now(),
                 ]);
 
-                // TODO: Send email to client with login credentials if new account
+                if ($request->create_client_account && $request->password) {
+                    $client->notify(new ClientWelcomeNotification($client, $request->password));
+                }
 
                 DB::commit();
 

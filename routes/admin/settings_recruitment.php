@@ -43,26 +43,26 @@ use Illuminate\Support\Facades\Route;
     // Career Management Routes (Admin)
     Route::name('admin.')->middleware('permission:recruitment.view')->group(function () {
         // Job Vacancy Management
-        Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class)->only(['index', 'show']);
-        Route::resource('jobs', App\Http\Controllers\Admin\JobVacancyController::class)
+        Route::resource('jobs', App\Modules\HRM\Controllers\Admin\JobVacancyController::class)->only(['index', 'show']);
+        Route::resource('jobs', App\Modules\HRM\Controllers\Admin\JobVacancyController::class)
             ->only(['create', 'store', 'edit', 'update', 'destroy'])
             ->middleware('permission:recruitment.manage_jobs');
         
         // Tab Views for Job Detail Hub
-        Route::get('jobs/{id}/applications', [App\Http\Controllers\Admin\JobVacancyController::class, 'applications'])->name('jobs.applications');
-        Route::get('jobs/{id}/pipeline', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'jobPipeline'])->name('jobs.pipeline');
-        Route::get('jobs/{id}/tests', [App\Http\Controllers\Admin\JobVacancyController::class, 'tests'])->name('jobs.tests');
-        Route::get('jobs/{id}/interviews', [App\Http\Controllers\Admin\InterviewScheduleController::class, 'jobInterviews'])->name('jobs.interviews');
+        Route::get('jobs/{id}/applications', [App\Modules\HRM\Controllers\Admin\JobVacancyController::class, 'applications'])->name('jobs.applications');
+        Route::get('jobs/{id}/pipeline', [App\Modules\HRM\Controllers\Admin\RecruitmentPipelineController::class, 'jobPipeline'])->name('jobs.pipeline');
+        Route::get('jobs/{id}/tests', [App\Modules\HRM\Controllers\Admin\JobVacancyController::class, 'tests'])->name('jobs.tests');
+        Route::get('jobs/{id}/interviews', [App\Modules\HRM\Controllers\Admin\InterviewScheduleController::class, 'jobInterviews'])->name('jobs.interviews');
         
         // Job Application Management
-        Route::get('applications', [App\Http\Controllers\Admin\JobApplicationController::class, 'index'])->name('applications.index');
-        Route::get('applications/{id}', [App\Http\Controllers\Admin\JobApplicationController::class, 'show'])->name('applications.show');
-        Route::patch('applications/{id}/status', [App\Http\Controllers\Admin\JobApplicationController::class, 'updateStatus'])
+        Route::get('applications', [App\Modules\HRM\Controllers\Admin\JobApplicationController::class, 'index'])->name('applications.index');
+        Route::get('applications/{id}', [App\Modules\HRM\Controllers\Admin\JobApplicationController::class, 'show'])->name('applications.show');
+        Route::patch('applications/{id}/status', [App\Modules\HRM\Controllers\Admin\JobApplicationController::class, 'updateStatus'])
             ->middleware('permission:recruitment.process_applications')
             ->name('applications.update-status');
-        Route::get('applications/{id}/download-cv', [App\Http\Controllers\Admin\JobApplicationController::class, 'downloadCv'])->name('applications.download-cv');
-        Route::get('applications/{id}/download-portfolio', [App\Http\Controllers\Admin\JobApplicationController::class, 'downloadPortfolio'])->name('applications.download-portfolio');
-        Route::delete('applications/{id}', [App\Http\Controllers\Admin\JobApplicationController::class, 'destroy'])
+        Route::get('applications/{id}/download-cv', [App\Modules\HRM\Controllers\Admin\JobApplicationController::class, 'downloadCv'])->name('applications.download-cv');
+        Route::get('applications/{id}/download-portfolio', [App\Modules\HRM\Controllers\Admin\JobApplicationController::class, 'downloadPortfolio'])->name('applications.download-portfolio');
+        Route::delete('applications/{id}', [App\Modules\HRM\Controllers\Admin\JobApplicationController::class, 'destroy'])
             ->middleware('permission:recruitment.process_applications')
             ->name('applications.destroy');
     });

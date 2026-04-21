@@ -62,7 +62,7 @@
     @if(isset($users) && $users->count() > 0)
         <div class="space-y-3">
             @foreach($users as $user)
-            <a href="#" onclick="alert('Detail anggota coming soon'); return false;" 
+            <a href="{{ route('mobile.team.show', $user) }}"
                class="block bg-white rounded-xl p-4 border border-gray-200 active:bg-gray-50">
                 <div class="flex items-center gap-3">
                     {{-- Avatar --}}

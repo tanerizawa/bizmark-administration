@@ -279,8 +279,32 @@ function updateStatus(status) {
 }
 
 function sendInvoice() {
-    // TODO: Implement email sending
-    alert('Email sending feature coming soon!');
+    if (!confirm('Kirim invoice ini ke client via email?')) return;
+
+    const btn = document.querySelector('[onclick="sendInvoice()"]');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mengirim...'; }
+
+    fetch('{{ route("invoices.send", $invoice) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert(result.message);
+            location.reload();
+        } else {
+            alert(result.message || 'Gagal mengirim invoice');
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send Invoice'; }
+        }
+    })
+    .catch(() => {
+        alert('Terjadi kesalahan saat mengirim invoice');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send Invoice'; }
+    });
 }
 </script>
 @endsection

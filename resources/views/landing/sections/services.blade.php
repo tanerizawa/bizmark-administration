@@ -65,7 +65,7 @@
 
                     {{-- Footer Link --}}
                     <div class="pt-6 border-t border-[#5B8DBE]/10">
-                        <a href="{{ route('services.show', $service['slug']) }}" 
+                        <a href="{{ route('services.show.id', $slug) }}" 
                            class="inline-flex items-center gap-2 text-[#5B8DBE] font-semibold text-sm hover:gap-3 transition-all duration-300 group/link">
                             <span>Pelajari Lebih Lanjut</span>
                             <i class="fas fa-arrow-right text-xs group-hover/link:translate-x-1 transition-transform duration-300"></i>

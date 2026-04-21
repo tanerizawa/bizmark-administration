@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\ApplicationStatusLog;
+use App\Models\User;
+use App\Notifications\PaymentConfirmedNotification;
 use App\Services\ProjectConversionService;
 use App\Services\PermitApplicationWorkflowService;
 use Illuminate\Http\Request;
@@ -177,8 +179,13 @@ class PaymentCallbackController extends Controller
             ]);
         }
 
-        // TODO: Send email notification to client and admin
-        
+        $notification = new PaymentConfirmedNotification($payment);
+        $application?->client?->notify($notification);
+        User::where('is_active', true)
+            ->whereHas('role', fn ($q) => $q->where('name', 'admin'))
+            ->get()
+            ->each->notify($notification);
+
         Log::info('Payment successful', [
             'payment_number' => $payment->payment_number,
             'application_number' => $application->application_number,

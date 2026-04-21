@@ -50,10 +50,62 @@
         </div>
     </div>
 
+    {{-- Edit Profile Modal --}}
+    <div id="modal-edit-profile" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/50">
+        <div class="bg-white rounded-t-2xl w-full max-w-lg p-6 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-gray-900">Edit Profile</h3>
+                <button onclick="closeModal('modal-edit-profile')" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="form-edit-profile" class="space-y-3">
+                @csrf
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+                    <input type="text" name="name" id="edit-name" value="{{ $user->name }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" id="edit-email" value="{{ $user->email }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
+                    <input type="text" name="phone" id="edit-phone" value="{{ $user->phone ?? '' }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                </div>
+                <button type="submit" class="w-full py-3 bg-[#0A66C2] text-white rounded-xl font-semibold">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+    {{-- Change Password Modal --}}
+    <div id="modal-change-password" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/50">
+        <div class="bg-white rounded-t-2xl w-full max-w-lg p-6 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-gray-900">Ubah Password</h3>
+                <button onclick="closeModal('modal-change-password')" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="form-change-password" class="space-y-3">
+                @csrf
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password Saat Ini</label>
+                    <input type="password" name="current_password" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
+                    <input type="password" name="password" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" required minlength="8">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
+                    <input type="password" name="password_confirmation" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" required>
+                </div>
+                <button type="submit" class="w-full py-3 bg-amber-600 text-white rounded-xl font-semibold">Ubah Password</button>
+            </form>
+        </div>
+    </div>
+
     {{-- Menu Options --}}
     <div class="space-y-2">
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <a href="#" onclick="editProfile()" class="flex items-center gap-4 p-4 active:bg-gray-50">
+            <button onclick="openModal('modal-edit-profile')" class="w-full flex items-center gap-4 p-4 active:bg-gray-50 text-left">
                 <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
                     <i class="fas fa-user-edit text-[#0A66C2]"></i>
                 </div>
@@ -62,11 +114,11 @@
                     <div class="text-xs text-gray-500">Ubah nama, email, dan foto</div>
                 </div>
                 <i class="fas fa-chevron-right text-gray-400 text-sm"></i>
-            </a>
+            </button>
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <a href="#" onclick="changePassword()" class="flex items-center gap-4 p-4 active:bg-gray-50">
+            <button onclick="openModal('modal-change-password')" class="w-full flex items-center gap-4 p-4 active:bg-gray-50 text-left">
                 <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
                     <i class="fas fa-lock text-amber-600"></i>
                 </div>
@@ -75,11 +127,11 @@
                     <div class="text-xs text-gray-500">Keamanan akun</div>
                 </div>
                 <i class="fas fa-chevron-right text-gray-400 text-sm"></i>
-            </a>
+            </button>
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <a href="#" onclick="notificationSettings()" class="flex items-center gap-4 p-4 active:bg-gray-50">
+            <a href="{{ route('mobile.settings.preferences') }}" class="flex items-center gap-4 p-4 active:bg-gray-50">
                 <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
                     <i class="fas fa-bell text-purple-600"></i>
                 </div>
@@ -132,16 +184,82 @@
 </div>
 
 <script>
-function editProfile() {
-    alert('Feature coming soon: Edit Profile');
+function openModal(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('hidden');
+    el.classList.add('flex');
 }
 
-function changePassword() {
-    alert('Feature coming soon: Change Password');
+function closeModal(id) {
+    const el = document.getElementById(id);
+    el.classList.add('hidden');
+    el.classList.remove('flex');
 }
 
-function notificationSettings() {
-    alert('Feature coming soon: Notification Settings');
-}
+document.getElementById('form-edit-profile').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
+
+    fetch('{{ route("mobile.profile.update") }}', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+            name: document.getElementById('edit-name').value,
+            email: document.getElementById('edit-email').value,
+            phone: document.getElementById('edit-phone').value,
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            closeModal('modal-edit-profile');
+            location.reload();
+        } else {
+            alert(data.message || 'Gagal menyimpan');
+        }
+    })
+    .catch(() => alert('Terjadi kesalahan'))
+    .finally(() => { btn.disabled = false; btn.textContent = 'Simpan Perubahan'; });
+});
+
+document.getElementById('form-change-password').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(this));
+    if (data.password !== data.password_confirmation) {
+        alert('Konfirmasi password tidak cocok');
+        return;
+    }
+    const btn = this.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Mengubah...';
+
+    fetch('{{ route("mobile.profile.change-password") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(result => {
+        if (result.success) {
+            closeModal('modal-change-password');
+            alert(result.message);
+            this.reset();
+        } else {
+            alert(result.message || 'Gagal mengubah password');
+        }
+    })
+    .catch(() => alert('Terjadi kesalahan'))
+    .finally(() => { btn.disabled = false; btn.textContent = 'Ubah Password'; });
+});
 </script>
 @endsection

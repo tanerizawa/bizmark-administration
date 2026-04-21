@@ -3,14 +3,14 @@
 use App\Http\Controllers\Mobile\ApprovalController;
 use App\Http\Controllers\Mobile\ClientController;
 use App\Http\Controllers\Mobile\DashboardController;
-use App\Http\Controllers\Mobile\DocumentController;
+use App\Modules\Proyek\Controllers\Mobile\DocumentController;
 use App\Http\Controllers\Mobile\FinancialController;
 use App\Http\Controllers\Mobile\NotificationController;
 use App\Http\Controllers\Mobile\ProfileController;
-use App\Http\Controllers\Mobile\ProjectController;
+use App\Modules\Proyek\Controllers\Mobile\ProjectController;
 use App\Http\Controllers\Mobile\PushNotificationController;
-use App\Http\Controllers\Mobile\ReportController;
-use App\Http\Controllers\Mobile\TaskController;
+use App\Modules\Proyek\Controllers\Mobile\ReportController;
+use App\Modules\Proyek\Controllers\Mobile\TaskController;
 use App\Http\Controllers\Mobile\TeamController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -152,6 +152,7 @@ Route::prefix('m')->middleware(['auth'])->name('mobile.')->group(function () {
         Route::patch('/update', [ProfileController::class, 'update'])->name('update');
         Route::post('/avatar', [ProfileController::class, 'uploadAvatar'])->name('avatar');
         Route::post('/preferences', [ProfileController::class, 'updatePreferences'])->name('preferences');
+        Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
     });
 
     // Settings

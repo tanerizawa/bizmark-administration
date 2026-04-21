@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\RecruitmentController;
+use App\Modules\HRM\Controllers\Admin\RecruitmentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FaqAggregationController;
 use App\Http\Controllers\LocaleController;
@@ -164,13 +164,13 @@ Route::get('/kalkulator-perizinan', [App\Http\Controllers\CalculatorController::
 Route::post('/kalkulator-perizinan/calculate', [App\Http\Controllers\CalculatorController::class, 'calculate'])->name('calculator.calculate');
 
 // Polygon SHP Maker Tool (Public)
-Route::get('/polygon-shp-maker', [App\Http\Controllers\PolygonToolController::class, 'index'])->name('polygon.shp.index');
+Route::get('/polygon-shp-maker', [App\Modules\Perizinan\Controllers\Public\PolygonToolController::class, 'index'])->name('polygon.shp.index');
 
 // Career/Jobs Pages (Public)
-Route::get('/karir', [App\Http\Controllers\JobVacancyController::class, 'index'])->name('career.index');
-Route::get('/karir/{slug}', [App\Http\Controllers\JobVacancyController::class, 'show'])->name('career.show');
-Route::get('/karir/{vacancy_id}/apply', [App\Http\Controllers\JobApplicationController::class, 'create'])->name('career.apply');
-Route::post('/karir/apply', [App\Http\Controllers\JobApplicationController::class, 'store'])->name('career.apply.store');
+Route::get('/karir', [App\Modules\HRM\Controllers\Public\JobVacancyController::class, 'index'])->name('career.index');
+Route::get('/karir/{slug}', [App\Modules\HRM\Controllers\Public\JobVacancyController::class, 'show'])->name('career.show');
+Route::get('/karir/{vacancy_id}/apply', [App\Modules\HRM\Controllers\Public\JobApplicationController::class, 'create'])->name('career.apply');
+Route::post('/karir/apply', [App\Modules\HRM\Controllers\Public\JobApplicationController::class, 'store'])->name('career.apply.store');
 
 // Newsletter Subscription (Public)
 Route::post('/subscribe', [App\Http\Controllers\SubscriberController::class, 'subscribe'])->name('newsletter.subscribe');
@@ -272,20 +272,20 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::get('/services/{kbliCode}', [App\Http\Controllers\Client\ServiceController::class, 'show'])->name('services.show');
 
         // Application Routes
-        Route::get('/applications', [App\Http\Controllers\Client\ApplicationController::class, 'index'])->name('applications.index');
-        Route::get('/applications/create', [App\Http\Controllers\Client\ApplicationController::class, 'create'])->name('applications.create');
-        Route::post('/applications', [App\Http\Controllers\Client\ApplicationController::class, 'store'])->name('applications.store');
-        Route::post('/applications/select-permits', [App\Http\Controllers\Client\ApplicationController::class, 'selectPermits'])->name('applications.select-permits');
-        Route::get('/applications/create-package', [App\Http\Controllers\Client\ApplicationController::class, 'createPackage'])->name('applications.create-package');
-        Route::post('/applications/store-package', [App\Http\Controllers\Client\ApplicationController::class, 'storeMultiple'])->name('applications.store-package');
-        Route::get('/applications/{id}', [App\Http\Controllers\Client\ApplicationController::class, 'show'])->name('applications.show');
-        Route::get('/applications/{id}/edit', [App\Http\Controllers\Client\ApplicationController::class, 'edit'])->name('applications.edit');
-        Route::put('/applications/{id}', [App\Http\Controllers\Client\ApplicationController::class, 'update'])->name('applications.update');
-        Route::get('/applications/{id}/preview-submit', [App\Http\Controllers\Client\ApplicationController::class, 'previewSubmit'])->name('applications.preview-submit');
-        Route::post('/applications/{id}/submit', [App\Http\Controllers\Client\ApplicationController::class, 'submit'])->name('applications.submit');
-        Route::post('/applications/{id}/cancel', [App\Http\Controllers\Client\ApplicationController::class, 'cancel'])->name('applications.cancel');
-        Route::post('/applications/{id}/documents', [App\Http\Controllers\Client\ApplicationController::class, 'uploadDocument'])->name('applications.documents.upload');
-        Route::delete('/applications/{applicationId}/documents/{documentId}', [App\Http\Controllers\Client\ApplicationController::class, 'deleteDocument'])->name('applications.documents.delete');
+        Route::get('/applications', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'index'])->name('applications.index');
+        Route::get('/applications/create', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'create'])->name('applications.create');
+        Route::post('/applications', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'store'])->name('applications.store');
+        Route::post('/applications/select-permits', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'selectPermits'])->name('applications.select-permits');
+        Route::get('/applications/create-package', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'createPackage'])->name('applications.create-package');
+        Route::post('/applications/store-package', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'storeMultiple'])->name('applications.store-package');
+        Route::get('/applications/{id}', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'show'])->name('applications.show');
+        Route::get('/applications/{id}/edit', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'edit'])->name('applications.edit');
+        Route::put('/applications/{id}', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'update'])->name('applications.update');
+        Route::get('/applications/{id}/preview-submit', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'previewSubmit'])->name('applications.preview-submit');
+        Route::post('/applications/{id}/submit', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'submit'])->name('applications.submit');
+        Route::post('/applications/{id}/cancel', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'cancel'])->name('applications.cancel');
+        Route::post('/applications/{id}/documents', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'uploadDocument'])->name('applications.documents.upload');
+        Route::delete('/applications/{applicationId}/documents/{documentId}', [App\Modules\Proyek\Controllers\Client\ApplicationController::class, 'deleteDocument'])->name('applications.documents.delete');
 
         // Quotation Routes (Phase 3.4)
         Route::get('/applications/{id}/quotation', [App\Http\Controllers\Client\ClientQuotationController::class, 'show'])->name('quotations.show');
@@ -305,13 +305,13 @@ Route::prefix('client')->name('client.')->group(function () {
             ->name('notifications.read-all');
 
         // Project Routes
-        Route::get('/projects', [App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
-        Route::get('/projects/{id}', [App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
+        Route::get('/projects', [App\Modules\Proyek\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/{id}', [App\Modules\Proyek\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
 
         // Document Routes
-        Route::get('/documents', [App\Http\Controllers\Client\DocumentController::class, 'index'])->name('documents.index');
-        Route::post('/documents', [App\Http\Controllers\Client\DocumentController::class, 'store'])->name('documents.store');
-        Route::get('/documents/{id}/download', [App\Http\Controllers\Client\DocumentController::class, 'download'])->name('documents.download');
+        Route::get('/documents', [App\Modules\Proyek\Controllers\Client\DocumentController::class, 'index'])->name('documents.index');
+        Route::post('/documents', [App\Modules\Proyek\Controllers\Client\DocumentController::class, 'store'])->name('documents.store');
+        Route::get('/documents/{id}/download', [App\Modules\Proyek\Controllers\Client\DocumentController::class, 'download'])->name('documents.download');
 
         // Profile Routes
         Route::get('/profile', [App\Http\Controllers\Client\ProfileController::class, 'edit'])->name('profile.edit');
@@ -394,7 +394,7 @@ Route::middleware(['auth', 'permission:email.manage'])->prefix('admin')->name('a
 // Admin: Permit Application Management (Phase 3)
 Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function () {
     // Unified Permit Management Interface (New Tabbed Interface)
-    Route::get('permits', [App\Http\Controllers\Admin\PermitManagementController::class, 'index'])
+    Route::get('permits', [App\Modules\Perizinan\Controllers\Admin\PermitManagementController::class, 'index'])
         ->middleware(['permission:permits.manage'])
         ->name('permits.index');
 
@@ -404,35 +404,35 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
 
     Route::middleware(['permission:permits.manage'])->group(function () {
         // Permit Application List & Detail
-        Route::get('permit-applications', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'index'])
+        Route::get('permit-applications', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'index'])
             ->name('permit-applications.index');
-        Route::get('permit-applications/{id}', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'show'])
+        Route::get('permit-applications/{id}', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'show'])
             ->name('permit-applications.show');
 
         // Review Actions
-        Route::post('permit-applications/{id}/start-review', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'startReview'])
+        Route::post('permit-applications/{id}/start-review', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'startReview'])
             ->name('permit-applications.start-review');
-        Route::post('permit-applications/{id}/update-status', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'updateStatus'])
+        Route::post('permit-applications/{id}/update-status', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'updateStatus'])
             ->name('permit-applications.update-status');
-        Route::post('permit-applications/{id}/add-notes', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'addNotes'])
+        Route::post('permit-applications/{id}/add-notes', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'addNotes'])
             ->name('permit-applications.add-notes');
 
         // Document Verification
-        Route::post('permit-applications/{application}/documents/{document}/verify', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'verifyDocument'])
+        Route::post('permit-applications/{application}/documents/{document}/verify', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'verifyDocument'])
             ->name('permit-applications.documents.verify');
-        Route::post('permit-applications/{id}/verify-all-documents', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'verifyAllDocuments'])
+        Route::post('permit-applications/{id}/verify-all-documents', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'verifyAllDocuments'])
             ->name('permit-applications.verify-all-documents');
-        Route::post('permit-applications/{id}/request-document-revision', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'requestDocumentRevision'])
+        Route::post('permit-applications/{id}/request-document-revision', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'requestDocumentRevision'])
             ->name('permit-applications.request-document-revision');
-        Route::post('permit-applications/{id}/convert-to-project', [App\Http\Controllers\Admin\ApplicationManagementController::class, 'convertToProject'])
+        Route::post('permit-applications/{id}/convert-to-project', [App\Modules\Proyek\Controllers\Admin\ApplicationManagementController::class, 'convertToProject'])
             ->name('permit-applications.convert-to-project');
 
         // Package Revision Management
-        Route::get('permit-applications/{id}/revise', [App\Http\Controllers\Admin\PackageRevisionController::class, 'create'])
+        Route::get('permit-applications/{id}/revise', [App\Modules\Proyek\Controllers\Admin\PackageRevisionController::class, 'create'])
             ->name('permit-applications.revise');
-        Route::post('permit-applications/{id}/revisions', [App\Http\Controllers\Admin\PackageRevisionController::class, 'store'])
+        Route::post('permit-applications/{id}/revisions', [App\Modules\Proyek\Controllers\Admin\PackageRevisionController::class, 'store'])
             ->name('permit-applications.revisions.store');
-        Route::get('permit-applications/{applicationId}/revisions/{revisionId}', [App\Http\Controllers\Admin\PackageRevisionController::class, 'show'])
+        Route::get('permit-applications/{applicationId}/revisions/{revisionId}', [App\Modules\Proyek\Controllers\Admin\PackageRevisionController::class, 'show'])
             ->name('permit-applications.revisions.show');
 
         // Quotation Management
@@ -450,21 +450,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
             ->name('quotations.send-email');
 
         // Document Review (Phase 3)
-        Route::post('documents/{document}/approve', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approve'])
+        Route::post('documents/{document}/approve', [App\Modules\Proyek\Controllers\Admin\DocumentReviewController::class, 'approve'])
             ->name('documents.approve');
-        Route::post('documents/{document}/reject', [App\Http\Controllers\Admin\DocumentReviewController::class, 'reject'])
+        Route::post('documents/{document}/reject', [App\Modules\Proyek\Controllers\Admin\DocumentReviewController::class, 'reject'])
             ->name('documents.reject');
-        Route::post('documents/bulk-approve', [App\Http\Controllers\Admin\DocumentReviewController::class, 'bulkApprove'])
+        Route::post('documents/bulk-approve', [App\Modules\Proyek\Controllers\Admin\DocumentReviewController::class, 'bulkApprove'])
             ->name('documents.bulk-approve');
-        Route::post('applications/{application}/documents/approve-all', [App\Http\Controllers\Admin\DocumentReviewController::class, 'approveAll'])
+        Route::post('applications/{application}/documents/approve-all', [App\Modules\Proyek\Controllers\Admin\DocumentReviewController::class, 'approveAll'])
             ->name('applications.documents.approve-all');
 
         // Application Notes/Communication (Phase 4)
-        Route::post('applications/{application}/notes', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'store'])
+        Route::post('applications/{application}/notes', [App\Modules\Proyek\Controllers\Admin\ApplicationNoteController::class, 'store'])
             ->name('applications.notes.store');
-        Route::delete('applications/{application}/notes/{note}', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'destroy'])
+        Route::delete('applications/{application}/notes/{note}', [App\Modules\Proyek\Controllers\Admin\ApplicationNoteController::class, 'destroy'])
             ->name('applications.notes.destroy');
-        Route::post('notes/{note}/mark-read', [App\Http\Controllers\Admin\ApplicationNoteController::class, 'markAsRead'])
+        Route::post('notes/{note}/mark-read', [App\Modules\Proyek\Controllers\Admin\ApplicationNoteController::class, 'markAsRead'])
             ->name('notes.mark-read');
     });
 
@@ -486,15 +486,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web'])->group(function
 
 // Client: Application Notes (Phase 4)
 Route::prefix('client')->name('client.')->middleware(['auth:client'])->group(function () {
-    Route::post('applications/{application}/notes', [App\Http\Controllers\Client\ApplicationNoteController::class, 'store'])
+    Route::post('applications/{application}/notes', [App\Modules\Proyek\Controllers\Client\ApplicationNoteController::class, 'store'])
         ->name('applications.notes.store');
 
     // Package Revision Management for Client
-    Route::get('applications/{applicationId}/revisions/{revisionId}', [App\Http\Controllers\Client\RevisionController::class, 'show'])
+    Route::get('applications/{applicationId}/revisions/{revisionId}', [App\Modules\Proyek\Controllers\Client\RevisionController::class, 'show'])
         ->name('applications.revisions.show');
-    Route::post('applications/{applicationId}/revisions/{revisionId}/approve', [App\Http\Controllers\Client\RevisionController::class, 'approve'])
+    Route::post('applications/{applicationId}/revisions/{revisionId}/approve', [App\Modules\Proyek\Controllers\Client\RevisionController::class, 'approve'])
         ->name('applications.revisions.approve');
-    Route::post('applications/{applicationId}/revisions/{revisionId}/reject', [App\Http\Controllers\Client\RevisionController::class, 'reject'])
+    Route::post('applications/{applicationId}/revisions/{revisionId}/reject', [App\Modules\Proyek\Controllers\Client\RevisionController::class, 'reject'])
         ->name('applications.revisions.reject');
 });
 
@@ -521,9 +521,9 @@ Route::get('/auth/twitter/callback', function () {
 
 // KBLI API
 Route::prefix('api/kbli')->group(function () {
-    Route::get('/', [App\Http\Controllers\Api\KbliController::class, 'index'])->name('api.kbli.index');
-    Route::get('/search', [App\Http\Controllers\Api\KbliController::class, 'search'])->name('api.kbli.search');
-    Route::get('/{code}', [App\Http\Controllers\Api\KbliController::class, 'show'])->name('api.kbli.show');
+    Route::get('/', [App\Modules\Perizinan\Controllers\Api\KbliController::class, 'index'])->name('api.kbli.index');
+    Route::get('/search', [App\Modules\Perizinan\Controllers\Api\KbliController::class, 'search'])->name('api.kbli.search');
+    Route::get('/{code}', [App\Modules\Perizinan\Controllers\Api\KbliController::class, 'show'])->name('api.kbli.show');
 });
 
 // ============================================================================
@@ -534,27 +534,27 @@ Route::prefix('api/kbli')->group(function () {
 Route::prefix('admin/recruitment')->name('admin.recruitment.')->middleware(['auth:web', 'permission:recruitment.manage'])->group(function () {
 
     // Interview Scheduling (Calendar-based)
-    Route::resource('interviews', App\Http\Controllers\Admin\InterviewScheduleController::class);
-    Route::get('interviews/{interview}/feedback', [App\Http\Controllers\Admin\InterviewScheduleController::class, 'feedback'])
+    Route::resource('interviews', App\Modules\HRM\Controllers\Admin\InterviewScheduleController::class);
+    Route::get('interviews/{interview}/feedback', [App\Modules\HRM\Controllers\Admin\InterviewScheduleController::class, 'feedback'])
         ->name('interviews.feedback');
-    Route::post('interviews/{interview}/feedback', [App\Http\Controllers\Admin\InterviewScheduleController::class, 'storeFeedback'])
+    Route::post('interviews/{interview}/feedback', [App\Modules\HRM\Controllers\Admin\InterviewScheduleController::class, 'storeFeedback'])
         ->name('interviews.feedback.store');
 
     // Test Management
-    Route::resource('tests', App\Http\Controllers\Admin\TestManagementController::class);
-    Route::post('tests/assign', [App\Http\Controllers\Admin\TestManagementController::class, 'assign'])
+    Route::resource('tests', App\Modules\HRM\Controllers\Admin\TestManagementController::class);
+    Route::post('tests/assign', [App\Modules\HRM\Controllers\Admin\TestManagementController::class, 'assign'])
         ->name('tests.assign');
-    Route::post('tests/{test}/assign', [App\Http\Controllers\Admin\TestManagementController::class, 'assign'])
+    Route::post('tests/{test}/assign', [App\Modules\HRM\Controllers\Admin\TestManagementController::class, 'assign'])
         ->name('tests.assign.legacy'); // Keep for backward compatibility
-    Route::get('tests/sessions/{session}/results', [App\Http\Controllers\Admin\TestManagementController::class, 'sessionResults'])
+    Route::get('tests/sessions/{session}/results', [App\Modules\HRM\Controllers\Admin\TestManagementController::class, 'sessionResults'])
         ->name('tests.sessions.results');
-    Route::delete('tests/sessions/{session}/cancel', [App\Http\Controllers\Admin\TestManagementController::class, 'cancelSession'])
+    Route::delete('tests/sessions/{session}/cancel', [App\Modules\HRM\Controllers\Admin\TestManagementController::class, 'cancelSession'])
         ->name('tests.sessions.cancel');
 
     // Manual Evaluation Routes (Essay/Rating Questions)
-    Route::get('tests/sessions/{session}/evaluate-manual', [App\Http\Controllers\Admin\TestManagementController::class, 'showEvaluationForm'])
+    Route::get('tests/sessions/{session}/evaluate-manual', [App\Modules\HRM\Controllers\Admin\TestManagementController::class, 'showEvaluationForm'])
         ->name('tests.sessions.evaluate-manual');
-    Route::post('tests/sessions/{session}/evaluate-manual', [App\Http\Controllers\Admin\TestManagementController::class, 'submitEvaluation'])
+    Route::post('tests/sessions/{session}/evaluate-manual', [App\Modules\HRM\Controllers\Admin\TestManagementController::class, 'submitEvaluation'])
         ->name('tests.sessions.submit-evaluation-manual');
 
     // Document Editing Test Routes
@@ -570,13 +570,13 @@ Route::prefix('admin/recruitment')->name('admin.recruitment.')->middleware(['aut
         ->name('tests.sessions.download-submission');
 
     // Recruitment Pipeline Dashboard
-    Route::get('pipeline', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'index'])
+    Route::get('pipeline', [App\Modules\HRM\Controllers\Admin\RecruitmentPipelineController::class, 'index'])
         ->name('pipeline.index');
-    Route::get('pipeline/{application}', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'show'])
+    Route::get('pipeline/{application}', [App\Modules\HRM\Controllers\Admin\RecruitmentPipelineController::class, 'show'])
         ->name('pipeline.show');
-    Route::post('pipeline/{application}/initialize', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'initializeStages'])
+    Route::post('pipeline/{application}/initialize', [App\Modules\HRM\Controllers\Admin\RecruitmentPipelineController::class, 'initializeStages'])
         ->name('pipeline.initialize');
-    Route::patch('pipeline/stages/{stage}', [App\Http\Controllers\Admin\RecruitmentPipelineController::class, 'updateStage'])
+    Route::patch('pipeline/stages/{stage}', [App\Modules\HRM\Controllers\Admin\RecruitmentPipelineController::class, 'updateStage'])
         ->name('pipeline.stages.update');
 });
 
@@ -584,21 +584,21 @@ Route::prefix('admin/recruitment')->name('admin.recruitment.')->middleware(['aut
 Route::prefix('candidate')->name('candidate.')->middleware('throttle:60,1')->group(function () {
 
     // Interview Access
-    Route::get('interview/{interview}', [App\Http\Controllers\Candidate\InterviewController::class, 'show'])
+    Route::get('interview/{interview}', [App\Modules\HRM\Controllers\Candidate\InterviewController::class, 'show'])
         ->name('interview.show');
-    Route::post('interview/{interview}/reschedule', [App\Http\Controllers\Candidate\InterviewController::class, 'requestReschedule'])
+    Route::post('interview/{interview}/reschedule', [App\Modules\HRM\Controllers\Candidate\InterviewController::class, 'requestReschedule'])
         ->name('interview.reschedule');
-    Route::get('interview/{interview}/join', [App\Http\Controllers\Candidate\InterviewController::class, 'join'])
+    Route::get('interview/{interview}/join', [App\Modules\HRM\Controllers\Candidate\InterviewController::class, 'join'])
         ->name('interview.join');
 
     // Test Portal
-    Route::get('test/{token}', [App\Http\Controllers\Candidate\TestController::class, 'show'])
+    Route::get('test/{token}', [App\Modules\HRM\Controllers\Candidate\TestController::class, 'show'])
         ->name('test.show');
-    Route::post('test/{token}/start', [App\Http\Controllers\Candidate\TestController::class, 'start'])
+    Route::post('test/{token}/start', [App\Modules\HRM\Controllers\Candidate\TestController::class, 'start'])
         ->name('test.start');
-    Route::post('test/{token}/answer', [App\Http\Controllers\Candidate\TestController::class, 'submitAnswer'])
+    Route::post('test/{token}/answer', [App\Modules\HRM\Controllers\Candidate\TestController::class, 'submitAnswer'])
         ->name('test.answer');
-    Route::post('test/{token}/complete', [App\Http\Controllers\Candidate\TestController::class, 'complete'])
+    Route::post('test/{token}/complete', [App\Modules\HRM\Controllers\Candidate\TestController::class, 'complete'])
         ->name('test.complete');
 
     // Document Editing Test - Candidate Routes
@@ -608,8 +608,8 @@ Route::prefix('candidate')->name('candidate.')->middleware('throttle:60,1')->gro
         ->name('test.submit-document');
 
     // AJAX endpoints for test interface
-    Route::post('test/{token}/track-tab', [App\Http\Controllers\Candidate\TestController::class, 'trackTabSwitch'])
+    Route::post('test/{token}/track-tab', [App\Modules\HRM\Controllers\Candidate\TestController::class, 'trackTabSwitch'])
         ->name('test.track-tab');
-    Route::get('test/{token}/time', [App\Http\Controllers\Candidate\TestController::class, 'getRemainingTime'])
+    Route::get('test/{token}/time', [App\Modules\HRM\Controllers\Candidate\TestController::class, 'getRemainingTime'])
         ->name('test.time');
 });
