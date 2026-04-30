@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Http\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoReportsController;
 use App\Models\SeoReport;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoReportsController;
 use App\Services\SeoReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -20,7 +20,7 @@ class SeoReportsControllerTest extends TestCase
         $service = $this->createMock(SeoReportService::class);
         $service->expects($this->once())->method('snapshotDailyViews')->willReturn(7);
 
-        $controller = new SeoReportsController();
+        $controller = new SeoReportsController;
         $response = $controller->runSnapshotViews($service);
 
         $this->assertSame(302, $response->getStatusCode());
@@ -48,7 +48,7 @@ class SeoReportsControllerTest extends TestCase
 
         $request = Request::create('/admin/seo/run/generate-report', 'POST', []);
 
-        $controller = new SeoReportsController();
+        $controller = new SeoReportsController;
         $response = $controller->runGenerateReport($request, $service);
 
         $this->assertSame(302, $response->getStatusCode());
@@ -73,7 +73,7 @@ class SeoReportsControllerTest extends TestCase
 
         $request = Request::create('/admin/seo/run/generate-report', 'POST', ['type' => 'monthly']);
 
-        $controller = new SeoReportsController();
+        $controller = new SeoReportsController;
         $response = $controller->runGenerateReport($request, $service);
 
         $this->assertSame(302, $response->getStatusCode());

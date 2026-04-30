@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\TestCompleted;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +12,7 @@ use Illuminate\Support\Str;
 class TestSession extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'job_application_id',
         'test_template_id',
@@ -111,7 +113,7 @@ class TestSession extends Model
      */
     public function isExpired(): bool
     {
-        return $this->expires_at->isPast() && 
+        return $this->expires_at->isPast() &&
                $this->status !== 'completed';
     }
 
@@ -130,7 +132,7 @@ class TestSession extends Model
     public function getRemainingMinutes(): int
     {
         // If not started yet, return full duration
-        if ($this->status === 'not-started' || !$this->started_at) {
+        if ($this->status === 'not-started' || ! $this->started_at) {
             return $this->testTemplate->duration_minutes;
         }
 
@@ -142,7 +144,7 @@ class TestSession extends Model
         // Calculate remaining time based on started_at
         $elapsed = now()->diffInMinutes($this->started_at);
         $duration = $this->testTemplate->duration_minutes;
-        
+
         return max(0, $duration - $elapsed);
     }
 
@@ -152,13 +154,13 @@ class TestSession extends Model
     public function getProgressPercentage(): float
     {
         $totalQuestions = $this->testTemplate->getQuestionsCount();
-        
+
         if ($totalQuestions === 0) {
             return 0;
         }
 
         $answeredCount = $this->testAnswers()->count();
-        
+
         return round(($answeredCount / $totalQuestions) * 100, 1);
     }
 
@@ -167,7 +169,7 @@ class TestSession extends Model
      */
     public function getStatusLabel(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'Menunggu',
             'in-progress' => 'Sedang Berlangsung',
             'completed' => 'Selesai',
@@ -182,7 +184,7 @@ class TestSession extends Model
      */
     public function getStatusColor(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'yellow',
             'in-progress' => 'blue',
             'completed' => 'green',
@@ -197,7 +199,7 @@ class TestSession extends Model
      */
     public function start(): bool
     {
-        if (!$this->canStart()) {
+        if (! $this->canStart()) {
             return false;
         }
 
@@ -219,13 +221,13 @@ class TestSession extends Model
             'completed_at' => now(),
             'score' => $score,
             'passed' => $passed,
-            'time_taken_minutes' => $this->started_at ? 
+            'time_taken_minutes' => $this->started_at ?
                 now()->diffInMinutes($this->started_at) : null,
         ]);
 
         // Dispatch event for recruitment workflow automation
         if ($updated && $this->recruitment_stage_id) {
-            event(new \App\Events\TestCompleted($this, $passed, $score));
+            event(new TestCompleted($this, $passed, $score));
         }
 
         return $updated;
@@ -242,16 +244,16 @@ class TestSession extends Model
         if ($this->started_at) {
             // Use diffInMinutes with absolute=false to detect negative values
             $minutes = $this->started_at->diffInMinutes(now(), false);
-            
+
             // Only use positive values, and ensure it's an integer
             if ($minutes > 0) {
                 $timeTaken = (int) round($minutes);
             }
         }
-        
+
         // Auto-grade the session
         $grading = $this->autoGrade();
-        
+
         $updated = $this->update([
             'status' => 'completed',
             'completed_at' => now(),
@@ -260,13 +262,13 @@ class TestSession extends Model
             'passed' => $grading['passed'],
             'requires_manual_review' => $grading['requires_manual_review'],
         ]);
-        
+
         // Dispatch event for recruitment workflow automation
         // Only if has score and passed (fully auto-graded)
-        if ($updated && $this->recruitment_stage_id && $grading['score'] !== null && !$grading['requires_manual_review']) {
-            event(new \App\Events\TestCompleted($this, $grading['passed'], $grading['score']));
+        if ($updated && $this->recruitment_stage_id && $grading['score'] !== null && ! $grading['requires_manual_review']) {
+            event(new TestCompleted($this, $grading['passed'], $grading['score']));
         }
-        
+
         return $updated;
     }
 
@@ -274,36 +276,36 @@ class TestSession extends Model
      * Auto-grade the test session.
      * Grades objective questions (multiple-choice) automatically.
      * Flags for manual review if has subjective questions (essay/rating).
-     * 
+     *
      * @return array ['score' => float|null, 'passed' => bool, 'requires_manual_review' => bool]
      */
     public function autoGrade(): array
     {
         $questions = $this->testTemplate->questions_data ?? [];
         $answers = $this->testAnswers->keyBy('question_id');
-        
+
         $totalPoints = 0;
         $earnedPoints = 0;
         $autoGradeableCount = 0;
         $requiresManualReview = false;
-        
+
         foreach ($questions as $index => $question) {
             $questionType = $question['question_type'] ?? null;
             $points = $question['points'] ?? 1;
             $answer = $answers->get($index);
-            
+
             // Skip if no answer
-            if (!$answer) {
+            if (! $answer) {
                 continue;
             }
-            
+
             $answerValue = $answer->answer_data['answer_value'] ?? null;
-            
+
             // Auto-grade multiple choice questions
             if ($questionType === 'multiple-choice' && isset($question['correct_answer'])) {
                 $autoGradeableCount++;
                 $totalPoints += $points;
-                
+
                 // Check if answer is correct
                 if ($answerValue == $question['correct_answer']) {
                     $earnedPoints += $points;
@@ -315,12 +317,12 @@ class TestSession extends Model
                 $totalPoints += $points;
             }
         }
-        
+
         // Calculate score
         $score = null;
         $passed = false;
-        
-        if ($autoGradeableCount > 0 && !$requiresManualReview) {
+
+        if ($autoGradeableCount > 0 && ! $requiresManualReview) {
             // All questions are auto-gradeable
             $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
             $passed = $score >= $this->testTemplate->passing_score;
@@ -330,7 +332,7 @@ class TestSession extends Model
             $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
             // Don't set passed yet - wait for manual review to complete
         }
-        
+
         return [
             'score' => $score,
             'passed' => $passed,
@@ -347,6 +349,7 @@ class TestSession extends Model
     public function incrementTabSwitches(): int
     {
         $this->increment('tab_switches');
+
         return $this->tab_switches;
     }
 
@@ -356,7 +359,7 @@ class TestSession extends Model
     public function scopeActive($query)
     {
         return $query->where('status', 'in-progress')
-                    ->where('expires_at', '>', now());
+            ->where('expires_at', '>', now());
     }
 
     /**
@@ -388,10 +391,10 @@ class TestSession extends Model
      */
     public function getSubmittedFileUrl(): ?string
     {
-        if (!$this->submitted_file_path) {
+        if (! $this->submitted_file_path) {
             return null;
         }
-        
+
         return \Storage::url($this->submitted_file_path);
     }
 
@@ -400,33 +403,32 @@ class TestSession extends Model
      */
     public function isPendingEvaluation(): bool
     {
-        return $this->requires_manual_review && !$this->evaluated_at;
+        return $this->requires_manual_review && ! $this->evaluated_at;
     }
 
     /**
      * Complete manual evaluation for subjective questions.
-     * 
-     * @param int $evaluatorId - User ID who evaluated
-     * @param array $manualScores - ['question_index' => score]
-     * @param string|null $notes - Evaluator notes
-     * @return bool
+     *
+     * @param  int  $evaluatorId  - User ID who evaluated
+     * @param  array  $manualScores  - ['question_index' => score]
+     * @param  string|null  $notes  - Evaluator notes
      */
     public function completeManualEvaluation(int $evaluatorId, array $manualScores, ?string $notes = null): bool
     {
         $questions = $this->testTemplate->questions_data ?? [];
         $answers = $this->testAnswers->keyBy('question_id');
-        
+
         // Get auto-grading results first
         $grading = $this->autoGrade();
         $totalPoints = 0;
         $earnedPoints = $grading['earned_points']; // Start with auto-graded points
-        
+
         // Add manual scores for subjective questions
         foreach ($questions as $index => $question) {
             $questionType = $question['question_type'] ?? null;
             $points = $question['points'] ?? 1;
             $totalPoints += $points;
-            
+
             // Add manual scores for subjective questions
             if (in_array($questionType, ['essay', 'rating', 'rating-scale', 'document-editing'])) {
                 if (isset($manualScores[$index])) {
@@ -434,11 +436,11 @@ class TestSession extends Model
                 }
             }
         }
-        
+
         // Calculate final score
         $finalScore = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
         $passed = $finalScore >= $this->testTemplate->passing_score;
-        
+
         $updated = $this->update([
             'score' => $finalScore,
             'passed' => $passed,
@@ -453,12 +455,12 @@ class TestSession extends Model
                 'final_score' => $finalScore,
             ],
         ]);
-        
+
         // Dispatch event for recruitment workflow automation
         if ($updated && $this->recruitment_stage_id) {
-            event(new \App\Events\TestCompleted($this, $passed, $finalScore));
+            event(new TestCompleted($this, $passed, $finalScore));
         }
-        
+
         return $updated;
     }
 
@@ -467,18 +469,18 @@ class TestSession extends Model
      */
     public function calculateScoreFromEvaluation(): float
     {
-        if (!$this->evaluation_scores || !isset($this->evaluation_scores['criteria_scores'])) {
+        if (! $this->evaluation_scores || ! isset($this->evaluation_scores['criteria_scores'])) {
             return 0;
         }
-        
+
         $totalScore = collect($this->evaluation_scores['criteria_scores'])->sum('score');
         $template = $this->testTemplate;
         $totalPoints = $template->getTotalEvaluationPoints();
-        
+
         if ($totalPoints == 0) {
             return 0;
         }
-        
+
         return round(($totalScore / $totalPoints) * 100, 2);
     }
 }

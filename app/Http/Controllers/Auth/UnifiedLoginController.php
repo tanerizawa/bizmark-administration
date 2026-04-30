@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\TwoFactorTrustedDevice;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\TwoFactorTrustedDevice;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -21,7 +22,7 @@ class UnifiedLoginController extends Controller
         if (Auth::guard('web')->check()) {
             return redirect('/dashboard');
         }
-        
+
         // If already logged in as client, redirect to client dashboard
         if (Auth::guard('client')->check()) {
             return redirect()->route('client.dashboard');
@@ -35,7 +36,7 @@ class UnifiedLoginController extends Controller
                 session()->put('url.intended', $redirect);
             }
         }
-        
+
         return view('auth.unified-login');
     }
 
@@ -56,12 +57,12 @@ class UnifiedLoginController extends Controller
         if (Auth::guard('web')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            $user = \App\Models\User::query()->findOrFail(Auth::guard('web')->id());
+            $user = User::query()->findOrFail(Auth::guard('web')->id());
             $sessionKey = (string) config('two_factor.session_key', 'two_factor_verified_at');
             $request->session()->forget($sessionKey);
 
             if ((bool) config('two_factor.enabled', true)) {
-                if (!$user->two_factor_enabled_at && !$user->two_factor_grace_until) {
+                if (! $user->two_factor_enabled_at && ! $user->two_factor_grace_until) {
                     $user->forceFill([
                         'two_factor_grace_until' => now()->addDays((int) config('two_factor.grace_days', 7)),
                     ])->save();
@@ -81,12 +82,12 @@ class UnifiedLoginController extends Controller
                         }
                     }
 
-                    if (!$request->session()->has($sessionKey)) {
+                    if (! $request->session()->has($sessionKey)) {
                         return redirect()->route('admin.security.2fa.challenge');
                     }
                 }
             }
-            
+
             return redirect()->intended('/dashboard')
                 ->with('success', 'Selamat datang kembali, Admin!');
         }
@@ -94,7 +95,7 @@ class UnifiedLoginController extends Controller
         // Try to authenticate as client (client guard)
         if (Auth::guard('client')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            
+
             return redirect()->intended(route('client.dashboard'))
                 ->with('success', 'Selamat datang di Portal Klien Bizmark.id!');
         }
@@ -115,7 +116,7 @@ class UnifiedLoginController extends Controller
         if (Auth::guard('web')->check()) {
             Auth::guard('web')->logout();
         }
-        
+
         // Logout from client guard if authenticated
         if (Auth::guard('client')->check()) {
             Auth::guard('client')->logout();

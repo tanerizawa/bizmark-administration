@@ -2,10 +2,11 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\ContentRefreshLog;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Services\ContentRefreshService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SeoRefreshLogsController extends Controller
@@ -34,7 +35,7 @@ class SeoRefreshLogsController extends Controller
             'total' => (int) $stats->total,
             'refreshed' => (int) $stats->refreshed,
             'errors' => (int) $stats->errors,
-            'last_run' => $stats->last_run ? \Carbon\Carbon::parse($stats->last_run) : null,
+            'last_run' => $stats->last_run ? Carbon::parse($stats->last_run) : null,
             'total_tokens' => (int) $stats->total_tokens,
         ];
 
@@ -69,7 +70,7 @@ class SeoRefreshLogsController extends Controller
     {
         $log = ContentRefreshLog::with('article')->findOrFail($id);
 
-        if (!$log->article) {
+        if (! $log->article) {
             return $this->seoRouteFlash('admin.seo.refresh-logs', 'error', 'Artikel sudah dihapus, tidak bisa retry.');
         }
 
@@ -110,4 +111,3 @@ class SeoRefreshLogsController extends Controller
         ]);
     }
 }
-

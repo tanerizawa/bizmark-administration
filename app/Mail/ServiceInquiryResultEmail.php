@@ -26,7 +26,7 @@ class ServiceInquiryResultEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Hasil Analisis Perizinan untuk ' . $this->inquiry->company_name . ' | Bizmark.ID',
+            subject: 'Hasil Analisis Perizinan untuk '.$this->inquiry->company_name.' | Bizmark.ID',
         );
     }
 
@@ -55,4 +55,3 @@ class ServiceInquiryResultEmail extends Mailable
         return [];
     }
 }
-

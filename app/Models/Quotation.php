@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Observers\AdminAuditObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ObservedBy([AdminAuditObserver::class])]
 class Quotation extends Model
 {
     use HasFactory;
@@ -49,9 +52,9 @@ class Quotation extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($quotation) {
-            if (!$quotation->quotation_number) {
+            if (! $quotation->quotation_number) {
                 $quotation->quotation_number = self::generateQuotationNumber();
             }
         });
@@ -63,10 +66,10 @@ class Quotation extends Model
         $lastQuotation = self::whereYear('created_at', $year)
             ->orderBy('id', 'desc')
             ->first();
-        
-        $nextNumber = $lastQuotation ? 
+
+        $nextNumber = $lastQuotation ?
             intval(substr($lastQuotation->quotation_number, -3)) + 1 : 1;
-        
+
         return sprintf('QUO-%s-%03d', $year, $nextNumber);
     }
 

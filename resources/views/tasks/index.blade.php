@@ -15,7 +15,7 @@
                 <div class="space-y-1 max-w-3xl">
                     <p class="admin-label-compact">Manajemen Tugas</p>
                     <h1 class="admin-hero-title">Kelola dan Lacak Semua Tugas Proyek</h1>
-                    <p class="admin-body" style="color: rgba(235,235,245,0.75);">Organisir tugas dengan prioritas yang jelas, tetapkan penanggung jawab, dan pantau kemajuan setiap aktivitas.</p>
+                    <p class="admin-body text-dark-text-secondary">Organisir tugas dengan prioritas yang jelas, tetapkan penanggung jawab, dan pantau kemajuan setiap aktivitas.</p>
                 </div>
                 <div>
                     <a href="{{ route('tasks.create') }}" class="admin-btn inline-flex items-center">
@@ -34,46 +34,46 @@
                         return $task->isOverdue() && $task->status !== 'done';
                     })->count();
                 @endphp
-                <div class="admin-stat-card" style="background: rgba(10,132,255,0.12);">
+                <div class="admin-stat-card bg-apple-blue/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
-                            <i class="fas fa-tasks text-xs" style="color: var(--apple-blue);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-blue/25">
+                            <i class="fas fa-tasks text-xs text-apple-blue"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: #FFFFFF;">{{ $totalTasks }}</p>
+                            <p class="admin-stat text-white">{{ $totalTasks }}</p>
                             <p class="admin-label-compact">Total Tugas</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: rgba(255,159,10,0.12);">
+                <div class="admin-stat-card bg-apple-orange/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,159,10,0.25);">
-                            <i class="fas fa-spinner text-xs" style="color: var(--apple-orange);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-orange/25">
+                            <i class="fas fa-spinner text-xs text-apple-orange"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(255,159,10,1);">{{ $pendingCount }}</p>
+                            <p class="admin-stat text-apple-orange">{{ $pendingCount }}</p>
                             <p class="admin-label-compact">Dalam Proses</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: rgba(52,199,89,0.12);">
+                <div class="admin-stat-card bg-apple-green/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(52,199,89,0.25);">
-                            <i class="fas fa-check text-xs" style="color: var(--apple-green);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-green/25">
+                            <i class="fas fa-check text-xs text-apple-green"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(52,199,89,1);">{{ $completedCount }}</p>
+                            <p class="admin-stat text-apple-green">{{ $completedCount }}</p>
                             <p class="admin-label-compact">Selesai</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: rgba(255,59,48,0.12);">
+                <div class="admin-stat-card bg-apple-red/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,59,48,0.25);">
-                            <i class="fas fa-exclamation text-xs" style="color: var(--apple-red);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-red/25">
+                            <i class="fas fa-exclamation text-xs text-apple-red"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(255,59,48,1);">{{ $overdueCount }}</p>
+                            <p class="admin-stat text-apple-red">{{ $overdueCount }}</p>
                             <p class="admin-label-compact">Terlambat</p>
                         </div>
                     </div>
@@ -90,7 +90,7 @@
                 <div class="relative">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Judul tugas..." 
                            class="admin-input w-full pl-7 rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2" style="font-size: 0.625rem; color: rgba(235,235,245,0.3);"></i>
+                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2 text-dark-text-tertiary text-[10px]"></i>
                 </div>
             </div>
             <div class="w-28">
@@ -140,7 +140,7 @@
     <div class="card-elevated rounded-apple-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700">
-                <thead style="background-color: var(--dark-bg-secondary);">
+                <thead class="bg-dark-bg-secondary">
                     <tr>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tugas</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Status</th>
@@ -151,24 +151,24 @@
                         <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
+                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
                     @forelse($tasks as $task)
                         @php
                             // Status configuration
                             $statusConfig = [
-                                'todo' => ['label' => 'Belum Dikerjakan', 'icon' => 'fa-circle', 'color' => 'rgba(255, 159, 10, 1)', 'bg' => 'rgba(255, 159, 10, 0.15)'],
-                                'in_progress' => ['label' => 'Sedang Dikerjakan', 'icon' => 'fa-spinner', 'color' => 'rgba(0, 122, 255, 1)', 'bg' => 'rgba(0, 122, 255, 0.15)'],
-                                'done' => ['label' => 'Selesai', 'icon' => 'fa-check-circle', 'color' => 'rgba(52, 199, 89, 1)', 'bg' => 'rgba(52, 199, 89, 0.15)'],
-                                'blocked' => ['label' => 'Terblokir', 'icon' => 'fa-ban', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.15)'],
+                                'todo' => ['label' => 'Belum Dikerjakan', 'icon' => 'fa-circle', 'cls' => 'bg-apple-orange/15 text-apple-orange'],
+                                'in_progress' => ['label' => 'Sedang Dikerjakan', 'icon' => 'fa-spinner', 'cls' => 'bg-apple-blue/15 text-apple-blue'],
+                                'done' => ['label' => 'Selesai', 'icon' => 'fa-check-circle', 'cls' => 'bg-apple-green/15 text-apple-green'],
+                                'blocked' => ['label' => 'Terblokir', 'icon' => 'fa-ban', 'cls' => 'bg-apple-red/15 text-apple-red'],
                             ];
                             $status = $statusConfig[$task->status] ?? $statusConfig['todo'];
 
                             // Priority configuration
                             $priorityConfig = [
-                                'urgent' => ['label' => 'Mendesak', 'icon' => 'fa-exclamation-circle', 'color' => 'rgba(255, 59, 48, 1)', 'bg' => 'rgba(255, 59, 48, 0.15)'],
-                                'high' => ['label' => 'Tinggi', 'icon' => 'fa-arrow-up', 'color' => 'rgba(255, 149, 0, 1)', 'bg' => 'rgba(255, 149, 0, 0.15)'],
-                                'normal' => ['label' => 'Normal', 'icon' => 'fa-minus', 'color' => 'rgba(0, 122, 255, 1)', 'bg' => 'rgba(0, 122, 255, 0.15)'],
-                                'low' => ['label' => 'Rendah', 'icon' => 'fa-arrow-down', 'color' => 'rgba(142, 142, 147, 1)', 'bg' => 'rgba(142, 142, 147, 0.15)'],
+                                'urgent' => ['label' => 'Mendesak', 'icon' => 'fa-exclamation-circle', 'cls' => 'bg-apple-red/15 text-apple-red'],
+                                'high' => ['label' => 'Tinggi', 'icon' => 'fa-arrow-up', 'cls' => 'bg-apple-orange/15 text-apple-orange'],
+                                'normal' => ['label' => 'Normal', 'icon' => 'fa-minus', 'cls' => 'bg-apple-blue/15 text-apple-blue'],
+                                'low' => ['label' => 'Rendah', 'icon' => 'fa-arrow-down', 'cls' => 'bg-dark-text-tertiary/15 text-dark-text-tertiary'],
                             ];
                             $priority = $priorityConfig[$task->priority] ?? $priorityConfig['normal'];
 
@@ -177,18 +177,17 @@
                             $rowStyle = $isOverdue ? 'border-left: 3px solid rgba(255, 59, 48, 1);' : '';
                         @endphp
 
-                        <tr class="hover-lift transition-apple" style="cursor: pointer; {{ $rowStyle }}" onclick="window.location='{{ route('tasks.show', $task) }}'">
+                        <tr class="hover-lift transition-apple cursor-pointer" style="{{ $rowStyle }}" onclick="window.location='{{ route('tasks.show', $task) }}'">
                             <!-- Tugas Info -->
                             <td class="px-4 py-3">
                                 <div>
                                     <div class="font-semibold text-sm text-dark-text-primary">{{ $task->title }}</div>
                                     @if($task->project)
                                         <div class="flex items-center mt-1">
-                                            <i class="fas fa-folder text-xs mr-1.5" style="color: rgba(235, 235, 245, 0.6);"></i>
+                                            <i class="fas fa-folder text-xs mr-1.5 text-dark-text-secondary"></i>
                                             <a href="{{ route('projects.show', $task->project) }}" 
                                                onclick="event.stopPropagation()"
-                                               class="text-xs hover:underline" 
-                                               style="color: rgba(0, 122, 255, 1);">
+                                               class="text-xs hover:underline text-apple-blue">
                                                 {{ $task->project->name }}
                                             </a>
                                         </div>
@@ -203,8 +202,7 @@
 
                             <!-- Status -->
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium" 
-                                      style="background-color: {{ $status['bg'] }}; color: {{ $status['color'] }};">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $status['cls'] }}">
                                     <i class="fas {{ $status['icon'] }} mr-1.5"></i>
                                     {{ $status['label'] }}
                                 </span>
@@ -212,8 +210,7 @@
 
                             <!-- Prioritas -->
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium" 
-                                      style="background-color: {{ $priority['bg'] }}; color: {{ $priority['color'] }};">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $priority['cls'] }}">
                                     <i class="fas {{ $priority['icon'] }} mr-1.5"></i>
                                     {{ $priority['label'] }}
                                 </span>
@@ -223,8 +220,7 @@
                             <td class="px-4 py-3 whitespace-nowrap">
                                 @if($task->assignedUser)
                                     <div class="flex items-center">
-                                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold mr-2" 
-                                             style="background-color: rgba(0, 122, 255, 0.15); color: rgba(0, 122, 255, 1);">
+                                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold mr-2 bg-apple-blue/15 text-apple-blue">
                                             {{ strtoupper(substr($task->assignedUser->name, 0, 2)) }}
                                         </div>
                                         <span class="text-sm text-dark-text-primary">{{ $task->assignedUser->name }}</span>
@@ -242,7 +238,7 @@
                                             {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}
                                         </div>
                                         @if($isOverdue)
-                                            <div class="text-xs mt-0.5" style="color: rgba(255, 59, 48, 1);">
+                                            <div class="text-xs mt-0.5 text-apple-red">
                                                 <i class="fas fa-exclamation-circle mr-1"></i>
                                                 Terlambat {{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }}
                                             </div>
@@ -268,7 +264,7 @@
                                         <div class="flex items-center justify-between mb-1">
                                             <span class="text-xs font-medium" style="color: {{ $progressColor }};">{{ $progress }}%</span>
                                         </div>
-                                        <div class="w-full h-1.5 rounded-full" style="background-color: rgba(142, 142, 147, 0.2);">
+                                        <div class="w-full h-1.5 rounded-full bg-white/8">
                                             <div class="h-full rounded-full transition-all" style="width: {{ $progress }}%; background-color: {{ $progressColor }};"></div>
                                         </div>
                                     </div>
@@ -279,17 +275,11 @@
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-center space-x-2" onclick="event.stopPropagation();">
                                     <a href="{{ route('tasks.show', $task) }}" 
-                                       class="p-2 rounded-apple transition-apple" 
-                                       style="color: #0A84FF; background-color: rgba(10, 132, 255, 0.1); border: 1px solid rgba(10, 132, 255, 0.3);" 
-                                       onmouseover="this.style.backgroundColor='#0A84FF'; this.style.color='#FFFFFF'" 
-                                       onmouseout="this.style.backgroundColor='rgba(10, 132, 255, 0.1)'; this.style.color='#0A84FF'">
+                                       class="p-2 rounded-apple transition-apple text-apple-blue bg-apple-blue/10 border border-apple-blue/30 hover:bg-apple-blue hover:text-white">
                                         <i class="fas fa-eye text-sm"></i>
                                     </a>
                                     <a href="{{ route('tasks.edit', $task) }}" 
-                                       class="p-2 rounded-apple transition-apple" 
-                                       style="color: #FF9F0A; background-color: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.3);" 
-                                       onmouseover="this.style.backgroundColor='#FF9F0A'; this.style.color='#FFFFFF'" 
-                                       onmouseout="this.style.backgroundColor='rgba(255, 159, 10, 0.1)'; this.style.color='#FF9F0A'">
+                                       class="p-2 rounded-apple transition-apple text-apple-orange bg-apple-orange/10 border border-apple-orange/30 hover:bg-apple-orange hover:text-white">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
                                 </div>
@@ -298,7 +288,7 @@
                     @empty
                         <tr>
                             <td colspan="7" class="px-4 py-8 text-center">
-                                <div class="flex flex-col items-center justify-center" style="color: rgba(235, 235, 245, 0.6);">
+                                <div class="flex flex-col items-center justify-center text-dark-text-secondary">
                                     <i class="fas fa-inbox text-4xl mb-3"></i>
                                     <p class="text-sm font-medium">Tidak ada tugas ditemukan</p>
                                     <p class="text-xs mt-1">Coba ubah filter atau tambahkan tugas baru</p>
@@ -312,7 +302,7 @@
 
         <!-- Pagination -->
         @if($tasks->hasPages())
-            <div class="px-4 py-3" style="border-top: 1px solid rgba(84, 84, 88, 0.65); background-color: var(--dark-bg-secondary);">
+            <div class="px-4 py-3 border-t border-white/10 bg-dark-bg-secondary">
                 {{ $tasks->links() }}
             </div>
         @endif

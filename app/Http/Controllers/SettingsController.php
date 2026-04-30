@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\AuthorizesRequests;
 use App\Models\BusinessSetting;
 use App\Models\ExpenseCategory;
 use App\Models\PaymentMethod;
@@ -13,7 +14,6 @@ use App\Models\Role;
 use App\Models\SecuritySetting;
 use App\Models\TaxRate;
 use App\Models\User;
-use App\Http\Controllers\Traits\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
@@ -40,14 +40,28 @@ class SettingsController extends Controller
         $businessSetting = BusinessSetting::current();
         $securitySetting = SecuritySetting::current();
 
-        $users = User::with('role')->orderBy('name')->get();
-        $roles = Role::withCount('users')->with('permissions')->get();
-        $permissions = Permission::all()->groupBy('group');
+        $users = in_array($activeTab, ['users', 'roles'])
+            ? User::with('role')->orderBy('name')->get()
+            : collect();
+        $roles = in_array($activeTab, ['users', 'roles'])
+            ? Role::withCount('users')->with('permissions')->get()
+            : collect();
+        $permissions = in_array($activeTab, ['users', 'roles'])
+            ? Permission::orderBy('group')->orderBy('name')->get()->groupBy('group')
+            : collect();
 
-        $expenseCategories = ExpenseCategory::options();
-        $paymentMethods = PaymentMethod::options();
-        $taxRates = TaxRate::options();
-        $projectStatuses = ProjectStatus::orderBy('sort_order')->orderBy('name')->get();
+        $expenseCategories = $activeTab === 'expense_categories'
+            ? ExpenseCategory::options()
+            : collect();
+        $paymentMethods = $activeTab === 'payment_methods'
+            ? PaymentMethod::options()
+            : collect();
+        $taxRates = $activeTab === 'tax_rates'
+            ? TaxRate::options()
+            : collect();
+        $projectStatuses = $activeTab === 'project_statuses'
+            ? ProjectStatus::orderBy('sort_order')->orderBy('name')->get()
+            : collect();
 
         return view('settings.index', compact(
             'activeTab',
@@ -119,9 +133,9 @@ class SettingsController extends Controller
         $setting->email_notifications = $emailNotifications;
         $setting->save();
 
-        if ($maintenance && !$originalMaintenance) {
+        if ($maintenance && ! $originalMaintenance) {
             Artisan::call('down', ['--secret' => config('app.maintenance_secret', 'bizmark-maintenance')]);
-        } elseif (!$maintenance && $originalMaintenance) {
+        } elseif (! $maintenance && $originalMaintenance) {
             Artisan::call('up');
         }
 
@@ -173,7 +187,7 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $e->errors()
+                    'errors' => $e->errors(),
                 ], 422);
             }
             throw $e;
@@ -186,10 +200,10 @@ class SettingsController extends Controller
 
         try {
             $validated = $request->validate([
-                'username' => 'required|string|max:255|unique:users,username,' . $user->id . '|regex:/^[a-z0-9_]+$/',
+                'username' => 'required|string|max:255|unique:users,username,'.$user->id.'|regex:/^[a-z0-9_]+$/',
                 'full_name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $user->id,
-                'employee_id' => 'nullable|string|max:255|unique:users,employee_id,' . $user->id,
+                'email' => 'required|email|unique:users,email,'.$user->id,
+                'employee_id' => 'nullable|string|max:255|unique:users,employee_id,'.$user->id,
                 'password' => ['nullable', 'confirmed', $rule],
                 'role_id' => 'required|exists:roles,id',
                 'position' => 'nullable|string|max:255',
@@ -203,7 +217,7 @@ class SettingsController extends Controller
             // Update 'name' from username for backward compatibility
             $validated['name'] = $validated['username'];
 
-            if (!empty($validated['password'])) {
+            if (! empty($validated['password'])) {
                 $validated['password'] = Hash::make($validated['password']);
             } else {
                 unset($validated['password']);
@@ -231,7 +245,7 @@ class SettingsController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed',
-                    'errors' => $e->errors()
+                    'errors' => $e->errors(),
                 ], 422);
             }
             throw $e;
@@ -256,7 +270,7 @@ class SettingsController extends Controller
 
     public function toggleUserStatus(User $user)
     {
-        $user->update(['is_active' => !$user->is_active]);
+        $user->update(['is_active' => ! $user->is_active]);
 
         return redirect()->route('settings.index', ['tab' => 'users'])
             ->with('success', 'Status user berhasil diubah');
@@ -282,7 +296,7 @@ class SettingsController extends Controller
             'is_system' => false,
         ]);
 
-        if (!empty($validated['permissions'])) {
+        if (! empty($validated['permissions'])) {
             $role->permissions()->sync($validated['permissions']);
         }
 

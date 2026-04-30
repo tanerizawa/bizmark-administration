@@ -12,13 +12,22 @@ services:
     networks:
       - bizmark_network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
+      - DB_CONNECTION=pgsql
       - DB_HOST=db
-      - DB_PORT=3306
+      - DB_PORT=5432
       - DB_DATABASE=bizmark_db
       - DB_USERNAME=bizmark_user
       - DB_PASSWORD=bizmark_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_STORE=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
 
   web:
     image: nginx:alpine
@@ -34,37 +43,179 @@ services:
     depends_on:
       - app
 
-  db:
-    image: mysql:8.0
-    container_name: bizmark_db
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bizmark_worker
     restart: unless-stopped
-    ports:
-      - "0.0.0.0:3306:3306"
-    environment:
-      MYSQL_DATABASE: bizmark_db
-      MYSQL_USER: bizmark_user
-      MYSQL_PASSWORD: bizmark_password
-      MYSQL_ROOT_PASSWORD: root_password
+    working_dir: /var/www
+    command: php artisan queue:work redis --sleep=3 --tries=3 --max-jobs=500 --timeout=120
     volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - bizmark_network
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: bizmark_phpmyadmin
-    restart: unless-stopped
-    ports:
-      - "0.0.0.0:8080:80"
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_USER: bizmark_user
-      PMA_PASSWORD: bizmark_password
+      - ./:/var/www
     networks:
       - bizmark_network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=bizmark_db
+      - DB_USERNAME=bizmark_user
+      - DB_PASSWORD=bizmark_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+
+  worker-email:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bizmark_worker_email
+    restart: unless-stopped
+    working_dir: /var/www
+    command: php artisan queue:work redis --queue=email --sleep=3 --tries=2 --max-jobs=200 --timeout=600
+    volumes:
+      - ./:/var/www
+    networks:
+      - bizmark_network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=bizmark_db
+      - DB_USERNAME=bizmark_user
+      - DB_PASSWORD=bizmark_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+
+  worker-documents:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bizmark_worker_documents
+    restart: unless-stopped
+    working_dir: /var/www
+    command: php artisan queue:work redis --queue=documents --sleep=3 --tries=3 --max-jobs=100 --timeout=120
+    volumes:
+      - ./:/var/www
+    networks:
+      - bizmark_network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=bizmark_db
+      - DB_USERNAME=bizmark_user
+      - DB_PASSWORD=bizmark_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+
+  worker-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bizmark_worker_ai
+    restart: unless-stopped
+    working_dir: /var/www
+    command: php artisan queue:work redis --queue=ai --sleep=3 --tries=3 --max-jobs=100 --timeout=300
+    volumes:
+      - ./:/var/www
+    networks:
+      - bizmark_network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=bizmark_db
+      - DB_USERNAME=bizmark_user
+      - DB_PASSWORD=bizmark_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bizmark_scheduler
+    restart: unless-stopped
+    working_dir: /var/www
+    command: sh -c "while true; do php artisan schedule:run --no-interaction; sleep 60; done"
+    volumes:
+      - ./:/var/www
+    networks:
+      - bizmark_network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=bizmark_db
+      - DB_USERNAME=bizmark_user
+      - DB_PASSWORD=bizmark_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  db:
+    image: postgres:14-alpine
+    container_name: bizmark_db
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: bizmark_db
+      POSTGRES_USER: bizmark_user
+      POSTGRES_PASSWORD: bizmark_password
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - bizmark_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bizmark_user -d bizmark_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: bizmark_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - bizmark_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   searxng:
     image: searxng/searxng:latest
@@ -87,7 +238,8 @@ services:
       - bizmark_network
 
 volumes:
-  mysql_data:
+  pg_data:
+  redis_data:
   searxng_data:
 
 networks:

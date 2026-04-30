@@ -92,15 +92,15 @@
                                          @mouseleave="perorangan_hover = false"
                                          :style="{
                                              'border-color': formData.applicant_type === 'perorangan' ? 'var(--color-primary)' : perorangan_hover ? 'var(--color-primary)' : 'var(--border-light)',
-                                             'background-color': formData.applicant_type === 'perorangan' ? 'var(--surface-cool)' : perorangan_hover ? '#dbeafe' : 'transparent',
+                                             'background-color': formData.applicant_type === 'perorangan' ? 'var(--surface-cool)' : perorangan_hover ? 'var(--surface-cool)' : 'transparent',
                                              'box-shadow': formData.applicant_type === 'perorangan' ? '0 10px 15px -3px rgba(15,23,42,0.1)' : perorangan_hover ? '0 4px 6px -1px rgba(15,23,42,0.1)' : 'none'
                                          }"
                                          @click="formData.applicant_type = 'perorangan'">
                                         <div class="flex items-start gap-4">
                                             <div class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors shadow-sm"
                                                  :style="{
-                                                     'background-color': formData.applicant_type === 'perorangan' ? 'var(--color-primary)' : '#dbeafe',
-                                                     'color': formData.applicant_type === 'perorangan' ? 'white' : '#0f172a'
+                                                     'background-color': formData.applicant_type === 'perorangan' ? 'var(--color-primary)' : 'var(--surface-cool)',
+                                                     'color': formData.applicant_type === 'perorangan' ? 'white' : 'var(--text-primary)'
                                                  }">
                                                 <i class="fas fa-user text-xl"></i>
                                             </div>
@@ -123,15 +123,15 @@
                                          @mouseleave="badan_hover = false"
                                          :style="{
                                              'border-color': formData.applicant_type === 'badan' ? 'var(--color-primary)' : badan_hover ? 'var(--color-primary)' : 'var(--border-light)',
-                                             'background-color': formData.applicant_type === 'badan' ? 'var(--surface-cool)' : badan_hover ? '#fed7aa' : 'transparent',
+                                             'background-color': formData.applicant_type === 'badan' ? 'var(--surface-cool)' : badan_hover ? 'var(--surface-warm)' : 'transparent',
                                              'box-shadow': formData.applicant_type === 'badan' ? '0 10px 15px -3px rgba(15,23,42,0.1)' : badan_hover ? '0 4px 6px -1px rgba(15,23,42,0.1)' : 'none'
                                          }"
                                          @click="formData.applicant_type = 'badan'">
                                         <div class="flex items-start gap-4">
                                             <div class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors shadow-sm"
                                                  :style="{
-                                                     'background-color': formData.applicant_type === 'badan' ? 'var(--color-primary)' : '#fed7aa',
-                                                     'color': formData.applicant_type === 'badan' ? 'white' : '#0f172a'
+                                                     'background-color': formData.applicant_type === 'badan' ? 'var(--color-primary)' : 'var(--surface-warm)',
+                                                     'color': formData.applicant_type === 'badan' ? 'white' : 'var(--text-primary)'
                                                  }">
                                                 <i class="fas fa-building text-xl"></i>
                                             </div>

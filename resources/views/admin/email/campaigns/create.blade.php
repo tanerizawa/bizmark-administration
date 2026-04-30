@@ -341,19 +341,26 @@
     </form>
 </div>
 
-{{-- Preview Modal --}}
-<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content" style="background: var(--dark-bg-elevated); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;">
-            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem 1.25rem;">
+{{-- Preview Modal (Alpine.js) --}}
+<div id="previewModalRoot" x-data="{ open: false }">
+    <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4"
+         @keydown.escape.window="open = false">
+        <div class="absolute inset-0 bg-black/70" @click="open = false"></div>
+        <div class="relative w-full max-w-4xl rounded-apple-lg overflow-hidden shadow-2xl"
+             style="background: var(--dark-bg-elevated); border: 1px solid rgba(255,255,255,0.08);">
+            <div class="flex items-center justify-between px-5 py-4"
+                 style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                 <div class="flex items-center gap-2">
                     <i class="fas fa-eye text-apple-blue"></i>
-                    <h5 class="modal-title text-white text-sm font-semibold" id="previewModalLabel" style="margin: 0;">Preview Email</h5>
+                    <h5 class="text-white text-sm font-semibold">Preview Email</h5>
                 </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                <button @click="open = false" class="text-gray-400 hover:text-white transition">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body" style="padding: 1.25rem;">
-                <div class="flex items-center gap-3 rounded-apple p-3 mb-4" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05);">
+            <div class="p-5">
+                <div class="flex items-center gap-3 rounded-apple p-3 mb-4"
+                     style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05);">
                     <span class="text-xs font-semibold uppercase tracking-wider" style="color: rgba(235,235,245,0.5);">Subjek:</span>
                     <span id="preview_subject" class="text-sm text-white font-medium"></span>
                 </div>
@@ -548,8 +555,7 @@ function previewContent() {
     const content = document.getElementById('content').value;
     document.getElementById('preview_subject').textContent = subject || '(Belum ada subjek)';
     document.getElementById('preview_content').innerHTML = content || '<p style="color:#999; padding: 2rem; text-align:center;">Belum ada konten</p>';
-    const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-    modal.show();
+    document.getElementById('previewModalRoot').__x.$data.open = true;
 }
 
 document.addEventListener('DOMContentLoaded', function () {

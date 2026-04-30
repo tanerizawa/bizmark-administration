@@ -11,14 +11,13 @@
                 <i class="fas fa-arrow-left text-lg"></i>
             </a>
             <div>
-                <h1 class="text-2xl font-semibold" style="color: #FFFFFF;">Edit Klien</h1>
-                <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">Perbarui informasi klien: {{ $client->name }}</p>
+                <h1 class="text-2xl font-semibold text-white">Edit Klien</h1>
+                <p class="text-xs mt-1 text-dark-text-secondary">Perbarui informasi klien: {{ $client->name }}</p>
             </div>
         </div>
         <div class="flex space-x-2">
             <a href="{{ route('clients.show', $client) }}" 
-               class="px-3 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center" 
-               style="background: rgba(142, 142, 147, 0.3); color: rgba(235, 235, 245, 0.8);">
+               class="px-3 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center bg-white/10 text-dark-text-primary/80">
                 <i class="fas fa-eye mr-1.5"></i>Lihat Detail
             </a>
         </div>
@@ -31,15 +30,15 @@
             @method('PUT')
 
             <!-- Informasi Dasar -->
-            <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+            <div class="px-4 py-2.5 border-b border-white/10">
+                <h3 class="text-sm font-semibold flex items-center text-white">
                     <i class="fas fa-info-circle mr-2 text-apple-blue"></i>Informasi Dasar
                 </h3>
             </div>
             <div class="p-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label for="name" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="name" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Nama Klien <span class="text-apple-red">*</span>
                         </label>
                         <input type="text" 
@@ -54,7 +53,7 @@
                     </div>
 
                     <div>
-                        <label for="company_name" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="company_name" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Nama Perusahaan
                         </label>
                         <input type="text" 
@@ -68,7 +67,7 @@
                     </div>
 
                     <div>
-                        <label for="client_type" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="client_type" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Tipe Klien <span class="text-apple-red">*</span>
                         </label>
                         <select class="input-dark w-full px-3 py-2 rounded-lg text-sm @error('client_type') border-apple-red @enderror" 
@@ -86,7 +85,7 @@
                     </div>
 
                     <div>
-                        <label for="industry" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="industry" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Industri
                         </label>
                         <input type="text" 
@@ -101,7 +100,7 @@
                     </div>
 
                     <div>
-                        <label for="status" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="status" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Status <span class="text-apple-red">*</span>
                         </label>
                         <select class="input-dark w-full px-3 py-2 rounded-lg text-sm @error('status') border-apple-red @enderror" 
@@ -120,15 +119,15 @@
             </div>
 
             <!-- Informasi Kontak -->
-            <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65); border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+            <div class="px-4 py-2.5 border-b border-white/10 border-t border-white/10">
+                <h3 class="text-sm font-semibold flex items-center text-white">
                     <i class="fas fa-address-book mr-2 text-apple-green"></i>Informasi Kontak
                 </h3>
             </div>
             <div class="p-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label for="contact_person" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="contact_person" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Nama Contact Person
                         </label>
                         <input type="text" 
@@ -142,7 +141,7 @@
                     </div>
 
                     <div>
-                        <label for="email" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="email" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Email
                         </label>
                         <input type="email" 
@@ -156,7 +155,7 @@
                     </div>
 
                     <div>
-                        <label for="phone" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="phone" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Telepon
                         </label>
                         <input type="text" 
@@ -171,7 +170,7 @@
                     </div>
 
                     <div>
-                        <label for="mobile" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="mobile" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Handphone / WhatsApp
                         </label>
                         <input type="text" 
@@ -188,15 +187,15 @@
             </div>
 
             <!-- Alamat -->
-            <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65); border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+            <div class="px-4 py-2.5 border-b border-white/10 border-t border-white/10">
+                <h3 class="text-sm font-semibold flex items-center text-white">
                     <i class="fas fa-map-marker-alt mr-2 text-apple-orange"></i>Alamat
                 </h3>
             </div>
             <div class="p-4">
                 <div class="grid grid-cols-1 gap-3">
                     <div>
-                        <label for="address" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="address" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Alamat Lengkap
                         </label>
                         <textarea class="input-dark w-full px-3 py-2 rounded-lg text-sm @error('address') border-apple-red @enderror" 
@@ -210,7 +209,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
-                            <label for="city" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                            <label for="city" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                                 Kota
                             </label>
                             <input type="text" 
@@ -224,7 +223,7 @@
                         </div>
 
                         <div>
-                            <label for="province" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                            <label for="province" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                                 Provinsi
                             </label>
                             <input type="text" 
@@ -238,7 +237,7 @@
                         </div>
 
                         <div>
-                            <label for="postal_code" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                            <label for="postal_code" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                                 Kode Pos
                             </label>
                             <input type="text" 
@@ -255,15 +254,15 @@
             </div>
 
             <!-- Informasi Pajak -->
-            <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65); border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+            <div class="px-4 py-2.5 border-b border-white/10 border-t border-white/10">
+                <h3 class="text-sm font-semibold flex items-center text-white">
                     <i class="fas fa-file-invoice mr-2 text-apple-purple"></i>Informasi Pajak
                 </h3>
             </div>
             <div class="p-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label for="npwp" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="npwp" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             NPWP
                         </label>
                         <input type="text" 
@@ -278,7 +277,7 @@
                     </div>
 
                     <div>
-                        <label for="tax_name" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="tax_name" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Nama di NPWP
                         </label>
                         <input type="text" 
@@ -292,7 +291,7 @@
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="tax_address" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label for="tax_address" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                             Alamat NPWP
                         </label>
                         <textarea class="input-dark w-full px-3 py-2 rounded-lg text-sm @error('tax_address') border-apple-red @enderror" 
@@ -307,14 +306,14 @@
             </div>
 
             <!-- Catatan -->
-            <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65); border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+            <div class="px-4 py-2.5 border-b border-white/10 border-t border-white/10">
+                <h3 class="text-sm font-semibold flex items-center text-white">
                     <i class="fas fa-sticky-note mr-2 text-apple-teal"></i>Catatan
                 </h3>
             </div>
             <div class="p-4">
                 <div>
-                    <label for="notes" class="block text-xs font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                    <label for="notes" class="block text-xs font-medium mb-1 text-dark-text-secondary">
                         Catatan Tambahan
                     </label>
                     <textarea class="input-dark w-full px-3 py-2 rounded-lg text-sm @error('notes') border-apple-red @enderror" 
@@ -329,8 +328,8 @@
             </div>
 
             <!-- Metadata Info -->
-            <div class="px-4 py-2" style="background-color: rgba(28, 28, 30, 0.5); border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                <div class="flex items-center justify-between text-xs" style="color: rgba(235, 235, 245, 0.5);">
+            <div class="px-4 py-2 bg-[#1C1C1E]/50 border-t border-white/10">
+                <div class="flex items-center justify-between text-xs text-dark-text-tertiary/50">
                     <div class="flex items-center space-x-4">
                         <span class="flex items-center">
                             <i class="fas fa-calendar-plus mr-1.5"></i>Dibuat: {{ $client->created_at->format('d M Y H:i') }}
@@ -343,10 +342,9 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex justify-end space-x-2 p-4" style="border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                <a href="{{ route('clients.show', $client) }}" 
-                   class="px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center" 
-                   style="background: rgba(142, 142, 147, 0.3); color: rgba(235, 235, 245, 0.8);">
+            <div class="flex justify-end space-x-2 p-4 border-t border-white/10">
+                <a href="{{ route('clients.show', $client) }}"
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center bg-white/10 text-dark-text-primary/80">
                     <i class="fas fa-times mr-1.5"></i>Batal
                 </a>
                 <button type="submit" 

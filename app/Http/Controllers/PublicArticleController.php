@@ -21,10 +21,10 @@ class PublicArticleController extends Controller
         // Cache latest articles for 10 minutes per locale.
         // If cache store is not writable, gracefully fallback to direct query.
         try {
-            $latestArticles = cache()->remember("landing.latest_articles.{$locale}", 600, function () {
+            $latestArticles = cache()->remember("landing.latest_articles.{$locale}.v5b", 600, function () {
                 return Article::published()
                     ->orderBy('published_at', 'desc')
-                    ->take(3)
+                    ->take(5)
                     ->get();
             });
         } catch (Throwable $e) {
@@ -33,9 +33,9 @@ class PublicArticleController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            $latestArticles = Article::published()
+            $latestArticles = Article::published() // fallback
                 ->orderBy('published_at', 'desc')
-                ->take(3)
+                ->take(5)
                 ->get();
         }
 

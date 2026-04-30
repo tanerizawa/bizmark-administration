@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\TrendingTopicService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class SeoTrendingTopicsCommand extends Command
@@ -68,6 +69,7 @@ class SeoTrendingTopicsCommand extends Command
                 $seeds = $this->getCategorySeeds($category);
                 if (empty($seeds)) {
                     $this->error("Unknown category: {$category}");
+
                     return self::FAILURE;
                 }
 
@@ -93,7 +95,7 @@ class SeoTrendingTopicsCommand extends Command
                 $this->table(
                     ['Category', 'Topics Found'],
                     collect($summary['categories'])
-                        ->map(fn($count, $cat) => [$cat, $count])
+                        ->map(fn ($count, $cat) => [$cat, $count])
                         ->values()
                         ->toArray()
                 );
@@ -101,7 +103,7 @@ class SeoTrendingTopicsCommand extends Command
                 $this->warn('No new trending topics discovered.');
             }
 
-            if (!empty($summary['errors'])) {
+            if (! empty($summary['errors'])) {
                 $this->newLine();
                 $this->warn('Errors encountered:');
                 foreach ($summary['errors'] as $error) {
@@ -117,6 +119,7 @@ class SeoTrendingTopicsCommand extends Command
 
         } catch (\Throwable $e) {
             $this->error("Discovery failed: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }
@@ -141,13 +144,13 @@ class SeoTrendingTopicsCommand extends Command
             ]
         );
 
-        if (!empty($summary['by_category'])) {
+        if (! empty($summary['by_category'])) {
             $this->newLine();
             $this->info('By Category:');
             $this->table(
                 ['Category', 'Count', 'Avg Score'],
                 collect($summary['by_category'])
-                    ->map(fn($data, $cat) => [
+                    ->map(fn ($data, $cat) => [
                         $cat,
                         $data['count'],
                         round($data['avg_score'], 1),
@@ -157,17 +160,17 @@ class SeoTrendingTopicsCommand extends Command
             );
         }
 
-        if (!empty($summary['top_topics'])) {
+        if (! empty($summary['top_topics'])) {
             $this->newLine();
             $this->info('Top 5 Unprocessed Topics:');
             $this->table(
                 ['Topic', 'Category', 'Score', 'Discovered'],
                 collect($summary['top_topics'])
-                    ->map(fn($t) => [
+                    ->map(fn ($t) => [
                         \Illuminate\Support\Str::limit($t['topic'], 40),
                         $t['category'],
                         $t['trend_score'],
-                        \Carbon\Carbon::parse($t['discovered_at'])->diffForHumans(),
+                        Carbon::parse($t['discovered_at'])->diffForHumans(),
                     ])
                     ->toArray()
             );
@@ -212,7 +215,7 @@ class SeoTrendingTopicsCommand extends Command
             $this->table(
                 ['Trending ID', 'Topic ID', 'Title', 'Score', 'Priority'],
                 collect($result['topics'])
-                    ->map(fn($t) => [
+                    ->map(fn ($t) => [
                         $t['trending_id'],
                         $t['article_topic_id'],
                         \Illuminate\Support\Str::limit($t['title'], 50),

@@ -9,8 +9,8 @@
             <i class="fas fa-arrow-left text-lg"></i>
         </a>
         <div>
-            <h1 class="text-3xl font-bold" style="color: #FFFFFF;">Edit Proyek</h1>
-            <p class="mt-1" style="color: rgba(235, 235, 245, 0.6);">{{ $project->name }}</p>
+            <h1 class="text-3xl font-bold text-white">Edit Proyek</h1>
+            <p class="mt-1 text-dark-text-secondary">{{ $project->name }}</p>
         </div>
     </div>
 
@@ -20,13 +20,13 @@
         
         <!-- Basic Information -->
         <div class="card-elevated rounded-apple-lg p-6">
-            <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">
+            <h3 class="text-lg font-semibold mb-4 text-white">
                 <i class="fas fa-info-circle mr-2 text-apple-blue-dark"></i>Informasi Proyek
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
-                    <label for="name" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="name" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Nama Proyek <span class="text-apple-red-dark">*</span>
                     </label>
                     <input type="text" id="name" name="name" value="{{ old('name', $project->name) }}" required
@@ -38,7 +38,7 @@
                 </div>
 
                 <div>
-                    <label for="client_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="client_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Klien <span class="text-apple-red-dark">*</span>
                     </label>
                     <select id="client_id" name="client_id" required
@@ -56,7 +56,7 @@
                     @error('client_id')
                     <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
                     @enderror
-                    <p class="mt-1.5 text-xs" style="color: rgba(235, 235, 245, 0.5);">
+                    <p class="mt-1.5 text-xs text-dark-text-tertiary">
                         <i class="fas fa-info-circle mr-1"></i>
                         Belum ada di list? 
                         <a href="{{ route('clients.create') }}" target="_blank" class="text-apple-blue hover:text-apple-blue-dark">
@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="md:col-span-2">
-                    <label for="description" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="description" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Deskripsi Proyek <span class="text-apple-red-dark">*</span>
                     </label>
                     <textarea id="description" name="description" rows="4" required
@@ -78,7 +78,7 @@
                 </div>
 
                 <div>
-                    <label for="institution_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="institution_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Institusi Tujuan <span class="text-apple-red-dark">*</span>
                     </label>
                     <select id="institution_id" name="institution_id" required
@@ -97,7 +97,7 @@
                 </div>
 
                 <div>
-                    <label for="status_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="status_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Status <span class="text-apple-red-dark">*</span>
                     </label>
                     <select id="status_id" name="status_id" required
@@ -119,13 +119,13 @@
 
         <!-- Project Schedule -->
         <div class="card-elevated rounded-apple-lg p-6">
-            <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">
+            <h3 class="text-lg font-semibold mb-4 text-white">
                 <i class="fas fa-calendar mr-2 text-apple-blue-dark"></i>Jadwal Proyek
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <label for="start_date" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="start_date" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Tanggal Mulai <span class="text-apple-red-dark">*</span>
                     </label>
                     <input type="date" id="start_date" name="start_date" 
@@ -137,7 +137,7 @@
                 </div>
 
                 <div>
-                    <label for="deadline" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="deadline" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Target Selesai
                     </label>
                     <input type="date" id="deadline" name="deadline" 
@@ -149,9 +149,9 @@
                 </div>
 
                 <div>
-                    <label for="completed_at" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="completed_at" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Tanggal Selesai Aktual
-                        <span class="text-xs" style="color: rgba(235, 235, 245, 0.5);">(opsional)</span>
+                        <span class="text-xs text-dark-text-tertiary">(opsional)</span>
                     </label>
                     <input type="date" id="completed_at" name="completed_at" 
                            value="{{ old('completed_at', $project->completed_at ? $project->completed_at->format('Y-m-d') : ($project->actual_completion_date ? $project->actual_completion_date->format('Y-m-d') : '')) }}"
@@ -183,7 +183,7 @@
                 </div>
 
                 <div>
-                    <label for="progress_percentage" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="progress_percentage" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Progress (%)
                     </label>
                     <input type="number" id="progress_percentage" name="progress_percentage" 
@@ -198,9 +198,9 @@
             <!-- Completion Notes -->
             @if($project->completed_at || old('completed_at'))
             <div class="mt-6">
-                <label for="completion_notes" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                <label for="completion_notes" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                     Catatan Penyelesaian
-                    <span class="text-xs" style="color: rgba(235, 235, 245, 0.5);">(opsional - muncul saat ada tanggal selesai)</span>
+                    <span class="text-xs text-dark-text-tertiary">(opsional - muncul saat ada tanggal selesai)</span>
                 </label>
                 <textarea id="completion_notes" name="completion_notes" rows="3"
                           class="input-dark w-full px-3 py-2 rounded-md @error('completion_notes') ring-2 ring-apple-red @enderror"
@@ -214,17 +214,17 @@
 
         <!-- Financial Information -->
         <div class="card-elevated rounded-apple-lg p-6">
-            <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">
+            <h3 class="text-lg font-semibold mb-4 text-white">
                 <i class="fas fa-dollar-sign mr-2 text-apple-blue-dark"></i>Informasi Keuangan
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="budget" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="budget" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Budget Proyek
                     </label>
                     <div class="relative">
-                        <span class="absolute left-3 top-2" style="color: rgba(235, 235, 245, 0.6);">Rp</span>
+                        <span class="absolute left-3 top-2 text-dark-text-secondary">Rp</span>
                         <input type="number" id="budget" name="budget" value="{{ old('budget', $project->budget) }}" step="0.01"
                                class="input-dark w-full pl-10 pr-3 py-2 rounded-md @error('budget') ring-2 ring-apple-red @enderror"
                                placeholder="0">
@@ -235,11 +235,11 @@
                 </div>
 
                 <div>
-                    <label for="actual_cost" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="actual_cost" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Biaya Aktual
                     </label>
                     <div class="relative">
-                        <span class="absolute left-3 top-2" style="color: rgba(235, 235, 245, 0.6);">Rp</span>
+                        <span class="absolute left-3 top-2 text-dark-text-secondary">Rp</span>
                         <input type="number" id="actual_cost" name="actual_cost" value="{{ old('actual_cost', $project->actual_cost) }}" step="0.01"
                                class="input-dark w-full pl-10 pr-3 py-2 rounded-md @error('actual_cost') ring-2 ring-apple-red @enderror"
                                placeholder="0">
@@ -253,12 +253,12 @@
 
         <!-- Additional Notes -->
         <div class="card-elevated rounded-apple-lg p-6">
-            <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">
+            <h3 class="text-lg font-semibold mb-4 text-white">
                 <i class="fas fa-sticky-note mr-2 text-apple-blue-dark"></i>Catatan Tambahan
             </h3>
             
             <div>
-                <label for="notes" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                <label for="notes" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                     Catatan
                 </label>
                 <textarea id="notes" name="notes" rows="4"
@@ -273,19 +273,19 @@
         <!-- Status Change Log (if status changes) -->
         @if($project->logs->count() > 0)
         <div class="card-elevated rounded-apple-lg p-6">
-            <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">
+            <h3 class="text-lg font-semibold mb-4 text-white">
                 <i class="fas fa-history mr-2 text-apple-blue-dark"></i>Riwayat Perubahan
             </h3>
             
             <div class="space-y-3 max-h-60 overflow-y-auto">
                 @foreach($project->logs->take(5) as $log)
-                <div class="flex items-start space-x-3 p-3 rounded-lg" style="background: rgba(58, 58, 60, 0.6);">
+                <div class="flex items-start space-x-3 p-3 rounded-lg bg-[rgba(58,58,60,0.6)]">
                     <div class="flex-shrink-0">
-                        <i class="fas fa-clock text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);"></i>
+                        <i class="fas fa-clock text-sm mt-1 text-dark-text-secondary"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm" style="color: rgba(235, 235, 245, 0.8);">{{ $log->description }}</p>
-                        <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">{{ $log->created_at->format('d M Y, H:i') }}</p>
+                        <p class="text-sm text-dark-text-primary/80">{{ $log->description }}</p>
+                        <p class="text-xs mt-1 text-dark-text-secondary">{{ $log->created_at->format('d M Y, H:i') }}</p>
                     </div>
                 </div>
                 @endforeach
@@ -305,7 +305,7 @@
         <div class="card-elevated rounded-apple-lg p-6">
             <div class="flex justify-end space-x-4">
                 <a href="{{ route('projects.show', $project) }}" 
-                   class="px-6 py-3 rounded-lg font-medium transition-colors" style="background: rgba(58, 58, 60, 0.8); color: rgba(235, 235, 245, 0.8);">
+                   class="px-6 py-3 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     <i class="fas fa-times mr-2"></i>Batal
                 </a>
                 <button type="submit" 

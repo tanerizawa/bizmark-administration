@@ -1,13 +1,22 @@
 /* ============================================
-   NEUROSCIENCE-BASED DESIGN SYSTEM
+   BIZMARK DESIGN SYSTEM
    Global Styles & Tailwind Configuration
    ============================================ */
 
-/* Import CSS Variables */
+/* Import Design Tokens (Single Source of Truth) */
+@import './design-tokens.css';
+
+/* Import CSS Variables (Legacy — will be removed after migration) */
 @import './neuroscience-variables.css';
 
 /* Import Tailwind CSS */
 @import 'tailwindcss';
+
+/* Import Font Awesome locally (replaces CDN) */
+@import '@fortawesome/fontawesome-free/css/fontawesome.css';
+@import '@fortawesome/fontawesome-free/css/regular.css';
+@import '@fortawesome/fontawesome-free/css/solid.css';
+@import '@fortawesome/fontawesome-free/css/brands.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

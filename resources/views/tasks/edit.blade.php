@@ -11,9 +11,9 @@
                class="text-apple-blue-dark hover:text-apple-blue">
                 <i class="fas fa-arrow-left text-xl"></i>
             </a>
-            <h1 class="text-3xl font-bold" style="color: #FFFFFF;">Edit Tugas</h1>
+            <h1 class="text-3xl font-bold text-white">Edit Tugas</h1>
         </div>
-        <p style="color: rgba(235, 235, 245, 0.6);">{{ $task->title }}</p>
+        <p class="text-dark-text-secondary">{{ $task->title }}</p>
     </div>
 
     <!-- Form -->
@@ -23,13 +23,13 @@
             @method('PUT')
 
             <!-- Basic Information -->
-            <div class="pb-6" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-lg font-medium mb-4" style="color: #FFFFFF;">Informasi Dasar</h3>
+            <div class="pb-6 border-b border-white/10">
+                <h3 class="text-lg font-medium mb-4 text-white">Informasi Dasar</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Project -->
                     <div class="md:col-span-2">
-                        <label for="project_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="project_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Proyek <span class="text-apple-red-dark">*</span>
                         </label>
                         <select name="project_id" 
@@ -51,7 +51,7 @@
 
                     <!-- Title -->
                     <div class="md:col-span-2">
-                        <label for="title" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="title" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Judul Tugas <span class="text-apple-red-dark">*</span>
                         </label>
                         <input type="text" 
@@ -67,7 +67,7 @@
 
                     <!-- Description -->
                     <div class="md:col-span-2">
-                        <label for="description" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Deskripsi</label>
+                        <label for="description" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Deskripsi</label>
                         <textarea name="description" 
                                   id="description"
                                   rows="4"
@@ -79,7 +79,7 @@
 
                     <!-- SOP Notes -->
                     <div class="md:col-span-2">
-                        <label for="sop_notes" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">SOP / Checklist</label>
+                        <label for="sop_notes" class="block text-sm font-medium mb-2 text-dark-text-primary/80">SOP / Checklist</label>
                         <textarea name="sop_notes" 
                                   id="sop_notes"
                                   rows="3"
@@ -92,13 +92,13 @@
             </div>
 
             <!-- Assignment & Timeline -->
-            <div class="pb-6" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-lg font-medium mb-4" style="color: #FFFFFF;">Penugasan & Timeline</h3>
+            <div class="pb-6 border-b border-white/10">
+                <h3 class="text-lg font-medium mb-4 text-white">Penugasan & Timeline</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Assigned User -->
                     <div>
-                        <label for="assigned_user_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Ditugaskan Kepada</label>
+                        <label for="assigned_user_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Ditugaskan Kepada</label>
                         <select name="assigned_user_id" 
                                 id="assigned_user_id"
                                 class="input-dark w-full px-3 py-2 rounded-md @error('assigned_user_id') ring-2 ring-apple-red @enderror">
@@ -116,7 +116,7 @@
 
                     <!-- Due Date -->
                     <div>
-                        <label for="due_date" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tanggal Jatuh Tempo</label>
+                        <label for="due_date" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Tanggal Jatuh Tempo</label>
                         <input type="date" 
                                name="due_date" 
                                id="due_date"
@@ -129,7 +129,7 @@
 
                     <!-- Estimated Hours -->
                     <div>
-                        <label for="estimated_hours" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Estimasi Jam Kerja</label>
+                        <label for="estimated_hours" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Estimasi Jam Kerja</label>
                         <input type="number" 
                                name="estimated_hours" 
                                id="estimated_hours"
@@ -143,7 +143,7 @@
 
                     <!-- Actual Hours -->
                     <div>
-                        <label for="actual_hours" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Jam Kerja Aktual</label>
+                        <label for="actual_hours" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Jam Kerja Aktual</label>
                         <input type="number" 
                                name="actual_hours" 
                                id="actual_hours"
@@ -157,7 +157,7 @@
 
                     <!-- Institution -->
                     <div>
-                        <label for="institution_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Institusi Terkait</label>
+                        <label for="institution_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Institusi Terkait</label>
                         <select name="institution_id" 
                                 id="institution_id"
                                 class="input-dark w-full px-3 py-2 rounded-md @error('institution_id') ring-2 ring-apple-red @enderror">
@@ -175,7 +175,7 @@
 
                     <!-- Dependencies -->
                     <div>
-                        <label for="depends_on_task_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Bergantung pada Tugas</label>
+                        <label for="depends_on_task_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Bergantung pada Tugas</label>
                         <select name="depends_on_task_id" 
                                 id="depends_on_task_id"
                                 class="input-dark w-full px-3 py-2 rounded-md @error('depends_on_task_id') ring-2 ring-apple-red @enderror">
@@ -194,13 +194,13 @@
             </div>
 
             <!-- Status & Priority -->
-            <div class="pb-6" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-lg font-medium mb-4" style="color: #FFFFFF;">Status & Prioritas</h3>
+            <div class="pb-6 border-b border-white/10">
+                <h3 class="text-lg font-medium mb-4 text-white">Status & Prioritas</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Status -->
                     <div>
-                        <label for="status" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="status" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Status <span class="text-apple-red-dark">*</span>
                         </label>
                         <select name="status" 
@@ -219,7 +219,7 @@
 
                     <!-- Priority -->
                     <div>
-                        <label for="priority" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="priority" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Prioritas <span class="text-apple-red-dark">*</span>
                         </label>
                         <select name="priority" 
@@ -238,7 +238,7 @@
 
                     <!-- Sort Order -->
                     <div>
-                        <label for="sort_order" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Urutan</label>
+                        <label for="sort_order" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Urutan</label>
                         <input type="number" 
                                name="sort_order" 
                                id="sort_order"
@@ -255,9 +255,9 @@
             <!-- Completion Notes -->
             @if($task->status === 'done' || $task->completion_notes)
             <div>
-                <h3 class="text-lg font-medium mb-4" style="color: #FFFFFF;">Catatan Penyelesaian</h3>
+                <h3 class="text-lg font-medium mb-4 text-white">Catatan Penyelesaian</h3>
                 <div>
-                    <label for="completion_notes" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Catatan</label>
+                    <label for="completion_notes" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Catatan</label>
                     <textarea name="completion_notes" 
                               id="completion_notes"
                               rows="4"
@@ -271,9 +271,9 @@
             @endif
 
             <!-- Form Actions -->
-            <div class="flex justify-end space-x-4 pt-6" style="border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                <a href="{{ route('tasks.show', $task) }}" 
-                   class="px-6 py-2 rounded-md font-medium transition-colors" style="border: 1px solid rgba(84, 84, 88, 0.65); color: rgba(235, 235, 245, 0.8); background: rgba(58, 58, 60, 0.6);">
+            <div class="flex justify-end space-x-4 pt-6 border-t border-white/10">
+                <a href="{{ route('tasks.show', $task) }}"
+                   class="px-6 py-2 rounded-md font-medium transition-colors border border-white/10 text-dark-text-primary/80 bg-[rgba(58,58,60,0.6)]">
                     Batal
                 </a>
                 <button type="submit" 

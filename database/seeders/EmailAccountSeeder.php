@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\EmailAccount;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class EmailAccountSeeder extends Seeder
 {
@@ -15,6 +15,17 @@ class EmailAccountSeeder extends Seeder
     {
         $emailAccounts = [
             [
+                'email' => 'info@bizmark.id',
+                'name' => 'Info - Bizmark',
+                'type' => 'shared',
+                'department' => 'general',
+                'description' => 'Main inbox for general information and inquiries',
+                'is_active' => true,
+                'auto_reply_enabled' => true,
+                'auto_reply_message' => 'Terima kasih telah menghubungi Bizmark.id. Kami telah menerima pesan Anda dan akan merespon dalam waktu 1x24 jam.',
+                'signature' => "Best regards,\nBizmark.id Team",
+            ],
+            [
                 'email' => 'cs@bizmark.id',
                 'name' => 'Customer Service',
                 'type' => 'shared',
@@ -22,6 +33,7 @@ class EmailAccountSeeder extends Seeder
                 'description' => 'General customer service inquiries and support',
                 'is_active' => true,
                 'auto_reply_enabled' => false,
+                'auto_reply_message' => null,
                 'signature' => "Best regards,\nCustomer Service Team\nBizmark.id",
             ],
             [
@@ -32,28 +44,8 @@ class EmailAccountSeeder extends Seeder
                 'description' => 'Sales inquiries, quotes, and partnerships',
                 'is_active' => true,
                 'auto_reply_enabled' => false,
+                'auto_reply_message' => null,
                 'signature' => "Best regards,\nSales Team\nBizmark.id",
-            ],
-            [
-                'email' => 'cs@bizmark.id',
-                'name' => 'Technical Support',
-                'type' => 'shared',
-                'department' => 'support',
-                'description' => 'Technical support and troubleshooting',
-                'is_active' => true,
-                'auto_reply_enabled' => false,
-                'signature' => "Best regards,\nTechnical Support Team\nBizmark.id",
-            ],
-            [
-                'email' => 'cs@bizmark.id',
-                'name' => 'General Information',
-                'type' => 'shared',
-                'department' => 'general',
-                'description' => 'General information and inquiries',
-                'is_active' => true,
-                'auto_reply_enabled' => true,
-                'auto_reply_message' => "Thank you for contacting Bizmark.id. We have received your message and will respond within 24 hours.",
-                'signature' => "Best regards,\nBizmark.id Team",
             ],
         ];
 

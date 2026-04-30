@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Project;
-use App\Models\Task;
-use App\Models\Document;
 use App\Models\Client;
+use App\Models\Document;
 use App\Models\Institution;
 use App\Models\PermitApplication;
+use App\Models\Project;
+use App\Models\Task;
+use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
@@ -19,11 +19,11 @@ class SearchController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q', '');
-        
+
         if (strlen($query) < 2) {
             return response()->json([
                 'results' => [],
-                'message' => 'Masukkan minimal 2 karakter untuk mencari'
+                'message' => 'Masukkan minimal 2 karakter untuk mencari',
             ]);
         }
 
@@ -37,7 +37,7 @@ class SearchController extends Controller
         ];
 
         // Count total results
-        $totalResults = collect($results)->sum(fn($items) => count($items));
+        $totalResults = collect($results)->sum(fn ($items) => count($items));
 
         return response()->json([
             'query' => $query,
@@ -53,7 +53,7 @@ class SearchController extends Controller
             ->orWhere('client_name', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'name', 'client_name'])
-            ->map(function($project) {
+            ->map(function ($project) {
                 return [
                     'id' => $project->id,
                     'title' => $project->name,
@@ -72,11 +72,11 @@ class SearchController extends Controller
             ->orWhere('description', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'title', 'status'])
-            ->map(function($task) {
+            ->map(function ($task) {
                 return [
                     'id' => $task->id,
                     'title' => $task->title,
-                    'subtitle' => 'Status: ' . ucfirst($task->status),
+                    'subtitle' => 'Status: '.ucfirst($task->status),
                     'icon' => 'fa-tasks',
                     'color' => 'apple-orange',
                     'url' => route('tasks.show', $task->id),
@@ -91,7 +91,7 @@ class SearchController extends Controller
             ->orWhere('description', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'title', 'category'])
-            ->map(function($document) {
+            ->map(function ($document) {
                 return [
                     'id' => $document->id,
                     'title' => $document->title,
@@ -111,7 +111,7 @@ class SearchController extends Controller
             ->orWhere('phone', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'name', 'email'])
-            ->map(function($client) {
+            ->map(function ($client) {
                 return [
                     'id' => $client->id,
                     'title' => $client->name,
@@ -130,7 +130,7 @@ class SearchController extends Controller
             ->orWhere('address', 'LIKE', "%{$query}%")
             ->limit(5)
             ->get(['id', 'name', 'type'])
-            ->map(function($institution) {
+            ->map(function ($institution) {
                 return [
                     'id' => $institution->id,
                     'title' => $institution->name,
@@ -146,13 +146,13 @@ class SearchController extends Controller
     private function searchPermits($query)
     {
         return PermitApplication::where('application_number', 'LIKE', "%{$query}%")
-            ->orWhereHas('client', function($q) use ($query) {
+            ->orWhereHas('client', function ($q) use ($query) {
                 $q->where('name', 'LIKE', "%{$query}%");
             })
             ->limit(5)
             ->with('client:id,name')
             ->get(['id', 'application_number', 'client_id', 'status'])
-            ->map(function($permit) {
+            ->map(function ($permit) {
                 return [
                     'id' => $permit->id,
                     'title' => $permit->application_number,

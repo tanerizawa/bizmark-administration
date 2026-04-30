@@ -26,10 +26,10 @@ class ClientWelcomeNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Selamat Datang di Bizmark.id — Akun Anda Siap')
-            ->greeting('Halo ' . $this->client->name . ',')
+            ->greeting('Halo '.$this->client->name.',')
             ->line('Akun klien Anda telah berhasil dibuat. Berikut detail login Anda:')
-            ->line('**Email:** ' . $this->client->email)
-            ->line('**Password:** ' . $this->plainPassword)
+            ->line('**Email:** '.$this->client->email)
+            ->line('**Password:** '.$this->plainPassword)
             ->action('Login ke Portal Klien', url('/client/login'))
             ->line('Segera ubah password Anda setelah login pertama kali.')
             ->line('Jika ada pertanyaan, silakan hubungi tim kami.');
@@ -40,7 +40,7 @@ class ClientWelcomeNotification extends Notification implements ShouldQueue
         return [
             'type' => 'client_welcome',
             'client_id' => $this->client->id,
-            'message' => 'Akun klien berhasil dibuat untuk ' . $this->client->email,
+            'message' => 'Akun klien berhasil dibuat untuk '.$this->client->email,
         ];
     }
 }

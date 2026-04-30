@@ -7,12 +7,12 @@
 <div class="max-w-3xl mx-auto">
     <!-- Validation Errors Alert (Global) -->
     @if ($errors->any())
-    <div class="mb-6 rounded-apple p-4" style="background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.3);">
+    <div class="mb-6 rounded-apple p-4 bg-apple-red/10 border border-apple-red/30">
         <div class="flex items-start">
-            <i class="fas fa-exclamation-triangle mt-0.5 mr-3" style="color: rgba(255, 59, 48, 1);"></i>
+            <i class="fas fa-exclamation-triangle mt-0.5 mr-3 text-apple-red"></i>
             <div class="flex-1">
-                <p class="text-sm font-medium mb-2" style="color: rgba(255, 59, 48, 1);">Validation Error</p>
-                <ul class="text-xs space-y-1" style="color: rgba(235, 235, 245, 0.9);">
+                <p class="text-sm font-medium mb-2 text-apple-red">Validation Error</p>
+                <ul class="text-xs space-y-1 text-dark-text-primary">
                     @foreach ($errors->all() as $error)
                         <li>• {{ $error }}</li>
                     @endforeach
@@ -25,17 +25,17 @@
     <!-- Back Button -->
     <div class="mb-6">
         <a href="{{ route('reconciliations.index') }}" 
-           class="inline-flex items-center text-sm" style="color: rgba(0, 122, 255, 1);">
+           class="inline-flex items-center text-sm text-apple-blue">
             <i class="fas fa-arrow-left mr-2"></i>
             Kembali ke Daftar Rekonsiliasi
         </a>
     </div>
 
     <!-- Form Card -->
-    <div class="rounded-apple p-6 shadow-sm" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);">
+    <div class="rounded-apple p-6 shadow-sm bg-white/5 backdrop-blur-md">
         <div class="mb-6">
-            <h2 class="text-xl font-bold mb-2" style="color: rgba(235, 235, 245, 0.9);">Informasi Rekonsiliasi</h2>
-            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">
+            <h2 class="text-xl font-bold mb-2 text-dark-text-primary">Informasi Rekonsiliasi</h2>
+            <p class="text-sm text-dark-text-secondary">
                 Upload bank statement dan mulai proses rekonsiliasi dengan transaksi sistem
             </p>
         </div>
@@ -45,12 +45,12 @@
 
             <!-- Cash Account Selection -->
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary">
                     Akun Kas/Bank <span class="text-red-500">*</span>
                 </label>
                 <select name="cash_account_id" required
                         class="w-full px-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('cash_account_id') ring-2 ring-red-500 @enderror"
-                        style="background: rgba(255, 255, 255, 0.05); color: rgba(235, 235, 245, 0.9); backdrop-filter: blur(10px);">
+                        class="w-full px-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('cash_account_id') ring-2 ring-red-500 @enderror bg-white/5 text-dark-text-primary backdrop-blur-md">
                     <option value="">Pilih akun kas/bank</option>
                     @foreach($cashAccounts as $account)
                         <option value="{{ $account->id }}" {{ old('cash_account_id') == $account->id ? 'selected' : '' }}>
@@ -66,23 +66,23 @@
             <!-- Period Selection -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary">
                         Tanggal Mulai <span class="text-red-500">*</span>
                     </label>
                     <input type="date" name="start_date" value="{{ old('start_date') }}" required
                            class="w-full px-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('start_date') ring-2 ring-red-500 @enderror"
-                           style="background: rgba(255, 255, 255, 0.05); color: rgba(235, 235, 245, 0.9); backdrop-filter: blur(10px);">
+                           class="w-full px-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('start_date') ring-2 ring-red-500 @enderror bg-white/5 text-dark-text-primary backdrop-blur-md">
                     @error('start_date')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary">
                         Tanggal Selesai <span class="text-red-500">*</span>
                     </label>
                     <input type="date" name="end_date" value="{{ old('end_date') }}" required
                            class="w-full px-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('end_date') ring-2 ring-red-500 @enderror"
-                           style="background: rgba(255, 255, 255, 0.05); color: rgba(235, 235, 245, 0.9); backdrop-filter: blur(10px);">
+                           class="w-full px-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('end_date') ring-2 ring-red-500 @enderror bg-white/5 text-dark-text-primary backdrop-blur-md">
                     @error('end_date')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
@@ -92,14 +92,13 @@
             <!-- Bank Balances -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary">
                         Saldo Awal Bank
                     </label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-sm" style="color: rgba(235, 235, 245, 0.6);">Rp</span>
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-sm text-dark-text-secondary">Rp</span>
                         <input type="text" id="opening_balance_display"
-                               class="w-full pl-12 pr-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('opening_balance_bank') ring-2 ring-red-500 @enderror"
-                               style="background: rgba(255, 255, 255, 0.05); color: rgba(235, 235, 245, 0.9); backdrop-filter: blur(10px);"
+                               class="w-full pl-12 pr-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('opening_balance_bank') ring-2 ring-red-500 @enderror bg-white/5 text-dark-text-primary backdrop-blur-md"
                                placeholder="0.00"
                                value="{{ old('opening_balance_bank') ? number_format((float)old('opening_balance_bank'), 2, '.', ',') : '' }}">
                         <input type="hidden" name="opening_balance_bank" id="opening_balance_bank" value="{{ old('opening_balance_bank') }}">
@@ -107,19 +106,18 @@
                     @error('opening_balance_bank')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
-                    <p class="mt-1 text-xs" style="color: rgba(235, 235, 245, 0.5);">
+                    <p class="mt-1 text-xs text-dark-text-tertiary/80">
                         <i class="fas fa-magic mr-1"></i>Auto-extract dari CSV BCA atau input manual
                     </p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary">
                         Saldo Akhir Bank
                     </label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-sm" style="color: rgba(235, 235, 245, 0.6);">Rp</span>
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-sm text-dark-text-secondary">Rp</span>
                         <input type="text" id="closing_balance_display"
-                               class="w-full pl-12 pr-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('closing_balance_bank') ring-2 ring-red-500 @enderror"
-                               style="background: rgba(255, 255, 255, 0.05); color: rgba(235, 235, 245, 0.9); backdrop-filter: blur(10px);"
+                               class="w-full pl-12 pr-4 py-3 rounded-apple text-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-500 @error('closing_balance_bank') ring-2 ring-red-500 @enderror bg-white/5 text-dark-text-primary backdrop-blur-md"
                                placeholder="0.00"
                                value="{{ old('closing_balance_bank') ? number_format((float)old('closing_balance_bank'), 2, '.', ',') : '' }}">
                         <input type="hidden" name="closing_balance_bank" id="closing_balance_bank" value="{{ old('closing_balance_bank') }}">
@@ -127,7 +125,7 @@
                     @error('closing_balance_bank')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
-                    <p class="mt-1 text-xs" style="color: rgba(235, 235, 245, 0.5);">
+                    <p class="mt-1 text-xs text-dark-text-tertiary/80">
                         <i class="fas fa-magic mr-1"></i>Auto-extract dari CSV BCA atau input manual
                     </p>
                 </div>
@@ -135,26 +133,25 @@
 
             <!-- Bank Statement Upload -->
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.9);">
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary">
                     Upload Bank Statement <span class="text-red-500">*</span>
                 </label>
-                <div class="border-2 border-dashed rounded-apple p-6 text-center hover:border-blue-500 transition-colors cursor-pointer @error('bank_statement') border-red-500 @enderror"
-                     style="border-color: rgba(235, 235, 245, 0.2); background: rgba(255, 255, 255, 0.02);"
+                <div class="border-2 border-dashed rounded-apple p-6 text-center hover:border-blue-500 transition-colors cursor-pointer @error('bank_statement') border-red-500 @enderror border-white/20 bg-white/[0.02]"
                      id="dropZone">
                     <input type="file" name="bank_statement" id="bankStatementInput" accept=".csv,.xlsx,.xls" required class="hidden">
                     <div id="uploadPrompt">
-                        <i class="fas fa-cloud-upload-alt text-4xl mb-3" style="color: rgba(0, 122, 255, 0.6);"></i>
-                        <p class="text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.9);">
+                        <i class="fas fa-cloud-upload-alt text-4xl mb-3 text-apple-blue/60"></i>
+                        <p class="text-sm font-medium mb-1 text-dark-text-primary">
                             Drag & drop file atau klik untuk browse
                         </p>
-                        <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
+                        <p class="text-xs text-dark-text-tertiary/80">
                             Format: CSV atau Excel (.xlsx, .xls) - Max 5MB
                         </p>
                     </div>
                     <div id="uploadSuccess" class="hidden">
-                        <i class="fas fa-file-csv text-4xl mb-3" style="color: rgba(52, 199, 89, 1);"></i>
-                        <p class="text-sm font-medium" style="color: rgba(52, 199, 89, 1);" id="fileName"></p>
-                        <button type="button" onclick="clearFile()" class="text-xs mt-2" style="color: rgba(235, 235, 245, 0.6);">
+                        <i class="fas fa-file-csv text-4xl mb-3 text-apple-green"></i>
+                        <p class="text-sm font-medium text-apple-green" id="fileName"></p>
+                        <button type="button" onclick="clearFile()" class="text-xs mt-2 text-dark-text-secondary">
                             <i class="fas fa-times"></i> Ganti file
                         </button>
                     </div>
@@ -165,21 +162,21 @@
             </div>
 
             <!-- Bank Format Info -->
-            <div class="rounded-apple p-4 mb-6" style="background: rgba(0, 122, 255, 0.1);">
+            <div class="rounded-apple p-4 mb-6 bg-apple-blue/10">
                 <div class="flex items-start">
-                    <i class="fas fa-info-circle mt-0.5 mr-3" style="color: rgba(0, 122, 255, 1);"></i>
+                    <i class="fas fa-info-circle mt-0.5 mr-3 text-apple-blue"></i>
                     <div class="flex-1">
-                        <p class="text-sm font-medium mb-3" style="color: rgba(0, 122, 255, 1);">Format Bank Statement yang Didukung</p>
+                        <p class="text-sm font-medium mb-3 text-apple-blue">Format Bank Statement yang Didukung</p>
                         
                         <!-- BCA Format -->
                         <div class="mb-3">
-                            <p class="text-xs font-semibold mb-1" style="color: rgba(235, 235, 245, 0.9);">
-                                <i class="fas fa-check-circle mr-1" style="color: rgba(52, 199, 89, 1);"></i>Format BCA (Auto-Detect)
+                            <p class="text-xs font-semibold mb-1 text-dark-text-primary">
+                                <i class="fas fa-check-circle mr-1 text-apple-green"></i>Format BCA (Auto-Detect)
                             </p>
-                            <p class="text-xs mb-2" style="color: rgba(235, 235, 245, 0.7);">
+                            <p class="text-xs mb-2 text-dark-text-secondary/90">
                                 File CSV dari BCA akan otomatis terdeteksi dan di-parse. Saldo awal & akhir akan otomatis terisi dari footer CSV.
                             </p>
-                            <code class="text-xs block p-2 rounded" style="background: rgba(0, 0, 0, 0.2); color: rgba(235, 235, 245, 0.9);">
+                            <code class="text-xs block p-2 rounded bg-black/20 text-dark-text-primary">
 Account No.,=,'1091806504<br>
 Date,Description,Branch,Amount,,Balance<br>
 '07/09,TRANSFER...,'0998,500000.00,DB,1234567.89<br>
@@ -190,23 +187,23 @@ Ending Balance,=,178447.23
                         
                         <!-- Standard/BTN Format -->
                         <div>
-                            <p class="text-xs font-semibold mb-1" style="color: rgba(235, 235, 245, 0.9);">
-                                <i class="fas fa-check-circle mr-1" style="color: rgba(52, 199, 89, 1);"></i>Format Standard/BTN
+                            <p class="text-xs font-semibold mb-1 text-dark-text-primary">
+                                <i class="fas fa-check-circle mr-1 text-apple-green"></i>Format Standard/BTN
                             </p>
-                            <p class="text-xs mb-2" style="color: rgba(235, 235, 245, 0.7);">
+                            <p class="text-xs mb-2 text-dark-text-secondary/90">
                                 Untuk bank lain, gunakan format standard dengan kolom terpisah untuk Debit dan Kredit. Saldo perlu diinput manual.
                             </p>
-                            <code class="text-xs block p-2 rounded" style="background: rgba(0, 0, 0, 0.2); color: rgba(235, 235, 245, 0.9);">
+                            <code class="text-xs block p-2 rounded bg-black/20 text-dark-text-primary">
 Tanggal,Keterangan,Debet,Kredit,Saldo,Referensi<br>
 2025-09-07,TRANSFER MASUK,0,500000.00,1234567.89,REF001
                             </code>
                         </div>
                         
-                        <div class="mt-3 pt-3 border-t" style="border-color: rgba(0, 122, 255, 0.2);">
-                            <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                        <div class="mt-3 pt-3 border-t border-apple-blue/20">
+                            <p class="text-xs text-dark-text-secondary">
                                 <strong>Format Angka:</strong> Gunakan koma (,) untuk separator ribuan dan titik (.) untuk desimal
                             </p>
-                            <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                            <p class="text-xs mt-1 text-dark-text-tertiary/80">
                                 <strong>Contoh:</strong> 1,234,567.89 atau 42,485,447.23
                             </p>
                         </div>
@@ -216,14 +213,12 @@ Tanggal,Keterangan,Debet,Kredit,Saldo,Referensi<br>
 
             <!-- Action Buttons -->
             <div class="flex items-center justify-end space-x-3">
-                <a href="{{ route('reconciliations.index') }}" 
-                   class="px-6 py-3 rounded-apple text-sm font-medium transition-all hover:opacity-90"
-                   style="background: rgba(255, 255, 255, 0.05); color: rgba(235, 235, 245, 0.9);">
+                <a href="{{ route('reconciliations.index') }}"
+                   class="px-6 py-3 rounded-apple text-sm font-medium transition-all hover:opacity-90 bg-white/5 text-dark-text-primary">
                     Batal
                 </a>
-                <button type="submit" 
-                        class="px-6 py-3 rounded-apple text-sm font-medium shadow-sm transition-all hover:opacity-90"
-                        style="background: linear-gradient(135deg, rgba(0, 122, 255, 1) 0%, rgba(10, 132, 255, 1) 100%); color: white;">
+                <button type="submit"
+                        class="px-6 py-3 rounded-apple text-sm font-medium shadow-sm transition-all hover:opacity-90 btn-primary">
                     <i class="fas fa-check mr-2"></i>
                     Mulai Rekonsiliasi
                 </button>

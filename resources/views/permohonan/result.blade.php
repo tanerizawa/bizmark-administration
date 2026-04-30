@@ -23,7 +23,7 @@
     
     <!-- Landing Page Styles -->
     @include('landing.partials.critical-css')
-    @include('landing.partials.styles-modern')
+    @vite('resources/css/landing-theme.css')
     
     <style>
         :root {
@@ -485,6 +485,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold mb-1" style="color: var(--text-primary);">{{ $currentStatusConfig['info_title'] }}</h4>
+                                {{-- SAFE: $statusConfig is a hardcoded PHP array in this template, not user-supplied --}}
                                 <p class="text-sm" style="color: var(--text-secondary);">{!! $currentStatusConfig['info_body'] !!}</p>
                             </div>
                         </div>

@@ -100,7 +100,7 @@
         <div class="p-4 rounded-xl bg-gray-50 border border-gray-200">
             <h4 class="font-semibold text-gray-900 mb-1">Audit K3</h4>
             <p class="text-sm text-gray-700">Waktu: <strong>7-14 hari</strong></p>
-            <p class="text-sm text-gray-700">Biaya: mulai <strong>Rp 15 juta</strong> tergantung scope</p>
+            <p class="text-sm text-gray-700">Biaya: mulai <strong>Rp 15 juta</strong> tergantung lingkup pekerjaan</p>
         </div>
     </div>
 </section>

@@ -49,12 +49,12 @@ class KbliSettingsController extends Controller
             // Read CSV file
             $handle = fopen($file->getRealPath(), 'r');
             $header = fgetcsv($handle); // Read header row
-            
+
             // Normalize header (lowercase, trim)
-            $header = array_map(function($col) {
+            $header = array_map(function ($col) {
                 return strtolower(trim($col));
             }, $header);
-            
+
             // Map possible column names
             $columnMap = [
                 'kode' => 'code',
@@ -68,7 +68,7 @@ class KbliSettingsController extends Controller
                 'notes' => 'notes',
                 'keterangan' => 'notes',
             ];
-            
+
             // Find column indexes
             $indexes = [];
             foreach ($header as $index => $colName) {
@@ -76,12 +76,12 @@ class KbliSettingsController extends Controller
                     $indexes[$columnMap[$colName]] = $index;
                 }
             }
-            
+
             // Validate required columns exist
-            if (!isset($indexes['code']) || !isset($indexes['description']) || !isset($indexes['sector'])) {
+            if (! isset($indexes['code']) || ! isset($indexes['description']) || ! isset($indexes['sector'])) {
                 throw new \Exception('Format CSV tidak valid. Header harus memiliki kolom: Kode/Code, Judul/Description, Kategori/Sector');
             }
-            
+
             $imported = 0;
             $skipped = 0;
             $errors = [];
@@ -106,6 +106,7 @@ class KbliSettingsController extends Controller
                     // Validate required fields
                     if (empty($data['code']) || empty($data['description']) || empty($data['sector'])) {
                         $skipped++;
+
                         continue;
                     }
 
@@ -117,7 +118,7 @@ class KbliSettingsController extends Controller
 
                     $imported++;
                 } catch (\Exception $e) {
-                    $errors[] = "Row error: " . $e->getMessage();
+                    $errors[] = 'Row error: '.$e->getMessage();
                     $skipped++;
                 }
             }
@@ -130,7 +131,7 @@ class KbliSettingsController extends Controller
                 $message .= ", {$skipped} baris dilewati";
             }
 
-            if (!empty($errors)) {
+            if (! empty($errors)) {
                 Log::warning('KBLI Import Errors', $errors);
             }
 
@@ -145,7 +146,7 @@ class KbliSettingsController extends Controller
             ]);
 
             return redirect()->route('admin.settings.kbli.index')
-                ->with('error', 'Import gagal: ' . $e->getMessage());
+                ->with('error', 'Import gagal: '.$e->getMessage());
         }
     }
 
@@ -160,18 +161,18 @@ class KbliSettingsController extends Controller
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ];
 
-        $callback = function() {
+        $callback = function () {
             $file = fopen('php://output', 'w');
-            
+
             // Write header
             fputcsv($file, ['code', 'description', 'sector', 'notes']);
-            
+
             // Write sample data
             fputcsv($file, ['62010', 'Aktivitas Pemrograman Komputer', 'J', 'Contoh: Pengembangan software, aplikasi web/mobile']);
             fputcsv($file, ['62020', 'Aktivitas Konsultasi Komputer', 'J', 'Contoh: Konsultan IT, system integrator']);
             fputcsv($file, ['55101', 'Hotel Bintang 5', 'I', 'Perhotelan berbintang lima']);
             fputcsv($file, ['01111', 'Pertanian Padi', 'A', 'Pertanian padi sawah dan ladang']);
-            
+
             fclose($file);
         };
 
@@ -191,7 +192,7 @@ class KbliSettingsController extends Controller
                 ->with('success', "{$count} data KBLI berhasil dihapus");
         } catch (\Exception $e) {
             return redirect()->route('admin.settings.kbli.index')
-                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 
@@ -200,20 +201,20 @@ class KbliSettingsController extends Controller
      */
     public function export()
     {
-        $filename = 'kbli_export_' . date('Y-m-d_His') . '.csv';
+        $filename = 'kbli_export_'.date('Y-m-d_His').'.csv';
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ];
 
-        $callback = function() {
+        $callback = function () {
             $file = fopen('php://output', 'w');
-            
+
             // Write header
             fputcsv($file, ['code', 'description', 'sector', 'notes']);
-            
+
             // Write data
-            Kbli::orderBy('code')->chunk(100, function($kblis) use ($file) {
+            Kbli::orderBy('code')->chunk(100, function ($kblis) use ($file) {
                 foreach ($kblis as $kbli) {
                     fputcsv($file, [
                         $kbli->code,
@@ -223,7 +224,7 @@ class KbliSettingsController extends Controller
                     ]);
                 }
             });
-            
+
             fclose($file);
         };
 

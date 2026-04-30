@@ -33,7 +33,7 @@ class InterviewRescheduleRequestNotification extends Notification implements Sho
             ->line("**Posisi:** {$vacancy}")
             ->line("**Jadwal semula:** {$scheduled}")
             ->line("**Alasan:** {$reason}")
-            ->action('Lihat Detail Interview', url('/dashboard/interviews/' . $this->interview->id))
+            ->action('Lihat Detail Interview', url('/dashboard/interviews/'.$this->interview->id))
             ->line('Silakan atur ulang jadwal sesuai permintaan kandidat.');
     }
 

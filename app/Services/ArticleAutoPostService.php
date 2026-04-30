@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
+use App\Jobs\GenerateAutoPostArticle;
 use App\Models\Article;
 use App\Models\ArticleTopic;
 use App\Models\AutoPostConfig;
-use App\Models\AutoPostSchedule;
 use App\Models\AutoPostLog;
-use App\Jobs\GenerateAutoPostArticle;
+use App\Models\AutoPostSchedule;
 use App\Services\AutoPost\ArticleAutoPostArticleCreator;
 use App\Services\AutoPost\ArticleAutoPostContentHelper;
 use App\Services\AutoPost\ArticleAutoPostImageHelper;
 use App\Services\AutoPost\ArticleAutoPostSeoHelper;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ArticleAutoPostService
@@ -48,14 +48,14 @@ class ArticleAutoPostService
     public function executeScheduledPost(AutoPostSchedule $schedule): Article
     {
         $startTime = microtime(true);
-        
+
         // Mark as processing (don't increment attempts — already done by the queue job)
         $schedule->update([
             'status' => 'processing',
             'started_at' => now(),
         ]);
-        
-        \Log::info('🚀 Starting scheduled article generation', [
+
+        Log::info('🚀 Starting scheduled article generation', [
             'schedule_id' => $schedule->id,
             'topic_id' => $schedule->topic_id,
             'topic_title' => $schedule->topic->title ?? 'N/A',
@@ -68,29 +68,29 @@ class ArticleAutoPostService
             'topic_id' => $schedule->topic_id,
             'level' => 'info',
             'event' => 'generation_started',
-            'message' => '🚀 Starting article generation for: ' . ($schedule->topic->title ?? 'Unknown Topic') . ' (Attempt #' . $schedule->attempts . ')',
+            'message' => '🚀 Starting article generation for: '.($schedule->topic->title ?? 'Unknown Topic').' (Attempt #'.$schedule->attempts.')',
             'context' => ['timestamp' => now()->toDateTimeString()],
         ]);
 
         try {
             // 1. Load configuration
-            \Log::info('⚙️  Loading configuration', ['schedule_id' => $schedule->id]);
+            Log::info('⚙️  Loading configuration', ['schedule_id' => $schedule->id]);
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'level' => 'info',
                 'event' => 'config_loaded',
                 'message' => '⚙️  Loading auto-post configuration',
             ]);
-            
+
             $config = AutoPostConfig::current();
-            
-            if (!$config->is_enabled) {
+
+            if (! $config->is_enabled) {
                 throw new \Exception('Auto-posting is disabled in configuration');
             }
-            
+
             // Set timeout based on config
             set_time_limit($config->timeout_seconds ?? 120);
-            
+
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'level' => 'success',
@@ -98,26 +98,26 @@ class ArticleAutoPostService
                 'message' => '✅ Configuration validated and ready',
                 'context' => ['model' => $config->ai_model, 'auto_publish' => $config->auto_publish, 'timeout' => $config->timeout_seconds],
             ]);
-            
+
             // 2. Load topic
             $topic = $schedule->topic;
-            
-            if (!$topic) {
+
+            if (! $topic) {
                 throw new \Exception("Topic not found for schedule #{$schedule->id}");
             }
-            
-            \Log::info('📋 Topic loaded', ['topic_id' => $topic->id, 'title' => $topic->title]);
+
+            Log::info('📋 Topic loaded', ['topic_id' => $topic->id, 'title' => $topic->title]);
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
                 'level' => 'info',
                 'event' => 'topic_loaded',
-                'message' => '📋 Topic loaded: ' . $topic->title,
+                'message' => '📋 Topic loaded: '.$topic->title,
                 'context' => ['category' => $topic->category, 'keywords' => $topic->keywords],
             ]);
-            
+
             // 3. Check for duplicates
-            \Log::info('🔍 Checking for duplicate topics', ['topic_id' => $topic->id]);
+            Log::info('🔍 Checking for duplicate topics', ['topic_id' => $topic->id]);
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
@@ -125,11 +125,11 @@ class ArticleAutoPostService
                 'event' => 'duplicate_check_started',
                 'message' => '🔍 Checking for duplicate content',
             ]);
-            
+
             if ($this->similarityService->isDuplicate($topic, $config->duplicate_threshold)) {
-                throw new \Exception("Topic is too similar to recent articles (duplicate detected)");
+                throw new \Exception('Topic is too similar to recent articles (duplicate detected)');
             }
-            
+
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
@@ -137,12 +137,12 @@ class ArticleAutoPostService
                 'event' => 'duplicate_check_passed',
                 'message' => '✅ No duplicate content detected',
             ]);
-            
+
             // 4. Mark topic as processing
             $topic->markAsProcessing();
-            
+
             // 5. Generate content via AI
-            \Log::info('🤖 Starting AI generation', ['topic_id' => $topic->id, 'model' => $config->ai_model]);
+            Log::info('🤖 Starting AI generation', ['topic_id' => $topic->id, 'model' => $config->ai_model]);
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
@@ -151,11 +151,11 @@ class ArticleAutoPostService
                 'message' => '🤖 Generating article content with AI',
                 'context' => ['model' => $config->ai_model, 'temperature' => 0.7],
             ]);
-            
+
             $articleData = $this->generationService->generateArticle($topic, $config);
-            
+
             $wordCount = str_word_count(strip_tags($articleData['content']));
-            \Log::info('✅ AI generation completed', ['word_count' => $wordCount, 'reading_time' => $articleData['reading_time']]);
+            Log::info('✅ AI generation completed', ['word_count' => $wordCount, 'reading_time' => $articleData['reading_time']]);
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
@@ -171,11 +171,11 @@ class ArticleAutoPostService
                 'word_count' => $wordCount,
                 'reading_time' => $articleData['reading_time'],
             ]);
-            
+
             // 6. Validate quality
             $qualityCheck = $this->qualityService->validateQuality($articleData, $config);
-            
-            if (!$qualityCheck['valid']) {
+
+            if (! $qualityCheck['valid']) {
                 // Only log failure if quality is critically low
                 if ($qualityCheck['quality_score'] < 50) {
                     AutoPostLog::logError('quality_check_failed', 'Article quality too low - rejected', [
@@ -185,9 +185,9 @@ class ArticleAutoPostService
                             'quality_score' => $qualityCheck['quality_score'],
                         ],
                     ]);
-                    throw new \Exception('Article quality too low: ' . implode(', ', $qualityCheck['issues']));
+                    throw new \Exception('Article quality too low: '.implode(', ', $qualityCheck['issues']));
                 }
-                
+
                 // Log warning for marginal quality but continue
                 AutoPostLog::logWarning('quality_check_warning', 'Article quality marginal but acceptable', [
                     'topic_id' => $topic->id,
@@ -197,7 +197,7 @@ class ArticleAutoPostService
                     ],
                 ]);
             }
-            
+
             AutoPostLog::logSuccess('quality_check_passed', 'Article quality validation passed', [
                 'topic_id' => $topic->id,
                 'context' => [
@@ -205,13 +205,13 @@ class ArticleAutoPostService
                     'warnings' => count($qualityCheck['warnings'] ?? []),
                 ],
             ]);
-            
+
             // 7. Add internal links + "Baca juga" section (SEO: +7 for ≥5 links, +3 for "Baca juga")
             AutoPostLog::logInfo('internal_links_processing', 'Adding internal links', [
                 'topic_id' => $topic->id,
                 'context' => ['target_count' => max($config->internal_links_count, 5)],
             ]);
-            
+
             // Use at least 5 internal links for maximum SEO score
             $targetLinkCount = max($config->internal_links_count, 5);
             $articleData['content'] = $this->linkService->addInternalLinks(
@@ -226,38 +226,38 @@ class ArticleAutoPostService
                 null,
                 2
             );
-            
+
             // Ensure "Baca juga" / "Artikel Terkait" section exists for +3 SEO bonus
             $articleData['content'] = $this->contentHelper->ensureBacaJugaSection($articleData['content'], $topic);
-            
+
             $linkStats = $this->linkService->validateLinks($articleData['content']);
-            
+
             AutoPostLog::logSuccess('internal_links_added', 'Internal links added successfully', [
                 'topic_id' => $topic->id,
                 'internal_links' => $linkStats['internal_links'],
             ]);
-            
+
             // 7.5. Fetch featured image from Pexels
             if ($config->include_featured_image) {
                 $articleData['featured_image'] = $this->imageHelper->fetchFeaturedImage($topic, $schedule);
             }
-            
+
             // 8. Create article
             $article = $this->articleCreator->createArticle($articleData, $topic);
-            
-            \Log::info('📝 Article created in database', [
+
+            Log::info('📝 Article created in database', [
                 'article_id' => $article->id,
                 'title' => $article->title,
                 'status' => $article->status,
             ]);
-            
+
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'article_id' => $article->id,
                 'topic_id' => $topic->id,
                 'level' => 'success',
                 'event' => 'article_created',
-                'message' => '📝 Article created in database: ' . $article->title,
+                'message' => '📝 Article created in database: '.$article->title,
                 'context' => [
                     'article_id' => $article->id,
                     'status' => $article->status,
@@ -266,17 +266,17 @@ class ArticleAutoPostService
                 'word_count' => str_word_count(strip_tags($article->content)),
                 'reading_time' => $article->reading_time,
             ]);
-            
+
             // 8.5. SEO Compliance: Score and auto-fix before publishing
             $seoResult = $this->seoHelper->applySeoCompliance($article, $schedule);
-            
+
             // 9. Mark topic as published
             $topic->markAsPublished($article->id);
-            
+
             // 10. Calculate generation time and cost
             $generationTime = (int) round(microtime(true) - $startTime);
             $estimatedCost = $this->generationService->estimateCost($config);
-            
+
             // 11. Final success log
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
@@ -284,10 +284,10 @@ class ArticleAutoPostService
                 'topic_id' => $topic->id,
                 'level' => 'success',
                 'event' => 'article_published',
-                'message' => '🚀 Article auto-posted successfully: ' . $article->title . ' (SEO: ' . ($seoResult['final_score'] ?? '?') . '/100)',
+                'message' => '🚀 Article auto-posted successfully: '.$article->title.' (SEO: '.($seoResult['final_score'] ?? '?').'/100)',
                 'context' => [
                     'article_id' => $article->id,
-                    'url' => url('/blog/' . $article->slug),
+                    'url' => url('/blog/'.$article->slug),
                     'quality_score' => $qualityCheck['quality_score'],
                     'seo_score' => $seoResult['final_score'] ?? null,
                     'seo_grade' => $seoResult['grade'] ?? null,
@@ -299,16 +299,16 @@ class ArticleAutoPostService
                 'internal_links' => $linkStats['internal_links'],
                 'ai_cost' => $estimatedCost,
             ]);
-            
-            \Log::info('✅ Article auto-posted successfully', [
+
+            Log::info('✅ Article auto-posted successfully', [
                 'article_id' => $article->id,
                 'title' => $article->title,
-                'generation_time' => $generationTime . 's',
+                'generation_time' => $generationTime.'s',
                 'quality_score' => $qualityCheck['quality_score'],
             ]);
-            
+
             return $article;
-            
+
         } catch (\Exception $e) {
             $generationTime = (int) round(microtime(true) - $startTime);
 
@@ -316,14 +316,14 @@ class ArticleAutoPostService
             $errorLower = Str::lower($errorMessage);
             $isDuplicateFailure = Str::contains($errorLower, 'duplicate detected');
             $isNonRetryableFailure = $isDuplicateFailure || Str::contains($errorLower, 'topic not found');
-            
+
             AutoPostLog::logError('article_generation_failed', $e->getMessage(), [
                 'schedule_id' => $schedule->id,
                 'topic_id' => $schedule->topic_id,
             ]);
-            
+
             // Duplicate/topic-not-found failures are deterministic and should not consume retries.
-            $shouldRetry = !$isNonRetryableFailure
+            $shouldRetry = ! $isNonRetryableFailure
                 && $schedule->attempts < ($config->retry_attempts ?? 3);
 
             // For duplicate topics, auto-assign replacement topic to keep pipeline moving.
@@ -339,7 +339,7 @@ class ArticleAutoPostService
                         'status' => 'pending',
                         'started_at' => null,
                         'completed_at' => null,
-                        'error_message' => 'Auto-reassigned due to duplicate topic: ' . Str::limit($topic->title, 120),
+                        'error_message' => 'Auto-reassigned due to duplicate topic: '.Str::limit($topic->title, 120),
                         'generation_time_seconds' => $generationTime,
                     ]);
 
@@ -361,7 +361,7 @@ class ArticleAutoPostService
                     // Re-dispatch immediately so due schedules can still complete without manual intervention.
                     GenerateAutoPostArticle::dispatch($schedule->fresh())->onQueue('default');
 
-                    \Log::warning('🔁 Schedule auto-reassigned after duplicate detection', [
+                    Log::warning('🔁 Schedule auto-reassigned after duplicate detection', [
                         'schedule_id' => $schedule->id,
                         'old_topic_id' => $topic->id,
                         'new_topic_id' => $replacementTopic->id,
@@ -371,95 +371,97 @@ class ArticleAutoPostService
                     throw new \RuntimeException('Duplicate topic handled by automatic reassignment');
                 }
             }
-            
+
             $schedule->update([
                 'status' => $shouldRetry ? 'pending' : 'failed',
                 'error_message' => substr($errorMessage, 0, 500),
                 'generation_time_seconds' => $generationTime,
                 'completed_at' => now(),
             ]);
-            
+
             // Mark topic as failed only if max retries exceeded
             if (isset($topic)) {
-                if (!$shouldRetry) {
+                if (! $shouldRetry) {
                     $topic->markAsFailed();
                 } else {
                     // Clear scheduling for retry
                     $topic->clearScheduling();
                 }
             }
-            
-            \Log::error('❌ Article generation failed', [
+
+            Log::error('❌ Article generation failed', [
                 'schedule_id' => $schedule->id,
                 'attempt' => $schedule->attempts,
                 'will_retry' => $shouldRetry,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            
+
             throw $e;
         }
     }
-
 
     /**
      * Schedule next batch of posts for a given date
      */
     public function scheduleNextBatch(Carbon $date): array
     {
-        \Log::info('📅 Scheduling next batch of posts', [
+        Log::info('📅 Scheduling next batch of posts', [
             'date' => $date->toDateString(),
         ]);
 
         $config = AutoPostConfig::current();
-        
-        if (!$config->is_enabled) {
-            \Log::warning('⚠️  Auto-posting is disabled, skipping scheduling');
+
+        if (! $config->is_enabled) {
+            Log::warning('⚠️  Auto-posting is disabled, skipping scheduling');
+
             return [];
         }
-        
+
         $schedules = [];
         $postTimes = $config->getPostTimesForDate($date);
-        
+
         foreach ($postTimes as $time) {
             // Check if already scheduled
             $existing = AutoPostSchedule::where('scheduled_at', $time)->first();
-            
+
             if ($existing) {
-                \Log::debug('⏭️  Schedule already exists for time', [
+                Log::debug('⏭️  Schedule already exists for time', [
                     'time' => $time->toDateTimeString(),
                 ]);
+
                 continue;
             }
-            
+
             // Get next available topic
             $topic = $this->getNextTopic();
-            
-            if (!$topic) {
-                \Log::warning('⚠️  No available topics for scheduling', [
+
+            if (! $topic) {
+                Log::warning('⚠️  No available topics for scheduling', [
                     'time' => $time->toDateTimeString(),
                 ]);
+
                 continue;
             }
-            
+
             // Create schedule
             $schedule = AutoPostSchedule::create([
                 'topic_id' => $topic->id,
                 'scheduled_at' => $time,
                 'status' => 'pending',
             ]);
-            
+
             // Update topic scheduled_for
             $topic->update(['scheduled_for' => $time]);
-            
+
             $schedules[] = $schedule;
-            
-            \Log::info('✅ Scheduled post', [
+
+            Log::info('✅ Scheduled post', [
                 'schedule_id' => $schedule->id,
                 'topic' => $topic->title,
                 'time' => $time->toDateTimeString(),
             ]);
-            
+
             AutoPostLog::create([
                 'schedule_id' => $schedule->id,
                 'topic_id' => $topic->id,
@@ -471,12 +473,12 @@ class ArticleAutoPostService
                 ],
             ]);
         }
-        
-        \Log::info('📊 Batch scheduling complete', [
+
+        Log::info('📊 Batch scheduling complete', [
             'date' => $date->toDateString(),
             'scheduled_count' => count($schedules),
         ]);
-        
+
         return $schedules;
     }
 
@@ -488,7 +490,7 @@ class ArticleAutoPostService
     {
         $config = AutoPostConfig::current();
 
-        if (!$config->is_enabled || $targetCount < 1) {
+        if (! $config->is_enabled || $targetCount < 1) {
             return [
                 'requested' => $targetCount,
                 'scheduled_count' => 0,
@@ -500,7 +502,8 @@ class ArticleAutoPostService
 
         $postTimes = collect($config->post_times ?? [])->filter()->unique()->sort()->values();
         if ($postTimes->isEmpty()) {
-            \Log::warning('⚠️ No post times configured for rolling batch scheduling');
+            Log::warning('⚠️ No post times configured for rolling batch scheduling');
+
             return [
                 'requested' => $targetCount,
                 'scheduled_count' => 0,
@@ -523,7 +526,7 @@ class ArticleAutoPostService
                     break;
                 }
 
-                $slot = Carbon::parse($cursor->format('Y-m-d') . ' ' . $time, $config->timezone);
+                $slot = Carbon::parse($cursor->format('Y-m-d').' '.$time, $config->timezone);
 
                 $exists = AutoPostSchedule::where('scheduled_at', $slot)->exists();
                 if ($exists) {
@@ -531,8 +534,8 @@ class ArticleAutoPostService
                 }
 
                 $topic = $this->getNextTopic();
-                if (!$topic) {
-                    \Log::warning('⚠️ No available topic for rolling slot', [
+                if (! $topic) {
+                    Log::warning('⚠️ No available topic for rolling slot', [
                         'slot' => $slot->toDateTimeString(),
                         'remaining' => $remaining,
                     ]);
@@ -586,14 +589,14 @@ class ArticleAutoPostService
     public function getNextTopic(): ?ArticleTopic
     {
         $config = AutoPostConfig::current();
-        
+
         // Get target language and market
         $targetLanguage = $config->getNextLanguage();
         $targetMarket = $config->getTargetMarket($targetLanguage);
-        
+
         // Get target category based on weights
         $targetCategory = $config->getNextCategory();
-        
+
         // Get available topics in target language, market, and category
         $topics = ArticleTopic::available()
             ->byLanguage($targetLanguage)
@@ -601,7 +604,7 @@ class ArticleAutoPostService
             ->byCategory($targetCategory)
             ->highPriority()
             ->get();
-        
+
         // If no topics in target category, get from any category
         if ($topics->isEmpty()) {
             $topics = ArticleTopic::available()
@@ -610,7 +613,7 @@ class ArticleAutoPostService
                 ->highPriority()
                 ->get();
         }
-        
+
         // If still empty, try other language
         if ($topics->isEmpty()) {
             $otherLanguage = $targetLanguage === 'id' ? 'en' : 'id';
@@ -619,20 +622,20 @@ class ArticleAutoPostService
                 ->highPriority()
                 ->get();
         }
-        
+
         if ($topics->isEmpty()) {
             return null;
         }
-        
+
         // Filter out duplicates
         foreach ($topics as $topic) {
             $isDuplicate = $this->similarityService->isDuplicate($topic, $config->duplicate_threshold);
-            
-            if (!$isDuplicate) {
+
+            if (! $isDuplicate) {
                 return $topic;
             }
         }
-        
+
         // If all topics are duplicates, return the highest priority one
         return $topics->first();
     }
@@ -643,7 +646,7 @@ class ArticleAutoPostService
     public function getStats(int $days = 30): array
     {
         $from = now()->subDays($days);
-        
+
         $totalScheduled = AutoPostSchedule::where('created_at', '>=', $from)->count();
         $completed = AutoPostSchedule::where('created_at', '>=', $from)
             ->where('status', 'completed')
@@ -654,18 +657,18 @@ class ArticleAutoPostService
         $pending = AutoPostSchedule::where('created_at', '>=', $from)
             ->where('status', 'pending')
             ->count();
-        
+
         $successRate = $totalScheduled > 0 ? round(($completed / $totalScheduled) * 100, 1) : 0;
-        
+
         $avgGenerationTime = AutoPostSchedule::where('created_at', '>=', $from)
             ->where('status', 'completed')
             ->whereNotNull('generation_time_seconds')
             ->avg('generation_time_seconds');
-        
+
         $totalCost = AutoPostLog::where('created_at', '>=', $from)
             ->whereNotNull('ai_cost')
             ->sum('ai_cost');
-        
+
         $topicsByCategory = ArticleTopic::where('status', 'published')
             ->where('published_at', '>=', $from)
             ->selectRaw('category, count(*) as count')
@@ -673,7 +676,7 @@ class ArticleAutoPostService
             ->get()
             ->pluck('count', 'category')
             ->toArray();
-        
+
         return [
             'total_scheduled' => $totalScheduled,
             'completed' => $completed,
@@ -692,17 +695,17 @@ class ArticleAutoPostService
     public function checkHealth(): array
     {
         $config = AutoPostConfig::current();
-        
+
         $availableTopics = ArticleTopic::available()->count();
         $pendingSchedules = AutoPostSchedule::pending()->count();
         $failedSchedules = AutoPostSchedule::failed()
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
-        
+
         $recentErrors = AutoPostLog::errors()
             ->where('created_at', '>=', now()->subHours(24))
             ->count();
-        
+
         $health = [
             'status' => 'healthy',
             'enabled' => $config->is_enabled,
@@ -712,27 +715,27 @@ class ArticleAutoPostService
             'recent_errors' => $recentErrors,
             'warnings' => [],
         ];
-        
+
         // Check for issues
-        if (!$config->is_enabled) {
+        if (! $config->is_enabled) {
             $health['status'] = 'disabled';
             $health['warnings'][] = 'Auto-posting is disabled';
         }
-        
+
         if ($availableTopics < 10) {
             $health['warnings'][] = "Low topic pool: only {$availableTopics} topics available";
         }
-        
+
         if ($failedSchedules > 5) {
             $health['status'] = 'degraded';
             $health['warnings'][] = "{$failedSchedules} failed schedules in last 7 days";
         }
-        
+
         if ($recentErrors > 10) {
             $health['status'] = 'unhealthy';
             $health['warnings'][] = "{$recentErrors} errors in last 24 hours";
         }
-        
+
         return $health;
     }
 }

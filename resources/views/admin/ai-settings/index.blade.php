@@ -15,14 +15,14 @@
             
             <div class="flex items-center gap-2">
                 <a href="{{ route('admin.ai-settings.recent-changes') }}" 
-                   class="admin-btn admin-btn-sm rounded" style="background: rgba(10,132,255,0.25); color: #fff;">
+                   class="admin-btn admin-btn-sm rounded bg-apple-blue/25 text-white">
                     <i class="fas fa-history mr-1"></i>Changes
                 </a>
                 <form action="{{ route('admin.ai-settings.clear-cache') }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" 
                             class="admin-btn admin-btn-sm rounded text-apple-orange"
-                            style="background: rgba(255,149,0,0.2);"
+                            class="bg-apple-orange/20"
                             onclick="return confirm('Clear all AI settings cache?')">
                         <i class="fas fa-sync-alt"></i>
                     </button>
@@ -86,7 +86,7 @@
                                 <label for="setting_{{ $setting->id }}" class="admin-body font-medium text-white">
                                     {{ ucwords(str_replace(['.', '_'], ' ', last(explode('.', $setting->key)))) }}
                                     @if($setting->is_encrypted)
-                                    <span class="admin-badge ml-1" style="background: rgba(255,149,0,0.2); color: #FF9500; font-size: 10px;">
+                                    <span class="admin-badge ml-1 bg-apple-orange/20 text-apple-orange text-[10px]">
                                         <i class="fas fa-lock"></i>
                                     </span>
                                     @endif
@@ -154,7 +154,7 @@
                                 Default: <code class="px-1 py-0.5 rounded bg-dark-surface-tertiary text-dark-text-secondary">{{ $setting->default_value }}</code>
                             </span>
                             @if($setting->requires_restart)
-                            <span class="admin-badge" style="background: rgba(10,132,255,0.2); color: #0A84FF;">
+                            <span class="admin-badge bg-apple-blue/20 text-apple-blue">
                                 <i class="fas fa-power-off"></i> Restart
                             </span>
                             @endif

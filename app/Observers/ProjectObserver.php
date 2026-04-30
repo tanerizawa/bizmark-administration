@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Project;
 use App\Models\ProjectStatus;
+use Illuminate\Support\Facades\Log;
 
 class ProjectObserver
 {
@@ -40,12 +41,12 @@ class ProjectObserver
     {
         // Get what changed
         $dirty = $project->getDirty();
-        
+
         // If progress changed, check if we need to auto-update status
         if (isset($dirty['progress_percentage'])) {
             $this->autoUpdateStatusFromProgress($project);
         }
-        
+
         // If status changed to "Selesai", ensure progress is 100%
         if (isset($dirty['status_id'])) {
             $this->validateStatusProgress($project);
@@ -94,34 +95,34 @@ class ProjectObserver
     private function autoUpdateStatusFromProgress(Project $project): void
     {
         $progress = $project->progress_percentage;
-        
+
         // If progress reaches 100%, auto-change to "Selesai" status
         if ($progress >= 100) {
             $completedStatus = ProjectStatus::where('code', 'COMPLETED')
                 ->orWhere('name', 'Selesai')
                 ->orWhere('code', 'SK_TERBIT')
                 ->first();
-            
+
             if ($completedStatus && $project->status_id != $completedStatus->id) {
                 $project->status_id = $completedStatus->id;
-                
+
                 // Create log for auto status change
-                \Log::info("Auto-changed project #{$project->id} status to 'Selesai' due to 100% progress");
+                Log::info("Auto-changed project #{$project->id} status to 'Selesai' due to 100% progress");
             }
         }
-        
+
         // If progress is 0%, and status is still "Lead" or "Penawaran", change to "Kontrak"
         elseif ($progress > 0 && $progress < 100) {
             $currentStatus = ProjectStatus::find($project->status_id);
-            
+
             if ($currentStatus && in_array($currentStatus->code, ['LEAD', 'PROPOSAL'])) {
                 $inProgressStatus = ProjectStatus::where('code', 'IN_PROGRESS')
                     ->orWhere('code', 'KONTRAK')
                     ->first();
-                
+
                 if ($inProgressStatus) {
                     $project->status_id = $inProgressStatus->id;
-                    \Log::info("Auto-changed project #{$project->id} status to 'In Progress' due to progress > 0%");
+                    Log::info("Auto-changed project #{$project->id} status to 'In Progress' due to progress > 0%");
                 }
             }
         }
@@ -133,31 +134,31 @@ class ProjectObserver
     private function validateStatusProgress(Project $project): void
     {
         $newStatus = ProjectStatus::find($project->status_id);
-        
-        if (!$newStatus) {
+
+        if (! $newStatus) {
             return;
         }
-        
+
         // If status is "Selesai" or any final status, ensure progress is 100%
-        if ($newStatus->is_final || 
+        if ($newStatus->is_final ||
             in_array($newStatus->code, ['COMPLETED', 'SELESAI', 'SK_TERBIT', 'CLOSED'])) {
-            
+
             if ($project->progress_percentage < 100) {
                 $project->progress_percentage = 100;
-                \Log::info("Auto-set project #{$project->id} progress to 100% due to final status");
+                Log::info("Auto-set project #{$project->id} progress to 100% due to final status");
             }
-            
+
             // Auto-set completed_at if not already set
             if (is_null($project->completed_at)) {
                 $project->completed_at = now();
-                \Log::info("Auto-set project #{$project->id} completed_at to now() due to final status");
+                Log::info("Auto-set project #{$project->id} completed_at to now() due to final status");
             }
         }
-        
+
         // If status is "Dibatalkan", don't change progress
         if ($newStatus->code === 'CANCELLED' || $newStatus->code === 'DIBATALKAN') {
             // Keep current progress as is
-            \Log::info("Project #{$project->id} cancelled - progress kept at {$project->progress_percentage}%");
+            Log::info("Project #{$project->id} cancelled - progress kept at {$project->progress_percentage}%");
         }
     }
 
@@ -167,20 +168,20 @@ class ProjectObserver
     private function calculateProgressFromTasks(Project $project): int
     {
         // Only calculate if project has ID (already exists)
-        if (!$project->id) {
+        if (! $project->id) {
             return 0;
         }
-        
+
         $totalTasks = $project->tasks()->count();
-        
+
         if ($totalTasks === 0) {
             return $project->progress_percentage ?? 0;
         }
-        
+
         $completedTasks = $project->tasks()
             ->whereIn('status', ['done', 'completed', 'selesai', 'DONE', 'COMPLETED', 'SELESAI'])
             ->count();
-        
+
         return round(($completedTasks / $totalTasks) * 100);
     }
 }

@@ -54,8 +54,8 @@
                 </div>
                 <div class="text-xs text-gray-600 font-medium">Cash Runway</div>
             </div>
-            <div class="text-xl font-bold text-gray-900">{{ $metrics['runway_months'] }} bulan</div>
-            <div class="text-xs text-gray-500 mt-1">Rp {{ number_format($cash_pulse['balance'] / 1000000, 1) }}M</div>
+            <div class="text-xl font-bold text-gray-900">{{ $metrics['runway_months'] ?? '—' }} bulan</div>
+            <div class="text-xs text-gray-500 mt-1">Rp {{ number_format(($cash_pulse['balance'] ?? 0) / 1000000, 1) }}M</div>
         </div>
 
         {{-- Card 3: Pending Approvals --}}

@@ -154,7 +154,7 @@
                 <a href="{{ route('consultation.index') }}"
                    class="btn btn-primary"
                    data-cta="faq_estimate">
-                    <i class="fas fa-calculator"></i>
+                    <i class="fas fa-calculator text-base flex-shrink-0 leading-none" aria-hidden="true"></i>
                     {{ $locale === 'id' ? 'Estimasi Biaya Gratis' : 'Free Cost Estimate' }}
                 </a>
                 <a href="{{ config('landing_metrics.contact.whatsapp_link') }}?text={{ rawurlencode($locale === 'id' ? 'Halo PT Cangah Pajaratan Mandiri, saya punya pertanyaan tentang perizinan' : 'Hello PT Cangah Pajaratan Mandiri, I have a question about permits') }}"
@@ -162,7 +162,7 @@
                    rel="noopener noreferrer"
                    class="btn btn-outline"
                    data-cta="faq_whatsapp">
-                    <i class="fab fa-whatsapp"></i>
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
                     {{ $locale === 'id' ? 'Chat WhatsApp' : 'Chat WhatsApp' }}
                 </a>
             </div>

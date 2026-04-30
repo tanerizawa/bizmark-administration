@@ -3,13 +3,13 @@
 namespace App\Modules\HRM\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\JobVacancy;
 use App\Models\JobApplication;
+use App\Models\JobVacancy;
 use App\Models\User;
 use App\Notifications\JobApplicationReceivedNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 
 class JobApplicationController extends Controller
 {
@@ -20,17 +20,17 @@ class JobApplicationController extends Controller
     {
         $vacancy = JobVacancy::findOrFail($vacancy_id);
 
-        if (!$vacancy->isOpen()) {
+        if (! $vacancy->isOpen()) {
             return redirect()->route('career.index')
                 ->with('error', 'Maaf, lowongan ini sudah ditutup.');
         }
 
         // Detect mobile
-        $isMobile = $request->header('User-Agent') && 
+        $isMobile = $request->header('User-Agent') &&
                    (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
-        
+
         $view = $isMobile ? 'career.mobile-apply' : 'career.apply';
-        
+
         return view($view, compact('vacancy'));
     }
 
@@ -50,7 +50,7 @@ class JobApplicationController extends Controller
                     $exists = JobApplication::where('job_vacancy_id', $request->job_vacancy_id)
                         ->where('email', $value)
                         ->exists();
-                    
+
                     if ($exists) {
                         $fail('Email ini sudah terdaftar untuk posisi ini. Setiap email hanya dapat mendaftar satu kali.');
                     }
@@ -60,21 +60,21 @@ class JobApplicationController extends Controller
             'birth_date' => 'nullable|date',
             'gender' => 'nullable|in:Pria,Wanita',
             'address' => 'nullable|string',
-            
+
             'education_level' => 'required|in:D3,S1,S2,S3',
             'major' => 'required|string|max:255',
             'institution' => 'required|string|max:255',
-            'graduation_year' => 'nullable|integer|min:1980|max:' . (date('Y') + 5),
+            'graduation_year' => 'nullable|integer|min:1980|max:'.(date('Y') + 5),
             'gpa' => 'nullable|numeric|min:0|max:4',
-            
+
             'work_experience' => 'nullable|string',
             'has_experience_ukl_upl' => 'boolean',
             'skills' => 'nullable|string',
-            
+
             'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
             'portfolio' => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
             'cover_letter' => 'nullable|string|max:2000',
-            
+
             'expected_salary' => 'nullable|integer|min:0',
             'available_from' => 'nullable|date',
         ], [
@@ -98,11 +98,11 @@ class JobApplicationController extends Controller
             }
 
             // Parse JSON fields
-            if (!empty($validated['work_experience'])) {
+            if (! empty($validated['work_experience'])) {
                 $validated['work_experience'] = json_decode($validated['work_experience'], true);
             }
 
-            if (!empty($validated['skills'])) {
+            if (! empty($validated['skills'])) {
                 $validated['skills'] = json_decode($validated['skills'], true);
             }
 
@@ -118,7 +118,7 @@ class JobApplicationController extends Controller
 
             Mail::raw(
                 "Terima kasih, {$application->full_name}! Lamaran Anda untuk posisi {$vacancy->title} telah kami terima. Tim kami akan menghubungi Anda segera.",
-                fn ($msg) => $msg->to($application->email)->subject('Lamaran Anda Telah Diterima — ' . $vacancy->title)
+                fn ($msg) => $msg->to($application->email)->subject('Lamaran Anda Telah Diterima — '.$vacancy->title)
             );
             $notification = new JobApplicationReceivedNotification($application->load('jobVacancy'));
             User::where('is_active', true)
@@ -131,44 +131,44 @@ class JobApplicationController extends Controller
 
         } catch (\Illuminate\Database\QueryException $e) {
             // Log database error with context
-            \Log::error('Job Application Database Error', [
+            Log::error('Job Application Database Error', [
                 'email' => $request->email ?? 'unknown',
                 'vacancy_id' => $request->job_vacancy_id,
                 'error' => $e->getMessage(),
                 'sql' => $e->getSql() ?? null,
             ]);
-            
+
             // Check for specific database constraint errors
             if (str_contains($e->getMessage(), 'not-null constraint') || str_contains($e->getMessage(), 'NOT NULL')) {
                 return back()->withInput()->withErrors([
-                    'form' => 'Mohon lengkapi semua field yang wajib diisi. Pastikan Anda telah mengisi: Nama Lengkap, Email, Telepon, Jenjang Pendidikan, Jurusan, dan Institusi.'
+                    'form' => 'Mohon lengkapi semua field yang wajib diisi. Pastikan Anda telah mengisi: Nama Lengkap, Email, Telepon, Jenjang Pendidikan, Jurusan, dan Institusi.',
                 ])->with('error', 'Form belum lengkap. Silakan periksa kembali semua field.');
             }
-            
+
             return back()->withInput()->withErrors([
-                'form' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi tim kami jika masalah berlanjut.'
+                'form' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi atau hubungi tim kami jika masalah berlanjut.',
             ]);
-            
+
         } catch (\Exception $e) {
             // Log general error
-            \Log::error('Job Application Error', [
+            Log::error('Job Application Error', [
                 'email' => $request->email ?? 'unknown',
                 'vacancy_id' => $request->job_vacancy_id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            
+
             // If Google Form fallback exists, suggest it
             $vacancy = JobVacancy::find($request->job_vacancy_id);
-            
+
             if ($vacancy && $vacancy->google_form_url) {
                 return back()->withInput()->withErrors([
-                    'form' => 'Terjadi kendala teknis. Anda dapat melanjutkan pendaftaran melalui Google Form sebagai alternatif.'
-                ])->with('info', 'Link Google Form: ' . $vacancy->google_form_url);
+                    'form' => 'Terjadi kendala teknis. Anda dapat melanjutkan pendaftaran melalui Google Form sebagai alternatif.',
+                ])->with('info', 'Link Google Form: '.$vacancy->google_form_url);
             }
 
             return back()->withInput()->withErrors([
-                'form' => 'Terjadi kesalahan tidak terduga. Silakan coba lagi dalam beberapa saat atau hubungi tim rekrutmen kami.'
+                'form' => 'Terjadi kesalahan tidak terduga. Silakan coba lagi dalam beberapa saat atau hubungi tim rekrutmen kami.',
             ])->with('error', 'Gagal mengirim lamaran. Silakan coba lagi.');
         }
     }

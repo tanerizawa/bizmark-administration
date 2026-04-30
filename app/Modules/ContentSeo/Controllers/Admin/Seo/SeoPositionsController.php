@@ -2,9 +2,9 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\KeywordPositionHistory;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Services\CompetitiveIntelligenceService;
 use Illuminate\Http\Request;
 
@@ -76,7 +76,7 @@ class SeoPositionsController extends Controller
             ->groupBy('date')
             ->orderBy('date')
             ->get()
-            ->map(fn($r) => [
+            ->map(fn ($r) => [
                 'date' => $r->date,
                 'avg_position' => round($r->avg_position, 1),
                 'count' => $r->count,
@@ -111,11 +111,11 @@ class SeoPositionsController extends Controller
         if ($keyword) {
             // Track single keyword
             $result = $intelligence->trackPosition($keyword);
-            
+
             if ($result) {
                 return $this->seoBackFlash('success', "Position tracked for '{$keyword}': #{$result->position}");
             }
-            
+
             return $this->seoBackFlash('error', "Failed to track position for '{$keyword}'");
         }
 
@@ -124,10 +124,9 @@ class SeoPositionsController extends Controller
 
         return $this->seoBackFlash(
             'success',
-            "Tracked {$results['tracked']} keywords. " .
-            "Skipped {$results['skipped']}. " .
+            "Tracked {$results['tracked']} keywords. ".
+            "Skipped {$results['skipped']}. ".
             "Created {$results['alerts_created']} alerts."
         );
     }
 }
-

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article;
 use App\Http\Controllers\Traits\AuthorizesRequests;
+use App\Models\Article;
+use App\Models\AutoPostConfig;
+use App\Models\AutoPostSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -28,7 +30,7 @@ class ArticleController extends Controller
         $tab = in_array($request->get('tab', 'all'), $allowedTabs, true)
             ? $request->get('tab', 'all')
             : 'all';
-        
+
         $articles = null;
 
         // Auto-post settings tab does not require article list query.
@@ -91,12 +93,12 @@ class ArticleController extends Controller
 
         // Get auto-post config and upcoming schedules
         // Get auto-post config (use current() which auto-creates default if missing)
-        $autoPostConfig = \App\Models\AutoPostConfig::current();
+        $autoPostConfig = AutoPostConfig::current();
         $scheduleDateColumn = Schema::hasColumn('auto_post_schedules', 'scheduled_at')
             ? 'scheduled_at'
             : 'scheduled_for';
 
-        $upcomingSchedules = \App\Models\AutoPostSchedule::with('topic')
+        $upcomingSchedules = AutoPostSchedule::with('topic')
             ->where($scheduleDateColumn, '>', now())
             ->where('status', 'pending')
             ->whereHas('topic') // Only schedules with existing topics
@@ -113,6 +115,7 @@ class ArticleController extends Controller
     public function create()
     {
         $categories = Article::getCategories();
+
         return view('articles.create', compact('categories'));
     }
 
@@ -173,6 +176,7 @@ class ArticleController extends Controller
     public function show(Article $article)
     {
         $article->load('author');
+
         return view('articles.show', compact('article'));
     }
 
@@ -182,6 +186,7 @@ class ArticleController extends Controller
     public function edit(Article $article)
     {
         $categories = Article::getCategories();
+
         return view('articles.edit', compact('article', 'categories'));
     }
 
@@ -296,7 +301,7 @@ class ArticleController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $path = $request->file('image')->store('articles/content', 'public');
@@ -304,8 +309,7 @@ class ArticleController extends Controller
 
         return response()->json([
             'success' => true,
-            'url' => $url
+            'url' => $url,
         ]);
     }
 }
-

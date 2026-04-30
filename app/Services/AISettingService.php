@@ -3,13 +3,16 @@
 namespace App\Services;
 
 use App\Models\AISetting;
+use App\Models\AISettingHistory;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class AISettingService
 {
     protected static array $cache = [];
+
     protected const CACHE_PREFIX = 'ai_setting:';
+
     protected const CACHE_TTL = 3600; // 1 hour
 
     /**
@@ -23,14 +26,16 @@ class AISettingService
         }
 
         // Laravel cache second
-        $cacheKey = static::CACHE_PREFIX . $key;
+        $cacheKey = static::CACHE_PREFIX.$key;
         $value = Cache::remember($cacheKey, static::CACHE_TTL, function () use ($key, $default) {
             $setting = AISetting::where('key', $key)->first();
+
             return $setting ? $setting->value : $default;
         });
 
         // Store in memory
         static::$cache[$key] = $value;
+
         return $value;
     }
 
@@ -39,14 +44,14 @@ class AISettingService
      */
     public static function getByCategory(string $category): array
     {
-        $cacheKey = static::CACHE_PREFIX . 'category:' . $category;
-        
+        $cacheKey = static::CACHE_PREFIX.'category:'.$category;
+
         return Cache::remember($cacheKey, static::CACHE_TTL, function () use ($category) {
             return AISetting::where('category', $category)
                 ->orderBy('display_order')
                 ->orderBy('key')
                 ->get()
-                ->mapWithKeys(fn($s) => [$s->key => $s->value])
+                ->mapWithKeys(fn ($s) => [$s->key => $s->value])
                 ->toArray();
         });
     }
@@ -57,7 +62,7 @@ class AISettingService
     public static function set(string $key, $value, ?string $reason = null): AISetting
     {
         $setting = AISetting::where('key', $key)->first();
-        
+
         $oldValue = $setting ? $setting->getRawOriginal('value') : null;
 
         if ($setting) {
@@ -95,15 +100,15 @@ class AISettingService
      */
     protected static function logChange(AISetting $setting, $oldValue, $newValue, ?string $reason = null): void
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return;
         }
 
-        \App\Models\AISettingHistory::create([
+        AISettingHistory::create([
             'setting_id' => $setting->id,
             'key' => $setting->key,
             'old_value' => $oldValue,
-            'new_value' => is_array($newValue) ? json_encode($newValue) : (string)$newValue,
+            'new_value' => is_array($newValue) ? json_encode($newValue) : (string) $newValue,
             'changed_by_name' => auth()->user()->name,
             'changed_by' => auth()->id(),
             'reason' => $reason,
@@ -127,14 +132,14 @@ class AISettingService
      */
     public static function forget(string $key): void
     {
-        $cacheKey = static::CACHE_PREFIX . $key;
+        $cacheKey = static::CACHE_PREFIX.$key;
         Cache::forget($cacheKey);
         unset(static::$cache[$key]);
-        
+
         // Also forget category cache
         $category = explode('.', $key)[0] ?? null;
         if ($category) {
-            Cache::forget(static::CACHE_PREFIX . 'category:' . $category);
+            Cache::forget(static::CACHE_PREFIX.'category:'.$category);
         }
     }
 
@@ -144,13 +149,13 @@ class AISettingService
     public static function clearAllCache(): void
     {
         static::$cache = [];
-        
+
         // Clear all ai_setting:* keys
         $keys = Cache::get('ai_setting_keys', []);
         foreach ($keys as $key) {
             Cache::forget($key);
         }
-        
+
         Log::info('AI Settings cache cleared');
     }
 
@@ -160,7 +165,7 @@ class AISettingService
     public static function reset(string $key): void
     {
         $setting = AISetting::where('key', $key)->first();
-        
+
         if ($setting && $setting->default_value !== null) {
             static::set($key, $setting->default_value, 'Reset to default');
         }

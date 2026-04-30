@@ -3,10 +3,9 @@
 namespace App\Modules\Perizinan\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\PermitTemplate;
 use App\Models\Project;
 use App\Models\ProjectPermit;
-use App\Models\PermitType;
-use App\Models\PermitTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -45,7 +44,7 @@ class ProjectPermitController extends Controller
     public function updateStatus(Request $request, ProjectPermit $permit)
     {
         $validated = $request->validate([
-            'status' => 'required|in:' . implode(',', ProjectPermit::STATUSES),
+            'status' => 'required|in:'.implode(',', ProjectPermit::STATUSES),
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'notes' => 'nullable|string',
@@ -57,7 +56,7 @@ class ProjectPermitController extends Controller
         // Check if trying to start without meeting dependencies
         $overrideData = [];
 
-        if ($validated['status'] === ProjectPermit::STATUS_IN_PROGRESS && !$permit->canStart()) {
+        if ($validated['status'] === ProjectPermit::STATUS_IN_PROGRESS && ! $permit->canStart()) {
             // Allow override if reason provided
             if (empty($validated['override_reason'])) {
                 return redirect()
@@ -182,18 +181,18 @@ class ProjectPermitController extends Controller
     public function destroy(ProjectPermit $permit)
     {
         // Check if other permits depend on this
-        $dependents = ProjectPermit::whereHas('dependencies', function($query) use ($permit) {
+        $dependents = ProjectPermit::whereHas('dependencies', function ($query) use ($permit) {
             $query->where('depends_on_permit_id', $permit->id);
         })->get();
 
         if ($dependents->count() > 0) {
             $redirectUrl = route('projects.show', $permit->project_id);
-            
+
             // If request has redirect_to_tab parameter, add it to URL
             if (request()->has('redirect_to_tab')) {
-                $redirectUrl .= '?tab=' . request('redirect_to_tab');
+                $redirectUrl .= '?tab='.request('redirect_to_tab');
             }
-            
+
             return redirect($redirectUrl)
                 ->with('error', 'Tidak dapat menghapus izin ini karena masih menjadi prasyarat izin lain!');
         }
@@ -201,10 +200,10 @@ class ProjectPermitController extends Controller
         $permit->delete();
 
         $redirectUrl = route('projects.show', $permit->project_id);
-        
+
         // If request has redirect_to_tab parameter, add it to URL
         if (request()->has('redirect_to_tab')) {
-            $redirectUrl .= '?tab=' . request('redirect_to_tab');
+            $redirectUrl .= '?tab='.request('redirect_to_tab');
         }
 
         return redirect($redirectUrl)
@@ -229,7 +228,7 @@ class ProjectPermitController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Urutan izin berhasil diperbarui!'
+            'message' => 'Urutan izin berhasil diperbarui!',
         ]);
     }
 }

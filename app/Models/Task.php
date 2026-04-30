@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Observers\AdminAuditObserver;
+use App\Observers\NavCountObserver;
+use App\Observers\TaskObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ObservedBy([NavCountObserver::class, TaskObserver::class, AdminAuditObserver::class])]
 class Task extends Model
 {
     use HasFactory;
@@ -38,7 +43,7 @@ class Task extends Model
     ];
 
     // ===== RELATIONSHIPS =====
-    
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
@@ -108,7 +113,7 @@ class Task extends Model
     public function scopeOverdue($query)
     {
         return $query->where('due_date', '<', now())
-                    ->whereNotIn('status', ['done']);
+            ->whereNotIn('status', ['done']);
     }
 
     // ===== HELPER METHODS =====
@@ -119,12 +124,13 @@ class Task extends Model
     public function canStart(): bool
     {
         // If no dependency, can always start
-        if (!$this->depends_on_task_id) {
+        if (! $this->depends_on_task_id) {
             return true;
         }
 
         // Check if dependency is completed
         $dependency = $this->dependsOnTask;
+
         return $dependency && $dependency->status === 'done';
     }
 
@@ -150,7 +156,7 @@ class Task extends Model
      */
     public function getStatusColor(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'todo' => 'rgba(142, 142, 147, 1)',
             'in_progress' => 'rgba(10, 132, 255, 1)',
             'done' => 'rgba(52, 199, 89, 1)',
@@ -164,7 +170,7 @@ class Task extends Model
      */
     public function getStatusLabel(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'todo' => 'Belum Dimulai',
             'in_progress' => 'Dalam Proses',
             'done' => 'Selesai',
@@ -178,7 +184,7 @@ class Task extends Model
      */
     public function getPriorityColor(): string
     {
-        return match($this->priority) {
+        return match ($this->priority) {
             'urgent' => 'rgba(255, 59, 48, 1)',
             'high' => 'rgba(255, 149, 0, 1)',
             'normal' => 'rgba(10, 132, 255, 1)',
@@ -192,7 +198,7 @@ class Task extends Model
      */
     public function getPriorityLabel(): string
     {
-        return match($this->priority) {
+        return match ($this->priority) {
             'urgent' => 'Mendesak',
             'high' => 'Tinggi',
             'normal' => 'Normal',
@@ -206,8 +212,8 @@ class Task extends Model
      */
     public function isOverdue(): bool
     {
-        return $this->due_date && 
-               $this->due_date->isPast() && 
+        return $this->due_date &&
+               $this->due_date->isPast() &&
                $this->status !== 'done';
     }
 
@@ -216,7 +222,7 @@ class Task extends Model
      */
     public function getProgress(): int
     {
-        return match($this->status) {
+        return match ($this->status) {
             'todo' => 0,
             'in_progress' => 50,
             'done' => 100,

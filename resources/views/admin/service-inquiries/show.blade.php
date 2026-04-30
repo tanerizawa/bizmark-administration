@@ -27,6 +27,17 @@
             </div>
         </div>
         <div class="flex space-x-2">
+            @if($serviceInquiry->ai_analysis)
+                <form method="POST" action="{{ route('admin.service-inquiries.send-result', $serviceInquiry) }}"
+                      onsubmit="return confirm('Kirim email hasil analisis AI ke {{ $serviceInquiry->email }}?')">
+                    @csrf
+                    <button type="submit"
+                            class="px-3 py-2 rounded-apple text-sm font-medium transition-colors inline-flex items-center"
+                            style="background-color: rgba(10,132,255,0.15); color: var(--apple-blue); border: 1px solid rgba(10,132,255,0.4);">
+                        <i class="fas fa-paper-plane mr-1.5"></i>Kirim Email Hasil AI
+                    </button>
+                </form>
+            @endif
             @if(!$serviceInquiry->client_id)
                 <button onclick="document.getElementById('convertModal').classList.remove('hidden')" 
                         class="px-3 py-2 rounded-apple text-sm font-medium transition-colors inline-flex items-center bg-purple-500 hover:bg-purple-600 text-white">
@@ -266,10 +277,18 @@
             <!-- AI Analysis Results -->
             @if($serviceInquiry->ai_analysis)
                 <div class="card-elevated rounded-apple-lg">
-                    <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
+                    <div class="px-4 py-3 flex items-center justify-between" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
                         <h3 class="text-base font-semibold text-white flex items-center">
                             <i class="fas fa-robot mr-2 text-apple-blue"></i>Hasil Analisis AI
                         </h3>
+                        <a href="{{ route('landing.service-inquiry.result', $serviceInquiry->inquiry_number) }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-apple text-xs font-medium transition-colors"
+                           style="background-color: rgba(10,132,255,0.15); color: var(--apple-blue); border: 1px solid rgba(10,132,255,0.3);">
+                            <i class="fas fa-external-link-alt text-[10px]"></i>
+                            Lihat Hasil User
+                        </a>
                     </div>
                     <div class="p-4 space-y-4">
                         <!-- Summary Stats -->
@@ -369,7 +388,15 @@
             @else
                 <div class="card-elevated rounded-apple-lg p-4 text-center">
                     <i class="fas fa-clock text-2xl text-dark-text-secondary opacity-30 mb-2"></i>
-                    <p class="text-sm text-dark-text-secondary">Analisis AI belum tersedia</p>
+                    <p class="text-sm text-dark-text-secondary mb-3">Analisis AI belum tersedia</p>
+                    <a href="{{ route('landing.service-inquiry.result', $serviceInquiry->inquiry_number) }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-apple text-xs font-medium transition-colors"
+                       style="background-color: rgba(10,132,255,0.1); color: var(--apple-blue); border: 1px solid rgba(10,132,255,0.25);">
+                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                        Buka Halaman Hasil
+                    </a>
                 </div>
             @endif
 

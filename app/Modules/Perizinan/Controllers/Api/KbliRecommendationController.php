@@ -4,8 +4,8 @@ namespace App\Modules\Perizinan\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\KbliPermitCacheService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class KbliRecommendationController extends Controller
 {
@@ -36,7 +36,7 @@ class KbliRecommendationController extends Controller
             $clientId
         );
 
-        if (!$recommendation) {
+        if (! $recommendation) {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghasilkan rekomendasi. Silakan coba lagi.',
@@ -56,18 +56,18 @@ class KbliRecommendationController extends Controller
                 'documents' => $recommendation->required_documents,
                 'risk_assessment' => $recommendation->risk_assessment,
                 'timeline' => $recommendation->estimated_timeline,
-                'additional_notes' => $recommendation->additional_notes 
-                    ? json_decode($recommendation->additional_notes, true) 
+                'additional_notes' => $recommendation->additional_notes
+                    ? json_decode($recommendation->additional_notes, true)
                     : null,
                 'summary' => [
                     'mandatory_permits_count' => $recommendation->mandatory_permits_count,
                     'total_documents' => count($recommendation->required_documents ?? []),
                     'estimated_cost' => $recommendation->total_cost_range,
-                    'estimated_days' => $recommendation->estimated_timeline 
+                    'estimated_days' => $recommendation->estimated_timeline
                         ? [
                             'min' => $recommendation->estimated_timeline['minimum_days'] ?? 0,
                             'max' => $recommendation->estimated_timeline['maximum_days'] ?? 0,
-                        ] 
+                        ]
                         : null,
                 ],
                 'metadata' => [
@@ -97,7 +97,7 @@ class KbliRecommendationController extends Controller
             $validated['location_type'] ?? null
         );
 
-        if (!$recommendation) {
+        if (! $recommendation) {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal me-refresh rekomendasi.',

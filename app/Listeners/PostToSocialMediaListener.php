@@ -17,7 +17,7 @@ class PostToSocialMediaListener implements ShouldQueue
 
     public function handle(ArticlePublishedEvent $event): void
     {
-        if (!$event->isNew) {
+        if (! $event->isNew) {
             return;
         }
 

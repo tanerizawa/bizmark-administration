@@ -6,14 +6,49 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKUP_DIR="${BACKUP_DIR:-$ROOT_DIR/storage/app/backups}"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 
-DB_CONNECTION="${DB_CONNECTION:-mysql}"
+# Load .env if variables not already set (needed when running from cron)
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source <(grep -E '^(DB_CONNECTION|DB_HOST|DB_PORT|DB_DATABASE|DB_USERNAME|DB_PASSWORD)=' "$ROOT_DIR/.env")
+  set +a
+fi
+
+DB_CONNECTION="${DB_CONNECTION:-pgsql}"
 DB_HOST="${DB_HOST:-127.0.0.1}"
-DB_PORT="${DB_PORT:-3306}"
+DB_PORT="${DB_PORT:-5432}"
 DB_DATABASE="${DB_DATABASE:-}"
 DB_USERNAME="${DB_USERNAME:-root}"
 DB_PASSWORD="${DB_PASSWORD:-}"
 
 mkdir -p "$BACKUP_DIR"
+
+backup_pgsql() {
+  local label="$1"
+  local output_file="$BACKUP_DIR/${label}-${TIMESTAMP}.sql"
+
+  if ! command -v pg_dump >/dev/null 2>&1; then
+    echo "pg_dump command not found."
+    exit 1
+  fi
+
+  if [[ -z "$DB_DATABASE" ]]; then
+    echo "DB_DATABASE is empty."
+    exit 1
+  fi
+
+  PGPASSWORD="$DB_PASSWORD" pg_dump \
+    --host="$DB_HOST" \
+    --port="$DB_PORT" \
+    --username="$DB_USERNAME" \
+    --no-password \
+    --format=plain \
+    --clean \
+    --if-exists \
+    "$DB_DATABASE" >"$output_file"
+
+  echo "Backup created: $output_file"
+}
 
 backup_mysql() {
   local label="$1"
@@ -95,6 +130,8 @@ case "$ACTION" in
   backup|daily|weekly|monthly|full)
     if [[ "$DB_CONNECTION" == "sqlite" ]]; then
       backup_sqlite "$ACTION"
+    elif [[ "$DB_CONNECTION" == "pgsql" || "$DB_PORT" == "5432" ]]; then
+      backup_pgsql "$ACTION"
     else
       backup_mysql "$ACTION"
     fi

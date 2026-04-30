@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Modules\AI\Controllers\Admin\DocumentAIController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'permission:documents.view'])->group(function () {
     Route::prefix('admin/projects/{project}/ai')->name('ai.')->group(function () {

@@ -2,9 +2,9 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\RankingAlert;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use Illuminate\Http\Request;
 
 class SeoRankingAlertsController extends Controller
@@ -66,4 +66,3 @@ class SeoRankingAlertsController extends Controller
         return $this->seoBackFlash('success', 'All alerts marked as read.');
     }
 }
-

@@ -24,15 +24,15 @@ class PMAInquiryReceivedNotification extends Notification implements ShouldQueue
         $formData = $this->inquiry->form_data ?? [];
 
         return (new MailMessage)
-            ->subject('[PMA Inquiry] ' . $this->inquiry->company_name . ' — ' . $this->inquiry->inquiry_number)
+            ->subject('[PMA Inquiry] '.$this->inquiry->company_name.' — '.$this->inquiry->inquiry_number)
             ->greeting('Halo Admin,')
             ->line('Inquiry PMA baru telah masuk.')
-            ->line('**No. Inquiry:** ' . $this->inquiry->inquiry_number)
-            ->line('**Perusahaan:** ' . $this->inquiry->company_name)
-            ->line('**Kontak:** ' . $this->inquiry->contact_person . ' (' . $this->inquiry->email . ')')
-            ->line('**Negara:** ' . ($formData['country'] ?? '-'))
-            ->line('**Investasi:** ' . ($formData['investment_amount_usd'] ?? '-'))
-            ->action('Lihat Inquiry', url('/dashboard/service-inquiries/' . $this->inquiry->id))
+            ->line('**No. Inquiry:** '.$this->inquiry->inquiry_number)
+            ->line('**Perusahaan:** '.$this->inquiry->company_name)
+            ->line('**Kontak:** '.$this->inquiry->contact_person.' ('.$this->inquiry->email.')')
+            ->line('**Negara:** '.($formData['country'] ?? '-'))
+            ->line('**Investasi:** '.($formData['investment_amount_usd'] ?? '-'))
+            ->action('Lihat Inquiry', url('/dashboard/service-inquiries/'.$this->inquiry->id))
             ->line('Segera tindak lanjuti dalam 1×24 jam.');
     }
 

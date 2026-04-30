@@ -51,114 +51,151 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh2JtHeS4ZL8SaJIs54IVqVdPXgeSrxlL1YgM7GkL4Z3+5eZ5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
-        :root { --color-primary: #0A66C2; --color-secondary: #00A0DC; }
+        [x-cloak] { display: none !important; }
         body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         .bg-mesh {
             background-image:
                 radial-gradient(at 20% 20%, rgba(10, 102, 194, 0.06) 0%, transparent 50%),
                 radial-gradient(at 80% 80%, rgba(249, 115, 22, 0.04) 0%, transparent 50%);
         }
-        .btn-lift { transition: all 0.3s ease; }
-        .btn-lift:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(10, 102, 194, 0.25); }
-        .animate-fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.6s ease forwards; }
         @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="font-sans bg-white text-gray-900 min-h-screen flex flex-col">
 
-    @php $contact = config('landing_metrics.contact'); @endphp
-
-    <!-- Sticky Navbar -->
     @php
+        $contact = config('landing_metrics.contact');
         $currentLocale = app()->getLocale();
         $landingUrl = $currentLocale === 'en' ? route('landing.en') : route('landing.id');
         $blogUrl = $currentLocale === 'en' ? route('blog.index.en') : route('blog.index.id');
     @endphp
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm" role="navigation" aria-label="{{ $currentLocale === 'id' ? 'Navigasi utama' : 'Main navigation' }}">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <a href="{{ $landingUrl }}" class="text-xl font-bold text-gray-900">
-                    <i class="fas fa-certificate mr-2 text-primary-500"></i>Bizmark.ID
-                </a>
-                <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
-                    <a href="{{ $landingUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.home') }}</a>
-                    <a href="{{ $currentLocale === 'en' ? route('services.index.en') : route('services.index.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.services') }}</a>
-                    <a href="{{ $currentLocale === 'en' ? route('process.en') : route('process.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.process') }}</a>
-                    <a href="{{ $currentLocale === 'en' ? route('about.en') : route('about.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.about') }}</a>
-                    <a href="{{ $blogUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.blog') }}</a>
-                    <!-- Locale Switcher -->
-                    <div class="relative inline-block text-left" id="localeSwitcher">
-                        <button type="button" onclick="document.getElementById('localeDropdown').classList.toggle('hidden')" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border transition-colors text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500" aria-expanded="false" aria-haspopup="true" aria-label="{{ $currentLocale === 'id' ? 'Ganti bahasa' : 'Change language' }}">
-                            <span class="text-base">{{ $currentLocale === 'en' ? '🇬🇧' : '🇮🇩' }}</span>
-                            <span class="hidden sm:inline">{{ $currentLocale === 'en' ? 'EN' : 'ID' }}</span>
-                            <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div id="localeDropdown" class="hidden absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white border border-gray-200 rounded-lg shadow-lg ring-1 ring-black/5" role="menu">
-                            <div class="py-1">
-                                <a href="{{ route('locale.set', 'id') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === 'id' ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}" role="menuitem">
-                                    <span class="text-lg">🇮🇩</span><span>Bahasa Indonesia</span>
-                                    @if($currentLocale === 'id')<i class="fas fa-check ml-auto text-primary-500 text-xs"></i>@endif
-                                </a>
-                                <a href="{{ route('locale.set', 'en') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === 'en' ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}" role="menuitem">
-                                    <span class="text-lg">🇬🇧</span><span>English</span>
-                                    @if($currentLocale === 'en')<i class="fas fa-check ml-auto text-primary-500 text-xs"></i>@endif
-                                </a>
+
+    <!-- Navigation -->
+    <div x-data="{ mobileOpen: false, localeOpen: false }"
+         @keydown.escape.window="mobileOpen = false; localeOpen = false"
+         class="no-print">
+        <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm" role="navigation" aria-label="{{ $currentLocale === 'id' ? 'Navigasi utama' : 'Main navigation' }}">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <a href="{{ $landingUrl }}" class="text-xl font-bold text-gray-900">
+                        <i class="fas fa-certificate mr-2 text-primary-500"></i>Bizmark.ID
+                    </a>
+                    <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
+                        <a href="{{ $landingUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.home') }}</a>
+                        <a href="{{ $currentLocale === 'en' ? route('services.index.en') : route('services.index.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.services') }}</a>
+                        <a href="{{ $currentLocale === 'en' ? route('process.en') : route('process.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.process') }}</a>
+                        <a href="{{ $currentLocale === 'en' ? route('about.en') : route('about.id') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.about') }}</a>
+                        <a href="{{ $blogUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.blog') }}</a>
+                        <!-- Locale Switcher (Alpine.js) -->
+                        <div class="relative inline-block text-left" @click.outside="localeOpen = false">
+                            <button type="button" @click="localeOpen = !localeOpen"
+                                    class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border transition-colors text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500"
+                                    :aria-expanded="localeOpen"
+                                    aria-haspopup="true"
+                                    aria-label="{{ $currentLocale === 'id' ? 'Ganti bahasa' : 'Change language' }}">
+                                <span class="text-base">{{ $currentLocale === 'en' ? '🇬🇧' : '🇮🇩' }}</span>
+                                <span class="hidden sm:inline">{{ $currentLocale === 'en' ? 'EN' : 'ID' }}</span>
+                                <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div x-show="localeOpen"
+                                 x-transition
+                                 x-cloak
+                                 class="absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white border border-gray-200 rounded-lg shadow-lg ring-1 ring-black/5"
+                                 role="menu">
+                                <div class="py-1">
+                                    <a href="{{ route('locale.set', 'id') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === 'id' ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}" role="menuitem">
+                                        <span class="text-lg">🇮🇩</span><span>Bahasa Indonesia</span>
+                                        @if($currentLocale === 'id')<i class="fas fa-check ml-auto text-primary-500 text-xs"></i>@endif
+                                    </a>
+                                    <a href="{{ route('locale.set', 'en') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === 'en' ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}" role="menuitem">
+                                        <span class="text-lg">🇬🇧</span><span>English</span>
+                                        @if($currentLocale === 'en')<i class="fas fa-check ml-auto text-primary-500 text-xs"></i>@endif
+                                    </a>
+                                </div>
                             </div>
                         </div>
+                        <a href="{{ $landingUrl }}#contact" class="ml-2 inline-flex items-center px-4 py-2 bg-primary-500 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(10,102,194,0.25)]">
+                            {{ __('landing.nav.get_started') }}
+                        </a>
                     </div>
-                    <a href="{{ $landingUrl }}#contact" class="ml-2 inline-flex items-center px-4 py-2 bg-primary-500 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition btn-lift">
-                        {{ __('landing.nav.get_started') }}
-                    </a>
+                    <!-- Mobile hamburger -->
+                    <button @click="mobileOpen = !mobileOpen"
+                            class="md:hidden p-2.5 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-primary-500 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
+                            :aria-expanded="mobileOpen"
+                            aria-label="{{ $currentLocale === 'id' ? 'Buka menu navigasi' : 'Open navigation menu' }}">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
                 </div>
-                <button class="md:hidden p-2.5 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-primary-500 transition min-w-[44px] min-h-[44px] flex items-center justify-center" onclick="document.getElementById('mobileMenuPanel').classList.toggle('translate-x-full')" aria-label="{{ $currentLocale === 'id' ? 'Buka menu navigasi' : 'Open navigation menu' }}">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Overlay -->
+        <div x-show="mobileOpen"
+             x-transition.opacity
+             x-cloak
+             class="fixed inset-0 bg-black/30 z-[55]"
+             @click="mobileOpen = false"
+             aria-hidden="true"></div>
+
+        <!-- Mobile Menu Panel -->
+        <div x-show="mobileOpen"
+             x-cloak
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-x-full"
+             x-transition:enter-end="translate-x-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="translate-x-0"
+             x-transition:leave-end="translate-x-full"
+             class="fixed inset-y-0 right-0 z-[60] w-80 max-w-[85vw] bg-white shadow-xl"
+             role="dialog"
+             aria-label="{{ $currentLocale === 'id' ? 'Menu navigasi' : 'Navigation menu' }}"
+             aria-modal="true">
+            <div class="flex items-center justify-between p-4 border-b border-gray-100">
+                <span class="text-lg font-bold text-gray-900"><i class="fas fa-certificate mr-2 text-primary-500"></i>Menu</span>
+                <button @click="mobileOpen = false"
+                        class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
+                        aria-label="{{ $currentLocale === 'id' ? 'Tutup menu' : 'Close menu' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-        </div>
-    </nav>
-    <!-- Mobile Menu Panel -->
-    <div id="mobileMenuPanel" class="fixed inset-y-0 right-0 z-[60] w-80 max-w-[85vw] bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out">
-        <div class="flex items-center justify-between p-4 border-b border-gray-100">
-            <span class="text-lg font-bold text-gray-900"><i class="fas fa-certificate mr-2 text-primary-500"></i>Menu</span>
-            <button onclick="document.getElementById('mobileMenuPanel').classList.add('translate-x-full')" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="{{ $currentLocale === 'id' ? 'Tutup menu' : 'Close menu' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        <div class="flex flex-col h-[calc(100%-65px)] overflow-y-auto">
-            <div class="p-4 space-y-1 flex-1">
-                <a href="{{ $landingUrl }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-home w-5 text-center text-gray-400"></i>{{ __('landing.nav.home') }}</a>
-                <a href="{{ $landingUrl }}#services" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-briefcase w-5 text-center text-gray-400"></i>{{ __('landing.nav.services') }}</a>
-                <a href="{{ $landingUrl }}#process" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-tasks w-5 text-center text-gray-400"></i>{{ __('landing.nav.process') }}</a>
-                <a href="{{ $landingUrl }}#about" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-info-circle w-5 text-center text-gray-400"></i>{{ __('landing.nav.about') }}</a>
-                <a href="{{ $blogUrl }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-newspaper w-5 text-center text-gray-400"></i>{{ __('landing.nav.blog') }}</a>
-                <a href="{{ route('landing.service-inquiry.create') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-primary-500 bg-primary-50 rounded-lg min-h-[44px]"><i class="fas fa-robot w-5 text-center"></i>Analisis AI</a>
-            </div>
-            <div class="px-4 py-3 border-t border-gray-100">
-                <p class="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-3">{{ __('landing.footer.language') }}</p>
-                <div class="flex gap-2">
-                    <a href="{{ route('locale.set', 'id') }}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition min-h-[44px] {{ $currentLocale === 'id' ? 'bg-primary-50 font-semibold text-primary-600' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}">
-                        <span>🇮🇩</span><span class="text-sm">Indonesia</span>
-                    </a>
-                    <a href="{{ route('locale.set', 'en') }}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition min-h-[44px] {{ $currentLocale === 'en' ? 'bg-primary-50 font-semibold text-primary-600' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}">
-                        <span>🇬🇧</span><span class="text-sm">English</span>
-                    </a>
+            <div class="flex flex-col h-[calc(100%-65px)] overflow-y-auto">
+                <div class="p-4 space-y-1 flex-1">
+                    <a href="{{ $landingUrl }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-home w-5 text-center text-gray-400"></i>{{ __('landing.nav.home') }}</a>
+                    <a href="{{ $landingUrl }}#services" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-briefcase w-5 text-center text-gray-400"></i>{{ __('landing.nav.services') }}</a>
+                    <a href="{{ $landingUrl }}#process" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-tasks w-5 text-center text-gray-400"></i>{{ __('landing.nav.process') }}</a>
+                    <a href="{{ $landingUrl }}#about" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-info-circle w-5 text-center text-gray-400"></i>{{ __('landing.nav.about') }}</a>
+                    <a href="{{ $blogUrl }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-newspaper w-5 text-center text-gray-400"></i>{{ __('landing.nav.blog') }}</a>
+                    <a href="{{ route('landing.service-inquiry.create') }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-primary-500 bg-primary-50 rounded-lg min-h-[44px]"><i class="fas fa-robot w-5 text-center"></i>Analisis AI</a>
                 </div>
-            </div>
-            <div class="p-4 border-t border-gray-100">
-                <a href="{{ $landingUrl }}#contact" onclick="document.getElementById('mobileMenuPanel').classList.add('translate-x-full')" class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary-500 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition min-h-[44px]"><i class="fas fa-paper-plane"></i>{{ __('landing.nav.get_started') }}</a>
+                <div class="px-4 py-3 border-t border-gray-100">
+                    <p class="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-3">{{ __('landing.footer.language') }}</p>
+                    <div class="flex gap-2">
+                        <a href="{{ route('locale.set', 'id') }}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition min-h-[44px] {{ $currentLocale === 'id' ? 'bg-primary-50 font-semibold text-primary-600' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}">
+                            <span>🇮🇩</span><span class="text-sm">Indonesia</span>
+                        </a>
+                        <a href="{{ route('locale.set', 'en') }}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition min-h-[44px] {{ $currentLocale === 'en' ? 'bg-primary-50 font-semibold text-primary-600' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}">
+                            <span>🇬🇧</span><span class="text-sm">English</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="p-4 border-t border-gray-100">
+                    <a href="{{ $landingUrl }}#contact" @click="mobileOpen = false" class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary-500 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition min-h-[44px]"><i class="fas fa-paper-plane"></i>{{ __('landing.nav.get_started') }}</a>
+                </div>
             </div>
         </div>
     </div>
-    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black/30 z-[55] hidden" onclick="document.getElementById('mobileMenuPanel').classList.add('translate-x-full'); this.classList.add('hidden')"></div>
-    <script>document.addEventListener('click',function(e){var s=document.getElementById('localeSwitcher');var d=document.getElementById('localeDropdown');if(s&&d&&!s.contains(e.target)){d.classList.add('hidden')}});document.getElementById('mobileMenuPanel').addEventListener('transitionend',function(){this.classList.contains('translate-x-full')?document.getElementById('mobileMenuOverlay').classList.add('hidden'):document.getElementById('mobileMenuOverlay').classList.remove('hidden')});document.querySelectorAll('#mobileMenuPanel a').forEach(function(a){a.addEventListener('click',function(){document.getElementById('mobileMenuPanel').classList.add('translate-x-full')})});</script>
 
     <!-- Content -->
     <main class="flex-1 flex items-center justify-center px-4 pt-24 pb-12 bg-gradient-to-b from-[#FDFBF8] via-[#FDFBF8] to-[#F5F3F8] bg-mesh relative overflow-hidden">
         <div class="absolute -top-16 -right-16 w-64 h-64 bg-primary-100/30 rounded-full blur-3xl"></div>
         <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-accent-400/10 rounded-full blur-3xl"></div>
 
-        <div class="max-w-md w-full text-center relative z-10 animate-fade-in">
+        <div class="max-w-md w-full text-center relative z-10 animate-[fadeIn_0.6s_ease_forwards]">
             <div class="bg-white rounded-2xl shadow-soft-lg border border-gray-100 p-8 sm:p-12">
                 <div class="w-20 h-20 mx-auto mb-6 bg-primary-50 rounded-full flex items-center justify-center">
                     <i class="fas fa-search text-3xl text-primary-400"></i>
@@ -171,7 +208,7 @@
                     Pastikan Anda menggunakan link yang benar dari email konfirmasi, atau coba analisis baru.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="{{ route('landing.service-inquiry.create') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all btn-lift">
+                    <a href="{{ route('landing.service-inquiry.create') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(10,102,194,0.25)]">
                         <i class="fas fa-plus-circle"></i> Analisis Baru
                     </a>
                     <a href="{{ route('landing.id') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-600 font-semibold rounded-xl hover:bg-gray-50 transition-all">
@@ -193,7 +230,7 @@
         $whatsappLink = $contact['whatsapp_link'] ?? ('https://wa.me/' . $whatsappNumber);
         $emailAddress = $contact['email'] ?? 'info@bizmark.id';
     @endphp
-    <footer class="bg-gray-900 text-gray-300 py-8 mt-auto">
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-auto no-print">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div>

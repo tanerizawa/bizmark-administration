@@ -20,7 +20,28 @@ class ApprovalDecisionNotification extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail', 'database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $actionLabel = $this->action === 'approved' ? 'disetujui' : 'ditolak';
+        $actionColor = $this->action === 'approved' ? 'success' : 'error';
+        $subject = '[Bizmark] '.ucfirst($this->itemType).' "'.$this->itemLabel.'" telah '.$actionLabel;
+
+        $mail = (new MailMessage)
+            ->subject($subject)
+            ->greeting('Halo, '.($notifiable->name ?? 'Tim'))
+            ->line(ucfirst($this->itemType).' **"'.$this->itemLabel.'"** telah **'.$actionLabel.'**.');
+
+        if ($this->note) {
+            $mail->line('**Catatan:** '.$this->note);
+        }
+
+        return $mail
+            ->line('Silakan login ke panel admin untuk melihat detail selengkapnya.')
+            ->action('Buka Panel Admin', url('/admin/dashboard'))
+            ->salutation('Salam, Tim Bizmark');
     }
 
     public function toArray(object $notifiable): array
@@ -32,7 +53,7 @@ class ApprovalDecisionNotification extends Notification implements ShouldQueue
             'item_type' => $this->itemType,
             'item_label' => $this->itemLabel,
             'action' => $this->action,
-            'message' => ucfirst($this->itemType) . " \"{$this->itemLabel}\" telah {$actionLabel}.",
+            'message' => ucfirst($this->itemType)." \"{$this->itemLabel}\" telah {$actionLabel}.",
             'note' => $this->note,
         ];
     }

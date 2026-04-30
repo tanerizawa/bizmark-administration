@@ -48,7 +48,7 @@
 </div>
 
 <div class="card-elevated rounded-apple-lg mb-4">
-    <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
+    <div class="px-4 py-3 border-b border-[rgba(84,84,88,0.65)]">
         <h3 class="text-base font-semibold text-white">Pencarian & Filter</h3>
     </div>
     <div class="p-4">
@@ -57,15 +57,13 @@
             <div class="md:col-span-2">
                 <input type="text"
                        name="search"
-                       class="w-full px-3 py-2 rounded-apple text-sm"
+                       class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary"
                        placeholder="Cari nomor permohonan, nama, email, telepon..."
-                       value="{{ request('search') }}"
-                       style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator); color: var(--dark-text-primary);">
+                       value="{{ request('search') }}">
             </div>
             <div>
                 <select name="status"
-                        class="w-full px-3 py-2 rounded-apple text-sm"
-                        style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator); color: var(--dark-text-primary);">
+                        class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary">
                     <option value="">Semua Status</option>
                     <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="reviewing" {{ request('status') == 'reviewing' ? 'selected' : '' }}>Reviewing</option>
@@ -77,8 +75,7 @@
             </div>
             <div>
                 <select name="applicant_type"
-                        class="w-full px-3 py-2 rounded-apple text-sm"
-                        style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator); color: var(--dark-text-primary);">
+                        class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary">
                     <option value="">Semua Pemohon</option>
                     <option value="perorangan" {{ request('applicant_type') == 'perorangan' ? 'selected' : '' }}>Perorangan</option>
                     <option value="badan" {{ request('applicant_type') == 'badan' ? 'selected' : '' }}>Badan Usaha</option>
@@ -100,7 +97,7 @@
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
+                <tr class="border-b border-[rgba(84,84,88,0.65)]">
                     <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Request #</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Tanggal</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Pemohon</th>
@@ -110,7 +107,7 @@
                     <th class="px-4 py-3 text-right text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-dark-separator">
+            <tbody class="divide-y divide-dark-border">
                 @forelse($serviceCostRequests ?? [] as $item)
                     @php
                         $statusColors = [
@@ -163,13 +160,13 @@
     </div>
 
     @if(isset($serviceCostRequests) && $serviceCostRequests->hasPages())
-        <div class="px-4 py-3" style="border-top: 1px solid rgba(84, 84, 88, 0.65);">
+        <div class="px-4 py-3 border-t border-[rgba(84,84,88,0.65)]">
             {{ $serviceCostRequests->appends(array_merge(request()->all(), ['tab' => 'service-cost-requests']))->links() }}
         </div>
     @endif
 </div>
 
-<div class="mt-4 rounded-apple-lg p-4" style="background-color: rgba(255, 149, 0, 0.08); border: 1px solid rgba(255, 149, 0, 0.3);">
+<div class="mt-4 rounded-apple-lg p-4 bg-[rgba(255,149,0,0.08)] border border-[rgba(255,149,0,0.3)]">
     <div class="flex items-start">
         <i class="fas fa-info-circle text-orange-400 mr-3 mt-0.5"></i>
         <div class="text-sm text-dark-text-secondary">

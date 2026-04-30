@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ArticleTopic;
 use App\Models\AutoPostConfig;
 use App\Services\ArticleAutoPostService;
 use App\Services\TopicGenerationService;
@@ -39,35 +40,40 @@ class ScheduleDailyPosts extends Command
         // Check if enabled
         $config = AutoPostConfig::current();
 
-        if (!$config->is_enabled) {
+        if (! $config->is_enabled) {
             $this->warn('⚠️  Auto-posting is DISABLED in configuration.');
             $this->line('   Enable it from admin panel: /admin/auto-post/config');
+
             return 1;
         }
 
-        $this->info("⚙️  Configuration:");
+        $this->info('⚙️  Configuration:');
         $this->line("   Posts per day: {$config->posts_per_day}");
-        $this->line("   Post times: " . implode(', ', $config->post_times));
+        $this->line('   Post times: '.implode(', ', $config->post_times));
         $this->line("   AI Model: {$config->ai_model}");
-        
+
         if ($config->language_distribution) {
             $langDist = collect($config->language_distribution)
-                ->map(fn($val, $key) => strtoupper($key) . ": {$val}%")
+                ->map(fn ($val, $key) => strtoupper($key).": {$val}%")
                 ->implode(', ');
             $this->line("   Language: {$langDist}");
         }
-        
+
         if ($config->market_focus) {
             $markets = [];
-            if ($config->market_focus['local'] ?? false) $markets[] = 'Local';
-            if ($config->market_focus['pma'] ?? false) $markets[] = 'PMA';
-            $this->line("   Markets: " . implode(' + ', $markets));
+            if ($config->market_focus['local'] ?? false) {
+                $markets[] = 'Local';
+            }
+            if ($config->market_focus['pma'] ?? false) {
+                $markets[] = 'PMA';
+            }
+            $this->line('   Markets: '.implode(' + ', $markets));
         }
-        
+
         $this->newLine();
 
         // Auto-replenish topic pool if running low
-        $availableTopics = \App\Models\ArticleTopic::available()->count();
+        $availableTopics = ArticleTopic::available()->count();
         $this->line("   Available topics: {$availableTopics}");
 
         if ($availableTopics < $config->posts_per_day) {
@@ -78,11 +84,11 @@ class ScheduleDailyPosts extends Command
                 if ($generated > 0) {
                     $this->info("   ✅ Generated {$generated} new topics via AI");
                 } else {
-                    $this->warn("   ⚠️  No new topics generated (possible duplicates)");
+                    $this->warn('   ⚠️  No new topics generated (possible duplicates)');
                 }
             } catch (\Exception $e) {
                 $this->warn("   ⚠️  Auto-generation failed: {$e->getMessage()}");
-                $this->line("   Continuing with existing topics...");
+                $this->line('   Continuing with existing topics...');
             }
         }
 
@@ -96,27 +102,28 @@ class ScheduleDailyPosts extends Command
                 $this->warn('⚠️  No posts scheduled. Possible reasons:');
                 $this->line('   - All time slots already scheduled');
                 $this->line('   - No available topics in pool');
+
                 return 0;
             }
 
-            $this->info("✅ Successfully scheduled " . count($schedules) . " post(s):");
+            $this->info('✅ Successfully scheduled '.count($schedules).' post(s):');
             $this->newLine();
 
             foreach ($schedules as $schedule) {
                 $topic = $schedule->topic;
                 $languageFlag = $topic->language === 'en' ? '🇬🇧' : '🇮🇩';
                 $marketBadge = $topic->target_market === 'pma' ? '[PMA]' : ($topic->target_market === 'both' ? '[BOTH]' : '[LOCAL]');
-                
+
                 $this->line("📄 Schedule #{$schedule->id}");
                 $this->line("   Topic: {$topic->title}");
                 $this->line("   Category: {$topic->category}");
-                $this->line("   Language: {$languageFlag} " . strtoupper($topic->language) . " {$marketBadge}");
+                $this->line("   Language: {$languageFlag} ".strtoupper($topic->language)." {$marketBadge}");
                 $this->line("   Time: {$schedule->scheduled_at->format('H:i')}");
                 $this->newLine();
             }
 
             $this->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            $this->info("📊 Scheduled: " . count($schedules) . " post(s)");
+            $this->info('📊 Scheduled: '.count($schedules).' post(s)');
             $this->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
             return 0;
@@ -127,6 +134,7 @@ class ScheduleDailyPosts extends Command
             if ($this->option('verbose')) {
                 $this->error($e->getTraceAsString());
             }
+
             return 1;
         }
     }

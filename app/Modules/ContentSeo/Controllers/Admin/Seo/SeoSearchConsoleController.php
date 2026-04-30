@@ -2,9 +2,9 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\SearchConsoleData;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Services\SearchConsoleService;
 use Illuminate\Http\Request;
 
@@ -37,6 +37,7 @@ class SeoSearchConsoleController extends Controller
         $result = $service->importFromGSC($days);
 
         $source = $result['source'] === 'simulated' ? 'Simulated' : 'Google API';
+
         return $this->seoRouteFlash(
             'admin.seo.search-console',
             'success',
@@ -56,4 +57,3 @@ class SeoSearchConsoleController extends Controller
         return $this->seoRouteFlash('admin.seo.search-console', 'success', "{$count} records cleared.");
     }
 }
-

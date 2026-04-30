@@ -17,6 +17,7 @@ class EmailSettingsController extends Controller
     public function index()
     {
         $settings = $this->getCurrentSettings();
+
         return view('admin.email.settings.index', compact('settings'));
     }
 
@@ -60,7 +61,7 @@ class EmailSettingsController extends Controller
                 $envUpdates['MAILGUN_SECRET'] = $request->mailgun_secret ?? '';
                 $envUpdates['MAILGUN_ENDPOINT'] = $request->mailgun_endpoint ?? 'api.eu.mailgun.net';
             }
-            
+
             // Add SMTP-specific settings
             if ($request->mail_mailer === 'smtp') {
                 $envUpdates['MAIL_HOST'] = $request->mail_host ?? '127.0.0.1';
@@ -77,7 +78,7 @@ class EmailSettingsController extends Controller
 
             return $this->settingsRedirect($request, 'success', 'Email settings updated successfully!');
         } catch (\Exception $e) {
-            return $this->settingsRedirect($request, 'error', 'Failed to update settings: ' . $e->getMessage())
+            return $this->settingsRedirect($request, 'error', 'Failed to update settings: '.$e->getMessage())
                 ->withInput();
         }
     }
@@ -95,7 +96,7 @@ class EmailSettingsController extends Controller
             });
 
             $mailHost = (string) config('mail.mailers.smtp.host', '');
-            $message = 'Test email successfully handed off to the mail provider for ' . $request->test_email . '.';
+            $message = 'Test email successfully handed off to the mail provider for '.$request->test_email.'.';
 
             if (str_contains($mailHost, 'brevo')) {
                 $message .= ' Jika email tetap tidak masuk, periksa Transactional Logs di Brevo karena recipient bisa diblokir akibat unsubscribed, blacklist, atau policy deliverability.';
@@ -103,12 +104,12 @@ class EmailSettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => $message
+                'message' => $message,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send test email: ' . $e->getMessage()
+                'message' => 'Failed to send test email: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -133,10 +134,10 @@ class EmailSettingsController extends Controller
 
         foreach ($data as $key => $value) {
             $value = $value ?? '';
-            
+
             // Handle values with spaces or special characters
             if (str_contains($value, ' ') || str_contains($value, '#')) {
-                $value = '"' . $value . '"';
+                $value = '"'.$value.'"';
             }
 
             // Check if key exists

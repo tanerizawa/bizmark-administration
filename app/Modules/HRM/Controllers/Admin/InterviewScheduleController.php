@@ -2,17 +2,17 @@
 
 namespace App\Modules\HRM\Controllers\Admin;
 
+use App\Events\InterviewCompleted;
 use App\Http\Controllers\Controller;
 use App\Mail\InterviewRescheduledMail;
 use App\Mail\InterviewScheduledMail;
 use App\Models\InterviewSchedule;
 use App\Models\JobApplication;
+use App\Models\JobVacancy;
 use App\Models\User;
-use App\Events\InterviewCompleted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class InterviewScheduleController extends Controller
 {
@@ -34,7 +34,7 @@ class InterviewScheduleController extends Controller
             $events = $interviews->map(function ($interview) {
                 return [
                     'id' => $interview->id,
-                    'title' => $interview->jobApplication->full_name . ' - ' . $interview->jobApplication->jobVacancy->title,
+                    'title' => $interview->jobApplication->full_name.' - '.$interview->jobApplication->jobVacancy->title,
                     'start' => $interview->scheduled_at->toIso8601String(),
                     'end' => $interview->scheduled_at->copy()->addMinutes($interview->duration_minutes)->toIso8601String(),
                     'backgroundColor' => $this->getStatusColor($interview->status),
@@ -80,7 +80,7 @@ class InterviewScheduleController extends Controller
     {
         $applicationId = $request->input('application_id');
         $application = $applicationId ? JobApplication::with('jobVacancy')->findOrFail($applicationId) : null;
-        
+
         // Get available interviewers (active users, can filter by role if needed)
         $interviewers = User::where('is_active', true)
             ->orderBy('full_name')
@@ -116,8 +116,8 @@ class InterviewScheduleController extends Controller
 
         // If video interview, generate Jitsi room name if no meeting link provided
         if ($validated['meeting_type'] === 'video-call' && empty($validated['meeting_link'])) {
-            $roomName = 'interview-' . Str::random(12);
-            $validated['meeting_link'] = 'https://' . config('services.jitsi.domain', 'meet.jit.si') . '/' . $roomName;
+            $roomName = 'interview-'.Str::random(12);
+            $validated['meeting_link'] = 'https://'.config('services.jitsi.domain', 'meet.jit.si').'/'.$roomName;
         }
 
         $interview = InterviewSchedule::create($validated);
@@ -188,15 +188,15 @@ class InterviewScheduleController extends Controller
             $interview->load('jobApplication.jobVacancy');
             Mail::to($interview->jobApplication->email)
                 ->send(new InterviewRescheduledMail(
-                    $interview, 
-                    $oldDate, 
+                    $interview,
+                    $oldDate,
                     $request->input('reschedule_reason', 'Schedule adjustment')
                 ));
         }
 
         return redirect()
             ->route('admin.recruitment.interviews.show', $interview)
-            ->with('success', 'Interview berhasil diupdate.' . ($dateChanged ? ' Notifikasi reschedule telah dikirim.' : ''));
+            ->with('success', 'Interview berhasil diupdate.'.($dateChanged ? ' Notifikasi reschedule telah dikirim.' : ''));
     }
 
     /**
@@ -277,13 +277,13 @@ class InterviewScheduleController extends Controller
         if ($interviewStage && $interviewStage->status === 'in-progress') {
             // Auto-pass or fail based on recommendation
             $passed = in_array($validated['recommendation'], ['highly-recommended', 'recommended']);
-            
+
             $interviewStage->update([
                 'status' => $passed ? 'passed' : 'failed',
                 'completed_at' => now(),
                 'passed' => $passed,
-                'notes' => $passed 
-                    ? 'Interview feedback: ' . ucfirst(str_replace('-', ' ', $validated['recommendation']))
+                'notes' => $passed
+                    ? 'Interview feedback: '.ucfirst(str_replace('-', ' ', $validated['recommendation']))
                     : 'Interview feedback: Not recommended',
             ]);
 
@@ -316,7 +316,7 @@ class InterviewScheduleController extends Controller
      */
     private function getStatusColor(string $status): string
     {
-        return match($status) {
+        return match ($status) {
             'scheduled' => '#3b82f6',  // blue
             'completed' => '#10b981',  // green
             'cancelled' => '#ef4444',  // red
@@ -330,13 +330,13 @@ class InterviewScheduleController extends Controller
      */
     public function jobInterviews($jobId)
     {
-        $vacancy = \App\Models\JobVacancy::withCount('applications')->findOrFail($jobId);
-        
+        $vacancy = JobVacancy::withCount('applications')->findOrFail($jobId);
+
         // Get all interviews for applications of this job
-        $query = InterviewSchedule::with(['jobApplication' => function($q) use ($jobId) {
-                $q->where('job_vacancy_id', $jobId);
-            }])
-            ->whereHas('jobApplication', function($q) use ($jobId) {
+        $query = InterviewSchedule::with(['jobApplication' => function ($q) use ($jobId) {
+            $q->where('job_vacancy_id', $jobId);
+        }])
+            ->whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })
             ->orderBy('scheduled_at', 'desc');
@@ -355,23 +355,23 @@ class InterviewScheduleController extends Controller
 
         // Interview statistics for this job
         $stats = [
-            'total' => InterviewSchedule::whereHas('jobApplication', function($q) use ($jobId) {
+            'total' => InterviewSchedule::whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })->count(),
-            
-            'scheduled' => InterviewSchedule::whereHas('jobApplication', function($q) use ($jobId) {
+
+            'scheduled' => InterviewSchedule::whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })->where('status', 'scheduled')->count(),
-            
-            'completed' => InterviewSchedule::whereHas('jobApplication', function($q) use ($jobId) {
+
+            'completed' => InterviewSchedule::whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })->where('status', 'completed')->count(),
-            
-            'upcoming' => InterviewSchedule::whereHas('jobApplication', function($q) use ($jobId) {
+
+            'upcoming' => InterviewSchedule::whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })->where('status', 'scheduled')
-              ->where('scheduled_at', '>=', now())
-              ->count(),
+                ->where('scheduled_at', '>=', now())
+                ->count(),
         ];
 
         return view('admin.jobs.interviews', compact('vacancy', 'interviews', 'stats'));

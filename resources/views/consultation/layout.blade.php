@@ -16,6 +16,31 @@
     <meta property="og:description" content="@yield('meta_description', 'Hitung estimasi biaya perizinan usaha Anda dengan AI.')">
     <meta property="og:image" content="https://bizmark.id/images/og-consultation.jpg">
     
+    <!-- Organization Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Organization",
+        "name": "Bizmark.ID",
+        "legalName": "PT Cangah Pajaratan Mandiri",
+        "url": "{{ url('/') }}",
+        "logo": "{{ asset('images/logo.png') }}",
+        "description": "Konsultan perizinan lingkungan dan bisnis Indonesia.",
+        "contactPoint": {
+            "@@type": "ContactPoint",
+            "telephone": "+62-838-7960-2855",
+            "contactType": "customer service",
+            "availableLanguage": ["Indonesian", "English"]
+        },
+        "address": {
+            "@@type": "PostalAddress",
+            "addressCountry": "ID",
+            "addressRegion": "West Java",
+            "addressLocality": "Karawang"
+        }
+    }
+    </script>
+    
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     
@@ -23,6 +48,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     
     <!-- Tailwind CSS (compiled) -->
     @vite('resources/css/landing.css')
@@ -30,15 +56,15 @@
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- FontAwesome (non-render-blocking) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <!-- Landing Page Styles (for consistent theming) -->
     @include('landing.partials.critical-css')
-    @include('landing.partials.styles-modern')
+    @vite('resources/css/landing-theme.css')
     
     <style>
         [x-cloak] { display: none !important; }

@@ -3,17 +3,14 @@
 namespace App\Modules\HRM\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\TestAssignedMail;
-use App\Models\TestTemplate;
-use App\Models\TestSession;
 use App\Models\JobApplication;
+use App\Models\TestSession;
+use App\Models\TestTemplate;
 use App\Modules\HRM\Services\RecruitmentWorkflowService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class TestManagementController extends Controller
 {
@@ -72,7 +69,7 @@ class TestManagementController extends Controller
                 'instructions' => 'nullable|string',
                 'is_active' => 'boolean',
             ]);
-            
+
             // Process evaluation criteria
             $criteria = collect($validated['evaluation_criteria'])->map(function ($criterion, $index) {
                 return [
@@ -83,37 +80,37 @@ class TestManagementController extends Controller
                     'type' => $criterion['type'],
                 ];
             })->toArray();
-            
+
             $validated['evaluation_criteria'] = [
                 'criteria' => $criteria,
                 'total_points' => collect($criteria)->sum('points'),
             ];
-            
+
             // Store template file
             if ($request->hasFile('template_file')) {
                 $file = $request->file('template_file');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = time().'_'.$file->getClientOriginalName();
                 $path = $file->storeAs('test-templates', $filename, 'private');
                 $validated['template_file_path'] = $path;
-                
+
                 Log::info('Template file uploaded (create)', [
                     'filename' => $filename,
                     'path' => $path,
                 ]);
             }
-            
+
             // Process reference attachments if provided
             if ($request->has('reference_attachments')) {
                 $validated['reference_attachments'] = $request->reference_attachments;
-                
+
                 Log::info('Reference attachments added', [
-                    'attachment_count' => count($request->reference_attachments)
+                    'attachment_count' => count($request->reference_attachments),
                 ]);
             }
-            
+
             unset($validated['template_file']);
             $validated['is_active'] = $request->boolean('is_active', true);
-            
+
         } else {
             // Regular question-based test
             $validated = $request->validate([
@@ -177,7 +174,7 @@ class TestManagementController extends Controller
             'pass_rate' => $test->passRate(),
             'average_duration' => $test->testSessions()
                 ->where('status', 'completed')
-                ->avg(\DB::raw('EXTRACT(EPOCH FROM (completed_at - started_at)) / 60')),
+                ->avg(DB::raw('EXTRACT(EPOCH FROM (completed_at - started_at)) / 60')),
         ];
 
         // Get available candidates for assignment (candidates without active session for this test)
@@ -186,7 +183,7 @@ class TestManagementController extends Controller
             ->pluck('job_application_id')
             ->toArray();
 
-        $availableCandidates = \App\Models\JobApplication::whereNotIn('id', $assignedApplicationIds)
+        $availableCandidates = JobApplication::whereNotIn('id', $assignedApplicationIds)
             ->with('jobVacancy')
             ->latest()
             ->take(20)
@@ -227,7 +224,7 @@ class TestManagementController extends Controller
             $rules['evaluation_criteria.*.description'] = 'nullable|string';
             $rules['evaluation_criteria.*.points'] = 'nullable|numeric|min:0|max:100';
             $rules['evaluation_criteria.*.type'] = 'nullable|in:Technical,Analysis,Quality,checkbox,rating,numeric';
-            
+
             // Reference attachments validation
             $rules['reference_attachments'] = 'nullable|array';
             $rules['reference_attachments.*.name'] = 'nullable|string|max:255';
@@ -265,14 +262,14 @@ class TestManagementController extends Controller
             }
 
             $file = $request->file('template_file');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = time().'_'.$file->getClientOriginalName();
             $path = $file->storeAs('test-templates', $filename, 'private');
             $validated['template_file_path'] = $path;
-            
+
             Log::info('Template file uploaded (update)', [
                 'filename' => $filename,
                 'path' => $path,
-                'test_id' => $test->id
+                'test_id' => $test->id,
             ]);
         }
 
@@ -280,17 +277,17 @@ class TestManagementController extends Controller
         if ($request->test_type === 'document-editing' && $request->has('evaluation_criteria')) {
             $validated['evaluation_criteria'] = [
                 'criteria' => $request->evaluation_criteria,
-                'total_points' => array_sum(array_column($request->evaluation_criteria, 'points'))
+                'total_points' => array_sum(array_column($request->evaluation_criteria, 'points')),
             ];
         }
 
         // Process reference_attachments for document-editing (only if provided)
         if ($request->test_type === 'document-editing' && $request->has('reference_attachments')) {
             $validated['reference_attachments'] = $request->reference_attachments;
-            
+
             Log::info('Reference attachments updated', [
                 'test_id' => $test->id,
-                'attachment_count' => count($request->reference_attachments)
+                'attachment_count' => count($request->reference_attachments),
             ]);
         }
 
@@ -316,7 +313,7 @@ class TestManagementController extends Controller
         Log::info('Template updated', [
             'test_id' => $test->id,
             'has_file' => isset($validated['template_file_path']),
-            'file_path' => $validated['template_file_path'] ?? null
+            'file_path' => $validated['template_file_path'] ?? null,
         ]);
 
         return redirect()
@@ -333,23 +330,23 @@ class TestManagementController extends Controller
         $activeSessions = $test->testSessions()
             ->whereIn('status', ['in-progress', 'completed'])
             ->count();
-        
+
         if ($activeSessions > 0) {
             return redirect()
                 ->route('admin.recruitment.tests.index')
                 ->with('error', "Tidak dapat menghapus template yang memiliki {$activeSessions} sesi aktif/selesai. Hapus sesi tersebut terlebih dahulu.");
         }
-        
+
         // Delete pending sessions (if any) - they haven't started yet
         $pendingSessions = $test->testSessions()->where('status', 'pending')->count();
         if ($pendingSessions > 0) {
             $test->testSessions()->where('status', 'pending')->delete();
             Log::info('Deleted pending sessions', [
                 'test_id' => $test->id,
-                'count' => $pendingSessions
+                'count' => $pendingSessions,
             ]);
         }
-        
+
         // Delete template file if document-editing type
         if ($test->test_type === 'document-editing' && $test->template_file_path) {
             if (Storage::disk('private')->exists($test->template_file_path)) {
@@ -359,7 +356,7 @@ class TestManagementController extends Controller
 
         $test->delete();
 
-        $message = $pendingSessions > 0 
+        $message = $pendingSessions > 0
             ? "Template test berhasil dihapus (termasuk {$pendingSessions} sesi pending)."
             : 'Template test berhasil dihapus.';
 
@@ -381,31 +378,31 @@ class TestManagementController extends Controller
 
         $template = TestTemplate::findOrFail($validated['test_template_id']);
         $application = JobApplication::findOrFail($validated['job_application_id']);
-        
+
         // Check if active session already exists for this application + template
         $existingSession = TestSession::where('job_application_id', $application->id)
             ->where('test_template_id', $template->id)
             ->whereIn('status', ['pending', 'in-progress'])
             ->first();
-        
+
         if ($existingSession) {
             return back()
                 ->with('warning', 'Kandidat sudah memiliki test session aktif untuk template ini.')
                 ->withInput();
         }
-        
+
         // Use WorkflowService for integrated assignment
         $workflowService = app(RecruitmentWorkflowService::class);
-        
+
         try {
             $session = $workflowService->assignTest($application, $template);
-            
+
             // Update expires_at if provided
             if (isset($validated['expires_at'])) {
                 $session->update(['expires_at' => $validated['expires_at']]);
             }
-            
-            Log::info("Test assigned via workflow service", [
+
+            Log::info('Test assigned via workflow service', [
                 'session_id' => $session->id,
                 'application_id' => $application->id,
                 'template_id' => $template->id,
@@ -415,15 +412,15 @@ class TestManagementController extends Controller
             // Redirect back to test template detail (not session)
             return redirect()
                 ->route('admin.recruitment.tests.show', $template)
-                ->with('success', 'Test berhasil diberikan kepada ' . $application->full_name . '. Notifikasi email telah dikirim.');
+                ->with('success', 'Test berhasil diberikan kepada '.$application->full_name.'. Notifikasi email telah dikirim.');
         } catch (\Exception $e) {
-            Log::error("Failed to assign test via workflow", [
+            Log::error('Failed to assign test via workflow', [
                 'error' => $e->getMessage(),
                 'application_id' => $application->id,
             ]);
-            
+
             return back()
-                ->with('error', 'Gagal memberikan test: ' . $e->getMessage())
+                ->with('error', 'Gagal memberikan test: '.$e->getMessage())
                 ->withInput();
         }
     }
@@ -437,7 +434,7 @@ class TestManagementController extends Controller
             'testTemplate',
             'jobApplication.jobVacancy',
             'testAnswers',
-            'evaluator'
+            'evaluator',
         ]);
 
         return view('admin.recruitment.tests.session-results', compact('session'));
@@ -449,7 +446,7 @@ class TestManagementController extends Controller
     public function showEvaluationForm(TestSession $session)
     {
         // Check if session requires manual review
-        if (!$session->requires_manual_review) {
+        if (! $session->requires_manual_review) {
             return redirect()
                 ->route('admin.recruitment.tests.sessions.results', $session)
                 ->with('info', 'This test session does not require manual evaluation.');
@@ -465,11 +462,11 @@ class TestManagementController extends Controller
         // Get questions that need manual review
         $questions = $session->testTemplate->questions_data ?? [];
         $answers = $session->testAnswers->keyBy('question_id');
-        
+
         $subjectiveQuestions = [];
         foreach ($questions as $index => $question) {
             $questionType = $question['question_type'] ?? null;
-            
+
             // Only subjective questions need manual grading
             if (in_array($questionType, ['essay', 'rating', 'rating-scale', 'document-editing'])) {
                 $subjectiveQuestions[$index] = [
@@ -488,7 +485,7 @@ class TestManagementController extends Controller
     public function submitEvaluation(Request $request, TestSession $session)
     {
         // Validate session status
-        if (!$session->requires_manual_review) {
+        if (! $session->requires_manual_review) {
             return redirect()
                 ->route('admin.recruitment.tests.sessions.results', $session)
                 ->with('error', 'This test session does not require manual evaluation.');
@@ -511,7 +508,7 @@ class TestManagementController extends Controller
         if ($success) {
             return redirect()
                 ->route('admin.recruitment.tests.sessions.results', $session)
-                ->with('success', 'Evaluation completed successfully. Final score: ' . number_format($session->fresh()->score, 2) . '%');
+                ->with('success', 'Evaluation completed successfully. Final score: '.number_format($session->fresh()->score, 2).'%');
         }
 
         return back()
@@ -524,7 +521,7 @@ class TestManagementController extends Controller
     public function cancelSession(TestSession $session)
     {
         // Validate that session can be cancelled
-        if (!in_array($session->status, ['pending', 'not-started', 'expired'])) {
+        if (! in_array($session->status, ['pending', 'not-started', 'expired'])) {
             return back()
                 ->with('error', 'Test session tidak dapat dibatalkan karena sudah dimulai atau diselesaikan.');
         }

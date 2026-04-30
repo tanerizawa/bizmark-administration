@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
+use App\Models\ArticleTopic;
 use App\Models\AutoPostConfig;
 use App\Models\AutoPostLog;
 use App\Models\AutoPostSchedule;
-use App\Models\ArticleTopic;
-use App\Models\Article;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Carbon\Carbon;
 
 class AutoPostController extends Controller
 {
@@ -21,29 +21,29 @@ class AutoPostController extends Controller
     public function index(Request $request)
     {
         $activeTab = $request->get('tab', 'config');
-        
+
         // Config data
         $config = AutoPostConfig::current();
-        
+
         // Analytics/Overview data
         $period = $request->get('period', '7days');
         [$startDate, $endDate] = $this->getPeriodDates($period);
-        
+
         $analytics = $this->getAnalyticsData($startDate, $endDate, $period);
-        
+
         // Topics data
         $topicsData = $this->getTopicsData($request);
-        
+
         // Schedules data
         $schedulesData = $this->getSchedulesData($request);
-        
+
         return view('admin.auto-post.index', array_merge([
             'activeTab' => $activeTab,
             'config' => $config,
             'period' => $period,
         ], $analytics, $topicsData, $schedulesData));
     }
-    
+
     /**
      * Get analytics data for overview.
      */
@@ -54,11 +54,11 @@ class AutoPostController extends Controller
                 ->where('created_at', '<=', $endDate)
                 ->where('source_type', 'auto-generated')
                 ->count(),
-            
+
             'total_topics' => ArticleTopic::count(),
             'available_topics' => ArticleTopic::where('status', 'pending')->whereNull('scheduled_for')->count(),
             'used_topics' => ArticleTopic::where('status', 'published')->count(),
-            
+
             'pending_schedules' => AutoPostSchedule::where('status', 'pending')->count(),
             'completed_schedules' => AutoPostSchedule::where('status', 'completed')
                 ->where('completed_at', '>=', $startDate)
@@ -67,34 +67,34 @@ class AutoPostController extends Controller
                 ->where('completed_at', '>=', $startDate)
                 ->count(),
         ];
-        
+
         $totalProcessed = $stats['completed_schedules'] + $stats['failed_schedules'];
-        $stats['success_rate'] = $totalProcessed > 0 
+        $stats['success_rate'] = $totalProcessed > 0
             ? round(($stats['completed_schedules'] / $totalProcessed) * 100, 1)
             : 0;
-        
+
         $dailyGeneration = AutoPostSchedule::select(
-                DB::raw('DATE(completed_at) as date'),
-                DB::raw('COUNT(*) as count'),
-                DB::raw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as success"),
-                DB::raw("SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed")
-            )
+            DB::raw('DATE(completed_at) as date'),
+            DB::raw('COUNT(*) as count'),
+            DB::raw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as success"),
+            DB::raw("SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed")
+        )
             ->whereNotNull('completed_at')
             ->where('completed_at', '>=', $startDate)
             ->where('completed_at', '<=', $endDate)
             ->groupBy(DB::raw('DATE(completed_at)'))
             ->orderBy('date')
             ->get();
-        
+
         $categoryDistribution = Article::select('category', DB::raw('COUNT(*) as count'))
             ->where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $endDate)
             ->where('source_type', 'auto-generated')
             ->groupBy('category')
             ->get();
-        
+
         $performanceMetrics = $this->calculatePerformanceMetrics($startDate, $endDate);
-        
+
         return [
             'stats' => $stats,
             'dailyGeneration' => $dailyGeneration,
@@ -102,14 +102,14 @@ class AutoPostController extends Controller
             'performanceMetrics' => $performanceMetrics,
         ];
     }
-    
+
     /**
      * Get topics data for topics tab.
      */
     private function getTopicsData(Request $request): array
     {
         $query = ArticleTopic::query();
-        
+
         if ($search = $request->get('search')) {
             $driver = DB::connection()->getDriverName();
             $like = "%{$search}%";
@@ -120,22 +120,24 @@ class AutoPostController extends Controller
 
                 if ($driver === 'pgsql') {
                     $q->orWhereRaw('CAST(keywords AS TEXT) ILIKE ?', [$like]);
+
                     return;
                 }
 
                 if ($driver === 'mysql' || $driver === 'mariadb') {
                     $q->orWhereRaw('CAST(keywords AS CHAR) LIKE ?', [$like]);
+
                     return;
                 }
 
                 $q->orWhereRaw('keywords LIKE ?', [$like]);
             });
         }
-        
+
         if ($status = $request->get('status')) {
             $query->where('status', $status);
         }
-        
+
         if ($category = $request->get('category')) {
             $query->where('category', $category);
         }
@@ -143,9 +145,9 @@ class AutoPostController extends Controller
         if ($market = $request->get('market')) {
             $query->where('target_market', $market);
         }
-        
+
         $topics = $query->orderBy('created_at', 'desc')->paginate(20);
-        
+
         $topicStats = [
             'total' => ArticleTopic::count(),
             'available' => ArticleTopic::where('status', 'pending')->whereNull('scheduled_for')->count(),
@@ -155,10 +157,10 @@ class AutoPostController extends Controller
             'pma' => ArticleTopic::where('target_market', 'pma')->count(),
             'both' => ArticleTopic::where('target_market', 'both')->count(),
         ];
-        
+
         $categories = ArticleTopic::distinct('category')->pluck('category')->filter();
         $markets = collect(['local', 'pma', 'both']);
-        
+
         return [
             'topics' => $topics,
             'topicStats' => $topicStats,
@@ -166,7 +168,7 @@ class AutoPostController extends Controller
             'markets' => $markets,
         ];
     }
-    
+
     /**
      * Get schedules data for schedules tab.
      */
@@ -193,34 +195,34 @@ class AutoPostController extends Controller
         if ($dateTo = $request->get('schedule_date_to')) {
             $query->whereDate($scheduleDateColumn, '<=', $dateTo);
         }
-        
+
         if ($status = $request->get('schedule_status')) {
             $query->where('status', $status);
         }
-        
+
         $schedules = $query->orderBy($scheduleDateColumn, 'desc')->paginate(20);
-        
+
         $scheduleStats = [
             'pending' => AutoPostSchedule::where('status', 'pending')->count(),
             'processing' => AutoPostSchedule::where('status', 'processing')->count(),
             'completed' => AutoPostSchedule::where('status', 'completed')->count(),
             'failed' => AutoPostSchedule::where('status', 'failed')->count(),
         ];
-        
+
         return [
             'schedules' => $schedules,
             'scheduleStats' => $scheduleStats,
             'scheduleDateColumn' => $scheduleDateColumn,
         ];
     }
-    
+
     /**
      * Get period dates for analytics.
      */
     private function getPeriodDates($period): array
     {
         $endDate = Carbon::now();
-        
+
         switch ($period) {
             case '24hours':
                 $startDate = Carbon::now()->subDay();
@@ -237,10 +239,10 @@ class AutoPostController extends Controller
             default:
                 $startDate = Carbon::now()->subDays(7);
         }
-        
+
         return [$startDate, $endDate];
     }
-    
+
     /**
      * Calculate performance metrics.
      */

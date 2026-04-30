@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
-use App\Models\ApplicationStatusLog;
 use App\Models\User;
 use App\Notifications\PaymentConfirmedNotification;
-use App\Services\ProjectConversionService;
 use App\Services\PermitApplicationWorkflowService;
+use App\Services\ProjectConversionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +29,7 @@ class PaymentCallbackController extends Controller
     public function callback(Request $request)
     {
         try {
-            if (!$this->isValidMidtransSignature($request)) {
+            if (! $this->isValidMidtransSignature($request)) {
                 Log::warning('Midtrans callback rejected: invalid signature', [
                     'ip' => $request->ip(),
                     'order_id' => $request->input('order_id'),
@@ -39,7 +38,7 @@ class PaymentCallbackController extends Controller
                 return response()->json(['message' => 'Invalid callback signature'], 403);
             }
 
-            $notification = new Notification();
+            $notification = new Notification;
 
             $transactionStatus = $notification->transaction_status;
             $fraudStatus = $notification->fraud_status ?? null;
@@ -55,14 +54,16 @@ class PaymentCallbackController extends Controller
             try {
                 $payment = Payment::where('payment_number', $paymentNumber)->lockForUpdate()->first();
 
-                if (!$payment) {
+                if (! $payment) {
                     DB::rollBack();
                     Log::error('Payment not found', ['order_id' => $paymentNumber]);
+
                     return response()->json(['message' => 'Payment not found'], 404);
                 }
 
                 if (in_array($payment->status, ['success', 'failed'], true)) {
                     DB::commit();
+
                     return response()->json(['message' => 'Callback already processed']);
                 }
 
@@ -101,7 +102,7 @@ class PaymentCallbackController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'Error processing callback: ' . $e->getMessage()
+                'message' => 'Error processing callback: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -121,7 +122,7 @@ class PaymentCallbackController extends Controller
             return false;
         }
 
-        $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+        $expectedSignature = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
 
         return hash_equals($expectedSignature, $signature);
     }
@@ -138,7 +139,7 @@ class PaymentCallbackController extends Controller
 
         $quotation = $payment->quotation;
         $application = $quotation?->application;
-        if (!$application) {
+        if (! $application) {
             throw new \RuntimeException('Application not found for payment.');
         }
 
@@ -150,7 +151,7 @@ class PaymentCallbackController extends Controller
         $workflow->transition(
             $application,
             'payment_verified',
-            'Pembayaran berhasil melalui ' . $payment->gateway_provider . ': ' . $payment->payment_number,
+            'Pembayaran berhasil melalui '.$payment->gateway_provider.': '.$payment->payment_number,
             'system',
             null
         );
@@ -161,7 +162,7 @@ class PaymentCallbackController extends Controller
 
         // Auto-convert to project
         try {
-            $conversionService = new ProjectConversionService();
+            $conversionService = new ProjectConversionService;
             if ($conversionService->canConvert($application)) {
                 $project = $conversionService->convertToProject($application);
                 Log::info('Application auto-converted to project', [
@@ -172,7 +173,7 @@ class PaymentCallbackController extends Controller
             }
         } catch (\Exception $e) {
             // Log error but don't fail the payment process
-            Log::error("Payment successful but project conversion failed", [
+            Log::error('Payment successful but project conversion failed', [
                 'application_id' => $application->id,
                 'payment_id' => $payment->id,
                 'error' => $e->getMessage(),

@@ -20,8 +20,7 @@ class ServiceCostRequestQuoteMail extends Mailable
         public string $bodyText,
         public string $htmlBody,
         public array $signature = []
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {

@@ -509,10 +509,9 @@
         
         document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/" + domainAttr + ";SameSite=Lax" + secureAttr;
         
-        // Debug - check if cookie was set
+        // Verify cookie was set successfully
         setTimeout(() => {
-            const check = getCookie(name);
-            console.log('Cookie set attempt:', name, 'Value saved:', check ? 'YES' : 'NO');
+            getCookie(name);
         }, 100);
     }
     

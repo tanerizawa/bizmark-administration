@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -112,7 +113,7 @@ class AutoPostConfig extends Model
     public function getPostTimesForDate($date)
     {
         return collect($this->post_times)->map(function ($time) use ($date) {
-            return \Carbon\Carbon::parse($date->format('Y-m-d') . ' ' . $time, $this->timezone);
+            return Carbon::parse($date->format('Y-m-d').' '.$time, $this->timezone);
         });
     }
 
@@ -125,7 +126,7 @@ class AutoPostConfig extends Model
         $weights = $this->category_weights;
         $total = array_sum($weights);
         $rand = rand(1, $total);
-        
+
         $current = 0;
         foreach ($weights as $category => $weight) {
             $current += $weight;
@@ -133,7 +134,7 @@ class AutoPostConfig extends Model
                 return $category;
             }
         }
-        
+
         return 'general'; // Fallback
     }
 
@@ -142,19 +143,19 @@ class AutoPostConfig extends Model
      */
     public function getNextLanguage()
     {
-        if (!$this->language_distribution || empty($this->language_distribution)) {
+        if (! $this->language_distribution || empty($this->language_distribution)) {
             return 'id'; // Default to Indonesian
         }
 
         $weights = $this->language_distribution;
         $total = array_sum($weights);
-        
+
         if ($total === 0) {
             return 'id';
         }
-        
+
         $rand = rand(1, $total);
-        
+
         $current = 0;
         foreach ($weights as $lang => $weight) {
             $current += $weight;
@@ -162,7 +163,7 @@ class AutoPostConfig extends Model
                 return $lang;
             }
         }
-        
+
         return 'id'; // Fallback
     }
 
@@ -171,7 +172,7 @@ class AutoPostConfig extends Model
      */
     public function getTargetMarket($language)
     {
-        if (!$this->market_focus || empty($this->market_focus)) {
+        if (! $this->market_focus || empty($this->market_focus)) {
             return $language === 'en' ? 'pma' : 'local';
         }
 

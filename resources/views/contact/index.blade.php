@@ -23,13 +23,13 @@
             <span class="section-badge mb-4">{{ $isEnglish ? 'Contact' : 'Kontak' }}</span>
             <h1 class="section-title mb-4">{{ $isEnglish ? 'Talk to our permit experts' : 'Konsultasi dengan tim ahli perizinan' }}</h1>
             <p class="text-lg leading-relaxed mb-0" style="color:var(--text-secondary);">
-                {{ $isEnglish ? 'Tell us your business context. We’ll help map the required permits and the fastest path to compliance.' : 'Ceritakan konteks usaha Anda. Kami bantu memetakan izin yang dibutuhkan dan jalur compliance yang paling efektif.' }}
+                {{ $isEnglish ? 'Tell us about your business. We will help map the permits you need and the most efficient path to compliance.' : 'Ceritakan jenis usaha Anda. Kami bantu memetakan izin yang dibutuhkan dan jalur kepatuhan yang paling efisien.' }}
             </p>
         </div>
     </div>
 </section>
 
-<section class="section-sm" aria-label="{{ $isEnglish ? 'Contact channels' : 'Kanal kontak' }}">
+<section class="section-sm" aria-label="{{ $isEnglish ? 'Contact channels' : 'Saluran Komunikasi' }}">
     <div class="container-wide">
         <div class="grid md:grid-cols-3 gap-6">
             <a href="tel:{{ $phoneHref }}" class="card hover-lift" aria-label="{{ $isEnglish ? 'Call us' : 'Telepon kami' }}">
@@ -80,7 +80,7 @@
             <div class="lg:col-span-5">
                 <h2 id="contact-form-heading" class="section-title mb-4">{{ $isEnglish ? 'Send a message' : 'Kirim pesan' }}</h2>
                 <p class="text-base leading-relaxed mb-8" style="color:var(--text-secondary);">
-                    {{ $isEnglish ? 'Fill out the form and we’ll get back to you with a recommended next step.' : 'Isi form dan kami akan menghubungi Anda dengan rekomendasi langkah berikutnya.' }}
+                    {{ $isEnglish ? 'Fill out the form and we will get back to you with a recommended next step.' : 'Isi formulir berikut dan tim kami akan menghubungi Anda dengan rekomendasi langkah selanjutnya.' }}
                 </p>
 
                 <div class="card">

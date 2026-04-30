@@ -22,7 +22,7 @@ class DashboardOperationalService
             ->get()
             ->map(function ($task) {
                 $dueDate = $task->due_date ? Carbon::parse($task->due_date) : null;
-                if (!$dueDate) {
+                if (! $dueDate) {
                     return null;
                 }
 
@@ -52,6 +52,7 @@ class DashboardOperationalService
             ->get()
             ->map(function ($project) {
                 $daysUntil = Carbon::now()->diffInDays($project->deadline, false);
+
                 return [
                     'id' => $project->id,
                     'name' => $project->name,
@@ -219,4 +220,3 @@ class DashboardOperationalService
         ];
     }
 }
-

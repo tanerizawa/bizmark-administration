@@ -4,10 +4,10 @@
     <div class="card-elevated rounded-apple-lg p-5 space-y-4">
         <div class="flex items-center justify-between flex-wrap gap-3">
             <div>
-                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Pencarian</p>
+                <p class="text-xs uppercase tracking-[0.35em] text-dark-text-tertiary">Pencarian</p>
                 <h2 class="text-sm font-semibold text-white">Cari Permohonan Izin</h2>
             </div>
-            <span class="text-xs" style="color: rgba(235,235,245,0.6);">
+            <span class="text-xs text-dark-text-secondary">
                 <i class="fas fa-info-circle mr-1"></i>
                 Menampilkan {{ $applications->total() ?? 0 }} hasil
             </span>
@@ -17,14 +17,14 @@
             <input type="hidden" name="tab" value="applications">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Pencarian</label>
+                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Pencarian</label>
                     <input type="text" name="search" value="{{ request('search') }}" 
                            placeholder="Nomor/nama klien..." 
                            class="input-dark w-full px-3 py-2 rounded-apple text-sm">
                 </div>
                 
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Status</label>
+                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Status</label>
                     <select name="status" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
                         <option value="">Semua Status</option>
                         @foreach($statuses as $status)
@@ -36,7 +36,7 @@
                 </div>
                 
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Jenis Izin</label>
+                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Jenis Izin</label>
                     <select name="permit_type" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
                         <option value="">Semua Jenis</option>
                         @foreach($permitTypes as $type)
@@ -63,7 +63,7 @@
     <div class="card-elevated rounded-apple-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700 text-sm">
-                <thead style="background-color: var(--dark-bg-tertiary); opacity: var(--opacity-bg-medium);">
+                <thead class="bg-[rgba(44,44,46,0.65)]">
                     <tr>
                         <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Nomor</th>
                         <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Klien</th>
@@ -73,7 +73,7 @@
                         <th scope="col" class="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
+                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
                     @forelse($applications as $app)
                         <tr class="hover-lift transition-apple">
                             <td class="px-4 py-2.5">
@@ -106,7 +106,7 @@
                                     $colors = explode('|', $status);
                                 @endphp
                                 <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                      style="background: {{ $colors[0] }}; opacity: var(--opacity-bg-strong); color: {{ $colors[1] }};">
+                                      style="background: {{ $colors[0] }}; color: {{ $colors[1] }};">
                                     {{ ucfirst(str_replace('_', ' ', $app->status)) }}
                                 </span>
                             </td>
@@ -120,9 +120,8 @@
                             </td>
                             <td class="px-4 py-2.5 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center space-x-1.5">
-                                    <a href="{{ route('admin.permit-applications.show', $app->id) }}" 
-                                       class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple" 
-                                       style="background-color: rgba(90, 200, 250, 0.15); color: var(--apple-teal); border: 1px solid rgba(90, 200, 250, 0.25);">
+                                    <a href="{{ route('admin.permit-applications.show', $app->id) }}"
+                                       class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple bg-apple-teal/20 text-apple-teal border border-apple-teal/30">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                 </div>
@@ -132,9 +131,9 @@
                         <tr>
                             <td colspan="6" class="px-4 py-16 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-inbox text-4xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
-                                    <h3 class="text-base font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Permohonan</h3>
-                                    <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">
+                                    <i class="fas fa-inbox text-4xl mb-6 text-dark-text-tertiary"></i>
+                                    <h3 class="text-base font-semibold mb-2 text-white">Belum Ada Permohonan</h3>
+                                    <p class="mb-6 text-dark-text-secondary">
                                         Permohonan izin dari klien akan muncul di sini
                                     </p>
                                 </div>
@@ -148,7 +147,7 @@
 
     {{-- Pagination --}}
     @if($applications->hasPages())
-        <div class="rounded-apple-lg px-4 py-3" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);">
+        <div class="rounded-apple-lg px-4 py-3 bg-dark-bg-tertiary border border-white/20 shadow-soft">
             {{ $applications->appends(['tab' => 'applications'])->links('pagination::tailwind') }}
         </div>
     @endif

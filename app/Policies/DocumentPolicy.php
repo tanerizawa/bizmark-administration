@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Document;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class DocumentPolicy
 {
@@ -13,7 +12,7 @@ class DocumentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasPermission('documents.view');
     }
 
     /**
@@ -21,7 +20,7 @@ class DocumentPolicy
      */
     public function view(User $user, Document $document): bool
     {
-        return false;
+        return $user->hasPermission('documents.view');
     }
 
     /**
@@ -29,7 +28,7 @@ class DocumentPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasPermission('documents.create');
     }
 
     /**
@@ -37,7 +36,7 @@ class DocumentPolicy
      */
     public function update(User $user, Document $document): bool
     {
-        return false;
+        return $user->hasPermission('documents.edit');
     }
 
     /**
@@ -45,7 +44,7 @@ class DocumentPolicy
      */
     public function delete(User $user, Document $document): bool
     {
-        return false;
+        return $user->hasPermission('documents.delete');
     }
 
     /**
@@ -53,7 +52,7 @@ class DocumentPolicy
      */
     public function restore(User $user, Document $document): bool
     {
-        return false;
+        return $user->hasPermission('documents.delete');
     }
 
     /**
@@ -61,6 +60,6 @@ class DocumentPolicy
      */
     public function forceDelete(User $user, Document $document): bool
     {
-        return false;
+        return $user->hasPermission('documents.delete');
     }
 }

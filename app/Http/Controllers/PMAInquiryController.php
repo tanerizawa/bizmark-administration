@@ -6,6 +6,7 @@ use App\Models\ServiceInquiry;
 use App\Models\User;
 use App\Notifications\PMAInquiryReceivedNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -20,7 +21,7 @@ class PMAInquiryController extends Controller
         $services = config('services_pma');
         $countries = $this->getCountries();
         $investmentSectors = $this->getInvestmentSectors();
-        
+
         return view('pma.inquiry.create', compact('services', 'countries', 'investmentSectors'));
     }
 
@@ -37,23 +38,23 @@ class PMAInquiryController extends Controller
             'company_name' => 'required|string|max:255',
             'country' => 'required|string|max:100',
             'position' => 'nullable|string|max:100',
-            
+
             // Investment Information
             'investment_sector' => 'required|string|max:255',
             'investment_amount_usd' => 'required|string|max:50',
             'investment_timeline' => 'required|string|max:100',
             'business_location' => 'required|string|max:255',
-            
+
             // Services Required
             'services_needed' => 'required|array|min:1',
             'services_needed.*' => 'string',
-            
+
             // Additional Information
             'project_description' => 'required|string|max:2000',
             'specific_questions' => 'nullable|string|max:2000',
             'preferred_contact_method' => 'required|in:email,whatsapp,phone',
             'preferred_contact_time' => 'nullable|string|max:100',
-            
+
             // Privacy
             'privacy_consent' => 'accepted',
         ]);
@@ -61,13 +62,13 @@ class PMAInquiryController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         try {
-            $inquiryNumber = 'PMA-' . strtoupper(Str::random(8));
-            
+            $inquiryNumber = 'PMA-'.strtoupper(Str::random(8));
+
             $inquiry = ServiceInquiry::create([
                 'inquiry_number' => $inquiryNumber,
                 'email' => $request->email,
@@ -100,7 +101,7 @@ class PMAInquiryController extends Controller
 
             Mail::raw(
                 "Dear {$request->full_name},\n\nThank you for your PMA inquiry (Ref: {$inquiryNumber}). Our team will contact you within 1 business day.\n\nBest regards,\nBizmark.id Team",
-                fn ($msg) => $msg->to($request->email)->subject('PMA Inquiry Received — ' . $inquiryNumber)
+                fn ($msg) => $msg->to($request->email)->subject('PMA Inquiry Received — '.$inquiryNumber)
             );
             $notification = new PMAInquiryReceivedNotification($inquiry);
             User::where('is_active', true)
@@ -116,14 +117,14 @@ class PMAInquiryController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('PMA Inquiry submission failed', [
+            Log::error('PMA Inquiry submission failed', [
                 'error' => $e->getMessage(),
                 'email' => $request->email,
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred. Please try again or contact us directly.'
+                'message' => 'An error occurred. Please try again or contact us directly.',
             ], 500);
         }
     }
@@ -134,7 +135,7 @@ class PMAInquiryController extends Controller
     public function result($inquiryNumber)
     {
         $inquiry = ServiceInquiry::where('inquiry_number', $inquiryNumber)->firstOrFail();
-        
+
         return view('pma.inquiry.result', compact('inquiry'));
     }
 
@@ -145,20 +146,20 @@ class PMAInquiryController extends Controller
     {
         $amount = $request->investment_amount_usd;
         $timeline = $request->investment_timeline;
-        
+
         // High priority: Large investment (>$500k) or urgent timeline
-        if (str_contains($amount, '500,000') || 
-            str_contains($amount, '1,000,000') || 
+        if (str_contains($amount, '500,000') ||
+            str_contains($amount, '1,000,000') ||
             str_contains($timeline, '1-3 months')) {
             return 'high';
         }
-        
+
         // Medium priority: Mid-range investment or medium timeline
-        if (str_contains($amount, '100,000') || 
+        if (str_contains($amount, '100,000') ||
             str_contains($timeline, '3-6 months')) {
             return 'medium';
         }
-        
+
         return 'normal';
     }
 

@@ -2,12 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\GenerateAutoPostArticle;
 use App\Models\Article;
 use App\Models\ArticleTopic;
 use App\Models\AutoPostSchedule;
-use App\Jobs\GenerateAutoPostArticle;
+use App\Services\ArticleAutoPostService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AutoPostDiagnose extends Command
 {
@@ -29,16 +31,16 @@ class AutoPostDiagnose extends Command
 
         // 1. Check orphan schedules (processing but no article)
         $issues = array_merge($issues, $this->checkOrphanSchedules());
-        
+
         // 2. Check schedules that should be linked to existing articles
         $issues = array_merge($issues, $this->checkUnlinkedSchedules());
-        
+
         // 3. Check stuck processing schedules
         $issues = array_merge($issues, $this->checkStuckSchedules());
-        
+
         // 4. Check queue health
         $issues = array_merge($issues, $this->checkQueueHealth());
-        
+
         // 5. Check log permissions
         $issues = array_merge($issues, $this->checkPermissions());
 
@@ -47,15 +49,15 @@ class AutoPostDiagnose extends Command
         $this->info('═══════════════════════════════════════════════════════════════');
         $this->info('                         SUMMARY');
         $this->info('═══════════════════════════════════════════════════════════════');
-        
+
         if (empty($issues)) {
             $this->info('✅ No issues found! System is healthy.');
         } else {
-            $this->warn("Found " . count($issues) . " issue(s):");
+            $this->warn('Found '.count($issues).' issue(s):');
             foreach ($issues as $issue) {
                 $this->line("  • {$issue['type']}: {$issue['message']}");
             }
-            
+
             if ($this->option('fix')) {
                 $this->newLine();
                 $this->info('🔧 Applying fixes...');
@@ -121,7 +123,9 @@ class AutoPostDiagnose extends Command
             ->get();
 
         foreach ($schedules as $schedule) {
-            if (!$schedule->topic) continue;
+            if (! $schedule->topic) {
+                continue;
+            }
 
             // Check if article with same title exists
             $existingArticle = Article::where('title', $schedule->topic->title)->first();
@@ -211,7 +215,7 @@ class AutoPostDiagnose extends Command
                 'message' => 'Supervisor workers not running',
                 'fix' => 'manual',
             ];
-            $this->error("  ✗ Supervisor workers not running!");
+            $this->error('  ✗ Supervisor workers not running!');
         } else {
             $this->line('  ✓ Supervisor workers are running');
         }
@@ -225,21 +229,21 @@ class AutoPostDiagnose extends Command
         $issues = [];
 
         $logPath = storage_path('logs/laravel.log');
-        
+
         if (file_exists($logPath)) {
             $perms = substr(sprintf('%o', fileperms($logPath)), -4);
             $owner = posix_getpwuid(fileowner($logPath))['name'] ?? 'unknown';
             $group = posix_getgrgid(filegroup($logPath))['name'] ?? 'unknown';
-            
+
             $this->line("  Log file: {$owner}:{$group} ({$perms})");
-            
-            if (!is_writable($logPath)) {
+
+            if (! is_writable($logPath)) {
                 $issues[] = [
                     'type' => 'log_permission',
                     'message' => 'Laravel log file not writable',
                     'fix' => 'fix_permissions',
                 ];
-                $this->warn("  ⚠️  Log file not writable!");
+                $this->warn('  ⚠️  Log file not writable!');
             } else {
                 $this->line('  ✓ Log file is writable');
             }
@@ -272,7 +276,7 @@ class AutoPostDiagnose extends Command
                             'article_id' => $issue['article_id'],
                             'completed_at' => now(),
                         ]);
-                        
+
                         // Also update topic
                         if ($schedule->topic) {
                             $schedule->topic->update([
@@ -280,7 +284,7 @@ class AutoPostDiagnose extends Command
                                 'article_id' => $issue['article_id'],
                             ]);
                         }
-                        
+
                         $this->info("  ✓ Linked Schedule #{$schedule->id} to Article #{$issue['article_id']}");
                     }
                     break;
@@ -298,7 +302,7 @@ class AutoPostDiagnose extends Command
 
                 case 'flush_failed':
                     $this->call('queue:flush');
-                    $this->info("  ✓ Flushed failed jobs");
+                    $this->info('  ✓ Flushed failed jobs');
                     break;
 
                 case 'fix_permissions':
@@ -307,7 +311,7 @@ class AutoPostDiagnose extends Command
                     foreach (glob("{$logPath}/*.log") as $logFile) {
                         @chmod($logFile, 0664);
                     }
-                    $this->info("  ✓ Fixed log permissions");
+                    $this->info('  ✓ Fixed log permissions');
                     break;
 
                 case 'manual':
@@ -330,7 +334,7 @@ class AutoPostDiagnose extends Command
         // Test 1: Unique Slug Generation
         $this->info('Test 1: Unique Slug Generation');
         try {
-            $title = 'Test Slug Generation ' . time();
+            $title = 'Test Slug Generation '.time();
             $a1 = Article::create([
                 'title' => $title,
                 'content' => '<p>Test</p>',
@@ -346,7 +350,7 @@ class AutoPostDiagnose extends Command
                 'reading_time' => 1,
                 'is_featured' => false,
             ]);
-            
+
             $a2 = Article::create([
                 'title' => $title,
                 'content' => '<p>Test 2</p>',
@@ -362,20 +366,20 @@ class AutoPostDiagnose extends Command
                 'reading_time' => 1,
                 'is_featured' => false,
             ]);
-            
+
             if ($a1->slug !== $a2->slug) {
                 $this->info("  ✓ PASSED: Unique slugs generated ({$a1->slug} vs {$a2->slug})");
                 $passed++;
             } else {
-                $this->error("  ✗ FAILED: Duplicate slugs!");
+                $this->error('  ✗ FAILED: Duplicate slugs!');
                 $failed++;
             }
-            
+
             // Cleanup
             $a1->forceDelete();
             $a2->forceDelete();
         } catch (\Exception $e) {
-            $this->error("  ✗ FAILED: " . $e->getMessage());
+            $this->error('  ✗ FAILED: '.$e->getMessage());
             $failed++;
         }
 
@@ -383,55 +387,55 @@ class AutoPostDiagnose extends Command
         $this->info('Test 2: Queue Job Dispatch');
         try {
             $beforeCount = DB::table('jobs')->count();
-            
+
             // Create test schedule
             $testTopic = ArticleTopic::first();
-            if (!$testTopic) {
-                $this->warn("  ⏭️  SKIPPED: No topics available");
+            if (! $testTopic) {
+                $this->warn('  ⏭️  SKIPPED: No topics available');
             } else {
                 $testSchedule = AutoPostSchedule::create([
                     'topic_id' => $testTopic->id,
                     'scheduled_at' => now()->addDays(30),
                     'status' => 'pending',
                 ]);
-                
+
                 GenerateAutoPostArticle::dispatch($testSchedule);
-                
+
                 $afterCount = DB::table('jobs')->count();
-                
+
                 if ($afterCount > $beforeCount) {
-                    $this->info("  ✓ PASSED: Job dispatched successfully");
+                    $this->info('  ✓ PASSED: Job dispatched successfully');
                     $passed++;
                 } else {
-                    $this->error("  ✗ FAILED: Job not added to queue");
+                    $this->error('  ✗ FAILED: Job not added to queue');
                     $failed++;
                 }
-                
+
                 // Cleanup - delete test schedule and job
                 $testSchedule->forceDelete();
-                DB::table('jobs')->whereRaw("created_at >= ?", [now()->subMinute()])->delete();
+                DB::table('jobs')->whereRaw('created_at >= ?', [now()->subMinute()])->delete();
             }
         } catch (\Exception $e) {
-            $this->error("  ✗ FAILED: " . $e->getMessage());
+            $this->error('  ✗ FAILED: '.$e->getMessage());
             $failed++;
         }
 
         // Test 3: Log Writing
         $this->info('Test 3: Log Writing');
         try {
-            $testMessage = 'DIAGNOSTIC_TEST_' . time();
-            \Log::info($testMessage);
-            
+            $testMessage = 'DIAGNOSTIC_TEST_'.time();
+            Log::info($testMessage);
+
             $logContent = file_get_contents(storage_path('logs/laravel.log'));
             if (strpos($logContent, $testMessage) !== false) {
-                $this->info("  ✓ PASSED: Log writing works");
+                $this->info('  ✓ PASSED: Log writing works');
                 $passed++;
             } else {
-                $this->error("  ✗ FAILED: Log message not found");
+                $this->error('  ✗ FAILED: Log message not found');
                 $failed++;
             }
         } catch (\Exception $e) {
-            $this->error("  ✗ FAILED: " . $e->getMessage());
+            $this->error('  ✗ FAILED: '.$e->getMessage());
             $failed++;
         }
 
@@ -442,18 +446,18 @@ class AutoPostDiagnose extends Command
             $this->info("  ✓ PASSED: Database connected ({$count} schedules)");
             $passed++;
         } catch (\Exception $e) {
-            $this->error("  ✗ FAILED: " . $e->getMessage());
+            $this->error('  ✗ FAILED: '.$e->getMessage());
             $failed++;
         }
 
         // Test 5: Article Service Instantiation
         $this->info('Test 5: Service Container');
         try {
-            $service = app(\App\Services\ArticleAutoPostService::class);
-            $this->info("  ✓ PASSED: ArticleAutoPostService resolved");
+            $service = app(ArticleAutoPostService::class);
+            $this->info('  ✓ PASSED: ArticleAutoPostService resolved');
             $passed++;
         } catch (\Exception $e) {
-            $this->error("  ✗ FAILED: " . $e->getMessage());
+            $this->error('  ✗ FAILED: '.$e->getMessage());
             $failed++;
         }
 
@@ -461,7 +465,7 @@ class AutoPostDiagnose extends Command
         $this->newLine();
         $total = $passed + $failed;
         $this->info("Tests completed: {$passed}/{$total} passed");
-        
+
         if ($failed > 0) {
             $this->error("{$failed} test(s) failed!");
         }
@@ -478,17 +482,18 @@ class AutoPostDiagnose extends Command
             ->orderBy('id')
             ->first();
 
-        if (!$schedule) {
+        if (! $schedule) {
             $this->warn('No pending schedules available for testing.');
+
             return;
         }
 
         $this->info("Dispatching Schedule #{$schedule->id}...");
-        $this->line("Topic: " . ($schedule->topic->title ?? 'N/A'));
+        $this->line('Topic: '.($schedule->topic->title ?? 'N/A'));
 
         GenerateAutoPostArticle::dispatch($schedule);
 
-        $this->info("Job dispatched! Monitoring for 60 seconds...");
+        $this->info('Job dispatched! Monitoring for 60 seconds...');
         $this->newLine();
 
         // Monitor progress
@@ -498,23 +503,25 @@ class AutoPostDiagnose extends Command
         for ($i = 0; $i < 12; $i++) {
             sleep(5);
             $bar->advance();
-            
+
             $schedule->refresh();
-            
+
             if ($schedule->status === 'completed') {
                 $bar->finish();
                 $this->newLine(2);
-                $this->info("✅ SUCCESS! Schedule completed.");
+                $this->info('✅ SUCCESS! Schedule completed.');
                 $this->line("  Article ID: #{$schedule->article_id}");
                 $this->line("  Generation Time: {$schedule->generation_time_seconds}s");
+
                 return;
             }
-            
+
             if ($schedule->status === 'failed') {
                 $bar->finish();
                 $this->newLine(2);
-                $this->error("❌ FAILED!");
+                $this->error('❌ FAILED!');
                 $this->line("  Error: {$schedule->error_message}");
+
                 return;
             }
         }

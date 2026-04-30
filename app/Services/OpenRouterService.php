@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Log;
 class OpenRouterService
 {
     protected string $apiKey;
+
     protected string $baseUrl = 'https://openrouter.ai/api/v1';
+
     protected string $primaryModel = 'anthropic/claude-sonnet-4';
+
     protected string $fallbackModel = 'google/gemini-2.5-flash';
-    
+
     public function __construct()
     {
         $this->apiKey = config('services.openrouter.api_key');
@@ -64,7 +67,7 @@ class OpenRouterService
                     'limitations' => $analysis['limitations'] ?? '',
                 ]),
                 'ai_model' => $analysis['ai_model_used'] ?? 'unknown',
-                'ai_prompt_hash' => md5($kbliCode . $sector . ($businessScale ?? '') . ($locationType ?? '')),
+                'ai_prompt_hash' => md5($kbliCode.$sector.($businessScale ?? '').($locationType ?? '')),
                 'confidence_score' => $this->calculateConfidence([
                     'recommended_permits' => $analysis['recommended_permits'] ?? [],
                     'required_documents' => $analysis['required_documents'] ?? [],
@@ -81,6 +84,7 @@ class OpenRouterService
                 'status' => 'error',
                 'error_message' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -92,21 +96,21 @@ class OpenRouterService
     protected function buildPrompt(string $kbliCode, string $description, string $sector, ?string $businessScale, ?string $locationType): string
     {
         // Legacy: this method is no longer called. All prompt logic lives in FreeAIAnalysisService.
-        return "DEPRECATED — see FreeAIAnalysisService";
+        return 'DEPRECATED — see FreeAIAnalysisService';
     }
 
     protected function callAI(string $prompt, string $model): array
     {
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Authorization' => 'Bearer '.$this->apiKey,
                 'HTTP-Referer' => config('app.url'),
                 'X-Title' => config('app.name'),
             ])->timeout(60)->post("{$this->baseUrl}/chat/completions", [
                 'model' => $model,
                 'messages' => [
                     ['role' => 'system', 'content' => 'You are an expert in Indonesian business licensing. Always respond in Indonesian. Provide valid JSON only.'],
-                    ['role' => 'user', 'content' => $prompt]
+                    ['role' => 'user', 'content' => $prompt],
                 ],
                 'temperature' => 0.7,
                 'max_tokens' => 4000,
@@ -114,6 +118,7 @@ class OpenRouterService
 
             if ($response->successful()) {
                 $data = $response->json();
+
                 return [
                     'success' => true,
                     'content' => $data['choices'][0]['message']['content'] ?? '',
@@ -135,12 +140,12 @@ class OpenRouterService
         $content = trim($content);
 
         $data = json_decode($content, true);
-        
+
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('Invalid JSON: ' . json_last_error_msg());
+            throw new \Exception('Invalid JSON: '.json_last_error_msg());
         }
 
-        if (!isset($data['permits']) || !is_array($data['permits'])) {
+        if (! isset($data['permits']) || ! is_array($data['permits'])) {
             throw new \Exception('Missing or invalid permits field');
         }
 
@@ -161,21 +166,31 @@ class OpenRouterService
     protected function calculateConfidence(array $data): float
     {
         $score = 0.5;
-        
+
         if (isset($data['recommended_permits'])) {
             $hasMandatory = collect($data['recommended_permits'])->where('type', 'mandatory')->isNotEmpty();
-            if ($hasMandatory) $score += 0.2;
+            if ($hasMandatory) {
+                $score += 0.2;
+            }
         }
-        if (!empty($data['required_documents'])) $score += 0.1;
-        if (!empty($data['risk_assessment'])) $score += 0.1;
-        if (!empty($data['estimated_timeline'])) $score += 0.1;
+        if (! empty($data['required_documents'])) {
+            $score += 0.1;
+        }
+        if (! empty($data['risk_assessment'])) {
+            $score += 0.1;
+        }
+        if (! empty($data['estimated_timeline'])) {
+            $score += 0.1;
+        }
 
         return min(1.0, $score);
     }
 
     protected function calculateCost(array $usage, string $model): ?float
     {
-        if (empty($usage)) return null;
+        if (empty($usage)) {
+            return null;
+        }
 
         $costs = [
             'anthropic/claude-3.5-sonnet' => ['input' => 3.0, 'output' => 15.0],
@@ -199,6 +214,88 @@ class OpenRouterService
     }
 
     /**
+     * Paraphrase a document template using project context.
+     * Used by ParaphraseDocumentJob to generate personalized document drafts.
+     *
+     * @param string $templateText The extracted text from the document template
+     * @param array $context Project context data (client info, permit details, etc.)
+     * @return array{success: bool, full_text: string, chunks: array|null, total_input_tokens: int, total_output_tokens: int, cost: float|null, chunks_count: int, model: string|null, error: string|null}
+     */
+    public function paraphraseDocument(string $templateText, array $context): array
+    {
+        $contextSummary = $context['summary'] ?? json_encode($context);
+
+        $systemPrompt = 'You are a professional document drafter for Indonesian business permits and licensing. '
+            . 'Your task is to paraphrase and personalize the given document template using the provided project context. '
+            . 'Rules: '
+            . '1. Maintain all legal language and terminology precisely. '
+            . '2. Replace placeholder fields (e.g., [Nama Perusahaan], [Alamat]) with actual data from context. '
+            . '3. Keep the same document structure and section ordering. '
+            . '4. Do not add or remove clauses unless the context explicitly requires it. '
+            . '5. Output in the same language as the template (Indonesian, unless specified otherwise). '
+            . '6. Return the response as a JSON object with keys: "full_text" (the complete paraphrased document), '
+            . '"chunks" (array of section chunks if the document has clear sections, otherwise null), '
+            . 'and "word_count" (approximate word count of the output).';
+
+        $userMessage = "Document Template:\n```\n{$templateText}\n```\n\n"
+            . "Project Context:\n```json\n{$contextSummary}\n```\n\n"
+            . 'Please paraphrase this document using the project context. Return JSON only.';
+
+        $result = $this->chat([
+            ['role' => 'system', 'content' => $systemPrompt],
+            ['role' => 'user', 'content' => $userMessage],
+        ], [
+            'temperature' => 0.3,
+            'max_tokens' => 8192,
+        ]);
+
+        if (!$result['success']) {
+            return [
+                'success' => false,
+                'full_text' => '',
+                'chunks' => null,
+                'total_input_tokens' => 0,
+                'total_output_tokens' => 0,
+                'cost' => null,
+                'chunks_count' => 0,
+                'model' => null,
+                'error' => $result['error'] ?? 'AI paraphrasing failed',
+            ];
+        }
+
+        try {
+            $parsed = json_decode($result['content'], true, 512, JSON_THROW_ON_ERROR);
+            $fullText = $parsed['full_text'] ?? $result['content'];
+            $chunks = $parsed['chunks'] ?? null;
+
+            return [
+                'success' => true,
+                'full_text' => $fullText,
+                'chunks' => $chunks,
+                'total_input_tokens' => $result['prompt_tokens'] ?? 0,
+                'total_output_tokens' => $result['completion_tokens'] ?? 0,
+                'cost' => $result['cost'] ?? null,
+                'chunks_count' => is_array($chunks) ? count($chunks) : 0,
+                'model' => $result['model'] ?? null,
+                'error' => null,
+            ];
+        } catch (\JsonException $e) {
+            // If JSON parsing fails, use the raw content
+            return [
+                'success' => true,
+                'full_text' => $result['content'],
+                'chunks' => null,
+                'total_input_tokens' => $result['prompt_tokens'] ?? 0,
+                'total_output_tokens' => $result['completion_tokens'] ?? 0,
+                'cost' => $result['cost'] ?? null,
+                'chunks_count' => 0,
+                'model' => $result['model'] ?? null,
+                'error' => null,
+            ];
+        }
+    }
+
+    /**
      * Generic chat method for flexible AI interactions.
      * Automatically falls back to secondary model on 400/404 errors.
      */
@@ -218,7 +315,7 @@ class OpenRouterService
         foreach ($modelsToTry as $currentModel) {
             try {
                 $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Authorization' => 'Bearer '.$this->apiKey,
                     'HTTP-Referer' => config('app.url'),
                     'X-Title' => config('app.name'),
                 ])->timeout(120)->post("{$this->baseUrl}/chat/completions", [
@@ -230,6 +327,7 @@ class OpenRouterService
 
                 if ($response->successful()) {
                     $data = $response->json();
+
                     return [
                         'success' => true,
                         'content' => $data['choices'][0]['message']['content'] ?? '',
@@ -250,6 +348,7 @@ class OpenRouterService
                         'status' => $status,
                         'fallback' => $this->fallbackModel,
                     ]);
+
                     continue;
                 }
 
@@ -261,7 +360,7 @@ class OpenRouterService
 
                 $lastResult = [
                     'success' => false,
-                    'error' => 'API request failed: ' . $status,
+                    'error' => 'API request failed: '.$status,
                     'details' => $response->json(),
                 ];
             } catch (\Exception $e) {

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ConsultRequest;
 use App\Models\Client;
+use App\Models\ConsultRequest;
 use App\Models\PermitApplication;
 use App\Notifications\ClientWelcomeNotification;
 use Illuminate\Http\Request;
@@ -51,13 +51,13 @@ class ConsultationLeadController extends Controller
         // Search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('company_name', 'like', "%{$search}%")
-                  ->orWhere('location', 'like', "%{$search}%")
-                  ->orWhere('kbli_code', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%")
+                    ->orWhere('kbli_code', 'like', "%{$search}%");
             });
         }
 
@@ -108,7 +108,7 @@ class ConsultationLeadController extends Controller
     {
         $request->validate([
             'estimate_status' => 'required|in:auto_estimated,reviewed,approved,quoted,rejected',
-            'admin_notes' => 'nullable|string|max:2000'
+            'admin_notes' => 'nullable|string|max:2000',
         ]);
 
         $consultation->update([
@@ -127,11 +127,11 @@ class ConsultationLeadController extends Controller
     public function markContacted(Request $request, ConsultRequest $consultation)
     {
         $request->validate([
-            'admin_notes' => 'nullable|string|max:2000'
+            'admin_notes' => 'nullable|string|max:2000',
         ]);
 
         $consultation->markAsContacted();
-        
+
         if ($request->admin_notes) {
             $consultation->update(['admin_notes' => $request->admin_notes]);
         }
@@ -145,19 +145,19 @@ class ConsultationLeadController extends Controller
     public function addNote(Request $request, ConsultRequest $consultation)
     {
         $request->validate([
-            'note' => 'required|string|max:2000'
+            'note' => 'required|string|max:2000',
         ]);
 
         $currentNotes = $consultation->admin_notes ?? [];
         $user = auth()->user();
-        
+
         $newNote = [
             'note' => $request->note,
             'admin_name' => $user->name,
             'admin_id' => $user->id,
             'created_at' => now()->toISOString(),
         ];
-        
+
         $currentNotes[] = $newNote;
         $consultation->update(['admin_notes' => $currentNotes]);
 
@@ -180,7 +180,7 @@ class ConsultationLeadController extends Controller
             // Check if email already exists
             $client = Client::where('email', $consultation->email)->first();
 
-            if (!$client && $request->create_client_account) {
+            if (! $client && $request->create_client_account) {
                 // Create new client account
                 $client = Client::create([
                     'name' => $consultation->name ?: 'Guest User',
@@ -205,11 +205,11 @@ class ConsultationLeadController extends Controller
                     'location_city' => $consultation->location,
                     'status' => 'draft',
                     'submission_date' => now(),
-                    'notes' => "Converted from consultation request: #{$consultation->id}\n\n" . 
-                              "Original estimate: " . ($consultation->auto_estimate['cost_summary']['formatted']['grand_total'] ?? 'N/A') . "\n" .
-                              "Investment level: {$consultation->investment_level}\n" .
-                              "Business size: {$consultation->business_size}\n\n" .
-                              "AI Analysis:\n" . json_encode($consultation->auto_estimate['ai_analysis'] ?? [], JSON_PRETTY_PRINT),
+                    'notes' => "Converted from consultation request: #{$consultation->id}\n\n".
+                              'Original estimate: '.($consultation->auto_estimate['cost_summary']['formatted']['grand_total'] ?? 'N/A')."\n".
+                              "Investment level: {$consultation->investment_level}\n".
+                              "Business size: {$consultation->business_size}\n\n".
+                              "AI Analysis:\n".json_encode($consultation->auto_estimate['ai_analysis'] ?? [], JSON_PRETTY_PRINT),
                 ]);
 
                 // Update consultation
@@ -223,15 +223,17 @@ class ConsultationLeadController extends Controller
 
                 return redirect()
                     ->route('admin.consultation-leads.show', $consultation)
-                    ->with('success', 'Consultation berhasil dikonversi ke client! Client ID: ' . $client->id);
+                    ->with('success', 'Consultation berhasil dikonversi ke client! Client ID: '.$client->id);
             }
 
             DB::rollBack();
+
             return back()->with('error', 'Gagal membuat client account');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -269,16 +271,16 @@ class ConsultationLeadController extends Controller
 
         $consultations = $query->get();
 
-        $filename = 'consultation-leads-' . now()->format('Y-m-d') . '.csv';
-        
+        $filename = 'consultation-leads-'.now()->format('Y-m-d').'.csv';
+
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ];
 
-        $callback = function() use ($consultations) {
+        $callback = function () use ($consultations) {
             $file = fopen('php://output', 'w');
-            
+
             // Header row
             fputcsv($file, [
                 'ID',
@@ -295,7 +297,7 @@ class ConsultationLeadController extends Controller
                 'Status',
                 'Contacted',
                 'Converted',
-                'Confidence Score'
+                'Confidence Score',
             ]);
 
             // Data rows
@@ -306,7 +308,7 @@ class ConsultationLeadController extends Controller
                     $consultation->email,
                     $consultation->phone,
                     $consultation->company_name,
-                    $consultation->kbli_code . ' - ' . optional($consultation->kbli)->description,
+                    $consultation->kbli_code.' - '.optional($consultation->kbli)->description,
                     $consultation->project_description,
                     $consultation->business_size_label,
                     $consultation->location,
@@ -315,7 +317,7 @@ class ConsultationLeadController extends Controller
                     $consultation->estimate_status,
                     $consultation->contacted ? 'Yes' : 'No',
                     $consultation->converted_to_client ? 'Yes' : 'No',
-                    $consultation->confidence_score ?? '-'
+                    $consultation->confidence_score ?? '-',
                 ]);
             }
 
@@ -342,9 +344,9 @@ class ConsultationLeadController extends Controller
      */
     private function mapBusinessSizeToCompanyType(string $businessSize): string
     {
-        return match($businessSize) {
+        return match ($businessSize) {
             'micro' => 'small_business',
-            'small' => 'small_business', 
+            'small' => 'small_business',
             'medium' => 'medium_enterprise',
             'large' => 'large_enterprise',
             default => 'small_business',

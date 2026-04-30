@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -17,7 +16,7 @@ return new class extends Migration
         }
 
         // Drop the ENUM constraint from test_type column
-        DB::statement("ALTER TABLE test_templates DROP CONSTRAINT IF EXISTS test_templates_test_type_check");
+        DB::statement('ALTER TABLE test_templates DROP CONSTRAINT IF EXISTS test_templates_test_type_check');
     }
 
     /**

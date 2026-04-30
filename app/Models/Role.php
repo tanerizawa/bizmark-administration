@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\AdminAuditObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([AdminAuditObserver::class])]
 class Role extends Model
 {
     use HasFactory;
@@ -52,7 +55,7 @@ class Role extends Model
         if (is_string($permission)) {
             $permission = Permission::where('name', $permission)->firstOrFail();
         }
-        
+
         return $this->permissions()->syncWithoutDetaching([$permission->id]);
     }
 
@@ -64,7 +67,7 @@ class Role extends Model
         if (is_string($permission)) {
             $permission = Permission::where('name', $permission)->firstOrFail();
         }
-        
+
         return $this->permissions()->detach($permission->id);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use App\Modules\HRM\Controllers\Admin\RecruitmentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FaqAggregationController;
 use App\Http\Controllers\LocaleController;
@@ -11,6 +10,7 @@ use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\ServiceComparisonController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
+use App\Modules\HRM\Controllers\Admin\RecruitmentController;
 use Illuminate\Support\Facades\Route;
 
 // SEO Routes
@@ -93,7 +93,9 @@ Route::prefix('en')->middleware('locale:en')->group(function () {
 
     // PMA Inquiry Form (English)
     Route::get('/inquiry', [App\Http\Controllers\PMAInquiryController::class, 'create'])->name('pma.inquiry.create');
-    Route::post('/inquiry', [App\Http\Controllers\PMAInquiryController::class, 'store'])->name('pma.inquiry.store');
+    Route::post('/inquiry', [App\Http\Controllers\PMAInquiryController::class, 'store'])
+        ->middleware('throttle:10,1') // 10 submissions per minute per IP
+        ->name('pma.inquiry.store');
     Route::get('/inquiry/result/{inquiryNumber}', [App\Http\Controllers\PMAInquiryController::class, 'result'])->name('pma.inquiry.result');
 
     // Legal Pages (EN)
@@ -122,7 +124,9 @@ Route::redirect('/id/blog', '/blog', 301);
 
 // Contact Page
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::post('/contact', [ContactController::class, 'submit'])
+    ->middleware('throttle:5,1') // 5 submissions per minute per IP
+    ->name('contact.submit');
 
 // Consultation Request / Cost Estimate (Public)
 Route::get('/estimasi-biaya', [App\Http\Controllers\ConsultationPageController::class, 'index'])->name('consultation.index');
@@ -132,8 +136,12 @@ Route::get('/estimasi-biaya/pdf/{requestId}', [App\Http\Controllers\Consultation
 // Permohonan Penghitungan Biaya Jasa (Service Cost Request)
 Route::prefix('permohonan')->group(function () {
     Route::get('/', [App\Http\Controllers\ServiceCostRequestController::class, 'index'])->name('permohonan.index');
-    Route::post('/', [App\Http\Controllers\ServiceCostRequestController::class, 'store'])->name('permohonan.store');
-    Route::post('/api/generate-letter-draft', [App\Http\Controllers\ServiceCostRequestController::class, 'generateLetterDraft'])->name('permohonan.generate-letter-draft');
+    Route::post('/', [App\Http\Controllers\ServiceCostRequestController::class, 'store'])
+        ->middleware('throttle:10,1') // 10 submissions per minute per IP (may include file uploads)
+        ->name('permohonan.store');
+    Route::post('/api/generate-letter-draft', [App\Http\Controllers\ServiceCostRequestController::class, 'generateLetterDraft'])
+        ->middleware('throttle:5,1') // 5 AI letter generations per minute per IP (prevents AI API abuse)
+        ->name('permohonan.generate-letter-draft');
     Route::get('/hasil/{requestNumber}', [App\Http\Controllers\ServiceCostRequestController::class, 'result'])->name('permohonan.result');
     Route::get('/api/status/{requestNumber}', [App\Http\Controllers\ServiceCostRequestController::class, 'checkStatus'])->name('permohonan.status');
 });
@@ -150,6 +158,7 @@ Route::prefix('konsultasi-gratis')->group(function () {
     Route::get('/', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'create'])
         ->name('landing.service-inquiry.create');
     Route::post('/', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'store'])
+        ->middleware('throttle:10,1') // 10 submissions per minute per IP (also has app-level per-email limiter)
         ->name('landing.service-inquiry.store');
     Route::get('/hasil/{inquiryNumber}', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'result'])
         ->name('landing.service-inquiry.result');
@@ -170,10 +179,14 @@ Route::get('/polygon-shp-maker', [App\Modules\Perizinan\Controllers\Public\Polyg
 Route::get('/karir', [App\Modules\HRM\Controllers\Public\JobVacancyController::class, 'index'])->name('career.index');
 Route::get('/karir/{slug}', [App\Modules\HRM\Controllers\Public\JobVacancyController::class, 'show'])->name('career.show');
 Route::get('/karir/{vacancy_id}/apply', [App\Modules\HRM\Controllers\Public\JobApplicationController::class, 'create'])->name('career.apply');
-Route::post('/karir/apply', [App\Modules\HRM\Controllers\Public\JobApplicationController::class, 'store'])->name('career.apply.store');
+Route::post('/karir/apply', [App\Modules\HRM\Controllers\Public\JobApplicationController::class, 'store'])
+    ->middleware('throttle:10,1') // 10 submissions per minute per IP
+    ->name('career.apply.store');
 
 // Newsletter Subscription (Public)
-Route::post('/subscribe', [App\Http\Controllers\SubscriberController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::post('/subscribe', [App\Http\Controllers\SubscriberController::class, 'subscribe'])
+    ->middleware('throttle:5,1') // 5 submissions per minute per IP
+    ->name('newsletter.subscribe');
 Route::get('/unsubscribe/{email}/{token}', [App\Http\Controllers\SubscriberController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 Route::get('/email/track/{tracking_id}', [App\Http\Controllers\SubscriberController::class, 'trackOpen'])->name('email.track');
 

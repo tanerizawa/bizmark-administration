@@ -2,8 +2,8 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -24,6 +24,7 @@ class SeoProgrammaticController extends Controller
         // Enrich services with name/icon from services_data
         $services = collect($serviceSlugs)->map(function ($slug) use ($servicesData) {
             $data = $servicesData[$slug] ?? [];
+
             return [
                 'slug' => $slug,
                 'title' => $data['title'] ?? ucfirst(str_replace('-', ' ', $slug)),
@@ -37,7 +38,7 @@ class SeoProgrammaticController extends Controller
         $provinceFilter = $request->get('province');
         $filteredCities = $cities;
         if ($provinceFilter) {
-            $filteredCities = collect($cities)->filter(fn($c) => ($c['province'] ?? '') === $provinceFilter)->all();
+            $filteredCities = collect($cities)->filter(fn ($c) => ($c['province'] ?? '') === $provinceFilter)->all();
         }
 
         $stats = [
@@ -79,4 +80,3 @@ class SeoProgrammaticController extends Controller
         return $this->seoRouteFlash('admin.seo.programmatic', 'success', "Cache programmatic SEO di-clear. {$cleared} entri dihapus.");
     }
 }
-

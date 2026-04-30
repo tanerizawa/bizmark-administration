@@ -51,7 +51,7 @@
         }
     </style>
 </head>
-<body style="min-height: 100vh; display: flex; flex-direction: column;">
+<body class="min-h-screen flex flex-col">
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container mx-auto px-4 py-4">
@@ -72,9 +72,9 @@
     </nav>
 
     <!-- Main Content -->
-    <div style="flex: 1; display: flex; flex-direction: column;">
+    <div class="flex-1 flex flex-col">
     <!-- Header -->
-    <section class="pt-32 pb-12 px-4" style="background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);">
+    <section class="pt-32 pb-12 px-4 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
         <div class="container mx-auto max-w-7xl">
             <div class="mb-4 text-sm text-gray-400">
                 <a href="{{ route('landing.id') }}" class="hover:text-blue-400">Beranda</a>
@@ -159,7 +159,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="py-8 px-4 border-t border-gray-800" style="margin-top: auto;">
+    <footer class="py-8 px-4 border-t border-gray-800 mt-auto">
         <div class="container mx-auto max-w-7xl text-center text-gray-500">
             <p>&copy; 2025 Bizmark.ID - PT Cangah Pajaratan Mandiri. All rights reserved.</p>
         </div>

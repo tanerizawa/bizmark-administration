@@ -85,74 +85,235 @@
             {{-- Contact Form --}}
             <div class="card shadow-[0_25px_80px_rgba(15,23,42,0.08)]">
                 <h3 class="text-xl font-bold text-slate-900 mb-4">Kirim Pertanyaan</h3>
-                <form class="space-y-4" 
-                      x-data="{ showOptional: false }"
-                      onsubmit="trackEvent('CTA', 'form_submit', 'contact_form'); alert('{{ app()->getLocale() == 'id' ? 'Pengiriman form akan segera diimplementasikan' : 'Form submission will be implemented soon' }}'); return false;">
+
+                {{-- Form status messages --}}
+                <div x-show="formStatus.message"
+                     x-cloak
+                     x-transition
+                     class="mb-4 p-4 rounded-xl text-sm font-medium"
+                     :class="{
+                         'bg-green-50 border border-green-200 text-green-800': formStatus.type === 'success',
+                         'bg-red-50 border border-red-200 text-red-800': formStatus.type === 'error'
+                     }"
+                     x-text="formStatus.message">
+                </div>
+
+                <form class="space-y-4"
+                      action="{{ route('contact.submit') }}"
+                      method="POST"
+                      x-data="{
+                          saveKey: 'bizmark_contact_draft',
+
+                          // Form fields (bound via x-model for autosave)
+                          name: '',
+                          email: '',
+                          phone: '',
+                          message: '',
+                          company: '',
+                          industry: '',
+                          permit_type: '',
+
+                          // UI state
+                          showOptional: false,
+                          formStatus: { type: '', message: '' },
+                          submitting: false,
+                          draftSaved: false,
+                          draftTimer: null,
+
+                          // ── Autosave ──────────────────────────────────────
+
+                          init() {
+                              this.loadDraft();
+                              // Watch each field and auto-save on any change
+                              this.$watch('name', () => this.queueSave());
+                              this.$watch('email', () => this.queueSave());
+                              this.$watch('phone', () => this.queueSave());
+                              this.$watch('message', () => this.queueSave());
+                              this.$watch('company', () => this.queueSave());
+                              this.$watch('industry', () => this.queueSave());
+                              this.$watch('permit_type', () => this.queueSave());
+                          },
+
+                          /** Debounced save: persist current field values to localStorage. */
+                          queueSave() {
+                              const data = {
+                                  name: this.name,
+                                  email: this.email,
+                                  phone: this.phone,
+                                  message: this.message,
+                                  company: this.company,
+                                  industry: this.industry,
+                                  permit_type: this.permit_type,
+                              };
+                              localStorage.setItem(this.saveKey, JSON.stringify(data));
+                              this.draftSaved = true;
+                              clearTimeout(this.draftTimer);
+                              this.draftTimer = setTimeout(() => { this.draftSaved = false; }, 3000);
+                          },
+
+                          /** Restore form fields from a previously saved draft. */
+                          loadDraft() {
+                              try {
+                                  const raw = localStorage.getItem(this.saveKey);
+                                  if (raw) {
+                                      const d = JSON.parse(raw);
+                                      this.name        = d.name        || '';
+                                      this.email       = d.email       || '';
+                                      this.phone       = d.phone       || '';
+                                      this.message     = d.message     || '';
+                                      this.company     = d.company     || '';
+                                      this.industry    = d.industry    || '';
+                                      this.permit_type = d.permit_type || '';
+                                  }
+                              } catch (_) { /* corrupted data — ignore */ }
+                          },
+
+                          /** Remove saved draft after successful submission. */
+                          clearDraft() {
+                              localStorage.removeItem(this.saveKey);
+                              this.draftSaved = false;
+                          },
+
+                          // ── Submission ────────────────────────────────────
+
+                          async submitContactForm() {
+                              if (this.submitting) return;
+                              this.submitting = true;
+                              this.formStatus = { type: '', message: '' };
+
+                              try {
+                                  const form = this.$el;
+                                  const formData = new FormData(form);
+                                  formData.append('subject', 'Pertanyaan dari Landing Page');
+
+                                  const response = await fetch(form.action, {
+                                      method: 'POST',
+                                      headers: {
+                                          'X-Requested-With': 'XMLHttpRequest',
+                                          'Accept': 'application/json',
+                                      },
+                                      body: formData,
+                                  });
+
+                                  const data = await response.json();
+
+                                  if (response.ok) {
+                                      this.formStatus = {
+                                          type: 'success',
+                                          message: data.message || 'Terima kasih! Pesan Anda telah terkirim. Kami akan segera menghubungi Anda.',
+                                      };
+                                      form.reset();
+                                      this.name = '';
+                                      this.email = '';
+                                      this.phone = '';
+                                      this.message = '';
+                                      this.company = '';
+                                      this.industry = '';
+                                      this.permit_type = '';
+                                      this.clearDraft();
+
+                                      if (typeof gtag !== 'undefined') {
+                                          gtag('event', 'contact_form_submit', {
+                                              event_category: 'engagement',
+                                              event_label: 'contact_section',
+                                          });
+                                      }
+                                  } else {
+                                      const errorMsg = data.errors
+                                          ? Object.values(data.errors).flat().join(', ')
+                                          : (data.message || 'Terjadi kesalahan. Silakan coba lagi.');
+                                      this.formStatus = { type: 'error', message: errorMsg };
+                                  }
+                              } catch (error) {
+                                  this.formStatus = {
+                                      type: 'error',
+                                      message: 'Terjadi kesalahan jaringan. Silakan coba lagi.',
+                                  };
+                              } finally {
+                                  this.submitting = false;
+                              }
+                          },
+                      }"
+                      @submit.prevent="submitContactForm">
+                    
+                    @csrf
                     
                     {{-- Required Fields --}}
                     <div>
                         <label for="name" class="block text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">
                             Nama <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" 
-                               id="name" 
-                               placeholder="Nama lengkap" 
-                               required 
+                        <input type="text"
+                               id="name"
+                               name="name"
+                               x-model="name"
+                               placeholder="Nama lengkap"
+                               required
                                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition">
                     </div>
-                    
+
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <label for="email" class="block text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">
                                 Email <span class="text-red-500">*</span>
                             </label>
-                            <input type="email" 
-                                   id="email" 
-                                   placeholder="email@perusahaan.com" 
-                                   required 
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   x-model="email"
+                                   placeholder="email@perusahaan.com"
+                                   required
                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition">
                         </div>
                         <div>
                             <label for="phone" class="block text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">
                                 Telepon <span class="text-red-500">*</span>
                             </label>
-                            <input type="tel" 
-                                   id="phone" 
-                                   placeholder="+62 838 7960 2855" 
-                                   required 
+                            <input type="tel"
+                                   id="phone"
+                                   name="phone"
+                                   x-model="phone"
+                                   placeholder="+62 838 7960 2855"
+                                   required
                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition">
                         </div>
                     </div>
-                    
+
                     <div>
                         <label for="message" class="block text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">
                             Pesan <span class="text-red-500">*</span>
                         </label>
-                        <textarea id="message" 
-                                  rows="3" 
-                                  placeholder="Ceritakan kebutuhan perizinan Anda..." 
-                                  required 
+                        <textarea id="message"
+                                  name="message"
+                                  x-model="message"
+                                  rows="3"
+                                  placeholder="Ceritakan kebutuhan perizinan Anda..."
+                                  required
                                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none resize-none transition"></textarea>
                     </div>
-                    
+
                     {{-- Progressive Disclosure: Optional Fields --}}
-                    <div x-show="showOptional" 
+                    <div x-show="showOptional"
                          x-collapse
                          class="space-y-4 pt-4 border-t border-slate-200">
                         <div>
                             <label for="company" class="block text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">
                                 Nama Perusahaan <span class="text-slate-300">(opsional)</span>
                             </label>
-                            <input type="text" 
-                                   id="company" 
-                                   placeholder="PT Contoh Indonesia" 
+                            <input type="text"
+                                   id="company"
+                                   name="company"
+                                   x-model="company"
+                                   placeholder="PT Contoh Indonesia"
                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition">
                         </div>
                         <div>
                             <label for="industry" class="block text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">
                                 Industri <span class="text-slate-300">(opsional)</span>
                             </label>
-                            <select id="industry" 
+                            <select id="industry"
+                                    name="industry"
+                                    x-model="industry"
                                     class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-slate-900 focus:bg-white focus:outline-none transition">
                                 <option value="">Pilih industri...</option>
                                 <option value="manufacturing">Manufaktur</option>
@@ -168,7 +329,9 @@
                             <label for="permit_type" class="block text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">
                                 Jenis Perizinan <span class="text-slate-300">(opsional)</span>
                             </label>
-                            <select id="permit_type" 
+                            <select id="permit_type"
+                                    name="permit_type"
+                                    x-model="permit_type"
                                     class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 focus:border-slate-900 focus:bg-white focus:outline-none transition">
                                 <option value="">Pilih perizinan...</option>
                                 <option value="lb3">Limbah B3</option>
@@ -181,15 +344,30 @@
                     </div>
                     
                     {{-- Toggle Optional Fields Button --}}
-                    <button type="button" 
-                            @click="showOptional = !showOptional; trackEvent('Form', 'toggle_optional_fields', showOptional ? 'show' : 'hide')" 
+                    <button type="button"
+                            @click="showOptional = !showOptional; trackEvent('Form', 'toggle_optional_fields', showOptional ? 'show' : 'hide')"
                             class="w-full text-sm text-slate-500 hover:text-primary transition flex items-center justify-center gap-2 py-2">
                         <i class="fas" :class="showOptional ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                         <span x-text="showOptional ? 'Sembunyikan detail tambahan' : 'Tambahkan detail (opsional)'"></span>
                     </button>
                     
-                    <button type="submit" class="btn btn-primary w-full justify-center group" data-cta="contact_form_submit">
-                        <span>Kirim Pertanyaan</span>
+                    {{-- Draft autosave indicator --}}
+                    <div x-show="draftSaved"
+                         x-transition
+                         class="flex items-center justify-center gap-1.5 text-xs"
+                         style="color: var(--text-tertiary, #94a3b8);">
+                        <i class="fas fa-check-circle text-green-500 text-[10px]"></i>
+                        <span>Draft tersimpan</span>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary w-full justify-center group"
+                            data-cta="contact_form_submit"
+                            :disabled="submitting">
+                        <span x-show="!submitting">Kirim Pertanyaan</span>
+                        <span x-show="submitting" class="flex items-center justify-center gap-2">
+                            <i class="fas fa-spinner fa-spin"></i> Mengirim...
+                        </span>
                         <i class="fas fa-paper-plane text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
                     </button>
                     <p class="text-xs text-center text-slate-400">Kami akan merespon setiap permintaan dalam waktu 24 jam kerja.</p>

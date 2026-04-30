@@ -15,9 +15,13 @@ class ApplicationStatusChanged extends Mailable
     use Queueable, SerializesModels;
 
     public $application;
+
     public $previousStatus;
+
     public $newStatus;
+
     public $changedBy;
+
     public $notes;
 
     /**

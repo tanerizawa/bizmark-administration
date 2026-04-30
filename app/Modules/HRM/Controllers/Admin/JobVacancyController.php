@@ -5,6 +5,8 @@ namespace App\Modules\HRM\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\AuthorizesRequests;
 use App\Models\JobVacancy;
+use App\Models\TestSession;
+use App\Models\TestTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -65,7 +67,7 @@ class JobVacancyController extends Controller
         // Encode arrays as JSON
         $validated['responsibilities'] = json_encode($validated['responsibilities']);
         $validated['qualifications'] = json_encode($validated['qualifications']);
-        $validated['benefits'] = !empty($validated['benefits']) ? json_encode($validated['benefits']) : null;
+        $validated['benefits'] = ! empty($validated['benefits']) ? json_encode($validated['benefits']) : null;
 
         JobVacancy::create($validated);
 
@@ -95,16 +97,16 @@ class JobVacancyController extends Controller
         $vacancy = JobVacancy::findOrFail($id);
 
         // Decode JSON fields for form
-        $vacancy->responsibilities = is_string($vacancy->responsibilities) 
-            ? json_decode($vacancy->responsibilities, true) 
+        $vacancy->responsibilities = is_string($vacancy->responsibilities)
+            ? json_decode($vacancy->responsibilities, true)
             : $vacancy->responsibilities;
-        
-        $vacancy->qualifications = is_string($vacancy->qualifications) 
-            ? json_decode($vacancy->qualifications, true) 
+
+        $vacancy->qualifications = is_string($vacancy->qualifications)
+            ? json_decode($vacancy->qualifications, true)
             : $vacancy->qualifications;
-        
-        $vacancy->benefits = is_string($vacancy->benefits) 
-            ? json_decode($vacancy->benefits, true) 
+
+        $vacancy->benefits = is_string($vacancy->benefits)
+            ? json_decode($vacancy->benefits, true)
             : $vacancy->benefits;
 
         return view('admin.jobs.edit', compact('vacancy'));
@@ -142,7 +144,7 @@ class JobVacancyController extends Controller
         // Encode arrays as JSON
         $validated['responsibilities'] = json_encode($validated['responsibilities']);
         $validated['qualifications'] = json_encode($validated['qualifications']);
-        $validated['benefits'] = !empty($validated['benefits']) ? json_encode($validated['benefits']) : null;
+        $validated['benefits'] = ! empty($validated['benefits']) ? json_encode($validated['benefits']) : null;
 
         $vacancy->update($validated);
 
@@ -168,7 +170,7 @@ class JobVacancyController extends Controller
     public function applications($id)
     {
         $vacancy = JobVacancy::withCount('applications')->findOrFail($id);
-        
+
         // Get all applications for this job with filters
         $query = $vacancy->applications()
             ->with('jobVacancy')
@@ -182,10 +184,10 @@ class JobVacancyController extends Controller
         // Apply search filter if provided
         if (request('search')) {
             $search = request('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('full_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -200,9 +202,9 @@ class JobVacancyController extends Controller
     public function tests($id)
     {
         $vacancy = JobVacancy::withCount('applications')->findOrFail($id);
-        
+
         // Get all test sessions for this job
-        $query = \App\Models\TestSession::whereHas('jobApplication', function($q) use ($id) {
+        $query = TestSession::whereHas('jobApplication', function ($q) use ($id) {
             $q->where('job_vacancy_id', $id);
         })->with(['jobApplication', 'testTemplate']);
 
@@ -214,7 +216,7 @@ class JobVacancyController extends Controller
         $testSessions = $query->latest()->paginate(20);
 
         // Calculate statistics
-        $allSessions = \App\Models\TestSession::whereHas('jobApplication', function($q) use ($id) {
+        $allSessions = TestSession::whereHas('jobApplication', function ($q) use ($id) {
             $q->where('job_vacancy_id', $id);
         });
 
@@ -233,14 +235,14 @@ class JobVacancyController extends Controller
         // Get candidates who haven't been assigned tests yet
         $candidates = $vacancy->applications()
             ->whereDoesntHave('testSessions')
-            ->orWhereHas('testSessions', function($q) {
+            ->orWhereHas('testSessions', function ($q) {
                 $q->whereIn('status', ['expired', 'cancelled']);
             })
             ->orderBy('full_name')
             ->get();
 
         // Get active test templates
-        $testTemplates = \App\Models\TestTemplate::where('is_active', true)
+        $testTemplates = TestTemplate::where('is_active', true)
             ->orderBy('title')
             ->get();
 

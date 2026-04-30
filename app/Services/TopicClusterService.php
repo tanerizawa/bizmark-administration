@@ -61,7 +61,7 @@ class TopicClusterService
             ->where('language', $language)
             ->where(function ($q) use ($service) {
                 $q->where('title', 'LIKE', "%{$service['title']}%")
-                  ->orWhere('meta_keywords', 'LIKE', "%{$service['slug']}%");
+                    ->orWhere('meta_keywords', 'LIKE', "%{$service['slug']}%");
                 foreach (explode(',', $service['meta_keywords'] ?? '') as $kw) {
                     $kw = trim($kw);
                     if (strlen($kw) > 3) {
@@ -78,7 +78,7 @@ class TopicClusterService
         }
 
         $year = date('Y');
-        $cluster = $existing ?? new TopicCluster();
+        $cluster = $existing ?? new TopicCluster;
         $cluster->fill([
             'pillar_title' => "Panduan Lengkap {$service['title']} {$year}",
             'pillar_slug' => "panduan-{$service['slug']}-{$year}",
@@ -151,8 +151,9 @@ PROMPT;
             'max_tokens' => 2000,
         ]);
 
-        if (!$response['success']) {
+        if (! $response['success']) {
             Log::error('TopicCluster: AI call failed', ['service' => $service['slug']]);
+
             return [];
         }
 
@@ -163,6 +164,7 @@ PROMPT;
         }
 
         $data = json_decode($content, true);
+
         return is_array($data) ? $data : [];
     }
 
@@ -184,7 +186,7 @@ PROMPT;
             $modified = false;
 
             foreach ($siblings as $sibling) {
-                $linkHtml = '<a href="' . e($sibling->getUrl()) . '">' . e($sibling->title) . '</a>';
+                $linkHtml = '<a href="'.e($sibling->getUrl()).'">'.e($sibling->title).'</a>';
 
                 // Don't add if link already exists
                 if (str_contains($content, $sibling->getUrl())) {
@@ -251,6 +253,7 @@ PROMPT;
 
             if ($existsAsArticle || $existsAsTopic) {
                 $skipped++;
+
                 continue;
             }
 
@@ -289,7 +292,7 @@ PROMPT;
             ];
         }
 
-        Log::info("TopicCluster: Converted subtopics to ArticleTopics", [
+        Log::info('TopicCluster: Converted subtopics to ArticleTopics', [
             'cluster_id' => $cluster->id,
             'pillar' => $cluster->pillar_title,
             'created' => count($created),
@@ -309,7 +312,7 @@ PROMPT;
 
         foreach ($clusters as $cluster) {
             $converted = $this->convertSubtopicsToArticleTopics($cluster, $limitPerCluster);
-            if (!empty($converted)) {
+            if (! empty($converted)) {
                 $results[$cluster->service_slug] = [
                     'pillar' => $cluster->pillar_title,
                     'topics_created' => count($converted),
@@ -327,8 +330,8 @@ PROMPT;
     protected function findAnchorPoint(string $content, string $targetTitle): ?array
     {
         // Find paragraph endings after first 20% of content
-        $minPosition = (int)(strlen($content) * 0.2);
-        $maxPosition = (int)(strlen($content) * 0.8);
+        $minPosition = (int) (strlen($content) * 0.2);
+        $maxPosition = (int) (strlen($content) * 0.8);
 
         // Find </p> tags within the target zone
         preg_match_all('/<\/p>/i', $content, $matches, PREG_OFFSET_CAPTURE);

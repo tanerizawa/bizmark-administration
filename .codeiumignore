@@ -1,0 +1,57 @@
+# =======================================================
+# .codeiumignore — Windsurf/Codeium AI context exclusions
+# Exclude large/generated/binary files to reduce token usage
+# =======================================================
+
+# Dependencies
+vendor/
+node_modules/
+
+# Build artifacts
+public/build/
+public/hot/
+public/storage/
+
+# Compiled Blade views cache
+storage/framework/views/
+storage/framework/cache/
+storage/framework/sessions/
+
+# Logs & backups
+storage/logs/
+storage/backups/
+*.log
+*.sql
+*.sql.gz
+
+# Large static data JSON (rebuilt from config at runtime)
+resources/data/
+
+# Uploaded / user files
+storage/app/public/
+
+# Legacy large view partials (split already done — still large individually)
+resources/views/landing/partials/legacy/head.blade.php
+resources/views/landing/partials/legacy/scripts.blade.php
+
+# Large standalone views (context rarely needed)
+resources/views/tools/polygon-shp.blade.php
+resources/views/admin/email-management/tabs/inbox.blade.php
+
+# Lock files
+composer.lock
+package-lock.json
+yarn.lock
+
+# Test coverage / cache
+.phpunit.result.cache
+.phpunit.cache/
+coverage/
+
+# IDE
+.idea/
+.vscode/
+.zed/
+
+# Docs archive
+docs/archive/

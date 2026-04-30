@@ -53,17 +53,14 @@ class PaymentSchedule extends Model
 
     /**
      * Mark payment as paid.
-     * 
-     * @param string|null $paymentMethod
-     * @param string|null $referenceNumber
-     * @param int|null $cashAccountId - NEW: Cash account that received payment
+     *
+     * @param  int|null  $cashAccountId  - NEW: Cash account that received payment
      */
     public function markAsPaid(
-        string $paymentMethod = null, 
-        string $referenceNumber = null,
+        ?string $paymentMethod = null,
+        ?string $referenceNumber = null,
         ?int $cashAccountId = null
-    ): void
-    {
+    ): void {
         $this->status = 'paid';
         $this->paid_date = now();
         $this->payment_method = $paymentMethod;
@@ -75,10 +72,10 @@ class PaymentSchedule extends Model
         if ($this->invoice_id) {
             $this->invoice->recordPayment($this->amount);
         }
-        
+
         // ✅ NEW: Auto-recalculate cash account balance
         if ($cashAccountId) {
-            $cashAccount = \App\Models\CashAccount::find($cashAccountId);
+            $cashAccount = CashAccount::find($cashAccountId);
             if ($cashAccount) {
                 $cashAccount->recalculateBalance(
                     changeType: 'income',
@@ -95,7 +92,7 @@ class PaymentSchedule extends Model
      */
     public function getStatusBadgeAttribute(): array
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => ['color' => 'yellow', 'label' => 'Pending'],
             'paid' => ['color' => 'green', 'label' => 'Paid'],
             'overdue' => ['color' => 'red', 'label' => 'Overdue'],

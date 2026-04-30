@@ -11,7 +11,7 @@
             <div class="w-48 h-48 bg-apple-purple opacity-20 blur-2xl rounded-full absolute bottom-0 left-8"></div>
         </div>
         <div class="relative space-y-4">
-            <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">
+            <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em] text-dark-text-secondary">
                 <a href="{{ route('admin.recruitment.index') }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
                     <i class="fas fa-arrow-left text-xs"></i> Rekrutmen
                 </a>
@@ -26,7 +26,7 @@
             <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                 <div class="space-y-2.5">
                     <h1 class="text-xl font-semibold text-white leading-tight">{{ $test->title }}</h1>
-                    <p class="text-sm" style="color: rgba(235,235,245,0.7);">
+                    <p class="text-sm text-dark-text-primary/70">
                         {{ $test->description ?? 'Template tes untuk proses rekrutmen' }}
                     </p>
                     <div class="flex flex-wrap gap-2 mt-3">
@@ -64,38 +64,38 @@
     <section class="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <div class="flex items-center justify-between">
-                <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Sesi</p>
-                <i class="fas fa-users text-lg" style="color: rgba(10,132,255,0.5);"></i>
+                <p class="text-xs uppercase tracking-widest text-apple-blue/90">Total Sesi</p>
+                <i class="fas fa-users text-lg text-apple-blue/50"></i>
             </div>
             <p class="text-xl font-bold text-white">{{ $test->test_sessions_count }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Kandidat mengikuti</p>
+            <p class="text-xs text-dark-text-secondary">Kandidat mengikuti</p>
         </div>
         
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <div class="flex items-center justify-between">
-                <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Avg. Score</p>
-                <i class="fas fa-chart-line text-lg" style="color: rgba(52,199,89,0.5);"></i>
+                <p class="text-xs uppercase tracking-widest text-apple-green/90">Avg. Score</p>
+                <i class="fas fa-chart-line text-lg text-apple-green/50"></i>
             </div>
             <p class="text-xl font-bold text-white">{{ number_format($statistics['average_score'] ?? 0, 1) }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Skor rata-rata</p>
+            <p class="text-xs text-dark-text-secondary">Skor rata-rata</p>
         </div>
         
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <div class="flex items-center justify-between">
-                <p class="text-xs uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Pass Rate</p>
-                <i class="fas fa-percentage text-lg" style="color: rgba(255,149,0,0.5);"></i>
+                <p class="text-xs uppercase tracking-widest text-apple-orange/90">Pass Rate</p>
+                <i class="fas fa-percentage text-lg text-apple-orange/50"></i>
             </div>
             <p class="text-xl font-bold text-white">{{ number_format($statistics['pass_rate'] ?? 0, 1) }}%</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tingkat kelulusan</p>
+            <p class="text-xs text-dark-text-secondary">Tingkat kelulusan</p>
         </div>
         
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
             <div class="flex items-center justify-between">
-                <p class="text-xs uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Avg. Duration</p>
-                <i class="fas fa-clock text-lg" style="color: rgba(191,90,242,0.5);"></i>
+                <p class="text-xs uppercase tracking-widest text-[rgba(191,90,242,0.9)]">Avg. Duration</p>
+                <i class="fas fa-clock text-lg text-[rgba(191,90,242,0.5)]"></i>
             </div>
             <p class="text-xl font-bold text-white">{{ number_format($statistics['average_duration'] ?? 0, 0) }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Menit rata-rata</p>
+            <p class="text-xs text-dark-text-secondary">Menit rata-rata</p>
         </div>
     </section>
 
@@ -108,30 +108,30 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-3">
                 <div class="flex justify-between py-3 border-b border-white/5">
-                    <span class="text-sm" style="color: rgba(235,235,245,0.6);">Durasi Tes</span>
+                    <span class="text-sm text-dark-text-secondary">Durasi Tes</span>
                     <span class="text-sm font-semibold text-white">{{ $test->duration_minutes }} menit</span>
                 </div>
                 <div class="flex justify-between py-3 border-b border-white/5">
-                    <span class="text-sm" style="color: rgba(235,235,245,0.6);">Passing Score</span>
+                    <span class="text-sm text-dark-text-secondary">Passing Score</span>
                     <span class="text-sm font-semibold text-white">{{ $test->passing_score }}%</span>
                 </div>
                 <div class="flex justify-between py-3 border-b border-white/5">
-                    <span class="text-sm" style="color: rgba(235,235,245,0.6);">Total Pertanyaan</span>
+                    <span class="text-sm text-dark-text-secondary">Total Pertanyaan</span>
                     <span class="text-sm font-semibold text-white">{{ $test->total_questions ?? 0 }} pertanyaan</span>
                 </div>
             </div>
             
             <div class="space-y-3">
                 <div class="flex justify-between py-3 border-b border-white/5">
-                    <span class="text-sm" style="color: rgba(235,235,245,0.6);">Dibuat</span>
+                    <span class="text-sm text-dark-text-secondary">Dibuat</span>
                     <span class="text-sm font-semibold text-white">{{ $test->created_at->format('d M Y H:i') }}</span>
                 </div>
                 <div class="flex justify-between py-3 border-b border-white/5">
-                    <span class="text-sm" style="color: rgba(235,235,245,0.6);">Terakhir Update</span>
+                    <span class="text-sm text-dark-text-secondary">Terakhir Update</span>
                     <span class="text-sm font-semibold text-white">{{ $test->updated_at->format('d M Y H:i') }}</span>
                 </div>
                 <div class="flex justify-between py-3 border-b border-white/5">
-                    <span class="text-sm" style="color: rgba(235,235,245,0.6);">Sesi Selesai</span>
+                    <span class="text-sm text-dark-text-secondary">Sesi Selesai</span>
                     <span class="text-sm font-semibold text-white">{{ $test->completed_sessions_count }} sesi</span>
                 </div>
             </div>
@@ -139,19 +139,19 @@
 
         {{-- Template File (Document Editing) --}}
         @if($test->test_type === 'document-editing' && $test->template_file_path)
-            <div class="mt-6 rounded-apple overflow-hidden" style="background: rgba(28,28,30,0.5); border: 1px solid rgba(84,84,88,0.35);">
-                <div class="px-6 py-4 border-b border-white/10" style="background: rgba(28,28,30,0.4);">
+            <div class="mt-6 rounded-apple overflow-hidden bg-[rgba(28,28,30,0.5)] border border-[rgba(84,84,88,0.35)]">
+                <div class="px-6 py-4 border-b border-white/10 bg-[rgba(28,28,30,0.4)]">
                     <h4 class="text-sm font-semibold text-white">Template Dokumen</h4>
                 </div>
                 <div class="px-6 py-4">
-                    <div class="flex items-center justify-between p-4 rounded-lg" style="background: rgba(28,28,30,0.4); border: 1px solid rgba(84,84,88,0.3);">
+                    <div class="flex items-center justify-between p-4 rounded-lg bg-[rgba(28,28,30,0.4)] border border-[rgba(84,84,88,0.3)]">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.15);">
-                                <i class="fas fa-file-word text-lg" style="color: rgba(10,132,255,0.9);"></i>
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-apple-blue/15">
+                                <i class="fas fa-file-word text-lg text-apple-blue/90"></i>
                             </div>
                             <div>
                                 <p class="text-sm font-semibold text-white">{{ basename($test->template_file_path) }}</p>
-                                <p class="text-xs mt-0.5" style="color: rgba(235,235,245,0.6);">
+                                <p class="text-xs mt-0.5 text-dark-text-secondary">
                                     Dokumen Template • 
                                     @if(Storage::disk('private')->exists($test->template_file_path))
                                         {{ number_format(Storage::disk('private')->size($test->template_file_path) / 1024, 2) }} KB
@@ -171,8 +171,8 @@
         @endif
 
         @if($test->instructions)
-            <div class="mt-6 rounded-apple overflow-hidden" style="background: rgba(28,28,30,0.5); border: 1px solid rgba(84,84,88,0.35);">
-                <div class="px-6 py-4 border-b border-white/10" style="background: rgba(28,28,30,0.4);">
+            <div class="mt-6 rounded-apple overflow-hidden bg-[rgba(28,28,30,0.5)] border border-[rgba(84,84,88,0.35)]">
+                <div class="px-6 py-4 border-b border-white/10 bg-[rgba(28,28,30,0.4)]">
                     <h4 class="text-sm font-semibold text-white">Instruksi Tes</h4>
                 </div>
                 <div class="px-6 py-5">
@@ -321,10 +321,10 @@
     <section class="card-elevated rounded-apple-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-white/10">
             <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-                <i class="fas fa-user-plus" style="color: rgba(52,199,89,1);"></i>
+                <i class="fas fa-user-plus text-apple-green"></i>
                 Assign Test to Candidate
             </h3>
-            <p class="text-xs mt-1" style="color: rgba(235,235,245,0.6);">
+            <p class="text-xs mt-1 text-dark-text-secondary">
                 Berikan tes ini kepada kandidat yang belum memiliki sesi aktif
             </p>
         </div>
@@ -340,8 +340,7 @@
                             Select Candidate <span class="text-red-500">*</span>
                         </label>
                         <select name="job_application_id" 
-                                class="w-full px-4 py-3 rounded-lg text-white transition-all"
-                                style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);"
+                                class="w-full px-4 py-3 rounded-lg text-white transition-all bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]"
                                 required>
                             <option value="">-- Pilih Kandidat --</option>
                             @foreach($availableCandidates as $candidate)
@@ -362,11 +361,10 @@
                         </label>
                         <input type="datetime-local" 
                                name="expires_at" 
-                               class="w-full px-4 py-3 rounded-lg text-white transition-all"
-                               style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);"
+                               class="w-full px-4 py-3 rounded-lg text-white transition-all bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]"
                                min="{{ now()->addHour()->format('Y-m-d\TH:i') }}"
                                value="{{ now()->addDays(7)->format('Y-m-d\TH:i') }}">
-                        <p class="text-xs mt-1" style="color: rgba(235,235,245,0.5);">
+                        <p class="text-xs mt-1 text-dark-text-tertiary">
                             Default: 7 days from now
                         </p>
                     </div>
@@ -379,8 +377,8 @@
                 </form>
             @else
                 <div class="text-center py-8">
-                    <i class="fas fa-inbox text-4xl mb-3" style="color: rgba(142,142,147,0.5);"></i>
-                    <p class="text-sm" style="color: rgba(235,235,245,0.6);">
+                    <i class="fas fa-inbox text-4xl mb-3 text-[rgba(142,142,147,0.5)]"></i>
+                    <p class="text-sm text-dark-text-secondary">
                         Tidak ada kandidat yang tersedia untuk di-assign. 
                         Semua kandidat sudah memiliki sesi aktif untuk tes ini.
                     </p>
@@ -393,7 +391,7 @@
     <section class="card-elevated rounded-apple-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-white/10">
             <h3 class="text-sm font-semibold text-white">All Test Sessions</h3>
-            <p class="text-xs mt-1" style="color: rgba(235,235,245,0.6);">
+            <p class="text-xs mt-1 text-dark-text-secondary">
                 Semua sesi tes dengan template ini ({{ $recentSessions->count() }} total)
             </p>
         </div>
@@ -401,14 +399,14 @@
         @if($recentSessions->count())
             <div class="overflow-x-auto">
                 <table class="min-w-full">
-                    <thead style="background: rgba(28,28,30,0.45);">
+                    <thead class="bg-[rgba(28,28,30,0.45)]">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Kandidat</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Score</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Durasi</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Tanggal</th>
-                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Kandidat</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Status</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Score</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Durasi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Tanggal</th>
+                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest text-dark-text-secondary">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -436,7 +434,7 @@
                                             </div>
                                             <div>
                                                 <p class="text-sm font-semibold text-white">{{ $session->jobApplication->full_name }}</p>
-                                                <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $session->jobApplication->email }}</p>
+                                                <p class="text-xs text-dark-text-secondary">{{ $session->jobApplication->email }}</p>
                                             </div>
                                         </div>
                                     @else
@@ -445,8 +443,8 @@
                                                 <i class="fas fa-user"></i>
                                             </div>
                                             <div>
-                                                <p class="text-sm font-semibold" style="color: rgba(235,235,245,0.5);">Data tidak tersedia</p>
-                                                <p class="text-xs" style="color: rgba(235,235,245,0.4);">Kandidat telah dihapus</p>
+                                                <p class="text-sm font-semibold text-dark-text-tertiary">Data tidak tersedia</p>
+                                                <p class="text-xs text-dark-text-tertiary/70">Kandidat telah dihapus</p>
                                             </div>
                                         </div>
                                     @endif
@@ -460,14 +458,14 @@
                                     @if($session->status === 'completed' && $session->score !== null)
                                         <span class="text-sm font-semibold text-white">{{ number_format($session->score, 1) }}</span>
                                     @else
-                                        <span class="text-sm" style="color: rgba(235,235,245,0.5);">-</span>
+                                        <span class="text-sm text-dark-text-tertiary">-</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
                                     @if($duration)
                                         <span class="text-sm text-white">{{ $duration }} menit</span>
                                     @else
-                                        <span class="text-sm" style="color: rgba(235,235,245,0.5);">-</span>
+                                        <span class="text-sm text-dark-text-tertiary">-</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm text-white">
@@ -496,10 +494,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" 
-                                                        class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
-                                                        style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,1);"
-                                                        onmouseover="this.style.background='rgba(255,59,48,0.25)'"
-                                                        onmouseout="this.style.background='rgba(255,59,48,0.15)'"
+                                                        class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[rgba(255,59,48,0.15)] text-[rgba(255,59,48,1)] hover:bg-[rgba(255,59,48,0.25)]"
                                                         title="Batalkan Test">
                                                     <i class="fas fa-times mr-1"></i>Batalkan
                                                 </button>
@@ -513,7 +508,7 @@
                 </table>
             </div>
         @else
-            <div class="text-center py-12 space-y-3" style="color: rgba(235,235,245,0.7);">
+            <div class="text-center py-12 space-y-3 text-dark-text-primary/70">
                 <i class="fas fa-clipboard-check text-4xl"></i>
                 <p class="text-sm">Belum ada sesi tes dengan template ini.</p>
             </div>

@@ -58,9 +58,13 @@ class ServiceController extends Controller
 
         // Load appropriate services config based on locale first
         // Indonesian locale always uses services_data
-        $services = $locale === 'id'
-            ? config('services_data', [])
-            : ($marketSegment === 'pma' ? config('services_pma', []) : config('services_data', []));
+        if ($locale === 'id') {
+            $services = config('services_data', []);
+        } else {
+            $primaryServices = $marketSegment === 'pma' ? config('services_pma', []) : config('services_data', []);
+            // Fallback: if slug not found in primary (e.g. pma doesn't have ID-specific slugs), try services_data
+            $services = isset($primaryServices[$slug]) ? $primaryServices : config('services_data', []);
+        }
 
         if (! isset($services[$slug])) {
             abort(404);
@@ -85,6 +89,7 @@ class ServiceController extends Controller
             'INDUSTRI' => 1,
             'LINGKUNGAN' => 2,
             'PERIZINAN USAHA' => 3,
+            'PMA & INVESTASI' => 0,
             'TEKNOLOGI' => 4,
             'K3' => 1,
             // English (PMA) categories

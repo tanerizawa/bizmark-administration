@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\GenerateServiceCostQuoteJob;
 use App\Mail\ServiceCostRequestQuoteMail;
 use App\Models\ServiceCostRequest;
 use App\Services\OpenRouterService;
@@ -10,13 +11,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class ServiceCostRequestController extends Controller
 {
-    public function __construct(private OpenRouterService $openRouterService)
-    {
-    }
+    public function __construct(private OpenRouterService $openRouterService) {}
 
     /**
      * Display the service cost request detail
@@ -24,7 +22,7 @@ class ServiceCostRequestController extends Controller
     public function show(string $requestNumber)
     {
         $serviceRequest = ServiceCostRequest::where('request_number', $requestNumber)->firstOrFail();
-        
+
         // Get status options
         $statusOptions = [
             'pending' => 'Pending',
@@ -50,7 +48,7 @@ class ServiceCostRequestController extends Controller
             $serviceRequest->quote_details = json_decode($serviceRequest->quote_details, true) ?? [];
         }
 
-        if (!is_array($serviceRequest->quote_details)) {
+        if (! is_array($serviceRequest->quote_details)) {
             $serviceRequest->quote_details = [];
         }
 
@@ -86,18 +84,18 @@ class ServiceCostRequestController extends Controller
         ]);
 
         $serviceRequest = ServiceCostRequest::where('request_number', $requestNumber)->firstOrFail();
-        
+
         // Get current notes
         $notes = $serviceRequest->admin_notes ?? '';
-        
+
         // Format new note with timestamp
         $timestamp = now()->format('d M Y H:i');
         $author = Auth::user()->name ?? 'Admin';
         $newNote = "[{$timestamp} - {$author}]\n{$validated['note']}";
-        
+
         // Append to notes
         $notes = $notes ? "{$notes}\n\n{$newNote}" : $newNote;
-        
+
         $serviceRequest->update([
             'admin_notes' => $notes,
         ]);
@@ -120,27 +118,36 @@ class ServiceCostRequestController extends Controller
         $serviceRequest = ServiceCostRequest::where('request_number', $requestNumber)->firstOrFail();
 
         $shouldGenerateAi = (bool) ($validated['generate_ai_content'] ?? false);
-        $quoteContent = $shouldGenerateAi
-            ? $this->generateAiQuoteContent($serviceRequest, $validated)
-            : null;
 
-        if (empty($quoteContent)) {
-            $quoteContent = $this->generateFallbackQuoteContent($serviceRequest, $validated);
+        if ($shouldGenerateAi) {
+            $serviceRequest->update([
+                'quoted_price' => $validated['quoted_price'],
+                'quoted_timeline' => $validated['quoted_timeline'] ?? null,
+                'ai_quote_status' => 'pending',
+            ]);
+
+            GenerateServiceCostQuoteJob::dispatch(
+                $serviceRequest->request_number,
+                $validated,
+                Auth::id()
+            );
+
+            return back()->with('success', 'Quote sedang diproses AI. Halaman akan diperbarui otomatis dalam beberapa saat.');
         }
 
+        $quoteContent = $this->generateFallbackQuoteContent($serviceRequest, $validated);
         $quoteContent['digital_signature'] = $this->buildDigitalSignature($serviceRequest, (float) $validated['quoted_price']);
-        
+
         $serviceRequest->update([
             'status' => 'quoted',
             'quoted_price' => $validated['quoted_price'],
-            'quoted_timeline' => $validated['quoted_timeline'],
+            'quoted_timeline' => $validated['quoted_timeline'] ?? null,
             'quote_details' => $quoteContent,
             'quoted_at' => now(),
             'reviewed_by' => Auth::id(),
             'reviewed_at' => now(),
         ]);
 
-        // Add note about quote generation
         if ($validated['quote_notes']) {
             $timestamp = now()->format('d M Y H:i');
             $author = Auth::user()->name ?? 'Admin';
@@ -163,7 +170,7 @@ class ServiceCostRequestController extends Controller
 
         $serviceRequest = ServiceCostRequest::where('request_number', $requestNumber)->firstOrFail();
 
-        if (!$serviceRequest->quoted_price) {
+        if (! $serviceRequest->quoted_price) {
             return back()->with('error', 'Nilai quote belum tersedia. Silakan isi quote terlebih dahulu.');
         }
 
@@ -173,26 +180,15 @@ class ServiceCostRequestController extends Controller
             'quote_notes' => $validated['regen_notes'] ?? null,
         ];
 
-        $quoteContent = $this->generateAiQuoteContent($serviceRequest, $generationPayload);
-        if (empty($quoteContent)) {
-            $quoteContent = $this->generateFallbackQuoteContent($serviceRequest, $generationPayload);
-        }
+        $serviceRequest->update(['ai_quote_status' => 'pending']);
 
-        $quoteContent['digital_signature'] = $this->buildDigitalSignature($serviceRequest, (float) $serviceRequest->quoted_price);
+        GenerateServiceCostQuoteJob::dispatch(
+            $serviceRequest->request_number,
+            $generationPayload,
+            Auth::id()
+        );
 
-        $serviceRequest->update([
-            'quote_details' => $quoteContent,
-            'reviewed_by' => Auth::id(),
-            'reviewed_at' => now(),
-        ]);
-
-        $timestamp = now()->format('d M Y H:i');
-        $author = Auth::user()->name ?? 'Admin';
-        $note = "[{$timestamp} - {$author}]\nKonten quote berhasil diregenerate";
-        $notes = $serviceRequest->admin_notes ? "{$serviceRequest->admin_notes}\n\n{$note}" : $note;
-        $serviceRequest->update(['admin_notes' => $notes]);
-
-        return back()->with('success', 'Konten quote berhasil diregenerate.');
+        return back()->with('success', 'Konten quote sedang diregenerate oleh AI. Halaman akan diperbarui otomatis dalam beberapa saat.');
     }
 
     /**
@@ -201,7 +197,7 @@ class ServiceCostRequestController extends Controller
     public function complete(Request $request, string $requestNumber)
     {
         $serviceRequest = ServiceCostRequest::where('request_number', $requestNumber)->firstOrFail();
-        
+
         $serviceRequest->update([
             'status' => 'accepted',
             'completed_at' => now(),
@@ -217,7 +213,7 @@ class ServiceCostRequestController extends Controller
     public function archive(Request $request, string $requestNumber)
     {
         $serviceRequest = ServiceCostRequest::where('request_number', $requestNumber)->firstOrFail();
-        
+
         $serviceRequest->update([
             'archived_at' => now(),
         ]);
@@ -233,11 +229,12 @@ class ServiceCostRequestController extends Controller
         $validated = $request->validate([
             'email_subject' => 'nullable|string|max:255',
             'email_body' => 'nullable|string|max:20000',
+            'attachments.*' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
         ]);
 
         $serviceRequest = ServiceCostRequest::where('request_number', $requestNumber)->firstOrFail();
 
-        if (!$serviceRequest->quoted_at || !$serviceRequest->quoted_price) {
+        if (! $serviceRequest->quoted_at || ! $serviceRequest->quoted_price) {
             return back()->with('error', 'Quote belum tersedia. Silakan generate quote terlebih dahulu.');
         }
 
@@ -254,7 +251,7 @@ class ServiceCostRequestController extends Controller
 
         $subject = trim((string) ($validated['email_subject'] ?? ($quoteDetails['email_subject'] ?? '')));
         if ($subject === '') {
-            $subject = 'Penawaran Jasa - ' . $serviceRequest->request_number . ' - Bizmark.ID';
+            $subject = 'Penawaran Jasa - '.$serviceRequest->request_number.' - Bizmark.ID';
         }
         $subject = $this->sanitizeQuoteText($subject, $serviceRequest, false);
 
@@ -294,14 +291,57 @@ class ServiceCostRequestController extends Controller
         }
 
         try {
-            Mail::to($serviceRequest->email)
-                ->send(new ServiceCostRequestQuoteMail(
-                    serviceRequest: $serviceRequest,
-                    subjectLine: $subject,
-                    bodyText: $body,
-                    htmlBody: $htmlBody,
-                    signature: $digitalSignature
-                ));
+            $mailable = new ServiceCostRequestQuoteMail(
+                serviceRequest: $serviceRequest,
+                subjectLine: $subject,
+                bodyText: $body,
+                htmlBody: $htmlBody,
+                signature: $digitalSignature
+            );
+
+            // Attach uploaded files if provided — store on public disk and save metadata
+            $quoteDetails = is_array($serviceRequest->quote_details) ? $serviceRequest->quote_details : [];
+            $attachmentsMeta = $quoteDetails['attachments'] ?? [];
+
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    if (! $file || ! $file->isValid()) {
+                        continue;
+                    }
+
+                    $dir = 'service-cost-requests/'.$serviceRequest->request_number.'/attachments';
+                    $filename = time().'-'.preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
+                    $storedPath = $file->storeAs($dir, $filename, 'public');
+
+                    if ($storedPath) {
+                        $meta = [
+                            'name' => $file->getClientOriginalName(),
+                            'path' => $storedPath,
+                            'size' => $file->getSize(),
+                            'mime' => $file->getMimeType(),
+                            'uploaded_at' => now()->toDateTimeString(),
+                        ];
+
+                        $attachmentsMeta[] = $meta;
+
+                        // Attach file from storage to the mailable
+                        try {
+                            $mailable->attachFromStorageDisk('public', $storedPath, $file->getClientOriginalName(), ['mime' => $file->getMimeType()]);
+                        } catch (\Throwable $e) {
+                            // fallback: attach directly from temp file
+                            $mailable->attach($file->getRealPath(), [
+                                'as' => $file->getClientOriginalName(),
+                                'mime' => $file->getMimeType(),
+                            ]);
+                        }
+                    }
+                }
+
+                $quoteDetails['attachments'] = $attachmentsMeta;
+                $serviceRequest->update(['quote_details' => $quoteDetails]);
+            }
+
+            Mail::to($serviceRequest->email)->send($mailable);
 
             $timestamp = now()->format('d M Y H:i');
             $author = Auth::user()->name ?? 'Admin';
@@ -344,27 +384,27 @@ class ServiceCostRequestController extends Controller
 
             $systemPrompt = "Anda adalah konsultan legal bisnis Indonesia senior. Tugas Anda membuat konten penawaran jasa yang profesional, formal, sopan, jelas, dan siap kirim. Jangan gunakan placeholder seperti [Nama], [Perusahaan], atau teks dummy apa pun. Penutup WAJIB menggunakan penanda pengirim 'Tim Konsultan' dan email kontak info@bizmark.id.\n\nOutput WAJIB JSON valid dengan struktur:\n{\n  \"offer_text\": \"isi penawaran formal untuk customer (plain text)\",\n  \"email_subject\": \"subjek email formal\",\n  \"email_body\": \"isi email formal lengkap (plain text)\",\n  \"email_html_body\": \"isi email HTML formal dengan <p>, <strong>, <em>, <ul>, <li>, <table>, <tr>, <td>\"\n}";
 
-            $userPrompt = "Buatkan konten penawaran resmi untuk data berikut:\n" .
-                "- Nomor Permohonan: {$serviceRequest->request_number}\n" .
-                "- Nama Pemohon: {$serviceRequest->display_name}\n" .
-                "- Email Pemohon: {$serviceRequest->email}\n" .
-                "- Tipe Pemohon: " . ($serviceRequest->applicant_type === 'badan' ? 'Badan Usaha' : 'Perorangan') . "\n" .
-                "- Kategori Layanan: {$categoryLabel}\n" .
-                "- Layanan yang Diminta: " . (empty($serviceLabels) ? '-' : implode('; ', $serviceLabels)) . "\n" .
-                "- Deskripsi Kebutuhan: " . ($serviceRequest->project_description ?: '-') . "\n" .
-                "- Lokasi Proyek: " . ($serviceRequest->project_location ?: '-') . "\n" .
-                "- Estimasi Biaya Penawaran: Rp " . number_format((float) $validated['quoted_price'], 0, ',', '.') . "\n" .
-                "- Timeline Penawaran: " . (($validated['quoted_timeline'] ?? '') !== '' ? $validated['quoted_timeline'] : '-') . "\n" .
-                "- Catatan Admin Tambahan: " . (($validated['quote_notes'] ?? '') !== '' ? $validated['quote_notes'] : '-') . "\n\n" .
-                "Aturan:\n" .
-                "1. Gunakan bahasa Indonesia formal dan profesional.\n" .
-                "2. Penawaran harus mencakup ringkasan kebutuhan, nilai penawaran, timeline, dan ajakan tindak lanjut.\n" .
-                "3. Email body harus siap kirim manual oleh admin (lengkap salam pembuka, isi, penutup, dan kontak lanjutan).\n" .
-                "4. Jangan mengarang data di luar input.\n" .
-                "5. Jangan gunakan placeholder.\n" .
-                "6. Penutup wajib: Tim Konsultan (info@bizmark.id).\n" .
-                "7. Field email_html_body wajib berisi HTML bersih dengan kombinasi bold/italic dan tabel ringkas penawaran.\n" .
-                "8. Kembalikan JSON valid saja sesuai format.";
+            $userPrompt = "Buatkan konten penawaran resmi untuk data berikut:\n".
+                "- Nomor Permohonan: {$serviceRequest->request_number}\n".
+                "- Nama Pemohon: {$serviceRequest->display_name}\n".
+                "- Email Pemohon: {$serviceRequest->email}\n".
+                '- Tipe Pemohon: '.($serviceRequest->applicant_type === 'badan' ? 'Badan Usaha' : 'Perorangan')."\n".
+                "- Kategori Layanan: {$categoryLabel}\n".
+                '- Layanan yang Diminta: '.(empty($serviceLabels) ? '-' : implode('; ', $serviceLabels))."\n".
+                '- Deskripsi Kebutuhan: '.($serviceRequest->project_description ?: '-')."\n".
+                '- Lokasi Proyek: '.($serviceRequest->project_location ?: '-')."\n".
+                '- Estimasi Biaya Penawaran: Rp '.number_format((float) $validated['quoted_price'], 0, ',', '.')."\n".
+                '- Timeline Penawaran: '.(($validated['quoted_timeline'] ?? '') !== '' ? $validated['quoted_timeline'] : '-')."\n".
+                '- Catatan Admin Tambahan: '.(($validated['quote_notes'] ?? '') !== '' ? $validated['quote_notes'] : '-')."\n\n".
+                "Aturan:\n".
+                "1. Gunakan bahasa Indonesia formal dan profesional.\n".
+                "2. Penawaran harus mencakup ringkasan kebutuhan, nilai penawaran, timeline, dan ajakan tindak lanjut.\n".
+                "3. Email body harus siap kirim manual oleh admin (lengkap salam pembuka, isi, penutup, dan kontak lanjutan).\n".
+                "4. Jangan mengarang data di luar input.\n".
+                "5. Jangan gunakan placeholder.\n".
+                "6. Penutup wajib: Tim Konsultan (info@bizmark.id).\n".
+                "7. Field email_html_body wajib berisi HTML bersih dengan kombinasi bold/italic dan tabel ringkas penawaran.\n".
+                '8. Kembalikan JSON valid saja sesuai format.';
 
             $aiResponse = $this->openRouterService->chat([
                 ['role' => 'system', 'content' => $systemPrompt],
@@ -375,7 +415,7 @@ class ServiceCostRequestController extends Controller
                 'max_tokens' => 1800,
             ]);
 
-            if (!($aiResponse['success'] ?? false)) {
+            if (! ($aiResponse['success'] ?? false)) {
                 Log::warning('AI quote generation failed at request level', [
                     'request_number' => $serviceRequest->request_number,
                     'error' => $aiResponse['error'] ?? 'unknown',
@@ -389,11 +429,11 @@ class ServiceCostRequestController extends Controller
             $content = preg_replace('/```$/', '', $content);
             $decoded = json_decode(trim($content), true);
 
-            if (!is_array($decoded) && preg_match('/\{[\s\S]*\}/', $content, $matches)) {
+            if (! is_array($decoded) && preg_match('/\{[\s\S]*\}/', $content, $matches)) {
                 $decoded = json_decode($matches[0], true);
             }
 
-            if (!is_array($decoded)) {
+            if (! is_array($decoded)) {
                 return null;
             }
 
@@ -436,25 +476,25 @@ class ServiceCostRequestController extends Controller
     private function generateFallbackQuoteContent(ServiceCostRequest $serviceRequest, array $validated): array
     {
         $timeline = ($validated['quoted_timeline'] ?? '') !== '' ? $validated['quoted_timeline'] : 'Sesuai kesepakatan';
-        $quotePrice = 'Rp ' . number_format((float) $validated['quoted_price'], 0, ',', '.');
+        $quotePrice = 'Rp '.number_format((float) $validated['quoted_price'], 0, ',', '.');
         $quoteNotes = trim((string) ($validated['quote_notes'] ?? ''));
 
-        $offerText = "Menindaklanjuti permohonan {$serviceRequest->request_number}, bersama ini kami sampaikan penawaran jasa secara resmi sebesar {$quotePrice} dengan estimasi pelaksanaan {$timeline}.\n\n" .
-            "Penawaran ini disusun berdasarkan informasi kebutuhan yang telah Bapak/Ibu sampaikan. Jika diperlukan penyesuaian ruang lingkup layanan, rincian biaya dan timeline dapat kami revisi melalui konfirmasi lanjutan.\n\n" .
-            "Kami siap mendampingi proses hingga tahap implementasi. Mohon konfirmasi persetujuan agar tim kami dapat menindaklanjuti tahap berikutnya.";
+        $offerText = "Menindaklanjuti permohonan {$serviceRequest->request_number}, bersama ini kami sampaikan penawaran jasa secara resmi sebesar {$quotePrice} dengan estimasi pelaksanaan {$timeline}.\n\n".
+            "Penawaran ini disusun berdasarkan informasi kebutuhan yang telah Bapak/Ibu sampaikan. Jika diperlukan penyesuaian ruang lingkup layanan, rincian biaya dan timeline dapat kami revisi melalui konfirmasi lanjutan.\n\n".
+            'Kami siap mendampingi proses hingga tahap implementasi. Mohon konfirmasi persetujuan agar tim kami dapat menindaklanjuti tahap berikutnya.';
 
         if ($quoteNotes !== '') {
             $offerText .= "\n\nCatatan tambahan: {$quoteNotes}";
         }
 
         $emailSubject = "Penawaran Jasa - {$serviceRequest->request_number} - Bizmark.ID";
-        $emailBody = "Yth. Bapak/Ibu {$serviceRequest->display_name},\n\n" .
-            "Terima kasih atas permohonan yang telah disampaikan kepada Bizmark.ID. Berdasarkan kebutuhan yang Bapak/Ibu ajukan, kami menyampaikan penawaran jasa sebagai berikut:\n\n" .
-            "- Nomor Permohonan: {$serviceRequest->request_number}\n" .
-            "- Nilai Penawaran: {$quotePrice}\n" .
-            "- Estimasi Timeline: {$timeline}\n\n" .
-            ($quoteNotes !== '' ? "Catatan: {$quoteNotes}\n\n" : '') .
-            "Apabila Bapak/Ibu berkenan, kami siap melanjutkan ke tahap berikutnya. Silakan membalas email ini untuk konfirmasi atau kebutuhan penyesuaian.\n\n" .
+        $emailBody = "Yth. Bapak/Ibu {$serviceRequest->display_name},\n\n".
+            "Terima kasih atas permohonan yang telah disampaikan kepada Bizmark.ID. Berdasarkan kebutuhan yang Bapak/Ibu ajukan, kami menyampaikan penawaran jasa sebagai berikut:\n\n".
+            "- Nomor Permohonan: {$serviceRequest->request_number}\n".
+            "- Nilai Penawaran: {$quotePrice}\n".
+            "- Estimasi Timeline: {$timeline}\n\n".
+            ($quoteNotes !== '' ? "Catatan: {$quoteNotes}\n\n" : '').
+            "Apabila Bapak/Ibu berkenan, kami siap melanjutkan ke tahap berikutnya. Silakan membalas email ini untuk konfirmasi atau kebutuhan penyesuaian.\n\n".
             "Hormat kami,\nTim Konsultan\ninfo@bizmark.id";
 
         $offerText = $this->sanitizeQuoteText($offerText, $serviceRequest, false);
@@ -523,18 +563,18 @@ class ServiceCostRequestController extends Controller
             if ($line !== '') {
                 $line = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $line) ?? $line;
                 $line = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $line) ?? $line;
-                $htmlParagraphs[] = '<p style="margin:0 0 12px 0;line-height:1.75;color:#1f2937;font-size:14px;">' . $line . '</p>';
+                $htmlParagraphs[] = '<p style="margin:0 0 12px 0;line-height:1.75;color:#1f2937;font-size:14px;">'.$line.'</p>';
             }
         }
 
         $timeline = $serviceRequest->quoted_timeline ?: 'Sesuai kesepakatan';
         $summaryTable = '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:10px 0 16px 0;border-collapse:collapse;border:1px solid #dbe2ef;border-radius:10px;overflow:hidden;">'
-            . '<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;">Nomor Permohonan</td><td style="padding:10px 12px;background:#ffffff;color:#0f172a;font-size:12px;font-weight:600;text-align:right;">' . e($serviceRequest->request_number) . '</td></tr>'
-            . '<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;border-top:1px solid #e2e8f0;">Nilai Penawaran</td><td style="padding:10px 12px;background:#ffffff;color:#0f172a;font-size:12px;font-weight:700;text-align:right;border-top:1px solid #e2e8f0;">Rp ' . number_format((float) $serviceRequest->quoted_price, 0, ',', '.') . '</td></tr>'
-            . '<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;border-top:1px solid #e2e8f0;">Estimasi Timeline</td><td style="padding:10px 12px;background:#ffffff;color:#0f172a;font-size:12px;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;">' . e($timeline) . '</td></tr>'
-            . '</table>';
+            .'<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;">Nomor Permohonan</td><td style="padding:10px 12px;background:#ffffff;color:#0f172a;font-size:12px;font-weight:600;text-align:right;">'.e($serviceRequest->request_number).'</td></tr>'
+            .'<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;border-top:1px solid #e2e8f0;">Nilai Penawaran</td><td style="padding:10px 12px;background:#ffffff;color:#0f172a;font-size:12px;font-weight:700;text-align:right;border-top:1px solid #e2e8f0;">Rp '.number_format((float) $serviceRequest->quoted_price, 0, ',', '.').'</td></tr>'
+            .'<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;border-top:1px solid #e2e8f0;">Estimasi Timeline</td><td style="padding:10px 12px;background:#ffffff;color:#0f172a;font-size:12px;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;">'.e($timeline).'</td></tr>'
+            .'</table>';
 
-        return $summaryTable . implode('', $htmlParagraphs);
+        return $summaryTable.implode('', $htmlParagraphs);
     }
 
     /**
@@ -551,6 +591,7 @@ class ServiceCostRequestController extends Controller
         $cleaned = strip_tags($trimmed, $allowed);
         $cleaned = preg_replace('/\son[a-z]+="[^"]*"/i', '', $cleaned) ?? $cleaned;
         $cleaned = preg_replace('/javascript:/i', '', $cleaned) ?? $cleaned;
+
         return trim($cleaned);
     }
 
@@ -560,8 +601,8 @@ class ServiceCostRequestController extends Controller
     private function buildDigitalSignature(ServiceCostRequest $serviceRequest, float $quotedPrice): array
     {
         $issuedAt = now();
-        $signatureId = 'SIG-' . $serviceRequest->request_number . '-' . $issuedAt->format('YmdHis');
-        $hash = strtoupper(substr(hash('sha256', $serviceRequest->request_number . '|' . $quotedPrice . '|' . $issuedAt->toIso8601String() . '|' . config('app.key')), 0, 20));
+        $signatureId = 'SIG-'.$serviceRequest->request_number.'-'.$issuedAt->format('YmdHis');
+        $hash = strtoupper(substr(hash('sha256', $serviceRequest->request_number.'|'.$quotedPrice.'|'.$issuedAt->toIso8601String().'|'.config('app.key')), 0, 20));
 
         return [
             'signer_name' => 'Tim Konsultan',

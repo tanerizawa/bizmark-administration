@@ -4,12 +4,12 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
             <h3 class="text-xl font-semibold text-white">Rekonsiliasi Bank</h3>
-            <p class="text-sm" style="color: rgba(235,235,245,0.65);">
+            <p class="text-sm text-dark-text-secondary">
                 Kelola dan pantau rekonsiliasi transaksi bank
             </p>
         </div>
-        <a href="{{ route('reconciliations.create') }}" 
-           class="admin-btn admin-btn-sm rounded" style="background: rgba(52,199,89,0.25);">
+        <a href="{{ route('reconciliations.create') }}"
+           class="admin-btn admin-btn-sm rounded bg-apple-green/25">
             <i class="fas fa-plus mr-1.5"></i>Rekonsiliasi Baru
         </a>
     </div>
@@ -38,7 +38,7 @@
                     <option value="discrepancy" {{ request('recon_status') == 'discrepancy' ? 'selected' : '' }}>Selisih</option>
                 </select>
             </div>
-            <button type="submit" class="admin-btn admin-btn-sm rounded" style="background: rgba(10,132,255,0.25);">
+            <button type="submit" class="admin-btn admin-btn-sm rounded bg-apple-blue/25">
                 <i class="fas fa-filter"></i>
             </button>
         </form>
@@ -49,7 +49,7 @@
     <div class="card-elevated rounded-apple-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700">
-                <thead style="background-color: var(--dark-bg-secondary);">
+                <thead class="bg-dark-bg-secondary">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tanggal</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Akun</th>
@@ -60,7 +60,7 @@
                         <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
+                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
                     @foreach($reconciliations as $recon)
                     <tr class="hover:bg-dark-bg-tertiary transition-apple">
                         <td class="px-4 py-3">
@@ -89,20 +89,19 @@
                         </td>
                         <td class="px-4 py-3 text-center">
                             @php
-                                $statusColors = [
-                                    'pending' => 'background: rgba(255,149,0,0.15); color: var(--apple-orange);',
-                                    'completed' => 'background: rgba(52,199,89,0.15); color: var(--apple-green);',
-                                    'discrepancy' => 'background: rgba(255,59,48,0.15); color: var(--apple-red);',
+                                $statusClasses = [
+                                    'pending' => 'bg-apple-orange/15 text-apple-orange',
+                                    'completed' => 'bg-apple-green/15 text-apple-green',
+                                    'discrepancy' => 'bg-apple-red/15 text-apple-red',
                                 ];
                             @endphp
-                            <span class="px-2 py-1 text-xs font-medium rounded-apple" style="{{ $statusColors[$recon->status] ?? $statusColors['pending'] }}">
+                            <span class="px-2 py-1 text-xs font-medium rounded-apple {{ $statusClasses[$recon->status] ?? $statusClasses['pending'] }}">
                                 {{ ucfirst($recon->status) }}
                             </span>
                         </td>
                         <td class="px-4 py-3 text-center">
-                            <a href="{{ route('reconciliations.show', $recon) }}" 
-                               class="inline-flex items-center px-2 py-1 rounded text-xs" 
-                               style="background: rgba(10,132,255,0.15); color: var(--apple-blue);">
+                            <a href="{{ route('reconciliations.show', $recon) }}"
+                               class="inline-flex items-center px-2 py-1 rounded text-xs bg-apple-blue/15 text-apple-blue">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </td>
@@ -113,7 +112,7 @@
         </div>
         
         @if($reconciliations->hasPages())
-        <div class="px-4 py-3" style="background: var(--dark-bg-tertiary); border-top: 1px solid var(--dark-separator);">
+        <div class="px-4 py-3 bg-dark-bg-tertiary border-t border-dark-separator">
             {{ $reconciliations->appends(['tab' => 'reconciliations'])->links() }}
         </div>
         @endif
@@ -121,15 +120,15 @@
     @else
     {{-- Empty State --}}
     <div class="card-elevated rounded-apple-lg p-8 text-center">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: rgba(10,132,255,0.15);">
-            <i class="fas fa-balance-scale text-2xl" style="color: var(--apple-blue);"></i>
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-apple-blue/15">
+            <i class="fas fa-balance-scale text-2xl text-apple-blue"></i>
         </div>
         <h3 class="text-lg font-semibold text-white mb-2">Belum Ada Rekonsiliasi</h3>
         <p class="text-sm text-dark-text-secondary mb-4">
             Mulai rekonsiliasi untuk memastikan catatan buku sesuai dengan mutasi bank.
         </p>
-        <a href="{{ route('reconciliations.create') }}" 
-           class="admin-btn rounded px-4 py-2" style="background: rgba(52,199,89,0.25);">
+        <a href="{{ route('reconciliations.create') }}"
+           class="admin-btn rounded px-4 py-2 bg-apple-green/25">
             <i class="fas fa-plus mr-1.5"></i>Rekonsiliasi Pertama
         </a>
     </div>

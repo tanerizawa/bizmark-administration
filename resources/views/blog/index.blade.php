@@ -2,96 +2,351 @@
 
 @php
     $locale = app()->getLocale();
-    $blogArticleRoute = $locale === 'en' ? 'blog.article.en' : 'blog.article.id';
-    $blogCategoryRoute = $locale === 'en' ? 'blog.category.en' : 'blog.category.id';
-    $blogTagRoute = $locale === 'en' ? 'blog.tag.en' : 'blog.tag.id';
+    $isEn = $locale === 'en';
+    $pageTitle = $isEn ? 'Insights & Expertise' : 'Wawasan & Pengetahuan';
+    $pageDescription = $isEn
+        ? 'In-depth articles on Indonesian permit regulations, real case studies, and compliance guides from the Bizmark.ID team.'
+        : 'Artikel mendalam tentang regulasi perizinan Indonesia, studi kasus nyata, dan panduan kepatuhan dari tim Bizmark.ID.';
+
+    $blogIndexRoute = $isEn ? 'blog.index.en' : 'blog.index.id';
+    $blogArticleRoute = $isEn ? 'blog.article.en' : 'blog.article.id';
+    $blogCategoryRoute = $isEn ? 'blog.category.en' : 'blog.category.id';
+
+    $categoryLabels = \App\Helpers\BlogHelper::categoryLabels($isEn);
+    $fmtCategory = function($cat) use ($categoryLabels) {
+        return $categoryLabels[$cat] ?? \Illuminate\Support\Str::title(str_replace('-', ' ', (string)$cat));
+    };
+
+    // Collect unique categories from current page for filter chips
+    $availableCategories = $articles->pluck('category')->unique()->filter()->values();
+
+    $totalArticles = $articles->total();
+    $featured = $articles->first();
+    $rest = $articles->slice(1);
 @endphp
 
-@section('title', $locale === 'en' ? 'Insights - Bizmark.ID' : 'Wawasan - Bizmark.ID')
-@section('meta_description', $locale === 'en'
-    ? 'Practical guides and insights about permits, compliance, and business operations in Indonesia.'
-    : 'Panduan praktis dan wawasan seputar perizinan, compliance, dan operasional bisnis di Indonesia.')
+@section('title', $pageTitle . ' — Bizmark.ID')
+@section('meta_description', $pageDescription)
+
+@section('structured_data')
+<script type="application/ld+json">
+{
+    "@@context": "https://schema.org",
+    "@@type": "Blog",
+    "name": "{{ $pageTitle }} — Bizmark.ID",
+    "description": @json($pageDescription),
+    "url": "{{ url()->current() }}",
+    "publisher": {
+        "@@type": "Organization",
+        "name": "Bizmark.ID",
+        "logo": "{{ asset('images/logo.png') }}"
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@@context": "https://schema.org",
+    "@@type": "BreadcrumbList",
+    "itemListElement": [
+        { "@@type": "ListItem", "position": 1, "name": "{{ $isEn ? 'Home' : 'Beranda' }}", "item": "{{ url('/') }}" },
+        { "@@type": "ListItem", "position": 2, "name": "{{ $pageTitle }}", "item": "{{ url()->current() }}" }
+    ]
+}
+</script>
+@endsection
 
 @section('content')
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+
+{{-- HERO --}}
+<section class="section-v2" style="background: linear-gradient(180deg, #fff 0%, var(--surface-premium) 100%);">
     <div class="container-wide">
-        <span class="section-badge mb-4">{{ $locale === 'en' ? 'Insights' : 'Wawasan' }}</span>
-        <h1 class="section-title mb-4">{{ $locale === 'en' ? 'Guides, checklists, and regulatory updates' : 'Panduan, checklist, dan update regulasi' }}</h1>
-        <p class="section-description mb-0" style="margin-left:0;">
-            {{ $locale === 'en'
-                ? 'Explore articles written to help you plan permits, reduce risk, and execute faster.'
-                : 'Jelajahi artikel yang membantu Anda merencanakan izin, mengurangi risiko, dan mengeksekusi lebih cepat.' }}
-        </p>
+        <nav aria-label="Breadcrumb" class="text-xs mb-6" style="color: var(--text-tertiary);">
+            <a href="{{ url('/') }}" style="color: var(--text-secondary);">{{ $isEn ? 'Home' : 'Beranda' }}</a>
+            <span class="mx-2">/</span>
+            <span>{{ $isEn ? 'Blog' : 'Blog' }}</span>
+        </nav>
+
+        <div class="max-w-4xl">
+            <span class="eyebrow mb-6">{{ $isEn ? 'Insights & Expertise' : 'Wawasan & Pengetahuan' }}</span>
+            <h1 class="display-xl mt-2 mb-6" style="color: var(--text-primary);">
+                {{ $isEn
+                    ? 'Regulatory insight, written by practitioners.'
+                    : 'Wawasan regulasi dari para praktisi perizinan.' }}
+            </h1>
+            <p class="text-xl leading-relaxed max-w-3xl" style="color: var(--text-secondary);">
+                {{ $isEn
+                    ? 'In-depth articles on Indonesian permit regulations, real case studies, and step-by-step compliance guides from our consultant team.'
+                    : 'Artikel mendalam tentang regulasi perizinan Indonesia, studi kasus nyata, dan panduan kepatuhan langkah demi langkah dari tim konsultan kami.' }}
+            </p>
+
+            @if($totalArticles > 0)
+                <div class="mt-8 text-sm" style="color: var(--text-tertiary);">
+                    <i class="fas fa-newspaper mr-2" style="color: var(--color-gold);"></i>
+                    <strong style="color: var(--text-primary);">{{ number_format($totalArticles) }}</strong>
+                    {{ $isEn ? 'published articles' : 'artikel terpublikasi' }}
+                </div>
+            @endif
+        </div>
     </div>
 </section>
 
-<section class="section">
+{{-- CATEGORY CHIPS (filter) --}}
+@if($availableCategories->count() > 1)
+<section class="section-v2-sm border-y" style="background: var(--bg-overlay); border-color: var(--border-subtle);">
     <div class="container-wide">
-        @if($articles->count() === 0)
-            <div class="card text-center">
-                <h2 class="text-xl font-bold mb-2" style="color:var(--text-primary);">{{ $locale === 'en' ? 'No articles yet' : 'Belum ada artikel' }}</h2>
-                <p class="mb-0" style="color:var(--text-secondary);">{{ $locale === 'en' ? 'Please check back soon.' : 'Silakan cek kembali nanti.' }}</p>
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="text-[11px] font-bold uppercase tracking-[.15em] mr-3" style="color: var(--text-tertiary);">
+                {{ $isEn ? 'Browse by' : 'Jelajahi' }}:
+            </span>
+            <a href="{{ route($blogIndexRoute) }}" class="cert-badge" style="background: var(--color-primary); color: #fff; border-color: var(--color-primary);">
+                {{ $isEn ? 'All' : 'Semua' }}
+            </a>
+            @foreach($availableCategories as $cat)
+                <a href="{{ route($blogCategoryRoute, $cat) }}" class="cert-badge" style="cursor: pointer;">
+                    {{ $fmtCategory($cat) }}
+                </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+@if($articles->isEmpty())
+    {{-- EMPTY STATE --}}
+    <section class="section-v2">
+        <div class="container-wide text-center py-16">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6"
+                 style="background: var(--surface-cool); color: var(--text-tertiary);">
+                <i class="fas fa-newspaper text-3xl"></i>
             </div>
-        @else
-            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                @foreach($articles as $article)
-                    <article class="card p-0 overflow-hidden">
-                        <a href="{{ route($blogArticleRoute, $article->slug) }}" class="block">
-                            <div class="relative" style="aspect-ratio: 16/9; background:var(--surface-cool);">
-                                @if($article->featured_image_url)
-                                    <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" class="w-full h-full object-cover" loading="lazy" width="1200" height="675">
+            <h2 class="font-display text-2xl font-bold mb-2" style="color: var(--text-primary);">
+                {{ $isEn ? 'No articles yet' : 'Belum ada artikel' }}
+            </h2>
+            <p style="color: var(--text-secondary);">
+                {{ $isEn ? 'Check back soon for new insights.' : 'Nantikan insight terbaru dari tim kami.' }}
+            </p>
+        </div>
+    </section>
+@else
+    {{-- FEATURED + GRID --}}
+    <section class="section-v2"
+             x-data="blogSearch()"
+             x-init="initSearch(@json($articles->getCollection()->map(fn($a) => [
+                 'slug' => $a->slug,
+                 'title' => $a->title,
+                 'excerpt' => $a->excerpt,
+                 'category' => $a->category,
+             ])))">
+        <div class="container-wide">
+
+            {{-- Search Bar --}}
+            <div class="mb-10"
+                 x-show="!searching || query.length > 0"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0">
+                <div class="relative max-w-xl">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-sm"
+                       :class="query.length > 0 ? 'text-accent' : ''"
+                       style="color: var(--text-tertiary);"></i>
+                    <input type="text"
+                           x-ref="searchInput"
+                           x-model="query"
+                           @keydown.escape="clearSearch()"
+                           @keydown.slash.prevent="$refs.searchInput.focus()"
+                           placeholder="{{ $isEn ? 'Search articles by title, topic or category...' : 'Cari artikel berdasarkan judul, topik, atau kategori...' }}"
+                           class="w-full pl-10 pr-10 py-3 rounded-xl border text-sm transition"
+                           style="background: var(--bg-raised); color: var(--text-primary); border-color: var(--border-subtle);">
+                    <button x-show="query.length > 0"
+                            @click="clearSearch()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full text-xs transition"
+                            style="background: var(--border-light); color: var(--text-tertiary);"
+                            type="button"
+                            aria-label="{{ $isEn ? 'Clear search' : 'Hapus pencarian' }}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 mt-2 text-xs" style="color: var(--text-tertiary);">
+                    <span><kbd style="background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 1px 6px; font-family: inherit;">/</kbd> {{ $isEn ? 'to search' : 'untuk mencari' }}</span>
+                    <span class="mx-1">·</span>
+                    <span x-show="query.length > 0" x-text="`${filteredCount} ${'{{ $isEn ? 'results' : 'hasil' }}'}`"></span>
+                    <span x-show="query.length > 0 && filteredCount === 0" style="color: var(--color-warning);">{{ $isEn ? 'No matching articles' : 'Tidak ada artikel yang cocok' }}</span>
+                </div>
+            </div>
+
+            {{-- No results state --}}
+            <div x-show="query.length > 0 && filteredCount === 0"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 class="text-center py-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
+                     style="background: var(--surface-cool); color: var(--text-tertiary);">
+                    <i class="fas fa-search text-2xl"></i>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2" style="color: var(--text-primary);">
+                    {{ $isEn ? 'No results found' : 'Hasil tidak ditemukan' }}
+                </h3>
+                <p style="color: var(--text-secondary);">
+                    {{ $isEn ? 'Try different keywords or browse by category.' : 'Coba kata kunci lain atau jelajahi berdasarkan kategori.' }}
+                </p>
+            </div>
+
+            {{-- Featured (page 1 only) --}}
+            @if($articles->onFirstPage() && $featured)
+                <a href="{{ route($blogArticleRoute, $featured->slug) }}"
+                   class="article-card featured block mb-12"
+                   style="display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: 2.5rem; align-items: center;"
+                   x-show="matches('{{ $featured->slug }}')">
+                    <div class="article-image">
+                        @if($featured->featured_image)
+                            <img src="{{ \Illuminate\Support\Str::startsWith($featured->featured_image, ['http','/']) ? $featured->featured_image : asset('storage/' . $featured->featured_image) }}"
+                                 alt="{{ $featured->title }}"
+                                 loading="eager" fetchpriority="high" width="900" height="675">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center bg-ink-gradient">
+                                <i class="fas fa-newspaper text-5xl text-white/40"></i>
+                            </div>
+                        @endif
+                    </div>
+                    <div>
+                        <div class="article-meta mb-3">
+                            <span class="article-cat">{{ $fmtCategory($featured->category) }}</span>
+                            <span>·</span>
+                            <time datetime="{{ optional($featured->published_at)->toIso8601String() }}">
+                                {{ optional($featured->published_at)->translatedFormat('d M Y') }}
+                            </time>
+                            @if($featured->reading_time)
+                                <span>·</span>
+                                <span>{{ $featured->reading_time }} {{ $isEn ? 'min read' : 'menit baca' }}</span>
+                            @endif
+                        </div>
+                        <h2 class="article-title mb-4">{{ $featured->title }}</h2>
+                        @if($featured->excerpt)
+                            <p class="article-excerpt mb-6">{{ \Illuminate\Support\Str::limit($featured->excerpt, 220) }}</p>
+                        @endif
+                        <span class="link-primary font-semibold text-sm inline-flex items-center gap-2">
+                            {{ $isEn ? 'Read article' : 'Baca artikel' }}
+                            <i class="fas fa-arrow-right text-xs flex-shrink-0 leading-none" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </a>
+
+                {{-- Responsive fallback: stack featured on mobile --}}
+                <style>
+                    @media (max-width: 767px) {
+                        .article-card.featured { grid-template-columns: 1fr !important; gap: 1.25rem !important; }
+                    }
+                </style>
+            @endif
+
+            {{-- Grid: rest of articles --}}
+            @php $gridArticles = $articles->onFirstPage() ? $rest : $articles->getCollection(); @endphp
+            @if($gridArticles->count() > 0)
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 grid-equal">
+                    @foreach($gridArticles as $article)
+                        <a href="{{ route($blogArticleRoute, $article->slug) }}" class="article-card"
+                           x-show="matches('{{ $article->slug }}')">
+                            <div class="article-image">
+                                @if($article->featured_image)
+                                    <img src="{{ \Illuminate\Support\Str::startsWith($article->featured_image, ['http','/']) ? $article->featured_image : asset('storage/' . $article->featured_image) }}"
+                                         alt="{{ $article->title }}"
+                                         loading="lazy" width="600" height="375">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(135deg, rgba(15,23,42,.08), rgba(14,165,233,.12));">
-                                        <i class="fas fa-newspaper text-4xl" style="color:rgba(15,23,42,.25);"></i>
+                                    <div class="w-full h-full flex items-center justify-center bg-ink-gradient">
+                                        <i class="fas fa-newspaper text-3xl text-white/40"></i>
                                     </div>
                                 @endif
-                                <div class="absolute top-3 left-3">
-                                    <span class="chip active" style="background:rgba(15,23,42,.75);border-color:transparent;color:#fff;">
-                                        {{ $article->category_label }}
-                                    </span>
+                            </div>
+                            <div class="flex flex-col flex-1">
+                                <div class="article-meta mb-2">
+                                    <span class="article-cat">{{ $fmtCategory($article->category) }}</span>
+                                    <span>·</span>
+                                    <time datetime="{{ optional($article->published_at)->toIso8601String() }}">
+                                        {{ optional($article->published_at)->translatedFormat('d M Y') }}
+                                    </time>
                                 </div>
+                                <h3 class="article-title mb-3">{{ $article->title }}</h3>
+                                @if($article->excerpt)
+                                    <p class="article-excerpt flex-1">{{ \Illuminate\Support\Str::limit($article->excerpt, 140) }}</p>
+                                @endif
+                                @if($article->reading_time)
+                                    <div class="text-xs mt-4 pt-4 border-t" style="color: var(--text-tertiary); border-color: var(--border-subtle);">
+                                        <i class="far fa-clock mr-1"></i>
+                                        {{ $article->reading_time }} {{ $isEn ? 'min read' : 'menit baca' }}
+                                    </div>
+                                @endif
                             </div>
                         </a>
+                    @endforeach
+                </div>
+            @endif
 
-                        <div class="p-6">
-                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs mb-3" style="color:var(--text-tertiary);">
-                                <span><i class="far fa-calendar mr-1"></i>{{ optional($article->published_at)->format('d M Y') }}</span>
-                                <span><i class="far fa-clock mr-1"></i>{{ $article->reading_time }} {{ $locale === 'en' ? 'min read' : 'menit' }}</span>
-                                <span><i class="far fa-eye mr-1"></i>{{ number_format($article->views) }}</span>
-                            </div>
-
-                            <h2 class="text-lg font-bold mb-2" style="color:var(--text-primary);">
-                                <a href="{{ route($blogArticleRoute, $article->slug) }}" class="hover:underline" style="text-underline-offset:3px;">
-                                    {{ $article->title }}
-                                </a>
-                            </h2>
-                            <p class="text-sm mb-4" style="color:var(--text-secondary);">{{ Str::limit($article->excerpt, 140) }}</p>
-
-                            @if(!empty($article->tags))
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    @foreach(array_slice($article->tags, 0, 4) as $tag)
-                                        <a href="{{ route($blogTagRoute, $tag) }}" class="chip">#{{ $tag }}</a>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                            <div class="pt-3 border-t" style="border-color:var(--border-light);">
-                                <a href="{{ route($blogArticleRoute, $article->slug) }}" class="link-primary text-sm inline-flex items-center">
-                                    {{ $locale === 'en' ? 'Read' : 'Baca' }} <i class="fas fa-arrow-right ml-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-
+            {{-- Pagination --}}
             @if($articles->hasPages())
-                <div class="mt-10">
+                <div class="mt-12" x-show="query.length === 0">
                     {{ $articles->links() }}
                 </div>
             @endif
-        @endif
+        </div>
+    </section>
+
+    {{-- Newsletter CTA at end --}}
+    <div x-show="query.length === 0">
+        @include('landing.sections.v2.newsletter', ['locale' => $locale])
     </div>
-</section>
+@endif
+
 @endsection
 
+@push('scripts')
+<script>
+/**
+ * Alpine.js blog search component.
+ * Provides live client-side filtering of articles by title, excerpt, or category.
+ */
+window.blogSearch = function() {
+    return {
+        query: '',
+        searching: false,
+        articles: [],
+
+        /** Initialize with serialized article data from the server. */
+        initSearch(articles) {
+            this.articles = articles;
+        },
+
+        /** Number of articles matching the current query. */
+        get filteredCount() {
+            if (!this.query || !this.query.trim()) return this.articles.length;
+            const q = this.query.toLowerCase().trim();
+            return this.articles.filter(a =>
+                a.title.toLowerCase().includes(q) ||
+                (a.excerpt && a.excerpt.toLowerCase().includes(q)) ||
+                (a.category && a.category.toLowerCase().includes(q))
+            ).length;
+        },
+
+        /** Check if a specific article (by slug) matches the current query. */
+        matches(slug) {
+            if (!this.query || !this.query.trim()) return true;
+            const q = this.query.toLowerCase().trim();
+            return this.articles.some(a =>
+                a.slug === slug && (
+                    a.title.toLowerCase().includes(q) ||
+                    (a.excerpt && a.excerpt.toLowerCase().includes(q)) ||
+                    (a.category && a.category.toLowerCase().includes(q))
+                )
+            );
+        },
+
+        /** Clear search query and re-focus the search input. */
+        clearSearch() {
+            this.query = '';
+            this.searching = false;
+            this.$refs.searchInput?.focus();
+        }
+    };
+};
+</script>
+@endpush

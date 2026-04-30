@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Observers\AdminAuditObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 
+#[ObservedBy([AdminAuditObserver::class])]
 class Payment extends Model
 {
     use HasFactory;
@@ -45,9 +48,9 @@ class Payment extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($payment) {
-            if (!$payment->payment_number) {
+            if (! $payment->payment_number) {
                 $payment->payment_number = self::generatePaymentNumber();
             }
         });
@@ -62,7 +65,7 @@ class Payment extends Model
             ->whereMonth('created_at', $month)
             ->orderBy('id', 'desc')
             ->first();
-        
+
         $nextNumber = 1;
 
         if ($lastPayment && is_string($lastPayment->payment_number)) {
@@ -70,7 +73,7 @@ class Payment extends Model
                 $nextNumber = (int) $m[1] + 1;
             }
         }
-        
+
         return sprintf('PAY-%s%s-%04d', $year, $month, $nextNumber);
     }
 

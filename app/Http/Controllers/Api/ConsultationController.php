@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\ApiResponse;
 use App\Models\ConsultRequest;
 use App\Models\Kbli;
 use App\Services\ConsultationPricingEngine;
@@ -13,9 +14,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ConsultationController extends Controller
 {
+    use ApiResponse;
+
     protected ConsultationPricingEngine $pricingEngine;
+
     protected PerizinanAIService $ragService;
-    
+
     public function __construct(
         ConsultationPricingEngine $pricingEngine,
         PerizinanAIService $ragService
@@ -23,11 +27,10 @@ class ConsultationController extends Controller
         $this->pricingEngine = $pricingEngine;
         $this->ragService = $ragService;
     }
-    
+
     /**
      * Submit free consultation request with AI cost estimation
-     * 
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function submit(Request $request)
@@ -39,7 +42,7 @@ class ConsultationController extends Controller
                 'applicant_name' => 'required|string|max:255',
                 'applicant_email' => 'nullable|email|max:255',
                 'contact_phone' => 'required|string|max:20',
-                
+
                 // Business information (5-digit KBLI required)
                 'kbli_code' => [
                     'required',
@@ -64,7 +67,7 @@ class ConsultationController extends Controller
                     'exists:kbli,code',
                 ],
                 'additional_activities.*.description' => 'nullable|string|max:255',
-                
+
                 // Project details (optional - AI will recommend if not provided)
                 'deliverables' => 'nullable|string|max:5000',
             ], [
@@ -85,7 +88,7 @@ class ConsultationController extends Controller
                 'additional_activities.*.kbli_code.regex' => 'KBLI aktivitas tambahan harus 5 digit.',
                 'additional_activities.*.kbli_code.exists' => 'KBLI aktivitas tambahan tidak valid.',
             ]);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
@@ -93,27 +96,27 @@ class ConsultationController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-            
+
             $validated = $validator->validated();
-            
+
             // Verify KBLI code is 5-digit and active
             $kbli = Kbli::findByCode($validated['kbli_code']);
-            if (!$kbli || strlen($kbli->code) !== 5) {
+            if (! $kbli || strlen($kbli->code) !== 5) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Silakan pilih KBLI 5 digit yang valid.',
                 ], 422);
             }
-            
+
             // Calculate AI-enhanced estimate
             Log::info('Calculating consultation estimate', [
                 'kbli_code' => $validated['kbli_code'],
                 'business_size' => $validated['business_size'],
                 'location' => $validated['location'],
             ]);
-            
+
             $startTime = microtime(true);
-            
+
             $estimate = $this->pricingEngine->calculateEstimate([
                 'kbli_code' => $validated['kbli_code'],
                 'business_size' => $validated['business_size'],
@@ -128,20 +131,20 @@ class ConsultationController extends Controller
                 'project_description' => $validated['deliverables'] ?? 'Konsultasi perizinan usaha',
                 'deliverables_requested' => [],
             ]);
-            
+
             $estimateTime = (int) ((microtime(true) - $startTime) * 1000);
-            
+
             // Map form investment_level to database enum (now consistent)
             $investmentLevelMap = [
                 'under_100m' => 'under_100m',
                 '100m_500m' => '100m_500m',
                 '500m_2b' => '500m_2b',
                 '2b_10b' => 'over_2b',       // Map to closest DB enum
-                '10b_50b' => 'over_2b',      // Large investments  
+                '10b_50b' => 'over_2b',      // Large investments
                 'above_50b' => 'over_2b',    // Very large investments
             ];
             $dbInvestmentLevel = $investmentLevelMap[$validated['investment_level']] ?? 'under_100m';
-            
+
             // Map form location_type to database enum values
             $locationTypeMap = [
                 'commercial' => 'commercial',
@@ -154,14 +157,14 @@ class ConsultationController extends Controller
                 'educational' => 'residential',     // Educational as residential-like
             ];
             $dbLocationType = $locationTypeMap[$validated['location_type']] ?? 'commercial';
-            
+
             // Get RAG regulation context
             [$ragInsights, $ragConfidence] = $this->buildStructuredRagInsights($validated, $kbli);
-            
+
             // Use actual applicant data or fallback to descriptive placeholder
             $applicantName = $validated['applicant_name'];
-            $applicantEmail = $validated['applicant_email'] ?? ('guest-' . time() . '@bizmark.id');
-            
+            $applicantEmail = $validated['applicant_email'] ?? ('guest-'.time().'@bizmark.id');
+
             // Create consultation request record with accurate data
             $consultRequest = ConsultRequest::create([
                 'name' => $applicantName, // Real applicant name
@@ -171,9 +174,9 @@ class ConsultationController extends Controller
                 'kbli_code' => $validated['kbli_code'],
                 'business_size' => $validated['business_size'],
                 'location' => $validated['location'],
-                'location_type' => $dbLocationType, 
-                'investment_level' => $dbInvestmentLevel, 
-                'employee_count' => (int)($validated['employee_count'] ?? 0), // Ensure integer
+                'location_type' => $dbLocationType,
+                'investment_level' => $dbInvestmentLevel,
+                'employee_count' => (int) ($validated['employee_count'] ?? 0), // Ensure integer
                 'project_description' => $validated['deliverables'] ?? 'Konsultasi perizinan usaha',
                 'deliverables_requested' => [],
                 'estimate_status' => 'auto_estimated',
@@ -185,7 +188,7 @@ class ConsultationController extends Controller
                         'business_nature' => $validated['business_nature'] ?? null,
                         'original_investment_level' => $validated['investment_level'], // Keep original for reference
                         'original_location_type' => $validated['location_type'], // Keep original for reference
-                    ]
+                    ],
                 ]),
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
@@ -194,7 +197,7 @@ class ConsultationController extends Controller
                 'rag_confidence' => $ragConfidence,
                 'rag_processed_at' => $ragInsights ? now() : null,
             ]);
-            
+
             Log::info('Consultation request created', [
                 'request_id' => $consultRequest->id,
                 'kbli_code' => $validated['kbli_code'],
@@ -202,10 +205,10 @@ class ConsultationController extends Controller
                 'confidence' => $estimate['confidence_score'] ?? 0,
                 'processing_time_ms' => $estimateTime,
             ]);
-            
+
             // Increment KBLI usage counter
             $kbli->incrementUsage();
-            
+
             // Return response with estimate
             return response()->json([
                 'success' => true,
@@ -243,21 +246,21 @@ class ConsultationController extends Controller
                     'created_at' => $consultRequest->created_at->toIso8601String(),
                 ],
             ], 201);
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal. Mohon periksa data Anda.',
                 'errors' => $e->errors(),
             ], 422);
-            
+
         } catch (\Exception $e) {
             Log::error('Consultation submission error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'input' => $request->except(['password', 'token']),
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengirim permintaan estimasi. Silakan coba lagi.',
@@ -265,11 +268,10 @@ class ConsultationController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Get quick estimate without saving (preview only)
-     * 
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function quickEstimate(Request $request)
@@ -287,7 +289,7 @@ class ConsultationController extends Controller
                 'geographic_region' => 'nullable|in:jakarta_capital,java_major_cities,java_medium_cities,java_small_cities,bali_lombok,sumatra_major,sumatra_others,kalimantan_major,kalimantan_others,sulawesi_major,sulawesi_others,eastern_indonesia,border_areas',
                 'investment_level' => 'nullable|in:under_100m,100m_500m,500m_2b,2b_10b,10b_50b,above_50b',
             ]);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
@@ -295,19 +297,19 @@ class ConsultationController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-            
+
             $validated = $validator->validated();
-            
+
             // Quick estimate without full AI analysis
             $kbli = Kbli::findByCode($validated['kbli_code']);
-            
-            if (!$kbli || strlen($kbli->code) !== 5) {
+
+            if (! $kbli || strlen($kbli->code) !== 5) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Kode KBLI tidak valid.',
                 ], 422);
             }
-            
+
             // Use base pricing with multipliers only (no AI call)
             $estimate = $this->pricingEngine->calculateEstimate([
                 'kbli_code' => $validated['kbli_code'],
@@ -320,7 +322,7 @@ class ConsultationController extends Controller
                 'project_description' => 'Quick estimate preview',
                 'deliverables_requested' => [],
             ]);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -337,43 +339,37 @@ class ConsultationController extends Controller
                     'note' => 'Ini adalah estimasi cepat. Kirim formulir penuh untuk analisis AI yang lebih detail.',
                 ],
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Quick estimate error', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghitung estimasi cepat.',
             ], 500);
         }
     }
-    
+
     /**
      * Extract UTM parameters from request
-     * 
-     * @param Request $request
-     * @return array|null
      */
     protected function extractUtmParams(Request $request): ?array
     {
         $utmParams = [];
-        
+
         $utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
-        
+
         foreach ($utmKeys as $key) {
             if ($request->has($key)) {
                 $utmParams[$key] = $request->input($key);
             }
         }
-        
+
         return empty($utmParams) ? null : $utmParams;
     }
-    
+
     /**
      * Convert entity type code to readable label for RAG query
-     * 
-     * @param string $entityType
-     * @return string
      */
     protected function getEntityTypeLabel(string $entityType): string
     {
@@ -391,7 +387,7 @@ class ConsultationController extends Controller
             'bumn' => 'BUMN (Badan Usaha Milik Negara)',
             'foreign_rep' => 'Kantor Perwakilan Perusahaan Asing',
         ];
-        
+
         return $labels[$entityType] ?? 'PT';
     }
 
@@ -496,19 +492,19 @@ class ConsultationController extends Controller
             $kbliCode = $activity['kbli_code'] ?? null;
             $description = $activity['description'] ?? null;
 
-            if (!$kbliCode && !$description) {
+            if (! $kbliCode && ! $description) {
                 continue;
             }
 
             $resolvedKbli = $kbliCode ? Kbli::findByCode($kbliCode) : null;
 
             $activities[] = [
-                'label' => 'Aktivitas Tambahan ' . ($index + 1),
+                'label' => 'Aktivitas Tambahan '.($index + 1),
                 'kbli_code' => $resolvedKbli?->code ?? $kbliCode,
                 'description' => $resolvedKbli?->description ?? $description ?? 'Aktivitas usaha tambahan',
             ];
         }
 
-        return array_values(array_filter($activities, fn (array $activity) => !empty($activity['kbli_code']) && !empty($activity['description'])));
+        return array_values(array_filter($activities, fn (array $activity) => ! empty($activity['kbli_code']) && ! empty($activity['description'])));
     }
 }

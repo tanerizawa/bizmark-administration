@@ -261,6 +261,7 @@
     <div class="container max-w-4xl">
         <article class="bg-white border border-slate-200 rounded-3xl p-8 md:p-12 shadow-[0_35px_80px_-60px_rgba(15,23,42,0.6)]">
             <div class="article-prose">
+                {{-- SAFE: sanitized via HtmlSanitizer whitelist (strips scripts, event handlers, dangerous attrs) --}}
                 {!! \App\Support\HtmlSanitizer::clean($article->content) !!}
             </div>
 

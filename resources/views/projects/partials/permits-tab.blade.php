@@ -5,7 +5,7 @@
             <h3 class="card-title text-white">
                 <i class="fas fa-certificate mr-2 text-apple-blue-dark"></i>Izin & Prasyarat Proyek
             </h3>
-            <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
+            <p class="text-sm mt-1 text-dark-text-secondary">
                 Kelola izin dan dependensi yang diperlukan proyek
             </p>
         </div>
@@ -13,20 +13,17 @@
         @if($project->permits->count() === 0)
             <div class="flex gap-2">
                 <button onclick="event.stopPropagation(); showTemplateModal()" 
-                        class="btn-secondary-sm" 
-                        style="background: rgba(255, 149, 0, 0.2); color: rgba(255, 149, 0, 1); border-color: transparent;">
+                        class="btn-secondary-sm bg-apple-orange/20 text-apple-orange border-transparent">
                     <i class="fas fa-layer-group mr-2"></i>Gunakan Template
                 </button>
                 <button onclick="event.stopPropagation(); showAddPermitModal()" 
-                        class="btn-primary-sm" 
-                        style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+                        class="btn-primary-sm bg-apple-blue/90 text-white">
                     <i class="fas fa-plus mr-2"></i>Tambah Izin Manual
                 </button>
             </div>
         @else
             <button onclick="event.stopPropagation(); showAddPermitModal()" 
-                    class="btn-secondary-sm" 
-                    style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
+                    class="btn-secondary-sm bg-apple-blue/20 text-apple-blue">
                 <i class="fas fa-plus mr-2"></i>Tambah Izin
             </button>
         @endif
@@ -66,16 +63,16 @@
                 $goalStatusColor = $goalStatusColors[$statusLower] ?? 'rgba(142, 142, 147, 1)';
                 $goalStatusLabel = $goalStatusLabels[$statusLower] ?? $goalPermit->status;
             @endphp
-            <div class="data-block" style="border-color: rgba(10,132,255,0.2); background: rgba(10,132,255,0.05);">
+            <div class="data-block border-apple-blue/20 bg-apple-blue/[0.05]">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-[11px] font-semibold mb-1" style="color: rgba(10, 132, 255, 1); letter-spacing: 0.08em;">
+                        <p class="text-[11px] font-semibold mb-1 text-apple-blue tracking-[0.08em]">
                             <i class="fas fa-flag mr-1"></i>IZIN TUJUAN
                         </p>
-                        <p class="text-sm font-semibold" style="color: #FFFFFF;">
+                        <p class="text-sm font-semibold text-white">
                             {{ $goalPermit->permitType->name }}
                         </p>
-                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.7);">
+                        <p class="text-xs mt-0.5 text-dark-text-secondary">
                             {{ $goalPermit->institutionName }}
                         </p>
                     </div>
@@ -92,27 +89,27 @@
         <!-- Statistics -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
             <div class="data-block">
-                <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.65);">Total Izin</p>
-                <p class="text-lg font-semibold" style="color: #FFFFFF;">{{ $statistics['total'] ?? 0 }}</p>
+                <p class="text-xs mb-1 text-dark-text-secondary">Total Izin</p>
+                <p class="text-lg font-semibold text-white">{{ $statistics['total'] ?? 0 }}</p>
             </div>
-            <div class="data-block" style="background: rgba(52, 199, 89, 0.08); border-color: rgba(52, 199, 89, 0.2);">
-                <p class="text-xs mb-1" style="color: rgba(52, 199, 89, 0.85);">Selesai</p>
-                <p class="text-lg font-semibold" style="color: rgba(52, 199, 89, 1);">
+            <div class="data-block bg-apple-green/[0.08] border-apple-green/20">
+                <p class="text-xs mb-1 text-apple-green/85">Selesai</p>
+                <p class="text-lg font-semibold text-apple-green">
                     {{ $statistics['completed'] ?? 0 }}
                 </p>
-                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                <p class="text-xs text-dark-text-secondary">
                     {{ $statistics['completion_rate'] ?? 0 }}%
                 </p>
             </div>
-            <div class="data-block" style="background: rgba(255, 149, 0, 0.08); border-color: rgba(255, 149, 0, 0.2);">
-                <p class="text-xs mb-1" style="color: rgba(255, 149, 0, 0.85);">Dalam Proses</p>
-                <p class="text-lg font-semibold" style="color: rgba(255, 149, 0, 1);">
+            <div class="data-block bg-apple-orange/[0.08] border-apple-orange/20">
+                <p class="text-xs mb-1 text-apple-orange/85">Dalam Proses</p>
+                <p class="text-lg font-semibold text-apple-orange">
                     {{ $statistics['in_progress'] ?? 0 }}
                 </p>
             </div>
-            <div class="data-block" style="background: rgba(142, 142, 147, 0.08); border-color: rgba(142, 142, 147, 0.2);">
-                <p class="text-xs mb-1" style="color: rgba(142, 142, 147, 0.85);">Belum Dimulai</p>
-                <p class="text-lg font-semibold" style="color: rgba(142, 142, 147, 1);">
+            <div class="data-block bg-[rgba(142,142,147,0.08)] border-[rgba(142,142,147,0.2)]">
+                <p class="text-xs mb-1 text-[rgba(142,142,147,0.85)]">Belum Dimulai</p>
+                <p class="text-lg font-semibold text-[rgba(142,142,147,1)]">
                     {{ $statistics['not_started'] ?? 0 }}
                 </p>
             </div>
@@ -120,9 +117,9 @@
 
         <!-- Permit Flow Diagram -->
         <div id="permits-sortable" class="space-y-2">
-            <h4 class="text-xs font-semibold mb-2" style="color: rgba(235, 235, 245, 0.8);">
+            <h4 class="text-xs font-semibold mb-2 text-dark-text-primary/80">
                 <i class="fas fa-sitemap mr-1"></i>Alur Izin & Dependensi
-                <span class="ml-2 text-xs" style="color: rgba(235, 235, 245, 0.5);">(Drag untuk mengubah urutan)</span>
+                <span class="ml-2 text-xs text-dark-text-tertiary">(Drag untuk mengubah urutan)</span>
             </h4>
 
             @php
@@ -144,20 +141,17 @@
                      data-end-date="{{ $permit->end_date?->format('Y-m-d') ?? '' }}"
                      data-notes="{{ $permit->notes ?? '' }}">
                     <!-- Permit Card -->
-                    <div class="permit-card p-2 rounded-lg" 
-                         style="background: rgba(58, 58, 60, 0.5); transition: all 0.2s ease;">
+                    <div class="permit-card p-2 rounded-lg bg-[rgba(58,58,60,0.5)] transition-all duration-200">
                         
                         <div class="flex items-start gap-2">
                             <!-- Drag Handle -->
-                            <div class="drag-handle flex-shrink-0 cursor-move opacity-50 hover:opacity-100 transition-opacity" 
-                                 style="color: rgba(235, 235, 245, 0.6);" 
+                            <div class="drag-handle flex-shrink-0 cursor-move opacity-50 hover:opacity-100 transition-opacity text-dark-text-secondary" 
                                  title="Drag untuk mengubah urutan">
                                 <i class="fas fa-grip-vertical text-base"></i>
                             </div>
                             
                             <!-- Sequence Badge -->
-                            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" 
-                                 style="background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-apple-blue/30 text-apple-blue">
                                 {{ $loop->iteration }}
                             </div>
 
@@ -165,10 +159,10 @@
                                 <!-- Permit Header -->
                                 <div class="flex items-start justify-between mb-1">
                                     <div class="flex-1 min-w-0">
-                                        <h5 class="text-sm font-semibold truncate" style="color: #FFFFFF;">
+                                        <h5 class="text-sm font-semibold truncate text-white">
                                             {{ $permit->permitType->name }}
                                         </h5>
-                                        <p class="text-xs mt-0.5 truncate" style="color: rgba(235, 235, 245, 0.6);">
+                                        <p class="text-xs mt-0.5 truncate text-dark-text-secondary">
                                             {{ $permit->institutionName }}
                                         </p>
                                     </div>
@@ -210,24 +204,21 @@
                                         <!-- Actions -->
                                         <div class="flex gap-0.5">
                                             <button onclick="event.stopPropagation(); showManageDependenciesModal({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors"
-                                                    style="color: rgba(175, 82, 222, 1);" 
+                                                    class="p-1.5 rounded transition-colors text-[rgba(175,82,222,1)]"
                                                     onmouseover="this.style.background='rgba(175, 82, 222, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Kelola Dependensi">
                                                 <i class="fas fa-project-diagram text-xs"></i>
                                             </button>
                                             <button onclick="event.stopPropagation(); updatePermitStatus({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors"
-                                                    style="color: rgba(10, 132, 255, 1);" 
+                                                    class="p-1.5 rounded transition-colors text-apple-blue"
                                                     onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Update Status">
                                                 <i class="fas fa-edit text-xs"></i>
                                             </button>
                                             <button onclick="event.stopPropagation(); deletePermit({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors"
-                                                    style="color: rgba(255, 59, 48, 1);" 
+                                                    class="p-1.5 rounded transition-colors text-apple-red"
                                                     onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Hapus Izin">
@@ -313,14 +304,12 @@
                                 <!-- Can Start Check -->
                                 @if(strtolower($permit->status) === 'not_started')
                                     @if($permit->canStart())
-                                        <div class="mt-2 p-1.5 rounded-lg text-xs" 
-                                             style="background: rgba(52, 199, 89, 0.1); color: rgba(52, 199, 89, 1);">
+                                        <div class="mt-2 p-1.5 rounded-lg text-xs bg-apple-green/10 text-apple-green">
                                             <i class="fas fa-check-circle mr-1"></i>
                                             Siap dimulai - Semua prasyarat terpenuhi
                                         </div>
                                     @else
-                                        <div class="mt-2 p-1.5 rounded-lg text-xs" 
-                                             style="background: rgba(255, 59, 48, 0.1); color: rgba(255, 59, 48, 1);">
+                                        <div class="mt-2 p-1.5 rounded-lg text-xs bg-apple-red/10 text-apple-red">
                                             <i class="fas fa-lock mr-1"></i>
                                             Menunggu prasyarat: 
                                             @foreach($permit->getBlockers() as $blocker)
@@ -332,8 +321,8 @@
 
                                 <!-- Dependencies -->
                                 @if($permit->dependencies->count() > 0)
-                                    <div class="mt-2 pt-2" style="border-top: 1px solid rgba(58, 58, 60, 0.8);">
-                                        <p class="text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.6);">
+                                    <div class="mt-2 pt-2 border-t border-white/10">
+                                        <p class="text-xs font-semibold mb-1.5 text-dark-text-secondary">
                                             <i class="fas fa-link mr-1"></i>PRASYARAT:
                                         </p>
                                         <div class="flex flex-wrap gap-1.5">
@@ -364,16 +353,16 @@
                                     <div class="mt-2 grid grid-cols-2 gap-3 text-xs">
                                         @if($permit->start_date)
                                             <div>
-                                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Mulai:</p>
-                                                <p style="color: rgba(235, 235, 245, 0.8);">
+                                                <p class="text-xs text-dark-text-secondary">Mulai:</p>
+                                                <p class="text-dark-text-primary/80">
                                                     {{ $permit->start_date->format('d M Y') }}
                                                 </p>
                                             </div>
                                         @endif
                                         @if($permit->end_date)
                                             <div>
-                                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Selesai:</p>
-                                                <p style="color: rgba(235, 235, 245, 0.8);">
+                                                <p class="text-xs text-dark-text-secondary">Selesai:</p>
+                                                <p class="text-dark-text-primary/80">
                                                     {{ $permit->end_date->format('d M Y') }}
                                                 </p>
                                             </div>
@@ -383,23 +372,22 @@
 
                                 <!-- Notes -->
                                 @if($permit->notes)
-                                    <div class="mt-2 p-2 rounded-lg text-xs" style="background: rgba(58, 58, 60, 0.5);">
-                                        <p class="text-xs font-semibold mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                                    <div class="mt-2 p-2 rounded-lg text-xs bg-[rgba(58,58,60,0.5)]">
+                                        <p class="text-xs font-semibold mb-1 text-dark-text-secondary">
                                             <i class="fas fa-sticky-note mr-1"></i>Catatan:
                                         </p>
-                                        <p style="color: rgba(235, 235, 245, 0.8);">{{ $permit->notes }}</p>
+                                        <p class="text-dark-text-primary/80">{{ $permit->notes }}</p>
                                     </div>
                                 @endif
 
                                 <!-- Documents Section -->
-                                <div class="mt-2 pt-2" style="border-top: 1px solid rgba(58, 58, 60, 0.8);">
+                                <div class="mt-2 pt-2 border-t border-white/10">
                                     <div class="flex items-center justify-between mb-1.5">
-                                        <p class="text-xs font-semibold" style="color: rgba(235, 235, 245, 0.6);">
+                                        <p class="text-xs font-semibold text-dark-text-secondary">
                                             <i class="fas fa-paperclip mr-1"></i>DOKUMEN ({{ $permit->documents->count() }})
                                         </p>
                                         <button onclick="event.stopPropagation(); showUploadModal({{ $permit->id }})" 
-                                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all"
-                                                style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);"
+                                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all bg-apple-blue/20 text-apple-blue"
                                                 onmouseover="this.style.background='rgba(10, 132, 255, 0.3)'"
                                                 onmouseout="this.style.background='rgba(10, 132, 255, 0.2)'"
                                                 title="Upload Dokumen">
@@ -410,36 +398,33 @@
                                     @if($permit->documents->count() > 0)
                                         <div class="space-y-1.5">
                                             @foreach($permit->documents as $doc)
-                                                <div class="flex items-center justify-between p-2 rounded-lg group" 
-                                                     style="background: rgba(58, 58, 60, 0.5);">
+                                                <div class="flex items-center justify-between p-2 rounded-lg group bg-[rgba(58,58,60,0.5)]">
                                                     <div class="flex items-center gap-2 flex-1 min-w-0">
                                                         <i class="fas {{ 
                                                             str_contains($doc->file_type, 'pdf') ? 'fa-file-pdf' : 
                                                             (str_contains($doc->file_type, 'image') ? 'fa-file-image' : 
                                                             (str_contains($doc->file_type, 'word') || str_contains($doc->file_type, 'document') ? 'fa-file-word' : 
                                                             'fa-file')) 
-                                                        }}" style="color: rgba(10, 132, 255, 1);"></i>
+                                                        }} text-apple-blue"></i>
                                                         <div class="flex-1 min-w-0">
-                                                            <p class="text-xs truncate" style="color: rgba(235, 235, 245, 0.9);">
+                                                            <p class="text-xs truncate text-dark-text-primary/90">
                                                                 {{ $doc->original_filename }}
                                                             </p>
-                                                            <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
-                                                                {{ $doc->file_size_formatted }} • {{ $doc->created_at->format('d M Y H:i') }}
+                                                            <p class="text-xs text-dark-text-tertiary">
+                                                                {{ $doc->file_size_formatted }} &bull; {{ $doc->created_at->format('d M Y H:i') }}
                                                             </p>
                                                         </div>
                                                     </div>
                                                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <a href="{{ route('permits.documents.download', ['project' => $project->id, 'document' => $doc->id]) }}" 
-                                                           class="p-2 rounded transition-colors"
-                                                           style="color: rgba(10, 132, 255, 1);"
+                                                           class="p-2 rounded transition-colors text-apple-blue"
                                                            onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
                                                            onmouseout="this.style.background='transparent'"
                                                            title="Download">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                         <button onclick="event.stopPropagation(); deleteDocument({{ $doc->id }})" 
-                                                                class="p-2 rounded transition-colors"
-                                                                style="color: rgba(255, 59, 48, 1);"
+                                                                class="p-2 rounded transition-colors text-apple-red"
                                                                 onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
                                                                 onmouseout="this.style.background='transparent'"
                                                                 title="Hapus">
@@ -450,7 +435,7 @@
                                             @endforeach
                                         </div>
                                     @else
-                                        <p class="text-xs text-center py-2" style="color: rgba(235, 235, 245, 0.5);">
+                                        <p class="text-xs text-center py-2 text-dark-text-tertiary">
                                             Belum ada dokumen
                                         </p>
                                     @endif
@@ -462,7 +447,7 @@
                     <!-- Arrow to next -->
                     @if(!$loop->last)
                         <div class="flex justify-center my-2">
-                            <i class="fas fa-arrow-down text-2xl" style="color: rgba(235, 235, 245, 0.3);"></i>
+                            <i class="fas fa-arrow-down text-2xl text-dark-text-tertiary/50"></i>
                         </div>
                     @endif
                 </div>
@@ -471,7 +456,7 @@
             {{-- Arrow to Goal Permit --}}
             @if($goalPermit && $nonGoalPermits->count() > 0)
                 <div class="flex justify-center my-2">
-                    <i class="fas fa-arrow-down text-2xl" style="color: rgba(235, 235, 245, 0.3);"></i>
+                    <i class="fas fa-arrow-down text-2xl text-dark-text-tertiary/50"></i>
                 </div>
             @endif
 
@@ -490,20 +475,17 @@
                      data-end-date="{{ $permit->end_date?->format('Y-m-d') ?? '' }}"
                      data-notes="{{ $permit->notes ?? '' }}">
                     <!-- Goal Permit Card (dengan ring blue) -->
-                    <div class="permit-card p-2 rounded-lg ring-2 ring-blue-500" 
-                         style="background: rgba(58, 58, 60, 0.5); transition: all 0.2s ease;">
+                    <div class="permit-card p-2 rounded-lg ring-2 ring-blue-500 bg-[rgba(58,58,60,0.5)] transition-all duration-200">
                         
                         <div class="flex items-start gap-2">
                             <!-- Lock Icon (instead of drag handle) -->
-                            <div class="flex-shrink-0 opacity-30" 
-                                 style="color: rgba(235, 235, 245, 0.6);" 
+                            <div class="flex-shrink-0 opacity-30 text-dark-text-secondary" 
                                  title="Goal permit tidak dapat dipindahkan">
                                 <i class="fas fa-lock text-base"></i>
                             </div>
                             
                             <!-- Goal Badge -->
-                            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" 
-                                 style="background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-apple-blue/30 text-apple-blue">
                                 <i class="fas fa-flag"></i>
                             </div>
 
@@ -511,14 +493,13 @@
                                 <!-- Permit Header -->
                                 <div class="flex items-start justify-between mb-1">
                                     <div class="flex-1 min-w-0">
-                                        <h5 class="text-sm font-semibold truncate" style="color: #FFFFFF;">
+                                        <h5 class="text-sm font-semibold truncate text-white">
                                             {{ $permit->permitType->name }}
-                                            <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full" 
-                                                  style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
+                                            <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-apple-blue/20 text-apple-blue">
                                                 <i class="fas fa-flag mr-1"></i>TUJUAN
                                             </span>
                                         </h5>
-                                        <p class="text-xs mt-0.5 truncate" style="color: rgba(235, 235, 245, 0.6);">
+                                        <p class="text-xs mt-0.5 truncate text-dark-text-secondary">
                                             {{ $permit->institutionName }}
                                         </p>
                                     </div>
@@ -560,24 +541,21 @@
                                         <!-- Actions -->
                                         <div class="flex gap-0.5">
                                             <button onclick="event.stopPropagation(); showManageDependenciesModal({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors"
-                                                    style="color: rgba(175, 82, 222, 1);" 
+                                                    class="p-1.5 rounded transition-colors text-[rgba(175,82,222,1)]"
                                                     onmouseover="this.style.background='rgba(175, 82, 222, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Kelola Dependensi">
                                                 <i class="fas fa-project-diagram text-xs"></i>
                                             </button>
                                             <button onclick="event.stopPropagation(); updatePermitStatus({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors"
-                                                    style="color: rgba(10, 132, 255, 1);" 
+                                                    class="p-1.5 rounded transition-colors text-apple-blue"
                                                     onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Update Status">
                                                 <i class="fas fa-edit text-xs"></i>
                                             </button>
                                             <button onclick="event.stopPropagation(); deletePermit({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors"
-                                                    style="color: rgba(255, 59, 48, 1);" 
+                                                    class="p-1.5 rounded transition-colors text-apple-red"
                                                     onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Hapus Izin">
@@ -663,14 +641,12 @@
                                 <!-- Can Start Check -->
                                 @if(strtolower($permit->status) === 'not_started')
                                     @if($permit->canStart())
-                                        <div class="mt-2 p-1.5 rounded-lg text-xs" 
-                                             style="background: rgba(52, 199, 89, 0.1); color: rgba(52, 199, 89, 1);">
+                                        <div class="mt-2 p-1.5 rounded-lg text-xs bg-apple-green/10 text-apple-green">
                                             <i class="fas fa-check-circle mr-1"></i>
                                             Siap dimulai - Semua prasyarat terpenuhi
                                         </div>
                                     @else
-                                        <div class="mt-2 p-1.5 rounded-lg text-xs" 
-                                             style="background: rgba(255, 59, 48, 0.1); color: rgba(255, 59, 48, 1);">
+                                        <div class="mt-2 p-1.5 rounded-lg text-xs bg-apple-red/10 text-apple-red">
                                             <i class="fas fa-lock mr-1"></i>
                                             Menunggu prasyarat: 
                                             @foreach($permit->getBlockers() as $blocker)
@@ -682,8 +658,8 @@
 
                                 <!-- Dependencies -->
                                 @if($permit->dependencies->count() > 0)
-                                    <div class="mt-2 pt-2" style="border-top: 1px solid rgba(58, 58, 60, 0.8);">
-                                        <p class="text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.6);">
+                                    <div class="mt-2 pt-2 border-t border-white/10">
+                                        <p class="text-xs font-semibold mb-1.5 text-dark-text-secondary">
                                             <i class="fas fa-link mr-1"></i>PRASYARAT:
                                         </p>
                                         <div class="flex flex-wrap gap-1.5">
@@ -714,16 +690,16 @@
                                     <div class="mt-2 grid grid-cols-2 gap-3 text-xs">
                                         @if($permit->start_date)
                                             <div>
-                                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Mulai:</p>
-                                                <p style="color: rgba(235, 235, 245, 0.8);">
+                                                <p class="text-xs text-dark-text-secondary">Mulai:</p>
+                                                <p class="text-dark-text-primary/80">
                                                     {{ $permit->start_date->format('d M Y') }}
                                                 </p>
                                             </div>
                                         @endif
                                         @if($permit->end_date)
                                             <div>
-                                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Selesai:</p>
-                                                <p style="color: rgba(235, 235, 245, 0.8);">
+                                                <p class="text-xs text-dark-text-secondary">Selesai:</p>
+                                                <p class="text-dark-text-primary/80">
                                                     {{ $permit->end_date->format('d M Y') }}
                                                 </p>
                                             </div>
@@ -733,23 +709,22 @@
 
                                 <!-- Notes -->
                                 @if($permit->notes)
-                                    <div class="mt-2 p-2 rounded-lg text-xs" style="background: rgba(58, 58, 60, 0.5);">
-                                        <p class="text-xs font-semibold mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                                    <div class="mt-2 p-2 rounded-lg text-xs bg-[rgba(58,58,60,0.5)]">
+                                        <p class="text-xs font-semibold mb-1 text-dark-text-secondary">
                                             <i class="fas fa-sticky-note mr-1"></i>Catatan:
                                         </p>
-                                        <p style="color: rgba(235, 235, 245, 0.8);">{{ $permit->notes }}</p>
+                                        <p class="text-dark-text-primary/80">{{ $permit->notes }}</p>
                                     </div>
                                 @endif
 
                                 <!-- Documents Section -->
-                                <div class="mt-2 pt-2" style="border-top: 1px solid rgba(58, 58, 60, 0.8);">
+                                <div class="mt-2 pt-2 border-t border-white/10">
                                     <div class="flex items-center justify-between mb-1.5">
-                                        <p class="text-xs font-semibold" style="color: rgba(235, 235, 245, 0.6);">
+                                        <p class="text-xs font-semibold text-dark-text-secondary">
                                             <i class="fas fa-paperclip mr-1"></i>DOKUMEN ({{ $permit->documents->count() }})
                                         </p>
                                         <button onclick="event.stopPropagation(); showUploadModal({{ $permit->id }})" 
-                                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all"
-                                                style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);"
+                                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all bg-apple-blue/20 text-apple-blue"
                                                 onmouseover="this.style.background='rgba(10, 132, 255, 0.3)'"
                                                 onmouseout="this.style.background='rgba(10, 132, 255, 0.2)'"
                                                 title="Upload Dokumen">
@@ -760,36 +735,33 @@
                                     @if($permit->documents->count() > 0)
                                         <div class="space-y-1.5">
                                             @foreach($permit->documents as $doc)
-                                                <div class="flex items-center justify-between p-2 rounded-lg group" 
-                                                     style="background: rgba(58, 58, 60, 0.5);">
+                                                <div class="flex items-center justify-between p-2 rounded-lg group bg-[rgba(58,58,60,0.5)]">
                                                     <div class="flex items-center gap-2 flex-1 min-w-0">
                                                         <i class="fas {{ 
                                                             str_contains($doc->file_type, 'pdf') ? 'fa-file-pdf' : 
                                                             (str_contains($doc->file_type, 'image') ? 'fa-file-image' : 
                                                             (str_contains($doc->file_type, 'word') || str_contains($doc->file_type, 'document') ? 'fa-file-word' : 
                                                             'fa-file')) 
-                                                        }}" style="color: rgba(10, 132, 255, 1);"></i>
+                                                        }} text-apple-blue"></i>
                                                         <div class="flex-1 min-w-0">
-                                                            <p class="text-xs truncate" style="color: rgba(235, 235, 245, 0.9);">
+                                                            <p class="text-xs truncate text-dark-text-primary/90">
                                                                 {{ $doc->original_filename }}
                                                             </p>
-                                                            <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
-                                                                {{ $doc->file_size_formatted }} • {{ $doc->created_at->format('d M Y H:i') }}
+                                                            <p class="text-xs text-dark-text-tertiary">
+                                                                {{ $doc->file_size_formatted }} &bull; {{ $doc->created_at->format('d M Y H:i') }}
                                                             </p>
                                                         </div>
                                                     </div>
                                                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <a href="{{ route('permits.documents.download', ['project' => $project->id, 'document' => $doc->id]) }}" 
-                                                           class="p-2 rounded transition-colors"
-                                                           style="color: rgba(10, 132, 255, 1);"
+                                                           class="p-2 rounded transition-colors text-apple-blue"
                                                            onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
                                                            onmouseout="this.style.background='transparent'"
                                                            title="Download">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                         <button onclick="event.stopPropagation(); deleteDocument({{ $doc->id }})" 
-                                                                class="p-2 rounded transition-colors"
-                                                                style="color: rgba(255, 59, 48, 1);"
+                                                                class="p-2 rounded transition-colors text-apple-red"
                                                                 onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
                                                                 onmouseout="this.style.background='transparent'"
                                                                 title="Hapus">
@@ -800,7 +772,7 @@
                                             @endforeach
                                         </div>
                                     @else
-                                        <p class="text-xs text-center py-2" style="color: rgba(235, 235, 245, 0.5);">
+                                        <p class="text-xs text-center py-2 text-dark-text-tertiary">
                                             Belum ada dokumen
                                         </p>
                                     @endif
@@ -814,20 +786,18 @@
     @else
         <!-- Empty State -->
         <div class="text-center py-12">
-            <i class="fas fa-certificate text-6xl mb-4" style="color: rgba(235, 235, 245, 0.3);"></i>
-            <h4 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Izin</h4>
-            <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">
+            <i class="fas fa-certificate text-6xl mb-4 text-dark-text-tertiary/50"></i>
+            <h4 class="text-xl font-semibold mb-2 text-white">Belum Ada Izin</h4>
+            <p class="mb-6 text-dark-text-secondary">
                 Tambahkan izin yang diperlukan untuk proyek ini
             </p>
             <div class="flex justify-center gap-4">
                 <button onclick="event.stopPropagation(); showTemplateModal()" 
-                        class="px-6 py-3 rounded-lg font-medium transition-colors" 
-                        style="background: rgba(255, 149, 0, 0.2); color: rgba(255, 149, 0, 1);">
+                        class="px-6 py-3 rounded-lg font-medium transition-colors bg-apple-orange/20 text-apple-orange">
                     <i class="fas fa-layer-group mr-2"></i>Gunakan Template
                 </button>
                 <button onclick="event.stopPropagation(); showAddPermitModal()" 
-                        class="px-6 py-3 rounded-lg font-medium transition-colors" 
-                        style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+                        class="px-6 py-3 rounded-lg font-medium transition-colors bg-apple-blue/90 text-white">
                     <i class="fas fa-plus mr-2"></i>Tambah Izin Manual
                 </button>
             </div>
@@ -1117,13 +1087,13 @@
 
 <!-- Upload Document Modal -->
 <div id="upload-document-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center" style="display: none;">
-    <div class="rounded-lg shadow-xl max-w-lg w-full mx-4" style="background: rgba(30, 30, 30, 1);">
-        <div class="sticky top-0 px-6 py-4" style="background: rgba(30, 30, 30, 1); border-bottom: 1px solid rgba(58, 58, 60, 1);">
+    <div class="rounded-lg shadow-xl max-w-lg w-full mx-4 bg-[#1e1e1e]">
+        <div class="sticky top-0 px-6 py-4 bg-[#1e1e1e] border-b border-[rgba(58,58,60,1)]">
             <div class="flex items-center justify-between">
-                <h3 class="text-xl font-semibold" style="color: #FFFFFF;">
+                <h3 class="text-xl font-semibold text-white">
                     <i class="fas fa-upload mr-2"></i>Upload Dokumen
                 </h3>
-                <button onclick="closeUploadModal()" style="color: rgba(142, 142, 147, 1);" 
+                <button onclick="closeUploadModal()" class="text-[rgba(142,142,147,1)] hover:text-white"
                         onmouseover="this.style.color='rgba(255, 255, 255, 1)'"
                         onmouseout="this.style.color='rgba(142, 142, 147, 1)'">
                     <i class="fas fa-times text-xl"></i>
@@ -1136,20 +1106,19 @@
             
             <div class="space-y-4">
                 <!-- Permit Info -->
-                <div class="p-4 rounded-lg" style="background: rgba(58, 58, 60, 0.5);">
+                <div class="p-4 rounded-lg bg-[rgba(58,58,60,0.5)]">
                     <div class="flex items-center">
-                        <span id="upload-permit-sequence" class="inline-flex items-center justify-center w-8 h-8 rounded-full font-semibold mr-3" 
-                              style="background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);"></span>
+                        <span id="upload-permit-sequence" class="inline-flex items-center justify-center w-8 h-8 rounded-full font-semibold mr-3 bg-apple-blue/30 text-apple-blue"></span>
                         <div>
-                            <div id="upload-permit-name" class="font-medium" style="color: #FFFFFF;"></div>
-                            <div class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Upload dokumen pendukung</div>
+                            <div id="upload-permit-name" class="font-medium text-white"></div>
+                            <div class="text-sm text-dark-text-secondary">Upload dokumen pendukung</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- File Input -->
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Pilih File
                     </label>
                     <input type="file" 
@@ -1157,39 +1126,35 @@
                            name="document"
                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                            required
-                           class="w-full px-4 py-2 rounded-lg border text-sm"
-                           style="background: rgba(58, 58, 60, 1); border-color: rgba(99, 99, 102, 1); color: #FFFFFF;">
-                    <p class="text-xs mt-2" style="color: rgba(235, 235, 245, 0.5);">
+                           class="w-full px-4 py-2 rounded-lg border text-sm bg-[rgba(58,58,60,1)] border-[rgba(99,99,102,1)] text-white">
+                    <p class="text-xs mt-2 text-dark-text-tertiary">
                         Format: PDF, DOC, DOCX, JPG, PNG (Max: 5MB)
                     </p>
                 </div>
 
                 <!-- Description -->
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Deskripsi (Opsional)
                     </label>
                     <textarea id="document-description" 
                               name="description"
                               rows="3"
-                              class="w-full px-4 py-2 rounded-lg border text-sm"
-                              style="background: rgba(58, 58, 60, 1); border-color: rgba(99, 99, 102, 1); color: #FFFFFF;"
+                              class="w-full px-4 py-2 rounded-lg border text-sm bg-[rgba(58,58,60,1)] border-[rgba(99,99,102,1)] text-white"
                               placeholder="Keterangan tentang dokumen ini..."></textarea>
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3 mt-6 pt-4" style="border-top: 1px solid rgba(58, 58, 60, 1);">
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-[rgba(58,58,60,1)]">
                 <button type="button" 
                         onclick="closeUploadModal()"
-                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors"
-                        style="background: rgba(58, 58, 60, 1); color: rgba(235, 235, 245, 0.8);"
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors bg-[rgba(58,58,60,1)] text-dark-text-primary/80"
                         onmouseover="this.style.background='rgba(72, 72, 74, 1)'"
                         onmouseout="this.style.background='rgba(58, 58, 60, 1)'">
                     Batal
                 </button>
                 <button type="submit" 
-                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors"
-                        style="background: rgba(10, 132, 255, 1); color: #FFFFFF;"
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors bg-apple-blue text-white"
                         onmouseover="this.style.background='rgba(0, 122, 255, 1)'"
                         onmouseout="this.style.background='rgba(10, 132, 255, 1)'">
                     <i class="fas fa-upload mr-2"></i>Upload
@@ -1201,24 +1166,20 @@
 
 <!-- Manage Dependencies Modal -->
 <div id="manage-dependencies-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" style="display: none;">
-    <div class="rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" 
-         style="background: #1C1C1E;">
-        <div class="sticky top-0 border-b px-4 py-3" 
-             style="background: #1C1C1E; border-color: rgba(58, 58, 60, 0.8);">
+    <div class="rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto bg-[#1C1C1E]">
+        <div class="sticky top-0 border-b px-4 py-3 bg-[#1C1C1E] border-[rgba(58,58,60,0.8)]">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <h3 class="text-lg font-semibold" style="color: #FFFFFF;">
-                        <i class="fas fa-project-diagram mr-2" style="color: rgba(10, 132, 255, 1);"></i>
+                    <h3 class="text-lg font-semibold text-white">
+                        <i class="fas fa-project-diagram mr-2 text-apple-blue"></i>
                         Kelola Dependensi Izin
                     </h3>
-                    <span id="dep-count-badge" class="px-2 py-0.5 text-xs font-semibold rounded-full" 
-                          style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1); display: none;">
+                    <span id="dep-count-badge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-apple-blue/20 text-apple-blue" style="display: none;">
                         0 Prasyarat
                     </span>
                 </div>
                 <button onclick="event.stopPropagation(); closeManageDependenciesModal()" 
-                        class="p-1.5 rounded-lg transition-colors" 
-                        style="color: rgba(235, 235, 245, 0.6);" 
+                        class="p-1.5 rounded-lg transition-colors text-dark-text-secondary"
                         onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'; this.style.color='rgba(255, 59, 48, 1)'"
                         onmouseout="this.style.background='transparent'; this.style.color='rgba(235, 235, 245, 0.6)'">
                     <i class="fas fa-times text-lg"></i>
@@ -1231,13 +1192,12 @@
             
             <div class="space-y-3">
                 <!-- Current Permit Info -->
-                <div id="dep-permit-info" class="rounded-lg p-3" style="background: rgba(58, 58, 60, 0.5);">
+                <div id="dep-permit-info" class="rounded-lg p-3 bg-[rgba(58,58,60,0.5)]">
                     <div class="flex items-center gap-2">
-                        <span id="dep-permit-sequence" class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold" 
-                              style="background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);"></span>
+                        <span id="dep-permit-sequence" class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-apple-blue/30 text-apple-blue"></span>
                         <div class="flex-1 min-w-0">
-                            <div id="dep-permit-name" class="text-sm font-semibold truncate" style="color: #FFFFFF;"></div>
-                            <div class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.6);">
+                            <div id="dep-permit-name" class="text-sm font-semibold truncate text-white"></div>
+                            <div class="text-xs mt-0.5 text-dark-text-secondary">
                                 Tambahkan prasyarat yang harus dipenuhi sebelum izin ini dapat diproses
                             </div>
                         </div>
@@ -1245,8 +1205,8 @@
                 </div>
 
                 <!-- Current Dependencies List -->
-                <div id="current-dependencies" class="rounded-lg p-3" style="background: rgba(58, 58, 60, 0.5);">
-                    <h4 class="text-xs font-semibold mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                <div id="current-dependencies" class="rounded-lg p-3 bg-[rgba(58,58,60,0.5)]">
+                    <h4 class="text-xs font-semibold mb-2 text-dark-text-primary/80">
                         <i class="fas fa-link mr-1"></i>PRASYARAT YANG ADA:
                     </h4>
                     <div id="dependencies-list" class="space-y-1.5">
@@ -1255,20 +1215,19 @@
                 </div>
 
                 <!-- Add New Dependency -->
-                <div class="rounded-lg p-3" style="background: rgba(10, 132, 255, 0.1); border: 1px solid rgba(10, 132, 255, 0.3);">
-                    <h4 class="text-xs font-semibold mb-2" style="color: rgba(10, 132, 255, 1);">
+                <div class="rounded-lg p-3 bg-apple-blue/10 border border-apple-blue/30">
+                    <h4 class="text-xs font-semibold mb-2 text-apple-blue">
                         <i class="fas fa-plus mr-1"></i>TAMBAH PRASYARAT BARU:
                     </h4>
                     
                     <div class="grid grid-cols-3 gap-2">
                         <!-- Select Permit -->
                         <div class="col-span-2">
-                            <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.8);">
-                                Izin Prasyarat <span style="color: rgba(255, 59, 48, 1);">*</span>
+                            <label class="block text-xs font-medium mb-1.5 text-dark-text-primary/80">
+                                Izin Prasyarat <span class="text-apple-red">*</span>
                             </label>
                             <select name="depends_on_permit_id" id="dep-select" required 
-                                    class="w-full rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2" 
-                                    style="background: rgba(58, 58, 60, 0.8); border: 1px solid rgba(84, 84, 88, 0.65); color: #FFFFFF; focus:ring-color: rgba(10, 132, 255, 0.5);">
+                                    class="w-full rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 bg-[rgba(58,58,60,0.8)] border border-[rgba(84,84,88,0.65)] text-white focus:ring-[rgba(10,132,255,0.5)]">
                                 <option value="">-- Pilih Izin --</option>
                                 <!-- Will be populated by JavaScript -->
                             </select>
@@ -1276,20 +1235,19 @@
                         
                         <!-- Dependency Type -->
                         <div>
-                            <label class="block text-xs font-medium mb-1.5" style="color: rgba(235, 235, 245, 0.8);">
-                                Jenis <span style="color: rgba(255, 59, 48, 1);">*</span>
+                            <label class="block text-xs font-medium mb-1.5 text-dark-text-primary/80">
+                                Jenis <span class="text-apple-red">*</span>
                             </label>
                             <select name="can_proceed_without" required 
-                                    class="w-full rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2" 
-                                    style="background: rgba(58, 58, 60, 0.8); border: 1px solid rgba(84, 84, 88, 0.65); color: #FFFFFF;">
+                                    class="w-full rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 bg-[rgba(58,58,60,0.8)] border border-[rgba(84,84,88,0.65)] text-white">
                                 <option value="0">Wajib</option>
                                 <option value="1">Opsional</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="mt-2 p-2 rounded text-xs" style="background: rgba(10, 132, 255, 0.05); color: rgba(235, 235, 245, 0.7);">
-                        <i class="fas fa-info-circle mr-1" style="color: rgba(10, 132, 255, 1);"></i>
+                    <div class="mt-2 p-2 rounded text-xs bg-[rgba(10,132,255,0.05)] text-dark-text-secondary">
+                        <i class="fas fa-info-circle mr-1 text-apple-blue"></i>
                         <strong>Wajib:</strong> Prasyarat harus selesai. <strong>Opsional:</strong> Direkomendasikan tapi bisa dilewati.
                     </div>
                 </div>
@@ -1298,15 +1256,13 @@
             <!-- Action Buttons -->
             <div class="flex gap-2 mt-4">
                 <button type="button" onclick="event.stopPropagation(); closeManageDependenciesModal()" 
-                        class="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all" 
-                        style="background: rgba(142, 142, 147, 0.3); color: rgba(235, 235, 245, 0.9);" 
+                        class="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all bg-[rgba(142,142,147,0.3)] text-dark-text-primary/90"
                         onmouseover="this.style.background='rgba(142, 142, 147, 0.4)'"
                         onmouseout="this.style.background='rgba(142, 142, 147, 0.3)'">
                     <i class="fas fa-times mr-1"></i>Tutup
                 </button>
                 <button type="submit" 
-                        class="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all" 
-                        style="background: rgba(10, 132, 255, 1); color: #FFFFFF;" 
+                        class="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all bg-apple-blue text-white"
                         onmouseover="this.style.background='rgba(10, 132, 255, 0.8)'"
                         onmouseout="this.style.background='rgba(10, 132, 255, 1)'">
                     <i class="fas fa-plus mr-1"></i>Tambah Prasyarat
@@ -1792,7 +1748,7 @@ function initializePermitsSortable() {
                 new Sortable(sortableContainer, {
                     animation: 200,
                     handle: '.drag-handle',
-                    draggable: '[data-permit-id]', // FIX #1: Only permit cards draggable (not h4, arrows)
+                    draggable: '[data-permit-id]',
                     ghostClass: 'sortable-ghost',
                     chosenClass: 'sortable-chosen',
                     dragClass: 'sortable-drag',
@@ -1806,7 +1762,7 @@ function initializePermitsSortable() {
                         items.forEach((item, index) => {
                             const permitId = item.dataset.permitId;
                             newOrder.push({
-                                id: parseInt(permitId),  // FIX: Backend expects 'id' not 'permit_id'
+                                id: parseInt(permitId),
                                 sequence_order: index + 1
                             });
                         });

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\InternalLinkService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class SeoBacklinkScanCommand extends Command
 {
@@ -14,26 +15,27 @@ class SeoBacklinkScanCommand extends Command
     public function handle(InternalLinkService $linkService): int
     {
         try {
-        $limit = (int) $this->option('limit');
+            $limit = (int) $this->option('limit');
 
-        $this->info("🔗 Starting backlink scan (limit: {$limit})...");
+            $this->info("🔗 Starting backlink scan (limit: {$limit})...");
 
-        $stats = $linkService->batchBacklinkScan($limit);
+            $stats = $linkService->batchBacklinkScan($limit);
 
-        $this->info("✅ Backlink scan complete:");
-        $this->table(
-            ['Metric', 'Value'],
-            [
-                ['Articles Scanned', $stats['scanned']],
-                ['Articles Updated', $stats['updated']],
-                ['Links Injected', $stats['links_injected']],
-            ]
-        );
+            $this->info('✅ Backlink scan complete:');
+            $this->table(
+                ['Metric', 'Value'],
+                [
+                    ['Articles Scanned', $stats['scanned']],
+                    ['Articles Updated', $stats['updated']],
+                    ['Links Injected', $stats['links_injected']],
+                ]
+            );
 
-        return Command::SUCCESS;
+            return Command::SUCCESS;
         } catch (\Exception $e) {
-            \Log::error('Backlink scan failed: ' . $e->getMessage());
-            $this->error('Scan failed: ' . $e->getMessage());
+            Log::error('Backlink scan failed: '.$e->getMessage());
+            $this->error('Scan failed: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }

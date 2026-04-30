@@ -16,7 +16,7 @@ class CostFormatter
     public static function format(float $value): string
     {
         if ($value >= 1_000_000_000) {
-            return 'Rp ' . number_format($value / 1_000_000_000, 1, ',', '.') . 'M';
+            return 'Rp '.number_format($value / 1_000_000_000, 1, ',', '.').'M';
         }
 
         if ($value >= 1_000_000) {
@@ -24,15 +24,15 @@ class CostFormatter
             // Strip trailing ,0 → "3,0 Juta" => "3 Juta"
             $formatted = rtrim(rtrim($formatted, '0'), ',');
 
-            return 'Rp ' . $formatted . ' Juta';
+            return 'Rp '.$formatted.' Juta';
         }
 
         if ($value >= 1000) {
-            return 'Rp ' . number_format($value / 1000, 0, ',', '.') . 'rb';
+            return 'Rp '.number_format($value / 1000, 0, ',', '.').'rb';
         }
 
         if ($value > 0) {
-            return 'Rp ' . number_format($value, 0, ',', '.');
+            return 'Rp '.number_format($value, 0, ',', '.');
         }
 
         return 'Rp 0';
@@ -48,6 +48,6 @@ class CostFormatter
             return self::format($min);
         }
 
-        return self::format($min) . ' - ' . self::format($max);
+        return self::format($min).' - '.self::format($max);
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 abstract class ModuleServiceProvider extends ServiceProvider
 {
     protected string $moduleName = '';
+
     protected string $moduleNamespace = '';
 
     public function register(): void
@@ -44,6 +45,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
     protected function getModulePath(string $path = ''): string
     {
         $base = dirname((new \ReflectionClass(static::class))->getFileName(), 2);
-        return $path ? $base . '/' . $path : $base;
+
+        return $path ? $base.'/'.$path : $base;
     }
 }

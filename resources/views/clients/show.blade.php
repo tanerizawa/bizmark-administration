@@ -11,8 +11,8 @@
                 <i class="fas fa-arrow-left text-lg"></i>
             </a>
             <div>
-                <h1 class="text-2xl font-semibold" style="color: #FFFFFF;">{{ $client->name }}</h1>
-                <div class="flex items-center space-x-3 text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">
+                <h1 class="text-2xl font-semibold text-white">{{ $client->name }}</h1>
+                <div class="flex items-center space-x-3 text-xs mt-1 text-dark-text-secondary">
                     <span class="flex items-center">
                         <i class="fas fa-calendar-alt mr-1.5"></i>{{ $client->created_at->format('d M Y') }}
                     </span>
@@ -23,9 +23,8 @@
             </div>
         </div>
         <div class="flex space-x-2">
-            <a href="{{ route('clients.edit', $client) }}" 
-               class="px-3 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center" 
-               style="background: rgba(255, 149, 0, 0.9); color: #FFFFFF;">
+            <a href="{{ route('clients.edit', $client) }}"
+               class="px-3 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center bg-apple-orange/90 text-white">
                 <i class="fas fa-edit mr-1.5"></i>Edit
             </a>
         </div>
@@ -39,8 +38,8 @@
                     <i class="fas fa-briefcase text-white text-base"></i>
                 </div>
                 <div class="ml-3">
-                    <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Total Proyek</p>
-                    <h3 class="text-xl font-semibold" style="color: #FFFFFF;">{{ $client->projects->count() }}</h3>
+                    <p class="text-xs text-dark-text-secondary">Total Proyek</p>
+                    <h3 class="text-xl font-semibold text-white">{{ $client->projects->count() }}</h3>
                 </div>
             </div>
         </div>
@@ -51,8 +50,8 @@
                     <i class="fas fa-tasks text-white text-base"></i>
                 </div>
                 <div class="ml-3">
-                    <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Proyek Aktif</p>
-                    <h3 class="text-xl font-semibold" style="color: #FFFFFF;">{{ $client->activeProjectsCount() }}</h3>
+                    <p class="text-xs text-dark-text-secondary">Proyek Aktif</p>
+                    <h3 class="text-xl font-semibold text-white">{{ $client->activeProjectsCount() }}</h3>
                 </div>
             </div>
         </div>
@@ -63,8 +62,8 @@
                     <i class="fas fa-money-bill-wave text-white text-base"></i>
                 </div>
                 <div class="ml-3">
-                    <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Total Nilai</p>
-                    <h3 class="text-sm font-semibold" style="color: #FFFFFF;">Rp {{ number_format($client->totalProjectValue ?? 0, 0, ',', '.') }}</h3>
+                    <p class="text-xs text-dark-text-secondary">Total Nilai</p>
+                    <h3 class="text-sm font-semibold text-white">Rp {{ number_format($client->totalProjectValue ?? 0, 0, ',', '.') }}</h3>
                 </div>
             </div>
         </div>
@@ -75,8 +74,8 @@
                     <i class="fas fa-check-circle text-white text-base"></i>
                 </div>
                 <div class="ml-3">
-                    <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Total Dibayar</p>
-                    <h3 class="text-sm font-semibold" style="color: #FFFFFF;">Rp {{ number_format($client->totalPaid ?? 0, 0, ',', '.') }}</h3>
+                    <p class="text-xs text-dark-text-secondary">Total Dibayar</p>
+                    <h3 class="text-sm font-semibold text-white">Rp {{ number_format($client->totalPaid ?? 0, 0, ',', '.') }}</h3>
                 </div>
             </div>
         </div>
@@ -85,53 +84,53 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
         <!-- Client Information -->
         <div class="card-elevated rounded-apple-lg">
-            <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+            <div class="px-4 py-2.5 border-b border-white/10">
+                <h3 class="text-sm font-semibold flex items-center text-white">
                     <i class="fas fa-info-circle mr-2 text-apple-blue"></i>Informasi Klien
                 </h3>
             </div>
             <div class="p-4 space-y-3">
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Nama Klien</label>
                     <p class="text-sm text-dark-text-primary">{{ $client->name }}</p>
                 </div>
 
                 @if($client->company_name)
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Nama Perusahaan</label>
                     <p class="text-sm text-dark-text-primary">{{ $client->company_name }}</p>
                 </div>
                 @endif
 
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Tipe Klien</label>
                     <p class="text-sm">
                         @if($client->client_type == 'individual')
-                            <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(90, 200, 250, 0.15); color: var(--apple-teal);">Individual</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-teal/15 text-apple-teal">Individual</span>
                         @elseif($client->client_type == 'company')
-                            <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(0, 122, 255, 0.15); color: var(--apple-blue);">Perusahaan</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-blue/15 text-apple-blue">Perusahaan</span>
                         @else
-                            <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(175, 82, 222, 0.15); color: var(--apple-purple);">Pemerintah</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-purple/15 text-apple-purple">Pemerintah</span>
                         @endif
                     </p>
                 </div>
 
                 @if($client->industry)
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Industri</label>
                     <p class="text-sm text-dark-text-primary">{{ $client->industry }}</p>
                 </div>
                 @endif
 
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Status</label>
                     <p class="text-sm">
                         @if($client->status == 'active')
-                            <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(52, 199, 89, 0.15); color: var(--apple-green);">Aktif</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-green/15 text-apple-green">Aktif</span>
                         @elseif($client->status == 'inactive')
-                            <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(255, 59, 48, 0.15); color: var(--apple-red);">Tidak Aktif</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-red/15 text-apple-red">Tidak Aktif</span>
                         @else
-                            <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(255, 149, 0, 0.15); color: var(--apple-orange);">Potensial</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-orange/15 text-apple-orange">Potensial</span>
                         @endif
                     </p>
                 </div>
@@ -140,21 +139,21 @@
 
         <!-- Contact Information -->
         <div class="card-elevated rounded-apple-lg">
-            <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+            <div class="px-4 py-2.5 border-b border-white/10">
+                <h3 class="text-sm font-semibold flex items-center text-white">
                     <i class="fas fa-address-book mr-2 text-apple-green"></i>Informasi Kontak
                 </h3>
             </div>
             <div class="p-4 space-y-3">
                 @if($client->contact_person)
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Contact Person</label>
                     <p class="text-sm text-dark-text-primary">{{ $client->contact_person }}</p>
                 </div>
                 @endif
 
                 @if($client->email)
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Email</label>
                     <p class="text-sm text-dark-text-primary flex items-center">
                         <i class="fas fa-envelope mr-2 text-apple-blue"></i>
@@ -164,7 +163,7 @@
                 @endif
 
                 @if($client->phone)
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Telepon</label>
                     <p class="text-sm text-dark-text-primary flex items-center">
                         <i class="fas fa-phone mr-2 text-apple-blue"></i>
@@ -174,16 +173,13 @@
                 @endif
 
                 @if($client->mobile)
-                <div class="info-group">
+                <div class="pb-3 border-b border-white/10 last:border-b-0 last:pb-0">
                     <label class="text-xs font-medium text-dark-text-secondary block mb-1">Handphone / WhatsApp</label>
                     <p class="text-sm flex items-center space-x-2">
                         <i class="fab fa-whatsapp text-apple-green"></i>
                         <a href="tel:{{ $client->mobile }}" class="text-apple-blue hover:underline">{{ $client->mobile }}</a>
                         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $client->mobile) }}" target="_blank" 
-                           class="inline-flex items-center px-2 py-1 rounded-apple text-xs font-medium transition-apple" 
-                           style="background-color: rgba(52, 199, 89, 0.15); color: var(--apple-green); border: 1px solid rgba(52, 199, 89, 0.3);"
-                           onmouseover="this.style.backgroundColor='rgba(52, 199, 89, 0.25)'" 
-                           onmouseout="this.style.backgroundColor='rgba(52, 199, 89, 0.15)'">
+                           class="inline-flex items-center px-2 py-1 rounded-apple text-xs font-medium transition-apple bg-apple-green/15 text-apple-green border border-apple-green/30 hover:bg-apple-green/25">
                             <i class="fab fa-whatsapp mr-1"></i>Chat
                         </a>
                     </p>
@@ -200,9 +196,9 @@
     <!-- Projects List -->
     @if($client->projects->count() > 0)
     <div class="card-elevated rounded-apple-lg">
-        <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
+        <div class="px-4 py-2.5 border-b border-white/10">
             <div class="flex justify-between items-center">
-                <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+                <h3 class="text-sm font-semibold flex items-center text-white">
                     <i class="fas fa-folder mr-2 text-apple-orange"></i>Daftar Proyek ({{ $client->projects->count() }})
                 </h3>
                 <a href="{{ route('projects.create', ['client_id' => $client->id]) }}" class="btn-primary px-3 py-1.5 text-white rounded-lg text-xs font-medium inline-flex items-center">
@@ -211,23 +207,23 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y" style="border-color: rgba(84, 84, 88, 0.65);">
-                <thead style="background-color: var(--dark-bg-secondary);">
+            <table class="min-w-full divide-y divide-white/10">
+                <thead class="bg-dark-bg-secondary">
                     <tr>
-                        <th scope="col" class="px-4 py-2.5 text-left text-xs font-medium uppercase" style="color: rgba(235, 235, 245, 0.6);">Nama Proyek</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-xs font-medium uppercase" style="color: rgba(235, 235, 245, 0.6);">Status</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-xs font-medium uppercase" style="color: rgba(235, 235, 245, 0.6);">Deadline</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-xs font-medium uppercase" style="color: rgba(235, 235, 245, 0.6);">Nilai Kontrak</th>
-                        <th scope="col" class="px-4 py-2.5 text-center text-xs font-medium uppercase" style="color: rgba(235, 235, 245, 0.6);">Aksi</th>
+                        <th scope="col" class="px-4 py-2.5 text-left text-xs font-medium uppercase text-dark-text-secondary">Nama Proyek</th>
+                        <th scope="col" class="px-4 py-2.5 text-left text-xs font-medium uppercase text-dark-text-secondary">Status</th>
+                        <th scope="col" class="px-4 py-2.5 text-left text-xs font-medium uppercase text-dark-text-secondary">Deadline</th>
+                        <th scope="col" class="px-4 py-2.5 text-left text-xs font-medium uppercase text-dark-text-secondary">Nilai Kontrak</th>
+                        <th scope="col" class="px-4 py-2.5 text-center text-xs font-medium uppercase text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y" style="background-color: var(--dark-bg-secondary); border-color: rgba(84, 84, 88, 0.65);">
+                <tbody class="divide-y divide-white/10 bg-dark-bg-secondary">
                     @foreach($client->projects as $project)
-                        <tr class="hover-lift transition-apple">
+                        <tr class="hover-lift transition-apple hover:bg-dark-bg-tertiary">
                             <td class="px-4 py-3">
-                                <div class="font-medium text-sm" style="color: #FFFFFF;">{{ $project->name }}</div>
+                                <div class="font-medium text-sm text-white">{{ $project->name }}</div>
                                 @if($project->description)
-                                    <div class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.6);">{{ Str::limit($project->description, 50) }}</div>
+                                    <div class="text-xs mt-0.5 text-dark-text-secondary">{{ Str::limit($project->description, 50) }}</div>
                                 @endif
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
@@ -236,23 +232,22 @@
                                         {{ $project->status->name }}
                                     </span>
                                 @else
-                                    <span class="text-xs" style="color: rgba(235, 235, 245, 0.6);">-</span>
+                                    <span class="text-xs text-dark-text-secondary">-</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                            <td class="px-4 py-3 whitespace-nowrap text-xs text-dark-text-secondary">
                                 @if($project->deadline)
                                     {{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
                                 @else
                                     -
                                 @endif
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-xs" style="color: #FFFFFF;">
+                            <td class="px-4 py-3 whitespace-nowrap text-xs text-white">
                                 Rp {{ number_format($project->contract_value ?? 0, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-center">
-                                <a href="{{ route('projects.show', $project) }}" 
-                                   class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors" 
-                                   style="background: rgba(0, 122, 255, 0.15); color: var(--apple-blue);">
+                                <a href="{{ route('projects.show', $project) }}"
+                                   class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-apple-blue/15 text-apple-blue">
                                     <i class="fas fa-eye mr-1.5"></i>Detail
                                 </a>
                             </td>
@@ -267,31 +262,16 @@
     <!-- Notes -->
     @if($client->notes)
     <div class="card-elevated rounded-apple-lg mt-4">
-        <div class="px-4 py-2.5" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-            <h3 class="text-sm font-semibold flex items-center" style="color: #FFFFFF;">
+        <div class="px-4 py-2.5 border-b border-white/10">
+            <h3 class="text-sm font-semibold flex items-center text-white">
                 <i class="fas fa-sticky-note mr-2 text-apple-purple"></i>Catatan
             </h3>
         </div>
         <div class="p-4">
-            <p class="text-sm whitespace-pre-line" style="color: rgba(235, 235, 245, 0.8);">{{ $client->notes }}</p>
+            <p class="text-sm whitespace-pre-line text-dark-text-primary/80">{{ $client->notes }}</p>
         </div>
     </div>
     @endif
 </div>
 
-<style>
-    .info-group {
-        padding-bottom: 0.75rem;
-        border-bottom: 1px solid rgba(84, 84, 88, 0.35);
-    }
-
-    .info-group:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-
-    tbody tr:hover {
-        background-color: var(--dark-bg-tertiary) !important;
-    }
-</style>
 @endsection

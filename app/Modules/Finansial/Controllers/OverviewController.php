@@ -4,7 +4,6 @@ namespace App\Modules\Finansial\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
-use Illuminate\Support\Facades\Log;
 
 class OverviewController extends Controller
 {

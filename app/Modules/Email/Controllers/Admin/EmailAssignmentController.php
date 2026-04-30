@@ -43,7 +43,7 @@ class EmailAssignmentController extends Controller
             if ($existingAssignments > 0) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Personal email accounts can only have one user assigned'
+                    'message' => 'Personal email accounts can only have one user assigned',
                 ], 400);
             }
         }
@@ -66,7 +66,7 @@ class EmailAssignmentController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => "User {$user->name} assigned to {$emailAccount->email}",
-                'data' => $assignment->load(['user', 'emailAccount'])
+                'data' => $assignment->load(['user', 'emailAccount']),
             ], 201);
         }
 
@@ -103,7 +103,7 @@ class EmailAssignmentController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Permissions updated successfully',
-                'data' => $assignment->fresh(['user', 'emailAccount'])
+                'data' => $assignment->fresh(['user', 'emailAccount']),
             ]);
         }
 
@@ -121,11 +121,11 @@ class EmailAssignmentController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        if (!$assignment) {
+        if (! $assignment) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Assignment not found'
+                    'message' => 'Assignment not found',
                 ], 404);
             }
 
@@ -141,11 +141,11 @@ class EmailAssignmentController extends Controller
                 ->where('is_active', true)
                 ->count();
 
-            if ($primaryCount <= 1 && !$request->has('force')) {
+            if ($primaryCount <= 1 && ! $request->has('force')) {
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Cannot remove the last primary handler. Assign another primary handler first or use force=1.'
+                        'message' => 'Cannot remove the last primary handler. Assign another primary handler first or use force=1.',
                     ], 400);
                 }
 
@@ -160,13 +160,13 @@ class EmailAssignmentController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => "User {$user->name} removed from {$emailAccount->email}"
+                'message' => "User {$user->name} removed from {$emailAccount->email}",
             ]);
         }
 
         return redirect()
             ->back()
-            ->with('success', "User removed successfully");
+            ->with('success', 'User removed successfully');
     }
 
     /**
@@ -192,7 +192,7 @@ class EmailAssignmentController extends Controller
         foreach ($validated['assignments'] as $assignmentData) {
             try {
                 $user = User::find($assignmentData['user_id']);
-                
+
                 // Check if already assigned
                 $existing = EmailAssignment::where('email_account_id', $emailAccount->id)
                     ->where('user_id', $user->id)
@@ -202,8 +202,9 @@ class EmailAssignmentController extends Controller
                     $results['failed'][] = [
                         'user_id' => $user->id,
                         'email' => $user->email,
-                        'reason' => 'Already assigned'
+                        'reason' => 'Already assigned',
                     ];
+
                     continue;
                 }
 
@@ -219,27 +220,27 @@ class EmailAssignmentController extends Controller
                 $results['success'][] = [
                     'user_id' => $user->id,
                     'email' => $user->email,
-                    'role' => $assignmentData['role']
+                    'role' => $assignmentData['role'],
                 ];
 
             } catch (\Exception $e) {
                 $results['failed'][] = [
                     'user_id' => $assignmentData['user_id'] ?? null,
-                    'reason' => $e->getMessage()
+                    'reason' => $e->getMessage(),
                 ];
             }
         }
 
-        $message = count($results['success']) . ' user(s) assigned successfully';
+        $message = count($results['success']).' user(s) assigned successfully';
         if (count($results['failed']) > 0) {
-            $message .= ', ' . count($results['failed']) . ' failed';
+            $message .= ', '.count($results['failed']).' failed';
         }
 
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => $message,
-                'data' => $results
+                'data' => $results,
             ]);
         }
 
@@ -257,8 +258,8 @@ class EmailAssignmentController extends Controller
             ->with(['emailAccount'])
             ->get();
 
-        $grouped = $assignments->groupBy('role')->map(function($group) {
-            return $group->map(function($assignment) {
+        $grouped = $assignments->groupBy('role')->map(function ($group) {
+            return $group->map(function ($assignment) {
                 return [
                     'email' => $assignment->emailAccount->email,
                     'name' => $assignment->emailAccount->name,
@@ -282,7 +283,7 @@ class EmailAssignmentController extends Controller
                 'user' => $user->only(['id', 'name', 'email', 'department']),
                 'assignments' => $grouped,
                 'total' => $assignments->count(),
-            ]
+            ],
         ]);
     }
 
@@ -305,10 +306,10 @@ class EmailAssignmentController extends Controller
             ->where('user_id', $validated['to_user_id'])
             ->first();
 
-        if (!$toAssignment) {
+        if (! $toAssignment) {
             return response()->json([
                 'success' => false,
-                'message' => 'Target user is not assigned to this email account'
+                'message' => 'Target user is not assigned to this email account',
             ], 400);
         }
 
@@ -326,7 +327,7 @@ class EmailAssignmentController extends Controller
             'data' => [
                 'from' => $fromAssignment->fresh('user'),
                 'to' => $toAssignment->fresh('user'),
-            ]
+            ],
         ]);
     }
 }

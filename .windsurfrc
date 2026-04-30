@@ -1,0 +1,60 @@
+{
+  "project": {
+    "name": "BizMark.ID",
+    "description": "Laravel 12 enterprise permit consulting platform (PHP 8.2+, PostgreSQL, Redis, Vite)",
+    "language": "php"
+  },
+  "context": {
+    "ignore": [
+      "vendor/**",
+      "node_modules/**",
+      "public/build/**",
+      "public/storage/**",
+      "storage/framework/views/**",
+      "storage/framework/cache/**",
+      "storage/framework/sessions/**",
+      "storage/logs/**",
+      "storage/backups/**",
+      "storage/app/public/**",
+      "resources/data/**",
+      "composer.lock",
+      "package-lock.json",
+      "*.log",
+      "*.sql",
+      "*.sql.gz",
+      ".phpunit.result.cache",
+      "docs/archive/**",
+      "resources/views/landing/partials/legacy/head.blade.php",
+      "resources/views/landing/partials/legacy/scripts.blade.php",
+      "resources/views/tools/polygon-shp.blade.php",
+      "resources/views/admin/email-management/tabs/inbox.blade.php"
+    ],
+    "priority": [
+      "app/Http/Controllers/**",
+      "app/Models/**",
+      "app/Services/**",
+      "app/Jobs/**",
+      "app/Policies/**",
+      "app/Modules/**",
+      "app/Observers/**",
+      "app/Providers/**",
+      "routes/**",
+      "database/migrations/**",
+      "tests/**",
+      "config/*.php"
+    ]
+  },
+  "hints": {
+    "framework": "Laravel 12",
+    "db": "PostgreSQL 14",
+    "cache": "Redis 7",
+    "queue": "Redis (worker: queue:work redis)",
+    "frontend": "Vite + Tailwind CSS 4 + Alpine.js",
+    "auth_admin": "App\\Models\\User (role/permission-based, hasPermission())",
+    "auth_client": "App\\Models\\Client (separate guard: client)",
+    "observer_pattern": "#[ObservedBy] attribute on models (Laravel 10+ style)",
+    "static_data": "Use App\\Services\\StaticDataService for services_data / services_pma",
+    "test_db": "SQLite in-memory (see phpunit.xml)",
+    "modules_path": "app/Modules/{ModuleName}/Controllers|Services|Models"
+  }
+}

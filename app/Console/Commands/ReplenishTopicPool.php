@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ArticleTopic;
 use App\Services\TopicGenerationService;
 use Illuminate\Console\Command;
 
@@ -20,11 +21,12 @@ class ReplenishTopicPool extends Command
         $threshold = (int) $this->option('threshold');
         $force = $this->option('force');
 
-        $available = \App\Models\ArticleTopic::available()->count();
+        $available = ArticleTopic::available()->count();
         $this->info("📊 Current pool: {$available} available topics (threshold: {$threshold})");
 
-        if (!$force && $available >= $threshold) {
-            $this->info("✅ Pool is healthy, no replenishment needed.");
+        if (! $force && $available >= $threshold) {
+            $this->info('✅ Pool is healthy, no replenishment needed.');
+
             return 0;
         }
 
@@ -37,16 +39,17 @@ class ReplenishTopicPool extends Command
                 : $service->replenishIfNeeded($threshold);
 
             if ($created > 0) {
-                $newAvailable = \App\Models\ArticleTopic::available()->count();
+                $newAvailable = ArticleTopic::available()->count();
                 $this->info("✅ Successfully generated {$created} new topics.");
                 $this->info("📊 Pool now: {$newAvailable} available topics.");
             } else {
-                $this->warn("⚠️ No new topics were generated. AI response might have returned duplicates.");
+                $this->warn('⚠️ No new topics were generated. AI response might have returned duplicates.');
             }
 
             return 0;
         } catch (\Exception $e) {
             $this->error("❌ Failed: {$e->getMessage()}");
+
             return 1;
         }
     }

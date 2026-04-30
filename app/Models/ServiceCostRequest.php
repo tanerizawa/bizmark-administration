@@ -41,6 +41,7 @@ class ServiceCostRequest extends Model
         'quoted_price',
         'quoted_timeline',
         'quote_details',
+        'ai_quote_status',
         'quoted_at',
         'responded_at',
         'reviewed_by',
@@ -87,7 +88,7 @@ class ServiceCostRequest extends Model
     public static function generateRequestNumber(): string
     {
         do {
-            $number = 'SCR-' . strtoupper(Str::random(8));
+            $number = 'SCR-'.strtoupper(Str::random(8));
         } while (self::where('request_number', $number)->exists());
 
         return $number;
@@ -101,6 +102,7 @@ class ServiceCostRequest extends Model
         if ($this->applicant_type === 'badan') {
             return $this->company_name ?: $this->name;
         }
+
         return $this->name;
     }
 
@@ -197,10 +199,11 @@ class ServiceCostRequest extends Model
      */
     public function getFormattedBudgetAttribute(): ?string
     {
-        if (!$this->estimated_budget) {
+        if (! $this->estimated_budget) {
             return null;
         }
-        return 'Rp ' . number_format($this->estimated_budget, 0, ',', '.');
+
+        return 'Rp '.number_format($this->estimated_budget, 0, ',', '.');
     }
 
     /**
@@ -208,10 +211,11 @@ class ServiceCostRequest extends Model
      */
     public function getFormattedQuotedPriceAttribute(): ?string
     {
-        if (!$this->quoted_price) {
+        if (! $this->quoted_price) {
             return null;
         }
-        return 'Rp ' . number_format($this->quoted_price, 0, ',', '.');
+
+        return 'Rp '.number_format($this->quoted_price, 0, ',', '.');
     }
 
     /**
@@ -295,7 +299,7 @@ class ServiceCostRequest extends Model
      */
     public function reviewer()
     {
-        return $this->belongsTo(\App\Models\User::class, 'reviewed_by');
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 
     /**
@@ -303,6 +307,6 @@ class ServiceCostRequest extends Model
      */
     public function completedBy()
     {
-        return $this->belongsTo(\App\Models\User::class, 'completed_by');
+        return $this->belongsTo(User::class, 'completed_by');
     }
 }

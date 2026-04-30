@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" class="scroll-smooth" style="margin:0;padding:0;">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
+<script>
+// --- Dark/Light Mode Initialization ---
+// Must run synchronously before paint to prevent flash
+(function() {
+    var theme = localStorage.getItem('bizmark_theme');
+    if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+})();
+</script>
 <head>
     @include('landing.partials.head')
-    @include('landing.partials.styles-modern')
+    @vite('resources/css/landing-theme.css')
+    @vite('resources/js/app.js')
     @yield('structured_data')
     @stack('styles')
 </head>
-<body class="font-sans antialiased bg-white text-gray-900 min-h-screen flex flex-col" style="margin:0;padding:0;">
+<body class="font-sans antialiased min-h-screen flex flex-col">
 
 @php
     $landingMetrics = config('landing_metrics');
@@ -29,40 +43,58 @@
     
     @include('landing.partials.footer')
     
-    <!-- Floating Action Buttons -->
-    <div class="fab-group fixed bottom-6 right-6 flex flex-col gap-3 z-[999]">
-        <a href="{{ $whatsappLink }}?text=Halo%20PT%20Cangah%20Pajaratan%20Mandiri%2C%20saya%20ingin%20konsultasi%20tentang%20perizinan" 
-           target="_blank" 
-           class="fab fab-whatsapp"
-           title="Chat WhatsApp"
-           aria-label="Chat via WhatsApp"
-           data-cta="fab_whatsapp"
-           onclick="trackEvent('CTA', 'click', 'fab_whatsapp')">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-        <a href="tel:{{ str_replace(' ', '', $phoneNumber) }}" 
-           class="fab fab-phone"
-           title="Telepon Kami"
-           aria-label="Hubungi via telepon"
-           data-cta="fab_phone"
-           onclick="trackEvent('CTA', 'click', 'fab_phone')">
-            <i class="fas fa-phone-alt"></i>
-        </a>
-        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'}); trackEvent('Navigation', 'scroll_to_top', 'fab');" 
-                class="fab fab-back-to-top"
-                id="backToTop"
-                title="Kembali ke Atas"
-                aria-label="Kembali ke atas halaman">
-            <i class="fas fa-arrow-up"></i>
-        </button>
-    </div>
+    <!-- Scroll-to-top button -->
+    <button type="button"
+            id="backToTop"
+            class="fab fab-back-to-top"
+            aria-label="{{ app()->getLocale() === 'id' ? 'Kembali ke atas' : 'Back to top' }}"
+            x-data
+            @click="window.scrollTo({top:0,behavior:'smooth'}); if(window.trackEvent) trackEvent('Navigation','scroll_to_top','fab');">
+        <i class="fas fa-arrow-up" aria-hidden="true"></i>
+    </button>
     
     @include('landing.partials.scripts')
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    {{-- AOS.js Scroll Animations --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var aosConfig = {
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        };
+        if (typeof AOS !== 'undefined') {
+            AOS.init(aosConfig);
+        }
+        // Re-init on theme change (for light/dark mode transitions)
+        window.addEventListener('themeChanged', function() {
+            setTimeout(function() { if (typeof AOS !== 'undefined') AOS.refresh(); }, 300);
+        });
+    });
+    </script>
     @stack('scripts')
     
-    <!-- Tawk.to Live Chat Widget - DISABLED (Placeholder configuration) -->
-    <!-- To enable: Replace YOUR_PROPERTY_ID/YOUR_WIDGET_ID with actual values -->
+    {{-- ============================================================
+         Tawk.to Live Chat Widget — DISABLED (Placeholder Config)
+         ============================================================
+         This is the single highest-impact conversion improvement
+         available at zero code complexity (just configuration).
+
+         TO ENABLE:
+         1. Sign up / log in at https://dashboard.tawk.to
+         2. Create a new property or use existing one
+         3. Go to Admin → Widget Code and copy your property/widget ID
+         4. Replace YOUR_PROPERTY_ID / YOUR_WIDGET_ID below
+         5. Uncomment the <script> block
+         6. Run: php artisan view:clear && npm run build
+         7. Verify chat widget appears on landing pages
+
+         ALTERNATIVES (if Tawk.to is not desired):
+         - Tidio (tidio.com) — modern interface with AI chatbot
+         - Crisp (crisp.chat) — clean B2B-focused interface
+         - Both offer similar free tiers
+         ============================================================ --}}
     <!--
     <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -73,12 +105,7 @@
         s1.charset='UTF-8';
         s1.setAttribute('crossorigin','*');
         s0.parentNode.insertBefore(s1,s0);
-        
-        // Track chat events
-        Tawk_API.onLoad = function(){
-            console.log('Tawk.to chat loaded');
-        };
-        
+
         Tawk_API.onChatStarted = function(){
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'chat_started', {

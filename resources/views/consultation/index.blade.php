@@ -4,8 +4,43 @@
 @section('meta_description', 'Dapatkan estimasi biaya perizinan usaha Anda dengan AI analysis. Pilih jenis usaha (KBLI), isi informasi bisnis, dan terima estimasi biaya instan dengan rincian lengkap.')
 @section('meta_keywords', 'estimasi biaya perizinan, kalkulator biaya izin, biaya pengurusan izin, konsultasi perizinan online, KBLI search')
 
+@push('styles')
+<!-- BreadcrumbList Structured Data -->
+<script type="application/ld+json">
+{
+    "@@context": "https://schema.org",
+    "@@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@@type": "ListItem",
+            "position": 1,
+            "name": "Beranda",
+            "item": "{{ url('/') }}"
+        },
+        {
+            "@@type": "ListItem",
+            "position": 2,
+            "name": "Estimasi Biaya Perizinan",
+            "item": "{{ url()->current() }}"
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('content')
 <div class="min-h-screen consultation-section" style="padding-top: 5rem;">
+    <!-- Breadcrumb -->
+    <div style="background: var(--surface); border-bottom: 1px solid var(--border-light);">
+        <div class="container-wide py-4">
+            <nav aria-label="Breadcrumb" class="text-xs" style="color: var(--text-tertiary);">
+                <a href="{{ url('/') }}" style="color: var(--text-secondary);">Beranda</a>
+                <span class="mx-2">/</span>
+                <span>Estimasi Biaya Perizinan</span>
+            </nav>
+        </div>
+    </div>
+
     <!-- Header Section -->
     <div style="background: var(--surface); border-bottom: 1px solid var(--border-light);">
         <div class="container-wide py-12 md:py-16">
@@ -71,7 +106,7 @@
                                 <ul class="text-xs mt-1 space-y-0.5" style="color: var(--text-secondary);">
                                     <li>• Belum yakin <strong>izin apa saja</strong> yang dibutuhkan</li>
                                     <li>• Ingin AI menganalisis kebutuhan perizinan Anda</li>
-                                    <li>• Butuh rekomendasi timeline dan instansi terkait</li>
+                                    <li>• Butuh rekomendasi jadwal dan instansi terkait</li>
                                 </ul>
                                 <a href="/konsultasi-gratis" class="inline-flex items-center gap-2 mt-2 text-sm font-semibold hover:underline" style="color: var(--color-accent);">
                                     Coba Analisis Gratis <i class="fas fa-arrow-right text-xs"></i>
@@ -140,13 +175,13 @@
                                         <p class="text-sm font-medium" style="color: var(--text-primary);" x-text="selectedKBLI?.description"></p>
                                         <p class="text-xs mt-1" style="color: var(--text-secondary);" x-text="'Kategori: ' + selectedKBLI?.category"></p>
                                     </div>
-                                    <button 
+                                    <button
                                         type="button"
                                         @click="clearSelection"
+                                        @mouseenter="$el.style.color='#dc2626'"
+                                        @mouseleave="$el.style.color='var(--text-tertiary)'"
                                         class="ml-3 transition"
                                         style="color: var(--text-tertiary);"
-                                        onmouseover="this.style.color='#dc2626'"
-                                        onmouseout="this.style.color='var(--text-tertiary)'"
                                     >
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -164,11 +199,11 @@
                                     <button
                                         type="button"
                                         @click="selectKBLI(kbli)"
+                                        @mouseenter="$el.style.background='var(--surface-warm)'"
+                                        @mouseleave="$el.style.background='var(--surface)'"
                                         class="w-full px-4 py-3 text-left transition"
                                         :style="highlightedIndex === index ? 'background: rgba(14, 165, 233, 0.05)' : ''"
                                         style="border-bottom: 1px solid var(--border-light);"
-                                        onmouseover="this.style.background='var(--surface-warm)'"
-                                        onmouseout="this.style.background='var(--surface)'"
                                     >
                                         <div class="flex items-start gap-3">
                                             <span class="font-mono text-sm font-bold mt-0.5" style="color: var(--color-accent);" x-text="kbli.code"></span>
@@ -206,43 +241,43 @@
                                     KBLI Populer:
                                 </p>
                                 <div class="flex flex-wrap gap-2">
-                                    <button 
+                                    <button
                                         type="button"
                                         @click="search = 'restoran'; searchKBLI()"
+                                        @mouseenter="$el.style.background='rgba(14, 165, 233, 0.1)'; $el.style.borderColor='var(--color-accent)'"
+                                        @mouseleave="$el.style.background='var(--surface-warm)'; $el.style.borderColor='var(--border-light)'"
                                         class="px-3 py-1.5 text-sm rounded-lg transition"
                                         style="background: var(--surface-warm); color: var(--text-secondary); border: 1px solid var(--border-light);"
-                                        onmouseover="this.style.background='rgba(14, 165, 233, 0.1)'; this.style.borderColor='var(--color-accent)'"
-                                        onmouseout="this.style.background='var(--surface-warm)'; this.style.borderColor='var(--border-light)'"
                                     >
                                         Restoran
                                     </button>
-                                    <button 
+                                    <button
                                         type="button"
                                         @click="search = 'toko'; searchKBLI()"
+                                        @mouseenter="$el.style.background='rgba(14, 165, 233, 0.1)'; $el.style.borderColor='var(--color-accent)'"
+                                        @mouseleave="$el.style.background='var(--surface-warm)'; $el.style.borderColor='var(--border-light)'"
                                         class="px-3 py-1.5 text-sm rounded-lg transition"
                                         style="background: var(--surface-warm); color: var(--text-secondary); border: 1px solid var(--border-light);"
-                                        onmouseover="this.style.background='rgba(14, 165, 233, 0.1)'; this.style.borderColor='var(--color-accent)'"
-                                        onmouseout="this.style.background='var(--surface-warm)'; this.style.borderColor='var(--border-light)'"
                                     >
                                         Toko
                                     </button>
-                                    <button 
+                                    <button
                                         type="button"
                                         @click="search = 'konstruksi'; searchKBLI()"
+                                        @mouseenter="$el.style.background='rgba(14, 165, 233, 0.1)'; $el.style.borderColor='var(--color-accent)'"
+                                        @mouseleave="$el.style.background='var(--surface-warm)'; $el.style.borderColor='var(--border-light)'"
                                         class="px-3 py-1.5 text-sm rounded-lg transition"
                                         style="background: var(--surface-warm); color: var(--text-secondary); border: 1px solid var(--border-light);"
-                                        onmouseover="this.style.background='rgba(14, 165, 233, 0.1)'; this.style.borderColor='var(--color-accent)'"
-                                        onmouseout="this.style.background='var(--surface-warm)'; this.style.borderColor='var(--border-light)'"
                                     >
                                         Konstruksi
                                     </button>
-                                    <button 
+                                    <button
                                         type="button"
                                         @click="search = 'manufaktur'; searchKBLI()"
+                                        @mouseenter="$el.style.background='rgba(14, 165, 233, 0.1)'; $el.style.borderColor='var(--color-accent)'"
+                                        @mouseleave="$el.style.background='var(--surface-warm)'; $el.style.borderColor='var(--border-light)'"
                                         class="px-3 py-1.5 text-sm rounded-lg transition"
                                         style="background: var(--surface-warm); color: var(--text-secondary); border: 1px solid var(--border-light);"
-                                        onmouseover="this.style.background='rgba(14, 165, 233, 0.1)'; this.style.borderColor='var(--color-accent)'"
-                                        onmouseout="this.style.background='var(--surface-warm)'; this.style.borderColor='var(--border-light)'"
                                     >
                                         Manufaktur
                                     </button>
@@ -535,7 +570,7 @@
                                 >
                                 <p class="mt-1 text-xs" style="color: var(--text-secondary);">
                                     <i class="fas fa-envelope mr-1"></i>
-                                    Email untuk mengirim hasil estimasi detail dan follow-up
+                                    Email untuk mengirimkan hasil estimasi lengkap dan tindak lanjut
                                 </p>
                             </div>
 
@@ -680,13 +715,13 @@
                                 <i class="fas fa-save"></i>
                                 <span x-text="draftRestored ? 'Draft tersimpan dipulihkan' : getLastSavedText()"></span>
                             </div>
-                            <button 
+                            <button
                                 type="button"
                                 @click="clearDraft(); draftRestored = false; Object.keys(formData).forEach(k => { if(typeof formData[k] === 'string') formData[k] = ''; else if(Array.isArray(formData[k])) formData[k] = []; }); selectedKBLI = null; quickEstimate = null;"
+                                @mouseenter="$el.style.color='#dc2626'"
+                                @mouseleave="$el.style.color='var(--text-tertiary)'"
                                 class="text-xs px-2 py-1 rounded transition"
                                 style="color: var(--text-tertiary); background: var(--surface);"
-                                onmouseover="this.style.color='#dc2626'"
-                                onmouseout="this.style.color='var(--text-tertiary)'"
                             >
                                 <i class="fas fa-times mr-1"></i>Hapus Draft
                             </button>
@@ -746,7 +781,7 @@
                     </div>
                     <h3 class="font-bold mb-2" style="color: var(--text-primary);">Breakdown Lengkap</h3>
                     <p class="text-sm" style="color: var(--text-secondary);">
-                        Rincian biaya per dokumen, timeline pengerjaan, dan estimasi waktu penyelesaian yang akurat.
+                        Rincian biaya per dokumen, jadwal pengerjaan, dan estimasi waktu penyelesaian yang akurat.
                     </p>
                 </div>
 

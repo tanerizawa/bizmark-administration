@@ -13,6 +13,7 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $payment;
+
     public $reason;
 
     public function __construct(Payment $payment, $reason)
@@ -29,12 +30,12 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Pembayaran Ditolak - ' . $this->payment->payment_number)
-            ->greeting('Halo ' . $notifiable->name . ',')
+            ->subject('Pembayaran Ditolak - '.$this->payment->payment_number)
+            ->greeting('Halo '.$notifiable->name.',')
             ->line('Mohon maaf, bukti pembayaran Anda tidak dapat diverifikasi.')
-            ->line('**Nomor Pembayaran:** ' . $this->payment->payment_number)
-            ->line('**Alasan:** ' . $this->reason)
-            ->action('Upload Ulang Bukti Pembayaran', url('/client/applications/' . $this->payment->quotation->application_id . '/payment'))
+            ->line('**Nomor Pembayaran:** '.$this->payment->payment_number)
+            ->line('**Alasan:** '.$this->reason)
+            ->action('Upload Ulang Bukti Pembayaran', url('/client/applications/'.$this->payment->quotation->application_id.'/payment'))
             ->line('Silakan upload ulang bukti pembayaran yang valid.')
             ->salutation('Salam, Tim Bizmark.id');
     }
@@ -46,7 +47,7 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
             'payment_id' => $this->payment->id,
             'payment_number' => $this->payment->payment_number,
             'reason' => $this->reason,
-            'message' => 'Pembayaran ' . $this->payment->payment_number . ' ditolak',
+            'message' => 'Pembayaran '.$this->payment->payment_number.' ditolak',
         ];
     }
 }

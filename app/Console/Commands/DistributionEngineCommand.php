@@ -7,6 +7,7 @@ use App\Models\ContentSyndication;
 use App\Models\EmailSubscriber;
 use App\Models\SocialPost;
 use App\Models\User;
+use App\Notifications\NewArticleNotification;
 use App\Services\ContentSyndicationService;
 use App\Services\SocialCaptionService;
 use App\Services\SocialPostingService;
@@ -50,7 +51,7 @@ class DistributionEngineCommand extends Command
             foreach ($results as $articleId => $platforms) {
                 $article = Article::find($articleId);
                 $statuses = collect($platforms)->pluck('status')->countBy();
-                $this->line("   📄 {$article?->title}: " . $statuses->map(fn ($c, $s) => "{$s}({$c})")->implode(', '));
+                $this->line("   📄 {$article?->title}: ".$statuses->map(fn ($c, $s) => "{$s}({$c})")->implode(', '));
             }
         }
 
@@ -62,7 +63,7 @@ class DistributionEngineCommand extends Command
                 ->orderBy('published_at', 'desc')
                 ->limit($limit * 3)
                 ->get()
-                ->filter(fn ($a) => !Cache::has("social_captions:{$a->id}"))
+                ->filter(fn ($a) => ! Cache::has("social_captions:{$a->id}"))
                 ->take($limit);
 
             $generated = 0;
@@ -70,7 +71,7 @@ class DistributionEngineCommand extends Command
                 $captions = $captionService->generateAll($article);
                 Cache::put("social_captions:{$article->id}", $captions, now()->addDays(7));
                 $generated++;
-                $this->line("   ✅ {$article->title} — " . count($captions) . " platform captions");
+                $this->line("   ✅ {$article->title} — ".count($captions).' platform captions');
             }
             $this->line("   Generated captions for {$generated} articles");
         }
@@ -124,11 +125,11 @@ class DistributionEngineCommand extends Command
 
             if ($latest && $subscribers > 0) {
                 $cacheKey = "push_sent:{$latest->id}";
-                if (!Cache::has($cacheKey)) {
+                if (! Cache::has($cacheKey)) {
                     $users = User::whereHas('pushSubscriptions')->get();
                     \Illuminate\Support\Facades\Notification::send(
                         $users,
-                        new \App\Notifications\NewArticleNotification($latest)
+                        new NewArticleNotification($latest)
                     );
                     Cache::put($cacheKey, true, now()->addDays(1));
                     $this->line("   ✅ Push sent: {$latest->title} → {$subscribers} subscribers");
@@ -177,6 +178,7 @@ class DistributionEngineCommand extends Command
                     $count++;
                 }
             });
+
         return $count;
     }
 }

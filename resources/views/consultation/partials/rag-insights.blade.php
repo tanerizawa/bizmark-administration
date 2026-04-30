@@ -74,6 +74,7 @@
 
                 <!-- Expanded view (full formatted content) -->
                 <div x-show="expanded" x-cloak class="rag-content">
+                    {{-- SAFE: sanitized via HtmlSanitizer whitelist (strips scripts, event handlers, dangerous attrs) --}}
                     {!! \App\Support\HtmlSanitizer::clean($answer) !!}
                     @if(strlen(strip_tags($answer)) > 400)
                         <button @click="expanded = false" 

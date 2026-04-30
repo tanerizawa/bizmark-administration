@@ -16,14 +16,14 @@ class EmailTemplateController extends Controller
     public function index()
     {
         $templates = EmailTemplate::orderBy('created_at', 'desc')->paginate(15);
-        
+
         $stats = [
             'total' => EmailTemplate::count(),
             'active' => EmailTemplate::where('is_active', true)->count(),
             'newsletter' => EmailTemplate::where('category', 'newsletter')->count(),
             'promotional' => EmailTemplate::where('category', 'promotional')->count(),
         ];
-        
+
         return view('admin.email.templates.index', compact('templates', 'stats'));
     }
 
@@ -53,19 +53,21 @@ class EmailTemplateController extends Controller
     public function show($id)
     {
         $template = EmailTemplate::findOrFail($id);
+
         return view('admin.email.templates.show', compact('template'));
     }
 
     public function edit($id)
     {
         $template = EmailTemplate::findOrFail($id);
+
         return view('admin.email.templates.edit', compact('template'));
     }
 
     public function update(Request $request, $id)
     {
         $template = EmailTemplate::findOrFail($id);
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
@@ -91,4 +93,3 @@ class EmailTemplateController extends Controller
             ->with('success', 'Template berhasil dihapus.');
     }
 }
-

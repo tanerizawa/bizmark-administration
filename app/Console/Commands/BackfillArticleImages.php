@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Article;
 use App\Services\PexelsService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class BackfillArticleImages extends Command
 {
@@ -34,7 +35,7 @@ class BackfillArticleImages extends Command
             ->orderBy('id')
             ->get()
             ->filter(function (Article $article) {
-                return !\Storage::disk('public')->exists($article->featured_image);
+                return ! \Storage::disk('public')->exists($article->featured_image);
             });
 
         if ($orphaned->isNotEmpty()) {
@@ -52,6 +53,7 @@ class BackfillArticleImages extends Command
 
         if ($articles->isEmpty()) {
             $this->info('All articles already have featured images.');
+
             return 0;
         }
 
@@ -72,8 +74,9 @@ class BackfillArticleImages extends Command
 
             if ($dryRun) {
                 $this->newLine();
-                $this->line("  #{$article->id} \"{$article->title}\" → queries: " . implode(' | ', $queries));
+                $this->line("  #{$article->id} \"{$article->title}\" → queries: ".implode(' | ', $queries));
                 $bar->advance();
+
                 continue;
             }
 
@@ -97,7 +100,7 @@ class BackfillArticleImages extends Command
         $bar->finish();
         $this->newLine(2);
 
-        if (!$dryRun) {
+        if (! $dryRun) {
             $this->info("Done: {$success} images added, {$failed} not found.");
         }
 
@@ -113,12 +116,12 @@ class BackfillArticleImages extends Command
         if (is_string($tags)) {
             $tags = json_decode($tags, true);
         }
-        if (!empty($tags)) {
+        if (! empty($tags)) {
             $queries[] = implode(' ', array_slice((array) $tags, 0, 2));
         }
 
         // 2. Meta keywords (first 2-3)
-        if (!empty($article->meta_keywords)) {
+        if (! empty($article->meta_keywords)) {
             $kw = array_map('trim', explode(',', $article->meta_keywords));
             $queries[] = implode(' ', array_slice($kw, 0, 2));
         }
@@ -135,11 +138,11 @@ class BackfillArticleImages extends Command
 
         // 4. Category fallback
         $categoryMap = [
-            'tips'       => 'business office professional',
+            'tips' => 'business office professional',
             'regulation' => 'government legal document',
-            'general'    => 'business Indonesia office',
+            'general' => 'business Indonesia office',
             'case-study' => 'business success team',
-            'news'       => 'business news Indonesia',
+            'news' => 'business news Indonesia',
         ];
         $queries[] = $categoryMap[$article->category] ?? 'business professional office';
 
@@ -155,7 +158,7 @@ class BackfillArticleImages extends Command
                     'size' => 'medium',
                 ]);
 
-                if (!empty($results['photos'])) {
+                if (! empty($results['photos'])) {
                     $photo = $results['photos'][0];
                     $url = $photo['src']['large2x'] ?? $photo['src']['large'] ?? $photo['src']['original'];
 
@@ -166,7 +169,7 @@ class BackfillArticleImages extends Command
                     );
                 }
             } catch (\Exception $e) {
-                \Log::warning('Backfill image search failed', [
+                Log::warning('Backfill image search failed', [
                     'query' => $query,
                     'error' => $e->getMessage(),
                 ]);

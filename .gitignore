@@ -74,6 +74,16 @@ getMessage
 cookies.txt
 *.backup
 
+# Windsurf / Cascade AI (config files di-commit, tidak di-ignore)
+
+# Blade compiled views cache
+storage/framework/views/
+storage/framework/cache/
+storage/framework/sessions/
+
+# Generated JSON data (rebuilt from config)
+resources/data/*.json
+
 # Old/backup file patterns (prevent future accumulation)
 *.old
 *_old.*

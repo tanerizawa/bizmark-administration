@@ -13,9 +13,13 @@ class JobApplicationStatusChanged extends Mailable
     use Queueable, SerializesModels;
 
     public $application;
+
     public $previousStatus;
+
     public $newStatus;
+
     public $changedBy;
+
     public $notes;
 
     /**
@@ -55,14 +59,14 @@ class JobApplicationStatusChanged extends Mailable
         );
 
         return $this->from(config('mail.from.address'), config('mail.from.name'))
-                    ->subject($subject)
-                    ->view('emails.job-application-status-changed')
-                    ->with([
-                        'application' => $this->application,
-                        'previousStatus' => $this->previousStatus,
-                        'newStatus' => $this->newStatus,
-                        'changedBy' => $this->changedBy,
-                        'notes' => $this->notes,
-                    ]);
+            ->subject($subject)
+            ->view('emails.job-application-status-changed')
+            ->with([
+                'application' => $this->application,
+                'previousStatus' => $this->previousStatus,
+                'newStatus' => $this->newStatus,
+                'changedBy' => $this->changedBy,
+                'notes' => $this->notes,
+            ]);
     }
 }

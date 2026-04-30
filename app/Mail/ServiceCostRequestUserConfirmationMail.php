@@ -13,14 +13,12 @@ class ServiceCostRequestUserConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public ServiceCostRequest $serviceRequest)
-    {
-    }
+    public function __construct(public ServiceCostRequest $serviceRequest) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Permohonan Diterima - ' . $this->serviceRequest->request_number . ' | Bizmark.ID',
+            subject: 'Permohonan Diterima - '.$this->serviceRequest->request_number.' | Bizmark.ID',
         );
     }
 

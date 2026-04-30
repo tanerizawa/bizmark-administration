@@ -2,21 +2,21 @@
 <div>
     <div class="mb-3 flex justify-between items-center">
         <div>
-            <h3 class="text-base font-semibold" style="color: #FFFFFF;">
-                <i class="fas fa-briefcase mr-2" style="color: rgba(235, 235, 245, 0.4);"></i>
+            <h3 class="text-base font-semibold text-white">
+                <i class="fas fa-briefcase mr-2 text-dark-text-tertiary/40"></i>
                 Keuangan Umum Perusahaan
             </h3>
-            <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.5);">
+            <p class="text-xs mt-0.5 text-dark-text-tertiary/80">
                 Pemasukan dan pengeluaran yang tidak terkait dengan proyek tertentu
             </p>
         </div>
         <div class="flex gap-2">
-            <button onclick="openGeneralIncomeModal()" 
+            <button onclick="openGeneralIncomeModal()"
                     class="btn-apple-primary text-sm">
                 <i class="fas fa-plus-circle mr-2"></i>
                 Pemasukan Umum
             </button>
-            <button onclick="openGeneralExpenseModal()" 
+            <button onclick="openGeneralExpenseModal()"
                     class="btn-secondary-sm">
                 <i class="fas fa-minus-circle mr-2"></i>
                 Pengeluaran Umum
@@ -26,11 +26,11 @@
 
     {{-- Summary Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-        <div class="p-3 rounded-apple" style="background: rgba(52, 199, 89, 0.08);">
+        <div class="p-3 rounded-apple bg-apple-green/8">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs mb-0.5" style="color: rgba(235, 235, 245, 0.5);">Total Pemasukan Umum</p>
-                    <p class="text-lg font-bold" style="color: rgba(52, 199, 89, 1);">
+                    <p class="text-xs mb-0.5 text-dark-text-tertiary/80">Total Pemasukan Umum</p>
+                    <p class="text-lg font-bold text-apple-green">
                         @php
                             $generalIncome = $generalTransactions['income'] ?? collect();
                             $totalIncome = $generalIncome->sum('amount');
@@ -38,18 +38,17 @@
                         Rp {{ number_format($totalIncome) }}
                     </p>
                 </div>
-                <div class="h-10 w-10 flex items-center justify-center rounded-full"
-                     style="background: rgba(52, 199, 89, 0.15);">
-                    <i class="fas fa-arrow-down text-sm" style="color: rgba(52, 199, 89, 0.9);"></i>
+                <div class="h-10 w-10 flex items-center justify-center rounded-full bg-apple-green/15">
+                    <i class="fas fa-arrow-down text-sm text-apple-green/90"></i>
                 </div>
             </div>
         </div>
 
-        <div class="p-3 rounded-apple" style="background: rgba(255, 59, 48, 0.08);">
+        <div class="p-3 rounded-apple bg-apple-red/8">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs mb-0.5" style="color: rgba(235, 235, 245, 0.5);">Total Pengeluaran Umum</p>
-                    <p class="text-lg font-bold" style="color: rgba(255, 59, 48, 1);">
+                    <p class="text-xs mb-0.5 text-dark-text-tertiary/80">Total Pengeluaran Umum</p>
+                    <p class="text-lg font-bold text-apple-red">
                         @php
                             $generalExpenses = $generalTransactions['expenses'] ?? collect();
                             $totalExpenses = $generalExpenses->sum('amount');
@@ -57,25 +56,23 @@
                         Rp {{ number_format($totalExpenses) }}
                     </p>
                 </div>
-                <div class="h-10 w-10 flex items-center justify-center rounded-full"
-                     style="background: rgba(255, 59, 48, 0.15);">
-                    <i class="fas fa-arrow-up text-sm" style="color: rgba(255, 59, 48, 0.9);"></i>
+                <div class="h-10 w-10 flex items-center justify-center rounded-full bg-apple-red/15">
+                    <i class="fas fa-arrow-up text-sm text-apple-red/90"></i>
                 </div>
             </div>
         </div>
 
-        <div class="p-3 rounded-apple" style="background: rgba(0, 122, 255, 0.08);">
+        <div class="p-3 rounded-apple bg-apple-blue/8">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs mb-0.5" style="color: rgba(235, 235, 245, 0.5);">Selisih</p>
+                    <p class="text-xs mb-0.5 text-dark-text-tertiary/80">Selisih</p>
                     @php $netGeneral = $totalIncome - $totalExpenses; @endphp
-                    <p class="text-lg font-bold" style="color: {{ $netGeneral >= 0 ? 'rgba(52, 199, 89, 1)' : 'rgba(255, 59, 48, 1)' }};">
+                    <p class="text-lg font-bold {{ $netGeneral >= 0 ? 'text-apple-green' : 'text-apple-red' }}">
                         {{ $netGeneral >= 0 ? '+' : '' }}Rp {{ number_format($netGeneral) }}
                     </p>
                 </div>
-                <div class="h-10 w-10 flex items-center justify-center rounded-full"
-                     style="background: rgba(0, 122, 255, 0.15);">
-                    <i class="fas fa-balance-scale text-sm" style="color: rgba(0, 122, 255, 0.9);"></i>
+                <div class="h-10 w-10 flex items-center justify-center rounded-full bg-apple-blue/15">
+                    <i class="fas fa-balance-scale text-sm text-apple-blue/90"></i>
                 </div>
             </div>
         </div>
@@ -87,47 +84,44 @@
             {{-- General Income Section --}}
             @if($generalIncome->count() > 0)
             <div class="card-elevated rounded-apple-lg p-4">
-                <h4 class="text-sm font-semibold mb-3" style="color: rgba(235, 235, 245, 0.9);">
-                    <i class="fas fa-plus-circle mr-2" style="color: rgba(52, 199, 89, 0.8);"></i>
+                <h4 class="text-sm font-semibold mb-3 text-dark-text-primary/90">
+                    <i class="fas fa-plus-circle mr-2 text-apple-green/80"></i>
                     Pemasukan Umum ({{ $generalIncome->count() }})
                 </h4>
                 <div class="space-y-2">
                     @foreach($generalIncome as $income)
-                    <div class="p-3 rounded-apple" style="background: rgba(52, 199, 89, 0.05); border-left: 3px solid rgba(52, 199, 89, 0.5);">
+                    <div class="p-3 rounded-apple bg-apple-green/[0.05] border-l-[3px] border-l-apple-green/50">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.9);">
+                                    <span class="text-xs font-medium text-dark-text-primary/90">
                                         {{ \Carbon\Carbon::parse($income->payment_date)->isoFormat('D MMM Y') }}
                                     </span>
-                                    <span class="px-2 py-0.5 text-xs rounded-full" 
-                                          style="background: rgba(52, 199, 89, 0.15); color: rgba(52, 199, 89, 1);">
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-apple-green/15 text-apple-green">
                                         {{ ucfirst($income->payment_method) }}
                                     </span>
                                 </div>
-                                <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.85);">
+                                <p class="text-sm mt-1 text-dark-text-primary/85">
                                     {{ $income->description ?? 'Pemasukan Umum' }}
                                 </p>
                                 @if($income->bankAccount)
-                                <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                                <p class="text-xs mt-1 text-dark-text-tertiary/80">
                                     <i class="fas fa-university text-xs mr-1"></i>
                                     {{ $income->bankAccount->account_name }}
                                 </p>
                                 @endif
                             </div>
                             <div class="text-right">
-                                <div class="text-sm font-bold" style="color: rgba(52, 199, 89, 1);">
+                                <div class="text-sm font-bold text-apple-green">
                                     +Rp {{ number_format($income->amount) }}
                                 </div>
                                 <div class="flex gap-1 mt-2">
-                                    <button onclick="editGeneralIncome({{ $income->id }})" 
-                                            class="text-xs px-2 py-1 rounded hover:bg-white/10"
-                                            style="color: rgba(235, 235, 245, 0.6);">
+                                    <button onclick="editGeneralIncome({{ $income->id }})"
+                                            class="text-xs px-2 py-1 rounded hover:bg-white/10 text-dark-text-secondary">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button onclick="deleteGeneralIncome({{ $income->id }})" 
-                                            class="text-xs px-2 py-1 rounded hover:bg-red-500/20"
-                                            style="color: rgba(255, 59, 48, 0.8);">
+                                    <button onclick="deleteGeneralIncome({{ $income->id }})"
+                                            class="text-xs px-2 py-1 rounded hover:bg-red-500/20 text-apple-red/80">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -142,47 +136,44 @@
             {{-- General Expenses Section --}}
             @if($generalExpenses->count() > 0)
             <div class="card-elevated rounded-apple-lg p-4">
-                <h4 class="text-sm font-semibold mb-3" style="color: rgba(235, 235, 245, 0.9);">
-                    <i class="fas fa-minus-circle mr-2" style="color: rgba(255, 59, 48, 0.8);"></i>
+                <h4 class="text-sm font-semibold mb-3 text-dark-text-primary/90">
+                    <i class="fas fa-minus-circle mr-2 text-apple-red/80"></i>
                     Pengeluaran Umum ({{ $generalExpenses->count() }})
                 </h4>
                 <div class="space-y-2">
                     @foreach($generalExpenses as $expense)
-                    <div class="p-3 rounded-apple" style="background: rgba(255, 59, 48, 0.05); border-left: 3px solid rgba(255, 59, 48, 0.5);">
+                    <div class="p-3 rounded-apple bg-apple-red/[0.05] border-l-[3px] border-l-apple-red/50">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.9);">
+                                    <span class="text-xs font-medium text-dark-text-primary/90">
                                         {{ \Carbon\Carbon::parse($expense->expense_date)->isoFormat('D MMM Y') }}
                                     </span>
-                                    <span class="px-2 py-0.5 text-xs rounded-full" 
-                                          style="background: rgba(255, 149, 0, 0.15); color: rgba(255, 149, 0, 1);">
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-apple-orange/15 text-apple-orange">
                                         {{ $expense->category_name }}
                                     </span>
                                 </div>
-                                <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.85);">
+                                <p class="text-sm mt-1 text-dark-text-primary/85">
                                     {{ $expense->description ?? $expense->vendor_name ?? 'Pengeluaran Umum' }}
                                 </p>
                                 @if($expense->bankAccount)
-                                <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                                <p class="text-xs mt-1 text-dark-text-tertiary/80">
                                     <i class="fas fa-university text-xs mr-1"></i>
                                     {{ $expense->bankAccount->account_name }}
                                 </p>
                                 @endif
                             </div>
                             <div class="text-right">
-                                <div class="text-sm font-bold" style="color: rgba(255, 59, 48, 1);">
+                                <div class="text-sm font-bold text-apple-red">
                                     -Rp {{ number_format($expense->amount) }}
                                 </div>
                                 <div class="flex gap-1 mt-2">
-                                    <button onclick="editGeneralExpense({{ $expense->id }})" 
-                                            class="text-xs px-2 py-1 rounded hover:bg-white/10"
-                                            style="color: rgba(235, 235, 245, 0.6);">
+                                    <button onclick="editGeneralExpense({{ $expense->id }})"
+                                            class="text-xs px-2 py-1 rounded hover:bg-white/10 text-dark-text-secondary">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button onclick="deleteGeneralExpense({{ $expense->id }})" 
-                                            class="text-xs px-2 py-1 rounded hover:bg-red-500/20"
-                                            style="color: rgba(255, 59, 48, 0.8);">
+                                    <button onclick="deleteGeneralExpense({{ $expense->id }})"
+                                            class="text-xs px-2 py-1 rounded hover:bg-red-500/20 text-apple-red/80">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -197,11 +188,11 @@
     @else
         <div class="card-elevated rounded-apple-lg p-8 text-center">
             <div class="flex flex-col items-center justify-center">
-                <i class="fas fa-briefcase text-4xl mb-3" style="color: rgba(235, 235, 245, 0.25);"></i>
-                <p class="text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.5);">
+                <i class="fas fa-briefcase text-4xl mb-3 text-dark-text-tertiary/25"></i>
+                <p class="text-sm font-medium mb-1 text-dark-text-tertiary/80">
                     Belum ada transaksi keuangan umum
                 </p>
-                <p class="text-xs" style="color: rgba(235, 235, 245, 0.4);">
+                <p class="text-xs text-dark-text-tertiary/60">
                     Klik tombol di atas untuk menambahkan pemasukan atau pengeluaran umum
                 </p>
             </div>
@@ -211,21 +202,28 @@
 
 {{-- JavaScript Functions --}}
 <script>
-let generalIncomeModal, generalExpenseModal;
 let editingIncomeId = null, editingExpenseId = null;
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize modals
-    generalIncomeModal = new bootstrap.Modal(document.getElementById('generalIncomeModal'));
-    generalExpenseModal = new bootstrap.Modal(document.getElementById('generalExpenseModal'));
-});
+function openGeneralIncomeModalAlpine() {
+    window.__generalIncomeOpen = true;
+    document.getElementById('generalIncomeAlpineRoot').__x.$data.open = true;
+}
+function closeGeneralIncomeModalAlpine() {
+    document.getElementById('generalIncomeAlpineRoot').__x.$data.open = false;
+}
+function openGeneralExpenseModalAlpine() {
+    document.getElementById('generalExpenseAlpineRoot').__x.$data.open = true;
+}
+function closeGeneralExpenseModalAlpine() {
+    document.getElementById('generalExpenseAlpineRoot').__x.$data.open = false;
+}
 
 function openGeneralIncomeModal() {
     editingIncomeId = null;
     document.getElementById('generalIncomeForm').reset();
     document.getElementById('incomeModalTitle').textContent = 'Tambah Pemasukan Umum';
     document.getElementById('incomeSubmitBtn').textContent = 'Simpan Pemasukan';
-    generalIncomeModal.show();
+    document.getElementById('generalIncomeAlpineRoot').__x.$data.open = true;
 }
 
 function openGeneralExpenseModal() {
@@ -233,7 +231,7 @@ function openGeneralExpenseModal() {
     document.getElementById('generalExpenseForm').reset();
     document.getElementById('expenseModalTitle').textContent = 'Tambah Pengeluaran Umum';
     document.getElementById('expenseSubmitBtn').textContent = 'Simpan Pengeluaran';
-    generalExpenseModal.show();
+    document.getElementById('generalExpenseAlpineRoot').__x.$data.open = true;
 }
 
 function editGeneralIncome(id) {
@@ -253,7 +251,6 @@ function editGeneralIncome(id) {
                 document.getElementById('income_bank_account_id').value = income.bank_account_id;
                 document.getElementById('income_description').value = income.description || '';
                 document.getElementById('income_reference_number').value = income.reference_number || '';
-                generalIncomeModal.show();
             } else {
                 Swal.fire('Error', 'Gagal memuat data pemasukan', 'error');
             }
@@ -262,6 +259,7 @@ function editGeneralIncome(id) {
             console.error('Error:', error);
             Swal.fire('Error', 'Terjadi kesalahan saat memuat data', 'error');
         });
+    document.getElementById('generalIncomeAlpineRoot').__x.$data.open = true;
 }
 
 function deleteGeneralIncome(id) {
@@ -317,7 +315,6 @@ function editGeneralExpense(id) {
                 document.getElementById('expense_bank_account_id').value = expense.bank_account_id;
                 document.getElementById('expense_vendor_name').value = expense.vendor_name || '';
                 document.getElementById('expense_description').value = expense.description || '';
-                generalExpenseModal.show();
             } else {
                 Swal.fire('Error', 'Gagal memuat data pengeluaran', 'error');
             }
@@ -326,6 +323,7 @@ function editGeneralExpense(id) {
             console.error('Error:', error);
             Swal.fire('Error', 'Terjadi kesalahan saat memuat data', 'error');
         });
+    document.getElementById('generalExpenseAlpineRoot').__x.$data.open = true;
 }
 
 function deleteGeneralExpense(id) {
@@ -366,17 +364,10 @@ function deleteGeneralExpense(id) {
 function submitGeneralIncome() {
     const form = document.getElementById('generalIncomeForm');
     const formData = new FormData(form);
-    
-    const url = editingIncomeId 
-        ? `/general-transactions/income/${editingIncomeId}`
-        : '/general-transactions/income';
-    
+    const url = editingIncomeId ? `/general-transactions/income/${editingIncomeId}` : '/general-transactions/income';
     const method = editingIncomeId ? 'PUT' : 'POST';
-    
-    // Convert FormData to JSON for PUT requests
     const data = {};
     formData.forEach((value, key) => data[key] = value);
-    
     fetch(url, {
         method: method,
         headers: {
@@ -389,7 +380,7 @@ function submitGeneralIncome() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            generalIncomeModal.hide();
+            document.getElementById('generalIncomeAlpineRoot').__x.$data.open = false;
             Swal.fire('Berhasil!', data.message, 'success').then(() => location.reload());
         } else {
             Swal.fire('Error', data.message, 'error');
@@ -404,17 +395,10 @@ function submitGeneralIncome() {
 function submitGeneralExpense() {
     const form = document.getElementById('generalExpenseForm');
     const formData = new FormData(form);
-    
-    const url = editingExpenseId 
-        ? `/general-transactions/expense/${editingExpenseId}`
-        : '/general-transactions/expense';
-    
+    const url = editingExpenseId ? `/general-transactions/expense/${editingExpenseId}` : '/general-transactions/expense';
     const method = editingExpenseId ? 'PUT' : 'POST';
-    
-    // Convert FormData to JSON for PUT requests
     const data = {};
     formData.forEach((value, key) => data[key] = value);
-    
     fetch(url, {
         method: method,
         headers: {
@@ -427,7 +411,7 @@ function submitGeneralExpense() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            generalExpenseModal.hide();
+            document.getElementById('generalExpenseAlpineRoot').__x.$data.open = false;
             Swal.fire('Berhasil!', data.message, 'success').then(() => location.reload());
         } else {
             Swal.fire('Error', data.message, 'error');
@@ -440,35 +424,33 @@ function submitGeneralExpense() {
 }
 </script>
 
-{{-- General Income Modal --}}
-<div class="modal fade" id="generalIncomeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-apple-lg" style="background: rgba(28, 28, 30, 1); border: 1px solid rgba(255, 255, 255, 0.1);">
-            <div class="modal-header border-0">
-                <h5 class="modal-title" id="incomeModalTitle" style="color: #FFFFFF;">Tambah Pemasukan Umum</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+{{-- General Income Modal (Alpine.js) --}}
+<div id="generalIncomeAlpineRoot" x-data="{ open: false }">
+    <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4"
+         @keydown.escape.window="open = false">
+        <div class="absolute inset-0 bg-black/60" @click="open = false"></div>
+        <div class="relative rounded-apple-lg shadow-2xl w-full max-w-md bg-[#1C1C1E] border border-white/10">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-white/[0.08]">
+                <h5 id="incomeModalTitle" class="text-white font-semibold">Tambah Pemasukan Umum</h5>
+                <button @click="open = false" class="text-dark-text-tertiary/80 hover:text-white transition">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                <form id="generalIncomeForm" onsubmit="event.preventDefault(); submitGeneralIncome();">
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Tanggal Pemasukan</label>
-                        <input type="date" class="form-control form-control-apple" 
-                               id="income_payment_date" name="payment_date" required>
+            <div class="p-5">
+                <form id="generalIncomeForm" onsubmit="event.preventDefault(); submitGeneralIncome();" class="space-y-3">
+                    @php $inputCls = 'w-full px-3 py-2 text-sm rounded-lg focus:outline-none bg-dark-bg-tertiary border border-white/10 text-white'; @endphp
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Tanggal Pemasukan</label>
+                        <input type="date" class="{{ $inputCls }}" id="income_payment_date" name="payment_date" required>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Jumlah (Rp)</label>
-                        <input type="text" class="form-control form-control-apple" 
-                               id="income_amount_display" 
-                               placeholder="0.00"
-                               inputmode="decimal">
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Jumlah (Rp)</label>
+                        <input type="text" class="{{ $inputCls }}" id="income_amount_display" placeholder="0.00" inputmode="decimal">
                         <input type="hidden" name="amount" id="income_amount">
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Metode Pembayaran</label>
-                        <select class="form-select form-control-apple" 
-                                id="income_payment_method" name="payment_method" required>
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Metode Pembayaran</label>
+                        <select class="{{ $inputCls }}" id="income_payment_method" name="payment_method" required>
                             <option value="">Pilih Metode</option>
                             <option value="transfer">Transfer Bank</option>
                             <option value="cash">Tunai</option>
@@ -476,88 +458,75 @@ function submitGeneralExpense() {
                             <option value="other">Lainnya</option>
                         </select>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Akun Kas/Bank</label>
-                        <select class="form-select form-control-apple" 
-                                id="income_bank_account_id" name="bank_account_id" required>
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Akun Kas/Bank</label>
+                        <select class="{{ $inputCls }}" id="income_bank_account_id" name="bank_account_id" required>
                             <option value="">Pilih Akun</option>
                             @foreach($cashAccountsList as $account)
                             <option value="{{ $account->id }}">{{ $account->account_name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Nomor Referensi (Opsional)</label>
-                        <input type="text" class="form-control form-control-apple" 
-                               id="income_reference_number" name="reference_number" 
-                               placeholder="No. Bukti/Referensi">
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Nomor Referensi (Opsional)</label>
+                        <input type="text" class="{{ $inputCls }}" id="income_reference_number" name="reference_number" placeholder="No. Bukti/Referensi">
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Keterangan</label>
-                        <textarea class="form-control form-control-apple" 
-                                  id="income_description" name="description" rows="3"
-                                  placeholder="Deskripsi pemasukan umum..."></textarea>
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Keterangan</label>
+                        <textarea class="{{ $inputCls }}" id="income_description" name="description" rows="3" placeholder="Deskripsi pemasukan umum..."></textarea>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-apple-primary" id="incomeSubmitBtn" 
-                        onclick="submitGeneralIncome()">Simpan Pemasukan</button>
+            <div class="flex justify-end gap-2 px-5 py-4 border-t border-white/[0.08]">
+                <button type="button" @click="open = false"
+                        class="px-4 py-2 text-sm rounded-lg transition bg-dark-bg-tertiary text-dark-text-primary/70 border border-white/10">Batal</button>
+                <button type="button" id="incomeSubmitBtn" onclick="submitGeneralIncome()"
+                        class="btn-apple-primary text-sm">Simpan Pemasukan</button>
             </div>
         </div>
     </div>
 </div>
 
-{{-- General Expense Modal --}}
-<div class="modal fade" id="generalExpenseModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-apple-lg" style="background: rgba(28, 28, 30, 1); border: 1px solid rgba(255, 255, 255, 0.1);">
-            <div class="modal-header border-0">
-                <h5 class="modal-title" id="expenseModalTitle" style="color: #FFFFFF;">Tambah Pengeluaran Umum</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+{{-- General Expense Modal (Alpine.js) --}}
+<div id="generalExpenseAlpineRoot" x-data="{ open: false }">
+    <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4"
+         @keydown.escape.window="open = false">
+        <div class="absolute inset-0 bg-black/60" @click="open = false"></div>
+        <div class="relative rounded-apple-lg shadow-2xl w-full max-w-md bg-[#1C1C1E] border border-white/10">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-white/[0.08]">
+                <h5 id="expenseModalTitle" class="text-white font-semibold">Tambah Pengeluaran Umum</h5>
+                <button @click="open = false" class="text-dark-text-tertiary/80 hover:text-white transition">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                <form id="generalExpenseForm" onsubmit="event.preventDefault(); submitGeneralExpense();">
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Tanggal Pengeluaran</label>
-                        <input type="date" class="form-control form-control-apple" 
-                               id="expense_expense_date" name="expense_date" required>
+            <div class="p-5">
+                <form id="generalExpenseForm" onsubmit="event.preventDefault(); submitGeneralExpense();" class="space-y-3">
+                    @php $inputCls = 'w-full px-3 py-2 text-sm rounded-lg focus:outline-none bg-dark-bg-tertiary border border-white/10 text-white'; @endphp
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Tanggal Pengeluaran</label>
+                        <input type="date" class="{{ $inputCls }}" id="expense_expense_date" name="expense_date" required>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Jumlah (Rp)</label>
-                        <input type="text" class="form-control form-control-apple" 
-                               id="expense_amount_display" 
-                               placeholder="0.00"
-                               inputmode="decimal">
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Jumlah (Rp)</label>
+                        <input type="text" class="{{ $inputCls }}" id="expense_amount_display" placeholder="0.00" inputmode="decimal">
                         <input type="hidden" name="amount" id="expense_amount">
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Kategori</label>
-                        <select class="form-select form-control-apple" 
-                                id="expense_category" name="category" required>
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Kategori</label>
+                        <select class="{{ $inputCls }}" id="expense_category" name="category" required>
                             <option value="">Pilih Kategori</option>
                             @foreach($expenseCategories as $groupName => $items)
                                 <optgroup label="{{ $groupName }}">
                                     @foreach($items as $category)
-                                        <option value="{{ $category['value'] }}">
-                                            {{ $category['icon'] }} {{ $category['label'] }}
-                                        </option>
+                                        <option value="{{ $category['value'] }}">{{ $category['icon'] }} {{ $category['label'] }}</option>
                                     @endforeach
                                 </optgroup>
                             @endforeach
                         </select>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Metode Pembayaran</label>
-                        <select class="form-select form-control-apple" 
-                                id="expense_payment_method" name="payment_method" required>
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Metode Pembayaran</label>
+                        <select class="{{ $inputCls }}" id="expense_payment_method" name="payment_method" required>
                             <option value="">Pilih Metode</option>
                             <option value="transfer">Transfer Bank</option>
                             <option value="cash">Tunai</option>
@@ -565,37 +534,30 @@ function submitGeneralExpense() {
                             <option value="other">Lainnya</option>
                         </select>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Akun Kas/Bank</label>
-                        <select class="form-select form-control-apple" 
-                                id="expense_bank_account_id" name="bank_account_id" required>
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Akun Kas/Bank</label>
+                        <select class="{{ $inputCls }}" id="expense_bank_account_id" name="bank_account_id" required>
                             <option value="">Pilih Akun</option>
                             @foreach($cashAccountsList as $account)
                             <option value="{{ $account->id }}">{{ $account->account_name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Vendor/Penerima (Opsional)</label>
-                        <input type="text" class="form-control form-control-apple" 
-                               id="expense_vendor_name" name="vendor_name" 
-                               placeholder="Nama vendor atau penerima">
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Vendor/Penerima (Opsional)</label>
+                        <input type="text" class="{{ $inputCls }}" id="expense_vendor_name" name="vendor_name" placeholder="Nama vendor atau penerima">
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" style="color: rgba(235, 235, 245, 0.7);">Keterangan</label>
-                        <textarea class="form-control form-control-apple" 
-                                  id="expense_description" name="description" rows="3"
-                                  placeholder="Deskripsi pengeluaran umum..."></textarea>
+                    <div>
+                        <label class="block text-xs mb-1 text-dark-text-primary/70">Keterangan</label>
+                        <textarea class="{{ $inputCls }}" id="expense_description" name="description" rows="3" placeholder="Deskripsi pengeluaran umum..."></textarea>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-apple-primary" id="expenseSubmitBtn" 
-                        onclick="submitGeneralExpense()">Simpan Pengeluaran</button>
+            <div class="flex justify-end gap-2 px-5 py-4 border-t border-white/[0.08]">
+                <button type="button" @click="open = false"
+                        class="px-4 py-2 text-sm rounded-lg transition bg-dark-bg-tertiary text-dark-text-primary/70 border border-white/10">Batal</button>
+                <button type="button" id="expenseSubmitBtn" onclick="submitGeneralExpense()"
+                        class="btn-apple-primary text-sm">Simpan Pengeluaran</button>
             </div>
         </div>
     </div>

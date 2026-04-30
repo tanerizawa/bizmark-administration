@@ -5,8 +5,8 @@ namespace App\Listeners;
 use App\Events\ArticlePublishedEvent;
 use App\Services\SocialCaptionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class GenerateSocialCaptions implements ShouldQueue
 {
@@ -18,7 +18,7 @@ class GenerateSocialCaptions implements ShouldQueue
 
     public function handle(ArticlePublishedEvent $event): void
     {
-        if (!$event->isNew) {
+        if (! $event->isNew) {
             return;
         }
 

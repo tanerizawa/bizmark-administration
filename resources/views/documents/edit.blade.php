@@ -10,27 +10,27 @@
             <ol class="list-none p-0 inline-flex">
                 <li class="flex items-center">
                     <a href="{{ route('dashboard') }}" class="text-apple-blue-dark hover:text-apple-blue">Dashboard</a>
-                    <svg class="w-3 h-3 mx-3" style="color: rgba(142, 142, 147, 0.8);" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-3 h-3 mx-3 text-[rgba(142,142,147,0.8)]" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                     </svg>
                 </li>
                 <li class="flex items-center">
                     <a href="{{ route('documents.index') }}" class="text-apple-blue-dark hover:text-apple-blue">Dokumen</a>
-                    <svg class="w-3 h-3 mx-3" style="color: rgba(142, 142, 147, 0.8);" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-3 h-3 mx-3 text-[rgba(142,142,147,0.8)]" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                     </svg>
                 </li>
                 <li class="flex items-center">
                     <a href="{{ route('documents.show', $document) }}" class="text-apple-blue-dark hover:text-apple-blue">{{ Str::limit($document->title, 30) }}</a>
-                    <svg class="w-3 h-3 mx-3" style="color: rgba(142, 142, 147, 0.8);" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-3 h-3 mx-3 text-[rgba(142,142,147,0.8)]" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                     </svg>
                 </li>
-                <li style="color: rgba(235, 235, 245, 0.6);">Edit</li>
+                <li class="text-dark-text-secondary">Edit</li>
             </ol>
         </nav>
-        <h1 class="text-3xl font-bold" style="color: #FFFFFF;">Edit Dokumen</h1>
-        <p class="mt-2" style="color: rgba(235, 235, 245, 0.6);">Perbarui informasi dokumen {{ $document->title }}</p>
+        <h1 class="text-3xl font-bold text-white">Edit Dokumen</h1>
+        <p class="mt-2 text-dark-text-secondary">Perbarui informasi dokumen {{ $document->title }}</p>
     </div>
 
     <form action="{{ route('documents.update', $document) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
@@ -42,12 +42,12 @@
             <div class="lg:col-span-2">
                 <!-- Basic Information -->
                 <div class="card-elevated rounded-apple-lg p-6 mb-6">
-                    <h2 class="text-xl font-semibold mb-6" style="color: #FFFFFF;">Informasi Dasar</h2>
+                    <h2 class="text-xl font-semibold mb-6 text-white">Informasi Dasar</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Title -->
                         <div class="md:col-span-2">
-                            <label for="title" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                            <label for="title" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                 Judul Dokumen <span class="text-apple-red-dark">*</span>
                             </label>
                             <input type="text" 
@@ -63,7 +63,7 @@
 
                         <!-- Category -->
                         <div>
-                            <label for="category" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                            <label for="category" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                 Kategori <span class="text-apple-red-dark">*</span>
                             </label>
                             <select id="category" 
@@ -86,7 +86,7 @@
 
                         <!-- Version -->
                         <div>
-                            <label for="version" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                            <label for="version" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                 Versi
                             </label>
                             <input type="text" 
@@ -102,7 +102,7 @@
 
                         <!-- Status -->
                         <div>
-                            <label for="status" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                            <label for="status" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                 Status <span class="text-apple-red-dark">*</span>
                             </label>
                             <select id="status" 
@@ -122,7 +122,7 @@
 
                         <!-- Document Type -->
                         <div>
-                            <label for="document_type" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                            <label for="document_type" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                 Tipe Dokumen
                             </label>
                             <input type="text" 
@@ -138,7 +138,7 @@
 
                         <!-- Description -->
                         <div class="md:col-span-2">
-                            <label for="description" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                            <label for="description" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                 Deskripsi
                             </label>
                             <textarea id="description" 
@@ -153,7 +153,7 @@
 
                         <!-- Notes -->
                         <div class="md:col-span-2">
-                            <label for="notes" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                            <label for="notes" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                 Catatan
                             </label>
                             <textarea id="notes" 
@@ -170,13 +170,13 @@
 
                 <!-- File Upload -->
                 <div class="card-elevated rounded-apple-lg p-6 mb-6">
-                    <h2 class="text-xl font-semibold mb-6" style="color: #FFFFFF;">File Dokumen</h2>
+                    <h2 class="text-xl font-semibold mb-6 text-white">File Dokumen</h2>
                     
                     <!-- Current File Info -->
-                    <div class="mb-6 p-4 rounded-lg" style="background: rgba(58, 58, 60, 0.5); border: 1px solid rgba(84, 84, 88, 0.65);">
-                        <h3 class="text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">File Saat Ini</h3>
+                    <div class="mb-6 p-4 rounded-lg bg-[rgba(58,58,60,0.5)] border border-white/10">
+                        <h3 class="text-sm font-medium mb-2 text-dark-text-primary/80">File Saat Ini</h3>
                         <div class="flex items-center">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3" style="background: rgba(10, 132, 255, 0.2);">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 bg-apple-blue/20">
                                 @if(str_contains($document->mime_type, 'pdf'))
                                     <i class="fas fa-file-pdf text-apple-red"></i>
                                 @elseif(str_contains($document->mime_type, 'image'))
@@ -186,12 +186,12 @@
                                 @elseif(str_contains($document->mime_type, 'excel') || str_contains($document->mime_type, 'spreadsheet'))
                                     <i class="fas fa-file-excel text-apple-green"></i>
                                 @else
-                                    <i class="fas fa-file" style="color: rgba(142, 142, 147, 0.8);"></i>
+                                    <i class="fas fa-file text-[rgba(142,142,147,0.8)]"></i>
                                 @endif
                             </div>
                             <div class="flex-1">
-                                <p class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.8);">{{ $document->file_name }}</p>
-                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                                <p class="text-sm font-medium text-dark-text-primary/80">{{ $document->file_name }}</p>
+                                <p class="text-xs text-dark-text-secondary">
                                     {{ number_format($document->file_size / 1024, 1) }} KB • {{ $document->mime_type }}
                                 </p>
                             </div>
@@ -204,28 +204,28 @@
 
                     <!-- New File Upload -->
                     <div>
-                        <label for="file" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="file" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Upload File Baru (Opsional)
                         </label>
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg hover:border-gray-400 transition-colors duration-200" style="border-color: rgba(84, 84, 88, 0.65);">
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg hover:border-gray-400 transition-colors duration-200 border-white/10">
                             <div class="space-y-1 text-center">
-                                <svg class="mx-auto h-12 w-12" style="color: rgba(142, 142, 147, 0.8);" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <svg class="mx-auto h-12 w-12 text-[rgba(142,142,147,0.8)]" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
-                                <div class="flex text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                                <div class="flex text-sm text-dark-text-secondary">
                                     <label for="file" class="relative cursor-pointer rounded-md font-medium text-apple-blue-dark hover:text-apple-blue focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-apple-blue">
                                         <span>Upload file baru</span>
                                         <input id="file" name="file" type="file" class="sr-only" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                                     </label>
                                     <p class="pl-1">atau drag and drop</p>
                                 </div>
-                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">PDF, DOC, XLS, JPG sampai 10MB</p>
+                                <p class="text-xs text-dark-text-secondary">PDF, DOC, XLS, JPG sampai 10MB</p>
                             </div>
                         </div>
                         @error('file')
                             <p class="text-apple-red-dark text-sm mt-1">{{ $message }}</p>
                         @enderror
-                        <p class="text-sm mt-2" style="color: rgba(235, 235, 245, 0.6);">
+                        <p class="text-sm mt-2 text-dark-text-secondary">
                             <i class="fas fa-info-circle mr-1"></i>
                             Jika tidak upload file baru, file yang ada sekarang akan tetap digunakan.
                         </p>
@@ -234,7 +234,7 @@
 
                 <!-- Security & Access -->
                 <div class="card-elevated rounded-apple-lg p-6">
-                    <h2 class="text-xl font-semibold mb-6" style="color: #FFFFFF;">Keamanan & Akses</h2>
+                    <h2 class="text-xl font-semibold mb-6 text-white">Keamanan & Akses</h2>
                     
                     <div class="space-y-4">
                         <!-- Confidential -->
@@ -245,7 +245,7 @@
                                    value="1"
                                    {{ old('is_confidential', $document->is_confidential) ? 'checked' : '' }}
                                    class="h-4 w-4 text-apple-blue border-gray-300 rounded focus:ring-apple-blue">
-                            <label for="is_confidential" class="ml-2 block text-sm" style="color: rgba(235, 235, 245, 0.8);">
+                            <label for="is_confidential" class="ml-2 block text-sm text-dark-text-primary/80">
                                 Dokumen rahasia (akses terbatas)
                             </label>
                         </div>
@@ -253,7 +253,7 @@
                         <!-- Document Date -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label for="document_date" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                                <label for="document_date" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                     Tanggal Dokumen
                                 </label>
                                 <input type="date" 
@@ -264,7 +264,7 @@
                             </div>
 
                             <div>
-                                <label for="submission_date" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                                <label for="submission_date" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                     Tanggal Pengajuan
                                 </label>
                                 <input type="date" 
@@ -275,7 +275,7 @@
                             </div>
 
                             <div>
-                                <label for="approval_date" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                                <label for="approval_date" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                                     Tanggal Persetujuan
                                 </label>
                                 <input type="date" 
@@ -293,11 +293,11 @@
             <div class="lg:col-span-1">
                 <!-- Project & Task Selection -->
                 <div class="card-elevated rounded-apple-lg p-6 mb-6">
-                    <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">Proyek & Tugas</h3>
+                    <h3 class="text-lg font-semibold mb-4 text-white">Proyek & Tugas</h3>
                     
                     <!-- Project -->
                     <div class="mb-4">
-                        <label for="project_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="project_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Proyek <span class="text-apple-red-dark">*</span>
                         </label>
                         <select id="project_id" 
@@ -318,7 +318,7 @@
 
                     <!-- Task -->
                     <div>
-                        <label for="task_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="task_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Tugas (Opsional)
                         </label>
                         <select id="task_id" 
@@ -344,7 +344,7 @@
                         </button>
                         
                         <a href="{{ route('documents.show', $document) }}" 
-                           class="w-full py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center" style="background: rgba(142, 142, 147, 0.6); color: rgba(235, 235, 245, 0.8);">
+                           class="w-full py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center bg-[rgba(142,142,147,0.6)] text-dark-text-primary/80">
                             <i class="fas fa-times mr-2"></i>
                             Batal
                         </a>

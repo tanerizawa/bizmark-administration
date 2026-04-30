@@ -1,0 +1,48 @@
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Route;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+        then: function () {
+            Route::middleware('web')
+                ->group(base_path('routes/mobile.php'));
+        }
+    )
+    ->withMiddleware(function (Middleware $middleware): void {
+        // Add middleware to web group
+        $middleware->web(append: [
+            \App\Http\Middleware\RequestId::class,
+            \App\Http\Middleware\NeuralResponseTime::class, // Neuroscience: Monitor response time (<300ms optimal)
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\DeviceDetection::class, // Public landing auto-redirect (FIRST)
+            \App\Http\Middleware\DetectMobile::class, // Authenticated user mobile dashboard (AFTER)
+            \App\Http\Middleware\LogReconciliationRequests::class, // Debug reconciliation (only active when APP_DEBUG=true)
+        ]);
+
+        // Register middleware aliases
+        $middleware->alias([
+            'permission' => \App\Http\Middleware\CheckPermission::class,
+            'role' => \App\Http\Middleware\CheckRole::class,
+            'locale' => \App\Http\Middleware\SetLocale::class,
+            'email.access' => \App\Http\Middleware\CheckEmailManagementAccess::class,
+            'internal.api' => \App\Http\Middleware\EnsureInternalApiKey::class,
+            'email.webhook.replay' => \App\Http\Middleware\EnsureEmailWebhookReplayProtection::class,
+            '2fa' => \App\Http\Middleware\EnsureTwoFactorVerified::class,
+        ]);
+
+        // Exclude webhook endpoints from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'webhook/*',
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        //
+    })->create();

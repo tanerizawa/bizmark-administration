@@ -5,25 +5,25 @@
     <!-- Total Budget -->
     <div class="data-block">
         <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Nilai Kontrak</span>
+            <span class="text-xs font-medium text-dark-text-secondary">Nilai Kontrak</span>
             <i class="fas fa-wallet text-xs text-apple-blue-dark"></i>
         </div>
-        <p class="text-sm font-bold mb-0.5 leading-tight" style="color: #FFFFFF;">
+        <p class="text-sm font-bold mb-0.5 leading-tight text-white">
             Rp {{ number_format($totalBudget, 0, ',', '.') }}
         </p>
-        <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">Total kontrak</p>
+        <p class="text-xs text-dark-text-tertiary">Total kontrak</p>
     </div>
 
     <!-- Total Received -->
     <div class="data-block">
         <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Diterima</span>
-            <i class="fas fa-hand-holding-usd text-xs" style="color: rgba(52, 199, 89, 1);"></i>
+            <span class="text-xs font-medium text-dark-text-secondary">Diterima</span>
+            <i class="fas fa-hand-holding-usd text-xs text-apple-green"></i>
         </div>
-        <p class="text-sm font-bold mb-0.5 leading-tight" style="color: rgba(52, 199, 89, 1);">
+        <p class="text-sm font-bold mb-0.5 leading-tight text-apple-green">
             Rp {{ number_format($totalReceived, 0, ',', '.') }}
         </p>
-        <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
+        <p class="text-xs text-dark-text-tertiary">
             {{ $totalBudget > 0 ? number_format(($totalReceived / $totalBudget) * 100, 1) : 0 }}% terbayar
         </p>
     </div>
@@ -31,13 +31,13 @@
     <!-- Total Expenses -->
     <div class="data-block">
         <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Pengeluaran</span>
-            <i class="fas fa-shopping-cart text-xs" style="color: rgba(255, 59, 48, 1);"></i>
+            <span class="text-xs font-medium text-dark-text-secondary">Pengeluaran</span>
+            <i class="fas fa-shopping-cart text-xs text-apple-red"></i>
         </div>
-        <p class="text-sm font-bold mb-0.5 leading-tight" style="color: rgba(255, 59, 48, 1);">
+        <p class="text-sm font-bold mb-0.5 leading-tight text-apple-red">
             Rp {{ number_format($totalExpenses, 0, ',', '.') }}
         </p>
-        <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
+        <p class="text-xs text-dark-text-tertiary">
             {{ $totalBudget > 0 ? number_format(($totalExpenses / $totalBudget) * 100, 1) : 0 }}% dari kontrak
         </p>
     </div>
@@ -45,13 +45,13 @@
     <!-- Profit Margin -->
     <div class="data-block">
         <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Profit</span>
-            <i class="fas fa-chart-line text-xs" style="color: rgba(0, 122, 255, 1);"></i>
+            <span class="text-xs font-medium text-dark-text-secondary">Profit</span>
+            <i class="fas fa-chart-line text-xs text-apple-blue"></i>
         </div>
         <p class="text-sm font-bold mb-0.5 leading-tight" style="color: {{ $profitMargin >= 0 ? 'rgba(52, 199, 89, 1)' : 'rgba(255, 59, 48, 1)' }};">
             {{ $profitMargin < 0 ? '-' : '' }}Rp {{ number_format(abs($profitMargin), 0, ',', '.') }}
         </p>
-        <p class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
+        <p class="text-xs text-dark-text-tertiary">
             {{ $totalReceived > 0 ? number_format(($profitMargin / $totalReceived) * 100, 1) : 0 }}% margin
         </p>
     </div>
@@ -62,18 +62,18 @@
     <div class="data-block">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-xs mb-0.5" style="color: rgba(235, 235, 245, 0.6);">Total Invoice</p>
-                <p class="text-sm font-bold" style="color: #FFFFFF;">Rp {{ number_format($totalInvoiced, 0, ',', '.') }}</p>
+                <p class="text-xs mb-0.5 text-dark-text-secondary">Total Invoice</p>
+                <p class="text-sm font-bold text-white">Rp {{ number_format($totalInvoiced, 0, ',', '.') }}</p>
             </div>
-            <i class="fas fa-file-invoice text-lg" style="color: rgba(0, 122, 255, 0.6);"></i>
+            <i class="fas fa-file-invoice text-lg text-apple-blue/60"></i>
         </div>
     </div>
 
     <div class="data-block">
         <div class="flex items-center justify-between">
             <div class="flex-1">
-                <p class="text-xs mb-0.5" style="color: rgba(235, 235, 245, 0.6);">Kasbon Belum Lunas</p>
-                <p class="text-sm font-bold" style="color: rgba(255, 149, 0, 1);">Rp {{ number_format($receivableOutstanding, 0, ',', '.') }}</p>
+                <p class="text-xs mb-0.5 text-dark-text-secondary">Kasbon Belum Lunas</p>
+                <p class="text-sm font-bold text-apple-orange">Rp {{ number_format($receivableOutstanding, 0, ',', '.') }}</p>
                 @php
                     $kasbonCount = $project->expenses()
                         ->where('is_receivable', true)
@@ -81,10 +81,10 @@
                         ->count();
                 @endphp
                 @if($kasbonCount > 0)
-                <p class="text-xs mt-0.5" style="color: rgba(255, 149, 0, 0.7);">{{ $kasbonCount }} kasbon aktif</p>
+                <p class="text-xs mt-0.5 text-apple-orange/70">{{ $kasbonCount }} kasbon aktif</p>
                 @endif
             </div>
-            <i class="fas fa-hand-holding-usd text-lg" style="color: rgba(255, 149, 0, 0.6);"></i>
+            <i class="fas fa-hand-holding-usd text-lg text-apple-orange/60"></i>
         </div>
     </div>
 </div>
@@ -92,7 +92,7 @@
 <!-- Financial Chart - Compact -->
 <div class="page-card space-y-2 mb-3">
     <div class="flex items-center justify-between mb-2">
-        <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
+        <h3 class="text-sm font-semibold text-white">
             <i class="fas fa-chart-bar mr-2 text-apple-blue-dark"></i>Pemasukan vs Pengeluaran (6 Bulan)
         </h3>
     </div>
@@ -104,12 +104,11 @@
 <!-- Invoices Section - Compact -->
 <div class="page-card space-y-2 mb-3">
     <div class="flex justify-between items-center mb-2">
-        <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
+        <h3 class="text-sm font-semibold text-white">
             <i class="fas fa-file-invoice mr-2 text-apple-blue-dark"></i>Daftar Invoice
         </h3>
         <button onclick="openInvoiceModal()" 
-                class="btn-primary-sm" 
-                style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
+                class="btn-primary-sm bg-apple-blue/90 text-white">
             <i class="fas fa-plus mr-1"></i>Tambah Invoice
         </button>
     </div>
@@ -118,32 +117,32 @@
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr style="border-bottom: 1px solid rgba(58, 58, 60, 0.8);">
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">No. Invoice</th>
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Tanggal</th>
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Jatuh Tempo</th>
-                    <th class="text-right py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Total</th>
-                    <th class="text-right py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Terbayar</th>
-                    <th class="text-center py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Status</th>
-                    <th class="text-center py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Aksi</th>
+                <tr class="border-b border-white/10">
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">No. Invoice</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Tanggal</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Jatuh Tempo</th>
+                    <th class="text-right py-2 px-2 text-xs font-medium text-dark-text-secondary">Total</th>
+                    <th class="text-right py-2 px-2 text-xs font-medium text-dark-text-secondary">Terbayar</th>
+                    <th class="text-center py-2 px-2 text-xs font-medium text-dark-text-secondary">Status</th>
+                    <th class="text-center py-2 px-2 text-xs font-medium text-dark-text-secondary">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($project->invoices as $invoice)
-                <tr style="border-bottom: 1px solid rgba(58, 58, 60, 0.4);">
-                    <td class="py-1.5 px-2 text-xs font-mono" style="color: rgba(0, 122, 255, 1);">
+                <tr class="border-b border-white/5">
+                    <td class="py-1.5 px-2 text-xs font-mono text-apple-blue">
                         {{ $invoice->invoice_number }}
                     </td>
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         {{ $invoice->invoice_date->format('d M Y') }}
                     </td>
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         {{ $invoice->due_date->format('d M Y') }}
                     </td>
-                    <td class="py-1.5 px-2 text-xs text-right font-semibold" style="color: #FFFFFF;">
+                    <td class="py-1.5 px-2 text-xs text-right font-semibold text-white">
                         Rp {{ number_format($invoice->total_amount, 0, ',', '.') }}
                     </td>
-                    <td class="py-1.5 px-2 text-xs text-right font-semibold" style="color: rgba(52, 199, 89, 1);">
+                    <td class="py-1.5 px-2 text-xs text-right font-semibold text-apple-green">
                         Rp {{ number_format($invoice->paid_amount, 0, ',', '.') }}
                     </td>
                     <td class="py-1.5 px-2 text-center">
@@ -166,21 +165,21 @@
                         <div class="flex items-center justify-center space-x-2">
                             @if($invoice->status !== 'paid' && $invoice->status !== 'cancelled')
                             <button onclick="openPaymentModal({{ $invoice->id }}, '{{ $invoice->invoice_number }}', {{ $invoice->remaining_amount }})" 
-                                    class="text-xs hover:opacity-75" style="color: rgba(52, 199, 89, 1);" title="Catat Pembayaran">
+                                    class="text-xs hover:opacity-75 text-apple-green" title="Catat Pembayaran">
                                 <i class="fas fa-dollar-sign"></i>
                             </button>
                             @endif
                             <a href="{{ route('invoices.download-pdf', $invoice) }}" target="_blank"
-                               class="text-xs hover:opacity-75" style="color: rgba(255, 149, 0, 1);" title="Download PDF">
+                               class="text-xs hover:opacity-75 text-apple-orange" title="Download PDF">
                                 <i class="fas fa-file-pdf"></i>
                             </a>
                             <button onclick="viewInvoice({{ $invoice->id }})" 
-                                    class="text-xs hover:opacity-75" style="color: rgba(0, 122, 255, 1);" title="Lihat Detail">
+                                    class="text-xs hover:opacity-75 text-apple-blue" title="Lihat Detail">
                                 <i class="fas fa-eye"></i>
                             </button>
                             @if($invoice->status === 'draft' || $invoice->status === 'cancelled')
                             <button onclick="deleteInvoice({{ $invoice->id }})" 
-                                    class="text-xs hover:opacity-75" style="color: rgba(255, 59, 48, 1);" title="Hapus Invoice">
+                                    class="text-xs hover:opacity-75 text-apple-red" title="Hapus Invoice">
                                 <i class="fas fa-trash"></i>
                             </button>
                             @endif
@@ -193,12 +192,11 @@
     </div>
     @else
     <div class="text-center py-8">
-        <i class="fas fa-file-invoice text-3xl mb-2" style="color: rgba(235, 235, 245, 0.3);"></i>
-        <p class="text-sm mb-1" style="color: rgba(235, 235, 245, 0.6);">Belum ada invoice</p>
-        <p class="text-xs mb-3" style="color: rgba(235, 235, 245, 0.4);">Buat invoice pertama untuk melacak pembayaran</p>
+        <i class="fas fa-file-invoice text-3xl mb-2 text-dark-text-tertiary/50"></i>
+        <p class="text-sm mb-1 text-dark-text-secondary">Belum ada invoice</p>
+        <p class="text-xs mb-3 text-dark-text-tertiary/50">Buat invoice pertama untuk melacak pembayaran</p>
         <button onclick="openInvoiceModal()" 
-                class="text-xs px-4 py-2 rounded-lg font-medium transition-colors" 
-                style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
+                class="text-xs px-4 py-2 rounded-lg font-medium transition-colors bg-apple-blue/90 text-white">
             <i class="fas fa-plus mr-1"></i>Buat Invoice Pertama
         </button>
     </div>
@@ -209,24 +207,23 @@
 <div class="page-card space-y-2 mb-3">
     <div class="flex justify-between items-center mb-2">
         <div class="flex items-center gap-2">
-            <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
-                <i class="fas fa-hand-holding-usd mr-2" style="color: rgba(52, 199, 89, 1);"></i>Pemasukan Langsung
+            <h3 class="text-sm font-semibold text-white">
+                <i class="fas fa-hand-holding-usd mr-2 text-apple-green"></i>Pemasukan Langsung
             </h3>
             @if($totalDirectIncome > 0)
-            <span class="text-xs px-2 py-1 rounded-lg font-semibold" style="background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 1);">
+            <span class="text-xs px-2 py-1 rounded-lg font-semibold bg-apple-green/20 text-apple-green">
                 Total: Rp {{ number_format($totalDirectIncome, 0, ',', '.') }}
             </span>
             @endif
         </div>
         <button onclick="openDirectIncomeModal()" 
-                class="btn-primary-sm" 
-                style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF; border-color: transparent;">
+                class="btn-primary-sm bg-apple-green/90 text-white border-transparent">
             <i class="fas fa-plus mr-1"></i>Tambah Pemasukan
         </button>
     </div>
 
-    <div class="text-xs mb-2 px-3 py-2 rounded-lg" style="background: rgba(52, 199, 89, 0.1); border-left: 3px solid rgba(52, 199, 89, 1); color: rgba(235, 235, 245, 0.8);">
-        <i class="fas fa-info-circle mr-1" style="color: rgba(52, 199, 89, 1);"></i>
+    <div class="text-xs mb-2 px-3 py-2 rounded-lg bg-apple-green/10 border-l-[3px] border-apple-green text-dark-text-primary/80">
+        <i class="fas fa-info-circle mr-1 text-apple-green"></i>
         <strong>Pemasukan Langsung</strong> adalah pembayaran yang diterima tanpa invoice formal (contoh: uang muka, donasi, hibah, atau pembayaran cash langsung).
     </div>
 
@@ -234,31 +231,31 @@
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr style="border-bottom: 1px solid rgba(58, 58, 60, 0.8);">
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Tanggal</th>
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Deskripsi</th>
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Metode Pembayaran</th>
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Rekening/Kas</th>
-                    <th class="text-right py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Jumlah</th>
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Dicatat Oleh</th>
-                    <th class="text-center py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Aksi</th>
+                <tr class="border-b border-white/10">
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Tanggal</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Deskripsi</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Metode Pembayaran</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Rekening/Kas</th>
+                    <th class="text-right py-2 px-2 text-xs font-medium text-dark-text-secondary">Jumlah</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Dicatat Oleh</th>
+                    <th class="text-center py-2 px-2 text-xs font-medium text-dark-text-secondary">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($directIncomes as $income)
-                <tr style="border-bottom: 1px solid rgba(58, 58, 60, 0.4);">
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                <tr class="border-b border-white/5">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         {{ \Carbon\Carbon::parse($income->payment_date)->format('d M Y') }}
                     </td>
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         {{ $income->description }}
                         @if($income->reference_number)
-                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.5);">
+                        <p class="text-xs mt-0.5 text-dark-text-tertiary">
                             Ref: {{ $income->reference_number }}
                         </p>
                         @endif
                     </td>
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         @php
                             $methodLabels = [
                                 'bank_transfer' => 'Transfer Bank',
@@ -270,40 +267,39 @@
                             $methodLabel = $methodLabels[$income->payment_method] ?? ucfirst($income->payment_method);
                         @endphp
                         <span class="inline-flex items-center">
-                            <i class="fas fa-{{ $income->payment_method === 'cash' ? 'money-bill-wave' : ($income->payment_method === 'bank_transfer' ? 'university' : 'credit-card') }} mr-1.5" 
-                               style="color: rgba(235, 235, 245, 0.4);"></i>
+                            <i class="fas fa-{{ $income->payment_method === 'cash' ? 'money-bill-wave' : ($income->payment_method === 'bank_transfer' ? 'university' : 'credit-card') }} mr-1.5 text-dark-text-tertiary/50"></i>
                             {{ $methodLabel }}
                         </span>
                     </td>
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         @if($income->bankAccount)
                             {{ $income->bankAccount->account_name }}
                             @if($income->bankAccount->account_number)
-                            <span class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
+                            <span class="text-xs text-dark-text-tertiary">
                                 ({{ $income->bankAccount->account_number }})
                             </span>
                             @endif
                         @else
-                            <span style="color: rgba(235, 235, 245, 0.5);">-</span>
+                            <span class="text-dark-text-tertiary">-</span>
                         @endif
                     </td>
-                    <td class="py-1.5 px-2 text-xs text-right font-bold" style="color: rgba(52, 199, 89, 1);">
+                    <td class="py-1.5 px-2 text-xs text-right font-bold text-apple-green">
                         Rp {{ number_format($income->amount, 0, ',', '.') }}
                     </td>
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.7);">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-secondary">
                         {{ $income->createdBy ? $income->createdBy->name : '-' }}
-                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.4);">
+                        <p class="text-xs mt-0.5 text-dark-text-tertiary/50">
                             {{ $income->created_at->format('d M Y H:i') }}
                         </p>
                     </td>
                     <td class="py-1.5 px-2 text-center">
                         <div class="flex items-center justify-center space-x-2">
                             <button onclick="editDirectIncome({{ $income->id }})" 
-                                    class="text-xs hover:opacity-75" style="color: rgba(0, 122, 255, 1);" title="Edit">
+                                    class="text-xs hover:opacity-75 text-apple-blue" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button onclick="deleteDirectIncome({{ $income->id }})" 
-                                    class="text-xs hover:opacity-75" style="color: rgba(255, 59, 48, 1);" title="Hapus">
+                                    class="text-xs hover:opacity-75 text-apple-red" title="Hapus">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -315,12 +311,11 @@
     </div>
     @else
     <div class="text-center py-8">
-        <i class="fas fa-hand-holding-usd text-3xl mb-2" style="color: rgba(52, 199, 89, 0.3);"></i>
-        <p class="text-sm mb-1" style="color: rgba(235, 235, 245, 0.6);">Belum ada pemasukan langsung</p>
-        <p class="text-xs mb-3" style="color: rgba(235, 235, 245, 0.4);">Catat pemasukan yang tidak terkait dengan invoice</p>
+        <i class="fas fa-hand-holding-usd text-3xl mb-2 text-apple-green/30"></i>
+        <p class="text-sm mb-1 text-dark-text-secondary">Belum ada pemasukan langsung</p>
+        <p class="text-xs mb-3 text-dark-text-tertiary/50">Catat pemasukan yang tidak terkait dengan invoice</p>
         <button onclick="openDirectIncomeModal()" 
-                class="text-xs px-4 py-2 rounded-lg font-medium transition-colors" 
-                style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
+                class="text-xs px-4 py-2 rounded-lg font-medium transition-colors bg-apple-green/90 text-white">
             <i class="fas fa-plus mr-1"></i>Tambah Pemasukan Pertama
         </button>
     </div>
@@ -330,12 +325,11 @@
 <!-- Unified Expenses Section with Smart Filters -->
 <div class="page-card space-y-2">
     <div class="flex justify-between items-center mb-2">
-        <h3 class="text-sm font-semibold" style="color: #FFFFFF;">
+        <h3 class="text-sm font-semibold text-white">
             <i class="fas fa-receipt mr-2 text-apple-blue-dark"></i>Pengeluaran & Kasbon
         </h3>
         <button onclick="openExpenseModal()" 
-                class="text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors" 
-                style="background: rgba(255, 59, 48, 0.9); color: #FFFFFF;">
+                class="text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors bg-apple-red/90 text-white">
             <i class="fas fa-plus mr-1"></i>Tambah
         </button>
     </div>
@@ -361,19 +355,16 @@
     <!-- Compact Filter Tabs -->
     <div class="flex gap-2 mb-2 overflow-x-auto">
         <button onclick="filterExpenses('all')" 
-                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
-                style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(235, 235, 245, 0.9);">
-            <i class="fas fa-list mr-1.5" style="color: rgba(235, 235, 245, 0.4);"></i>Semua ({{ $countAll }})
+                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap bg-white/5 border border-white/10 text-dark-text-primary/90">
+            <i class="fas fa-list mr-1.5 text-dark-text-tertiary/50"></i>Semua ({{ $countAll }})
         </button>
         <button onclick="filterExpenses('kasbon')" 
-                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
-                style="background: rgba(255, 204, 0, 0.15); border: 1px solid rgba(255, 204, 0, 0.3); color: rgba(255, 204, 0, 1);">
-            <i class="fas fa-money-bill-wave mr-1.5" style="color: rgba(255, 204, 0, 0.6);"></i>Kasbon/Piutang Internal ({{ $countKasbon }})
+                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap bg-[rgba(255,204,0,0.15)] border-[rgba(255,204,0,0.3)] text-[rgba(255,204,0,1)]">
+            <i class="fas fa-money-bill-wave mr-1.5 text-[rgba(255,204,0,0.6)]"></i>Kasbon/Piutang Internal ({{ $countKasbon }})
         </button>
         <button onclick="filterExpenses('regular')" 
-                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
-                style="background: rgba(10, 132, 255, 0.15); border: 1px solid rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);">
-            <i class="fas fa-file-invoice mr-1.5" style="color: rgba(10, 132, 255, 0.6);"></i>Pengeluaran Operasional ({{ $countRegular }})
+                class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap bg-apple-blue/15 border-apple-blue/30 text-apple-blue">
+            <i class="fas fa-file-invoice mr-1.5 text-apple-blue/60"></i>Pengeluaran Operasional ({{ $countRegular }})
         </button>
     </div>
 
@@ -381,15 +372,15 @@
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr style="border-bottom: 1px solid rgba(58, 58, 60, 0.8);">
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Tanggal</th>
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Deskripsi</th>
-                    <th class="text-left py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Kategori</th>
-                    <th class="text-center py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Tipe</th>
-                    <th class="text-right py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Jumlah</th>
-                    <th class="text-right py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Dibayar</th>
-                    <th class="text-center py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Status</th>
-                    <th class="text-center py-2 px-2 text-xs font-medium" style="color: rgba(235, 235, 245, 0.6);">Aksi</th>
+                <tr class="border-b border-white/10">
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Tanggal</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Deskripsi</th>
+                    <th class="text-left py-2 px-2 text-xs font-medium text-dark-text-secondary">Kategori</th>
+                    <th class="text-center py-2 px-2 text-xs font-medium text-dark-text-secondary">Tipe</th>
+                    <th class="text-right py-2 px-2 text-xs font-medium text-dark-text-secondary">Jumlah</th>
+                    <th class="text-right py-2 px-2 text-xs font-medium text-dark-text-secondary">Dibayar</th>
+                    <th class="text-center py-2 px-2 text-xs font-medium text-dark-text-secondary">Status</th>
+                    <th class="text-center py-2 px-2 text-xs font-medium text-dark-text-secondary">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -404,42 +395,42 @@
                     
                     $remaining = $expense->amount - $expense->receivable_paid_amount;
                 @endphp
-                <tr class="expense-row" data-type="{{ $expenseType }}" style="border-bottom: 1px solid rgba(58, 58, 60, 0.4);">
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                <tr class="expense-row border-b border-white/5" data-type="{{ $expenseType }}">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         {{ $expense->expense_date->format('d M Y') }}
                     </td>
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         {{ $expense->description }}
                         @if($expense->is_receivable && $expense->receivable_status != 'paid')
-                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.5);">
+                        <p class="text-xs mt-0.5 text-dark-text-tertiary">
                             Dari: {{ $expense->receivable_from ?? '-' }}
                         </p>
                         @endif
                         @if($expense->notes)
-                        <p class="text-xs mt-0.5" style="color: rgba(235, 235, 245, 0.5);">{{ Str::limit($expense->notes, 50) }}</p>
+                        <p class="text-xs mt-0.5 text-dark-text-tertiary">{{ Str::limit($expense->notes, 50) }}</p>
                         @endif
                     </td>
-                    <td class="py-1.5 px-2 text-xs" style="color: rgba(235, 235, 245, 0.9);">
+                    <td class="py-1.5 px-2 text-xs text-dark-text-primary/90">
                         <span class="inline-flex items-center">
-                            <i class="fas fa-{{ $expense->category_icon }} mr-1.5" style="color: rgba(235, 235, 245, 0.4);"></i>
+                            <i class="fas fa-{{ $expense->category_icon }} mr-1.5 text-dark-text-tertiary/50"></i>
                             <span>{{ $expense->category_name }}</span>
                         </span>
                     </td>
                     <td class="py-1.5 px-2 text-center">
                         @if($expense->is_receivable && $expense->receivable_status != 'paid')
-                        <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full" style="background: rgba(255, 204, 0, 0.2); color: rgba(255, 204, 0, 1);">
-                            <i class="fas fa-money-bill-wave mr-1" style="color: rgba(255, 204, 0, 0.6);"></i> Kasbon
+                        <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-[rgba(255,204,0,0.2)] text-[rgba(255,204,0,1)]">
+                            <i class="fas fa-money-bill-wave mr-1 text-[rgba(255,204,0,0.6)]"></i> Kasbon
                         </span>
                         @else
-                        <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full" style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);">
-                            <i class="fas fa-file-invoice mr-1" style="color: rgba(10, 132, 255, 0.6);"></i> Operasional
+                        <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-apple-blue/20 text-apple-blue">
+                            <i class="fas fa-file-invoice mr-1 text-apple-blue/60"></i> Operasional
                         </span>
                         @endif
                     </td>
-                    <td class="py-1.5 px-2 text-xs text-right font-semibold" style="color: rgba(255, 59, 48, 1);">
+                    <td class="py-1.5 px-2 text-xs text-right font-semibold text-apple-red">
                         Rp {{ number_format($expense->amount, 0, ',', '.') }}
                     </td>
-                    <td class="py-1.5 px-2 text-xs text-right" style="color: rgba(52, 199, 89, 1);">
+                    <td class="py-1.5 px-2 text-xs text-right text-apple-green">
                         @if($expense->is_receivable && $expense->receivable_paid_amount > 0)
                         Rp {{ number_format($expense->receivable_paid_amount, 0, ',', '.') }}
                         @else
@@ -449,11 +440,11 @@
                     <td class="py-1.5 px-2 text-center">
                         @if($expense->is_receivable && $expense->receivable_status != 'paid')
                             @if($expense->receivable_status == 'pending')
-                            <span class="inline-flex px-2 py-0.5 text-xs rounded-full" style="background: rgba(255, 69, 58, 0.2); color: rgba(255, 69, 58, 1);">
+                            <span class="inline-flex px-2 py-0.5 text-xs rounded-full bg-apple-red/20 text-apple-red">
                                 Belum Bayar
                             </span>
                             @elseif($expense->receivable_status == 'partial')
-                            <span class="inline-flex px-2 py-0.5 text-xs rounded-full" style="background: rgba(255, 204, 0, 0.2); color: rgba(255, 204, 0, 1);">
+                            <span class="inline-flex px-2 py-0.5 text-xs rounded-full bg-[rgba(255,204,0,0.2)] text-[rgba(255,204,0,1)]">
                                 Sebagian
                             </span>
                             @endif
@@ -465,22 +456,19 @@
                         <div class="flex justify-center space-x-1">
                             @if($expense->is_receivable && $expense->receivable_status != 'paid')
                             <button onclick="recordReceivablePayment({{ $expense->id }}, {{ $remaining }})" 
-                                    class="text-xs px-2 py-1 rounded hover:opacity-75" 
-                                    style="background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 1);"
+                                    class="text-xs px-2 py-1 rounded hover:opacity-75 bg-apple-green/20 text-apple-green"
                                     title="Catat Pembayaran">
                                 <i class="fas fa-money-bill"></i>
                             </button>
                             @endif
                             @if($expense && $expense->id)
                             <button onclick="editExpense({{ $expense->id }})" 
-                                    class="text-xs px-2 py-1 rounded hover:opacity-75" 
-                                    style="background: rgba(10, 132, 255, 0.2); color: rgba(10, 132, 255, 1);"
+                                    class="text-xs px-2 py-1 rounded hover:opacity-75 bg-apple-blue/20 text-apple-blue"
                                     title="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button onclick="deleteExpense({{ $expense->id }})" 
-                                    class="text-xs px-2 py-1 rounded hover:opacity-75" 
-                                    style="background: rgba(255, 69, 58, 0.2); color: rgba(255, 69, 58, 1);"
+                                    class="text-xs px-2 py-1 rounded hover:opacity-75 bg-apple-red/20 text-apple-red"
                                     title="Hapus">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -494,8 +482,8 @@
     </div>
     @else
     <div class="text-center py-6">
-        <i class="fas fa-inbox text-3xl mb-2" style="color: rgba(235, 235, 245, 0.3);"></i>
-        <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Belum ada pengeluaran tercatat</p>
+        <i class="fas fa-inbox text-3xl mb-2 text-dark-text-tertiary/50"></i>
+        <p class="text-xs text-dark-text-secondary">Belum ada pengeluaran tercatat</p>
     </div>
     @endif
 </div>

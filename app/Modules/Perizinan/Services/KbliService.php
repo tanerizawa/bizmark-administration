@@ -19,11 +19,11 @@ class KbliService
         }
 
         // Cache key based on keyword and limit
-        $cacheKey = 'kbli_search_' . md5(strtolower($keyword)) . '_' . $limit;
+        $cacheKey = 'kbli_search_'.md5(strtolower($keyword)).'_'.$limit;
 
         return Cache::remember($cacheKey, 3600, function () use ($keyword, $limit) {
             $results = Kbli::search($keyword, $limit);
-            
+
             // Convert to array format for compatibility
             return $results->map(function ($kbli) {
                 return [
@@ -41,12 +41,12 @@ class KbliService
      */
     public function getByCode(string $code): ?array
     {
-        $cacheKey = 'kbli_code_' . $code;
+        $cacheKey = 'kbli_code_'.$code;
 
         return Cache::remember($cacheKey, 86400, function () use ($code) {
             $kbli = Kbli::findByCode($code);
-            
-            if (!$kbli) {
+
+            if (! $kbli) {
                 return null;
             }
 
@@ -69,7 +69,7 @@ class KbliService
             $results = Kbli::whereRaw('LENGTH(code) = 5')
                 ->orderBy('code')
                 ->get();
-            
+
             return $results->map(function ($kbli) {
                 return [
                     'code' => $kbli->code,
@@ -86,11 +86,11 @@ class KbliService
      */
     public function getBySector(string $sector): array
     {
-        $cacheKey = 'kbli_sector_' . $sector;
+        $cacheKey = 'kbli_sector_'.$sector;
 
         return Cache::remember($cacheKey, 86400, function () use ($sector) {
             $results = Kbli::getBySector($sector);
-            
+
             return $results->map(function ($kbli) {
                 return [
                     'code' => $kbli->code,

@@ -3,10 +3,9 @@
 namespace App\Modules\HRM\Controllers\Candidate;
 
 use App\Http\Controllers\Controller;
-use App\Models\TestSession;
 use App\Models\TestAnswer;
+use App\Models\TestSession;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class TestController extends Controller
 {
@@ -36,7 +35,7 @@ class TestController extends Controller
 
         // If started, show test interface
         $session->load('testAnswers');
-        
+
         // Calculate remaining time
         if ($session->status === 'in-progress' && $session->started_at) {
             // Calculate time elapsed since started_at
@@ -47,9 +46,9 @@ class TestController extends Controller
             // Test not started yet, use full duration
             $remainingMinutes = $session->testTemplate->duration_minutes;
         }
-        
+
         $progress = $session->getProgressPercentage();
-        
+
         // Check if this is a document-editing test
         if ($session->testTemplate->isDocumentEditingTest()) {
             return view('candidate.test-document-editing', [
@@ -57,7 +56,7 @@ class TestController extends Controller
                 'remainingMinutes' => $remainingMinutes,
             ]);
         }
-        
+
         // Get questions from template for regular tests
         $questions = $session->testTemplate->questions_data ?? [];
 
@@ -65,7 +64,7 @@ class TestController extends Controller
             'testSession' => $session,
             'remainingMinutes' => $remainingMinutes,
             'progress' => $progress,
-            'questions' => $questions
+            'questions' => $questions,
         ]);
     }
 
@@ -77,17 +76,17 @@ class TestController extends Controller
         $session = TestSession::where('session_token', $token)->firstOrFail();
 
         // Validate can start
-        if (!in_array($session->status, ['not-started', 'pending'])) {
+        if (! in_array($session->status, ['not-started', 'pending'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Test sudah dimulai atau selesai.'
+                'message' => 'Test sudah dimulai atau selesai.',
             ], 400);
         }
 
         if ($session->expires_at->isPast()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Test sudah expired.'
+                'message' => 'Test sudah expired.',
             ], 400);
         }
 
@@ -114,7 +113,7 @@ class TestController extends Controller
         $session = TestSession::where('session_token', $token)->firstOrFail();
 
         // Check if session is active
-        if (!$session->isActive()) {
+        if (! $session->isActive()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Test session tidak aktif atau sudah expired.',
@@ -149,31 +148,31 @@ class TestController extends Controller
         $session = TestSession::where('session_token', $token)->firstOrFail();
 
         // Validate can complete
-        if (!in_array($session->status, ['in-progress', 'started'])) {
+        if (! in_array($session->status, ['in-progress', 'started'])) {
             return redirect()
                 ->route('candidate.test.show', $token)
                 ->with('error', 'Test sudah diselesaikan atau tidak dapat disubmit.');
         }
-        
+
         // Ensure started_at is set (fallback if user somehow bypassed start button)
-        if (!$session->started_at) {
+        if (! $session->started_at) {
             $session->update(['started_at' => now()]);
         }
 
         // Process answers from form
         $answers = $request->input('answers', []);
-        
+
         // Save all answers to database
         foreach ($answers as $questionIndex => $answerValue) {
             // Get question from template to find question_id
             $questions = $session->testTemplate->questions_data ?? [];
-            
+
             if (isset($questions[$questionIndex])) {
                 $question = $questions[$questionIndex];
-                
+
                 // Use question index as question_id since questions don't have id field
                 $questionId = $questionIndex;
-                
+
                 // Prepare answer data
                 $answerData = [
                     'question_index' => $questionIndex,
@@ -181,14 +180,14 @@ class TestController extends Controller
                     'question_type' => $question['question_type'] ?? '',
                     'answer_value' => $answerValue,
                 ];
-                
+
                 // If multiple choice, include option text
                 if (isset($question['question_type']) && $question['question_type'] === 'multiple-choice') {
                     if (isset($question['options'][$answerValue])) {
                         $answerData['answer_text'] = $question['options'][$answerValue];
                     }
                 }
-                
+
                 // Save or update answer
                 $session->testAnswers()->updateOrCreate(
                     ['question_id' => $questionId],
@@ -224,7 +223,7 @@ class TestController extends Controller
             if ($session->tab_switches >= 5) {
                 $session->update([
                     'status' => 'flagged',
-                    'notes' => 'Auto-flagged: Too many tab switches (' . $session->tab_switches . ')',
+                    'notes' => 'Auto-flagged: Too many tab switches ('.$session->tab_switches.')',
                 ]);
 
                 return response()->json([

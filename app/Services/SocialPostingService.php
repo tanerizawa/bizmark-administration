@@ -30,6 +30,7 @@ class SocialPostingService
             Log::info('No social platforms configured, skipping pending record creation', [
                 'article' => $article->id,
             ]);
+
             return [];
         }
 
@@ -40,6 +41,7 @@ class SocialPostingService
             // Skip if already posted
             if ($this->alreadyPosted($article, $platform)) {
                 $results[$platform] = ['status' => 'skipped', 'reason' => 'already_posted'];
+
                 continue;
             }
 
@@ -55,20 +57,22 @@ class SocialPostingService
      */
     public function postToPlatform(Article $article, string $platform, string $caption): array
     {
-        $method = 'postTo' . ucfirst($platform);
+        $method = 'postTo'.ucfirst($platform);
 
-        if (!method_exists($this, $method)) {
+        if (! method_exists($this, $method)) {
             return $this->createRecord($article, $platform, $caption, 'pending', 'Platform posting not implemented');
         }
 
         try {
             $result = $this->{$method}($article, $caption);
+
             return $result;
         } catch (\Exception $e) {
             Log::error("Social posting to {$platform} failed", [
                 'article' => $article->id,
                 'error' => $e->getMessage(),
             ]);
+
             return $this->createRecord($article, $platform, $caption, 'failed', $e->getMessage());
         }
     }
@@ -82,8 +86,9 @@ class SocialPostingService
         $processed = 0;
 
         foreach ($posts as $post) {
-            if (!$post->article) {
+            if (! $post->article) {
                 $post->update(['status' => 'failed', 'error_message' => 'Article deleted']);
+
                 continue;
             }
 
@@ -144,7 +149,7 @@ class SocialPostingService
         $botToken = config('services.telegram.bot_token');
         $channelId = config('services.telegram.channel_id');
 
-        if (!$botToken || !$channelId) {
+        if (! $botToken || ! $channelId) {
             return $this->createRecord($article, 'telegram', $caption, 'pending', 'Telegram bot token or channel ID not configured');
         }
 
@@ -168,6 +173,7 @@ class SocialPostingService
         }
 
         $error = $response->json('description', 'Unknown Telegram API error');
+
         return $this->createRecord($article, 'telegram', $caption, 'failed', $error);
     }
 
@@ -179,11 +185,11 @@ class SocialPostingService
         $accessToken = config('services.linkedin.access_token');
         $orgId = config('services.linkedin.organization_id');
 
-        if (!$accessToken || !$orgId) {
+        if (! $accessToken || ! $orgId) {
             return $this->createRecord($article, 'linkedin', $caption, 'pending', 'LinkedIn credentials not configured');
         }
 
-        $articleUrl = config('app.url') . '/blog/' . $article->slug;
+        $articleUrl = config('app.url').'/blog/'.$article->slug;
 
         $response = Http::withToken($accessToken)
             ->post('https://api.linkedin.com/v2/ugcPosts', [
@@ -208,6 +214,7 @@ class SocialPostingService
 
         if ($response->successful()) {
             $postId = $response->json('id', '');
+
             return $this->createRecord($article, 'linkedin', $caption, 'posted', null, [
                 'platform_post_id' => $postId,
                 'platform_url' => "https://www.linkedin.com/feed/update/{$postId}",
@@ -227,7 +234,7 @@ class SocialPostingService
         $accessToken = config('services.twitter.access_token');
         $accessTokenSecret = config('services.twitter.access_token_secret');
 
-        if (!$accessToken || !$apiKey || !$apiSecret || !$accessTokenSecret) {
+        if (! $accessToken || ! $apiKey || ! $apiSecret || ! $accessTokenSecret) {
             return $this->createRecord($article, 'twitter', $caption, 'pending', 'Twitter API credentials not configured');
         }
 
@@ -239,14 +246,15 @@ class SocialPostingService
         $oauth = $this->buildOAuthHeader($url, 'POST', [], $apiKey, $apiSecret, $accessToken, $accessTokenSecret);
 
         $response = Http::withHeaders([
-                'Authorization' => $oauth,
-                'Content-Type' => 'application/json',
-            ])
+            'Authorization' => $oauth,
+            'Content-Type' => 'application/json',
+        ])
             ->asJson()
             ->post($url, $payload);
 
         if ($response->successful()) {
             $tweetId = $response->json('data.id');
+
             return $this->createRecord($article, 'twitter', $caption, 'posted', null, [
                 'platform_post_id' => $tweetId,
                 'platform_url' => "https://twitter.com/i/web/status/{$tweetId}",
@@ -268,11 +276,11 @@ class SocialPostingService
         $pageToken = config('services.facebook.page_access_token');
         $pageId = config('services.facebook.page_id');
 
-        if (!$pageToken || !$pageId) {
+        if (! $pageToken || ! $pageId) {
             return $this->createRecord($article, 'facebook', $caption, 'pending', 'Facebook page credentials not configured');
         }
 
-        $articleUrl = config('app.url') . '/blog/' . $article->slug;
+        $articleUrl = config('app.url').'/blog/'.$article->slug;
 
         $response = Http::post("https://graph.facebook.com/v19.0/{$pageId}/feed", [
             'message' => $caption,
@@ -282,6 +290,7 @@ class SocialPostingService
 
         if ($response->successful() && $response->json('id')) {
             $postId = $response->json('id');
+
             return $this->createRecord($article, 'facebook', $caption, 'posted', null, [
                 'platform_post_id' => $postId,
                 'platform_url' => "https://www.facebook.com/{$postId}",
@@ -298,23 +307,24 @@ class SocialPostingService
     protected function getGbpAccessToken(): ?string
     {
         $refreshToken = config('services.gbp.refresh_token');
-        if (!$refreshToken) {
+        if (! $refreshToken) {
             return null;
         }
 
         return Cache::remember('gbp_access_token', 55 * 60, function () use ($refreshToken) {
             $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
-                'client_id'     => config('services.google.client_id'),
+                'client_id' => config('services.google.client_id'),
                 'client_secret' => config('services.google.client_secret'),
                 'refresh_token' => $refreshToken,
-                'grant_type'    => 'refresh_token',
+                'grant_type' => 'refresh_token',
             ]);
 
             if ($response->successful()) {
                 return $response->json('access_token');
             }
 
-            \Log::warning('GBP token refresh failed', ['status' => $response->status(), 'body' => $response->body()]);
+            Log::warning('GBP token refresh failed', ['status' => $response->status(), 'body' => $response->body()]);
+
             return null;
         });
     }
@@ -327,11 +337,11 @@ class SocialPostingService
         $accessToken = $this->getGbpAccessToken();
         $locationId = config('services.gbp.location_id');
 
-        if (!$accessToken || !$locationId) {
+        if (! $accessToken || ! $locationId) {
             return $this->createRecord($article, 'gbp', $caption, 'pending', 'GBP credentials not configured');
         }
 
-        $articleUrl = config('app.url') . '/blog/' . $article->slug;
+        $articleUrl = config('app.url').'/blog/'.$article->slug;
 
         // Google Business Profile Local Posts API
         // Requires "My Business Business Information API" enabled in Google Cloud Console
@@ -348,6 +358,7 @@ class SocialPostingService
 
         if ($response->successful()) {
             $postName = $response->json('name', '');
+
             return $this->createRecord($article, 'gbp', $caption, 'posted', null, [
                 'platform_post_id' => $postName,
             ]);
@@ -373,13 +384,13 @@ class SocialPostingService
         if (config('services.linkedin.access_token') && config('services.linkedin.organization_id')) {
             $platforms[] = 'linkedin';
         }
-        if (!$freeOnly && config('services.twitter.access_token') && config('services.twitter.api_key')) {
+        if (! $freeOnly && config('services.twitter.access_token') && config('services.twitter.api_key')) {
             $platforms[] = 'twitter';
         }
         if (config('services.facebook.page_access_token') && config('services.facebook.page_id')) {
             $platforms[] = 'facebook';
         }
-        if (!$freeOnly && config('services.gbp.refresh_token') && config('services.gbp.location_id')) {
+        if (! $freeOnly && config('services.gbp.refresh_token') && config('services.gbp.location_id')) {
             $platforms[] = 'gbp';
         }
 
@@ -402,6 +413,7 @@ class SocialPostingService
         foreach (['telegram', 'linkedin', 'twitter', 'facebook', 'gbp'] as $platform) {
             if ($this->alreadyPosted($article, $platform)) {
                 $results[$platform] = ['status' => 'skipped'];
+
                 continue;
             }
 
@@ -459,7 +471,7 @@ class SocialPostingService
 
     protected function getDefaultCaption(Article $article, string $platform): string
     {
-        $url = config('app.url') . '/blog/' . $article->slug;
+        $url = config('app.url').'/blog/'.$article->slug;
         $title = $article->title;
         $excerpt = Str::limit(strip_tags($article->content), 200);
 
@@ -487,16 +499,16 @@ class SocialPostingService
 
         $base = array_merge($oauth, $params);
         ksort($base);
-        $baseString = strtoupper($method) . '&' . rawurlencode($url) . '&' . rawurlencode(http_build_query($base, '', '&', PHP_QUERY_RFC3986));
-        $signingKey = rawurlencode($consumerSecret) . '&' . rawurlencode($tokenSecret);
+        $baseString = strtoupper($method).'&'.rawurlencode($url).'&'.rawurlencode(http_build_query($base, '', '&', PHP_QUERY_RFC3986));
+        $signingKey = rawurlencode($consumerSecret).'&'.rawurlencode($tokenSecret);
         $oauth['oauth_signature'] = base64_encode(hash_hmac('sha1', $baseString, $signingKey, true));
 
         $parts = [];
         foreach ($oauth as $k => $v) {
-            $parts[] = rawurlencode($k) . '="' . rawurlencode($v) . '"';
+            $parts[] = rawurlencode($k).'="'.rawurlencode($v).'"';
         }
 
-        return 'OAuth ' . implode(', ', $parts);
+        return 'OAuth '.implode(', ', $parts);
     }
 
     /**

@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\DocumentDraft;
 use App\Models\ComplianceCheck;
+use App\Models\DocumentDraft;
 use App\Services\UKLUPLComplianceService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,7 +17,12 @@ class ComplianceCheckJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
+
     public $timeout = 120;
+
+    public array $backoff = [30, 90, 300];
+
+    public bool $deleteWhenMissingModels = true;
 
     /**
      * Create a new job instance.
@@ -89,7 +94,7 @@ class ComplianceCheckJob implements ShouldQueue
             ['draft_id' => $this->draftId],
             [
                 'status' => 'failed',
-                'error_message' => 'Job failed after ' . $this->tries . ' attempts: ' . $exception->getMessage(),
+                'error_message' => 'Job failed after '.$this->tries.' attempts: '.$exception->getMessage(),
             ]
         );
     }

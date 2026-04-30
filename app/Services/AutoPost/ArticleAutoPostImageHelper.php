@@ -6,12 +6,12 @@ use App\Models\ArticleTopic;
 use App\Models\AutoPostLog;
 use App\Models\AutoPostSchedule;
 use App\Services\PexelsService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ArticleAutoPostImageHelper
 {
     public function __construct(protected PexelsService $pexelsService) {}
-
 
     /**
      * Fetch a relevant featured image from Pexels based on topic context
@@ -38,7 +38,7 @@ class ArticleAutoPostImageHelper
                     'locale' => 'id-ID',
                 ]);
 
-                if (!empty($results['photos'])) {
+                if (! empty($results['photos'])) {
                     foreach ($results['photos'] as $photo) {
                         $score = $this->scorePhotoCandidate($photo, $query, $topic);
                         if ($score > $bestScore) {
@@ -49,7 +49,7 @@ class ArticleAutoPostImageHelper
                     }
                 }
             } catch (\Exception $e) {
-                \Log::warning('Pexels search failed for query', [
+                Log::warning('Pexels search failed for query', [
                     'query' => $query,
                     'error' => $e->getMessage(),
                 ]);
@@ -57,7 +57,7 @@ class ArticleAutoPostImageHelper
         }
 
         // Last-resort fallback to curated image if all query results are too weak.
-        if (!$bestPhoto) {
+        if (! $bestPhoto) {
             try {
                 $curated = $this->pexelsService->getCuratedPhotos(10, 1);
                 foreach ($curated['photos'] ?? [] as $photo) {
@@ -69,7 +69,7 @@ class ArticleAutoPostImageHelper
                     }
                 }
             } catch (\Exception $e) {
-                \Log::warning('Pexels curated fallback failed', [
+                Log::warning('Pexels curated fallback failed', [
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -127,7 +127,7 @@ class ArticleAutoPostImageHelper
         // 2) Main title + Indonesia business context
         if ($title !== '') {
             $queries[] = $title;
-            $queries[] = $title . ' Indonesia bisnis';
+            $queries[] = $title.' Indonesia bisnis';
         }
 
         // 3) Simplified title without year/noise words
@@ -136,12 +136,12 @@ class ArticleAutoPostImageHelper
         $cleanTitle = preg_replace('/[^\w\s]/u', '', $cleanTitle);
         $stopWords = ['dan', 'yang', 'untuk', 'dengan', 'dalam', 'cara', 'panduan', 'lengkap'];
         $words = array_values(array_filter(explode(' ', Str::lower(trim($cleanTitle))), function ($w) use ($stopWords) {
-            return strlen($w) > 2 && !in_array($w, $stopWords, true);
+            return strlen($w) > 2 && ! in_array($w, $stopWords, true);
         }));
         if (count($words) > 4) {
             $words = array_slice($words, 0, 4);
         }
-        if (!empty($words)) {
+        if (! empty($words)) {
             $queries[] = implode(' ', $words);
         }
 
@@ -173,13 +173,13 @@ class ArticleAutoPostImageHelper
         $score = 0;
 
         $queryTokens = $this->extractSearchTokens($query);
-        $topicTokens = $this->extractSearchTokens($topic->title . ' ' . implode(' ', $topic->keywords ?? []));
+        $topicTokens = $this->extractSearchTokens($topic->title.' '.implode(' ', $topic->keywords ?? []));
         $categoryHints = $this->extractSearchTokens(implode(' ', $this->getCategoryImageHints($topic->category)));
 
         $alt = Str::lower((string) ($photo['alt'] ?? ''));
         $url = Str::lower((string) ($photo['url'] ?? ''));
         $photographer = Str::lower((string) ($photo['photographer'] ?? ''));
-        $haystack = $alt . ' ' . $url . ' ' . $photographer;
+        $haystack = $alt.' '.$url.' '.$photographer;
 
         foreach ($queryTokens as $token) {
             if (Str::contains($haystack, $token)) {
@@ -222,7 +222,7 @@ class ArticleAutoPostImageHelper
         $stop = ['dan', 'yang', 'untuk', 'dengan', 'dalam', 'atau', 'the', 'for', 'from'];
 
         return array_values(array_unique(array_filter($parts, function ($token) use ($stop) {
-            return mb_strlen($token) > 2 && !in_array($token, $stop, true);
+            return mb_strlen($token) > 2 && ! in_array($token, $stop, true);
         })));
     }
 
@@ -238,5 +238,4 @@ class ArticleAutoPostImageHelper
 
         return $hints[$category] ?? ['business', 'office', 'document'];
     }
-
 }

@@ -9,6 +9,7 @@ use App\Models\ProjectExpense;
 use App\Models\ProjectPayment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DashboardFinancialService
 {
@@ -61,7 +62,7 @@ class DashboardFinancialService
             }
 
             if ($currentBalance < 0) {
-                \Log::warning('Dashboard: Negative cash balance detected', [
+                Log::warning('Dashboard: Negative cash balance detected', [
                     'balance' => $currentBalance,
                     'date' => Carbon::now()->toDateTimeString(),
                 ]);
@@ -78,7 +79,7 @@ class DashboardFinancialService
                 'status_color' => $statusColor,
             ];
         } catch (\Exception $e) {
-            \Log::error('Dashboard getCashFlowStatus error: '.$e->getMessage(), [
+            Log::error('Dashboard getCashFlowStatus error: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 
@@ -189,7 +190,7 @@ class DashboardFinancialService
                 'total_received' => $totalReceived,
             ];
         } catch (\Exception $e) {
-            \Log::error('Dashboard getFinancialSummary error: '.$e->getMessage(), [
+            Log::error('Dashboard getFinancialSummary error: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 
@@ -349,4 +350,3 @@ class DashboardFinancialService
         ];
     }
 }
-

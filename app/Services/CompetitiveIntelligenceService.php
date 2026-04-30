@@ -2,16 +2,19 @@
 
 namespace App\Services;
 
+use App\Models\Article;
 use App\Models\CompetitorAnalysis;
+use App\Models\KeywordCluster;
 use App\Models\KeywordPositionHistory;
 use App\Models\RankingAlert;
-use App\Models\Article;
 use Illuminate\Support\Facades\Log;
 
 class CompetitiveIntelligenceService
 {
     protected OpenRouterService $ai;
+
     protected GoogleSearchService $googleSearch;
+
     protected SearxngSearchService $searxng;
 
     public function __construct(OpenRouterService $ai, GoogleSearchService $googleSearch, SearxngSearchService $searxng)
@@ -35,8 +38,8 @@ class CompetitiveIntelligenceService
             $ourArticle = Article::published()
                 ->where(function ($q) use ($keyword) {
                     $q->where('title', 'LIKE', "%{$keyword}%")
-                      ->orWhere('meta_keywords', 'LIKE', "%{$keyword}%")
-                      ->orWhere('meta_title', 'LIKE', "%{$keyword}%");
+                        ->orWhere('meta_keywords', 'LIKE', "%{$keyword}%")
+                        ->orWhere('meta_title', 'LIKE', "%{$keyword}%");
                 })
                 ->orderByDesc('views_count')
                 ->first();
@@ -46,7 +49,7 @@ class CompetitiveIntelligenceService
             // Priority 1: SearXNG (open-source, self-hosted, unlimited)
             if ($this->searxng->isConfigured()) {
                 $serp = $this->searxng->search($keyword);
-                if ($serp['success'] && !empty($serp['results'])) {
+                if ($serp['success'] && ! empty($serp['results'])) {
                     return $this->analyzeWithRealSerp($keyword, $ourUrl, $serp, 'searxng');
                 }
                 Log::info("SearXNG returned no results for '{$keyword}', trying Google...");
@@ -55,7 +58,7 @@ class CompetitiveIntelligenceService
             // Priority 2: Google Custom Search API (100 free/day)
             if ($this->googleSearch->isConfigured()) {
                 $serp = $this->googleSearch->search($keyword);
-                if ($serp['success'] && !empty($serp['results'])) {
+                if ($serp['success'] && ! empty($serp['results'])) {
                     return $this->analyzeWithRealSerp($keyword, $ourUrl, $serp, 'google_serp');
                 }
                 Log::info("Google Search returned no results for '{$keyword}', falling back to AI...");
@@ -66,6 +69,7 @@ class CompetitiveIntelligenceService
 
         } catch (\Throwable $e) {
             Log::error("CompetitiveIntelligence: Failed for '{$keyword}'", ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -82,7 +86,7 @@ class CompetitiveIntelligenceService
         // Step 2: Build real competitor list (exclude our site)
         $competitors = [];
         foreach ($serp['results'] as $result) {
-            if (!empty($result['is_ours'])) {
+            if (! empty($result['is_ours'])) {
                 continue;
             }
             $competitors[] = [
@@ -96,8 +100,7 @@ class CompetitiveIntelligenceService
         }
 
         // Step 3: AI enrichment — analyze real competitors for strengths, gaps, and recommendations
-        $serpDataForPrompt = collect($competitors)->take(5)->map(fn($c) =>
-            "#{$c['position']} {$c['domain']} — \"{$c['title']}\" — {$c['snippet']}"
+        $serpDataForPrompt = collect($competitors)->take(5)->map(fn ($c) => "#{$c['position']} {$c['domain']} — \"{$c['title']}\" — {$c['snippet']}"
         )->implode("\n");
 
         $prompt = <<<PROMPT
@@ -145,7 +148,7 @@ PROMPT;
         }
 
         // Merge AI strengths into real competitor data
-        if ($aiData && !empty($aiData['competitor_strengths'])) {
+        if ($aiData && ! empty($aiData['competitor_strengths'])) {
             $strengthsMap = collect($aiData['competitor_strengths'])->keyBy('domain');
             foreach ($competitors as &$comp) {
                 if ($strengthsMap->has($comp['domain'])) {
@@ -206,7 +209,7 @@ PROMPT;
             'max_tokens' => 2000,
         ]);
 
-        if (!$response['success']) {
+        if (! $response['success']) {
             return null;
         }
 
@@ -215,7 +218,7 @@ PROMPT;
             true
         );
 
-        if (!$data) {
+        if (! $data) {
             return null;
         }
 
@@ -238,6 +241,7 @@ PROMPT;
         if ($position === null) {
             return 'Tidak ditemukan di halaman 1 (posisi > 10)';
         }
+
         return "#{$position}";
     }
 
@@ -248,7 +252,7 @@ PROMPT;
     {
         $results = [];
 
-        $keywords = \App\Models\KeywordCluster::query()
+        $keywords = KeywordCluster::query()
             ->orderByDesc('estimated_volume')
             ->take($limit)
             ->pluck('seed_keyword')
@@ -299,7 +303,7 @@ PROMPT;
             'total_gaps' => CompetitorAnalysis::where('analyzed_at', '>=', now()->subDays(30))
                 ->whereNotNull('content_gaps')
                 ->get()
-                ->sum(fn($a) => count($a->content_gaps ?? [])),
+                ->sum(fn ($a) => count($a->content_gaps ?? [])),
         ];
     }
 
@@ -320,12 +324,12 @@ PROMPT;
 
             if ($this->searxng->isConfigured()) {
                 $serp = $this->searxng->search($keyword);
-                if ($serp['success'] && !empty($serp['results'])) {
+                if ($serp['success'] && ! empty($serp['results'])) {
                     $dataSource = 'searxng';
                 }
             }
 
-            if (!$serp && $this->googleSearch->isConfigured()) {
+            if (! $serp && $this->googleSearch->isConfigured()) {
                 $serp = $this->googleSearch->search($keyword);
                 if ($serp && $serp['success']) {
                     $dataSource = 'google_serp';
@@ -337,17 +341,17 @@ PROMPT;
             $ourUrl = null;
             $topCompetitors = [];
 
-            if ($serp && !empty($serp['results'])) {
+            if ($serp && ! empty($serp['results'])) {
                 // Find our URL
                 foreach ($serp['results'] as $result) {
-                    if (!empty($result['is_ours'])) {
+                    if (! empty($result['is_ours'])) {
                         $ourUrl = $result['url'];
                         break;
                     }
                 }
                 // Get top 5 competitors
                 $topCompetitors = array_slice(
-                    array_filter($serp['results'], fn($r) => empty($r['is_ours'])),
+                    array_filter($serp['results'], fn ($r) => empty($r['is_ours'])),
                     0, 5
                 );
             }
@@ -372,7 +376,7 @@ PROMPT;
             }
 
             // Get search intent from keyword cluster if exists
-            $keywordCluster = \App\Models\KeywordCluster::where('seed_keyword', $keyword)->first();
+            $keywordCluster = KeywordCluster::where('seed_keyword', $keyword)->first();
             $searchIntent = $keywordCluster?->search_intent;
             $searchVolume = $keywordCluster?->estimated_volume;
 
@@ -384,7 +388,7 @@ PROMPT;
                 'previous_position' => $previousPosition,
                 'position_change' => $positionChange,
                 'data_source' => $dataSource,
-                'top_competitors' => array_map(fn($c) => [
+                'top_competitors' => array_map(fn ($c) => [
                     'position' => $c['position'] ?? null,
                     'domain' => $c['domain'] ?? '',
                     'title' => $c['title'] ?? '',
@@ -409,6 +413,7 @@ PROMPT;
             Log::error("Position tracking failed for '{$keyword}'", [
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -430,7 +435,7 @@ PROMPT;
         $keywords = collect();
 
         // 1. From keyword clusters (high priority)
-        $clusterKeywords = \App\Models\KeywordCluster::query()
+        $clusterKeywords = KeywordCluster::query()
             ->active()
             ->orderByDesc('priority')
             ->orderByDesc('estimated_volume')
@@ -460,8 +465,8 @@ PROMPT;
             ->whereNotNull('meta_keywords')
             ->take(20)
             ->pluck('meta_keywords')
-            ->flatMap(fn($k) => explode(',', $k))
-            ->map(fn($k) => trim($k))
+            ->flatMap(fn ($k) => explode(',', $k))
+            ->map(fn ($k) => trim($k))
             ->filter();
         $keywords = $keywords->merge($articleKeywords);
 
@@ -475,11 +480,12 @@ PROMPT;
         foreach ($keywords as $keyword) {
             if (in_array($keyword, $trackedToday)) {
                 $results['skipped']++;
+
                 continue;
             }
 
             $history = $this->trackPosition($keyword);
-            
+
             if ($history) {
                 $results['tracked']++;
                 $results['details'][] = [
@@ -510,12 +516,14 @@ PROMPT;
         // Lost ranking completely
         if ($history->previous_position !== null && $history->position === null) {
             RankingAlert::createLostRankingAlert($history);
+
             return;
         }
 
         // New ranking
         if ($history->previous_position === null && $history->position !== null) {
             RankingAlert::createNewRankingAlert($history);
+
             return;
         }
 

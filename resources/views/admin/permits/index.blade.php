@@ -25,10 +25,9 @@
 
     <!-- Compact Summary Statistics -->
     <div class="grid grid-cols-4 gap-2">
-        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
-                 style="background: rgba(10,132,255,0.1); border: 1px solid rgba(10,132,255,0.2);">
-            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(10,132,255,0.2);">
-                <i class="fas fa-file-alt text-apple-blue" style="font-size: 0.7rem;"></i>
+        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2 bg-apple-blue/10 border border-apple-blue/20">
+            <div class="admin-stat-icon rounded flex items-center justify-center bg-apple-blue/20">
+                <i class="fas fa-file-alt text-apple-blue text-xs"></i>
             </div>
             <div>
                 <p class="admin-small text-apple-blue uppercase tracking-wider">Total</p>
@@ -36,10 +35,9 @@
             </div>
         </article>
 
-        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
-                 style="background: rgba(255,159,10,0.1); border: 1px solid rgba(255,159,10,0.2);">
-            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,159,10,0.2);">
-                <i class="fas fa-exclamation text-apple-orange" style="font-size: 0.7rem;"></i>
+        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2 bg-apple-orange/10 border border-apple-orange/20">
+            <div class="admin-stat-icon rounded flex items-center justify-center bg-apple-orange/20">
+                <i class="fas fa-exclamation text-apple-orange text-xs"></i>
             </div>
             <div>
                 <p class="admin-small text-apple-orange uppercase tracking-wider">Tindakan</p>
@@ -47,10 +45,9 @@
             </div>
         </article>
 
-        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
-                 style="background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.2);">
-            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(52,199,89,0.2);">
-                <i class="fas fa-credit-card text-apple-green" style="font-size: 0.7rem;"></i>
+        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2 bg-apple-green/10 border border-apple-green/20">
+            <div class="admin-stat-icon rounded flex items-center justify-center bg-apple-green/20">
+                <i class="fas fa-credit-card text-apple-green text-xs"></i>
             </div>
             <div>
                 <p class="admin-small text-apple-green uppercase tracking-wider">Pending</p>
@@ -58,13 +55,12 @@
             </div>
         </article>
 
-        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
-                 style="background: rgba(175,82,222,0.1); border: 1px solid rgba(175,82,222,0.2);">
-            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(175,82,222,0.2);">
-                <i class="fas fa-project-diagram" style="color: #AF52DE; font-size: 0.7rem;"></i>
+        <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2 bg-[rgba(175,82,222,0.1)] border border-[rgba(175,82,222,0.2)]">
+            <div class="admin-stat-icon rounded flex items-center justify-center bg-[rgba(175,82,222,0.2)]">
+                <i class="fas fa-project-diagram text-[#AF52DE] text-xs"></i>
             </div>
             <div>
-                <p class="admin-small uppercase tracking-wider" style="color: #AF52DE;">Aktif</p>
+                <p class="admin-small uppercase tracking-wider text-[#AF52DE]">Aktif</p>
                 <p class="admin-stat text-white">{{ isset($activeProjects) ? $activeProjects : 0 }}</p>
             </div>
         </article>
@@ -72,7 +68,7 @@
 
     {{-- Tab Navigation --}}
     <section class="card-elevated rounded-apple-lg overflow-hidden">
-        <div class="border-b" style="border-color: var(--dark-separator);">
+        <div class="border-b border-white/10">
             <div class="flex space-x-1 p-2 overflow-x-auto" role="tablist">
                 <button onclick="switchTab('dashboard')" id="tab-dashboard" 
                         class="tab-button {{ $activeTab == 'dashboard' ? 'active' : '' }}">
@@ -82,7 +78,7 @@
                         class="tab-button {{ $activeTab == 'applications' ? 'active' : '' }}">
                     <i class="fas fa-file-signature"></i>Permohonan
                     @if(($notifications['applications'] ?? 0) > 0)
-                        <span class="admin-badge ml-1" style="background: rgba(255,204,0,0.25); color: #FFD60A;">{{ $notifications['applications'] }}</span>
+                        <span class="admin-badge ml-1 bg-[rgba(255,204,0,0.25)] text-[#FFD60A]">{{ $notifications['applications'] }}</span>
                     @endif
                 </button>
                 <button onclick="switchTab('types')" id="tab-types"
@@ -97,7 +93,7 @@
                         class="tab-button {{ $activeTab == 'payments' ? 'active' : '' }}">
                     <i class="fas fa-money-check-alt"></i>Pembayaran
                     @if(($notifications['payments'] ?? 0) > 0)
-                        <span class="admin-badge ml-1" style="background: rgba(52,199,89,0.25); color: #34C759;">{{ $notifications['payments'] }}</span>
+                        <span class="admin-badge ml-1 bg-apple-green/25 text-apple-green">{{ $notifications['payments'] }}</span>
                     @endif
                 </button>
             </div>

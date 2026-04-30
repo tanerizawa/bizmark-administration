@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Landing;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\AnalyzeServiceInquiryJob;
+use App\Models\Kbli;
 use App\Models\ServiceInquiry;
 use App\Services\FreeAIAnalysisService;
 use App\Services\ServiceInquiryRateLimiter;
-use App\Jobs\AnalyzeServiceInquiryJob;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ServiceInquiryController extends Controller
 {
@@ -42,7 +43,7 @@ class ServiceInquiryController extends Controller
             'phone' => 'required|string|max:50',
             'contact_person' => 'required|string|max:255',
             'position' => 'nullable|string|max:100',
-            
+
             // Step 2: Business Info
             'business_activity' => 'required|string|max:1000',
             'kbli_code' => 'nullable|regex:/^\d{5}$/|exists:kbli,code',
@@ -53,7 +54,7 @@ class ServiceInquiryController extends Controller
             'estimated_investment' => 'required|in:under_100m,100m_500m,500m_2b,over_2b',
             'timeline' => 'nullable|in:urgent,1-3_months,3-6_months,6plus_months,not_sure',
             'additional_notes' => 'nullable|string|max:2000',
-            
+
             // UTM tracking
             'utm_source' => 'nullable|string|max:100',
             'utm_medium' => 'nullable|string|max:100',
@@ -63,7 +64,7 @@ class ServiceInquiryController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -73,21 +74,21 @@ class ServiceInquiryController extends Controller
 
         // Check rate limit
         $limitCheck = $this->rateLimiter->check($email, $ip);
-        if (!$limitCheck['allowed']) {
+        if (! $limitCheck['allowed']) {
             return response()->json([
                 'success' => false,
                 'error' => 'rate_limit',
                 'message' => $limitCheck['message'],
                 'retry_after' => $limitCheck['retry_after'],
-                'retry_after_formatted' => $limitCheck['retry_after_formatted']
+                'retry_after_formatted' => $limitCheck['retry_after_formatted'],
             ], 429);
         }
 
         try {
             // Create inquiry record
             $kbliDescription = null;
-            if (!empty($data['kbli_code'])) {
-                $kbli = \App\Models\Kbli::findByCode($data['kbli_code']);
+            if (! empty($data['kbli_code'])) {
+                $kbli = Kbli::findByCode($data['kbli_code']);
                 $kbliDescription = $kbli?->description ?? null;
             }
 
@@ -121,35 +122,42 @@ class ServiceInquiryController extends Controller
                 'session_id' => $request->session()->getId(),
             ]);
 
-            // Increment rate limiter
-            $this->rateLimiter->increment($email, $ip);
-
-            // Dispatch async job for AI analysis
+            // Dispatch async job for AI analysis (before increment so a cache failure doesn't block the job)
             AnalyzeServiceInquiryJob::dispatch($inquiry->id);
+
+            // Increment rate limiter (non-fatal — job already dispatched above)
+            try {
+                $this->rateLimiter->increment($email, $ip);
+            } catch (\Exception $e) {
+                Log::warning('ServiceInquiry: rate limiter increment failed', [
+                    'inquiry_number' => $inquiry->inquiry_number,
+                    'error' => $e->getMessage(),
+                ]);
+            }
 
             Log::info('ServiceInquiry created', [
                 'inquiry_number' => $inquiry->inquiry_number,
                 'email' => $email,
-                'company' => $data['company_name']
+                'company' => $data['company_name'],
             ]);
 
             return response()->json([
                 'success' => true,
                 'inquiry_number' => $inquiry->inquiry_number,
                 'message' => 'Inquiry berhasil dikirim. AI sedang menganalisis...',
-                'remaining_today' => $limitCheck['remaining_today'] ?? 0
+                'remaining_today' => $limitCheck['remaining_today'] ?? 0,
             ]);
 
         } catch (\Exception $e) {
             Log::error('ServiceInquiry creation failed', [
                 'error' => $e->getMessage(),
-                'email' => $email
+                'email' => $email,
             ]);
 
             return response()->json([
                 'success' => false,
                 'error' => 'server_error',
-                'message' => 'Terjadi kesalahan. Silakan coba lagi.'
+                'message' => 'Terjadi kesalahan. Silakan coba lagi.',
             ], 500);
         }
     }
@@ -161,29 +169,29 @@ class ServiceInquiryController extends Controller
     {
         $inquiry = ServiceInquiry::where('inquiry_number', $inquiryNumber)->first();
 
-        if (!$inquiry) {
+        if (! $inquiry) {
             return response()->json([
                 'success' => false,
                 'error' => 'not_found',
-                'message' => 'Inquiry tidak ditemukan'
+                'message' => 'Inquiry tidak ditemukan',
             ], 404);
         }
 
         // Check if still processing
-        if (in_array($inquiry->status, ['processing', 'new']) && !$inquiry->ai_analysis) {
+        if (in_array($inquiry->status, ['processing', 'new']) && ! $inquiry->ai_analysis) {
             return response()->json([
                 'success' => false,
                 'status' => 'processing',
-                'message' => 'AI masih memproses analisis Anda. Mohon tunggu...'
+                'message' => 'AI masih memproses analisis Anda. Mohon tunggu...',
             ]);
         }
 
         // Check if permanently failed (no analysis generated)
-        if ($inquiry->status === 'error' && !$inquiry->ai_analysis) {
+        if ($inquiry->status === 'error' && ! $inquiry->ai_analysis) {
             return response()->json([
                 'success' => false,
                 'status' => 'error',
-                'message' => 'Terjadi kendala dalam analisis. Tim kami akan menghubungi Anda melalui email.'
+                'message' => 'Terjadi kendala dalam analisis. Tim kami akan menghubungi Anda melalui email.',
             ]);
         }
 
@@ -210,7 +218,7 @@ class ServiceInquiryController extends Controller
     {
         $inquiry = ServiceInquiry::where('inquiry_number', $inquiryNumber)->first();
 
-        if (!$inquiry) {
+        if (! $inquiry) {
             return response()->view('landing.service-inquiry.not-found', [
                 'inquiryNumber' => $inquiryNumber,
             ], 404);
@@ -247,7 +255,7 @@ class ServiceInquiryController extends Controller
         return response()->json([
             'allowed' => $limitCheck['allowed'],
             'stats' => $stats,
-            'limit_info' => $limitCheck
+            'limit_info' => $limitCheck,
         ]);
     }
 
@@ -263,8 +271,7 @@ class ServiceInquiryController extends Controller
             'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur',
             'Kalimantan Barat', 'Kalimantan Tengah', 'Kalimantan Selatan', 'Kalimantan Timur', 'Kalimantan Utara',
             'Sulawesi Utara', 'Gorontalo', 'Sulawesi Tengah', 'Sulawesi Barat', 'Sulawesi Selatan', 'Sulawesi Tenggara',
-            'Maluku', 'Maluku Utara', 'Papua', 'Papua Barat', 'Papua Tengah', 'Papua Pegunungan', 'Papua Selatan', 'Papua Barat Daya'
+            'Maluku', 'Maluku Utara', 'Papua', 'Papua Barat', 'Papua Tengah', 'Papua Pegunungan', 'Papua Selatan', 'Papua Barat Daya',
         ];
     }
 }
-

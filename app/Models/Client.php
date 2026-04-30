@@ -2,20 +2,19 @@
 
 namespace App\Models;
 
+use App\Notifications\ClientVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
 class Client extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, SoftDeletes, Notifiable, HasPushSubscriptions;
+    use HasFactory, HasPushSubscriptions, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -60,14 +59,14 @@ class Client extends Authenticatable implements MustVerifyEmail
 
         // When a client is soft deleted, set client_id to NULL in related permit_applications
         static::deleting(function ($client) {
-            if (!$client->isForceDeleting()) {
+            if (! $client->isForceDeleting()) {
                 // Soft delete - set client_id to NULL instead of cascading
-                \DB::table('permit_applications')
+                DB::table('permit_applications')
                     ->where('client_id', $client->id)
                     ->update(['client_id' => null]);
-                
+
                 // Optionally also handle projects if needed
-                // \DB::table('projects')
+                // DB::table('projects')
                 //     ->where('client_id', $client->id)
                 //     ->update(['client_id' => null]);
             }
@@ -88,7 +87,7 @@ class Client extends Authenticatable implements MustVerifyEmail
      */
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new \App\Notifications\ClientVerifyEmail);
+        $this->notify(new ClientVerifyEmail);
     }
 
     /**

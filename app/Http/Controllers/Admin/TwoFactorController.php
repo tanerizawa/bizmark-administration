@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AdminAuditLog;
 use App\Models\TwoFactorTrustedDevice;
+use App\Models\User;
 use App\Services\Security\TotpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class TwoFactorController extends Controller
 {
     public function setup(Request $request, TotpService $totp)
     {
-        $user = \App\Models\User::query()->findOrFail(Auth::guard('web')->id());
+        $user = User::query()->findOrFail(Auth::guard('web')->id());
 
         $secret = (string) $request->session()->get('two_factor_setup_secret', '');
         if ($secret === '') {
@@ -37,7 +38,7 @@ class TwoFactorController extends Controller
             'code' => ['required', 'string'],
         ]);
 
-        $user = \App\Models\User::query()->findOrFail(Auth::guard('web')->id());
+        $user = User::query()->findOrFail(Auth::guard('web')->id());
         $secret = (string) $request->session()->get('two_factor_setup_secret', '');
         abort_if($secret === '', 400, 'Setup session not found');
 
@@ -74,7 +75,7 @@ class TwoFactorController extends Controller
             'trust_device' => ['nullable', 'boolean'],
         ]);
 
-        $user = \App\Models\User::query()->findOrFail(Auth::guard('web')->id());
+        $user = User::query()->findOrFail(Auth::guard('web')->id());
         abort_unless($user->two_factor_enabled_at, 403, '2FA is not enabled');
 
         $secret = Crypt::decryptString((string) $user->two_factor_secret);
@@ -82,7 +83,7 @@ class TwoFactorController extends Controller
         $ok = $totp->verify($secret, $code);
 
         $usedRecovery = false;
-        if (!$ok) {
+        if (! $ok) {
             $usedRecovery = $this->consumeRecoveryCode($user, $code);
             $ok = $usedRecovery;
         }
@@ -113,7 +114,7 @@ class TwoFactorController extends Controller
 
     public function regenerateRecoveryCodes(Request $request)
     {
-        $user = \App\Models\User::query()->findOrFail(Auth::guard('web')->id());
+        $user = User::query()->findOrFail(Auth::guard('web')->id());
         abort_unless($user->two_factor_enabled_at, 403, '2FA is not enabled');
 
         $codesPlain = $this->generateRecoveryCodes(10);
@@ -136,7 +137,7 @@ class TwoFactorController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $user = \App\Models\User::query()->findOrFail(Auth::guard('web')->id());
+        $user = User::query()->findOrFail(Auth::guard('web')->id());
         abort_unless(Hash::check((string) $request->input('password'), (string) $user->password), 422, 'Invalid password');
 
         $user->forceFill([
@@ -165,7 +166,7 @@ class TwoFactorController extends Controller
         }
 
         $list = json_decode(Crypt::decryptString($encrypted), true);
-        if (!is_array($list)) {
+        if (! is_array($list)) {
             return false;
         }
 
@@ -189,6 +190,7 @@ class TwoFactorController extends Controller
         for ($i = 0; $i < $count; $i++) {
             $codes[] = strtoupper(Str::random(10));
         }
+
         return $codes;
     }
 
@@ -197,7 +199,7 @@ class TwoFactorController extends Controller
         AdminAuditLog::create([
             'user_id' => $userId,
             'event' => $event,
-            'auditable_type' => \App\Models\User::class,
+            'auditable_type' => User::class,
             'auditable_id' => $userId,
             'old_values' => $old,
             'new_values' => $new,

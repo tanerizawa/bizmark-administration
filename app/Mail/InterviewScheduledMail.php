@@ -6,10 +6,11 @@ use App\Models\InterviewSchedule;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event;
 
@@ -32,7 +33,7 @@ class InterviewScheduledMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Interview Scheduled - ' . $this->interview->jobApplication->jobVacancy->title,
+            subject: 'Interview Scheduled - '.$this->interview->jobApplication->jobVacancy->title,
         );
     }
 
@@ -66,12 +67,12 @@ class InterviewScheduledMail extends Mailable implements ShouldQueue
             $calendar = Calendar::create()
                 ->event(
                     Event::create()
-                        ->name('Interview: ' . $this->interview->jobApplication->jobVacancy->title)
+                        ->name('Interview: '.$this->interview->jobApplication->jobVacancy->title)
                         ->description(
-                            "Interview with " . config('app.name') . "\n\n" .
-                            "Type: " . $this->interview->getMeetingTypeLabel() . "\n" .
-                            "Duration: " . $this->interview->duration_minutes . " minutes\n\n" .
-                            ($this->interview->meeting_link ? "Meeting Link: " . $this->interview->meeting_link : "")
+                            'Interview with '.config('app.name')."\n\n".
+                            'Type: '.$this->interview->getMeetingTypeLabel()."\n".
+                            'Duration: '.$this->interview->duration_minutes." minutes\n\n".
+                            ($this->interview->meeting_link ? 'Meeting Link: '.$this->interview->meeting_link : '')
                         )
                         ->startsAt($this->interview->scheduled_at)
                         ->endsAt($this->interview->scheduled_at->copy()->addMinutes($this->interview->duration_minutes))
@@ -79,13 +80,13 @@ class InterviewScheduledMail extends Mailable implements ShouldQueue
                 );
 
             $icsContent = $calendar->get();
-            $icsPath = storage_path('app/temp/interview-' . $this->interview->id . '.ics');
-            
+            $icsPath = storage_path('app/temp/interview-'.$this->interview->id.'.ics');
+
             // Ensure temp directory exists
-            if (!file_exists(storage_path('app/temp'))) {
+            if (! file_exists(storage_path('app/temp'))) {
                 mkdir(storage_path('app/temp'), 0755, true);
             }
-            
+
             file_put_contents($icsPath, $icsContent);
 
             $attachments[] = Attachment::fromPath($icsPath)
@@ -93,7 +94,7 @@ class InterviewScheduledMail extends Mailable implements ShouldQueue
                 ->withMime('text/calendar');
         } catch (\Exception $e) {
             // If calendar generation fails, continue without attachment
-            \Log::error('Failed to generate calendar attachment: ' . $e->getMessage());
+            Log::error('Failed to generate calendar attachment: '.$e->getMessage());
         }
 
         return $attachments;

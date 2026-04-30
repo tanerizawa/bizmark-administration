@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ServiceInquiry;
+use App\Mail\ServiceInquiryResultEmail;
 use App\Models\Client;
 use App\Models\PermitApplication;
+use App\Models\ServiceInquiry;
 use App\Notifications\ClientWelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ServiceInquiryController extends Controller
 {
@@ -33,12 +35,12 @@ class ServiceInquiryController extends Controller
         // Search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('inquiry_number', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('company_name', 'like', "%{$search}%")
-                  ->orWhere('contact_person', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('contact_person', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -88,7 +90,7 @@ class ServiceInquiryController extends Controller
     {
         $request->validate([
             'status' => 'required|in:new,processing,analyzed,contacted,qualified,converted,registered,lost',
-            'admin_notes' => 'nullable|string|max:2000'
+            'admin_notes' => 'nullable|string|max:2000',
         ]);
 
         $serviceInquiry->update([
@@ -107,7 +109,7 @@ class ServiceInquiryController extends Controller
     public function updatePriority(Request $request, ServiceInquiry $serviceInquiry)
     {
         $request->validate([
-            'priority' => 'required|in:low,medium,high'
+            'priority' => 'required|in:low,medium,high',
         ]);
 
         $serviceInquiry->update(['priority' => $request->priority]);
@@ -121,15 +123,15 @@ class ServiceInquiryController extends Controller
     public function addNote(Request $request, ServiceInquiry $serviceInquiry)
     {
         $request->validate([
-            'note' => 'required|string|max:2000'
+            'note' => 'required|string|max:2000',
         ]);
 
         $currentNotes = $serviceInquiry->admin_notes ?? '';
         $timestamp = now()->format('Y-m-d H:i');
         $user = auth()->user()->name;
-        
+
         $newNote = "[{$timestamp}] {$user}: {$request->note}";
-        $updatedNotes = $currentNotes ? $currentNotes . "\n\n" . $newNote : $newNote;
+        $updatedNotes = $currentNotes ? $currentNotes."\n\n".$newNote : $newNote;
 
         $serviceInquiry->update(['admin_notes' => $updatedNotes]);
 
@@ -151,7 +153,7 @@ class ServiceInquiryController extends Controller
             // Check if email already exists
             $client = Client::where('email', $serviceInquiry->email)->first();
 
-            if (!$client && $request->create_client_account) {
+            if (! $client && $request->create_client_account) {
                 // Create new client account
                 $client = Client::create([
                     'name' => $serviceInquiry->contact_person,
@@ -176,8 +178,8 @@ class ServiceInquiryController extends Controller
                     'location_city' => $serviceInquiry->form_data['location_city'] ?? null,
                     'status' => 'draft',
                     'submission_date' => now(),
-                    'notes' => "Converted from inquiry: {$serviceInquiry->inquiry_number}\n\n" . 
-                              "AI Analysis:\n" . json_encode($serviceInquiry->ai_analysis, JSON_PRETTY_PRINT),
+                    'notes' => "Converted from inquiry: {$serviceInquiry->inquiry_number}\n\n".
+                              "AI Analysis:\n".json_encode($serviceInquiry->ai_analysis, JSON_PRETTY_PRINT),
                 ]);
 
                 // Update inquiry
@@ -196,15 +198,17 @@ class ServiceInquiryController extends Controller
 
                 return redirect()
                     ->route('admin.service-inquiries.show', $serviceInquiry)
-                    ->with('success', 'Inquiry berhasil dikonversi ke project! Client ID: ' . $client->id);
+                    ->with('success', 'Inquiry berhasil dikonversi ke project! Client ID: '.$client->id);
             }
 
             DB::rollBack();
+
             return back()->with('error', 'Gagal membuat client account');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -231,16 +235,16 @@ class ServiceInquiryController extends Controller
 
         $inquiries = $query->get();
 
-        $filename = 'service-inquiries-' . now()->format('Y-m-d') . '.csv';
-        
+        $filename = 'service-inquiries-'.now()->format('Y-m-d').'.csv';
+
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ];
 
-        $callback = function() use ($inquiries) {
+        $callback = function () use ($inquiries) {
             $file = fopen('php://output', 'w');
-            
+
             // Header row
             fputcsv($file, [
                 'Inquiry Number',
@@ -253,7 +257,7 @@ class ServiceInquiryController extends Controller
                 'Status',
                 'Priority',
                 'Estimated Value',
-                'Complexity Score'
+                'Complexity Score',
             ]);
 
             // Data rows
@@ -268,8 +272,8 @@ class ServiceInquiryController extends Controller
                     $inquiry->business_activity,
                     $inquiry->status,
                     $inquiry->priority,
-                    $inquiry->estimated_value ? 'Rp ' . number_format($inquiry->estimated_value) : '-',
-                    $inquiry->complexity_score ?? '-'
+                    $inquiry->estimated_value ? 'Rp '.number_format($inquiry->estimated_value) : '-',
+                    $inquiry->complexity_score ?? '-',
                 ]);
             }
 
@@ -277,6 +281,33 @@ class ServiceInquiryController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Send AI result email to the inquiry's email address
+     */
+    public function sendResult(ServiceInquiry $serviceInquiry)
+    {
+        if (! $serviceInquiry->ai_analysis) {
+            return back()->with('error', 'Analisis AI belum tersedia untuk inquiry ini.');
+        }
+
+        try {
+            Mail::to($serviceInquiry->email)
+                ->send(new ServiceInquiryResultEmail($serviceInquiry));
+
+            // Log as admin note
+            $currentNotes = $serviceInquiry->admin_notes ?? '';
+            $timestamp = now()->format('Y-m-d H:i');
+            $user = auth()->user()->name;
+            $newNote = "[{$timestamp}] {$user}: Email hasil analisis AI dikirim ke {$serviceInquiry->email}";
+            $updatedNotes = $currentNotes ? $currentNotes."\n\n".$newNote : $newNote;
+            $serviceInquiry->update(['admin_notes' => $updatedNotes]);
+
+            return back()->with('success', 'Email hasil analisis AI berhasil dikirim ke '.$serviceInquiry->email);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengirim email: '.$e->getMessage());
+        }
     }
 
     /**

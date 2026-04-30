@@ -1,16 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Modules\ContentSeo\Controllers\Admin\SeoCommandCenterController;
-use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoScoresController;
-use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoReportsController;
-use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoCompetitorsController;
 use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoAbTestsController;
-use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoSearchConsoleController;
-use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoRefreshLogsController;
-use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoProgrammaticController;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoCompetitorsController;
 use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoPositionsController;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoProgrammaticController;
 use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoRankingAlertsController;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoRefreshLogsController;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoReportsController;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoScoresController;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoSearchConsoleController;
+use App\Modules\ContentSeo\Controllers\Admin\SeoCommandCenterController;
+use Illuminate\Support\Facades\Route;
 
 Route::name('admin.')->middleware(['web', 'auth', 'permission:content.manage'])->prefix('admin')->group(function () {
     Route::prefix('seo')->name('seo.')->group(function () {

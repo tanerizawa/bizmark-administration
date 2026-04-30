@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
 use App\Http\Controllers\Traits\AuthorizesRequests;
+use App\Models\Client;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -27,9 +27,9 @@ class ClientController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('company_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -46,12 +46,12 @@ class ClientController extends Controller
         // Sorting
         $allowedSortBy = ['name', 'company_name', 'email', 'phone', 'status', 'client_type', 'created_at'];
         $sortBy = $request->get('sort_by', 'name');
-        if (!in_array($sortBy, $allowedSortBy, true)) {
+        if (! in_array($sortBy, $allowedSortBy, true)) {
             $sortBy = 'name';
         }
 
         $sortOrder = strtolower((string) $request->get('sort_order', 'asc'));
-        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+        if (! in_array($sortOrder, ['asc', 'desc'], true)) {
             $sortOrder = 'asc';
         }
 
@@ -114,7 +114,7 @@ class ClientController extends Controller
     public function show(Client $client)
     {
         $client->load(['projects.status', 'projects.institution']);
-        
+
         // Statistics
         $stats = [
             'total_projects' => $client->projects->count(),
@@ -195,7 +195,7 @@ class ClientController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('company_name', 'like', "%{$search}%");
+                    ->orWhere('company_name', 'like', "%{$search}%");
             });
         }
 

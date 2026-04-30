@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\KeywordCluster;
 use App\Models\Article;
+use App\Models\KeywordCluster;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -24,8 +24,9 @@ class KeywordResearchService
         $services = config('services_data', []);
         $service = collect($services)->firstWhere('slug', $serviceSlug);
 
-        if (!$service) {
+        if (! $service) {
             Log::warning("KeywordResearch: Unknown service slug: {$serviceSlug}");
+
             return null;
         }
 
@@ -37,6 +38,7 @@ class KeywordResearchService
 
         if ($existing && $existing->last_researched_at && $existing->last_researched_at->diffInDays(now()) < 30) {
             Log::info("KeywordResearch: Skipping {$serviceSlug}, researched recently");
+
             return $existing;
         }
 
@@ -121,8 +123,9 @@ class KeywordResearchService
             'max_tokens' => 3000,
         ]);
 
-        if (!$response['success']) {
+        if (! $response['success']) {
             Log::error('KeywordResearch: AI call failed', ['error' => $response['error'] ?? 'unknown']);
+
             return null;
         }
 
@@ -132,7 +135,7 @@ class KeywordResearchService
         }
 
         // Upsert keyword cluster
-        $cluster = $existing ?? new KeywordCluster();
+        $cluster = $existing ?? new KeywordCluster;
         $cluster->fill([
             'seed_keyword' => $serviceData['title'],
             'cluster_name' => $data['cluster_name'] ?? $serviceData['title'],
@@ -167,8 +170,8 @@ class KeywordResearchService
     protected function buildKeywordPrompt(array $service, string $language, array $existingKeywords, array $existingTitles): string
     {
         $lang = $language === 'id' ? 'Indonesia' : 'English';
-        $existingStr = !empty($existingKeywords) ? "\nKeyword yang sudah ada (jangan duplikasi): " . implode(', ', array_slice($existingKeywords, 0, 20)) : '';
-        $titlesStr = !empty($existingTitles) ? "\nJudul artikel yang sudah ada: " . implode(', ', array_slice($existingTitles, 0, 15)) : '';
+        $existingStr = ! empty($existingKeywords) ? "\nKeyword yang sudah ada (jangan duplikasi): ".implode(', ', array_slice($existingKeywords, 0, 20)) : '';
+        $titlesStr = ! empty($existingTitles) ? "\nJudul artikel yang sudah ada: ".implode(', ', array_slice($existingTitles, 0, 15)) : '';
 
         return <<<PROMPT
 Lakukan riset keyword untuk topik: "{$service['title']}"
@@ -227,6 +230,7 @@ PROMPT;
                 'error' => json_last_error_msg(),
                 'content_preview' => substr($content, 0, 200),
             ]);
+
             return [];
         }
 
@@ -249,7 +253,7 @@ PROMPT;
                 ->where('language', $cluster->language)
                 ->where(function ($q) use ($keyword) {
                     $q->where('title', 'LIKE', "%{$keyword}%")
-                      ->orWhere('meta_keywords', 'LIKE', "%{$keyword}%");
+                        ->orWhere('meta_keywords', 'LIKE', "%{$keyword}%");
                 })
                 ->count();
         }

@@ -3,10 +3,14 @@
 namespace App\Modules\Proyek\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\PermitApplication;
 use App\Models\ApplicationNote;
+use App\Models\PermitApplication;
+use App\Models\User;
+use App\Notifications\ClientNoteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class ApplicationNoteController extends Controller
 {
@@ -23,7 +27,7 @@ class ApplicationNoteController extends Controller
             ->findOrFail($applicationId);
 
         $clientId = Auth::guard('client')->id();
-        
+
         $note = ApplicationNote::create([
             'application_id' => $application->id,
             'author_type' => 'client',
@@ -34,12 +38,12 @@ class ApplicationNoteController extends Controller
 
         // Send email notification to admins (wrapped in try-catch to prevent errors)
         try {
-            $admins = \App\Models\User::all();
-            if ($admins->count() > 0 && class_exists('\App\Notifications\ClientNoteNotification')) {
-                \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\ClientNoteNotification($note));
+            $admins = User::whereHas('role', fn ($q) => $q->where('name', 'admin'))->get();
+            if ($admins->isNotEmpty()) {
+                Notification::send($admins, new ClientNoteNotification($note));
             }
         } catch (\Exception $e) {
-            \Log::warning('Failed to send client note notification: ' . $e->getMessage());
+            Log::warning('Failed to send client note notification: '.$e->getMessage());
         }
 
         return back()->with('success', 'Pesan berhasil dikirim');

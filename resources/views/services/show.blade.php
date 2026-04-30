@@ -4,6 +4,29 @@
 @section('meta_description', $meta_description ?? $service['short_description'])
 @section('meta_keywords', $service['meta_keywords'] ?? '')
 
+@if(!empty($service['faq']))
+@section('structured_data')
+<script type="application/ld+json">
+{
+    "@@context": "https://schema.org",
+    "@@type": "FAQPage",
+    "mainEntity": [
+        @foreach($service['faq'] as $i => $faq)
+        {
+            "@@type": "Question",
+            "name": {{ json_encode($faq['q']) }},
+            "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": {{ json_encode($faq['a']) }}
+            }
+        }{{ !$loop->last ? ',' : '' }}
+        @endforeach
+    ]
+}
+</script>
+@endsection
+@endif
+
 @section('content')
 @php
     $contact = (array) data_get(config('landing_metrics'), 'contact', []);
@@ -19,8 +42,8 @@
         <div class="max-w-4xl">
             <a href="{{ route('services.index.id') }}" class="link-primary text-sm inline-flex items-center mb-5"><i class="fas fa-arrow-left mr-2"></i>Kembali ke semua layanan</a>
             <div class="flex items-start gap-4 mb-5">
-                <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background:{{ $service['color'] ?? '#0f172a' }}20;">
-                    <i class="fas {{ $service['icon'] ?? 'fa-briefcase' }}" style="color:{{ $service['color'] ?? '#0f172a' }};"></i>
+                <div class="w-14 h-14 rounded-xl flex items-center justify-center editorial-icon-badge" style="width:3.5rem;height:3.5rem;border-radius:.875rem;">
+                    <i class="fas {{ $service['icon'] ?? 'fa-briefcase' }} icon-xl" aria-hidden="true"></i>
                 </div>
                 <div>
                     <span class="section-badge">{{ $service['category'] ?? 'Layanan' }}</span>
@@ -69,6 +92,74 @@
 </section>
 @endif
 
+{{-- Comparison: Tanpa vs Dengan Bizmark --}}
+<section class="section-sm" style="background:var(--surface-warm);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);">
+    <div class="container-wide">
+        <div class="text-center mb-8">
+            <span class="section-badge mb-3">Mengapa Bizmark.ID?</span>
+            <h2 class="text-2xl font-bold mb-2" style="color:var(--text-primary);">Tanpa Bizmark vs Dengan Bizmark</h2>
+            <p class="text-sm" style="color:var(--text-secondary);">Lihat perbedaan nyata dalam proses, waktu, dan risiko pengurusan izin.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+            {{-- Tanpa Bizmark --}}
+            <div class="card border" style="border-color:rgba(239,68,68,.2);background:rgba(239,68,68,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:rgba(239,68,68,.12);">
+                        <i class="fas fa-times text-sm" style="color:#f87171;"></i>
+                    </div>
+                    <h3 class="font-bold text-base" style="color:#fca5a5;">Tanpa Bizmark</h3>
+                </div>
+                <ul class="space-y-2.5">
+                    @php
+                    $withoutItems = [
+                        ['icon' => 'fa-clock', 'text' => 'Proses lebih lama — penelitian mandiri memakan waktu berminggu-minggu'],
+                        ['icon' => 'fa-exclamation-triangle', 'text' => 'Risiko penolakan dokumen karena format atau persyaratan tidak sesuai'],
+                        ['icon' => 'fa-search', 'text' => 'Tidak ada visibilitas status — tidak tahu kapan izin terbit'],
+                        ['icon' => 'fa-money-bill-wave', 'text' => 'Biaya kesalahan bisa Rp 50–200 juta jika ada salah langkah'],
+                    ];
+                    @endphp
+                    @foreach($withoutItems as $item)
+                    <li class="flex items-start gap-2.5 text-sm" style="color:var(--text-secondary);">
+                        <i class="fas {{ $item['icon'] }} mt-0.5 shrink-0" style="color:#f87171;"></i>
+                        <span>{{ $item['text'] }}</span>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            {{-- Dengan Bizmark --}}
+            <div class="card border" style="border-color:rgba(34,197,94,.2);background:rgba(34,197,94,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:rgba(34,197,94,.12);">
+                        <i class="fas fa-check text-sm" style="color:#4ade80;"></i>
+                    </div>
+                    <h3 class="font-bold text-base" style="color:#86efac;">Dengan Bizmark.ID</h3>
+                </div>
+                <ul class="space-y-2.5">
+                    @php
+                    $withItems = [
+                        ['icon' => 'fa-bolt', 'text' => 'Proses dipercepat — tim berpengalaman tahu persis alur dan persyaratan'],
+                        ['icon' => 'fa-shield-halved', 'text' => 'Dokumen disiapkan sesuai standar — tingkat keberhasilan 96%'],
+                        ['icon' => 'fa-chart-line', 'text' => 'Laporan SLA mingguan — Anda tahu status izin setiap saat'],
+                        ['icon' => 'fa-hand-holding-usd', 'text' => 'Pembayaran bertahap: 50% DP, 50% saat izin terbit'],
+                    ];
+                    @endphp
+                    @foreach($withItems as $item)
+                    <li class="flex items-start gap-2.5 text-sm" style="color:var(--text-secondary);">
+                        <i class="fas {{ $item['icon'] }} mt-0.5 shrink-0" style="color:#4ade80;"></i>
+                        <span>{{ $item['text'] }}</span>
+                    </li>
+                    @endforeach
+                </ul>
+                <div class="mt-4 pt-4 border-t" style="border-color:rgba(34,197,94,.15);">
+                    <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-success w-full btn-sm">
+                        <i class="fab fa-whatsapp"></i> Mulai Konsultasi Gratis
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 @if($partial && View::exists($partial))
 <section class="section" style="background:var(--surface-warm);">
     <div class="container-wide">
@@ -103,10 +194,10 @@
 
 <section class="section-sm" style="background:var(--surface-dark);">
     <div class="container-wide text-center">
-        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Lanjutkan ke Tahap Eksekusi</h2>
-        <p class="mb-7" style="color:rgba(255,255,255,.74);">Tim kami siap membantu dari asesmen sampai izin terbit.</p>
+        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Siap memulai proses perizinan?</h2>
+        <p class="mb-7" style="color:rgba(255,255,255,.74);">Tim kami mendampingi Anda dari konsultasi awal hingga izin diterbitkan.</p>
         <div class="flex flex-wrap justify-center gap-3">
-            <a href="{{ route('contact.index') }}" class="btn btn-secondary"><i class="fas fa-paper-plane"></i> Kirim Brief</a>
+            <a href="{{ route('contact.index') }}" class="btn btn-secondary"><i class="fas fa-paper-plane"></i> Mulai Konsultasi</a>
             <a href="{{ route('services.index.id') }}" class="btn btn-ghost"><i class="fas fa-layer-group"></i> Layanan Lainnya</a>
         </div>
     </div>

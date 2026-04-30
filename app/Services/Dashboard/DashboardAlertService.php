@@ -24,6 +24,7 @@ class DashboardAlertService
             ->get()
             ->map(function ($project) use ($today) {
                 $project->days_overdue = $today->diffInDays($project->deadline);
+
                 return $project;
             });
 
@@ -34,6 +35,7 @@ class DashboardAlertService
             ->get()
             ->map(function ($task) use ($today) {
                 $task->days_overdue = $today->diffInDays($task->due_date);
+
                 return $task;
             });
 
@@ -46,6 +48,7 @@ class DashboardAlertService
             ->get()
             ->map(function ($project) {
                 $project->type = 'project';
+
                 return $project;
             });
 
@@ -55,6 +58,7 @@ class DashboardAlertService
             ->get()
             ->map(function ($task) {
                 $task->type = 'task';
+
                 return $task;
             });
 
@@ -94,4 +98,3 @@ class DashboardAlertService
         ];
     }
 }
-

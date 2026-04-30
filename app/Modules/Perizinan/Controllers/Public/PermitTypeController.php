@@ -3,8 +3,8 @@
 namespace App\Modules\Perizinan\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\PermitType;
 use App\Models\Institution;
+use App\Models\PermitType;
 use Illuminate\Http\Request;
 
 class PermitTypeController extends Controller
@@ -19,10 +19,10 @@ class PermitTypeController extends Controller
         // Search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -44,12 +44,12 @@ class PermitTypeController extends Controller
         // Sorting
         $allowedSortBy = ['name', 'code', 'category', 'avg_processing_days', 'is_active', 'created_at'];
         $sortBy = $request->get('sort_by', 'name');
-        if (!in_array($sortBy, $allowedSortBy, true)) {
+        if (! in_array($sortBy, $allowedSortBy, true)) {
             $sortBy = 'name';
         }
 
         $sortOrder = strtolower((string) $request->get('sort_order', 'asc'));
-        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+        if (! in_array($sortOrder, ['asc', 'desc'], true)) {
             $sortOrder = 'asc';
         }
 
@@ -136,7 +136,7 @@ class PermitTypeController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'code' => 'required|string|max:50|unique:permit_types,code,' . $permitType->id,
+            'code' => 'required|string|max:50|unique:permit_types,code,'.$permitType->id,
             'category' => 'required|in:environmental,land,building,transportation,business,other',
             'institution_id' => 'nullable|exists:institutions,id',
             'avg_processing_days' => 'nullable|integer|min:1',
@@ -188,7 +188,7 @@ class PermitTypeController extends Controller
      */
     public function toggleStatus(PermitType $permitType)
     {
-        $permitType->update(['is_active' => !$permitType->is_active]);
+        $permitType->update(['is_active' => ! $permitType->is_active]);
 
         $status = $permitType->is_active ? 'diaktifkan' : 'dinonaktifkan';
 

@@ -11,11 +11,11 @@ class TotpService
         return $this->base32Encode(random_bytes($bytes));
     }
 
-    public function verify(string $base32Secret, string $code, int $timestamp = null, int $window = 1): bool
+    public function verify(string $base32Secret, string $code, ?int $timestamp = null, int $window = 1): bool
     {
         $timestamp ??= time();
         $code = preg_replace('/\s+/', '', $code) ?? '';
-        if (!ctype_digit($code) || strlen($code) !== 6) {
+        if (! ctype_digit($code) || strlen($code) !== 6) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class TotpService
         $secret = $this->base32Decode($base32Secret);
         $counter = intdiv($timestamp, 30);
 
-        $binCounter = pack('N*', 0) . pack('N*', $counter);
+        $binCounter = pack('N*', 0).pack('N*', $counter);
         $hash = hash_hmac('sha1', $binCounter, $secret, true);
         $offset = ord(substr($hash, -1)) & 0x0F;
         $part = substr($hash, $offset, 4);
@@ -96,4 +96,3 @@ class TotpService
         return $out;
     }
 }
-

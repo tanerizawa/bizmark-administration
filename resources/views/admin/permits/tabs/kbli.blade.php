@@ -4,24 +4,24 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
             <h3 class="text-base font-semibold text-white">Data KBLI</h3>
-            <p class="text-sm" style="color: rgba(235,235,245,0.65);">
+            <p class="text-sm text-dark-text-secondary">
                 Kelola Klasifikasi Baku Lapangan Usaha Indonesia (KBLI 2020)
             </p>
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('admin.settings.kbli.template') }}" 
-               class="admin-btn admin-btn-sm rounded" style="background: rgba(10,132,255,0.25);">
+               class="admin-btn admin-btn-sm rounded bg-apple-blue/25">
                 <i class="fas fa-download mr-1.5"></i>Template CSV
             </a>
             <button onclick="document.getElementById('import-modal').classList.remove('hidden')" 
-                    class="admin-btn admin-btn-sm rounded" style="background: rgba(52,199,89,0.25);">
+                    class="admin-btn admin-btn-sm rounded bg-apple-green/25">
                 <i class="fas fa-file-import mr-1.5"></i>Import KBLI
             </button>
             <form action="{{ route('admin.settings.kbli.clear') }}" method="POST" class="inline" 
                   onsubmit="return confirm('Hapus semua data KBLI? Tindakan ini tidak dapat dibatalkan.')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="admin-btn admin-btn-sm rounded" style="background: rgba(255,59,48,0.25);">
+                <button type="submit" class="admin-btn admin-btn-sm rounded bg-apple-red/25">
                     <i class="fas fa-trash-alt mr-1.5"></i>Hapus Semua
                 </button>
             </form>
@@ -32,8 +32,8 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple p-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
-                    <i class="fas fa-database" style="color: var(--apple-blue);"></i>
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-apple-blue/25">
+                    <i class="fas fa-database text-apple-blue"></i>
                 </div>
                 <div>
                     <p class="text-lg font-bold text-white">{{ $kbliStats['total'] ?? 0 }}</p>
@@ -43,8 +43,8 @@
         </div>
         <div class="card-elevated rounded-apple p-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(52,199,89,0.25);">
-                    <i class="fas fa-layer-group" style="color: var(--apple-green);"></i>
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-apple-green/25">
+                    <i class="fas fa-layer-group text-apple-green"></i>
                 </div>
                 <div>
                     <p class="text-lg font-bold text-white">{{ count($kbliStats['by_sector'] ?? []) }}</p>
@@ -54,8 +54,8 @@
         </div>
         <div class="card-elevated rounded-apple p-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(255,149,0,0.25);">
-                    <i class="fas fa-sync-alt" style="color: var(--apple-orange);"></i>
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-apple-orange/25">
+                    <i class="fas fa-sync-alt text-apple-orange"></i>
                 </div>
                 <div>
                     <p class="text-lg font-bold text-white">2020</p>
@@ -65,8 +65,8 @@
         </div>
         <div class="card-elevated rounded-apple p-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(175,82,222,0.25);">
-                    <i class="fas fa-file-csv" style="color: var(--apple-purple);"></i>
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-[rgba(175,82,222,0.25)]">
+                    <i class="fas fa-file-csv text-[#AF52DE]"></i>
                 </div>
                 <div>
                     <a href="{{ route('admin.settings.kbli.export') }}" class="text-lg font-bold text-white hover:underline">
@@ -83,8 +83,7 @@
     <div class="card-elevated rounded-apple p-3">
         <div class="flex flex-wrap gap-2">
             @foreach($kbliStats['by_sector'] as $sector)
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-apple text-xs font-medium" 
-                  style="background: rgba(10,132,255,0.15); color: var(--apple-blue);">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-apple text-xs font-medium bg-apple-blue/20 text-apple-blue">
                 <span class="font-bold">{{ $sector->sector }}</span>
                 <span class="opacity-70">{{ $sector->count }}</span>
             </span>
@@ -114,11 +113,11 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="admin-btn admin-btn-sm rounded" style="background: rgba(10,132,255,0.25);">
+            <button type="submit" class="admin-btn admin-btn-sm rounded bg-apple-blue/25">
                 <i class="fas fa-search mr-1.5"></i>Cari
             </button>
             @if(request('search') || request('category'))
-            <a href="{{ route('admin.permits.index', ['tab' => 'kbli']) }}" class="admin-btn admin-btn-sm rounded" style="background: rgba(142,142,147,0.25);">
+            <a href="{{ route('admin.permits.index', ['tab' => 'kbli']) }}" class="admin-btn admin-btn-sm rounded bg-[rgba(142,142,147,0.25)]">
                 <i class="fas fa-times"></i>
             </a>
             @endif
@@ -137,7 +136,7 @@
     <div class="card-elevated rounded-apple-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700">
-                <thead style="background-color: var(--dark-bg-secondary);">
+                <thead class="bg-dark-bg-secondary">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Kode</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Sektor</th>
@@ -145,14 +144,14 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Kegiatan</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
+                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
                     @foreach($kbliData as $kbli)
                     <tr class="hover:bg-dark-bg-tertiary transition-apple">
                         <td class="px-4 py-3">
                             <span class="font-mono text-sm font-medium text-white bg-apple-blue/20 px-2 py-0.5 rounded">{{ $kbli->code }}</span>
                         </td>
                         <td class="px-4 py-3">
-                            <span class="text-sm text-white px-2 py-0.5 rounded" style="background: rgba(52,199,89,0.2);">{{ $kbli->sector }}</span>
+                            <span class="text-sm text-white px-2 py-0.5 rounded bg-apple-green/20">{{ $kbli->sector }}</span>
                         </td>
                         <td class="px-4 py-3">
                             <p class="text-sm text-white">{{ $kbli->description }}</p>
@@ -169,15 +168,15 @@
         </div>
         
         @if($kbliData->hasPages())
-        <div class="px-4 py-3" style="background: var(--dark-bg-tertiary); border-top: 1px solid var(--dark-separator);">
+        <div class="px-4 py-3 bg-dark-bg-tertiary border-t border-white/10">
             {{ $kbliData->appends(['tab' => 'kbli'])->links() }}
         </div>
         @endif
     </div>
     @else
     <div class="card-elevated rounded-apple-lg p-8 text-center">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: rgba(10,132,255,0.15);">
-            <i class="fas fa-search text-2xl" style="color: var(--apple-blue);"></i>
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-apple-blue/20">
+            <i class="fas fa-search text-2xl text-apple-blue"></i>
         </div>
         <h3 class="text-sm font-semibold text-white mb-2">Tidak Ada Hasil</h3>
         <p class="text-sm text-dark-text-secondary mb-4">
@@ -192,12 +191,12 @@
         </p>
         @if(request('search') || request('category'))
         <a href="{{ route('admin.permits.index', ['tab' => 'kbli']) }}" 
-           class="admin-btn rounded px-4 py-2" style="background: rgba(10,132,255,0.25);">
+           class="admin-btn rounded px-4 py-2 bg-apple-blue/25">
             <i class="fas fa-undo mr-1.5"></i>Reset Pencarian
         </a>
         @else
         <button onclick="document.getElementById('import-modal').classList.remove('hidden')" 
-                class="admin-btn rounded px-4 py-2" style="background: rgba(52,199,89,0.25);">
+                class="admin-btn rounded px-4 py-2 bg-apple-green/25">
             <i class="fas fa-file-import mr-1.5"></i>Import KBLI
         </button>
         @endif
@@ -211,7 +210,7 @@
         <div class="fixed inset-0 bg-black/70 transition-opacity" onclick="document.getElementById('import-modal').classList.add('hidden')"></div>
         
         <div class="relative inline-block align-bottom rounded-apple-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-             style="background: var(--dark-bg-elevated);">
+             style="background: rgba(28,28,30,0.9);">
             <form action="{{ route('admin.settings.kbli.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="p-6">
@@ -235,12 +234,12 @@
                     </div>
                 </div>
                 
-                <div class="px-6 py-4 flex justify-end gap-2" style="background: var(--dark-bg-tertiary);">
+                <div class="px-6 py-4 flex justify-end gap-2 bg-dark-bg-tertiary">
                     <button type="button" onclick="document.getElementById('import-modal').classList.add('hidden')"
-                            class="admin-btn admin-btn-sm rounded" style="background: rgba(142,142,147,0.25);">
+                            class="admin-btn admin-btn-sm rounded bg-[rgba(142,142,147,0.25)]">
                         Batal
                     </button>
-                    <button type="submit" class="admin-btn admin-btn-sm rounded" style="background: rgba(52,199,89,0.25);">
+                    <button type="submit" class="admin-btn admin-btn-sm rounded bg-apple-green/25">
                         <i class="fas fa-upload mr-1.5"></i>Import
                     </button>
                 </div>

@@ -2,8 +2,51 @@
 
 @section('meta_title', 'Hasil Estimasi Biaya - Bizmark.ID')
 
+@push('styles')
+<!-- BreadcrumbList Structured Data -->
+<script type="application/ld+json">
+{
+    "@@context": "https://schema.org",
+    "@@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@@type": "ListItem",
+            "position": 1,
+            "name": "Beranda",
+            "item": "{{ url('/') }}"
+        },
+        {
+            "@@type": "ListItem",
+            "position": 2,
+            "name": "Estimasi Biaya Perizinan",
+            "item": "{{ route('consultation.index') }}"
+        },
+        {
+            "@@type": "ListItem",
+            "position": 3,
+            "name": "Hasil Estimasi",
+            "item": "{{ url()->current() }}"
+        }
+    ]
+}
+</script>
+@endpush
+
 @section('content')
 <div class="min-h-screen consultation-section" style="padding-top: 5rem;">
+    <!-- Breadcrumb -->
+    <div style="background: var(--surface); border-bottom: 1px solid var(--border-light);">
+        <div class="container-wide py-4">
+            <nav aria-label="Breadcrumb" class="text-xs" style="color: var(--text-tertiary);">
+                <a href="{{ url('/') }}" style="color: var(--text-secondary);">Beranda</a>
+                <span class="mx-2">/</span>
+                <a href="{{ route('consultation.index') }}" style="color: var(--text-secondary);">Estimasi Biaya Perizinan</a>
+                <span class="mx-2">/</span>
+                <span>Hasil Estimasi</span>
+            </nav>
+        </div>
+    </div>
+
     <div class="container-wide py-12">
         <div class="max-w-5xl mx-auto">
             
@@ -330,22 +373,18 @@
 
             <!-- Download Report -->
             <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a 
+                <a
                     href="{{ route('consultation.pdf', $consultation->id) }}"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition pdf-download-btn"
                     style="background: rgba(14, 165, 233, 0.1); color: var(--color-accent);"
-                    onmouseover="this.style.background='rgba(14, 165, 233, 0.15)'"
-                    onmouseout="this.style.background='rgba(14, 165, 233, 0.1)'"
                 >
                     <i class="fas fa-file-pdf"></i>
                     <span>Download Laporan PDF</span>
                 </a>
-                <button 
-                    class="inline-flex items-center gap-2 transition"
+                <button
+                    class="inline-flex items-center gap-2 transition print-btn"
                     style="color: var(--text-tertiary);"
                     onclick="window.print()"
-                    onmouseover="this.style.color='var(--text-secondary)'"
-                    onmouseout="this.style.color='var(--text-tertiary)'"
                 >
                     <i class="fas fa-print"></i>
                     <span>Print Halaman</span>
@@ -384,7 +423,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-sm mb-1" style="color: var(--text-primary);">Konsultasi dengan Ahli</h4>
-                                <p class="text-xs mb-3" style="color: var(--text-secondary);">Diskusikan estimasi ini dengan konsultan kami untuk mendapatkan penawaran pasti dan timeline detail.</p>
+                                <p class="text-xs mb-3" style="color: var(--text-secondary);">Diskusikan estimasi ini dengan konsultan kami untuk mendapatkan penawaran pasti dan jadwal pengerjaan secara rinci.</p>
                                 @php
                                     $whatsappBase = data_get(config('landing_metrics'), 'contact.whatsapp_link', 'https://wa.me/6283879602855');
                                     $whatsappText = "Halo, saya sudah dapat estimasi biaya (ID: #{$consultation->id}). Saya ingin konsultasi lebih lanjut.";

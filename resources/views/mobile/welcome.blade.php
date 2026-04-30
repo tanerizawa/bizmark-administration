@@ -97,9 +97,9 @@
             flex: 1;
         }
         
-        .error-message {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.5);
+        .info-message {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
@@ -113,9 +113,8 @@
         <h1>Bizmark Mobile</h1>
         <p>Kelola proyek, approve expenses, dan track tasks dari mana saja</p>
         
-        <div class="error-message">
-            ⚠️ <strong>Anda belum login!</strong><br>
-            Silakan login terlebih dahulu untuk mengakses mobile admin.
+        <div class="info-message">
+            🔐 <strong>Silakan login</strong> untuk mengakses Bizmark Mobile Admin.
         </div>
         
         <a href="{{ route('login') }}" class="btn">Login Sekarang</a>

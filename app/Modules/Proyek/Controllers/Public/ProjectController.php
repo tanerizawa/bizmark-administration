@@ -3,15 +3,15 @@
 namespace App\Modules\Proyek\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
-use App\Models\ProjectStatus;
+use App\Http\Controllers\Traits\AuthorizesRequests;
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
+use App\Models\Client;
 use App\Models\Institution;
 use App\Models\PermitTemplate;
 use App\Models\PermitType;
-use App\Models\Client;
-use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\UpdateProjectRequest;
-use App\Http\Controllers\Traits\AuthorizesRequests;
+use App\Models\Project;
+use App\Models\ProjectStatus;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -21,12 +21,13 @@ class ProjectController extends Controller
     public function __construct()
     {
         $this->authorizePermissions('projects');
-        
+
         // Additional authorization for custom actions
         $this->middleware(function ($request, $next) {
-            if (!auth()->user()->can('projects.edit')) {
+            if (! auth()->user()->can('projects.edit')) {
                 abort(403, 'Anda tidak memiliki akses untuk mengubah status proyek.');
             }
+
             return $next($request);
         })->only(['updateStatus']);
     }
@@ -41,13 +42,13 @@ class ProjectController extends Controller
         // Search functionality
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhereHas('client', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('company_name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('client', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('company_name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -70,42 +71,42 @@ class ProjectController extends Controller
 
         // Get filter options
         $statuses = ProjectStatus::all();
-        $clients = \App\Models\Client::orderBy('name')->get();
+        $clients = Client::orderBy('name')->get();
 
         // Calculate statistics for this filtered view
         $totalProjects = Project::count();
-        
+
         // In Progress: All active work statuses (not lead, not completed, not cancelled)
-        $inProgressProjects = Project::whereHas('status', function($q) {
+        $inProgressProjects = Project::whereHas('status', function ($q) {
             $q->whereIn('code', [
                 'CONTRACT',           // Kontrak
                 'PREPARATION',        // Persiapan
                 'IN_PROGRESS',        // Dalam Pengerjaan
                 'REVIEW',             // Review
                 'WAITING_APPROVAL',   // Menunggu Persetujuan
-                'REVISION'            // Revisi
+                'REVISION',            // Revisi
             ]);
         })->count();
-        
+
         // Completed: Projects marked as completed or closed successfully
-        $completedProjects = Project::whereHas('status', function($q) {
+        $completedProjects = Project::whereHas('status', function ($q) {
             $q->whereIn('code', ['COMPLETED', 'CLOSED']);
         })->count();
-        
+
         // Overdue: Projects past deadline, not completed, and not finished before deadline
         // Fix: Exclude projects that have completed_at set (even if status not yet updated)
         $overdueProjects = Project::where('deadline', '<', now())
             ->whereNull('completed_at')  // Not completed
-            ->whereHas('status', function($q) {
+            ->whereHas('status', function ($q) {
                 $q->whereNotIn('code', ['COMPLETED', 'CLOSED', 'CANCELLED', 'ON_HOLD']);
             })->count();
 
         return view('projects.index', compact(
-            'projects', 
-            'statuses', 
+            'projects',
+            'statuses',
             'clients',
             'totalProjects',
-            'inProgressProjects', 
+            'inProgressProjects',
             'completedProjects',
             'overdueProjects'
         ));
@@ -119,8 +120,8 @@ class ProjectController extends Controller
         $statuses = ProjectStatus::all();
         $institutions = Institution::all();
         $clients = Client::where('status', 'active')
-                        ->orderBy('name')
-                        ->get();
+            ->orderBy('name')
+            ->get();
 
         return view('projects.create', compact('statuses', 'institutions', 'clients'));
     }
@@ -131,10 +132,10 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         $validated = $request->validated();
-        
+
         // Auto-fill client information from Client model
         if (isset($validated['client_id'])) {
-            $client = \App\Models\Client::find($validated['client_id']);
+            $client = Client::find($validated['client_id']);
             if ($client) {
                 $validated['client_name'] = $client->name;
                 $validated['client_contact'] = $client->contact_person;
@@ -142,7 +143,7 @@ class ProjectController extends Controller
                 $validated['client_company'] = $client->company_name;
             }
         }
-        
+
         $project = Project::create($validated);
 
         // Log project creation
@@ -162,7 +163,7 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $project->load([
-            'status', 
+            'status',
             'institution',
             'client',
             'tasks',
@@ -184,30 +185,30 @@ class ProjectController extends Controller
         // Use contract_value first, fallback to budget for backward compatibility
         $totalBudget = $project->contract_value > 0 ? $project->contract_value : ($project->budget ?? 0);
         $totalInvoiced = $project->invoices()->sum('total_amount');
-        
+
         // Total received calculation (fixed for invoice-linked payments)
         // Since payments are now linked to invoices via invoice_id,
         // we calculate from invoice paid_amount to avoid double counting
         $invoicePayments = $project->invoices()->sum('paid_amount');
-        
+
         // Add manual payments that are NOT linked to any invoice (legacy/non-invoice payments)
         $manualPaymentsNotLinked = $project->payments()
             ->whereNull('invoice_id')
             ->sum('amount');
-        
+
         $totalReceived = $invoicePayments + $manualPaymentsNotLinked;
-        
+
         $totalExpenses = $project->expenses()->sum('amount');
         $totalScheduled = $project->paymentSchedules()->where('status', 'pending')->sum('amount');
-        
+
         $budgetRemaining = $totalBudget - $totalInvoiced;
-        
+
         // Calculate outstanding receivables (kasbon yang belum lunas)
         $receivableOutstanding = $project->expenses()
             ->where('is_receivable', true)
             ->whereIn('receivable_status', ['pending', 'partial'])
             ->sum('amount');
-        
+
         $profitMargin = $totalReceived - $totalExpenses;
 
         // Get direct income payments (payments without invoice) - for Direct Income section
@@ -216,11 +217,11 @@ class ProjectController extends Controller
             ->with(['bankAccount', 'createdBy'])
             ->orderBy('payment_date', 'desc')
             ->get();
-        
+
         $totalDirectIncome = $directIncomes->sum('amount');
-        
+
         $budgetRemaining = $totalBudget - $totalInvoiced;
-        
+
         // Calculate outstanding receivables (kasbon yang belum lunas)
         $receivableOutstanding = $project->expenses()
             ->where('is_receivable', true)
@@ -231,7 +232,7 @@ class ProjectController extends Controller
 
                 return max($remaining, 0);
             });
-        
+
         $profitMargin = $totalReceived - $totalExpenses;
 
         // Get monthly data for chart (last 6 months)
@@ -248,9 +249,9 @@ class ProjectController extends Controller
         ];
 
         return view('projects.show', compact(
-            'project', 
-            'statuses', 
-            'permitTemplates', 
+            'project',
+            'statuses',
+            'permitTemplates',
             'permitTypes',
             'statistics',
             'totalBudget',
@@ -275,8 +276,8 @@ class ProjectController extends Controller
         $statuses = ProjectStatus::all();
         $institutions = Institution::all();
         $clients = Client::where('status', 'active')
-                        ->orderBy('name')
-                        ->get();
+            ->orderBy('name')
+            ->get();
 
         return view('projects.edit', compact('project', 'statuses', 'institutions', 'clients'));
     }
@@ -288,10 +289,10 @@ class ProjectController extends Controller
     {
         $validated = $request->validated();
         $oldValues = $project->toArray();
-        
+
         // Auto-fill client information if client_id changed
         if (isset($validated['client_id']) && $validated['client_id'] != $project->client_id) {
-            $client = \App\Models\Client::find($validated['client_id']);
+            $client = Client::find($validated['client_id']);
             if ($client) {
                 $validated['client_name'] = $client->name;
                 $validated['client_contact'] = $client->contact_person;
@@ -299,12 +300,12 @@ class ProjectController extends Controller
                 $validated['client_company'] = $client->company_name;
             }
         }
-        
+
         // Sync completed_at to actual_completion_date for consistency
         if (isset($validated['completed_at'])) {
             $validated['actual_completion_date'] = $validated['completed_at'];
         }
-        
+
         $project->update($validated);
 
         // Log project update
@@ -344,7 +345,7 @@ class ProjectController extends Controller
     {
         $request->validate([
             'status_id' => 'required|exists:project_statuses,id',
-            'notes' => 'nullable|string|max:1000'
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $oldStatus = $project->status;
@@ -391,14 +392,14 @@ class ProjectController extends Controller
                 ->whereMonth('paid_date', $date->month)
                 ->whereYear('paid_date', $date->year)
                 ->sum('amount');
-            
+
             // 2. Direct project payments (legacy system - manual payments not linked to invoice)
             $directIncome = $project->payments()
                 ->whereNull('invoice_id') // Only count payments NOT linked to invoice
                 ->whereMonth('payment_date', $date->month)
                 ->whereYear('payment_date', $date->year)
                 ->sum('amount');
-            
+
             $totalIncome = (float) ($invoiceIncome + $directIncome);
             $income[] = $totalIncome;
 

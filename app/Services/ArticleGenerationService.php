@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\ArticleTopic;
 use App\Models\AutoPostConfig;
-use App\Services\OpenRouterService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ArticleGenerationService
@@ -21,22 +21,22 @@ class ArticleGenerationService
      */
     public function generateArticle(ArticleTopic $topic, AutoPostConfig $config): array
     {
-        \Log::info('🤖 Starting article generation', [
+        Log::info('🤖 Starting article generation', [
             'topic_id' => $topic->id,
             'topic_title' => $topic->title,
             'model' => $config->ai_model,
             'category' => $topic->category,
-            'target_words' => $config->min_word_count . '-' . $config->max_word_count,
+            'target_words' => $config->min_word_count.'-'.$config->max_word_count,
         ]);
 
         $startTime = microtime(true);
-        
-        \Log::info('📝 Preparing content generation prompt', ['topic_id' => $topic->id]);
+
+        Log::info('📝 Preparing content generation prompt', ['topic_id' => $topic->id]);
 
         try {
             // Generate content
             $content = $this->generateContent($topic, $config);
-            
+
             // Generate meta fields
             $title = $this->generateTitle($topic);
             $excerpt = $this->generateExcerpt($content);
@@ -44,13 +44,13 @@ class ArticleGenerationService
             $metaDescription = $this->generateMetaDescription($topic);
             $metaKeywords = $this->generateKeywords($topic);
             $tags = $this->generateTags($topic);
-            
+
             // Calculate reading time
             $readingTime = $this->calculateReadingTime($content);
-            
+
             $generationTime = round((microtime(true) - $startTime) * 1000);
-            
-            \Log::info('✅ Article generated successfully', [
+
+            Log::info('✅ Article generated successfully', [
                 'topic_id' => $topic->id,
                 'generation_time_ms' => $generationTime,
                 'word_count' => str_word_count(strip_tags($content)),
@@ -72,7 +72,7 @@ class ArticleGenerationService
             ];
 
         } catch (\Exception $e) {
-            \Log::error('❌ Article generation failed', [
+            Log::error('❌ Article generation failed', [
                 'topic_id' => $topic->id,
                 'error' => $e->getMessage(),
             ]);
@@ -89,7 +89,7 @@ class ArticleGenerationService
 
         // Ensure year in title for SEO freshness signal
         $year = date('Y');
-        if (!preg_match('/20\d{2}/', $title)) {
+        if (! preg_match('/20\d{2}/', $title)) {
             // Add year naturally
             if (mb_strlen($title) + strlen(" $year") <= 80) {
                 $title .= " $year";
@@ -105,46 +105,46 @@ class ArticleGenerationService
     protected function generateContent(ArticleTopic $topic, AutoPostConfig $config): string
     {
         $prompt = $this->buildContentPrompt($topic, $config);
-        
+
         $messages = [
             [
                 'role' => 'system',
-                'content' => $this->getSystemPrompt()
+                'content' => $this->getSystemPrompt(),
             ],
             [
                 'role' => 'user',
-                'content' => $prompt
-            ]
+                'content' => $prompt,
+            ],
         ];
-        
+
         $options = [
             'model' => $config->ai_model,
             'temperature' => 0.7,
             'max_tokens' => 4000,
         ];
-        
-        \Log::info('🌐 Calling OpenRouter API', [
+
+        Log::info('🌐 Calling OpenRouter API', [
             'model' => $options['model'],
             'max_tokens' => $options['max_tokens'],
         ]);
-        
+
         $response = $this->openRouter->chat($messages, $options);
-        
-        if (!$response['success']) {
-            \Log::error('❌ OpenRouter API failed', [
+
+        if (! $response['success']) {
+            Log::error('❌ OpenRouter API failed', [
                 'error' => $response['error'] ?? 'Unknown error',
                 'details' => $response['details'] ?? null,
             ]);
-            throw new \Exception('OpenRouter API error: ' . ($response['error'] ?? 'Unknown error'));
+            throw new \Exception('OpenRouter API error: '.($response['error'] ?? 'Unknown error'));
         }
-        
-        \Log::info('✅ OpenRouter API response received', [
+
+        Log::info('✅ OpenRouter API response received', [
             'content_length' => strlen($response['content']),
             'tokens_used' => $response['tokens_used'] ?? 'N/A',
         ]);
-        
+
         $markdown = $response['content'];
-        
+
         return $this->formatContent($markdown);
     }
 
@@ -154,15 +154,15 @@ class ArticleGenerationService
     protected function buildContentPrompt(ArticleTopic $topic, AutoPostConfig $config): string
     {
         $keywords = $topic->keywords ? implode(', ', $topic->keywords) : ($topic->language === 'en' ? 'business licensing' : 'perizinan usaha');
-        
+
         // Enforce minimum word count for SEO (content score needs ≥800 for +5, ≥1500 for +8)
         $minWords = max($config->min_word_count, 800);
         $maxWords = max($config->max_word_count, $minWords + 500);
-        
+
         // Enforce minimum heading counts for SEO (headings score needs ≥3 H2, ≥2 H3)
         $minHeadings = max($config->min_headings, 3);
         $maxHeadings = max($config->max_headings, $minHeadings + 2);
-        
+
         // Language-specific context
         $languageContext = $this->getLanguageContext($topic->language, $topic->target_market);
 
@@ -227,7 +227,7 @@ class ArticleGenerationService
      * Get template-specific structure instructions based on article category/type.
      * Produces differentiated content structure for Pillar, Comparison, Case Study, FAQ, and generic articles.
      */
-    protected function getTemplateInstructions(\App\Models\ArticleTopic $topic): string
+    protected function getTemplateInstructions(ArticleTopic $topic): string
     {
         $title = $topic->title;
         $isId = $topic->language === 'id';
@@ -237,7 +237,7 @@ class ArticleGenerationService
 
         return match ($type) {
             'pillar' => $isId
-                ? "**TEMPLATE: PILLAR PAGE (Panduan Lengkap)**
+                ? '**TEMPLATE: PILLAR PAGE (Panduan Lengkap)**
 IKUTI STRUKTUR INI DENGAN KETAT:
 1. <h2>Apa itu [Topik]?</h2> — Definisi, dasar hukum, siapa yang wajib
 2. <h2>Mengapa [Topik] Penting?</h2> — 5 alasan, konsekuensi jika tidak memiliki
@@ -247,8 +247,8 @@ IKUTI STRUKTUR INI DENGAN KETAT:
 6. <h2>Studi Kasus</h2> — 1-2 contoh nyata (boleh fiktif realistis)
 7. <h2>Tips dari Ahli Bizmark</h2> — Expert insights, kesalahan umum
 8. <h2>Konsultasi Gratis Bizmark</h2> — CTA: WhatsApp, form, telepon
-Target: 2000-3000 kata. Ini adalah halaman pilar — harus sangat komprehensif dan menjadi referensi utama."
-                : "**TEMPLATE: PILLAR PAGE (Comprehensive Guide)**
+Target: 2000-3000 kata. Ini adalah halaman pilar — harus sangat komprehensif dan menjadi referensi utama.'
+                : '**TEMPLATE: PILLAR PAGE (Comprehensive Guide)**
 FOLLOW THIS STRUCTURE STRICTLY:
 1. <h2>What is [Topic]?</h2> — Definition, legal basis, who needs it
 2. <h2>Why is [Topic] Important?</h2> — 5 reasons, consequences of non-compliance
@@ -258,10 +258,10 @@ FOLLOW THIS STRUCTURE STRICTLY:
 6. <h2>Case Study</h2> — 1-2 real examples
 7. <h2>Expert Tips from Bizmark</h2> — Common mistakes, pro insights
 8. <h2>Free Consultation</h2> — CTA
-Target: 2000-3000 words. This is a pillar page — must be extremely comprehensive.",
+Target: 2000-3000 words. This is a pillar page — must be extremely comprehensive.',
 
             'comparison' => $isId
-                ? "**TEMPLATE: ARTIKEL PERBANDINGAN**
+                ? '**TEMPLATE: ARTIKEL PERBANDINGAN**
 IKUTI STRUKTUR INI DENGAN KETAT:
 1. <h2>Tabel Perbandingan Cepat</h2> — Buat tabel HTML <table> dengan kolom: Aspek | Opsi A | Opsi B
 2. <h2>Apa itu [Opsi A]?</h2> — Penjelasan detail
@@ -271,8 +271,8 @@ IKUTI STRUKTUR INI DENGAN KETAT:
 6. <h2>Kapan Memilih [Opsi B]</h2> — Kondisi, keuntungan, contoh kasus
 7. <h2>FAQ Perbandingan</h2> — 5+ pertanyaan, format <h3>
 8. <h2>Konsultasi Gratis Bizmark</h2> — CTA
-WAJIB: Sertakan minimal 1 tabel HTML <table> perbandingan side-by-side."
-                : "**TEMPLATE: COMPARISON ARTICLE**
+WAJIB: Sertakan minimal 1 tabel HTML <table> perbandingan side-by-side.'
+                : '**TEMPLATE: COMPARISON ARTICLE**
 FOLLOW THIS STRUCTURE STRICTLY:
 1. <h2>Quick Comparison Table</h2> — HTML <table> with columns: Aspect | Option A | Option B
 2. <h2>What is [Option A]?</h2>
@@ -282,10 +282,10 @@ FOLLOW THIS STRUCTURE STRICTLY:
 6. <h2>When to Choose [Option B]</h2>
 7. <h2>FAQ</h2> — 5+ questions in <h3>
 8. <h2>Free Consultation</h2> — CTA
-REQUIRED: Include at least 1 HTML <table> for side-by-side comparison.",
+REQUIRED: Include at least 1 HTML <table> for side-by-side comparison.',
 
             'case-study' => $isId
-                ? "**TEMPLATE: STUDI KASUS**
+                ? '**TEMPLATE: STUDI KASUS**
 IKUTI STRUKTUR INI DENGAN KETAT:
 1. <h2>Latar Belakang</h2> — Profil klien/industri (boleh anonim), situasi awal
 2. <h2>Tantangan yang Dihadapi</h2> — 3-5 masalah spesifik dalam <ul>
@@ -293,7 +293,7 @@ IKUTI STRUKTUR INI DENGAN KETAT:
 4. <h2>Hasil & Timeline</h2> — Data kuantitatif: hari penyelesaian, penghematan biaya, metrik sukses
 5. <h2>Pelajaran untuk Anda</h2> — 3-5 takeaways dalam <ul>
 6. <h2>Hubungi Bizmark</h2> — CTA: konsultasi serupa
-Gaya penulisan: Naratif, storytelling, gunakan data spesifik (boleh realistis fiktif)."
+Gaya penulisan: Naratif, storytelling, gunakan data spesifik (boleh realistis fiktif).'
                 : "**TEMPLATE: CASE STUDY**
 FOLLOW THIS STRUCTURE STRICTLY:
 1. <h2>Background</h2> — Client/industry profile, initial situation
@@ -305,22 +305,22 @@ FOLLOW THIS STRUCTURE STRICTLY:
 Style: Narrative, storytelling, use specific data.",
 
             'faq' => $isId
-                ? "**TEMPLATE: KOMPILASI FAQ**
+                ? '**TEMPLATE: KOMPILASI FAQ**
 IKUTI STRUKTUR INI DENGAN KETAT:
 1. <h2>Pertanyaan Umum</h2> — 5-8 Q&A umum, setiap pertanyaan dalam <h3>, jawaban dalam <p>
 2. <h2>Pertanyaan Teknis</h2> — 5-8 Q&A teknis dengan detail prosedur
 3. <h2>Pertanyaan Biaya & Waktu</h2> — 5-8 Q&A tentang estimasi biaya dan timeline
 4. <h2>Masih Ada Pertanyaan?</h2> — CTA ke konsultasi Bizmark
 PENTING: Gunakan format konsisten <h3>Pertanyaan?</h3><p>Jawaban lengkap.</p> untuk setiap item.
-Minimal 15 pertanyaan total. Format ini optimal untuk Google Featured Snippets dan Schema FAQPage."
-                : "**TEMPLATE: FAQ COMPILATION**
+Minimal 15 pertanyaan total. Format ini optimal untuk Google Featured Snippets dan Schema FAQPage.'
+                : '**TEMPLATE: FAQ COMPILATION**
 FOLLOW THIS STRUCTURE STRICTLY:
 1. <h2>General Questions</h2> — 5-8 Q&A, each question in <h3>, answer in <p>
 2. <h2>Technical Questions</h2> — 5-8 technical Q&A with procedural detail
 3. <h2>Cost & Timeline Questions</h2> — 5-8 Q&A about estimates
 4. <h2>Still Have Questions?</h2> — CTA
 IMPORTANT: Use consistent <h3>Question?</h3><p>Detailed answer.</p> format.
-Minimum 15 questions total. This format is optimal for Google Featured Snippets and Schema FAQPage.",
+Minimum 15 questions total. This format is optimal for Google Featured Snippets and Schema FAQPage.',
 
             default => '', // Generic articles use the base prompt structure
         };
@@ -329,7 +329,7 @@ Minimum 15 questions total. This format is optimal for Google Featured Snippets 
     /**
      * Detect content template type from topic category and title patterns.
      */
-    protected function detectTemplateType(\App\Models\ArticleTopic $topic): string
+    protected function detectTemplateType(ArticleTopic $topic): string
     {
         $category = $topic->category;
         $title = mb_strtolower($topic->title);
@@ -376,7 +376,7 @@ Minimum 15 questions total. This format is optimal for Google Featured Snippets 
                 'business_context_title' => 'Business Context:',
                 'company_info' => '- Company: PT. Cangah Pajaratan Mandiri (bizmark.id)
 - Services: Business licensing consultant, environmental documents (UKL-UPL, AMDAL, SPPL), business analysis
-- Target Readers: ' . ($targetMarket === 'pma' ? 'Foreign investors (PMA), international businesses, expat entrepreneurs' : 'Business owners, developers, industries') . '
+- Target Readers: '.($targetMarket === 'pma' ? 'Foreign investors (PMA), international businesses, expat entrepreneurs' : 'Business owners, developers, industries').'
 - Expertise: 15+ years experience in licensing & environmental documentation',
                 'article_category' => 'Article Category:',
                 'main_keywords' => 'Main Keywords:',
@@ -441,7 +441,7 @@ Minimum 15 questions total. This format is optimal for Google Featured Snippets 
 - Don\'t be too promotional, maximum 1 service mention at the end
 - Include company expertise naturally in content
 - Use concrete data/facts when applicable (timeline, cost ranges, regulations)
-- ' . ($targetMarket === 'pma' ? 'Address specific PMA/foreign investment concerns and regulations' : 'Focus on local Indonesian business context'),
+- '.($targetMarket === 'pma' ? 'Address specific PMA/foreign investment concerns and regulations' : 'Focus on local Indonesian business context'),
                 'output_instruction' => 'PROVIDE ONLY HTML CONTENT, DO NOT INCLUDE TITLE OR OTHER METADATA.',
             ];
         }
@@ -527,7 +527,7 @@ Minimum 15 questions total. This format is optimal for Google Featured Snippets 
      */
     protected function getSystemPrompt(): string
     {
-        return "Anda adalah content writer ahli untuk perusahaan konsultan perizinan dan dokumen lingkungan di Indonesia. 
+        return 'Anda adalah content writer ahli untuk perusahaan konsultan perizinan dan dokumen lingkungan di Indonesia. 
 Anda memahami mendalam:
 - Regulasi perizinan usaha Indonesia (OSS, NIB, IMB, SLF, dll)
 - Dokumen lingkungan (UKL-UPL, AMDAL, SPPL)
@@ -541,7 +541,7 @@ Tulis artikel yang:
 - Mudah dipahami oleh non-experts
 - Membangun trust dan authority
 
-Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan kepada klien.";
+Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan kepada klien.';
     }
 
     /**
@@ -552,16 +552,16 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
         // Remove markdown code blocks if AI wrapped the output
         $content = preg_replace('/```html\s*/', '', $content);
         $content = preg_replace('/```\s*/', '', $content);
-        
+
         // Trim whitespace
         $content = trim($content);
-        
+
         // Ensure proper spacing between elements
-        $content = str_replace('</h2><p>', '</h2>' . PHP_EOL . '<p>', $content);
-        $content = str_replace('</h3><p>', '</h3>' . PHP_EOL . '<p>', $content);
-        $content = str_replace('</p><h2>', '</p>' . PHP_EOL . '<h2>', $content);
-        $content = str_replace('</p><h3>', '</p>' . PHP_EOL . '<h3>', $content);
-        
+        $content = str_replace('</h2><p>', '</h2>'.PHP_EOL.'<p>', $content);
+        $content = str_replace('</h3><p>', '</h3>'.PHP_EOL.'<p>', $content);
+        $content = str_replace('</p><h2>', '</p>'.PHP_EOL.'<h2>', $content);
+        $content = str_replace('</p><h3>', '</p>'.PHP_EOL.'<h3>', $content);
+
         return $content;
     }
 
@@ -582,7 +582,7 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
         }
 
         // Append brief CTA
-        $excerpt = trim($excerpt) . '. Selengkapnya di Bizmark.';
+        $excerpt = trim($excerpt).'. Selengkapnya di Bizmark.';
 
         return Str::limit($excerpt, 250, '');
     }
@@ -616,8 +616,8 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
         $base = trim($base);
 
         // Add power word if missing and space allows
-        if (!$hasPowerWord && mb_strlen($base) + 10 <= $maxBase) {
-            $base = 'Panduan ' . $base;
+        if (! $hasPowerWord && mb_strlen($base) + 10 <= $maxBase) {
+            $base = 'Panduan '.$base;
         }
 
         // Truncate base to fit within limit
@@ -627,7 +627,7 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
             $base = preg_replace('/\s+\S*$/', '', $base);
         }
 
-        $metaTitle = trim($base) . $suffix;
+        $metaTitle = trim($base).$suffix;
 
         return $metaTitle;
     }
@@ -640,7 +640,7 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
         // Extract keywords from title for SEO relevance matching
         $titleWords = array_filter(
             explode(' ', strtolower($topic->title)),
-            fn($w) => mb_strlen($w) > 3 && !in_array($w, ['yang', 'untuk', 'dari', 'dengan', 'dalam'])
+            fn ($w) => mb_strlen($w) > 3 && ! in_array($w, ['yang', 'untuk', 'dari', 'dengan', 'dalam'])
         );
         $keyPhrase = implode(' ', array_slice($titleWords, 0, 3));
 
@@ -667,7 +667,7 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
 
         // Ensure clean sentence end before CTA
         $base = rtrim(trim($base), '.,;:!?');
-        $description = $base . '. ' . $cta;
+        $description = $base.'. '.$cta;
 
         // Final safety: cap at 160
         if (mb_strlen($description) > 160) {
@@ -710,8 +710,10 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
         if (count($keywords) < 5) {
             $fillers = ['konsultan perizinan', 'izin usaha', 'dokumen lingkungan', 'OSS', 'NIB'];
             foreach ($fillers as $filler) {
-                if (count($keywords) >= 5) break;
-                if (!in_array($filler, $keywords)) {
+                if (count($keywords) >= 5) {
+                    break;
+                }
+                if (! in_array($filler, $keywords)) {
                     $keywords[] = $filler;
                 }
             }
@@ -728,7 +730,7 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
         $tags = $topic->tags ?? [];
 
         // If no tags, generate from keywords
-        if (empty($tags) && !empty($topic->keywords)) {
+        if (empty($tags) && ! empty($topic->keywords)) {
             $tags = array_slice($topic->keywords, 0, 5);
         }
 
@@ -736,7 +738,7 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
         if (count($tags) < 3) {
             $fillers = [$topic->category, 'Perizinan', 'Bizmark', 'Indonesia'];
             foreach ($fillers as $filler) {
-                if ($filler && count($tags) < 3 && !in_array($filler, $tags)) {
+                if ($filler && count($tags) < 3 && ! in_array($filler, $tags)) {
                     $tags[] = $filler;
                 }
             }
@@ -752,10 +754,10 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
     {
         $text = strip_tags($content);
         $wordCount = str_word_count($text);
-        
+
         // Average reading speed: 200 words per minute
         $readingTime = ceil($wordCount / 200);
-        
+
         return max(1, $readingTime); // Minimum 1 minute
     }
 
@@ -768,7 +770,7 @@ Gunakan tone profesional namun approachable, seperti konsultan yang menjelaskan 
         // Input: ~2000 tokens × $3/M = $0.006
         // Output: ~2500 tokens × $15/M = $0.0375
         // Total: ~$0.044 per article
-        
+
         return 0.044;
     }
 }

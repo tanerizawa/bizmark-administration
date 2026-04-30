@@ -3,13 +3,13 @@
 namespace App\Modules\Proyek\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PermitApplication;
-use App\Models\ApplicationRevision;
-use App\Models\QuotationItem;
-use App\Models\ApplicationLocationDetail;
 use App\Models\ApplicationLegalityDocument;
-use App\Models\PermitType;
+use App\Models\ApplicationLocationDetail;
+use App\Models\ApplicationRevision;
 use App\Models\ApplicationStatusLog;
+use App\Models\PermitApplication;
+use App\Models\PermitType;
+use App\Models\QuotationItem;
 use App\Notifications\PackageRevisionCreated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,27 +23,27 @@ class PackageRevisionController extends Controller
     public function create($applicationId)
     {
         $application = PermitApplication::with([
-            'client', 
+            'client',
             'revisions',
             'locationDetail',
             'legalityDocuments',
-            'quotationItems'
+            'quotationItems',
         ])->findOrFail($applicationId);
-        
+
         // Get current package data
         $currentPackage = $this->getCurrentPackageData($application);
-        
+
         // Get available permit types
         $permitTypes = PermitType::where('is_active', true)
             ->orderBy('name')
             ->get();
-        
+
         // Get previous revisions
         $revisions = $application->revisions()
             ->with('revisedBy')
             ->orderBy('revision_number', 'desc')
             ->get();
-        
+
         return view('admin.permit-applications.revise', compact(
             'application',
             'currentPackage',
@@ -51,7 +51,7 @@ class PackageRevisionController extends Controller
             'revisions'
         ));
     }
-    
+
     /**
      * Store revision baru
      */
@@ -65,7 +65,7 @@ class PackageRevisionController extends Controller
             'permits.*.service_type' => 'required|in:bizmark,owned,self',
             'permits.*.unit_price' => 'required|numeric|min:0',
             'permits.*.estimated_days' => 'required|integer|min:1',
-            
+
             // Location details (optional)
             'location.province' => 'nullable|string',
             'location.city_regency' => 'nullable|string',
@@ -78,12 +78,12 @@ class PackageRevisionController extends Controller
             'location.zone_type' => 'nullable|in:industrial,commercial,residential,mixed,special_economic_zone',
             'location.land_status' => 'nullable|in:HGB,HGU,Hak_Milik,Girik,Sewa,Other',
             'location.land_certificate_number' => 'nullable|string',
-            
+
             // Project data
             'land_area' => 'nullable|numeric',
             'building_area' => 'nullable|numeric',
             'investment_value' => 'nullable|numeric',
-            
+
             // Legality documents (optional)
             'legality_documents' => 'nullable|array',
             'legality_documents.*.category' => 'required_with:legality_documents|in:land_ownership,company_legal,existing_permits,power_of_attorney,technical,other',
@@ -93,17 +93,17 @@ class PackageRevisionController extends Controller
             'legality_documents.*.issued_date' => 'nullable|date',
             'legality_documents.*.notes' => 'nullable|string',
         ]);
-        
+
         $application = PermitApplication::findOrFail($applicationId);
-        
+
         DB::beginTransaction();
         try {
             // Create revision
             $revisionNumber = $application->revisions()->max('revision_number') + 1;
-            
+
             // Calculate total cost
             $totalCost = collect($validated['permits'])->sum('unit_price');
-            
+
             $revision = ApplicationRevision::create([
                 'application_id' => $application->id,
                 'revision_number' => $revisionNumber,
@@ -120,11 +120,11 @@ class PackageRevisionController extends Controller
                 'total_cost' => $totalCost,
                 'status' => 'pending_client_approval',
             ]);
-            
+
             // Create quotation items for this revision
             foreach ($validated['permits'] as $permit) {
                 $permitType = PermitType::find($permit['permit_type_id']);
-                
+
                 QuotationItem::create([
                     'application_id' => $application->id,
                     'revision_id' => $revision->id,
@@ -139,73 +139,73 @@ class PackageRevisionController extends Controller
                     'estimated_days' => $permit['estimated_days'],
                 ]);
             }
-            
+
             // Update location details if provided
-            if (!empty($validated['location'])) {
+            if (! empty($validated['location'])) {
                 $this->updateLocationDetails($application->id, $validated['location']);
             }
-            
+
             // Update legality documents if provided
-            if (!empty($validated['legality_documents'])) {
+            if (! empty($validated['legality_documents'])) {
                 $this->updateLegalityDocuments($application->id, $validated['legality_documents']);
             }
-            
+
             // Create status log
             ApplicationStatusLog::create([
                 'application_id' => $application->id,
                 'from_status' => $application->status,
                 'to_status' => $application->status, // Keep same status
-                'notes' => "Revisi paket #{$revisionNumber} dibuat oleh " . auth()->user()->name,
+                'notes' => "Revisi paket #{$revisionNumber} dibuat oleh ".auth()->user()->name,
                 'changed_by_type' => 'user',
                 'changed_by_id' => auth()->id(),
             ]);
-            
+
             if ($application->client) {
                 $application->client->notify(new PackageRevisionCreated($revision));
             }
-            
+
             DB::commit();
-            
+
             return redirect()
                 ->route('admin.permit-applications.show', $application->id)
                 ->with('success', 'Revisi paket berhasil dibuat dan menunggu persetujuan client');
-                
+
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to create package revision: ' . $e->getMessage(), [
+            Log::error('Failed to create package revision: '.$e->getMessage(), [
                 'application_id' => $applicationId,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            
+
             return back()
                 ->withInput()
-                ->with('error', 'Gagal membuat revisi: ' . $e->getMessage());
+                ->with('error', 'Gagal membuat revisi: '.$e->getMessage());
         }
     }
-    
+
     /**
      * Show revision details
      */
     public function show($applicationId, $revisionId)
     {
         $application = PermitApplication::with('client')->findOrFail($applicationId);
-        
+
         $revision = ApplicationRevision::with(['revisedBy', 'quotationItems.permitType'])
             ->where('application_id', $applicationId)
             ->where('id', $revisionId)
             ->firstOrFail();
-        
+
         // Get current package data for comparison
         $currentPackage = $this->getCurrentPackageData($application);
-        
+
         return view('admin.permit-applications.revision-detail', compact(
             'application',
             'revision',
             'currentPackage'
         ));
     }
-    
+
     /**
      * Get current package data (latest approved revision or original)
      */
@@ -216,7 +216,7 @@ class PackageRevisionController extends Controller
             ->where('status', 'approved')
             ->latest()
             ->first();
-        
+
         if ($latestRevision) {
             return [
                 'permits' => $latestRevision->permits_data,
@@ -226,12 +226,12 @@ class PackageRevisionController extends Controller
                 'revision_number' => $latestRevision->revision_number,
             ];
         }
-        
+
         // Return original form_data
-        $formData = is_string($application->form_data) 
-            ? json_decode($application->form_data, true) 
+        $formData = is_string($application->form_data)
+            ? json_decode($application->form_data, true)
             : ($application->form_data ?? []);
-        
+
         return [
             'permits' => $formData['selected_permits'] ?? [],
             'project_data' => [
@@ -244,7 +244,7 @@ class PackageRevisionController extends Controller
             'source' => 'original',
         ];
     }
-    
+
     /**
      * Update location details
      */
@@ -255,7 +255,7 @@ class PackageRevisionController extends Controller
             $locationData
         );
     }
-    
+
     /**
      * Update legality documents
      */
@@ -266,7 +266,7 @@ class PackageRevisionController extends Controller
             if (empty($doc['name'])) {
                 continue;
             }
-            
+
             ApplicationLegalityDocument::updateOrCreate(
                 [
                     'application_id' => $applicationId,
@@ -276,7 +276,7 @@ class PackageRevisionController extends Controller
                 [
                     'is_available' => $doc['is_available'] ?? false,
                     'document_number' => $doc['number'] ?? null,
-                    'issued_date' => !empty($doc['issued_date']) ? $doc['issued_date'] : null,
+                    'issued_date' => ! empty($doc['issued_date']) ? $doc['issued_date'] : null,
                     'notes' => $doc['notes'] ?? null,
                 ]
             );

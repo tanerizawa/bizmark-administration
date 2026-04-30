@@ -27,13 +27,13 @@ class PaymentUploadedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Bukti Pembayaran Baru - ' . $this->payment->payment_number)
+            ->subject('Bukti Pembayaran Baru - '.$this->payment->payment_number)
             ->greeting('Halo Admin,')
             ->line('Bukti pembayaran baru telah diupload dan menunggu verifikasi.')
-            ->line('**Nomor Pembayaran:** ' . $this->payment->payment_number)
-            ->line('**Klien:** ' . $this->payment->quotation->application->client->name)
-            ->line('**Jumlah:** Rp ' . number_format($this->payment->paid_amount, 0, ',', '.'))
-            ->action('Verifikasi Pembayaran', url('/payments/' . $this->payment->id . '/verify'))
+            ->line('**Nomor Pembayaran:** '.$this->payment->payment_number)
+            ->line('**Klien:** '.$this->payment->quotation->application->client->name)
+            ->line('**Jumlah:** Rp '.number_format($this->payment->paid_amount, 0, ',', '.'))
+            ->action('Verifikasi Pembayaran', url('/payments/'.$this->payment->id.'/verify'))
             ->salutation('Sistem Bizmark.id');
     }
 

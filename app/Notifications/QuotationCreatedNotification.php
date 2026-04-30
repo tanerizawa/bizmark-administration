@@ -27,17 +27,17 @@ class QuotationCreatedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $application = $this->quotation->application;
-        
+
         return (new MailMessage)
-            ->subject('Quotation Siap - ' . $application->application_number)
-            ->greeting('Halo ' . $notifiable->name . ',')
+            ->subject('Quotation Siap - '.$application->application_number)
+            ->greeting('Halo '.$notifiable->name.',')
             ->line('Quotation untuk permohonan izin Anda sudah siap!')
-            ->line('**Nomor Quotation:** ' . $this->quotation->quotation_number)
-            ->line('**Jenis Izin:** ' . $application->permitType->name)
-            ->line('**Total Biaya:** Rp ' . number_format($this->quotation->total_amount, 0, ',', '.'))
-            ->line('**Uang Muka:** Rp ' . number_format($this->quotation->down_payment_amount, 0, ',', '.') . ' (' . $this->quotation->down_payment_percentage . '%)')
-            ->line('**Berlaku Hingga:** ' . $this->quotation->expires_at->format('d F Y'))
-            ->action('Lihat Quotation', url('/client/applications/' . $application->id . '/quotation'))
+            ->line('**Nomor Quotation:** '.$this->quotation->quotation_number)
+            ->line('**Jenis Izin:** '.$application->permitType->name)
+            ->line('**Total Biaya:** Rp '.number_format($this->quotation->total_amount, 0, ',', '.'))
+            ->line('**Uang Muka:** Rp '.number_format($this->quotation->down_payment_amount, 0, ',', '.').' ('.$this->quotation->down_payment_percentage.'%)')
+            ->line('**Berlaku Hingga:** '.$this->quotation->expires_at->format('d F Y'))
+            ->action('Lihat Quotation', url('/client/applications/'.$application->id.'/quotation'))
             ->line('Silakan review dan terima quotation untuk melanjutkan ke pembayaran.')
             ->salutation('Salam, Tim Bizmark.id');
     }
@@ -49,7 +49,7 @@ class QuotationCreatedNotification extends Notification implements ShouldQueue
             'quotation_id' => $this->quotation->id,
             'quotation_number' => $this->quotation->quotation_number,
             'total_amount' => $this->quotation->total_amount,
-            'message' => 'Quotation ' . $this->quotation->quotation_number . ' sudah siap',
+            'message' => 'Quotation '.$this->quotation->quotation_number.' sudah siap',
         ];
     }
 }

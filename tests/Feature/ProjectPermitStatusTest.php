@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\ProjectPermitController;
 use App\Models\PermitType;
 use App\Models\Project;
 use App\Models\ProjectPermit;
 use App\Models\ProjectPermitDependency;
 use App\Models\ProjectStatus;
 use App\Models\User;
+use App\Modules\Perizinan\Controllers\Public\ProjectPermitController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\SubstituteBindings;

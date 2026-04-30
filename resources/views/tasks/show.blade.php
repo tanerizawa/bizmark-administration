@@ -13,8 +13,8 @@
                     <i class="fas fa-arrow-left text-xl"></i>
                 </a>
                 <div>
-                    <h1 class="text-3xl font-bold" style="color: #FFFFFF;">{{ $task->title }}</h1>
-                    <p class="mt-1" style="color: rgba(235, 235, 245, 0.6);">
+                    <h1 class="text-3xl font-bold text-white">{{ $task->title }}</h1>
+                    <p class="mt-1 text-dark-text-secondary">
                         Proyek: <a href="{{ route('projects.show', $task->project) }}" class="text-apple-blue-dark hover:text-apple-blue">{{ $task->project->name }}</a>
                     </p>
                 </div>
@@ -45,15 +45,21 @@
             <!-- Task Details -->
             <div class="card-elevated rounded-apple-lg p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-semibold" style="color: #FFFFFF;">Detail Tugas</h2>
+                    <h2 class="text-xl font-semibold text-white">Detail Tugas</h2>
                     <div class="flex items-center space-x-3">
                         <!-- Status Badge -->
                         @php
                             $statusColors = [
-                                'todo' => 'style="background: rgba(142, 142, 147, 0.4); color: rgba(235, 235, 245, 0.8);"',
-                                'in_progress' => 'style="background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);"',
-                                'done' => 'style="background: rgba(48, 209, 88, 0.3); color: rgba(48, 209, 88, 1);"',
-                                'blocked' => 'style="background: rgba(255, 69, 58, 0.3); color: rgba(255, 69, 58, 1);"'
+                                'todo' => 'text-dark-text-secondary',
+                                'in_progress' => 'text-apple-blue',
+                                'done' => 'text-apple-green',
+                                'blocked' => 'text-apple-red'
+                            ];
+                            $statusBgColors = [
+                                'todo' => 'bg-dark-text-tertiary/15',
+                                'in_progress' => 'bg-apple-blue/15',
+                                'done' => 'bg-apple-green/15',
+                                'blocked' => 'bg-apple-red/15'
                             ];
                             $statusLabels = [
                                 'todo' => 'To Do',
@@ -62,17 +68,23 @@
                                 'blocked' => 'Blocked'
                             ];
                         @endphp
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" {!! $statusColors[$task->status] !!}>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $statusBgColors[$task->status] }} {{ $statusColors[$task->status] }}">
                             {{ $statusLabels[$task->status] }}
                         </span>
 
                         <!-- Priority Badge -->
                         @php
                             $priorityColors = [
-                                'low' => 'style="background: rgba(142, 142, 147, 0.4); color: rgba(235, 235, 245, 0.8);"',
-                                'normal' => 'style="background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);"',
-                                'high' => 'style="background: rgba(255, 204, 0, 0.3); color: rgba(255, 214, 10, 1);"',
-                                'urgent' => 'style="background: rgba(255, 69, 58, 0.3); color: rgba(255, 69, 58, 1);"'
+                                'low' => 'text-dark-text-secondary',
+                                'normal' => 'text-apple-blue',
+                                'high' => 'text-apple-orange',
+                                'urgent' => 'text-apple-red'
+                            ];
+                            $priorityBgColors = [
+                                'low' => 'bg-dark-text-tertiary/15',
+                                'normal' => 'bg-apple-blue/15',
+                                'high' => 'bg-apple-orange/15',
+                                'urgent' => 'bg-apple-red/15'
                             ];
                             $priorityLabels = [
                                 'low' => 'Low Priority',
@@ -81,7 +93,7 @@
                                 'urgent' => 'Urgent'
                             ];
                         @endphp
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" {!! $priorityColors[$task->priority] !!}>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $priorityBgColors[$task->priority] }} {{ $priorityColors[$task->priority] }}">
                             {{ $priorityLabels[$task->priority] }}
                         </span>
                     </div>
@@ -90,8 +102,8 @@
                 <!-- Description -->
                 @if($task->description)
                 <div class="mb-6">
-                    <h3 class="text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Deskripsi</h3>
-                    <div class="prose max-w-none" style="color: rgba(235, 235, 245, 0.6);">
+                    <h3 class="text-sm font-medium mb-2 text-dark-text-primary/80">Deskripsi</h3>
+                    <div class="prose max-w-none text-dark-text-secondary">
                         {!! nl2br(e($task->description)) !!}
                     </div>
                 </div>
@@ -100,9 +112,9 @@
                 <!-- SOP Notes -->
                 @if($task->sop_notes)
                 <div class="mb-6">
-                    <h3 class="text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">SOP / Checklist</h3>
-                    <div class="rounded-md p-4" style="background: rgba(58, 58, 60, 0.5);">
-                        <div class="prose max-w-none" style="color: rgba(235, 235, 245, 0.6);">
+                    <h3 class="text-sm font-medium mb-2 text-dark-text-primary/80">SOP / Checklist</h3>
+                    <div class="rounded-md p-4 bg-[rgba(58,58,60,0.5)]">
+                        <div class="prose max-w-none text-dark-text-secondary">
                             {!! nl2br(e($task->sop_notes)) !!}
                         </div>
                     </div>
@@ -112,9 +124,9 @@
                 <!-- Completion Notes -->
                 @if($task->completion_notes)
                 <div class="mb-6">
-                    <h3 class="text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Catatan Penyelesaian</h3>
-                    <div class="rounded-md p-4" style="background: rgba(48, 209, 88, 0.2);">
-                        <div class="prose max-w-none" style="color: rgba(235, 235, 245, 0.6);">
+                    <h3 class="text-sm font-medium mb-2 text-dark-text-primary/80">Catatan Penyelesaian</h3>
+                    <div class="rounded-md p-4 bg-apple-green/20">
+                        <div class="prose max-w-none text-dark-text-secondary">
                             {!! nl2br(e($task->completion_notes)) !!}
                         </div>
                     </div>
@@ -122,16 +134,15 @@
                 @endif
 
                 <!-- Quick Status Update -->
-                <div class="pt-6" style="border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                    <h3 class="text-sm font-medium mb-3" style="color: rgba(235, 235, 245, 0.8);">Update Status</h3>
+                <div class="pt-6 border-t border-white/10">
+                    <h3 class="text-sm font-medium mb-3 text-dark-text-primary/80">Update Status</h3>
                     <div class="flex space-x-2">
                         @foreach(['todo', 'in_progress', 'done', 'blocked'] as $status)
-                            <button onclick="updateStatus('{{ $status }}')" 
-                                    class="px-3 py-1 rounded-md text-sm font-medium transition-colors"
+                            <button onclick="updateStatus('{{ $status }}')"
                                     @if($task->status === $status)
-                                        {!! $statusColors[$status] !!}
+                                        class="px-3 py-1 rounded-md text-sm font-medium transition-colors {{ $statusBgColors[$status] }} {{ $statusColors[$status] }}"
                                     @else
-                                        style="background: rgba(58, 58, 60, 0.5); color: rgba(235, 235, 245, 0.6);"
+                                        class="px-3 py-1 rounded-md text-sm font-medium transition-colors bg-[rgba(58,58,60,0.5)] text-dark-text-secondary"
                                     @endif>
                                 {{ $statusLabels[$status] }}
                             </button>
@@ -143,19 +154,19 @@
             <!-- Related Tasks -->
             @if($relatedTasks->count() > 0)
             <div class="card-elevated rounded-apple-lg p-6">
-                <h2 class="text-xl font-semibold mb-4" style="color: #FFFFFF;">Tugas Terkait</h2>
+                <h2 class="text-xl font-semibold mb-4 text-white">Tugas Terkait</h2>
                 <div class="space-y-3">
                     @foreach($relatedTasks as $relatedTask)
-                    <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(58, 58, 60, 0.5);">
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-[rgba(58,58,60,0.5)]">
                         <div>
                             <h3 class="font-medium">
                                 <a href="{{ route('tasks.show', $relatedTask) }}" class="text-apple-blue-dark hover:text-apple-blue">
                                     {{ $relatedTask->title }}
                                 </a>
                             </h3>
-                            <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">{{ $relatedTask->assignedUser->name ?? 'Belum ditugaskan' }}</p>
+                            <p class="text-sm text-dark-text-secondary">{{ $relatedTask->assignedUser->name ?? 'Belum ditugaskan' }}</p>
                         </div>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" {!! $statusColors[$relatedTask->status] !!}>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $statusBgColors[$relatedTask->status] }} {{ $statusColors[$relatedTask->status] }}">
                             {{ $statusLabels[$relatedTask->status] }}
                         </span>
                     </div>
@@ -169,19 +180,19 @@
         <div class="space-y-6">
             <!-- Task Info -->
             <div class="card-elevated rounded-apple-lg p-6">
-                <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">Informasi Tugas</h3>
+                <h3 class="text-lg font-semibold mb-4 text-white">Informasi Tugas</h3>
                 <dl class="space-y-3">
                     <div>
-                        <dt class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.6);">Ditugaskan Kepada</dt>
-                        <dd class="text-sm" style="color: rgba(235, 235, 245, 0.8);">
+                        <dt class="text-sm font-medium text-dark-text-secondary">Ditugaskan Kepada</dt>
+                        <dd class="text-sm text-dark-text-primary/80">
                             {{ $task->assignedUser->name ?? 'Belum ditugaskan' }}
                         </dd>
                     </div>
                     
                     @if($task->due_date)
                     <div>
-                        <dt class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.6);">Tanggal Jatuh Tempo</dt>
-                        <dd class="text-sm {{ $task->due_date->isPast() && $task->status !== 'done' ? 'text-apple-red-dark font-medium' : '' }}" style="{{ $task->due_date->isPast() && $task->status !== 'done' ? '' : 'color: rgba(235, 235, 245, 0.8);' }}">
+                        <dt class="text-sm font-medium text-dark-text-secondary">Tanggal Jatuh Tempo</dt>
+                        <dd class="text-sm {{ $task->due_date->isPast() && $task->status !== 'done' ? 'text-apple-red-dark font-medium' : 'text-dark-text-primary/80' }}">
                             {{ $task->due_date->format('d M Y') }}
                             @if($task->due_date->isPast() && $task->status !== 'done')
                                 <span class="text-xs text-apple-red-dark block">Terlambat {{ $task->due_date->diffForHumans() }}</span>
@@ -192,34 +203,34 @@
 
                     @if($task->institution)
                     <div>
-                        <dt class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.6);">Institusi</dt>
-                        <dd class="text-sm" style="color: rgba(235, 235, 245, 0.8);">{{ $task->institution->name }}</dd>
+                        <dt class="text-sm font-medium text-dark-text-secondary">Institusi</dt>
+                        <dd class="text-sm text-dark-text-primary/80">{{ $task->institution->name }}</dd>
                     </div>
                     @endif
 
                     @if($task->estimated_hours)
                     <div>
-                        <dt class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.6);">Estimasi Waktu</dt>
-                        <dd class="text-sm" style="color: rgba(235, 235, 245, 0.8);">{{ $task->estimated_hours }} jam</dd>
+                        <dt class="text-sm font-medium text-dark-text-secondary">Estimasi Waktu</dt>
+                        <dd class="text-sm text-dark-text-primary/80">{{ $task->estimated_hours }} jam</dd>
                     </div>
                     @endif
 
                     @if($task->actual_hours)
                     <div>
-                        <dt class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.6);">Waktu Aktual</dt>
-                        <dd class="text-sm" style="color: rgba(235, 235, 245, 0.8);">{{ $task->actual_hours }} jam</dd>
+                        <dt class="text-sm font-medium text-dark-text-secondary">Waktu Aktual</dt>
+                        <dd class="text-sm text-dark-text-primary/80">{{ $task->actual_hours }} jam</dd>
                     </div>
                     @endif
 
                     <div>
-                        <dt class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.6);">Dibuat</dt>
-                        <dd class="text-sm" style="color: rgba(235, 235, 245, 0.8);">{{ $task->created_at->format('d M Y H:i') }}</dd>
+                        <dt class="text-sm font-medium text-dark-text-secondary">Dibuat</dt>
+                        <dd class="text-sm text-dark-text-primary/80">{{ $task->created_at->format('d M Y H:i') }}</dd>
                     </div>
 
                     @if($task->started_at)
                     <div>
-                        <dt class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.6);">Dimulai</dt>
-                        <dd class="text-sm" style="color: rgba(235, 235, 245, 0.8);">
+                        <dt class="text-sm font-medium text-dark-text-secondary">Dimulai</dt>
+                        <dd class="text-sm text-dark-text-primary/80">
                             {{ is_string($task->started_at) ? \Carbon\Carbon::parse($task->started_at)->format('d M Y H:i') : $task->started_at->format('d M Y H:i') }}
                         </dd>
                     </div>
@@ -227,8 +238,8 @@
 
                     @if($task->completed_at)
                     <div>
-                        <dt class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.6);">Selesai</dt>
-                        <dd class="text-sm" style="color: rgba(235, 235, 245, 0.8);">
+                        <dt class="text-sm font-medium text-dark-text-secondary">Selesai</dt>
+                        <dd class="text-sm text-dark-text-primary/80">
                             {{ is_string($task->completed_at) ? \Carbon\Carbon::parse($task->completed_at)->format('d M Y H:i') : $task->completed_at->format('d M Y H:i') }}
                         </dd>
                     </div>
@@ -239,14 +250,14 @@
             <!-- Dependent Tasks -->
             @if($dependentTasks->count() > 0)
             <div class="card-elevated rounded-apple-lg p-6">
-                <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">Tugas yang Bergantung</h3>
+                <h3 class="text-lg font-semibold mb-4 text-white">Tugas yang Bergantung</h3>
                 <div class="space-y-2">
                     @foreach($dependentTasks as $dependentTask)
-                    <div class="p-2 rounded" style="background: rgba(58, 58, 60, 0.5);">
+                    <div class="p-2 rounded bg-[rgba(58,58,60,0.5)]">
                         <a href="{{ route('tasks.show', $dependentTask) }}" class="text-sm text-apple-blue-dark hover:text-apple-blue">
                             {{ $dependentTask->title }}
                         </a>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ml-2" {!! $statusColors[$dependentTask->status] !!}>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ml-2 {{ $statusBgColors[$dependentTask->status] }} {{ $statusColors[$dependentTask->status] }}">
                             {{ $statusLabels[$dependentTask->status] }}
                         </span>
                     </div>
@@ -257,7 +268,7 @@
 
             <!-- Actions -->
             <div class="card-elevated rounded-apple-lg p-6">
-                <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">Aksi</h3>
+                <h3 class="text-lg font-semibold mb-4 text-white">Aksi</h3>
                 <div class="space-y-3">
                     <a href="{{ route('tasks.edit', $task) }}" 
                        class="btn-primary w-full px-4 py-2 rounded-md font-medium transition-colors text-center block">

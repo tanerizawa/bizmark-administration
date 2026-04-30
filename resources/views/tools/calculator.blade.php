@@ -225,7 +225,7 @@
             <span class="section-badge">Alat Perizinan</span>
             <h1 class="section-title mb-3">Kalkulator Perizinan Usaha</h1>
             <p class="section-description mx-auto">
-                Simulasikan estimasi biaya, timeline, dan daftar dokumen untuk membantu perencanaan pengurusan izin sebelum konsultasi.
+                Simulasikan estimasi biaya, jadwal, dan daftar dokumen untuk membantu perencanaan pengurusan izin sebelum konsultasi.
             </p>
         </div>
 

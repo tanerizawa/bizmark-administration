@@ -3,13 +3,12 @@
 namespace App\Modules\Proyek\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\Task;
-use App\Models\Project;
-use App\Models\User;
-use App\Models\Institution;
 use App\Http\Controllers\Traits\AuthorizesRequests;
+use App\Models\Institution;
+use App\Models\Project;
+use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -18,12 +17,13 @@ class TaskController extends Controller
     public function __construct()
     {
         $this->authorizePermissions('tasks');
-        
+
         // Additional authorization for custom actions
         $this->middleware(function ($request, $next) {
-            if (!auth()->user()->can('tasks.edit')) {
+            if (! auth()->user()->can('tasks.edit')) {
                 abort(403, 'Anda tidak memiliki akses untuk mengubah tugas.');
             }
+
             return $next($request);
         })->only(['updateStatus', 'updateAssignment', 'reorder']);
     }
@@ -58,9 +58,9 @@ class TaskController extends Controller
         // Search by title or description
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -73,13 +73,13 @@ class TaskController extends Controller
                 WHEN 'low' THEN 4 
             END"
         )->orderBy('due_date', 'asc')
-          ->orderBy('created_at', 'desc')
-          ->paginate(15);
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
 
         // Get filter options
         $projects = Project::orderBy('name')->get();
         $users = User::orderBy('name')->get();
-        
+
         return view('tasks.index', compact('tasks', 'projects', 'users'));
     }
 
@@ -91,11 +91,11 @@ class TaskController extends Controller
         $projects = Project::orderBy('name')->get();
         $users = User::orderBy('name')->get();
         $institutions = Institution::orderBy('name')->get();
-        
+
         // Pre-select project if coming from project page
-        $selectedProject = $request->filled('project_id') ? 
+        $selectedProject = $request->filled('project_id') ?
             Project::find($request->project_id) : null;
-        
+
         return view('tasks.create', compact('projects', 'users', 'institutions', 'selectedProject'));
     }
 
@@ -120,7 +120,7 @@ class TaskController extends Controller
         ]);
 
         // Auto-set sort_order if not provided (append to end)
-        if (!isset($validated['sort_order'])) {
+        if (! isset($validated['sort_order'])) {
             $maxOrder = Task::where('project_id', $validated['project_id'])->max('sort_order') ?? 0;
             $validated['sort_order'] = $maxOrder + 1;
         }
@@ -128,8 +128,8 @@ class TaskController extends Controller
         $task = Task::create($validated);
 
         // Redirect back to project tasks tab
-        $redirectUrl = route('projects.show', $task->project_id) . '?tab=tasks';
-        
+        $redirectUrl = route('projects.show', $task->project_id).'?tab=tasks';
+
         return redirect($redirectUrl)
             ->with('success', 'Task berhasil dibuat!');
     }
@@ -140,19 +140,19 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         $task->load(['project', 'assignedUser', 'institution', 'documents', 'dependsOnTask', 'permit']);
-        
+
         // If JSON request (AJAX), return JSON
         if (request()->wantsJson() || request()->ajax()) {
             return response()->json($task);
         }
-        
+
         // Get related tasks
         $dependentTasks = Task::where('depends_on_task_id', $task->id)->get();
         $relatedTasks = Task::where('project_id', $task->project_id)
             ->where('id', '!=', $task->id)
             ->limit(5)
             ->get();
-            
+
         return view('tasks.show', compact('task', 'dependentTasks', 'relatedTasks'));
     }
 
@@ -164,13 +164,13 @@ class TaskController extends Controller
         $projects = Project::orderBy('name')->get();
         $users = User::orderBy('name')->get();
         $institutions = Institution::orderBy('name')->get();
-        
+
         // Get tasks that can be dependencies (exclude current task and its dependencies)
         $availableTasks = Task::where('project_id', $task->project_id)
             ->where('id', '!=', $task->id)
             ->where('depends_on_task_id', '!=', $task->id)
             ->get();
-        
+
         return view('tasks.edit', compact('task', 'projects', 'users', 'institutions', 'availableTasks'));
     }
 
@@ -189,7 +189,7 @@ class TaskController extends Controller
             'status' => 'required|in:todo,in_progress,done,blocked',
             'priority' => 'required|in:low,normal,high,urgent',
             'institution_id' => 'nullable|exists:institutions,id',
-            'depends_on_task_id' => 'nullable|exists:tasks,id|not_in:' . $task->id,
+            'depends_on_task_id' => 'nullable|exists:tasks,id|not_in:'.$task->id,
             'estimated_hours' => 'nullable|integer|min:1',
             'actual_hours' => 'nullable|integer|min:0',
             'completion_notes' => 'nullable|string',
@@ -224,12 +224,12 @@ class TaskController extends Controller
 
         if ($dependents->count() > 0) {
             $redirectUrl = route('projects.show', $task->project_id);
-            
+
             // If request has redirect_to_tab parameter, add it to URL
             if (request()->has('redirect_to_tab')) {
-                $redirectUrl .= '?tab=' . request('redirect_to_tab');
+                $redirectUrl .= '?tab='.request('redirect_to_tab');
             }
-            
+
             return redirect($redirectUrl)
                 ->with('error', 'Tidak dapat menghapus task ini karena masih menjadi prasyarat task lain!');
         }
@@ -238,10 +238,10 @@ class TaskController extends Controller
         $task->delete();
 
         $redirectUrl = route('projects.show', $projectId);
-        
+
         // If request has redirect_to_tab parameter, add it to URL
         if (request()->has('redirect_to_tab')) {
-            $redirectUrl .= '?tab=' . request('redirect_to_tab');
+            $redirectUrl .= '?tab='.request('redirect_to_tab');
         }
 
         return redirect($redirectUrl)
@@ -262,11 +262,11 @@ class TaskController extends Controller
         $newStatus = $validated['status'];
 
         // Check if task can be started (dependency validation)
-        if ($newStatus === 'in_progress' && !$task->canStart()) {
+        if ($newStatus === 'in_progress' && ! $task->canStart()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Task tidak dapat dimulai karena prasyarat belum selesai!',
-                'blockers' => $task->getBlockers()
+                'blockers' => $task->getBlockers(),
             ], 422);
         }
 
@@ -282,11 +282,11 @@ class TaskController extends Controller
         }
 
         $task->status = $newStatus;
-        
+
         if (isset($validated['completion_notes'])) {
             $task->completion_notes = $validated['completion_notes'];
         }
-        
+
         $task->save();
 
         return response()->json([
@@ -295,7 +295,7 @@ class TaskController extends Controller
             'status' => $newStatus,
             'status_label' => $task->getStatusLabel(),
             'status_color' => $task->getStatusColor(),
-            'progress' => $task->getProgress()
+            'progress' => $task->getProgress(),
         ]);
     }
 
@@ -318,7 +318,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Urutan task berhasil diperbarui!'
+            'message' => 'Urutan task berhasil diperbarui!',
         ]);
     }
 
@@ -338,14 +338,14 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => $assignedUser 
-                ? "Task berhasil di-assign ke {$assignedUser->name}!" 
+            'message' => $assignedUser
+                ? "Task berhasil di-assign ke {$assignedUser->name}!"
                 : 'Assignment task berhasil dihapus!',
             'assigned_user' => $assignedUser ? [
                 'id' => $assignedUser->id,
                 'name' => $assignedUser->name,
                 'email' => $assignedUser->email,
-            ] : null
+            ] : null,
         ]);
     }
 }

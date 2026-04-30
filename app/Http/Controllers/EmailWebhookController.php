@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EmailInbox;
 use App\Models\EmailAccount;
 use App\Models\EmailAssignment;
+use App\Models\EmailInbox;
 use App\Notifications\NewEmailReceivedNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -15,12 +16,12 @@ class EmailWebhookController extends Controller
 {
     /**
      * Receive incoming email from Cloudflare Email Worker
-     * 
+     *
      * Endpoint: POST /webhook/email/receive
      */
     public function receive(Request $request)
     {
-        if (!$this->isAuthorizedWebhookRequest($request)) {
+        if (! $this->isAuthorizedWebhookRequest($request)) {
             Log::warning('Rejected email webhook request', [
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
@@ -41,19 +42,20 @@ class EmailWebhookController extends Controller
             ]);
 
             // Validate required fields
-            if (!$request->filled('from') || !$request->filled('subject')) {
+            if (! $request->filled('from') || ! $request->filled('subject')) {
                 Log::error('Invalid email webhook data - missing required fields', [
                     'from' => $request->input('from'),
                     'to' => $request->input('to'),
                     'subject' => $request->input('subject'),
                     'message_id' => $request->input('message_id'),
                 ]);
+
                 return response()->json(['error' => 'Missing required fields: from, subject'], 400);
             }
 
             // Extract from email and name
             $fromRaw = $request->input('from');
-            
+
             // Parse "Name <email@example.com>" format
             if (preg_match('/<(.+?)>/', $fromRaw, $emailMatches)) {
                 $fromEmail = strtolower(trim($emailMatches[1]));
@@ -77,14 +79,14 @@ class EmailWebhookController extends Controller
             if ($emailAccount) {
                 $emailAccountId = $emailAccount->id;
                 $department = $emailAccount->department;
-                
+
                 // Get primary handler for auto-assignment
                 $primaryHandler = $emailAccount->getPrimaryHandler();
-                
+
                 Log::info('Email account found', [
                     'account_id' => $emailAccountId,
                     'department' => $department,
-                    'primary_handler' => $primaryHandler ? $primaryHandler->email : 'none'
+                    'primary_handler' => $primaryHandler ? $primaryHandler->email : 'none',
                 ]);
             } else {
                 Log::warning('No email account found for recipient', ['to' => $toEmail]);
@@ -93,13 +95,13 @@ class EmailWebhookController extends Controller
             // Get email body
             $bodyHtml = $request->input('html');
             $bodyText = $request->input('text');
-            
+
             // If no text body, extract from HTML
-            if (!$bodyText && $bodyHtml) {
+            if (! $bodyText && $bodyHtml) {
                 $bodyText = strip_tags($bodyHtml);
             }
 
-            $messageId = $request->input('message_id') ?? 'webhook-' . Str::uuid()->toString();
+            $messageId = $request->input('message_id') ?? 'webhook-'.Str::uuid()->toString();
 
             $existing = EmailInbox::query()->where('message_id', $messageId)->first();
             if ($existing) {
@@ -132,10 +134,10 @@ class EmailWebhookController extends Controller
                 'category' => 'inbox',
                 'is_read' => false,
                 'is_starred' => false,
-                'received_at' => $request->input('date') 
-                    ? \Carbon\Carbon::parse($request->input('date'))
+                'received_at' => $request->input('date')
+                    ? Carbon::parse($request->input('date'))
                     : now(),
-                
+
                 // Multi-user fields
                 'email_account_id' => $emailAccountId,
                 'department' => $department,
@@ -163,7 +165,7 @@ class EmailWebhookController extends Controller
                 'from' => $fromEmail,
                 'subject' => $inbox->subject,
                 'account_id' => $emailAccountId,
-                'assigned_to' => $primaryHandler ? $primaryHandler->email : 'unassigned'
+                'assigned_to' => $primaryHandler ? $primaryHandler->email : 'unassigned',
             ]);
 
             return response()->json([
@@ -178,7 +180,7 @@ class EmailWebhookController extends Controller
                     'assigned_to' => $primaryHandler ? $primaryHandler->email : null,
                     'priority' => $inbox->priority,
                     'status' => $inbox->status,
-                ]
+                ],
             ], 200);
 
         } catch (\Exception $e) {
@@ -189,11 +191,11 @@ class EmailWebhookController extends Controller
                 'subject' => $request->input('subject'),
                 'message_id' => $request->input('message_id'),
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'error' => 'Internal server error',
-                'message' => config('app.debug') ? $e->getMessage() : 'Failed to process email'
+                'message' => config('app.debug') ? $e->getMessage() : 'Failed to process email',
             ], 500);
         }
     }
@@ -204,22 +206,22 @@ class EmailWebhookController extends Controller
     protected function detectPriority($subject)
     {
         $subject = strtolower($subject);
-        
+
         $urgentKeywords = ['urgent', 'emergency', 'critical', 'asap', 'immediate'];
         $highKeywords = ['important', 'priority', 'high'];
-        
+
         foreach ($urgentKeywords as $keyword) {
             if (str_contains($subject, $keyword)) {
                 return 'urgent';
             }
         }
-        
+
         foreach ($highKeywords as $keyword) {
             if (str_contains($subject, $keyword)) {
                 return 'high';
             }
         }
-        
+
         return 'normal';
     }
 
@@ -235,7 +237,7 @@ class EmailWebhookController extends Controller
             Mail::raw($replyMessage, function ($message) use ($emailAccount, $recipientEmail, $fromName, $inbox) {
                 $message->to($recipientEmail)
                     ->from($emailAccount->email, $fromName)
-                    ->subject('Re: ' . ($inbox->subject ?? 'Pesan Anda'));
+                    ->subject('Re: '.($inbox->subject ?? 'Pesan Anda'));
             });
 
             Log::info('Auto-reply sent', [
@@ -248,7 +250,7 @@ class EmailWebhookController extends Controller
         } catch (\Exception $e) {
             Log::error('Auto-reply failed', [
                 'error' => $e->getMessage(),
-                'email_account' => $emailAccount->email
+                'email_account' => $emailAccount->email,
             ]);
         }
     }
@@ -266,7 +268,9 @@ class EmailWebhookController extends Controller
                 ->get();
 
             foreach ($usersToNotify as $assignment) {
-                if (!$assignment->user) continue;
+                if (! $assignment->user) {
+                    continue;
+                }
 
                 $assignment->user->notify(new NewEmailReceivedNotification($inbox, $emailAccount));
 
@@ -280,7 +284,7 @@ class EmailWebhookController extends Controller
         } catch (\Exception $e) {
             Log::error('Notification failed', [
                 'error' => $e->getMessage(),
-                'email_account' => $emailAccount->email
+                'email_account' => $emailAccount->email,
             ]);
         }
     }
@@ -303,7 +307,7 @@ class EmailWebhookController extends Controller
             'subject' => 'Test Email via Webhook',
             'text' => 'This is a test email sent via webhook endpoint.',
             'html' => '<p>This is a <strong>test email</strong> sent via webhook endpoint.</p>',
-            'message_id' => 'test-' . uniqid(),
+            'message_id' => 'test-'.uniqid(),
             'date' => now()->toIso8601String(),
         ];
 
@@ -345,7 +349,7 @@ class EmailWebhookController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Email webhook is active and working',
-            'data' => $stats
+            'data' => $stats,
         ]);
     }
 
@@ -353,14 +357,14 @@ class EmailWebhookController extends Controller
     {
         $allowedIps = array_filter(array_map('trim', (array) config('email_webhook.allowed_ips', [])));
 
-        if (!empty($allowedIps) && !in_array($request->ip(), $allowedIps, true)) {
+        if (! empty($allowedIps) && ! in_array($request->ip(), $allowedIps, true)) {
             return false;
         }
 
         $secret = (string) config('email_webhook.secret', '');
         $requireSignature = (bool) config('email_webhook.require_signature', app()->environment('production'));
 
-        if (!$requireSignature && $secret === '') {
+        if (! $requireSignature && $secret === '') {
             return true;
         }
 
@@ -419,7 +423,7 @@ class EmailWebhookController extends Controller
             ->orderBy('id')
             ->value('email');
 
-        if (!empty($activeRecipient)) {
+        if (! empty($activeRecipient)) {
             $activeRecipient = strtolower(trim((string) $activeRecipient));
 
             Log::warning('Inbound email webhook missing recipient, using first active email account', [

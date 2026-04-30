@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\TestPushNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,10 +22,10 @@ class PushNotificationController extends Controller
 
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 401);
         }
 
@@ -37,12 +38,12 @@ class PushNotificationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Berhasil mengaktifkan push notification'
+                'message' => 'Berhasil mengaktifkan push notification',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal: ' . $e->getMessage()
+                'message' => 'Gagal: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -58,10 +59,10 @@ class PushNotificationController extends Controller
 
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 401);
         }
 
@@ -70,12 +71,12 @@ class PushNotificationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Push notification dinonaktifkan'
+                'message' => 'Push notification dinonaktifkan',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal: ' . $e->getMessage()
+                'message' => 'Gagal: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -87,10 +88,10 @@ class PushNotificationController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 401);
         }
 
@@ -99,7 +100,7 @@ class PushNotificationController extends Controller
         return response()->json([
             'success' => true,
             'subscribed' => $subscriptions > 0,
-            'subscription_count' => $subscriptions
+            'subscription_count' => $subscriptions,
         ]);
     }
 
@@ -110,24 +111,24 @@ class PushNotificationController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 401);
         }
 
         try {
-            $user->notify(new \App\Notifications\TestPushNotification());
+            $user->notify(new TestPushNotification);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Test notification terkirim'
+                'message' => 'Test notification terkirim',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengirim: ' . $e->getMessage()
+                'message' => 'Gagal mengirim: '.$e->getMessage(),
             ], 500);
         }
     }

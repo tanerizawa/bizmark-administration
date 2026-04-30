@@ -4,8 +4,8 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\WebPush\WebPushMessage;
 use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 class TestNotification extends Notification
 {
@@ -42,9 +42,9 @@ class TestNotification extends Notification
             ->data([
                 'url' => route('client.dashboard'),
                 'type' => 'test',
-                'timestamp' => now()->toIso8601String()
+                'timestamp' => now()->toIso8601String(),
             ])
-            ->tag('test-notification-' . now()->timestamp)
+            ->tag('test-notification-'.now()->timestamp)
             ->vibrate([200, 100, 200, 100, 200])
             ->requireInteraction(true)
             ->renotify(true);
@@ -59,7 +59,7 @@ class TestNotification extends Notification
             'type' => 'test_notification',
             'message' => 'Ini adalah notifikasi test. Sistem notifikasi Anda berfungsi dengan baik!',
             'timestamp' => now()->toIso8601String(),
-            'url' => route('client.dashboard')
+            'url' => route('client.dashboard'),
         ];
     }
 }

@@ -1,315 +1,184 @@
 @extends('landing.layout')
 
 @php
-    $isEnglish = ($locale ?? app()->getLocale()) === 'en';
-    $pageTitle = $isEnglish ? 'About Us' : 'Tentang Kami';
-    $pageDescription = $isEnglish 
-        ? 'Learn about Bizmark.ID - Your trusted partner for business permit and investment services across Indonesia. ISO certified, expert team, nationwide coverage.'
-        : 'Pelajari tentang Bizmark.ID - Mitra terpercaya Anda untuk layanan perizinan dan investasi usaha di seluruh Indonesia. Bersertifikasi ISO, tim ahli, cakupan nasional.';
-    
-    $stats = config('landing_metrics.stats', [
-        'years_experience' => 12,
-        'clients_served' => 500,
-        'success_rate' => 98,
-        'permits_processed' => 2500
-    ]);
+    $locale = $locale ?? app()->getLocale();
+    $isEn = $locale === 'en';
+    $pageTitle = $isEn ? 'About Us' : 'Tentang Kami';
+    $pageDescription = $isEn
+        ? 'Bizmark.ID — a decade of permit consultancy for Indonesian manufacturing, infrastructure, and foreign-investment businesses. ISO 9001:2015, 138+ clients, nationwide coverage.'
+        : 'Bizmark.ID — satu dekade konsultansi perizinan untuk bisnis manufaktur, infrastruktur, dan PMA di Indonesia. ISO 9001:2015, 138+ klien, cakupan nasional.';
+
+    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $whatsappLink = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+    $primaryCtaRoute = route('landing.service-inquiry.create');
+    $servicesIndexRoute = $isEn ? route('services.index.en') : route('services.index.id');
+
+    $timeline = [
+        ['year' => '2014', 'title' => $isEn ? 'Founded in Karawang' : 'Didirikan di Karawang', 'desc' => $isEn ? 'Started as a specialist for manufacturing environmental permits.' : 'Dimulai sebagai spesialis perizinan lingkungan manufaktur.'],
+        ['year' => '2017', 'title' => $isEn ? 'AMDAL practice expanded' : 'Praktik AMDAL diperluas', 'desc' => $isEn ? 'Added full AMDAL, UKL-UPL studies across West Java.' : 'Menambahkan studi AMDAL, UKL-UPL lengkap di Jawa Barat.'],
+        ['year' => '2020', 'title' => $isEn ? 'Digital transformation: OSS-RBA' : 'Transformasi digital: OSS-RBA', 'desc' => $isEn ? 'Among the first consultants to offer integrated digital permit tracking for clients.' : 'Menjadi salah satu konsultan pertama yang menawarkan pelacakan perizinan digital terintegrasi bagi klien.'],
+        ['year' => '2022', 'title' => $isEn ? 'ISO 9001:2015 certified' : 'Sertifikasi ISO 9001:2015', 'desc' => $isEn ? 'Quality management formalized. Weekly SLA reports standardized.' : 'Manajemen mutu diformalkan. Laporan SLA mingguan distandardisasi.'],
+        ['year' => '2024', 'title' => $isEn ? 'AI-powered tools launched' : 'Peluncuran alat berbasis AI', 'desc' => $isEn ? 'AI permit checker, cost estimator, and SHP maker — free for all users.' : 'Cek perizinan AI, estimasi biaya, dan pembuat SHP — tersedia gratis untuk semua pengguna.'],
+        ['year' => '2026', 'title' => $isEn ? '138+ active clients' : '138+ klien aktif', 'desc' => $isEn ? 'Across manufacturing, logistics, energy, and PMA sectors.' : 'Lintas sektor manufaktur, logistik, energi, dan PMA.'],
+    ];
+
+    $values = [
+        ['icon' => 'fa-shield-halved', 'title' => $isEn ? 'Transparent by default' : 'Transparan sejak awal', 'desc' => $isEn ? 'Every SLA, cost, and timeline documented. No surprises.' : 'Setiap SLA, biaya, dan timeline didokumentasikan. Tanpa kejutan.'],
+        ['icon' => 'fa-compass',       'title' => $isEn ? 'Regulatory-first' : 'Regulasi adalah peta', 'desc' => $isEn ? 'Our team tracks every KBLI and policy change in-house.' : 'Tim kami mengikuti setiap perubahan KBLI dan kebijakan secara internal.'],
+        ['icon' => 'fa-users',         'title' => $isEn ? 'One team, one owner' : 'Satu tim, satu penanggung jawab', 'desc' => $isEn ? 'Dedicated project manager per project — no handoff confusion.' : 'Manajer proyek khusus per klien — tanpa lempar-lemparan tanggung jawab.'],
+        ['icon' => 'fa-certificate',   'title' => $isEn ? 'Quality certified' : 'Mutu tersertifikasi', 'desc' => $isEn ? 'ISO 9001:2015 operations. Audited processes.' : 'Operasional ISO 9001:2015. Proses teraudit.'],
+    ];
+
+    $certifications = [
+        ['icon' => 'fa-certificate', 'label' => 'ISO 9001:2015'],
+        ['icon' => 'fa-shield-halved', 'label' => $isEn ? 'OSS-RBA Partner' : 'Mitra OSS-RBA'],
+        ['icon' => 'fa-globe', 'label' => 'Bilingual EN / ID'],
+        ['icon' => 'fa-map-marked-alt', 'label' => $isEn ? 'Nationwide coverage' : 'Cakupan se-Indonesia'],
+    ];
 @endphp
 
-@section('title', $pageTitle . ' - Bizmark.ID')
+@section('title', $pageTitle . ' — Bizmark.ID')
 @section('meta_description', $pageDescription)
 
-@section('structured_data')
-<script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "Organization",
-    "name": "Bizmark.ID",
-    "description": "{{ $pageDescription }}",
-    "url": "{{ url('/') }}",
-    "logo": "{{ asset('logo.svg') }}",
-    "foundingDate": "2012",
-    "areaServed": "Indonesia",
-    "numberOfEmployees": {
-        "@@type": "QuantitativeValue",
-        "minValue": 10,
-        "maxValue": 50
-    },
-    "sameAs": [
-        "https://www.instagram.com/bizmark.id",
-        "https://www.linkedin.com/company/bizmark-id"
-    ]
-}
-</script>
-@endsection
-
 @section('content')
-<!-- Hero Section -->
-<section class="relative overflow-hidden pt-24 pb-16" style="background: linear-gradient(135deg, var(--surface-warm) 0%, var(--surface-secondary) 100%);">
+
+{{-- HERO --}}
+<section class="section-v2 bg-[var(--bg-raised)] border-b border-white/10">
+    <div class="container-wide">
+        <div class="max-w-4xl">
+            <span class="eyebrow mb-6">{{ $isEn ? 'About Bizmark' : 'Tentang Bizmark' }}</span>
+            <h1 class="display-xl mt-2 mb-6 text-gray-100">
+                {{ $isEn ? 'A decade of permit expertise, delivered transparently.' : 'Satu dekade keahlian di bidang perizinan, disampaikan secara transparan.' }}
+            </h1>
+            <p class="text-xl leading-relaxed max-w-3xl text-gray-400">
+                {{ $isEn
+                    ? 'Bizmark.ID (PT Cangah Pajaratan Mandiri) is a specialist permit consultancy serving manufacturing, infrastructure, energy, and foreign-investment clients across Indonesia.'
+                    : 'Bizmark.ID (PT Cangah Pajaratan Mandiri) adalah konsultan perizinan spesialis yang melayani klien manufaktur, infrastruktur, energi, dan PMA di seluruh Indonesia.' }}
+            </p>
+
+            <div class="stat-cluster mt-12 pt-10 border-t border-white/10">
+                <div class="stat-item"><div class="stat-value">138<span class="text-amber-400">+</span></div><div class="stat-label">{{ $isEn ? 'Corporate clients' : 'Klien Korporat' }}</div></div>
+                <div class="stat-item"><div class="stat-value">10<span class="text-[.6em] text-amber-400">+</span></div><div class="stat-label">{{ $isEn ? 'Years of experience' : 'Tahun pengalaman' }}</div></div>
+                <div class="stat-item"><div class="stat-value">96%</div><div class="stat-label">{{ $isEn ? 'On-time delivery' : 'Izin selesai tepat waktu' }}</div></div>
+                <div class="stat-item"><div class="stat-value">500<span class="text-amber-400">+</span></div><div class="stat-label">{{ $isEn ? 'Permits issued' : 'Izin yang diterbitkan' }}</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- MISSION / STORY --}}
+<section class="section-v2" aria-labelledby="story-heading">
+    <div class="container-wide">
+        <div class="grid lg:grid-cols-12 gap-12">
+            <div class="lg:col-span-5">
+                <span class="eyebrow mb-4">{{ $isEn ? 'Our Story' : 'Cerita Kami' }}</span>
+                <h2 id="story-heading" class="display-lg mt-2 text-gray-100">
+                    {{ $isEn ? 'Built to tackle regulatory complexity.' : 'Dibangun untuk mengatasi kerumitan regulasi perizinan.' }}
+                </h2>
+            </div>
+            <div class="lg:col-span-7">
+                <span class="gold-rule"></span>
+                <div class="text-lg leading-relaxed space-y-5 text-gray-400">
+                    <p>
+                        {{ $isEn
+                            ? 'We started in 2014 because Indonesian permit regulations change faster than most in-house teams can keep up with. Factory deadlines do not wait for anyone.'
+                            : 'Bizmark hadir pada 2014 karena regulasi perizinan Indonesia berubah lebih cepat dari yang mampu diikuti oleh kebanyakan tim internal. Tenggat waktu di pabrik tidak bisa menunggu.' }}
+                    </p>
+                    <p>
+                        {{ $isEn
+                            ? 'Today, we serve 138+ corporations with a single promise: every permit, every SLA, every report — fully documented and transparently delivered.'
+                            : 'Hari ini, kami melayani 138+ korporasi dengan satu janji: setiap izin, SLA, dan laporan — terdokumentasi lengkap dan disampaikan transparan.' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- TIMELINE --}}
+<section class="section-v2 section-premium" aria-labelledby="timeline-heading">
+    <div class="container-wide">
+        <div class="max-w-2xl mb-12">
+            <span class="eyebrow mb-4">{{ $isEn ? 'Milestones' : 'Tonggak Sejarah' }}</span>
+            <h2 id="timeline-heading" class="display-lg mt-2 text-gray-100">
+                {{ $isEn ? 'Twelve years, forward.' : 'Dua belas tahun, melangkah maju.' }}
+            </h2>
+        </div>
+
+        <ol class="timeline-v2 space-y-10 max-w-3xl">
+            @foreach($timeline as $t)
+                <li class="relative">
+                    <span class="timeline-node" aria-hidden="true"></span>
+                    <div class="font-display text-2xl font-bold mb-1 text-amber-400">{{ $t['year'] }}</div>
+                    <h3 class="font-bold text-lg mb-1 text-gray-100">{{ $t['title'] }}</h3>
+                    <p class="text-base leading-relaxed text-gray-400">{{ $t['desc'] }}</p>
+                </li>
+            @endforeach
+        </ol>
+    </div>
+</section>
+
+{{-- VALUES --}}
+<section class="section-v2" aria-labelledby="values-heading">
+    <div class="container-wide">
+        <div class="max-w-2xl mb-12">
+            <span class="eyebrow mb-4">{{ $isEn ? 'Our Values' : 'Nilai Kami' }}</span>
+            <h2 id="values-heading" class="display-lg mt-2 text-gray-100">
+                {{ $isEn ? 'How we work.' : 'Cara kami bekerja.' }}
+            </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            @foreach($values as $v)
+                <div class="premium-card flex flex-col">
+                    <div class="mb-5">
+                        <i class="fas {{ $v['icon'] }} icon-xl text-blue-400" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg mb-2 text-gray-100">{{ $v['title'] }}</h3>
+                    <p class="text-sm leading-relaxed text-gray-400">{{ $v['desc'] }}</p>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- CERTIFICATIONS --}}
+<section class="section-v2-sm section-premium">
+    <div class="container-wide text-center">
+        <span class="eyebrow mb-6 justify-center">{{ $isEn ? 'Certifications & Partnerships' : 'Sertifikasi & Kemitraan' }}</span>
+        <div class="flex flex-wrap justify-center gap-3 mt-6">
+            @foreach($certifications as $c)
+                <span class="cert-badge"><i class="fas {{ $c['icon'] }}"></i>{{ $c['label'] }}</span>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- CTA --}}
+<section class="section-v2 section-ink">
     <div class="container-wide">
         <div class="max-w-3xl mx-auto text-center">
-            <span class="section-badge mb-4">{{ $isEnglish ? 'About Bizmark.ID' : 'Tentang Bizmark.ID' }}</span>
-            <h1 class="text-4xl md:text-5xl font-bold mb-6" style="color: var(--text-primary);">
-                {{ $isEnglish ? 'Your Trusted Partner for Business Permits' : 'Mitra Terpercaya untuk Perizinan Usaha' }}
-            </h1>
-            <p class="text-xl leading-relaxed mb-8" style="color: var(--text-secondary);">
-                {{ $isEnglish 
-                    ? 'Since 2012, we\'ve been helping businesses navigate the complex landscape of permits and regulations in Indonesia.' 
-                    : 'Sejak 2012, kami telah membantu bisnis mengelola kompleksitas perizinan dan regulasi di Indonesia.' }}
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<section class="py-12" style="background: var(--color-primary);">
-    <div class="container-wide">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="text-center text-white">
-                <div class="text-4xl md:text-5xl font-bold mb-2">{{ $stats['years_experience'] ?? 12 }}+</div>
-                <div class="text-sm opacity-80">{{ $isEnglish ? 'Years Experience' : 'Tahun Pengalaman' }}</div>
-            </div>
-            <div class="text-center text-white">
-                <div class="text-4xl md:text-5xl font-bold mb-2">{{ $stats['clients_served'] ?? 500 }}+</div>
-                <div class="text-sm opacity-80">{{ $isEnglish ? 'Clients Served' : 'Klien Dilayani' }}</div>
-            </div>
-            <div class="text-center text-white">
-                <div class="text-4xl md:text-5xl font-bold mb-2">{{ $stats['success_rate'] ?? 98 }}%</div>
-                <div class="text-sm opacity-80">{{ $isEnglish ? 'Success Rate' : 'Tingkat Keberhasilan' }}</div>
-            </div>
-            <div class="text-center text-white">
-                <div class="text-4xl md:text-5xl font-bold mb-2">{{ $stats['permits_processed'] ?? 2500 }}+</div>
-                <div class="text-sm opacity-80">{{ $isEnglish ? 'Permits Processed' : 'Izin Diproses' }}</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- About Content Section -->
-<section class="section" style="background: var(--surface-primary);">
-    <div class="container-wide">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <!-- Left: Story -->
-            <div>
-                <h2 class="text-3xl font-bold mb-6" style="color: var(--text-primary);">
-                    {{ $isEnglish ? 'Our Story' : 'Cerita Kami' }}
-                </h2>
-                <div class="space-y-4 text-lg" style="color: var(--text-secondary);">
-                    <p>
-                        {{ $isEnglish 
-                            ? 'Bizmark.ID was founded with a simple mission: to make business permits accessible and hassle-free for every entrepreneur in Indonesia.'
-                            : 'Bizmark.ID didirikan dengan misi sederhana: menjadikan perizinan usaha mudah diakses dan tanpa hambatan bagi setiap pengusaha di Indonesia.' }}
-                    </p>
-                    <p>
-                        {{ $isEnglish 
-                            ? 'Over the years, we\'ve built a team of experienced professionals who understand the intricacies of Indonesian business regulations. Our deep knowledge spans various industries and permit types, from basic business licenses to complex investment permits.'
-                            : 'Selama bertahun-tahun, kami telah membangun tim profesional berpengalaman yang memahami seluk-beluk regulasi bisnis Indonesia. Pengetahuan mendalam kami mencakup berbagai industri dan jenis izin, dari izin usaha dasar hingga izin investasi yang kompleks.' }}
-                    </p>
-                    <p>
-                        {{ $isEnglish 
-                            ? 'Today, we continue to innovate with AI-powered tools and digital solutions while maintaining the personal touch that our clients value.'
-                            : 'Saat ini, kami terus berinovasi dengan alat berbasis AI dan solusi digital sambil mempertahankan sentuhan personal yang dihargai klien kami.' }}
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Right: Features -->
-            <div class="grid sm:grid-cols-2 gap-6">
-                <!-- Feature 1 -->
-                <div class="magazine-card p-6">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #10b981, #059669);">
-                        <i class="fas fa-certificate text-xl text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">
-                        {{ $isEnglish ? 'ISO Certified' : 'Bersertifikasi ISO' }}
-                    </h3>
-                    <p class="text-sm" style="color: var(--text-secondary);">
-                        {{ $isEnglish 
-                            ? 'Our quality management system meets international standards'
-                            : 'Sistem manajemen kualitas kami memenuhi standar internasional' }}
-                    </p>
-                </div>
-                
-                <!-- Feature 2 -->
-                <div class="magazine-card p-6">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
-                        <i class="fas fa-user-tie text-xl text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">
-                        {{ $isEnglish ? 'Expert Team' : 'Tim Ahli' }}
-                    </h3>
-                    <p class="text-sm" style="color: var(--text-secondary);">
-                        {{ $isEnglish 
-                            ? 'Experienced professionals with deep regulatory knowledge'
-                            : 'Profesional berpengalaman dengan pengetahuan regulasi mendalam' }}
-                    </p>
-                </div>
-                
-                <!-- Feature 3 -->
-                <div class="magazine-card p-6">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
-                        <i class="fas fa-handshake text-xl text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">
-                        {{ $isEnglish ? 'Trusted Partners' : 'Mitra Terpercaya' }}
-                    </h3>
-                    <p class="text-sm" style="color: var(--text-secondary);">
-                        {{ $isEnglish 
-                            ? 'Strong relationships with government agencies and institutions'
-                            : 'Hubungan kuat dengan instansi dan lembaga pemerintah' }}
-                    </p>
-                </div>
-                
-                <!-- Feature 4 -->
-                <div class="magazine-card p-6">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                        <i class="fas fa-map-marked-alt text-xl text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">
-                        {{ $isEnglish ? 'Nationwide' : 'Se-Indonesia' }}
-                    </h3>
-                    <p class="text-sm" style="color: var(--text-secondary);">
-                        {{ $isEnglish 
-                            ? 'Coverage across all provinces in Indonesia'
-                            : 'Cakupan di seluruh provinsi di Indonesia' }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Vision Mission Section -->
-<section class="section" style="background: var(--surface-warm);">
-    <div class="container-wide">
-        <div class="grid md:grid-cols-2 gap-8">
-            <!-- Vision -->
-            <div class="magazine-card p-8">
-                <div class="flex items-center gap-4 mb-6">
-                    <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));">
-                        <i class="fas fa-eye text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold" style="color: var(--text-primary);">
-                        {{ $isEnglish ? 'Our Vision' : 'Visi Kami' }}
-                    </h3>
-                </div>
-                <p class="text-lg leading-relaxed" style="color: var(--text-secondary);">
-                    {{ $isEnglish 
-                        ? 'To be Indonesia\'s leading business permit consultation service, known for excellence, integrity, and innovation in simplifying regulatory compliance for businesses of all sizes.'
-                        : 'Menjadi layanan konsultasi perizinan usaha terkemuka di Indonesia, dikenal karena keunggulan, integritas, dan inovasi dalam menyederhanakan kepatuhan regulasi bagi bisnis dari semua ukuran.' }}
-                </p>
-            </div>
-            
-            <!-- Mission -->
-            <div class="magazine-card p-8">
-                <div class="flex items-center gap-4 mb-6">
-                    <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #059669);">
-                        <i class="fas fa-bullseye text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold" style="color: var(--text-primary);">
-                        {{ $isEnglish ? 'Our Mission' : 'Misi Kami' }}
-                    </h3>
-                </div>
-                <ul class="space-y-3" style="color: var(--text-secondary);">
-                    <li class="flex items-start gap-3">
-                        <i class="fas fa-check-circle mt-1" style="color: var(--color-success);"></i>
-                        <span>{{ $isEnglish ? 'Provide expert guidance and end-to-end support for all business permits' : 'Memberikan panduan ahli dan dukungan end-to-end untuk semua perizinan usaha' }}</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <i class="fas fa-check-circle mt-1" style="color: var(--color-success);"></i>
-                        <span>{{ $isEnglish ? 'Leverage technology to streamline and accelerate permit processing' : 'Memanfaatkan teknologi untuk mempercepat proses perizinan' }}</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <i class="fas fa-check-circle mt-1" style="color: var(--color-success);"></i>
-                        <span>{{ $isEnglish ? 'Maintain transparency and build trust with every client interaction' : 'Menjaga transparansi dan membangun kepercayaan di setiap interaksi' }}</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <i class="fas fa-check-circle mt-1" style="color: var(--color-success);"></i>
-                        <span>{{ $isEnglish ? 'Continuously improve services based on client feedback' : 'Terus meningkatkan layanan berdasarkan umpan balik klien' }}</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Values Section -->
-<section class="section" style="background: var(--surface-primary);">
-    <div class="container-wide">
-        <div class="text-center mb-12">
-            <h2 class="section-title mb-4">{{ $isEnglish ? 'Our Core Values' : 'Nilai Inti Kami' }}</h2>
-            <p class="section-description mx-auto">
-                {{ $isEnglish 
-                    ? 'The principles that guide everything we do'
-                    : 'Prinsip-prinsip yang memandu semua yang kami lakukan' }}
-            </p>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <!-- Value 1 -->
-            <div class="text-center p-6">
-                <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style="background: rgba(var(--color-primary-rgb), 0.1);">
-                    <i class="fas fa-balance-scale text-2xl" style="color: var(--color-primary);"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary);">{{ $isEnglish ? 'Integrity' : 'Integritas' }}</h3>
-                <p class="text-sm" style="color: var(--text-secondary);">
-                    {{ $isEnglish 
-                        ? 'Honest, ethical practices in all dealings'
-                        : 'Praktik jujur dan etis dalam semua urusan' }}
-                </p>
-            </div>
-            
-            <!-- Value 2 -->
-            <div class="text-center p-6">
-                <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style="background: rgba(var(--color-primary-rgb), 0.1);">
-                    <i class="fas fa-gem text-2xl" style="color: var(--color-primary);"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary);">{{ $isEnglish ? 'Excellence' : 'Keunggulan' }}</h3>
-                <p class="text-sm" style="color: var(--text-secondary);">
-                    {{ $isEnglish 
-                        ? 'Commitment to highest quality standards'
-                        : 'Komitmen terhadap standar kualitas tertinggi' }}
-                </p>
-            </div>
-            
-            <!-- Value 3 -->
-            <div class="text-center p-6">
-                <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style="background: rgba(var(--color-primary-rgb), 0.1);">
-                    <i class="fas fa-heart text-2xl" style="color: var(--color-primary);"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary);">{{ $isEnglish ? 'Client-Centric' : 'Berpusat pada Klien' }}</h3>
-                <p class="text-sm" style="color: var(--text-secondary);">
-                    {{ $isEnglish 
-                        ? 'Your success is our ultimate goal'
-                        : 'Kesuksesan Anda adalah tujuan utama kami' }}
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="section" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);">
-    <div class="container-wide">
-        <div class="max-w-3xl mx-auto text-center text-white">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6">
-                {{ $isEnglish ? 'Let\'s Work Together' : 'Mari Bekerja Sama' }}
+            <span class="gold-rule"></span>
+            <h2 class="display-lg mb-6">
+                {{ $isEn ? 'Work with a team that knows the full regulatory landscape.' : 'Bekerja dengan tim yang memahami seluruh peta regulasi perizinan Indonesia.' }}
             </h2>
-            <p class="text-xl opacity-90 mb-8">
-                {{ $isEnglish 
-                    ? 'Ready to simplify your business permits? Get in touch with our team today.'
-                    : 'Siap menyederhanakan perizinan usaha Anda? Hubungi tim kami hari ini.' }}
+            <p class="text-lg leading-relaxed mb-8 text-white/75">
+                {{ $isEn
+                    ? 'Start with a free AI permit check — or speak directly with our consultant team.'
+                    : 'Mulai dengan cek perizinan AI gratis — atau bicara langsung dengan tim konsultan kami.' }}
             </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="{{ route('landing.service-inquiry.create') }}" class="btn bg-white text-[color:var(--color-primary)] hover:bg-gray-100">
-                    <i class="fas fa-comments mr-2"></i>
-                    {{ $isEnglish ? 'Contact Us' : 'Hubungi Kami' }}
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="{{ $primaryCtaRoute }}" class="btn btn-gold btn-lg">
+                    <i class="fas fa-robot"></i>
+                    <span>{{ $isEn ? 'Start Free Permit Check' : 'Cek Perizinan Gratis' }}</span>
                 </a>
-                <a href="{{ $isEnglish ? route('services.index.en') : route('services.index.id') }}" class="btn border-2 border-white text-white hover:bg-white/10">
-                    <i class="fas fa-list mr-2"></i>
-                    {{ $isEnglish ? 'Our Services' : 'Layanan Kami' }}
+                <a href="{{ $servicesIndexRoute }}" class="btn btn-ghost-on-dark btn-lg">
+                    <span>{{ $isEn ? 'Explore Services' : 'Lihat Semua Layanan' }}</span>
+                    <i class="fas fa-arrow-right text-xs"></i>
                 </a>
             </div>
         </div>
     </div>
 </section>
+
 @endsection

@@ -22,7 +22,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request, Project $project)
     {
-        if (!$project->client_id || !$project->client) {
+        if (! $project->client_id || ! $project->client) {
             return response()->json([
                 'success' => false,
                 'message' => 'Proyek ini belum memiliki klien. Silakan tambahkan klien terlebih dahulu.',
@@ -78,9 +78,10 @@ class InvoiceController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create invoice: ' . $e->getMessage(),
+                'message' => 'Failed to create invoice: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -127,8 +128,8 @@ class InvoiceController extends Controller
                 ->orderBy('id', 'asc')
                 ->first();
 
-            if (!$cashAccount) {
-                throw new \Exception('No active cash account found for payment method: ' . $validated['payment_method']);
+            if (! $cashAccount) {
+                throw new \Exception('No active cash account found for payment method: '.$validated['payment_method']);
             }
 
             $invoice->recordPayment($validated['amount']);
@@ -145,8 +146,10 @@ class InvoiceController extends Controller
                 'notes' => $validated['notes'] ?? null,
             ]);
 
+            $cashAccount->allowBalanceUpdate = true;
             $cashAccount->current_balance += $validated['amount'];
             $cashAccount->save();
+            $cashAccount->allowBalanceUpdate = false;
 
             DB::commit();
 
@@ -159,9 +162,10 @@ class InvoiceController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to record payment: ' . $e->getMessage(),
+                'message' => 'Failed to record payment: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -193,6 +197,8 @@ class InvoiceController extends Controller
             ProjectLog::create([
                 'project_id' => $projectId,
                 'user_id' => auth()->id(),
+                'action' => 'deleted',
+                'entity_type' => 'invoice',
                 'description' => "Invoice {$invoiceNumber} dihapus",
             ]);
 
@@ -201,7 +207,8 @@ class InvoiceController extends Controller
                 'message' => 'Invoice berhasil dihapus',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error deleting invoice: ' . $e->getMessage());
+            Log::error('Error deleting invoice: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menghapus invoice',
@@ -223,7 +230,7 @@ class InvoiceController extends Controller
 
         $client = $invoice->project?->client;
 
-        if (!$client) {
+        if (! $client) {
             return response()->json([
                 'success' => false,
                 'message' => 'Client tidak ditemukan untuk invoice ini.',
@@ -236,7 +243,7 @@ class InvoiceController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Invoice berhasil dikirim ke ' . $client->email,
+            'message' => 'Invoice berhasil dikirim ke '.$client->email,
         ]);
     }
 
@@ -251,6 +258,6 @@ class InvoiceController extends Controller
 
         $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
 
-        return $pdf->stream('Invoice-' . $invoice->invoice_number . '.pdf');
+        return $pdf->stream('Invoice-'.$invoice->invoice_number.'.pdf');
     }
 }

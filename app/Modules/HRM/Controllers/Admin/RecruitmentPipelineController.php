@@ -4,11 +4,9 @@ namespace App\Modules\HRM\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
+use App\Models\JobVacancy;
 use App\Models\RecruitmentStage;
-use App\Models\InterviewSchedule;
-use App\Models\TestSession;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class RecruitmentPipelineController extends Controller
 {
@@ -30,7 +28,7 @@ class RecruitmentPipelineController extends Controller
         if ($request->filled('stage')) {
             $query->whereHas('recruitmentStages', function ($q) use ($request) {
                 $q->where('stage_name', $request->stage)
-                  ->where('status', 'in-progress');
+                    ->where('status', 'in-progress');
             });
         }
 
@@ -41,23 +39,23 @@ class RecruitmentPipelineController extends Controller
             'total_in_pipeline' => JobApplication::whereHas('recruitmentStages', function ($q) {
                 $q->whereIn('status', ['pending', 'in-progress']);
             })->count(),
-            
+
             'screening' => RecruitmentStage::where('stage_name', 'screening')
                 ->where('status', 'in-progress')
                 ->count(),
-            
+
             'testing' => RecruitmentStage::where('stage_name', 'testing')
                 ->where('status', 'in-progress')
                 ->count(),
-            
+
             'interview' => RecruitmentStage::where('stage_name', 'interview')
                 ->where('status', 'in-progress')
                 ->count(),
-            
+
             'offer' => RecruitmentStage::where('stage_name', 'offer')
                 ->where('status', 'in-progress')
                 ->count(),
-            
+
             'completed_this_week' => RecruitmentStage::where('status', 'passed')
                 ->whereBetween('completed_at', [now()->startOfWeek(), now()->endOfWeek()])
                 ->count(),
@@ -82,7 +80,7 @@ class RecruitmentPipelineController extends Controller
         ]);
 
         // Check if job vacancy exists
-        if (!$application->jobVacancy) {
+        if (! $application->jobVacancy) {
             return redirect()
                 ->route('admin.recruitment.pipeline.index')
                 ->with('error', 'Job Vacancy untuk aplikasi ini tidak ditemukan. Data mungkin sudah dihapus.');
@@ -116,8 +114,8 @@ class RecruitmentPipelineController extends Controller
                 'job_application_id' => $application->id,
                 'stage_name' => $stageData['stage_name'],
                 'stage_order' => $stageData['stage_order'],
-                'status' => (int)$stageData['stage_order'] === 1 ? 'in-progress' : 'pending',
-                'started_at' => (int)$stageData['stage_order'] === 1 ? now() : null,
+                'status' => (int) $stageData['stage_order'] === 1 ? 'in-progress' : 'pending',
+                'started_at' => (int) $stageData['stage_order'] === 1 ? now() : null,
             ]);
         }
 
@@ -148,7 +146,7 @@ class RecruitmentPipelineController extends Controller
                     ]);
                     $message = 'Stage dimulai.';
                     break;
-                    
+
                 case 'passed':
                     $stage->update([
                         'status' => 'passed',
@@ -156,24 +154,24 @@ class RecruitmentPipelineController extends Controller
                         'score' => $validated['score'] ?? null,
                         'notes' => $validated['notes'] ?? null,
                     ]);
-                    
+
                     // Start next stage automatically
                     $nextStage = $stage->jobApplication->recruitmentStages()
                         ->where('stage_order', '>', $stage->stage_order)
                         ->where('status', 'pending')
                         ->orderBy('stage_order')
                         ->first();
-                        
+
                     if ($nextStage) {
                         $nextStage->update([
                             'status' => 'in-progress',
                             'started_at' => now(),
                         ]);
                     }
-                    
-                    $message = 'Stage berhasil diselesaikan.' . ($nextStage ? ' Stage berikutnya sudah dimulai.' : '');
+
+                    $message = 'Stage berhasil diselesaikan.'.($nextStage ? ' Stage berikutnya sudah dimulai.' : '');
                     break;
-                    
+
                 case 'failed':
                     $stage->update([
                         'status' => 'failed',
@@ -182,7 +180,7 @@ class RecruitmentPipelineController extends Controller
                     ]);
                     $message = 'Stage ditandai sebagai gagal.';
                     break;
-                    
+
                 case 'skipped':
                     $stage->update([
                         'status' => 'skipped',
@@ -197,13 +195,13 @@ class RecruitmentPipelineController extends Controller
         elseif (isset($validated['action'])) {
             if ($validated['action'] === 'pass') {
                 $stage->markAsPassed($validated['score'] ?? null, $validated['notes'] ?? null);
-                
+
                 // Start next stage automatically
                 $nextStage = $stage->jobApplication->getNextStage();
                 if ($nextStage) {
                     $nextStage->markAsStarted();
                 }
-                
+
                 $message = 'Stage berhasil diselesaikan. Stage berikutnya sudah dimulai.';
             } else {
                 $stage->markAsFailed($validated['notes'] ?? null);
@@ -241,7 +239,7 @@ class RecruitmentPipelineController extends Controller
                     'date' => $stage->started_at,
                     'timestamp' => $stage->started_at->format('d M Y H:i'),
                     'type' => 'stage_start',
-                    'title' => 'Memulai: ' . $stage->getStageNameLabel(),
+                    'title' => 'Memulai: '.$stage->getStageNameLabel(),
                     'description' => $stage->notes ?? '',
                     'icon' => 'play',
                     'color' => 'info',
@@ -253,7 +251,7 @@ class RecruitmentPipelineController extends Controller
                     'date' => $stage->completed_at,
                     'timestamp' => $stage->completed_at->format('d M Y H:i'),
                     'type' => $stage->status === 'passed' ? 'stage_pass' : 'stage_fail',
-                    'title' => ($stage->status === 'passed' ? 'Lulus: ' : 'Gagal: ') . $stage->getStageNameLabel(),
+                    'title' => ($stage->status === 'passed' ? 'Lulus: ' : 'Gagal: ').$stage->getStageNameLabel(),
                     'description' => $stage->notes ?? '',
                     'icon' => $stage->status === 'passed' ? 'check' : 'x',
                     'color' => $stage->status === 'passed' ? 'success' : 'danger',
@@ -268,7 +266,7 @@ class RecruitmentPipelineController extends Controller
                 'date' => $interview->scheduled_at,
                 'timestamp' => $interview->scheduled_at->format('d M Y H:i'),
                 'type' => 'interview',
-                'title' => 'Interview ' . $interview->getMeetingTypeLabel(),
+                'title' => 'Interview '.$interview->getMeetingTypeLabel(),
                 'description' => $interview->notes ?? '',
                 'icon' => 'users',
                 'color' => 'warning',
@@ -283,8 +281,8 @@ class RecruitmentPipelineController extends Controller
                     'date' => $session->completed_at,
                     'timestamp' => $session->completed_at->format('d M Y H:i'),
                     'type' => 'test',
-                    'title' => 'Selesai: ' . $session->testTemplate->title,
-                    'description' => 'Skor: ' . $session->final_score . '%',
+                    'title' => 'Selesai: '.$session->testTemplate->title,
+                    'description' => 'Skor: '.$session->final_score.'%',
                     'icon' => 'clipboard',
                     'color' => 'secondary',
                     'score' => $session->final_score,
@@ -305,8 +303,8 @@ class RecruitmentPipelineController extends Controller
      */
     public function jobPipeline($jobId)
     {
-        $vacancy = \App\Models\JobVacancy::withCount('applications')->findOrFail($jobId);
-        
+        $vacancy = JobVacancy::withCount('applications')->findOrFail($jobId);
+
         // Get all applications for this job with pipeline data
         $query = $vacancy->applications()
             ->with(['jobVacancy', 'recruitmentStages' => function ($q) {
@@ -318,16 +316,16 @@ class RecruitmentPipelineController extends Controller
         if (request('stage')) {
             $query->whereHas('recruitmentStages', function ($q) {
                 $q->where('stage_name', request('stage'))
-                  ->where('status', 'in-progress');
+                    ->where('status', 'in-progress');
             });
         }
 
         // Apply search filter
         if (request('search')) {
             $search = request('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('full_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -339,36 +337,36 @@ class RecruitmentPipelineController extends Controller
                 ->whereHas('recruitmentStages', function ($q) {
                     $q->whereIn('status', ['pending', 'in-progress']);
                 })->count(),
-            
-            'screening' => RecruitmentStage::whereHas('jobApplication', function($q) use ($jobId) {
+
+            'screening' => RecruitmentStage::whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })->where('stage_name', 'screening')
-              ->where('status', 'in-progress')
-              ->count(),
-            
-            'testing' => RecruitmentStage::whereHas('jobApplication', function($q) use ($jobId) {
+                ->where('status', 'in-progress')
+                ->count(),
+
+            'testing' => RecruitmentStage::whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })->where('stage_name', 'testing')
-              ->where('status', 'in-progress')
-              ->count(),
-            
-            'interview' => RecruitmentStage::whereHas('jobApplication', function($q) use ($jobId) {
+                ->where('status', 'in-progress')
+                ->count(),
+
+            'interview' => RecruitmentStage::whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })->where('stage_name', 'interview')
-              ->where('status', 'in-progress')
-              ->count(),
-            
-            'final' => RecruitmentStage::whereHas('jobApplication', function($q) use ($jobId) {
+                ->where('status', 'in-progress')
+                ->count(),
+
+            'final' => RecruitmentStage::whereHas('jobApplication', function ($q) use ($jobId) {
                 $q->where('job_vacancy_id', $jobId);
             })->where('stage_name', 'final')
-              ->where('status', 'in-progress')
-              ->count(),
-            
+                ->where('status', 'in-progress')
+                ->count(),
+
             'passed' => $vacancy->applications()
                 ->whereHas('recruitmentStages', function ($q) {
                     $q->where('status', 'passed');
                 })->count(),
-            
+
             'failed' => $vacancy->applications()
                 ->whereHas('recruitmentStages', function ($q) {
                     $q->where('status', 'failed');

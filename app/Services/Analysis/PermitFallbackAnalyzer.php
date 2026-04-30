@@ -24,9 +24,9 @@ class PermitFallbackAnalyzer
         $investment = $formData['estimated_investment'] ?? 'under_100m';
         $locationCategory = $formData['location_category'] ?? 'commercial';
         $businessActivity = $formData['business_activity'] ?? '';
-        
+
         // Determine scale multiplier for costs
-        $scaleMultiplier = match($scale) {
+        $scaleMultiplier = match ($scale) {
             'micro' => 1.0,
             'small' => 1.3,
             'medium' => 1.8,
@@ -52,19 +52,19 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 0,
                     'max' => 0,
-                    'note' => 'Gratis (pendaftaran online via OSS)'
+                    'note' => 'Gratis (pendaftaran online via OSS)',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(1500000 * $scaleMultiplier),
-                    'max' => (int)(3000000 * $scaleMultiplier),
-                    'note' => 'Pendampingan pendaftaran dan verifikasi data'
+                    'min' => (int) (1500000 * $scaleMultiplier),
+                    'max' => (int) (3000000 * $scaleMultiplier),
+                    'note' => 'Pendampingan pendaftaran dan verifikasi data',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(1500000 * $scaleMultiplier, 3000000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(1500000 * $scaleMultiplier, 3000000 * $scaleMultiplier),
                 'description' => 'Identitas tunggal pelaku usaha yang diterbitkan melalui OSS RBA. Wajib untuk semua jenis dan skala usaha di Indonesia sesuai UU Cipta Kerja.',
                 'issuing_authority' => 'Kementerian Investasi/BKPM via OSS',
                 'legal_basis' => 'UU 6/2023 (Cipta Kerja), PP 5/2021 tentang Perizinan Berusaha Berbasis Risiko',
                 'prerequisites' => [],
-                'triggers_next' => ['NPWP Badan Usaha', 'PKKPR/KKPR']
+                'triggers_next' => ['NPWP Badan Usaha', 'PKKPR/KKPR'],
             ],
             [
                 'code' => 'NPWP_BADAN',
@@ -76,19 +76,19 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 0,
                     'max' => 0,
-                    'note' => 'Gratis (pendaftaran online via Coretax/e-Registration)'
+                    'note' => 'Gratis (pendaftaran online via Coretax/e-Registration)',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(1000000 * $scaleMultiplier),
-                    'max' => (int)(1500000 * $scaleMultiplier),
-                    'note' => 'Pendampingan registrasi dan pengaturan pajak'
+                    'min' => (int) (1000000 * $scaleMultiplier),
+                    'max' => (int) (1500000 * $scaleMultiplier),
+                    'note' => 'Pendampingan registrasi dan pengaturan pajak',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(1000000 * $scaleMultiplier, 1500000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(1000000 * $scaleMultiplier, 1500000 * $scaleMultiplier),
                 'description' => 'Nomor Pokok Wajib Pajak untuk badan usaha. Diperlukan untuk kewajiban perpajakan dan transaksi bisnis.',
                 'issuing_authority' => 'Direktorat Jenderal Pajak (Coretax)',
                 'legal_basis' => 'UU 6/2023, UU 7/2021 tentang Harmonisasi Peraturan Perpajakan',
                 'prerequisites' => ['Nomor Induk Berusaha (NIB)'],
-                'triggers_next' => ['PKKPR/KKPR', 'Sertifikat Standar']
+                'triggers_next' => ['PKKPR/KKPR', 'Sertifikat Standar'],
             ],
         ];
 
@@ -106,19 +106,19 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 0,
                     'max' => 500000,
-                    'note' => 'Biaya administrasi (gratis jika via OSS untuk risiko rendah-menengah)'
+                    'note' => 'Biaya administrasi (gratis jika via OSS untuk risiko rendah-menengah)',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(2000000 * $scaleMultiplier),
-                    'max' => (int)(5000000 * $scaleMultiplier),
-                    'note' => 'Pendampingan analisis kesesuaian tata ruang'
+                    'min' => (int) (2000000 * $scaleMultiplier),
+                    'max' => (int) (5000000 * $scaleMultiplier),
+                    'note' => 'Pendampingan analisis kesesuaian tata ruang',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(2000000 * $scaleMultiplier, 5500000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(2000000 * $scaleMultiplier, 5500000 * $scaleMultiplier),
                 'description' => 'Persetujuan kesesuaian lokasi usaha dengan Rencana Tata Ruang Wilayah (RTRW/RDTR). Pengganti Izin Lokasi lama. Wajib sebelum mengurus izin lingkungan dan bangunan.',
                 'issuing_authority' => 'Pemerintah Daerah / ATR-BPN via OSS',
                 'legal_basis' => 'PP 21/2021 tentang Penyelenggaraan Penataan Ruang, UU 6/2023',
                 'prerequisites' => ['Nomor Induk Berusaha (NIB)'],
-                'triggers_next' => ['AMDAL/UKL-UPL/SPPL', 'PBG']
+                'triggers_next' => ['AMDAL/UKL-UPL/SPPL', 'PBG'],
             ];
         }
 
@@ -133,20 +133,20 @@ class PermitFallbackAnalyzer
                 'estimated_timeline' => '60-120 hari kerja',
                 'government_fee' => [
                     'min' => 10000000,
-                    'max' => (int)(100000000 * ($scale === 'large' ? 1.0 : 0.5)),
-                    'note' => 'Biaya evaluasi, sidang komisi AMDAL, dan PNBP KLHK'
+                    'max' => (int) (100000000 * ($scale === 'large' ? 1.0 : 0.5)),
+                    'note' => 'Biaya evaluasi, sidang komisi AMDAL, dan PNBP KLHK',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(50000000 * $scaleMultiplier),
-                    'max' => (int)(150000000 * $scaleMultiplier),
-                    'note' => 'Studi AMDAL lengkap: ANDAL, RKL-RPL, sidang komisi penilai'
+                    'min' => (int) (50000000 * $scaleMultiplier),
+                    'max' => (int) (150000000 * $scaleMultiplier),
+                    'note' => 'Studi AMDAL lengkap: ANDAL, RKL-RPL, sidang komisi penilai',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(60000000 * $scaleMultiplier, 250000000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(60000000 * $scaleMultiplier, 250000000 * $scaleMultiplier),
                 'description' => 'Dokumen kajian dampak lingkungan wajib untuk usaha berisiko tinggi. Mencakup studi ANDAL, RKL-RPL, dan sidang Komisi Penilai AMDAL.',
                 'issuing_authority' => 'Kementerian LHK / Dinas Lingkungan Hidup',
                 'legal_basis' => 'UU 6/2023, PP 22/2021 tentang Perlindungan dan Pengelolaan Lingkungan Hidup',
                 'prerequisites' => $needsPKKPR ? ['Nomor Induk Berusaha (NIB)', 'PKKPR'] : ['Nomor Induk Berusaha (NIB)'],
-                'triggers_next' => ['PBG', 'Sertifikat Standar']
+                'triggers_next' => ['PBG', 'Sertifikat Standar'],
             ];
         } elseif ($needsEnvironmental) {
             $permits[] = [
@@ -159,19 +159,19 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 1000000,
                     'max' => 5000000,
-                    'note' => 'Biaya pemeriksaan dan evaluasi dokumen DLH'
+                    'note' => 'Biaya pemeriksaan dan evaluasi dokumen DLH',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(10000000 * $scaleMultiplier),
-                    'max' => (int)(25000000 * $scaleMultiplier),
-                    'note' => 'Penyusunan dokumen UKL-UPL dan pendampingan'
+                    'min' => (int) (10000000 * $scaleMultiplier),
+                    'max' => (int) (25000000 * $scaleMultiplier),
+                    'note' => 'Penyusunan dokumen UKL-UPL dan pendampingan',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(11000000 * $scaleMultiplier, 30000000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(11000000 * $scaleMultiplier, 30000000 * $scaleMultiplier),
                 'description' => 'Dokumen pengelolaan lingkungan untuk usaha risiko menengah (dampak lingkungan sedang). Wajib sebelum operasional.',
                 'issuing_authority' => 'Dinas Lingkungan Hidup',
                 'legal_basis' => 'UU 6/2023, PP 22/2021 tentang Perlindungan dan Pengelolaan Lingkungan Hidup',
                 'prerequisites' => $needsPKKPR ? ['Nomor Induk Berusaha (NIB)', 'PKKPR'] : ['Nomor Induk Berusaha (NIB)'],
-                'triggers_next' => ['Sertifikat Standar', 'PBG']
+                'triggers_next' => ['Sertifikat Standar', 'PBG'],
             ];
         } else {
             // Low-risk: SPPL (Surat Pernyataan Pengelolaan Lingkungan)
@@ -185,19 +185,19 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 0,
                     'max' => 0,
-                    'note' => 'Gratis (terintegrasi dalam OSS untuk risiko rendah)'
+                    'note' => 'Gratis (terintegrasi dalam OSS untuk risiko rendah)',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(500000 * $scaleMultiplier),
-                    'max' => (int)(1500000 * $scaleMultiplier),
-                    'note' => 'Pendampingan penyusunan SPPL'
+                    'min' => (int) (500000 * $scaleMultiplier),
+                    'max' => (int) (1500000 * $scaleMultiplier),
+                    'note' => 'Pendampingan penyusunan SPPL',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(500000 * $scaleMultiplier, 1500000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(500000 * $scaleMultiplier, 1500000 * $scaleMultiplier),
                 'description' => 'Dokumen pernyataan pengelolaan lingkungan untuk usaha risiko rendah. Diterbitkan otomatis melalui OSS bersamaan dengan NIB.',
                 'issuing_authority' => 'OSS / Dinas Lingkungan Hidup',
                 'legal_basis' => 'UU 6/2023, PP 22/2021 tentang Perlindungan dan Pengelolaan Lingkungan Hidup',
                 'prerequisites' => ['Nomor Induk Berusaha (NIB)'],
-                'triggers_next' => ['Sertifikat Standar']
+                'triggers_next' => ['Sertifikat Standar'],
             ];
         }
 
@@ -213,19 +213,19 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 500000,
                     'max' => 1000000,
-                    'note' => 'Biaya verifikasi teknis fasilitas TPS'
+                    'note' => 'Biaya verifikasi teknis fasilitas TPS',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(7000000 * $scaleMultiplier),
-                    'max' => (int)(12000000 * $scaleMultiplier),
-                    'note' => 'Penyusunan SOP, desain TPS, verifikasi fasilitas'
+                    'min' => (int) (7000000 * $scaleMultiplier),
+                    'max' => (int) (12000000 * $scaleMultiplier),
+                    'note' => 'Penyusunan SOP, desain TPS, verifikasi fasilitas',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(7500000 * $scaleMultiplier, 13000000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(7500000 * $scaleMultiplier, 13000000 * $scaleMultiplier),
                 'description' => 'Izin penyimpanan sementara limbah Bahan Berbahaya dan Beracun (B3) sebelum diangkut ke fasilitas pengolahan.',
                 'issuing_authority' => 'Dinas Lingkungan Hidup / KemenLHK',
                 'legal_basis' => 'UU 6/2023, PP 22/2021, Permen LHK 6/2021',
                 'prerequisites' => [$needsAMDAL ? 'AMDAL' : 'UKL-UPL'],
-                'triggers_next' => ['Izin Pengelolaan Limbah B3']
+                'triggers_next' => ['Izin Pengelolaan Limbah B3'],
             ];
             $permits[] = [
                 'code' => 'IZIN_KELOLA_B3',
@@ -237,19 +237,19 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 1000000,
                     'max' => 5000000,
-                    'note' => 'PNBP KemenLHK untuk evaluasi pengelolaan B3'
+                    'note' => 'PNBP KemenLHK untuk evaluasi pengelolaan B3',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(15000000 * $scaleMultiplier),
-                    'max' => (int)(50000000 * $scaleMultiplier),
-                    'note' => 'Pendampingan pengurusan izin pengelolaan B3 lengkap'
+                    'min' => (int) (15000000 * $scaleMultiplier),
+                    'max' => (int) (50000000 * $scaleMultiplier),
+                    'note' => 'Pendampingan pengurusan izin pengelolaan B3 lengkap',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(16000000 * $scaleMultiplier, 55000000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(16000000 * $scaleMultiplier, 55000000 * $scaleMultiplier),
                 'description' => 'Izin untuk pengumpulan, penyimpanan, dan pengolahan limbah B3. Wajib untuk semua kegiatan yang menghasilkan atau mengelola limbah B3.',
                 'issuing_authority' => 'Kementerian Lingkungan Hidup dan Kehutanan',
                 'legal_basis' => 'UU 6/2023, PP 22/2021, Permen LHK 6/2021',
                 'prerequisites' => ['TPS-LB3', $needsAMDAL ? 'AMDAL' : 'UKL-UPL'],
-                'triggers_next' => []
+                'triggers_next' => [],
             ];
         }
 
@@ -265,21 +265,21 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 1000000,
                     'max' => 2000000,
-                    'note' => 'Retribusi PBG sesuai Perda (tergantung luas & zona)'
+                    'note' => 'Retribusi PBG sesuai Perda (tergantung luas & zona)',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(5000000 * $scaleMultiplier),
-                    'max' => (int)(8000000 * $scaleMultiplier),
-                    'note' => 'Pendampingan pengajuan PBG via SIMBG dan kelengkapan teknis'
+                    'min' => (int) (5000000 * $scaleMultiplier),
+                    'max' => (int) (8000000 * $scaleMultiplier),
+                    'note' => 'Pendampingan pengajuan PBG via SIMBG dan kelengkapan teknis',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(6000000 * $scaleMultiplier, 10000000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(6000000 * $scaleMultiplier, 10000000 * $scaleMultiplier),
                 'description' => 'Persetujuan dari pemerintah daerah untuk mendirikan atau merenovasi bangunan. Pengganti IMB sesuai UU Cipta Kerja. Diajukan melalui SIMBG.',
                 'issuing_authority' => 'Dinas PU / SIMBG',
                 'legal_basis' => 'UU 6/2023, PP 16/2021 tentang Bangunan Gedung',
                 'prerequisites' => $needsPKKPR
                     ? ['Nomor Induk Berusaha (NIB)', 'PKKPR', $needsAMDAL ? 'AMDAL' : ($needsEnvironmental ? 'UKL-UPL' : 'SPPL')]
                     : ['Nomor Induk Berusaha (NIB)', $needsAMDAL ? 'AMDAL' : ($needsEnvironmental ? 'UKL-UPL' : 'SPPL')],
-                'triggers_next' => ['Sertifikat Laik Fungsi (SLF)']
+                'triggers_next' => ['Sertifikat Laik Fungsi (SLF)'],
             ];
 
             // SLF after PBG
@@ -293,19 +293,19 @@ class PermitFallbackAnalyzer
                 'government_fee' => [
                     'min' => 500000,
                     'max' => 2000000,
-                    'note' => 'Biaya pemeriksaan kelaikan fungsi bangunan'
+                    'note' => 'Biaya pemeriksaan kelaikan fungsi bangunan',
                 ],
                 'consultant_fee' => [
-                    'min' => (int)(3000000 * $scaleMultiplier),
-                    'max' => (int)(7000000 * $scaleMultiplier),
-                    'note' => 'Pendampingan pengujian kelaikan dan penerbitan SLF'
+                    'min' => (int) (3000000 * $scaleMultiplier),
+                    'max' => (int) (7000000 * $scaleMultiplier),
+                    'note' => 'Pendampingan pengujian kelaikan dan penerbitan SLF',
                 ],
-                'total_cost_range' => \App\Services\Analysis\CostFormatter::range(3500000 * $scaleMultiplier, 9000000 * $scaleMultiplier),
+                'total_cost_range' => CostFormatter::range(3500000 * $scaleMultiplier, 9000000 * $scaleMultiplier),
                 'description' => 'Sertifikat yang menyatakan bangunan gedung telah laik fungsi untuk digunakan. Wajib dimiliki setelah PBG sebelum bangunan dioperasikan.',
                 'issuing_authority' => 'Dinas PU / SIMBG',
                 'legal_basis' => 'UU 6/2023, PP 16/2021 tentang Bangunan Gedung',
                 'prerequisites' => ['Persetujuan Bangunan Gedung (PBG)'],
-                'triggers_next' => ['Sertifikat Standar']
+                'triggers_next' => ['Sertifikat Standar'],
             ];
         }
 
@@ -320,14 +320,14 @@ class PermitFallbackAnalyzer
             'government_fee' => [
                 'min' => 0,
                 'max' => 500000,
-                'note' => 'Biaya verifikasi (jika diperlukan)'
+                'note' => 'Biaya verifikasi (jika diperlukan)',
             ],
             'consultant_fee' => [
-                'min' => (int)(3000000 * $scaleMultiplier),
-                'max' => (int)(7000000 * $scaleMultiplier),
-                'note' => 'Penyusunan dokumen dan pendampingan perizinan'
+                'min' => (int) (3000000 * $scaleMultiplier),
+                'max' => (int) (7000000 * $scaleMultiplier),
+                'note' => 'Penyusunan dokumen dan pendampingan perizinan',
             ],
-            'total_cost_range' => \App\Services\Analysis\CostFormatter::range(3000000 * $scaleMultiplier, 7500000 * $scaleMultiplier),
+            'total_cost_range' => CostFormatter::range(3000000 * $scaleMultiplier, 7500000 * $scaleMultiplier),
             'description' => 'Izin operasional sesuai klasifikasi risiko usaha melalui OSS RBA. Untuk risiko menengah-tinggi, memerlukan verifikasi lapangan.',
             'issuing_authority' => 'Pemerintah Daerah / K/L Terkait via OSS',
             'legal_basis' => 'UU 6/2023, PP 5/2021, Perpres 10/2021',
@@ -337,7 +337,7 @@ class PermitFallbackAnalyzer
                 $needsAMDAL ? 'AMDAL' : ($needsEnvironmental ? 'UKL-UPL' : 'SPPL'),
                 $needsPBG ? 'Sertifikat Laik Fungsi (SLF)' : null,
             ]),
-            'triggers_next' => []
+            'triggers_next' => [],
         ];
 
         // Calculate totals
@@ -350,14 +350,14 @@ class PermitFallbackAnalyzer
             $conMax += $permit['consultant_fee']['max'];
             // Parse timeline days
             if (preg_match('/(\d+)\s*[-–]\s*(\d+)/', $permit['estimated_timeline'], $m)) {
-                $totalMinDays += (int)$m[1];
-                $totalMaxDays += (int)$m[2];
+                $totalMinDays += (int) $m[1];
+                $totalMaxDays += (int) $m[2];
             }
         }
 
         $complexity = count($permits) <= 3 ? 4.0 : (count($permits) <= 5 ? 6.0 : (count($permits) <= 7 ? 7.5 : 8.5));
         $riskClass = $needsAMDAL ? 'tinggi' : ($needsEnvironmental || $needsB3 ? 'menengah_tinggi' : 'menengah_rendah');
-        $riskLevel = match($riskClass) {
+        $riskLevel = match ($riskClass) {
             'rendah' => 'low',
             'menengah_rendah' => 'medium',
             'menengah_tinggi' => 'high',
@@ -373,7 +373,7 @@ class PermitFallbackAnalyzer
         $criticalPath = [];
         foreach ($permits as $p) {
             if (in_array($p['priority'], ['critical', 'high'])) {
-                $criticalPath[] = $p['name'] . ' (' . $p['estimated_timeline'] . ')';
+                $criticalPath[] = $p['name'].' ('.$p['estimated_timeline'].')';
             }
         }
 
@@ -389,7 +389,7 @@ class PermitFallbackAnalyzer
                 'government_fees' => ['min' => $govMin, 'max' => $govMax],
                 'consultant_fees' => ['min' => $conMin, 'max' => $conMax],
                 'grand_total' => ['min' => $govMin + $conMin, 'max' => $govMax + $conMax],
-                'currency' => 'IDR'
+                'currency' => 'IDR',
             ],
             'total_estimated_timeline' => $timelineSummary,
             'estimated_timeline' => [
@@ -449,10 +449,9 @@ class PermitFallbackAnalyzer
             'ai_processing_time' => 0,
             'generated_at' => now()->toIso8601String(),
             'version' => '3.0-fallback-2026',
-            'cached' => false
+            'cached' => false,
         ];
     }
-
 
     /**
      * Check if business likely needs AMDAL (high-impact environmental assessment)
@@ -505,13 +504,13 @@ class PermitFallbackAnalyzer
         $envKeywords = ['pabrik', 'manufaktur', 'produksi', 'industri', 'pertambangan', 'mining',
             'konstruksi', 'pembangunan', 'chemical', 'kimia', 'limbah', 'pengolahan',
             'factory', 'manufacturing', 'tambang', 'sawit', 'kelapa sawit', 'perkebunan'];
-        
+
         foreach ($envKeywords as $keyword) {
             if (stripos($activity, $keyword) !== false) {
                 return true;
             }
         }
-        
+
         // Large investments typically need environmental assessment
         return in_array($investment, ['500m_2b', 'over_2b']);
     }
@@ -524,13 +523,13 @@ class PermitFallbackAnalyzer
         $pbgKeywords = ['restoran', 'cafe', 'kafe', 'hotel', 'penginapan', 'gudang', 'warehouse',
             'pabrik', 'factory', 'toko', 'ruko', 'showroom', 'bengkel', 'workshop',
             'klinik', 'rumah sakit', 'hospital', 'gedung', 'building', 'mall'];
-        
+
         foreach ($pbgKeywords as $keyword) {
             if (stripos($activity, $keyword) !== false) {
                 return true;
             }
         }
-        
+
         return in_array($locationCategory, ['industrial', 'commercial']);
     }
 }

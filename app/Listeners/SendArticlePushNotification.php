@@ -12,7 +12,7 @@ class SendArticlePushNotification
 {
     public function handle(ArticlePublishedEvent $event): void
     {
-        if (!$event->isNew) {
+        if (! $event->isNew) {
             return;
         }
 
@@ -22,6 +22,7 @@ class SendArticlePushNotification
 
             if ($users->isEmpty()) {
                 Log::info('No push subscribers for article notification', ['article' => $event->article->id]);
+
                 return;
             }
 

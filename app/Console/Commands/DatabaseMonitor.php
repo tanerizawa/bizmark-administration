@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\File;
-use Carbon\Carbon;
 
 class DatabaseMonitor extends Command
 {
@@ -85,9 +85,10 @@ class DatabaseMonitor extends Command
 
         // 1. Check database connectivity
         $this->info('🔌 Database Connection:');
-        if (!$this->checkConnection()) {
+        if (! $this->checkConnection()) {
             $this->error('   ❌ FAILED - Cannot connect to database!');
             $alerts[] = 'CRITICAL: Database connection failed!';
+
             return $this->finalize($alerts, $report);
         }
         $this->line('   ✅ Connected');
@@ -100,7 +101,7 @@ class DatabaseMonitor extends Command
         $report['tables'] = $currentCounts;
 
         foreach ($currentCounts as $table => $count) {
-            $this->line("   • {$table}: " . number_format($count) . " records");
+            $this->line("   • {$table}: ".number_format($count).' records');
         }
 
         // 3. Check for data anomalies
@@ -171,9 +172,11 @@ class DatabaseMonitor extends Command
     {
         try {
             DB::connection()->getPdo();
+
             return true;
         } catch (\Exception $e) {
             Log::error('Database connection check failed', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -207,11 +210,13 @@ class DatabaseMonitor extends Command
         try {
             if ($driver === 'sqlite') {
                 $rows = DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name");
+
                 return array_values(array_filter(array_map(fn ($r) => $r->name ?? null, $rows)));
             }
 
             if ($driver === 'pgsql') {
                 $rows = DB::select("SELECT tablename AS name FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename");
+
                 return array_values(array_filter(array_map(fn ($r) => $r->name ?? null, $rows)));
             }
 
@@ -221,6 +226,7 @@ class DatabaseMonitor extends Command
                 $arr = (array) $row;
                 $tables[] = array_values($arr)[0] ?? null;
             }
+
             return array_values(array_filter($tables));
         } catch (\Exception $e) {
             return $this->criticalTables;
@@ -234,9 +240,10 @@ class DatabaseMonitor extends Command
     {
         if (File::exists($this->baselinePath)) {
             $data = json_decode(File::get($this->baselinePath), true);
+
             return $data['counts'] ?? [];
         }
-        
+
         return [];
     }
 
@@ -266,18 +273,18 @@ class DatabaseMonitor extends Command
         }
 
         foreach ($current as $table => $count) {
-            if (!isset($baseline[$table])) {
+            if (! isset($baseline[$table])) {
                 continue;
             }
 
             $baselineCount = $baseline[$table];
-            
+
             if ($baselineCount > 0) {
                 $changePercent = (($count - $baselineCount) / $baselineCount) * 100;
 
                 // Detect significant data loss
                 if ($changePercent < -$this->thresholds['data_loss_percent']) {
-                    $anomalies[] = "DATA LOSS: {$table} dropped from {$baselineCount} to {$count} (" . round($changePercent, 1) . "%)";
+                    $anomalies[] = "DATA LOSS: {$table} dropped from {$baselineCount} to {$count} (".round($changePercent, 1).'%)';
                 }
             }
 
@@ -305,8 +312,9 @@ class DatabaseMonitor extends Command
             'issue' => null,
         ];
 
-        if (!is_dir($backupDir)) {
+        if (! is_dir($backupDir)) {
             $status['issue'] = 'Backup directory not found';
+
             return $status;
         }
 
@@ -314,11 +322,12 @@ class DatabaseMonitor extends Command
 
         if (empty($files)) {
             $status['issue'] = 'No backups found';
+
             return $status;
         }
 
         // Sort by modification time, newest first
-        usort($files, fn($a, $b) => filemtime($b) - filemtime($a));
+        usort($files, fn ($a, $b) => filemtime($b) - filemtime($a));
         $latestBackup = $files[0];
 
         $backupTime = Carbon::createFromTimestamp(filemtime($latestBackup));
@@ -332,6 +341,7 @@ class DatabaseMonitor extends Command
 
         if ($ageHours > $this->thresholds['backup_age_hours']) {
             $status['issue'] = "Backup is {$ageHours} hours old (threshold: {$this->thresholds['backup_age_hours']}h)";
+
             return $status;
         }
 
@@ -340,10 +350,12 @@ class DatabaseMonitor extends Command
         $minBytes = ($driver === 'sqlite') ? 1024 : 10000;
         if (filesize($latestBackup) < $minBytes) {
             $status['issue'] = 'Latest backup is suspiciously small';
+
             return $status;
         }
 
         $status['healthy'] = true;
+
         return $status;
     }
 
@@ -371,7 +383,7 @@ class DatabaseMonitor extends Command
 
             if ($driver === 'pgsql') {
                 $dbName = (string) ($connectionConfig['database'] ?? '');
-                $total = DB::selectOne("SELECT pg_size_pretty(pg_database_size(?)) as size", [$dbName])->size;
+                $total = DB::selectOne('SELECT pg_size_pretty(pg_database_size(?)) as size', [$dbName])->size;
 
                 $tables = DB::selectOne("
                     SELECT pg_size_pretty(sum(pg_table_size(quote_ident(tablename)::regclass))) as size
@@ -393,14 +405,14 @@ class DatabaseMonitor extends Command
             }
 
             $dbName = (string) ($connectionConfig['database'] ?? '');
-            $row = DB::selectOne("
+            $row = DB::selectOne('
                 SELECT
                     COALESCE(SUM(data_length),0) AS tables_bytes,
                     COALESCE(SUM(index_length),0) AS indexes_bytes,
                     COALESCE(SUM(data_length + index_length),0) AS total_bytes
                 FROM information_schema.tables
                 WHERE table_schema = ?
-            ", [$dbName]);
+            ', [$dbName]);
 
             return [
                 'total' => $this->formatBytes((int) ($row->total_bytes ?? 0)),
@@ -425,8 +437,8 @@ class DatabaseMonitor extends Command
             $driver = DB::connection()->getDriverName();
 
             if ($driver === 'pgsql') {
-                $active = (int) (DB::selectOne("SELECT count(*) as count FROM pg_stat_activity")->count ?? 0);
-                $max = (int) (DB::selectOne("SHOW max_connections")->max_connections ?? 0);
+                $active = (int) (DB::selectOne('SELECT count(*) as count FROM pg_stat_activity')->count ?? 0);
+                $max = (int) (DB::selectOne('SHOW max_connections')->max_connections ?? 0);
                 $usage = ($max > 0) ? round(($active / $max) * 100, 1) : 0;
 
                 return [
@@ -473,13 +485,13 @@ class DatabaseMonitor extends Command
     {
         $units = ['B', 'KB', 'MB', 'GB'];
         $i = 0;
-        
+
         while ($bytes >= 1024 && $i < count($units) - 1) {
             $bytes /= 1024;
             $i++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 
     /**
@@ -490,15 +502,15 @@ class DatabaseMonitor extends Command
         $this->info('');
 
         // Save report
-        $reportPath = storage_path('logs/db-monitor-' . now()->format('Y-m-d') . '.json');
+        $reportPath = storage_path('logs/db-monitor-'.now()->format('Y-m-d').'.json');
         File::put($reportPath, json_encode($report, JSON_PRETTY_PRINT));
 
         // Handle alerts
-        if (!empty($alerts) && $this->option('alert')) {
+        if (! empty($alerts) && $this->option('alert')) {
             $this->error('╔═══════════════════════════════════════════════════════════════╗');
             $this->error('║  ⚠️  ALERTS DETECTED!                                          ║');
             $this->error('╚═══════════════════════════════════════════════════════════════╝');
-            
+
             foreach ($alerts as $alert) {
                 $this->error("   • {$alert}");
                 Log::warning('Database Monitor Alert', ['alert' => $alert]);
@@ -526,15 +538,15 @@ class DatabaseMonitor extends Command
     {
         try {
             $email = config('mail.from.address', 'cs@bizmark.id');
-            $subject = '⚠️ [BIZMARK] Database Alert - ' . now()->format('Y-m-d H:i');
-            
+            $subject = '⚠️ [BIZMARK] Database Alert - '.now()->format('Y-m-d H:i');
+
             $body = "Database monitoring detected the following issues:\n\n";
             foreach ($alerts as $alert) {
                 $body .= "• {$alert}\n";
             }
-            $body .= "\n\nEnvironment: " . app()->environment();
-            $body .= "\nServer: " . gethostname();
-            $body .= "\nTime: " . now()->toIso8601String();
+            $body .= "\n\nEnvironment: ".app()->environment();
+            $body .= "\nServer: ".gethostname();
+            $body .= "\nTime: ".now()->toIso8601String();
 
             Mail::raw($body, function ($message) use ($email, $subject) {
                 $message->to($email)

@@ -3,26 +3,26 @@
     {{-- Quick Stats --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Total Pembayaran</p>
+            <p class="text-xs uppercase tracking-widest text-dark-text-secondary">Total Pembayaran</p>
             <p class="text-xl font-bold text-white">{{ $totalPayments }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Semua transaksi</p>
+            <p class="text-xs text-dark-text-secondary">Semua transaksi</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(255,159,10,0.9);">Pending</p>
-            <p class="text-xl font-bold" style="color: rgba(255,159,10,1);">{{ $pendingPayments }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu verifikasi</p>
+            <p class="text-xs uppercase tracking-widest text-apple-orange/90">Pending</p>
+            <p class="text-xl font-bold text-apple-orange">{{ $pendingPayments }}</p>
+            <p class="text-xs text-dark-text-secondary">Perlu verifikasi</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Terverifikasi</p>
-            <p class="text-xl font-bold" style="color: rgba(52,199,89,1);">{{ $verifiedPayments }}</p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sudah disetujui</p>
+            <p class="text-xs uppercase tracking-widest text-apple-green/90">Terverifikasi</p>
+            <p class="text-xl font-bold text-apple-green">{{ $verifiedPayments }}</p>
+            <p class="text-xs text-dark-text-secondary">Sudah disetujui</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-4 space-y-2">
-            <p class="text-xs uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Total Nilai</p>
-            <p class="text-2xl font-bold" style="color: rgba(10,132,255,1);">
+            <p class="text-xs uppercase tracking-widest text-apple-blue/90">Total Nilai</p>
+            <p class="text-2xl font-bold text-apple-blue">
                 Rp {{ number_format($totalAmount/1000000, 1) }}M
             </p>
-            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Pendapatan terverifikasi</p>
+            <p class="text-xs text-dark-text-secondary">Pendapatan terverifikasi</p>
         </div>
     </div>
 
@@ -32,14 +32,14 @@
             <input type="hidden" name="tab" value="payments">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Pencarian</label>
+                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Pencarian</label>
                     <input type="text" name="search" value="{{ request('search') }}" 
                            placeholder="Referensi/nomor permohonan..." 
                            class="input-dark w-full px-3 py-2 rounded-apple text-sm">
                 </div>
                 
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Status</label>
+                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Status</label>
                     <select name="status" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
                         <option value="">Semua Status</option>
                         <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Sedang Diproses</option>
@@ -49,7 +49,7 @@
                 </div>
                 
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5" style="color: rgba(235, 235, 245, 0.65);">Metode</label>
+                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Metode</label>
                     <select name="payment_method" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
                         <option value="">Semua Metode</option>
                         <option value="manual" {{ request('payment_method') == 'manual' ? 'selected' : '' }}>Transfer Manual</option>
@@ -73,7 +73,7 @@
     <div class="card-elevated rounded-apple-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700 text-sm">
-                <thead style="background-color: rgba(28,28,30,0.45);">
+                <thead class="bg-[rgba(28,28,30,0.45)]">
                     <tr>
                         <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Referensi</th>
                         <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Permohonan</th>
@@ -84,7 +84,7 @@
                         <th scope="col" class="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
+                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
                     @forelse($payments as $payment)
                         <tr class="hover-lift transition-apple">
                             <td class="px-4 py-2.5">
@@ -115,18 +115,15 @@
                             </td>
                             <td class="px-4 py-2.5 text-center whitespace-nowrap">
                                 @if($payment->status == 'processing')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                          style="background-color: rgba(255,159,10,0.15); color: rgba(255,159,10,1);">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-orange/20 text-apple-orange">
                                         <i class="fas fa-clock mr-1"></i>Proses
                                     </span>
                                 @elseif($payment->status == 'verified')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                          style="background-color: rgba(52,199,89,0.15); color: rgba(52,199,89,1);">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-green/20 text-apple-green">
                                         <i class="fas fa-check-circle mr-1"></i>Verified
                                     </span>
                                 @else
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                          style="background-color: rgba(255,59,48,0.15); color: rgba(255,59,48,1);">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-red/20 text-apple-red">
                                         <i class="fas fa-times-circle mr-1"></i>Gagal
                                     </span>
                                 @endif
@@ -139,17 +136,15 @@
                             <td class="px-4 py-2.5 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center space-x-1.5">
                                     @if($payment->application)
-                                        <a href="{{ route('admin.permit-applications.show', $payment->application->id) }}" 
-                                           class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple" 
-                                           style="background-color: rgba(90, 200, 250, 0.15); color: var(--apple-teal); border: 1px solid rgba(90, 200, 250, 0.25);"
+                                        <a href="{{ route('admin.permit-applications.show', $payment->application->id) }}"
+                                           class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple bg-apple-teal/20 text-apple-teal border border-apple-teal/30"
                                            title="Lihat Permohonan">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     @endif
                                     @if($payment->payment_proof)
                                         <a href="{{ Storage::url($payment->payment_proof) }}" target="_blank"
-                                           class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple" 
-                                           style="background-color: rgba(175,82,222,0.15); color: rgba(175,82,222,1); border: 1px solid rgba(175,82,222,0.25);"
+                                           class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple bg-[rgba(175,82,222,0.2)] text-[#AF52DE] border border-[rgba(175,82,222,0.3)]"
                                            title="Lihat Bukti">
                                             <i class="fas fa-file-image"></i>
                                         </a>
@@ -161,9 +156,9 @@
                         <tr>
                             <td colspan="7" class="px-4 py-16 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-money-check-alt text-4xl mb-6" style="color: rgba(235, 235, 245, 0.3);"></i>
-                                    <h3 class="text-base font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Pembayaran</h3>
-                                    <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">
+                                    <i class="fas fa-money-check-alt text-4xl mb-6 text-dark-text-tertiary"></i>
+                                    <h3 class="text-base font-semibold mb-2 text-white">Belum Ada Pembayaran</h3>
+                                    <p class="mb-6 text-dark-text-secondary">
                                         Transaksi pembayaran akan muncul di sini
                                     </p>
                                 </div>
@@ -177,7 +172,7 @@
 
     {{-- Pagination --}}
     @if($payments->hasPages())
-        <div class="rounded-apple-lg px-4 py-3" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);">
+        <div class="rounded-apple-lg px-4 py-3 bg-dark-bg-tertiary border border-white/20 shadow-soft">
             {{ $payments->appends(['tab' => 'payments'])->links('pagination::tailwind') }}
         </div>
     @endif

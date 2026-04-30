@@ -13,6 +13,7 @@ class BetaTesterDocumentLinkNotification extends Notification implements ShouldQ
     use Queueable;
 
     protected $betaTester;
+
     protected $isResend;
 
     /**
@@ -40,14 +41,14 @@ class BetaTesterDocumentLinkNotification extends Notification implements ShouldQ
     public function toMail(object $notifiable): MailMessage
     {
         $dashboardUrl = route('beta-tester.dashboard', ['token' => $this->betaTester->access_token]);
-        
-        $subject = $this->isResend 
-            ? 'Link Dokumen Beta Tester - Dikirim Ulang' 
+
+        $subject = $this->isResend
+            ? 'Link Dokumen Beta Tester - Dikirim Ulang'
             : 'Selamat Datang di Program Beta Tester Bizmark.ID';
 
         $greeting = $this->isResend
-            ? 'Halo kembali, ' . $this->betaTester->full_name
-            : 'Halo ' . $this->betaTester->full_name . ', Selamat Datang!';
+            ? 'Halo kembali, '.$this->betaTester->full_name
+            : 'Halo '.$this->betaTester->full_name.', Selamat Datang!';
 
         $intro = $this->isResend
             ? 'Berikut adalah link akses dashboard Anda yang dikirim ulang:'
@@ -57,12 +58,12 @@ class BetaTesterDocumentLinkNotification extends Notification implements ShouldQ
             ->subject($subject)
             ->greeting($greeting)
             ->line($intro)
-            ->line('**Nomor Registrasi:** ' . $this->betaTester->registration_number)
+            ->line('**Nomor Registrasi:** '.$this->betaTester->registration_number)
             ->line('Silakan klik tombol di bawah ini untuk mengakses dashboard dan menandatangani dokumen yang diperlukan:')
             ->action('Akses Dashboard', $dashboardUrl)
             ->line('**Penting:**')
             ->line('• Link ini bersifat rahasia dan personal untuk Anda')
-            ->line('• Token akses berlaku hingga: ' . $this->betaTester->access_token_expires_at->format('d F Y'))
+            ->line('• Token akses berlaku hingga: '.$this->betaTester->access_token_expires_at->format('d F Y'))
             ->line('• Jangan bagikan link ini kepada siapa pun')
             ->line('• Segera tanda tangani dokumen yang tersedia')
             ->line('Jika Anda mengalami kesulitan, silakan hubungi kami melalui email ini.')

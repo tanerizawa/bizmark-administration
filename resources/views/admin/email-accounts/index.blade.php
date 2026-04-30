@@ -3,320 +3,228 @@
 @section('title', 'Email Accounts Management')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <!-- Header -->
-        <div class="col-12 mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h3 mb-2 text-white">
-                        <i class="fas fa-at me-2"></i>Email Accounts
-                    </h1>
-                    <p class="text-dark-text-secondary mb-0">Manage company email accounts and user assignments</p>
-                </div>
-                <div>
-                    <a href="{{ route('admin.email-accounts.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>New Email Account
-                    </a>
-                </div>
+<div class="px-4 py-6 max-w-7xl mx-auto" x-data="{ deleteOpen: false, deleteForm: '' }">
+
+    {{-- Header --}}
+    <div class="flex items-start justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-at text-blue-400"></i>Email Accounts
+            </h1>
+            <p class="text-gray-400 mt-1">Manage company email accounts and user assignments</p>
+        </div>
+        <a href="{{ route('admin.email-accounts.create') }}"
+           class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
+            <i class="fas fa-plus mr-2"></i>New Email Account
+        </a>
+    </div>
+
+    {{-- Stats --}}
+    @php
+        $statCards = [
+            ['label' => 'Total Accounts', 'value' => $stats['total'] ?? 0, 'icon' => 'fa-at', 'color' => 'bg-blue-600'],
+            ['label' => 'Shared Accounts', 'value' => $stats['shared'] ?? 0, 'icon' => 'fa-users', 'color' => 'bg-green-600'],
+            ['label' => 'Personal Accounts', 'value' => $stats['personal'] ?? 0, 'icon' => 'fa-user', 'color' => 'bg-purple-600'],
+            ['label' => 'Active Users', 'value' => $stats['active_users'] ?? 0, 'icon' => 'fa-user-check', 'color' => 'bg-orange-500'],
+        ];
+    @endphp
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        @foreach($statCards as $card)
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-gray-400 mb-1">{{ $card['label'] }}</p>
+                <p class="text-2xl font-bold text-white">{{ $card['value'] }}</p>
+            </div>
+            <div class="w-12 h-12 rounded-full {{ $card['color'] }} flex items-center justify-center">
+                <i class="fas {{ $card['icon'] }} text-white"></i>
             </div>
         </div>
+        @endforeach
+    </div>
 
-        <!-- Stats Cards -->
-        <div class="col-12 mb-4">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <div class="card card-elevated rounded-apple">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-dark-text-secondary mb-1 small">Total Accounts</p>
-                                    <h3 class="text-white mb-0">{{ $stats['total'] ?? 0 }}</h3>
-                                </div>
-                                <div class="bg-apple-blue rounded-circle p-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-at text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card card-elevated rounded-apple">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-dark-text-secondary mb-1 small">Shared Accounts</p>
-                                    <h3 class="text-white mb-0">{{ $stats['shared'] ?? 0 }}</h3>
-                                </div>
-                                <div class="bg-apple-green rounded-circle p-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-users text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card card-elevated rounded-apple">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-dark-text-secondary mb-1 small">Personal Accounts</p>
-                                    <h3 class="text-white mb-0">{{ $stats['personal'] ?? 0 }}</h3>
-                                </div>
-                                <div class="bg-apple-purple rounded-circle p-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-user text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card card-elevated rounded-apple">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-dark-text-secondary mb-1 small">Active Users</p>
-                                    <h3 class="text-white mb-0">{{ $stats['active_users'] ?? 0 }}</h3>
-                                </div>
-                                <div class="bg-apple-orange rounded-circle p-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-user-check text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    {{-- Filters --}}
+    <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 mb-6">
+        <form method="GET" action="{{ route('admin.email-accounts.index') }}" id="filterForm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <input type="text" name="search" value="{{ request('search') }}"
+                       placeholder="Search by email or name..."
+                       class="lg:col-span-2 bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                @foreach(['type' => ['All Types', 'shared' => 'Shared', 'personal' => 'Personal'],
+                          'department' => ['All Departments', 'cs' => 'Customer Service', 'sales' => 'Sales', 'support' => 'Support', 'finance' => 'Finance'],
+                          'status' => ['All Status', 'active' => 'Active', 'inactive' => 'Inactive']] as $name => $opts)
+                <select name="{{ $name }}" onchange="document.getElementById('filterForm').submit()"
+                        class="bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    @foreach($opts as $val => $label)
+                        @if(is_int($val))
+                            <option value="">{{ $label }}</option>
+                        @else
+                            <option value="{{ $val }}" {{ request($name) === $val ? 'selected' : '' }}>{{ $label }}</option>
+                        @endif
+                    @endforeach
+                </select>
+                @endforeach
+
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition">
+                    <i class="fas fa-search mr-2"></i>Search
+                </button>
             </div>
-        </div>
+        </form>
+    </div>
 
-        <!-- Filters & Search -->
-        <div class="col-12 mb-4">
-            <div class="card card-elevated rounded-apple">
-                <div class="card-body">
-                    <form method="GET" action="{{ route('admin.email-accounts.index') }}" id="filterForm">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <input type="text" name="search" class="form-control bg-dark text-white border-secondary" 
-                                       placeholder="Search by email or name..." value="{{ request('search') }}">
+    {{-- Table --}}
+    <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-gray-400 border-b border-gray-700">
+                        <th class="px-5 py-3 font-medium">Email Address</th>
+                        <th class="px-5 py-3 font-medium">Name</th>
+                        <th class="px-5 py-3 font-medium">Type</th>
+                        <th class="px-5 py-3 font-medium">Department</th>
+                        <th class="px-5 py-3 font-medium">Assigned Users</th>
+                        <th class="px-5 py-3 font-medium">Emails</th>
+                        <th class="px-5 py-3 font-medium">Status</th>
+                        <th class="px-5 py-3 font-medium text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                    @forelse($emailAccounts as $account)
+                    <tr class="hover:bg-gray-700/40 text-gray-300">
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-envelope text-white text-xs"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white font-medium">{{ $account->email }}</p>
+                                    @if($account->forward_to)
+                                    <p class="text-gray-400 text-xs"><i class="fas fa-arrow-right mr-1"></i>{{ $account->forward_to }}</p>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="col-md-2">
-                                <select name="type" class="form-select bg-dark text-white border-secondary" onchange="document.getElementById('filterForm').submit()">
-                                    <option value="">All Types</option>
-                                    <option value="shared" {{ request('type') === 'shared' ? 'selected' : '' }}>Shared</option>
-                                    <option value="personal" {{ request('type') === 'personal' ? 'selected' : '' }}>Personal</option>
-                                </select>
+                        </td>
+                        <td class="px-5 py-3 text-white">{{ $account->name }}</td>
+                        <td class="px-5 py-3">
+                            @if($account->type === 'shared')
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">
+                                    <i class="fas fa-users"></i>Shared
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-400">
+                                    <i class="fas fa-user"></i>Personal
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-5 py-3">
+                            <span class="px-2 py-0.5 rounded text-xs bg-gray-700 text-gray-300">{{ ucfirst($account->department ?? 'N/A') }}</span>
+                        </td>
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-2">
+                                <span class="text-white">{{ $account->users->count() }}</span>
+                                @if($account->users->count() > 0)
+                                <div class="flex -space-x-2">
+                                    @foreach($account->users->take(3) as $user)
+                                    <div class="w-6 h-6 rounded-full bg-blue-600 border-2 border-gray-800 text-white flex items-center justify-center text-xs font-medium"
+                                         title="{{ $user->name }}">
+                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    </div>
+                                    @endforeach
+                                    @if($account->users->count() > 3)
+                                    <div class="w-6 h-6 rounded-full bg-gray-600 border-2 border-gray-800 text-white flex items-center justify-center text-xs">
+                                        +{{ $account->users->count() - 3 }}
+                                    </div>
+                                    @endif
+                                </div>
+                                @endif
                             </div>
-                            <div class="col-md-2">
-                                <select name="department" class="form-select bg-dark text-white border-secondary" onchange="document.getElementById('filterForm').submit()">
-                                    <option value="">All Departments</option>
-                                    <option value="cs" {{ request('department') === 'cs' ? 'selected' : '' }}>Customer Service</option>
-                                    <option value="sales" {{ request('department') === 'sales' ? 'selected' : '' }}>Sales</option>
-                                    <option value="support" {{ request('department') === 'support' ? 'selected' : '' }}>Support</option>
-                                    <option value="finance" {{ request('department') === 'finance' ? 'selected' : '' }}>Finance</option>
-                                    <option value="hr" {{ request('department') === 'hr' ? 'selected' : '' }}>HR</option>
-                                    <option value="it" {{ request('department') === 'it' ? 'selected' : '' }}>IT</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select name="status" class="form-select bg-dark text-white border-secondary" onchange="document.getElementById('filterForm').submit()">
-                                    <option value="">All Status</option>
-                                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-search me-2"></i>Search
+                        </td>
+                        <td class="px-5 py-3 text-white">
+                            <span class="text-green-400"><i class="fas fa-arrow-down mr-1"></i>{{ $account->total_received ?? 0 }}</span>
+                            <span class="mx-1 text-gray-600">|</span>
+                            <span class="text-blue-400"><i class="fas fa-arrow-up mr-1"></i>{{ $account->total_sent ?? 0 }}</span>
+                        </td>
+                        <td class="px-5 py-3">
+                            @if($account->is_active)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">
+                                    <i class="fas fa-check-circle"></i>Active
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400">
+                                    <i class="fas fa-times-circle"></i>Inactive
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-5 py-3 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route('admin.email-accounts.show', $account) }}" title="View"
+                                   class="p-1.5 border border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 rounded-lg text-xs transition">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.email-accounts.edit', $account) }}" title="Edit"
+                                   class="p-1.5 border border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 rounded-lg text-xs transition">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" title="Delete"
+                                        @click="deleteForm = '/admin/email-accounts/{{ $account->id }}'; deleteOpen = true"
+                                        class="p-1.5 border border-red-700 text-red-400 hover:bg-red-900/30 rounded-lg text-xs transition">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Email Accounts Table -->
-        <div class="col-12">
-            <div class="card card-elevated rounded-apple">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover mb-0">
-                            <thead>
-                                <tr style="border-bottom: 2px solid var(--dark-separator);">
-                                    <th class="px-4 py-3">Email Address</th>
-                                    <th class="px-4 py-3">Name</th>
-                                    <th class="px-4 py-3">Type</th>
-                                    <th class="px-4 py-3">Department</th>
-                                    <th class="px-4 py-3">Assigned Users</th>
-                                    <th class="px-4 py-3">Emails</th>
-                                    <th class="px-4 py-3">Status</th>
-                                    <th class="px-4 py-3 text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($emailAccounts as $account)
-                                <tr style="border-bottom: 1px solid var(--dark-separator);">
-                                    <td class="px-4 py-3">
-                                        <div class="d-flex align-items-center">
-                                            <div class="bg-apple-blue rounded-circle me-3" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-envelope text-white" style="font-size: 12px;"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-white fw-medium">{{ $account->email }}</div>
-                                                @if($account->forward_to)
-                                                    <small class="text-dark-text-secondary">
-                                                        <i class="fas fa-arrow-right me-1"></i>{{ $account->forward_to }}
-                                                    </small>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span class="text-white">{{ $account->name }}</span>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        @if($account->type === 'shared')
-                                            <span class="badge bg-apple-green">
-                                                <i class="fas fa-users me-1"></i>Shared
-                                            </span>
-                                        @else
-                                            <span class="badge bg-apple-purple">
-                                                <i class="fas fa-user me-1"></i>Personal
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span class="badge" style="background-color: var(--dark-bg-tertiary); color: var(--dark-text-secondary);">
-                                            {{ ucfirst($account->department ?? 'N/A') }}
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <div class="d-flex align-items-center">
-                                            <span class="text-white me-2">{{ $account->users->count() }}</span>
-                                            @if($account->users->count() > 0)
-                                                <div class="d-flex" style="margin-left: 8px;">
-                                                    @foreach($account->users->take(3) as $user)
-                                                        <div class="rounded-circle bg-apple-blue text-white d-flex align-items-center justify-content-center" 
-                                                             style="width: 24px; height: 24px; font-size: 10px; margin-left: -8px; border: 2px solid var(--dark-bg-secondary);"
-                                                             title="{{ $user->name }}">
-                                                            {{ strtoupper(substr($user->name, 0, 1)) }}
-                                                        </div>
-                                                    @endforeach
-                                                    @if($account->users->count() > 3)
-                                                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" 
-                                                             style="width: 24px; height: 24px; font-size: 10px; margin-left: -8px; border: 2px solid var(--dark-bg-secondary);">
-                                                            +{{ $account->users->count() - 3 }}
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-white">
-                                            <i class="fas fa-arrow-down text-apple-green me-1"></i>{{ $account->total_received ?? 0 }}
-                                            <span class="mx-2">|</span>
-                                            <i class="fas fa-arrow-up text-apple-blue me-1"></i>{{ $account->total_sent ?? 0 }}
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        @if($account->is_active)
-                                            <span class="badge bg-success">
-                                                <i class="fas fa-check-circle me-1"></i>Active
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger">
-                                                <i class="fas fa-times-circle me-1"></i>Inactive
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-3 text-end">
-                                        <div class="btn-group">
-                                            <a href="{{ route('admin.email-accounts.show', $account) }}" 
-                                               class="btn btn-sm btn-outline-light" title="View Details">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{{ route('admin.email-accounts.edit', $account) }}" 
-                                               class="btn btn-sm btn-outline-light" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                    onclick="deleteAccount({{ $account->id }})" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="8" class="text-center py-5">
-                                        <div class="text-dark-text-secondary">
-                                            <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
-                                            <p class="mb-0">No email accounts found</p>
-                                            @if(request()->hasAny(['search', 'type', 'department', 'status']))
-                                                <a href="{{ route('admin.email-accounts.index') }}" class="btn btn-sm btn-outline-light mt-3">
-                                                    <i class="fas fa-times me-2"></i>Clear Filters
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pagination -->
-            @if($emailAccounts->hasPages())
-            <div class="mt-4 d-flex justify-content-center">
-                {{ $emailAccounts->links() }}
-            </div>
-            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8" class="px-5 py-12 text-center">
+                            <i class="fas fa-inbox text-3xl text-gray-600 mb-3 block"></i>
+                            <p class="text-gray-400">No email accounts found</p>
+                            @if(request()->hasAny(['search', 'type', 'department', 'status']))
+                            <a href="{{ route('admin.email-accounts.index') }}"
+                               class="mt-3 inline-flex items-center px-4 py-2 border border-gray-600 text-gray-300 hover:text-white text-sm rounded-lg transition">
+                                <i class="fas fa-times mr-2"></i>Clear Filters
+                            </a>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark border-secondary">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title text-white">
-                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>Confirm Delete
+    {{-- Pagination --}}
+    @if($emailAccounts->hasPages())
+    <div class="mt-4 flex justify-center">
+        {{ $emailAccounts->links() }}
+    </div>
+    @endif
+
+    {{-- Delete Modal --}}
+    <div x-show="deleteOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+         @keydown.escape.window="deleteOpen = false">
+        <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl w-full max-w-md" @click.outside="deleteOpen = false">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-700">
+                <h5 class="text-white font-semibold flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle text-red-400"></i>Confirm Delete
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button @click="deleteOpen = false" class="text-gray-400 hover:text-white text-xl">&times;</button>
             </div>
-            <div class="modal-body text-white">
-                <p>Are you sure you want to delete this email account?</p>
-                <p class="text-danger mb-0">
-                    <i class="fas fa-info-circle me-1"></i>This action cannot be undone.
-                </p>
+            <div class="p-5">
+                <p class="text-white mb-2">Are you sure you want to delete this email account?</p>
+                <p class="text-red-400 text-sm"><i class="fas fa-info-circle mr-1"></i>This action cannot be undone.</p>
             </div>
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteForm" method="POST" style="display: inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-trash me-2"></i>Delete
+            <div class="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-700">
+                <button @click="deleteOpen = false"
+                    class="px-4 py-2 border border-gray-600 text-gray-300 hover:text-white rounded-lg text-sm transition">Cancel</button>
+                <form :action="deleteForm" method="POST" style="display:inline">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition">
+                        <i class="fas fa-trash mr-1.5"></i>Delete
                     </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 @endsection
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-function deleteAccount(id) {
-    const form = document.getElementById('deleteForm');
-    form.action = `/admin/email-accounts/${id}`;
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    modal.show();
-}
-</script>
-@endpush

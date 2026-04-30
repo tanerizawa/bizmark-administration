@@ -3,11 +3,11 @@
 namespace App\Modules\Perizinan\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\PermitDocument;
+use App\Models\PermitTemplate;
+use App\Models\PermitType;
 use App\Models\Project;
 use App\Models\ProjectPermit;
-use App\Models\PermitType;
-use App\Models\PermitTemplate;
-use App\Models\PermitDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -34,8 +34,8 @@ class PermitController extends Controller
             'completed' => $permits->where('status', 'APPROVED')->count(),
             'in_progress' => $permits->whereIn('status', ['IN_PROGRESS', 'SUBMITTED'])->count(),
             'not_started' => $permits->where('status', 'NOT_STARTED')->count(),
-            'blocked' => $permits->filter(function($permit) {
-                return $permit->status === 'NOT_STARTED' && 
+            'blocked' => $permits->filter(function ($permit) {
+                return $permit->status === 'NOT_STARTED' &&
                        $permit->dependencies->where('dependsOnPermit.status', '!=', 'APPROVED')->count() > 0;
             })->count(),
             'estimated_cost' => $permits->sum('estimated_cost'),
@@ -83,7 +83,7 @@ class PermitController extends Controller
         ]);
 
         // Get the next sequence order if not provided
-        if (!isset($validated['sequence_order'])) {
+        if (! isset($validated['sequence_order'])) {
             $validated['sequence_order'] = $project->permits()->max('sequence_order') + 1;
         }
 
@@ -111,13 +111,13 @@ class PermitController extends Controller
         ]);
 
         // Update status timestamps
-        if ($validated['status'] === 'IN_PROGRESS' && !$permit->started_at) {
+        if ($validated['status'] === 'IN_PROGRESS' && ! $permit->started_at) {
             $validated['started_at'] = now();
-        } elseif ($validated['status'] === 'SUBMITTED' && !$permit->submitted_at) {
+        } elseif ($validated['status'] === 'SUBMITTED' && ! $permit->submitted_at) {
             $validated['submitted_at'] = now();
-        } elseif ($validated['status'] === 'APPROVED' && !$permit->approved_at) {
+        } elseif ($validated['status'] === 'APPROVED' && ! $permit->approved_at) {
             $validated['approved_at'] = now();
-        } elseif ($validated['status'] === 'REJECTED' && !$permit->rejected_at) {
+        } elseif ($validated['status'] === 'REJECTED' && ! $permit->rejected_at) {
             $validated['rejected_at'] = now();
         }
 
@@ -134,7 +134,7 @@ class PermitController extends Controller
     public function destroy(ProjectPermit $permit)
     {
         $projectId = $permit->project_id;
-        
+
         // Check if other permits depend on this one
         if ($permit->dependents()->count() > 0) {
             return back()->with('error', 'Tidak dapat menghapus permit yang menjadi dependency permit lain');
@@ -158,14 +158,14 @@ class PermitController extends Controller
 
         $template = PermitTemplate::with([
             'items.permitType',
-            'dependencies'
+            'dependencies',
         ])->findOrFail($validated['template_id']);
 
         DB::beginTransaction();
         try {
             // Create permits from template items
             $permitMapping = [];
-            
+
             foreach ($template->items as $item) {
                 $permit = $project->permits()->create([
                     'permit_type_id' => $item->permit_type_id,
@@ -182,9 +182,9 @@ class PermitController extends Controller
 
             // Create dependencies
             foreach ($template->dependencies as $dependency) {
-                if (isset($permitMapping[$dependency->permit_item_id]) && 
+                if (isset($permitMapping[$dependency->permit_item_id]) &&
                     isset($permitMapping[$dependency->depends_on_item_id])) {
-                    
+
                     DB::table('project_permit_dependencies')->insert([
                         'project_permit_id' => $permitMapping[$dependency->permit_item_id],
                         'depends_on_permit_id' => $permitMapping[$dependency->depends_on_item_id],
@@ -206,7 +206,8 @@ class PermitController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menerapkan template: ' . $e->getMessage());
+
+            return back()->with('error', 'Gagal menerapkan template: '.$e->getMessage());
         }
     }
 
@@ -259,9 +260,9 @@ class PermitController extends Controller
         $visited = [];
         $queue = [$dependsOnPermitId];
 
-        while (!empty($queue)) {
+        while (! empty($queue)) {
             $currentId = array_shift($queue);
-            
+
             if ($currentId == $permitId) {
                 return true; // Circular dependency found
             }
@@ -308,6 +309,7 @@ class PermitController extends Controller
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -348,13 +350,14 @@ class PermitController extends Controller
             return response()->json([
                 'success' => true,
                 'updated_count' => $updated,
-                'message' => "Successfully updated {$updated} permits"
+                'message' => "Successfully updated {$updated} permits",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -379,13 +382,14 @@ class PermitController extends Controller
                     ->where('project_id', $project->id)
                     ->first();
 
-                if (!$permit) {
+                if (! $permit) {
                     continue;
                 }
 
                 // Check if other permits depend on this one
                 if ($permit->dependents()->count() > 0) {
                     $skipped++;
+
                     continue;
                 }
 
@@ -399,13 +403,14 @@ class PermitController extends Controller
                 'success' => true,
                 'deleted_count' => $deleted,
                 'skipped_count' => $skipped,
-                'message' => "Deleted {$deleted} permits" . ($skipped > 0 ? ", skipped {$skipped} with dependencies" : "")
+                'message' => "Deleted {$deleted} permits".($skipped > 0 ? ", skipped {$skipped} with dependencies" : ''),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -423,8 +428,8 @@ class PermitController extends Controller
         try {
             $file = $request->file('document');
             $originalFilename = $file->getClientOriginalName();
-            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalFilename);
-            
+            $filename = time().'_'.preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalFilename);
+
             // Store file in storage/app/permits_documents
             $path = $file->storeAs('permits_documents', $filename);
 
@@ -442,12 +447,12 @@ class PermitController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Document uploaded successfully',
-                'document' => $document
+                'document' => $document,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -457,7 +462,7 @@ class PermitController extends Controller
      */
     public function downloadDocument(Project $project, PermitDocument $document)
     {
-        if (!Storage::exists($document->file_path)) {
+        if (! Storage::exists($document->file_path)) {
             abort(404, 'File not found');
         }
 
@@ -479,12 +484,12 @@ class PermitController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Document deleted successfully'
+                'message' => 'Document deleted successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -504,12 +509,12 @@ class PermitController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Document deleted successfully'
+                'message' => 'Document deleted successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

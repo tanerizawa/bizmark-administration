@@ -11,9 +11,9 @@
                class="text-apple-blue-dark hover:text-apple-blue">
                 <i class="fas fa-arrow-left text-xl"></i>
             </a>
-            <h1 class="text-3xl font-bold" style="color: #FFFFFF;">Upload Dokumen Baru</h1>
+            <h1 class="text-3xl font-bold text-white">Upload Dokumen Baru</h1>
         </div>
-        <p style="color: rgba(235, 235, 245, 0.6);">Unggah dokumen perizinan atau berkas proyek</p>
+        <p class="text-dark-text-secondary">Unggah dokumen perizinan atau berkas proyek</p>
     </div>
 
     <!-- Form -->
@@ -22,17 +22,17 @@
             @csrf
 
             <!-- File Upload Section -->
-            <div class="pb-6" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-lg font-medium mb-4" style="color: #FFFFFF;">File Dokumen</h3>
+            <div class="pb-6 border-b border-white/10">
+                <h3 class="text-lg font-medium mb-4 text-white">File Dokumen</h3>
                 
                 <div>
-                    <label for="document_file" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label for="document_file" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Upload File <span class="text-apple-red-dark">*</span>
                     </label>
-                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md hover:border-gray-400 transition-colors" style="border-color: rgba(84, 84, 88, 0.65);">
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md hover:border-gray-400 transition-colors border-white/10">
                         <div class="space-y-1 text-center">
-                            <i class="fas fa-cloud-upload-alt text-3xl" style="color: rgba(142, 142, 147, 0.8);"></i>
-                            <div class="flex text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-[rgba(142,142,147,0.8)]"></i>
+                            <div class="flex text-sm text-dark-text-secondary">
                                 <label for="document_file" class="relative cursor-pointer rounded-md font-semibold focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-apple-blue" style="color: #0A84FF; text-decoration: underline;">
                                     <span>Klik di sini untuk upload file</span>
                                     <input id="document_file" 
@@ -44,7 +44,7 @@
                                 </label>
                                 <p class="pl-1">atau drag and drop</p>
                             </div>
-                            <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                            <p class="text-xs text-dark-text-secondary">
                                 PDF, DOC, XLS, gambar, ZIP hingga 10MB
                             </p>
                         </div>
@@ -55,11 +55,11 @@
                     
                     <!-- File Preview -->
                     <div id="file-preview" class="mt-4 hidden">
-                        <div class="flex items-center p-3 rounded-md" style="background: rgba(58, 58, 60, 0.5);">
-                            <i class="fas fa-file mr-3" style="color: rgba(142, 142, 147, 0.8);"></i>
+                        <div class="flex items-center p-3 rounded-md bg-[rgba(58,58,60,0.5)]">
+                            <i class="fas fa-file mr-3 text-[rgba(142,142,147,0.8)]"></i>
                             <div class="flex-1">
-                                <p class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.8);" id="file-name"></p>
-                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);" id="file-size"></p>
+                                <p class="text-sm font-medium text-dark-text-primary/80" id="file-name"></p>
+                                <p class="text-xs text-dark-text-secondary" id="file-size"></p>
                             </div>
                             <button type="button" onclick="removeFile()" class="text-apple-red-dark hover:text-apple-red">
                                 <i class="fas fa-times"></i>
@@ -70,13 +70,13 @@
             </div>
 
             <!-- Basic Information -->
-            <div class="pb-6" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                <h3 class="text-lg font-medium mb-4" style="color: #FFFFFF;">Informasi Dokumen</h3>
+            <div class="pb-6 border-b border-white/10">
+                <h3 class="text-lg font-medium mb-4 text-white">Informasi Dokumen</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Project -->
                     <div class="md:col-span-2">
-                        <label for="project_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="project_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Proyek <span class="text-apple-red-dark">*</span>
                         </label>
                         <select name="project_id" 
@@ -99,7 +99,7 @@
 
                     <!-- Task (Optional) -->
                     <div class="md:col-span-2">
-                        <label for="task_id" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Task Terkait (Opsional)</label>
+                        <label for="task_id" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Task Terkait (Opsional)</label>
                         <select name="task_id" 
                                 id="task_id"
                                 class="input-dark w-full px-3 py-2 rounded-md @error('task_id') ring-2 ring-apple-red @enderror">
@@ -119,7 +119,7 @@
 
                     <!-- Title -->
                     <div class="md:col-span-2">
-                        <label for="title" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="title" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Judul Dokumen <span class="text-apple-red-dark">*</span>
                         </label>
                         <input type="text" 
@@ -136,7 +136,7 @@
 
                     <!-- Category -->
                     <div>
-                        <label for="category" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="category" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Kategori <span class="text-apple-red-dark">*</span>
                         </label>
                         <select name="category" 
@@ -160,7 +160,7 @@
 
                     <!-- Status -->
                     <div>
-                        <label for="status" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                        <label for="status" class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                             Status <span class="text-apple-red-dark">*</span>
                         </label>
                         <select name="status" 
@@ -180,7 +180,7 @@
 
                     <!-- Document Date -->
                     <div>
-                        <label for="document_date" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tanggal Dokumen</label>
+                        <label for="document_date" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Tanggal Dokumen</label>
                         <input type="date" 
                                name="document_date" 
                                id="document_date"
@@ -199,13 +199,13 @@
                                    value="1"
                                    {{ old('is_confidential') ? 'checked' : '' }}
                                    class="rounded border-gray-300 text-apple-blue shadow-sm focus:border-apple-blue focus:ring focus:ring-apple-blue focus:ring-opacity-50">
-                            <span class="ml-2 text-sm" style="color: rgba(235, 235, 245, 0.8);">Dokumen Rahasia</span>
+                            <span class="ml-2 text-sm text-dark-text-primary/80">Dokumen Rahasia</span>
                         </label>
                     </div>
 
                     <!-- Description -->
                     <div class="md:col-span-2">
-                        <label for="description" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Deskripsi</label>
+                        <label for="description" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Deskripsi</label>
                         <textarea name="description" 
                                   id="description"
                                   rows="4"
@@ -218,7 +218,7 @@
 
                     <!-- Notes -->
                     <div class="md:col-span-2">
-                        <label for="notes" class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Catatan</label>
+                        <label for="notes" class="block text-sm font-medium mb-2 text-dark-text-primary/80">Catatan</label>
                         <textarea name="notes" 
                                   id="notes"
                                   rows="3"
@@ -232,9 +232,9 @@
             </div>
 
             <!-- Form Actions -->
-            <div class="flex justify-end space-x-4 pt-6" style="border-top: 1px solid rgba(84, 84, 88, 0.65);">
-                <a href="{{ route('documents.index') }}" 
-                   class="px-6 py-2 rounded-md font-medium transition-colors" style="border: 1px solid rgba(84, 84, 88, 0.65); color: rgba(235, 235, 245, 0.8); background: rgba(58, 58, 60, 0.6);">
+            <div class="flex justify-end space-x-4 pt-6 border-t border-white/10">
+                <a href="{{ route('documents.index') }}"
+                   class="px-6 py-2 rounded-md font-medium transition-colors border border-white/10 text-dark-text-primary/80 bg-[rgba(58,58,60,0.6)]">
                     Batal
                 </a>
                 <button type="submit" 

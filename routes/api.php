@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\ConsultationController;
+use App\Http\Controllers\Api\OpsController;
+use App\Http\Controllers\Api\PaymentCallbackController;
 use App\Modules\Perizinan\Controllers\Api\KbliController;
 use App\Modules\Perizinan\Controllers\Api\KbliRecommendationController;
-use App\Http\Controllers\Api\ConsultationController;
-use App\Http\Controllers\Api\PaymentCallbackController;
-use App\Http\Controllers\Api\OpsController;
 use Illuminate\Support\Facades\Route;
 
 /*

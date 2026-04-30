@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Http\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoRefreshLogsController;
 use App\Models\Article;
+use App\Modules\ContentSeo\Controllers\Admin\Seo\SeoRefreshLogsController;
 use App\Services\ContentRefreshService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
@@ -17,10 +17,10 @@ class SeoRefreshLogsControllerTest extends TestCase
         $service->expects($this->once())
             ->method('getStaleArticles')
             ->with(90, 2)
-            ->willReturn(new EloquentCollection());
+            ->willReturn(new EloquentCollection);
 
         $request = Request::create('/admin/seo/refresh-logs/run', 'POST', []);
-        $controller = new SeoRefreshLogsController();
+        $controller = new SeoRefreshLogsController;
         $response = $controller->runContentRefresh($request, $service);
 
         $this->assertSame(302, $response->getStatusCode());
@@ -61,7 +61,7 @@ class SeoRefreshLogsControllerTest extends TestCase
             });
 
         $request = Request::create('/admin/seo/refresh-logs/run', 'POST', ['limit' => 3]);
-        $controller = new SeoRefreshLogsController();
+        $controller = new SeoRefreshLogsController;
         $response = $controller->runContentRefresh($request, $service);
 
         $this->assertSame(302, $response->getStatusCode());
@@ -78,10 +78,10 @@ class SeoRefreshLogsControllerTest extends TestCase
         $service->expects($this->once())
             ->method('getStaleArticles')
             ->with(90, 5)
-            ->willReturn(new EloquentCollection());
+            ->willReturn(new EloquentCollection);
 
         $request = Request::create('/admin/seo/refresh-logs/run', 'POST', ['limit' => 99]);
-        $controller = new SeoRefreshLogsController();
+        $controller = new SeoRefreshLogsController;
         $controller->runContentRefresh($request, $service);
     }
 }

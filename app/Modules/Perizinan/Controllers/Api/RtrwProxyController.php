@@ -26,12 +26,12 @@ class RtrwProxyController extends Controller
             'province_code' => 'required|string|size:2',
         ]);
 
-        if (!config('rtrw.enabled')) {
+        if (! config('rtrw.enabled')) {
             return response()->json(['error' => 'RTRW service is disabled'], 503);
         }
 
         $provinceConfig = config("rtrw.provinces.{$validated['province_code']}");
-        if (!$provinceConfig) {
+        if (! $provinceConfig) {
             return response()->json([
                 'error' => 'Data RTRW belum tersedia untuk provinsi ini',
                 'available' => false,
@@ -95,12 +95,12 @@ class RtrwProxyController extends Controller
      */
     public function layers(Request $request, string $provinceCode): JsonResponse
     {
-        if (!config('rtrw.enabled')) {
+        if (! config('rtrw.enabled')) {
             return response()->json(['error' => 'RTRW service is disabled'], 503);
         }
 
         $provinceConfig = config("rtrw.provinces.{$provinceCode}");
-        if (!$provinceConfig) {
+        if (! $provinceConfig) {
             return response()->json(['error' => 'Province not found'], 404);
         }
 
@@ -114,14 +114,14 @@ class RtrwProxyController extends Controller
         }
 
         try {
-            $url = $this->buildProxiedUrl($provinceConfig['path'] . '/MapServer', ['f' => 'json']);
+            $url = $this->buildProxiedUrl($provinceConfig['path'].'/MapServer', ['f' => 'json']);
             $response = Http::timeout(config('rtrw.http.timeout'))
                 ->connectTimeout(config('rtrw.http.connect_timeout'))
                 ->withHeaders(['User-Agent' => config('rtrw.http.user_agent')])
                 ->get($url);
 
-            if (!$response->successful()) {
-                throw new \RuntimeException('GISTARU returned HTTP ' . $response->status());
+            if (! $response->successful()) {
+                throw new \RuntimeException('GISTARU returned HTTP '.$response->status());
             }
 
             $data = $response->json();
@@ -157,12 +157,12 @@ class RtrwProxyController extends Controller
      */
     public function legend(Request $request, string $provinceCode): JsonResponse
     {
-        if (!config('rtrw.enabled')) {
+        if (! config('rtrw.enabled')) {
             return response()->json(['error' => 'RTRW service is disabled'], 503);
         }
 
         $provinceConfig = config("rtrw.provinces.{$provinceCode}");
-        if (!$provinceConfig) {
+        if (! $provinceConfig) {
             return response()->json(['error' => 'Province not found'], 404);
         }
 
@@ -176,14 +176,14 @@ class RtrwProxyController extends Controller
         }
 
         try {
-            $url = $this->buildProxiedUrl($provinceConfig['path'] . '/MapServer/legend', ['f' => 'json']);
+            $url = $this->buildProxiedUrl($provinceConfig['path'].'/MapServer/legend', ['f' => 'json']);
             $response = Http::timeout(config('rtrw.http.timeout'))
                 ->connectTimeout(config('rtrw.http.connect_timeout'))
                 ->withHeaders(['User-Agent' => config('rtrw.http.user_agent')])
                 ->get($url);
 
-            if (!$response->successful()) {
-                throw new \RuntimeException('GISTARU legend returned HTTP ' . $response->status());
+            if (! $response->successful()) {
+                throw new \RuntimeException('GISTARU legend returned HTTP '.$response->status());
             }
 
             $data = $response->json();
@@ -201,7 +201,7 @@ class RtrwProxyController extends Controller
                         ];
                     });
                 })
-                ->filter(fn (array $item) => !empty($item['label']) || !empty($item['image_base64']))
+                ->filter(fn (array $item) => ! empty($item['label']) || ! empty($item['image_base64']))
                 ->values()
                 ->all();
 
@@ -240,12 +240,12 @@ class RtrwProxyController extends Controller
             'points.*.label' => 'nullable|string|max:80',
         ]);
 
-        if (!config('rtrw.enabled')) {
+        if (! config('rtrw.enabled')) {
             return response()->json(['error' => 'RTRW service is disabled'], 503);
         }
 
         $provinceConfig = config("rtrw.provinces.{$validated['province_code']}");
-        if (!$provinceConfig) {
+        if (! $provinceConfig) {
             return response()->json([
                 'error' => 'Data RTRW belum tersedia untuk provinsi ini',
                 'available' => false,
@@ -259,7 +259,7 @@ class RtrwProxyController extends Controller
 
             foreach ($validated['points'] as $index => $point) {
                 $zones = $this->queryZona($provinceConfig['path'], (float) $point['lat'], (float) $point['lng']);
-                $label = $point['label'] ?? ('Titik ' . ($index + 1));
+                $label = $point['label'] ?? ('Titik '.($index + 1));
 
                 $samples[] = [
                     'label' => $label,
@@ -282,7 +282,7 @@ class RtrwProxyController extends Controller
                     }
                     $seenKeys[$zoneKey] = true;
 
-                    if (!isset($aggregated[$zoneKey])) {
+                    if (! isset($aggregated[$zoneKey])) {
                         $aggregated[$zoneKey] = array_merge($zone, [
                             'hits' => 0,
                             'sample_labels' => [],
@@ -299,6 +299,7 @@ class RtrwProxyController extends Controller
                     $zone['coverage_percent'] = $sampleCount > 0
                         ? round(($zone['hits'] / $sampleCount) * 100, 1)
                         : 0;
+
                     return $zone;
                 })
                 ->sortByDesc('hits')
@@ -357,12 +358,12 @@ class RtrwProxyController extends Controller
             'height' => 'required|integer|min:1|max:1024',
         ]);
 
-        if (!config('rtrw.enabled')) {
+        if (! config('rtrw.enabled')) {
             abort(503, 'RTRW service is disabled');
         }
 
         $provinceConfig = config("rtrw.provinces.{$provinceCode}");
-        if (!$provinceConfig) {
+        if (! $provinceConfig) {
             abort(404, 'Province not found');
         }
 
@@ -376,11 +377,11 @@ class RtrwProxyController extends Controller
         }
 
         try {
-            $url = $this->buildProxiedUrl($provinceConfig['path'] . '/MapServer/export', [
+            $url = $this->buildProxiedUrl($provinceConfig['path'].'/MapServer/export', [
                 'bbox' => $validated['bbox'],
                 'bboxSR' => config('rtrw.spatial_reference'),
                 'imageSR' => config('rtrw.spatial_reference'),
-                'size' => $validated['width'] . ',' . $validated['height'],
+                'size' => $validated['width'].','.$validated['height'],
                 'dpi' => 96,
                 'format' => 'png32',
                 'transparent' => 'true',
@@ -392,7 +393,7 @@ class RtrwProxyController extends Controller
                 ->withHeaders(['User-Agent' => config('rtrw.http.user_agent')])
                 ->get($url);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 abort(502, 'GISTARU export failed');
             }
 
@@ -420,25 +421,25 @@ class RtrwProxyController extends Controller
      */
     private function queryZona(string $servicePath, float $lat, float $lng): array
     {
-        $url = $this->buildProxiedUrl($servicePath . '/MapServer/identify', [
-                'geometry' => "{$lng},{$lat}",
-                'geometryType' => 'esriGeometryPoint',
-                'sr' => config('rtrw.spatial_reference'),
-                'layers' => 'all',
-                'tolerance' => 1,
-                'mapExtent' => sprintf('%.6f,%.6f,%.6f,%.6f', $lng - 0.01, $lat - 0.01, $lng + 0.01, $lat + 0.01),
-                'imageDisplay' => '800,800,96',
-                'returnGeometry' => 'false',
-                'f' => 'json',
-            ]);
+        $url = $this->buildProxiedUrl($servicePath.'/MapServer/identify', [
+            'geometry' => "{$lng},{$lat}",
+            'geometryType' => 'esriGeometryPoint',
+            'sr' => config('rtrw.spatial_reference'),
+            'layers' => 'all',
+            'tolerance' => 1,
+            'mapExtent' => sprintf('%.6f,%.6f,%.6f,%.6f', $lng - 0.01, $lat - 0.01, $lng + 0.01, $lat + 0.01),
+            'imageDisplay' => '800,800,96',
+            'returnGeometry' => 'false',
+            'f' => 'json',
+        ]);
 
         $response = Http::timeout(config('rtrw.http.timeout'))
             ->connectTimeout(config('rtrw.http.connect_timeout'))
             ->withHeaders(['User-Agent' => config('rtrw.http.user_agent')])
             ->get($url);
 
-        if (!$response->successful()) {
-            throw new \RuntimeException('GISTARU identify returned HTTP ' . $response->status());
+        if (! $response->successful()) {
+            throw new \RuntimeException('GISTARU identify returned HTTP '.$response->status());
         }
 
         $data = $response->json();
@@ -475,12 +476,12 @@ class RtrwProxyController extends Controller
      */
     private function buildProxiedUrl(string $servicePath, array $params = []): string
     {
-        $innerUrl = config('rtrw.arcgis_base') . $servicePath;
+        $innerUrl = config('rtrw.arcgis_base').$servicePath;
 
-        if (!empty($params)) {
-            $innerUrl .= '?' . http_build_query($params);
+        if (! empty($params)) {
+            $innerUrl .= '?'.http_build_query($params);
         }
 
-        return config('rtrw.proxy_base') . $innerUrl;
+        return config('rtrw.proxy_base').$innerUrl;
     }
 }

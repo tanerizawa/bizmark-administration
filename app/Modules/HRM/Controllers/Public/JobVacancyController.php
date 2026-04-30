@@ -18,11 +18,11 @@ class JobVacancyController extends Controller
             ->paginate(12);
 
         // Detect mobile
-        $isMobile = $request->header('User-Agent') && 
+        $isMobile = $request->header('User-Agent') &&
                    (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
-        
+
         $view = $isMobile ? 'career.mobile-index' : 'career.index';
-        
+
         return view($view, compact('vacancies'));
     }
 
@@ -34,24 +34,24 @@ class JobVacancyController extends Controller
         $vacancy = JobVacancy::where('slug', $slug)->firstOrFail();
 
         // Parse JSON fields for display
-        $responsibilities = is_string($vacancy->responsibilities) 
-            ? json_decode($vacancy->responsibilities, true) 
+        $responsibilities = is_string($vacancy->responsibilities)
+            ? json_decode($vacancy->responsibilities, true)
             : $vacancy->responsibilities;
-            
-        $qualifications = is_string($vacancy->qualifications) 
-            ? json_decode($vacancy->qualifications, true) 
+
+        $qualifications = is_string($vacancy->qualifications)
+            ? json_decode($vacancy->qualifications, true)
             : $vacancy->qualifications;
-            
-        $benefits = is_string($vacancy->benefits) 
-            ? json_decode($vacancy->benefits, true) 
+
+        $benefits = is_string($vacancy->benefits)
+            ? json_decode($vacancy->benefits, true)
             : $vacancy->benefits;
 
         // Detect mobile
-        $isMobile = $request->header('User-Agent') && 
+        $isMobile = $request->header('User-Agent') &&
                    (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
-        
+
         $view = $isMobile ? 'career.mobile-show' : 'career.show';
-        
+
         return view($view, compact('vacancy', 'responsibilities', 'qualifications', 'benefits'));
     }
 }

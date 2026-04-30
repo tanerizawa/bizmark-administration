@@ -3,7 +3,6 @@
 namespace App\Modules\Perizinan\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class PolygonToolController extends Controller
 {

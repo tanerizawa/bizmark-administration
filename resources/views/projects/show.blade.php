@@ -206,7 +206,7 @@
                         <form action="{{ route('projects.destroy', $project) }}" method="POST" class="flex-1" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn-secondary-sm w-full" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,0.95); border-color: rgba(255,59,48,0.4);">
+                            <button type="submit" class="btn-secondary-sm w-full bg-apple-red/15 text-apple-red border-apple-red/40">
                                 <i class="fas fa-trash mr-1"></i>Hapus
                             </button>
                         </form>
@@ -214,23 +214,23 @@
                 </div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="kpi-card" style="background: rgba(10,132,255,0.08);">
-                    <p class="text-[11px] uppercase tracking-widest" style="color: rgba(10,132,255,0.9);">Nilai Kontrak</p>
+                <div class="kpi-card bg-[rgba(10,132,255,0.08)]">
+                    <p class="text-[11px] uppercase tracking-widest text-[rgba(10,132,255,0.9)]">Nilai Kontrak</p>
                     <p class="kpi-value mt-1">Rp {{ number_format($totalBudget, 0, ',', '.') }}</p>
                     <p class="text-xs muted">Budget disepakati</p>
                 </div>
-                <div class="kpi-card" style="background: rgba(52,199,89,0.08);">
-                    <p class="text-[11px] uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Diterima</p>
+                <div class="kpi-card bg-[rgba(52,199,89,0.08)]">
+                    <p class="text-[11px] uppercase tracking-widest text-[rgba(52,199,89,0.9)]">Diterima</p>
                     <p class="kpi-value mt-1">Rp {{ number_format($totalReceived, 0, ',', '.') }}</p>
                     <p class="text-xs muted">{{ $paymentProgress }}%</p>
                 </div>
-                <div class="kpi-card" style="background: rgba(191,90,242,0.08);">
-                    <p class="text-[11px] uppercase tracking-widest" style="color: rgba(191,90,242,0.9);">Progress Izin</p>
+                <div class="kpi-card bg-[rgba(191,90,242,0.08)]">
+                    <p class="text-[11px] uppercase tracking-widest text-[rgba(191,90,242,0.9)]">Progress Izin</p>
                     <p class="kpi-value mt-1">{{ $permitCompletionRate }}%</p>
                     <p class="text-xs muted">{{ $permitCompleted }}/{{ $statistics['total'] ?? 0 }} izin</p>
                 </div>
-                <div class="kpi-card" style="background: rgba(255,149,0,0.08);">
-                    <p class="text-[11px] uppercase tracking-widest" style="color: rgba(255,149,0,0.9);">Dokumen</p>
+                <div class="kpi-card bg-[rgba(255,149,0,0.08)]">
+                    <p class="text-[11px] uppercase tracking-widest text-[rgba(255,149,0,0.9)]">Dokumen</p>
                     <p class="kpi-value mt-1">{{ $documentsCount }}</p>
                     <p class="text-xs muted">Asset tersimpan</p>
                 </div>
@@ -239,14 +239,14 @@
     </section>
 
     @if(session('success'))
-        <div class="alert alert-success flex items-center gap-3">
+        <div class="flex items-center gap-3 bg-green-500/10 border border-green-500/30 text-green-400 rounded-xl px-4 py-3">
             <i class="fas fa-check-circle text-lg"></i>
             <span>{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger flex items-center gap-3">
+        <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3">
             <i class="fas fa-exclamation-circle text-lg"></i>
             <span>{{ session('error') }}</span>
         </div>
@@ -466,7 +466,7 @@
                         <p class="text-[11px] uppercase tracking-widest muted">Tanggal Mulai</p>
                         <p class="text-sm break-words">
                             @if($project->start_date)
-                                <i class="fas fa-calendar-check mr-1" style="color: rgba(52, 199, 89, 1);"></i>
+                                <i class="fas fa-calendar-check mr-1 text-apple-green"></i>
                                 {{ $project->start_date->format('d M Y') }}
                             @else
                                 <span class="muted">Belum ditentukan</span>
@@ -478,14 +478,14 @@
                         <p class="text-[11px] uppercase tracking-widest muted">Target Penyelesaian</p>
                         <p class="text-sm break-words">
                             @if($project->deadline)
-                                <i class="fas fa-flag mr-1" style="color: rgba(255, 149, 0, 1);"></i>
+                                <i class="fas fa-flag mr-1 text-apple-orange"></i>
                                 {{ $project->deadline->format('d M Y') }}
                                 @if($project->deadline->isPast() && !$project->actual_completion_date)
-                                    <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded" style="background: rgba(255, 59, 48, 0.2); color: rgba(255, 59, 48, 1);">
+                                    <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-apple-red/20 text-apple-red">
                                         Terlambat {{ $project->deadline->diffForHumans(null, true) }}
                                     </span>
                                 @elseif($project->deadline->diffInDays(now()) <= 7 && $project->deadline->isFuture())
-                                    <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded" style="background: rgba(255, 149, 0, 0.2); color: rgba(255, 149, 0, 1);">
+                                    <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-apple-orange/20 text-apple-orange">
                                         {{ $project->deadline->diffForHumans() }}
                                     </span>
                                 @endif
@@ -499,7 +499,7 @@
                     <div class="md:col-span-2 space-y-1">
                         <p class="text-[11px] uppercase tracking-widest muted">Tanggal Penyelesaian Aktual</p>
                         <div class="flex items-center gap-2">
-                            <p class="text-sm font-semibold" style="color: rgba(52, 199, 89, 1);">
+                            <p class="text-sm font-semibold text-apple-green">
                                 <i class="fas fa-check-circle mr-1"></i>
                                 {{ $project->actual_completion_date->format('d M Y') }}
                             </p>
@@ -510,15 +510,15 @@
                                     $isLate = $daysDiff < 0;
                                 @endphp
                                 @if($isEarly)
-                                    <span class="text-[11px] px-2 py-0.5 rounded" style="background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 1);">
+                                    <span class="text-[11px] px-2 py-0.5 rounded bg-apple-green/20 text-apple-green">
                                         <i class="fas fa-thumbs-up mr-1"></i>{{ abs($daysDiff) }} hari lebih cepat
                                     </span>
                                 @elseif($isLate)
-                                    <span class="text-[11px] px-2 py-0.5 rounded" style="background: rgba(255, 59, 48, 0.2); color: rgba(255, 59, 48, 1);">
+                                    <span class="text-[11px] px-2 py-0.5 rounded bg-apple-red/20 text-apple-red">
                                         <i class="fas fa-exclamation-circle mr-1"></i>{{ abs($daysDiff) }} hari terlambat
                                     </span>
                                 @else
-                                    <span class="text-[11px] px-2 py-0.5 rounded" style="background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 1);">
+                                    <span class="text-[11px] px-2 py-0.5 rounded bg-apple-green/20 text-apple-green">
                                         <i class="fas fa-bullseye mr-1"></i>Tepat waktu
                                     </span>
                                 @endif
@@ -544,8 +544,7 @@
                             <p class="text-sm font-semibold break-words flex items-center">
                                 {{ $project->client->company_name ?? $project->client->name }}
                                 <a href="{{ route('clients.show', $project->client) }}" 
-                                   class="ml-2 text-[12px] px-2 py-0.5 rounded transition-colors" 
-                                   style="background: rgba(0, 122, 255, 0.15); color: var(--apple-blue);">
+                                   class="ml-2 text-[12px] px-2 py-0.5 rounded transition-colors bg-apple-blue/15 text-apple-blue">
                                     <i class="fas fa-external-link-alt mr-1"></i>Lihat Detail
                                 </a>
                             </p>
@@ -643,11 +642,11 @@
                                 {{ $project->deadline->format('d M Y') }}
                                 @if($project->completed_at)
                                     @if($isEarly)
-                                        <span class="text-xs" style="color: rgba(10, 132, 255, 0.8);">⚡ (Lebih cepat)</span>
+                                        <span class="text-xs text-[rgba(10,132,255,0.8)]">⚡ (Lebih cepat)</span>
                                     @elseif($isOnTime)
-                                        <span class="text-xs" style="color: rgba(52, 199, 89, 0.8);">⏰ (Tepat waktu)</span>
+                                        <span class="text-xs text-[rgba(52,199,89,0.8)]">⏰ (Tepat waktu)</span>
                                     @elseif($isOverdue)
-                                        <span class="text-xs" style="color: rgba(255, 149, 10, 0.8);">⚠️ (Terlambat)</span>
+                                        <span class="text-xs text-[rgba(255,149,10,0.8)]">⚠️ (Terlambat)</span>
                                     @endif
                                 @else
                                     @if($isOverdue)
@@ -679,8 +678,7 @@
                     <h3 class="card-title text-white flex items-center">
                         <i class="fas fa-wallet mr-2 text-apple-blue-dark"></i>Ringkasan Keuangan
                     </h3>
-                    <button onclick="switchTab('financial')" class="text-xs px-2.5 py-1 rounded-md transition-colors" 
-                            style="background: rgba(0, 122, 255, 0.15); color: rgba(0, 122, 255, 1);">
+                    <button onclick="switchTab('financial')" class="text-xs px-2.5 py-1 rounded-md transition-colors bg-apple-blue/15 text-apple-blue">
                         <i class="fas fa-arrow-right mr-1"></i>Lihat Detail
                     </button>
                 </div>
@@ -691,17 +689,17 @@
                         <p class="text-sm font-bold">Rp {{ number_format($totalBudget, 0, ',', '.') }}</p>
                     </div>
                     
-                    <div class="data-block text-center" style="background: rgba(52, 199, 89, 0.12); border-color: rgba(52, 199, 89, 0.25);">
+                    <div class="data-block text-center bg-[rgba(52,199,89,0.12)] border-[rgba(52,199,89,0.25)]">
                         <p class="text-xs mb-1 muted">Diterima</p>
-                        <p class="text-sm font-bold" style="color: rgba(52, 199, 89, 1);">Rp {{ number_format($totalReceived, 0, ',', '.') }}</p>
+                        <p class="text-sm font-bold text-apple-green">Rp {{ number_format($totalReceived, 0, ',', '.') }}</p>
                         <p class="text-xs muted-2">
                             {{ $totalBudget > 0 ? number_format(($totalReceived / $totalBudget) * 100, 1) : 0 }}%
                         </p>
                     </div>
                     
-                    <div class="data-block text-center" style="background: rgba(255, 59, 48, 0.12); border-color: rgba(255, 59, 48, 0.25);">
+                    <div class="data-block text-center bg-[rgba(255,59,48,0.12)] border-[rgba(255,59,48,0.25)]">
                         <p class="text-xs mb-1 muted">Pengeluaran</p>
-                        <p class="text-sm font-bold" style="color: rgba(255, 59, 48, 1);">Rp {{ number_format($totalExpenses, 0, ',', '.') }}</p>
+                        <p class="text-sm font-bold text-apple-red">Rp {{ number_format($totalExpenses, 0, ',', '.') }}</p>
                         <p class="text-xs muted-2">
                             {{ $totalBudget > 0 ? number_format(($totalExpenses / $totalBudget) * 100, 1) : 0 }}%
                         </p>
@@ -761,8 +759,7 @@
                                 <i class="fas fa-file-alt mr-2 text-apple-blue-dark"></i>Daftar Dokumen Proyek
                             </h3>
                             <a href="{{ route('documents.create', ['project_id' => $project->id]) }}" 
-                               class="btn-primary-sm" 
-                               style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+                               class="btn-primary-sm bg-[rgba(10,132,255,0.9)] text-white">
                                 <i class="fas fa-plus mr-2"></i>Tambah Dokumen
                             </a>
                         </div>
@@ -787,13 +784,12 @@
                                             
                                             <div class="flex-1 min-w-0 space-y-1">
                                                 <a href="{{ route('documents.show', $document) }}" 
-                                                   class="text-sm font-semibold hover:text-apple-blue-dark transition-colors block" 
-                                                   style="color: #FFFFFF;">
+                                                   class="text-sm font-semibold hover:text-apple-blue-dark transition-colors block text-white">
                                                     {{ $document->name }}
                                                 </a>
                                                 
-                                                <div class="flex flex-wrap items-center gap-2 text-[12px]" style="color: rgba(235, 235, 245, 0.7);">
-                                                    <span class="inline-flex px-2 py-0.5 rounded" style="background: rgba(58, 58, 60, 0.8);">
+                                                <div class="flex flex-wrap items-center gap-2 text-[12px] text-dark-text-primary/70">
+                                                    <span class="inline-flex px-2 py-0.5 rounded bg-[rgba(58,58,60,0.8)]">
                                                         {{ $document->type }}
                                                     </span>
                                                     
@@ -834,11 +830,10 @@
                             </div>
                         @else
                             <div class="text-center py-8">
-                                <i class="fas fa-file-alt text-4xl mb-3" style="color: rgba(235, 235, 245, 0.3);"></i>
-                                <p style="color: rgba(235, 235, 245, 0.6);">Belum ada dokumen untuk proyek ini</p>
+                                <i class="fas fa-file-alt text-4xl mb-3 text-dark-text-tertiary/50"></i>
+                                <p class="text-dark-text-secondary">Belum ada dokumen untuk proyek ini</p>
                                 <a href="{{ route('documents.create', ['project_id' => $project->id]) }}" 
-                                   class="inline-block mt-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors" 
-                                   style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+                                   class="inline-block mt-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-[rgba(10,132,255,0.9)] text-white">
                                     <i class="fas fa-plus mr-2"></i>Upload Dokumen Pertama
                                 </a>
                             </div>
@@ -851,10 +846,10 @@
             <!-- Notes (commented out) -->
             @if(false && $project->notes)
             <div class="card-elevated rounded-apple-lg p-3.5">
-                <h3 class="text-lg font-semibold mb-3" style="color: #FFFFFF;">
+                <h3 class="text-lg font-semibold mb-3 text-white">
                     <i class="fas fa-sticky-note mr-2 text-apple-blue-dark"></i>Catatan
                 </h3>
-                <p class="whitespace-pre-line" style="color: rgba(235, 235, 245, 0.8);">{{ $project->notes }}</p>
+                <p class="whitespace-pre-line text-dark-text-primary/80">{{ $project->notes }}</p>
             </div>
             @endif
         </div>
@@ -865,36 +860,36 @@
             <!-- Combined Card: Recent Activity + Project Statistics -->
             <div class="card-elevated rounded-apple-xl overflow-hidden">
                 <!-- Recent Activity Section -->
-                <div class="p-6 border-b" style="border-color: rgba(58, 58, 60, 0.6);">
-                <h3 class="text-lg font-semibold mb-3" style="color: #FFFFFF;">
+                <div class="p-6 border-b border-white/5">
+                <h3 class="text-lg font-semibold mb-3 text-white">
                     <i class="fas fa-history mr-2 text-apple-blue-dark"></i>Aktivitas Terbaru
                 </h3>
                 @if($project->logs && $project->logs->count() > 0)
                 <div class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar">
                     @foreach($project->logs->take(10) as $log)
-                    <div class="flex items-start space-x-2 p-3 rounded-lg transition-colors hover:bg-opacity-80" style="background: rgba(58, 58, 60, 0.5);">
+                    <div class="flex items-start space-x-2 p-3 rounded-lg transition-colors hover:bg-opacity-80 bg-[rgba(58,58,60,0.5)]">
                         <div class="flex-shrink-0 mt-1">
                             @if(str_contains(strtolower($log->description), 'selesai') || str_contains(strtolower($log->description), 'completed'))
-                                <i class="fas fa-check-circle text-sm" style="color: rgba(52, 199, 89, 0.9);"></i>
+                                <i class="fas fa-check-circle text-sm text-apple-green/90"></i>
                             @elseif(str_contains(strtolower($log->description), 'tambah') || str_contains(strtolower($log->description), 'created'))
-                                <i class="fas fa-plus-circle text-sm" style="color: rgba(0, 122, 255, 0.9);"></i>
+                                <i class="fas fa-plus-circle text-sm text-apple-blue/90"></i>
                             @elseif(str_contains(strtolower($log->description), 'ubah') || str_contains(strtolower($log->description), 'updated'))
-                                <i class="fas fa-edit text-sm" style="color: rgba(255, 204, 0, 0.9);"></i>
+                                <i class="fas fa-edit text-sm text-[rgba(255,204,0,0.9)]"></i>
                             @elseif(str_contains(strtolower($log->description), 'hapus') || str_contains(strtolower($log->description), 'deleted'))
-                                <i class="fas fa-trash text-sm" style="color: rgba(255, 59, 48, 0.9);"></i>
+                                <i class="fas fa-trash text-sm text-apple-red/90"></i>
                             @else
-                                <i class="fas fa-circle text-xs" style="color: rgba(0, 122, 255, 0.9);"></i>
+                                <i class="fas fa-circle text-xs text-apple-blue/90"></i>
                             @endif
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm break-words" style="color: rgba(235, 235, 245, 0.9);">{{ $log->description }}</p>
+                            <p class="text-sm break-words text-dark-text-primary/90">{{ $log->description }}</p>
                             <div class="flex items-center mt-1 space-x-2">
-                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                                <p class="text-xs text-dark-text-secondary">
                                     {{ $log->created_at->diffForHumans() }}
                                 </p>
                                 @if($log->user)
-                                <span class="text-xs" style="color: rgba(235, 235, 245, 0.5);">•</span>
-                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                                <span class="text-xs text-dark-text-tertiary">•</span>
+                                <p class="text-xs text-dark-text-secondary">
                                     {{ $log->user->name }}
                                 </p>
                                 @endif
@@ -905,25 +900,25 @@
                 </div>
                 @else
                 <div class="text-center py-8">
-                    <i class="fas fa-inbox text-4xl mb-3" style="color: rgba(235, 235, 245, 0.3);"></i>
-                    <p class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Belum ada aktivitas</p>
+                    <i class="fas fa-inbox text-4xl mb-3 text-dark-text-tertiary/50"></i>
+                    <p class="text-sm text-dark-text-secondary">Belum ada aktivitas</p>
                 </div>
                 @endif
                 </div>
 
                 <!-- Project Statistics Section -->
                 <div class="p-6">
-                <h3 class="text-lg font-semibold mb-3" style="color: #FFFFFF;">
+                <h3 class="text-lg font-semibold mb-3 text-white">
                     <i class="fas fa-chart-pie mr-2 text-apple-blue-dark"></i>Statistik Proyek
                 </h3>
                 <div class="space-y-4">
                     <!-- Progress -->
                     <div>
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Progress Proyek</span>
-                            <span class="font-semibold" style="color: rgba(235, 235, 245, 0.9);">{{ $project->progress_percentage ?? 0 }}%</span>
+                            <span class="text-sm text-dark-text-secondary">Progress Proyek</span>
+                            <span class="font-semibold text-dark-text-primary/90">{{ $project->progress_percentage ?? 0 }}%</span>
                         </div>
-                        <div class="w-full h-2 rounded-full" style="background: rgba(58, 58, 60, 0.6);">
+                        <div class="w-full h-2 rounded-full bg-[rgba(58,58,60,0.6)]">
                             <div class="h-full rounded-full transition-all" 
                                  style="width: {{ $project->progress_percentage ?? 0 }}%; background: rgba(0, 122, 255, 0.9);"></div>
                         </div>
@@ -932,18 +927,18 @@
                     <!-- Tasks -->
                     <div>
                         <div class="flex justify-between items-center">
-                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Total Tugas</span>
-                            <span class="font-semibold" style="color: rgba(235, 235, 245, 0.9);">{{ $project->tasks->count() }}</span>
+                            <span class="text-sm text-dark-text-secondary">Total Tugas</span>
+                            <span class="font-semibold text-dark-text-primary/90">{{ $project->tasks->count() }}</span>
                         </div>
                         @if($project->tasks->count() > 0)
                         <div class="mt-1 flex justify-between text-xs">
-                            <span style="color: rgba(52, 199, 89, 0.9);">
+                            <span class="text-[rgba(52,199,89,0.9)]">
                                 <i class="fas fa-check-circle mr-1"></i>{{ $project->tasks->where('status', 'done')->count() }} selesai
                             </span>
-                            <span style="color: rgba(255, 204, 0, 0.9);">
+                            <span class="text-[rgba(255,204,0,0.9)]">
                                 <i class="fas fa-clock mr-1"></i>{{ $project->tasks->where('status', 'in_progress')->count() }} berjalan
                             </span>
-                            <span style="color: rgba(255, 149, 0, 0.9);">
+                            <span class="text-[rgba(255,149,0,0.9)]">
                                 <i class="fas fa-pause-circle mr-1"></i>{{ $project->tasks->whereIn('status', ['todo', 'blocked'])->count() }} pending
                             </span>
                         </div>
@@ -958,50 +953,50 @@
                                 \App\Models\ProjectPermit::STATUS_EXISTING,
                             ])->count();
                         @endphp
-                        <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Izin & Prasyarat</span>
-                        <span class="font-semibold" style="color: rgba(235, 235, 245, 0.9);">
+                        <span class="text-sm text-dark-text-secondary">Izin & Prasyarat</span>
+                        <span class="font-semibold text-dark-text-primary/90">
                             {{ $completedPermits }}/{{ $project->permits->count() }}
                         </span>
                     </div>
                     
                     <!-- Documents -->
                     <div class="flex justify-between items-center">
-                        <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Dokumen</span>
-                        <span class="font-semibold" style="color: rgba(235, 235, 245, 0.9);">{{ $project->documents->count() }}</span>
+                        <span class="text-sm text-dark-text-secondary">Dokumen</span>
+                        <span class="font-semibold text-dark-text-primary/90">{{ $project->documents->count() }}</span>
                     </div>
                     
                     <!-- Financial Summary -->
                     @if($project->contract_value > 0)
-                    <div class="pt-3 border-t" style="border-color: rgba(58, 58, 60, 0.6);">
+                    <div class="pt-3 border-t border-white/5">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-medium" style="color: rgba(235, 235, 245, 0.8);">Financial</span>
+                            <span class="text-sm font-medium text-dark-text-primary/80">Financial</span>
                         </div>
                         <div class="space-y-2">
                             <div class="flex justify-between text-xs">
-                                <span style="color: rgba(235, 235, 245, 0.6);">Nilai Kontrak</span>
-                                <span style="color: rgba(235, 235, 245, 0.9);">Rp {{ number_format($project->contract_value, 0, ',', '.') }}</span>
+                                <span class="text-dark-text-secondary">Nilai Kontrak</span>
+                                <span class="text-dark-text-primary/90">Rp {{ number_format($project->contract_value, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex justify-between text-xs">
-                                <span style="color: rgba(235, 235, 245, 0.6);">Pembayaran Diterima</span>
-                                <span style="color: rgba(52, 199, 89, 0.9);">Rp {{ number_format($project->payment_received ?? 0, 0, ',', '.') }}</span>
+                                <span class="text-dark-text-secondary">Pembayaran Diterima</span>
+                                <span class="text-apple-green/90">Rp {{ number_format($project->payment_received ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex justify-between text-xs">
-                                <span style="color: rgba(235, 235, 245, 0.6);">Total Pengeluaran</span>
-                                <span style="color: rgba(255, 59, 48, 0.9);">Rp {{ number_format($project->expenses->sum('amount') ?? 0, 0, ',', '.') }}</span>
+                                <span class="text-dark-text-secondary">Total Pengeluaran</span>
+                                <span class="text-apple-red/90">Rp {{ number_format($project->expenses->sum('amount') ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
                     @endif
                     
                     <!-- Timeline -->
-                    <div class="pt-3 border-t" style="border-color: rgba(58, 58, 60, 0.6);">
+                    <div class="pt-3 border-t border-white/5">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Dibuat</span>
-                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">{{ $project->created_at->format('d M Y') }}</span>
+                            <span class="text-sm text-dark-text-secondary">Dibuat</span>
+                            <span class="text-sm text-dark-text-secondary">{{ $project->created_at->format('d M Y') }}</span>
                         </div>
                         @if($project->deadline)
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Deadline</span>
+                            <span class="text-sm text-dark-text-secondary">Deadline</span>
                             @php
                                 // FIXED: Check if project is completed first
                                 if ($project->completed_at) {
@@ -1032,8 +1027,8 @@
                         </div>
                         @endif
                         <div class="flex justify-between items-center">
-                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Terakhir Update</span>
-                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">{{ $project->updated_at->diffForHumans() }}</span>
+                            <span class="text-sm text-dark-text-secondary">Terakhir Update</span>
+                            <span class="text-sm text-dark-text-secondary">{{ $project->updated_at->diffForHumans() }}</span>
                         </div>
                     </div>
                 </div>
@@ -1047,19 +1042,19 @@
 <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="closePaymentModal()">
     <div class="card-elevated rounded-apple-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation();">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-bold" style="color: #FFFFFF;">
+            <h3 class="text-xl font-bold text-white">
                 <i class="fas fa-money-bill-wave mr-2 text-apple-blue-dark"></i>Tambah Pembayaran
             </h3>
             <button onclick="closePaymentModal()" type="button"
-                    class="text-2xl hover:opacity-75 transition-opacity" style="color: rgba(235, 235, 245, 0.6);">×</button>
+                    class="text-2xl hover:opacity-75 transition-opacity text-dark-text-secondary">×</button>
         </div>
 
         <form action="{{ route('projects.payments.store', $project) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
-                        <i class="fas fa-file-invoice mr-1" style="color: rgba(0, 122, 255, 1);"></i>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
+                        <i class="fas fa-file-invoice mr-1 text-apple-blue"></i>
                         Invoice (Opsional)
                     </label>
                     <select name="invoice_id" id="payment_invoice_id" class="input-dark w-full px-4 py-2 rounded-lg" onchange="updatePaymentAmount()">
@@ -1070,25 +1065,25 @@
                         </option>
                         @endforeach
                     </select>
-                    <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                    <p class="text-xs mt-1 text-dark-text-tertiary">
                         Pilih invoice jika pembayaran ini untuk melunasi invoice tertentu. Biarkan kosong jika pembayaran umum.
                     </p>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tanggal Pembayaran *</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Tanggal Pembayaran *</label>
                     <input type="date" name="payment_date" required
                            class="input-dark w-full px-4 py-2 rounded-lg" value="{{ date('Y-m-d') }}">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Jumlah (Rp) *</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Jumlah (Rp) *</label>
                     <input type="number" name="amount" id="payment_amount" required min="0" step="0.01"
                            class="input-dark w-full px-4 py-2 rounded-lg" placeholder="0">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tipe Pembayaran *</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Tipe Pembayaran *</label>
                     <select name="payment_type" required class="input-dark w-full px-4 py-2 rounded-lg">
                         <option value="">Pilih tipe...</option>
                         <option value="dp">Down Payment (DP)</option>
@@ -1098,7 +1093,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Metode Pembayaran *</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Metode Pembayaran *</label>
                     <select name="payment_method" required class="input-dark w-full px-4 py-2 rounded-lg">
                         <option value="">Pilih metode...</option>
                         <option value="bank_transfer">Transfer Bank</option>
@@ -1110,7 +1105,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Akun Bank/Kas</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Akun Bank/Kas</label>
                     <select name="bank_account_id" class="input-dark w-full px-4 py-2 rounded-lg">
                         <option value="">Pilih akun...</option>
                         @foreach(\App\Models\CashAccount::active()->get() as $account)
@@ -1120,19 +1115,19 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">No. Referensi</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">No. Referensi</label>
                     <input type="text" name="reference_number" maxlength="100"
                            class="input-dark w-full px-4 py-2 rounded-lg" placeholder="No. transfer/cek/giro">
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Deskripsi/Catatan</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Deskripsi/Catatan</label>
                     <textarea name="description" rows="2"
                               class="input-dark w-full px-4 py-2 rounded-lg" placeholder="Catatan pembayaran..."></textarea>
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Upload Bukti (PDF/Gambar, max 5MB)</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Upload Bukti (PDF/Gambar, max 5MB)</label>
                     <input type="file" name="receipt_file" accept=".pdf,.jpg,.jpeg,.png"
                            class="input-dark w-full px-4 py-2 rounded-lg">
                 </div>
@@ -1140,12 +1135,10 @@
 
             <div class="flex justify-end space-x-2 mt-6">
                 <button type="button" onclick="closePaymentModal()"
-                        class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-80" 
-                        style="background: rgba(58, 58, 60, 0.8); color: rgba(235, 235, 245, 0.8);">
+                        class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-80 bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Batal
                 </button>
-                <button type="submit" class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-90" 
-                        style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
+                <button type="submit" class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-90 bg-apple-green/90 text-white">
                     <i class="fas fa-save mr-2"></i>Simpan Pembayaran
                 </button>
             </div>
@@ -1157,30 +1150,30 @@
 <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="closeExpenseModal()">
     <div class="card-elevated rounded-apple-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation();">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-bold" style="color: #FFFFFF;">
+            <h3 class="text-xl font-bold text-white">
                 <i class="fas fa-shopping-cart mr-2 text-apple-blue-dark"></i>Tambah Pengeluaran
             </h3>
             <button onclick="closeExpenseModal()" type="button"
-                    class="text-2xl hover:opacity-75 transition-opacity" style="color: rgba(235, 235, 245, 0.6);">×</button>
+                    class="text-2xl hover:opacity-75 transition-opacity text-dark-text-secondary">×</button>
         </div>
 
         <form id="expenseForm" action="{{ route('projects.financial-expenses.store', $project) }}" method="POST" enctype="multipart/form-data" onsubmit="return handleExpenseSubmit(event)">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tanggal Pengeluaran *</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Tanggal Pengeluaran *</label>
                     <input type="date" name="expense_date" required
                            class="input-dark w-full px-4 py-2 rounded-lg" value="{{ date('Y-m-d') }}">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Jumlah (Rp) *</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Jumlah (Rp) *</label>
                     <input type="number" name="amount" required min="0" step="0.01"
                            class="input-dark w-full px-4 py-2 rounded-lg" placeholder="0">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Kategori *</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Kategori *</label>
                     <select name="category" required class="input-dark w-full px-4 py-2 rounded-lg">
                         <option value="">Pilih kategori...</option>
                         <optgroup label="SDM & Personel">
@@ -1230,13 +1223,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Nama Rekanan/Penerima</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Nama Rekanan/Penerima</label>
                     <input type="text" name="vendor_name" maxlength="255"
                            class="input-dark w-full px-4 py-2 rounded-lg" placeholder="Nama rekanan atau penerima pembayaran">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Metode Pembayaran *</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Metode Pembayaran *</label>
                     <select name="payment_method" required class="input-dark w-full px-4 py-2 rounded-lg">
                         <option value="">Pilih metode...</option>
                         <option value="bank_transfer">Transfer Bank</option>
@@ -1248,7 +1241,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Akun Bank/Kas</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Akun Bank/Kas</label>
                     <select name="bank_account_id" class="input-dark w-full px-4 py-2 rounded-lg">
                         <option value="">Pilih akun...</option>
                         @foreach(\App\Models\CashAccount::active()->get() as $account)
@@ -1258,31 +1251,31 @@
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Deskripsi/Catatan</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Deskripsi/Catatan</label>
                     <textarea name="description" rows="2"
                               class="input-dark w-full px-4 py-2 rounded-lg" placeholder="Detail pengeluaran..."></textarea>
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="flex items-center space-x-2">
-                        <input type="checkbox" name="is_receivable" value="1" class="rounded" style="background: rgba(58, 58, 60, 0.8);" onchange="toggleReceivableFields()">
-                        <span class="text-sm" style="color: rgba(235, 235, 245, 0.8);">Kasbon/Piutang Internal (perlu dikembalikan oleh karyawan/pihak internal)</span>
+                        <input type="checkbox" name="is_receivable" value="1" class="rounded bg-[rgba(58,58,60,0.8)]" onchange="toggleReceivableFields()">
+                        <span class="text-sm text-dark-text-primary/80">Kasbon/Piutang Internal (perlu dikembalikan oleh karyawan/pihak internal)</span>
                     </label>
-                    <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                    <p class="text-xs mt-1 text-dark-text-tertiary">
                         Centang jika ini adalah kasbon atau uang yang dipinjamkan ke karyawan/tim internal yang harus dikembalikan
                     </p>
                 </div>
 
                 <div id="receivableFields" class="md:col-span-2 hidden">
-                    <div class="p-4 rounded-lg" style="background: rgba(255, 204, 0, 0.1); border: 1px solid rgba(255, 204, 0, 0.3);">
+                    <div class="p-4 rounded-lg bg-[rgba(255,204,0,0.1)] border border-[rgba(255,204,0,0.3)]">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Nama Penerima Kasbon *</label>
+                                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Nama Penerima Kasbon *</label>
                                 <input type="text" name="receivable_from" maxlength="255"
                                        class="input-dark w-full px-4 py-2 rounded-lg" placeholder="Nama karyawan/pihak internal">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Status</label>
+                                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Status</label>
                                 <select name="receivable_status" class="input-dark w-full px-4 py-2 rounded-lg">
                                     <option value="pending">Belum Bayar</option>
                                     <option value="partial">Sebagian</option>
@@ -1290,7 +1283,7 @@
                                 </select>
                             </div>
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Catatan Kasbon</label>
+                                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Catatan Kasbon</label>
                                 <textarea name="receivable_notes" rows="2"
                                           class="input-dark w-full px-4 py-2 rounded-lg" placeholder="Catatan tambahan untuk kasbon..."></textarea>
                             </div>
@@ -1299,7 +1292,7 @@
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Upload Bukti (PDF/Gambar, max 5MB)</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Upload Bukti (PDF/Gambar, max 5MB)</label>
                     <input type="file" name="receipt_file" accept=".pdf,.jpg,.jpeg,.png"
                            class="input-dark w-full px-4 py-2 rounded-lg">
                 </div>
@@ -1307,12 +1300,10 @@
 
             <div class="flex justify-end space-x-2 mt-6">
                 <button type="button" onclick="closeExpenseModal()"
-                        class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-80" 
-                        style="background: rgba(58, 58, 60, 0.8); color: rgba(235, 235, 245, 0.8);">
+                        class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-80 bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Batal
                 </button>
-                <button type="submit" class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-90" 
-                        style="background: rgba(255, 149, 0, 0.9); color: #FFFFFF;">
+                <button type="submit" class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-90 bg-apple-orange/90 text-white">
                     <i class="fas fa-save mr-2"></i>Simpan Pengeluaran
                 </button>
             </div>

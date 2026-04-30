@@ -2,53 +2,53 @@
 <div class="space-y-5">
     {{-- Focus Cards --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
-        <div class="card-elevated rounded-apple-lg p-4 space-y-3">
+        <x-ui.card variant="flat" padding="sm" class="space-y-3">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-semibold text-white">Antrian Tinjauan</h3>
-                <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(255,149,0,0.18); color: rgba(255,149,0,0.9);">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Antrian Tinjauan</h3>
+                <x-ui.badge variant="warning" size="sm">
                     @php
                         $reviewRatio = $totalApplications > 0 ? round(($pendingApplications / $totalApplications) * 100) : 0;
                     @endphp
                     {{ $reviewRatio }}%
-                </span>
+                </x-ui.badge>
             </div>
-            <p class="text-xl font-bold text-white">{{ $pendingApplications }}</p>
-            <p class="text-sm" style="color: rgba(235,235,245,0.65);">
+            <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $pendingApplications }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
                 Permohonan menunggu verifikasi admin. Prioritaskan yang telah diajukan dan sedang ditinjau.
             </p>
-        </div>
+        </x-ui.card>
 
-        <div class="card-elevated rounded-apple-lg p-4 space-y-3">
+        <x-ui.card variant="flat" padding="sm" class="space-y-3">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-semibold text-white">Jalur Penawaran</h3>
-                <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Operasional</span>
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Jalur Penawaran</h3>
+                <x-ui.badge variant="info" size="sm">Operasional</x-ui.badge>
             </div>
-            <p class="text-xl font-bold text-white">{{ $needQuotation }}</p>
-            <p class="text-sm" style="color: rgba(235,235,245,0.65);">
+            <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $needQuotation }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
                 Permohonan tanpa penawaran harga. Percepat proses agar pendapatan tidak tertahan.
             </p>
-        </div>
+        </x-ui.card>
 
-        <div class="card-elevated rounded-apple-lg p-4 space-y-3">
+        <x-ui.card variant="flat" padding="sm" class="space-y-3">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-semibold text-white">Pantauan Keuangan</h3>
-                <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(191,90,242,0.18); color: rgba(191,90,242,0.9);">Aktif</span>
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Pantauan Keuangan</h3>
+                <x-ui.badge variant="primary" size="sm">Aktif</x-ui.badge>
             </div>
-            <p class="text-xl font-bold text-white">{{ $pendingPayments }}</p>
-            <p class="text-sm" style="color: rgba(235,235,245,0.65);">
+            <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $pendingPayments }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
                 Pembayaran menunggu verifikasi. Lihat tab Pembayaran untuk detail lengkap.
             </p>
-        </div>
+        </x-ui.card>
     </div>
 
     {{-- Status Distribution --}}
-    <div class="card-elevated rounded-apple-xl p-6 space-y-4">
+    <x-ui.card variant="flat" padding="md" class="space-y-4">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Distribusi Status</p>
-                <h3 class="text-base font-semibold text-white">Rekap Permohonan per Status</h3>
+                <p class="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Distribusi Status</p>
+                <h3 class="text-base font-semibold text-gray-900 dark:text-white">Rekap Permohonan per Status</h3>
             </div>
-            <span class="text-xs" style="color: rgba(235,235,245,0.65);">Total {{ $totalApplications }} permohonan</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">Total {{ $totalApplications }} permohonan</span>
         </div>
         
         @php
@@ -57,79 +57,98 @@
         
         <div class="space-y-4">
             @forelse($applicationsByStatus as $status => $count)
+                @php
+                    $pct = min(100, ($count / $statusTotal) * 100);
+                @endphp
                 <div>
-                    <div class="flex items-center justify-between text-sm" style="color: rgba(235,235,245,0.8);">
+                    <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                         <span>{{ ucfirst(str_replace('_',' ', $status)) }}</span>
-                        <span class="font-semibold text-white">{{ $count }}</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ $count }}</span>
                     </div>
-                    <div class="mt-1 h-2 rounded-full bg-white/10">
-                        <div class="h-full rounded-full bg-gradient-to-r from-apple-blue to-apple-green" 
-                             style="width: {{ min(100, ($count / $statusTotal) * 100) }}%"></div>
+                    <div class="mt-1 h-2 rounded-full bg-gray-200 dark:bg-white/10" role="progressbar" aria-valuenow="{{ $count }}" aria-valuemin="0" aria-valuemax="{{ $statusTotal }}">
+                        <div class="h-full rounded-full bg-gradient-to-r from-[var(--apple-blue)] to-[var(--apple-green)] transition-all duration-500"
+                             style="width: {{ $pct }}%"></div>
                     </div>
                 </div>
             @empty
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada data status.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Belum ada data status.</p>
             @endforelse
         </div>
-    </div>
+    </x-ui.card>
 
     {{-- Recent Applications --}}
-    <div class="card-elevated rounded-apple-xl p-6 space-y-4">
+    <x-ui.card variant="flat" padding="md" class="space-y-4">
         <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
-                <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Aktivitas Terbaru</p>
-                <h2 class="text-base font-semibold text-white">Permohonan Terbaru</h2>
-                <p class="text-sm" style="color: rgba(235,235,245,0.65);">10 permohonan terakhir yang masuk ke sistem.</p>
+                <p class="text-xs uppercase tracking-[0.35em] text-gray-500 dark:text-gray-400">Aktivitas Terbaru</p>
+                <h2 class="text-base font-semibold text-gray-900 dark:text-white">Permohonan Terbaru</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">10 permohonan terakhir yang masuk ke sistem.</p>
             </div>
-            <a href="{{ route('admin.permits.index', ['tab' => 'applications']) }}" class="btn-secondary-sm">
+            <x-ui.button variant="outline" size="sm" :href="route('admin.permits.index', ['tab' => 'applications'])">
                 Lihat Semua
-            </a>
+            </x-ui.button>
         </div>
         
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700 text-sm">
-                <thead style="background-color: rgba(28,28,30,0.45);">
-                    <tr>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Nomor</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Klien</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Jenis Izin</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Status</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
-                    @forelse($recentApplications as $app)
-                        <tr class="hover-lift transition-apple cursor-pointer" onclick="window.location='{{ route('admin.permit-applications.show', $app->id) }}'">
-                            <td class="px-4 py-2.5 text-sm font-medium text-dark-text-primary">
-                                {{ $app->application_number }}
-                            </td>
-                            <td class="px-4 py-2.5">
-                                <div class="text-sm font-medium text-dark-text-primary">
-                                    {{ $app->client->company_name ?? $app->client->name }}
-                                </div>
-                            </td>
-                            <td class="px-4 py-2.5 text-sm text-dark-text-primary">
-                                {{ $app->permitType->name ?? 'N/A' }}
-                            </td>
-                            <td class="px-4 py-2.5 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                      style="background-color: rgba(10,132,255,0.15); color: rgba(10,132,255,1);">
-                                    {{ ucfirst(str_replace('_', ' ', $app->status)) }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-2.5 text-sm text-dark-text-secondary">
-                                {{ $app->created_at->locale('id')->diffForHumans() }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-sm" style="color: rgba(235,235,245,0.65);">
-                                Belum ada permohonan
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <x-ui.table
+            :columns="[
+                ['key' => 'number', 'label' => 'Nomor'],
+                ['key' => 'client', 'label' => 'Klien'],
+                ['key' => 'permit_type', 'label' => 'Jenis Izin'],
+                ['key' => 'status', 'label' => 'Status'],
+                ['key' => 'date', 'label' => 'Tanggal'],
+            ]"
+            :rows="$recentApplications"
+            :striped="true"
+            :hoverable="true"
+            variant="compact"
+            empty-message="Belum ada permohonan"
+        >
+            {{-- Application number --}}
+            <x-slot:cell-number="{ row }">
+                <span class="text-sm font-medium text-gray-900 dark:text-white cursor-pointer"
+                      @click="window.location='{{ route('admin.permit-applications.show', $row->id) }}'">
+                    {{ $row->application_number }}
+                </span>
+            </x-slot:cell-number>
+
+            {{-- Client --}}
+            <x-slot:cell-client="{ row }">
+                <span class="text-sm text-gray-700 dark:text-gray-300">
+                    {{ $row->client->company_name ?? $row->client->name }}
+                </span>
+            </x-slot:cell-client>
+
+            {{-- Permit type --}}
+            <x-slot:cell-permit_type="{ row }">
+                <span class="text-sm text-gray-700 dark:text-gray-300">
+                    {{ $row->permitType->name ?? 'N/A' }}
+                </span>
+            </x-slot:cell-permit_type>
+
+            {{-- Status --}}
+            <x-slot:cell-status="{ row }">
+                @php
+                    $statusVariant = match($row->status) {
+                        'draft' => 'neutral',
+                        'submitted', 'under_review' => 'warning',
+                        'document_incomplete' => 'danger',
+                        'quoted', 'quotation_accepted', 'payment_verified', 'completed' => 'success',
+                        'payment_pending' => 'warning',
+                        'in_progress' => 'info',
+                        default => 'neutral',
+                    };
+                @endphp
+                <x-ui.badge :variant="$statusVariant" size="sm">
+                    {{ ucfirst(str_replace('_', ' ', $row->status)) }}
+                </x-ui.badge>
+            </x-slot:cell-status>
+
+            {{-- Date --}}
+            <x-slot:cell-date="{ row }">
+                <span class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ $row->created_at->locale('id')->diffForHumans() }}
+                </span>
+            </x-slot:cell-date>
+        </x-ui.table>
+    </x-ui.card>
 </div>

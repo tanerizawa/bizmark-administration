@@ -3,157 +3,132 @@
 @section('title', 'Reply Email')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="px-4 py-6 max-w-4xl mx-auto"
+     x-data="{ showOriginal: false }">
+
+    {{-- Header --}}
+    <div class="flex items-start justify-between mb-6">
         <div>
-            <h1 class="h3 mb-1 text-white">
-                <i class="fas fa-reply me-2"></i>Reply Email
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-reply text-blue-400"></i>Reply Email
             </h1>
-            <p class="text-muted">Reply to: {{ $email->from_name ?? $email->from_email }}</p>
+            <p class="text-gray-400 mt-1">Reply to: {{ $email->from_name ?? $email->from_email }}</p>
         </div>
-        <a href="{{ route('admin.inbox.show', $email->id) }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Back
+        <a href="{{ route('admin.inbox.show', $email->id) }}"
+           class="inline-flex items-center px-4 py-2 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">
+            <i class="fas fa-arrow-left mr-2"></i>Back
         </a>
     </div>
 
     @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-5">
+        <i class="fas fa-exclamation-circle flex-shrink-0"></i><span>{{ session('error') }}</span>
+    </div>
     @endif
 
-    <!-- Original Email (Collapsed) -->
-    <div class="card bg-dark border-dark shadow-sm mb-3">
-        <div class="card-header bg-dark border-secondary">
-            <button class="btn btn-link text-white text-decoration-none p-0 w-100 text-start" 
-                    type="button" 
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#originalEmail">
-                <i class="fas fa-chevron-down me-2"></i>
-                <strong>Original Message</strong>
-                <span class="text-muted ms-2">from {{ $email->from_email }}</span>
-            </button>
-        </div>
-        <div class="collapse" id="originalEmail">
-            <div class="card-body">
-                <div class="mb-2">
-                    <strong class="text-white">Subject:</strong>
-                    <span class="text-muted">{{ $email->subject }}</span>
-                </div>
-                <div class="mb-2">
-                    <strong class="text-white">Date:</strong>
-                    <span class="text-muted">{{ $email->received_at->format('d M Y, H:i') }}</span>
-                </div>
-                <hr class="border-secondary">
-                <div class="text-muted" style="max-height: 300px; overflow-y: auto;">
-                    <div style="white-space: pre-wrap;">{{ $email->body_text ?: strip_tags($email->body_html ?? '') }}</div>
-                </div>
+    {{-- Original Email (collapsible) --}}
+    <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow mb-4">
+        <button type="button" @click="showOriginal = !showOriginal"
+                class="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-700/40 transition">
+            <span class="text-white font-medium flex items-center gap-2">
+                <i class="fas fa-chevron-down text-gray-400 transition-transform" :class="showOriginal ? 'rotate-180' : ''"></i>
+                Original Message
+            </span>
+            <span class="text-gray-400 text-sm">from {{ $email->from_email }}</span>
+        </button>
+        <div x-show="showOriginal" x-cloak class="border-t border-gray-700 p-5">
+            <div class="space-y-2 text-sm mb-3">
+                <p><span class="text-white font-medium">Subject:</span> <span class="text-gray-300">{{ $email->subject }}</span></p>
+                <p><span class="text-white font-medium">Date:</span> <span class="text-gray-300">{{ $email->received_at->format('d M Y, H:i') }}</span></p>
             </div>
+            <hr class="border-gray-700 mb-3">
+            <div class="text-gray-400 text-sm max-h-72 overflow-y-auto whitespace-pre-wrap">{{ $email->body_text ?: strip_tags($email->body_html ?? '') }}</div>
         </div>
     </div>
 
-    <!-- Reply Form -->
-    <div class="card bg-dark border-dark shadow-sm">
-        <div class="card-body">
+    {{-- Reply Form --}}
+    <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
+        <div class="p-6">
             <form action="{{ route('admin.inbox.send-reply', $email->id) }}" method="POST">
                 @csrf
+                <div class="space-y-4">
 
-                <!-- From Account -->
-                <div class="mb-3">
-                    <label for="from_account_id" class="form-label text-white">
-                        <i class="fas fa-at me-2"></i>From Account
-                    </label>
-                    <select class="form-select bg-dark text-white border-secondary @error('from_account_id') is-invalid @enderror"
-                            id="from_account_id"
-                            name="from_account_id">
-                        <option value="">Default ({{ config('mail.from.address') }})</option>
-                        @foreach(($fromAccounts ?? collect()) as $account)
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">
+                            <i class="fas fa-at mr-2 text-gray-400"></i>From Account
+                        </label>
+                        <select name="from_account_id"
+                                class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 @error('from_account_id') border-red-500 @enderror">
+                            <option value="">Default ({{ config('mail.from.address') }})</option>
+                            @foreach(($fromAccounts ?? collect()) as $account)
                             <option value="{{ $account->id }}"
                                 {{ (string) old('from_account_id', $email->email_account_id) === (string) $account->id ? 'selected' : '' }}>
                                 {{ $account->name }} ({{ $account->email }})
                             </option>
-                        @endforeach
-                    </select>
-                    @error('from_account_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                
-                <!-- To (Readonly) -->
-                <div class="mb-3">
-                    <label class="form-label text-white">
-                        <i class="fas fa-envelope me-2"></i>To
-                    </label>
-                    <input type="text" 
-                           class="form-control bg-dark text-white border-secondary" 
-                           value="{{ $email->from_name ?? $email->from_email }} <{{ $email->from_email }}>"
-                           readonly>
-                </div>
-
-                <!-- Subject (Auto-filled with Re:) -->
-                <div class="mb-3">
-                    <label class="form-label text-white">
-                        <i class="fas fa-tag me-2"></i>Subject
-                    </label>
-                    <input type="text" 
-                           class="form-control bg-dark text-white border-secondary" 
-                           value="Re: {{ $email->subject }}"
-                           readonly>
-                </div>
-
-                <!-- Reply Body -->
-                <div class="mb-3">
-                    <label for="body_html" class="form-label text-white">
-                        <i class="fas fa-align-left me-2"></i>Your Reply
-                    </label>
-                    <textarea class="form-control bg-dark text-white border-secondary @error('body_html') is-invalid @enderror" 
-                              id="body_html" 
-                              name="body_html" 
-                              rows="12" 
-                              placeholder="Write your reply here..."
-                              required>{{ old('body_html') }}</textarea>
-                    @error('body_html')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <div class="form-text text-muted">
-                        <i class="fas fa-info-circle me-1"></i>
-                        HTML formatting is supported
+                            @endforeach
+                        </select>
+                        @error('from_account_id')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
-                </div>
 
-                <!-- Quick Responses (Optional) -->
-                <div class="mb-3">
-                    <label class="form-label text-white">
-                        <i class="fas fa-bolt me-2"></i>Quick Responses
-                    </label>
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-outline-secondary" onclick="insertQuickResponse('thanks')">
-                            Thank You
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="insertQuickResponse('received')">
-                            Received
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="insertQuickResponse('follow')">
-                            Will Follow Up
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane me-2"></i>Send Reply
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="saveDraft()">
-                            <i class="fas fa-save me-2"></i>Save Draft
-                        </button>
+                        <label class="block text-sm font-medium text-white mb-1">
+                            <i class="fas fa-envelope mr-2 text-gray-400"></i>To
+                        </label>
+                        <input type="text" readonly
+                               value="{{ $email->from_name ?? $email->from_email }} <{{ $email->from_email }}>"
+                               class="w-full bg-gray-900/50 text-gray-400 border border-gray-700 rounded-lg px-3 py-2.5 text-sm cursor-not-allowed">
                     </div>
-                    <a href="{{ route('admin.inbox.show', $email->id) }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-times me-2"></i>Cancel
-                    </a>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">
+                            <i class="fas fa-tag mr-2 text-gray-400"></i>Subject
+                        </label>
+                        <input type="text" readonly value="Re: {{ $email->subject }}"
+                               class="w-full bg-gray-900/50 text-gray-400 border border-gray-700 rounded-lg px-3 py-2.5 text-sm cursor-not-allowed">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">
+                            <i class="fas fa-align-left mr-2 text-gray-400"></i>Your Reply <span class="text-red-400">*</span>
+                        </label>
+                        <textarea name="body_html" id="body_html" rows="12" required
+                                  placeholder="Write your reply here..."
+                                  class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono @error('body_html') border-red-500 @enderror">{{ old('body_html') }}</textarea>
+                        @error('body_html')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
+                        <p class="text-xs text-gray-500 mt-1"><i class="fas fa-info-circle mr-1"></i>HTML formatting is supported</p>
+                    </div>
+
+                    {{-- Quick Responses --}}
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-2">
+                            <i class="fas fa-bolt mr-2 text-gray-400"></i>Quick Responses
+                        </label>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach(['thanks' => 'Thank You', 'received' => 'Received', 'follow' => 'Will Follow Up'] as $key => $label)
+                            <button type="button" onclick="insertQuickResponse('{{ $key }}')"
+                                    class="px-3 py-1.5 border border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 text-sm rounded-lg transition">
+                                {{ $label }}
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2">
+                        <div class="flex gap-2">
+                            <button type="submit"
+                                    class="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
+                                <i class="fas fa-paper-plane mr-2"></i>Send Reply
+                            </button>
+                            <button type="button" id="saveDraftBtn" onclick="saveDraft()"
+                                    class="inline-flex items-center px-4 py-2.5 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">
+                                <i class="fas fa-save mr-2"></i>Save Draft
+                            </button>
+                        </div>
+                        <a href="{{ route('admin.inbox.show', $email->id) }}"
+                           class="inline-flex items-center px-4 py-2.5 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
@@ -162,49 +137,35 @@
 
 <script>
 const quickResponses = {
-    thanks: `Terima kasih atas email Anda.
-
-Kami sangat menghargai waktu Anda untuk menghubungi kami.
-
-Salam,
-Tim Bizmark.ID`,
-    received: `Email Anda telah kami terima.
-
-Kami akan meninjau pesan Anda dan segera memberikan respon.
-
-Terima kasih,
-Tim Bizmark.ID`,
-    follow: `Terima kasih atas email Anda.
-
-Kami akan menindaklanjuti hal ini dan segera menghubungi Anda kembali.
-
-Hormat kami,
-Tim Bizmark.ID`
+    thanks: `Terima kasih atas email Anda.\n\nKami sangat menghargai waktu Anda untuk menghubungi kami.\n\nSalam,\nTim Bizmark.ID`,
+    received: `Email Anda telah kami terima.\n\nKami akan meninjau pesan Anda dan segera memberikan respon.\n\nTerima kasih,\nTim Bizmark.ID`,
+    follow: `Terima kasih atas email Anda.\n\nKami akan menindaklanjuti hal ini dan segera menghubungi Anda kembali.\n\nHormat kami,\nTim Bizmark.ID`
 };
 
 function insertQuickResponse(type) {
-    const textarea = document.getElementById('body_html');
-    textarea.value = quickResponses[type];
-    textarea.focus();
+    const ta = document.getElementById('body_html');
+    ta.value = quickResponses[type];
+    ta.focus();
 }
+
+const DRAFT_KEY = 'reply_draft_{{ $email->id }}';
 
 function saveDraft() {
-    const body = document.getElementById('body_html').value;
-    
-    localStorage.setItem('reply_draft_{{ $email->id }}', JSON.stringify({
-        body: body,
+    const btn = document.getElementById('saveDraftBtn');
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({
+        body: document.getElementById('body_html').value,
         saved_at: new Date().toISOString()
     }));
-    
-    alert('Draft saved successfully!');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check mr-2"></i>Draft tersimpan';
+    btn.disabled = true;
+    setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2000);
 }
 
-// Load draft on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const draft = localStorage.getItem('reply_draft_{{ $email->id }}');
+document.addEventListener('DOMContentLoaded', function () {
+    const draft = localStorage.getItem(DRAFT_KEY);
     if (draft) {
         const data = JSON.parse(draft);
-        
         if (confirm('Found saved draft from ' + new Date(data.saved_at).toLocaleString() + '. Restore?')) {
             document.getElementById('body_html').value = data.body || '';
         }

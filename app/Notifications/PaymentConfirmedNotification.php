@@ -27,15 +27,15 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
         $type = $this->payment->payment_type === 'down_payment' ? 'Uang Muka (DP)' : 'Pelunasan';
 
         return (new MailMessage)
-            ->subject('Pembayaran Dikonfirmasi — ' . $this->payment->payment_number)
+            ->subject('Pembayaran Dikonfirmasi — '.$this->payment->payment_number)
             ->greeting('Halo,')
-            ->line("Pembayaran Anda telah berhasil dikonfirmasi.")
-            ->line('**No. Pembayaran:** ' . $this->payment->payment_number)
-            ->line('**No. Aplikasi:** ' . $appNumber)
-            ->line('**Jenis:** ' . $type)
-            ->line('**Jumlah:** Rp ' . $amount)
-            ->line('**Tanggal:** ' . $this->payment->paid_at?->format('d M Y H:i'))
-            ->action('Lihat Status Aplikasi', url('/client/applications/' . ($application?->id ?? '')))
+            ->line('Pembayaran Anda telah berhasil dikonfirmasi.')
+            ->line('**No. Pembayaran:** '.$this->payment->payment_number)
+            ->line('**No. Aplikasi:** '.$appNumber)
+            ->line('**Jenis:** '.$type)
+            ->line('**Jumlah:** Rp '.$amount)
+            ->line('**Tanggal:** '.$this->payment->paid_at?->format('d M Y H:i'))
+            ->action('Lihat Status Aplikasi', url('/client/applications/'.($application?->id ?? '')))
             ->line('Tim kami akan segera memproses aplikasi Anda. Terima kasih.');
     }
 

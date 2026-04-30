@@ -24,12 +24,12 @@ class PackageRevisionCreated extends Notification implements ShouldQueue
         $application = $this->revision->application;
 
         return (new MailMessage)
-            ->subject('Revisi Paket Layanan - ' . ($application?->application_number ?? ''))
-            ->greeting('Halo ' . $notifiable->name . ',')
+            ->subject('Revisi Paket Layanan - '.($application?->application_number ?? ''))
+            ->greeting('Halo '.$notifiable->name.',')
             ->line('Admin telah membuat revisi paket layanan untuk permohonan Anda.')
-            ->line('**Nomor Permohonan:** ' . ($application?->application_number ?? '-'))
-            ->line('**Alasan Revisi:** ' . ($this->revision->revision_reason ?? '-'))
-            ->action('Lihat Revisi', url('/client/applications/' . ($application?->id ?? '')))
+            ->line('**Nomor Permohonan:** '.($application?->application_number ?? '-'))
+            ->line('**Alasan Revisi:** '.($this->revision->revision_reason ?? '-'))
+            ->action('Lihat Revisi', url('/client/applications/'.($application?->id ?? '')))
             ->line('Silakan review dan berikan persetujuan Anda.')
             ->salutation('Salam, Tim Bizmark.id');
     }

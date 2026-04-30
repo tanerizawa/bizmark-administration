@@ -43,11 +43,11 @@ class ExpenseController extends Controller
         $validated['is_billable'] = false;
         $validated['is_receivable'] = $request->has('is_receivable') ? (bool) $request->is_receivable : false;
 
-        if (!isset($validated['receivable_paid_amount'])) {
+        if (! isset($validated['receivable_paid_amount'])) {
             $validated['receivable_paid_amount'] = $existing->receivable_paid_amount ?? 0;
         }
 
-        if (!empty($validated['is_receivable'])) {
+        if (! empty($validated['is_receivable'])) {
             if (empty($validated['receivable_status'])) {
                 $validated['receivable_status'] = 'pending';
             }
@@ -84,14 +84,14 @@ class ExpenseController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Error storing expense: ' . $e->getMessage(), [
+            Log::error('Error storing expense: '.$e->getMessage(), [
                 'project_id' => $project->id,
                 'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage(),
+                'message' => 'Terjadi kesalahan saat menyimpan: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -148,14 +148,14 @@ class ExpenseController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Error updating expense: ' . $e->getMessage(), [
+            Log::error('Error updating expense: '.$e->getMessage(), [
                 'expense_id' => $expense->id,
                 'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage(),
+                'message' => 'Terjadi kesalahan saat menyimpan: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -189,14 +189,14 @@ class ExpenseController extends Controller
                 'message' => 'Tidak ada file untuk dihapus',
             ], 404);
         } catch (\Exception $e) {
-            Log::error('Error deleting receipt file: ' . $e->getMessage(), [
+            Log::error('Error deleting receipt file: '.$e->getMessage(), [
                 'expense_id' => $expense->id,
                 'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus file: ' . $e->getMessage(),
+                'message' => 'Terjadi kesalahan saat menghapus file: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -205,7 +205,7 @@ class ExpenseController extends Controller
     {
         try {
             $expense->update([
-                'notes' => $expense->notes . ($request->invoice_note ? "\nInvoice: " . $request->invoice_note : "\nMarked as invoiced"),
+                'notes' => $expense->notes.($request->invoice_note ? "\nInvoice: ".$request->invoice_note : "\nMarked as invoiced"),
                 'updated_at' => now(),
             ]);
 
@@ -216,7 +216,7 @@ class ExpenseController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to mark expense as invoiced: ' . $e->getMessage(),
+                'message' => 'Failed to mark expense as invoiced: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -246,9 +246,9 @@ class ExpenseController extends Controller
             }
 
             $notes = $expense->receivable_notes ?? '';
-            $notes .= "\n" . now()->format('d M Y H:i') . ' - Pembayaran: Rp ' . number_format($paymentAmount, 0, ',', '.');
+            $notes .= "\n".now()->format('d M Y H:i').' - Pembayaran: Rp '.number_format($paymentAmount, 0, ',', '.');
             if ($request->payment_notes) {
-                $notes .= ' (' . $request->payment_notes . ')';
+                $notes .= ' ('.$request->payment_notes.')';
             }
 
             $expense->update([
@@ -261,7 +261,7 @@ class ExpenseController extends Controller
             $remaining = $expense->amount - $newPaidAmount;
             $message = $status === 'paid'
                 ? 'Piutang lunas!'
-                : 'Pembayaran tercatat. Sisa: Rp ' . number_format($remaining, 0, ',', '.');
+                : 'Pembayaran tercatat. Sisa: Rp '.number_format($remaining, 0, ',', '.');
 
             return response()->json([
                 'success' => true,
@@ -270,7 +270,7 @@ class ExpenseController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to record payment: ' . $e->getMessage(),
+                'message' => 'Failed to record payment: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -283,7 +283,7 @@ class ExpenseController extends Controller
                 'receivable_from' => null,
                 'receivable_status' => 'pending',
                 'receivable_paid_amount' => 0,
-                'receivable_notes' => $expense->receivable_notes . "\n[" . now()->format('d M Y H:i') . '] Status kasbon dihapus, dikembalikan ke pengeluaran biasa',
+                'receivable_notes' => $expense->receivable_notes."\n[".now()->format('d M Y H:i').'] Status kasbon dihapus, dikembalikan ke pengeluaran biasa',
                 'updated_at' => now(),
             ]);
 
@@ -294,7 +294,7 @@ class ExpenseController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to remove receivable: ' . $e->getMessage(),
+                'message' => 'Failed to remove receivable: '.$e->getMessage(),
             ], 500);
         }
     }

@@ -15,7 +15,7 @@
     <div class="container-wide">
         <span class="section-badge mb-4">Layanan</span>
         <h1 class="section-title mb-4">Solusi Perizinan End-to-End untuk Bisnis Anda</h1>
-        <p class="section-description mb-8" style="margin-left:0;">Pilih layanan sesuai kebutuhan dan lanjutkan ke detail untuk melihat cakupan, proses, persyaratan, dan langkah eksekusinya.</p>
+        <p class="section-description mb-8" style="margin-left:0;">Pilih layanan sesuai kebutuhan usaha Anda dan pelajari cakupan, proses, persyaratan, serta langkah pelaksanaannya secara lengkap.</p>
         <div class="flex flex-wrap gap-3">
             <a href="{{ $waHref }}" class="btn btn-secondary"><i class="fab fa-whatsapp"></i> Konsultasi Gratis</a>
             <a href="{{ route('contact.index') }}" class="btn btn-outline-primary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
@@ -37,9 +37,9 @@
                     @foreach($items as $slug => $service)
                         <article class="card h-full flex flex-col">
                             <div class="flex items-start justify-between gap-4 mb-4">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:{{ $service['color'] ?? '#0f172a' }}20;">
-                                    <i class="fas {{ $service['icon'] ?? 'fa-layer-group' }}" style="color:{{ $service['color'] ?? '#0f172a' }};"></i>
-                                </div>
+                                <span class="editorial-icon-badge" style="width:3rem;height:3rem;border-radius:.75rem;flex-shrink:0;">
+                                    <i class="fas {{ $service['icon'] ?? 'fa-layer-group' }} icon-md" aria-hidden="true"></i>
+                                </span>
                                 @if(!empty($service['badge']))
                                     <span class="badge-featured">{{ $service['badge'] }}</span>
                                 @endif
@@ -54,14 +54,17 @@
                                         <span class="text-xs px-2 py-1 rounded-full" style="background:var(--surface-cool);color:var(--text-secondary);"><i class="fas fa-clock mr-1"></i>{{ $service['process_time'] }}</span>
                                     @endif
                                     @if(!empty($service['price_range']))
-                                        <span class="text-xs px-2 py-1 rounded-full" style="background:rgba(22,163,74,.12);color:var(--color-success);"><i class="fas fa-tag mr-1"></i>{{ $service['price_range'] }}</span>
+                                        <span class="text-xs px-2 py-1 rounded-full font-semibold" style="background:rgba(22,163,74,.12);color:var(--color-success);"><i class="fas fa-tag mr-1"></i>Mulai {{ $service['price_range'] }}</span>
                                     @endif
                                 </div>
                             @endif
 
-                            <div class="mt-auto pt-3 border-t" style="border-color:var(--border-light);">
-                                <a href="{{ route('services.show.id', $slug) }}" class="link-primary text-sm inline-flex items-center">
+                            <div class="mt-auto pt-3 border-t space-y-2" style="border-color:var(--border-light);">
+                                <a href="{{ route('services.show.id', $slug) }}" class="link-primary text-sm inline-flex items-center w-full">
                                     Pelajari Lebih Lanjut <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                                <a href="{{ $waHref }}&text={{ rawurlencode('Halo, saya ingin konsultasi layanan ' . ($service['title'] ?? '')) }}" target="_blank" rel="noopener noreferrer" class="btn btn-success w-full btn-sm">
+                                    <i class="fab fa-whatsapp"></i> Konsultasi Gratis
                                 </a>
                             </div>
                         </article>

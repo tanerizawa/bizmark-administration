@@ -3,15 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Observers\AdminAuditObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
+#[ObservedBy([AdminAuditObserver::class])]
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasPushSubscriptions;
+    use HasFactory, HasPushSubscriptions, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -108,6 +111,7 @@ class User extends Authenticatable
                 return true;
             }
         }
+
         return false;
     }
 
@@ -120,12 +124,12 @@ class User extends Authenticatable
         if ($this->hasRole('admin')) {
             return true;
         }
-        
+
         return $this->hasAnyPermission([
             'recruitment.view_jobs',
             'recruitment.manage_jobs',
             'recruitment.view_applications',
-            'recruitment.process_applications'
+            'recruitment.process_applications',
         ]);
     }
 
@@ -138,7 +142,7 @@ class User extends Authenticatable
         if ($this->hasRole('admin')) {
             return true;
         }
-        
+
         return $this->hasAnyPermission([
             'email.view_inbox',
             'email.send_email',
@@ -146,7 +150,7 @@ class User extends Authenticatable
             'email.manage_campaigns',
             'email.manage_subscribers',
             'email.manage_templates',
-            'email.manage_settings'
+            'email.manage_settings',
         ]);
     }
 
@@ -159,7 +163,7 @@ class User extends Authenticatable
         if ($this->hasRole('admin')) {
             return true;
         }
-        
+
         return $this->hasAnyPermission([
             'master_data.view',
             'master_data.edit_permit_types',
@@ -170,9 +174,9 @@ class User extends Authenticatable
 
     /**
      * Override Laravel's can() method to check custom permissions
-     * @param mixed $abilities
-     * @param array|mixed $arguments
-     * @return bool
+     *
+     * @param  mixed  $abilities
+     * @param  array|mixed  $arguments
      */
     public function can($abilities, $arguments = []): bool
     {
@@ -180,12 +184,12 @@ class User extends Authenticatable
         if ($this->hasRole('admin')) {
             return true;
         }
-        
+
         // If it's a string, check our custom permission system
         if (is_string($abilities)) {
             return $this->hasPermission($abilities);
         }
-        
+
         // Otherwise, fall back to parent implementation
         return parent::can($abilities, $arguments);
     }
@@ -212,12 +216,12 @@ class User extends Authenticatable
     public function emailAccounts()
     {
         return $this->belongsToMany(
-            \App\Models\EmailAccount::class,
+            EmailAccount::class,
             'email_assignments',
             'user_id',
             'email_account_id'
         )->withPivot('can_read', 'can_send', 'can_delete', 'is_primary')
-         ->withTimestamps();
+            ->withTimestamps();
     }
 
     /**
@@ -225,7 +229,7 @@ class User extends Authenticatable
      */
     public function emailAssignments()
     {
-        return $this->hasMany(\App\Models\EmailAssignment::class, 'user_id');
+        return $this->hasMany(EmailAssignment::class, 'user_id');
     }
 
     /**
@@ -249,7 +253,10 @@ class User extends Authenticatable
      */
     public function getExpertiseListAttribute(): array
     {
-        if (empty($this->expertise)) return [];
+        if (empty($this->expertise)) {
+            return [];
+        }
+
         return array_map('trim', explode(',', $this->expertise));
     }
 }

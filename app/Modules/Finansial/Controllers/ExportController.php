@@ -28,7 +28,7 @@ class ExportController extends Controller
             $request->project_id
         );
 
-        $filename = 'invoices_' . now()->format('Y-m-d_His') . '.xlsx';
+        $filename = 'invoices_'.now()->format('Y-m-d_His').'.xlsx';
 
         return (new FastExcel($export->generator()))->download($filename);
     }
@@ -37,7 +37,7 @@ class ExportController extends Controller
     {
         $export = new InvoiceDetailExport($invoice);
 
-        $filename = 'invoice_' . $invoice->invoice_number . '_' . now()->format('Y-m-d') . '.xlsx';
+        $filename = 'invoice_'.$invoice->invoice_number.'_'.now()->format('Y-m-d').'.xlsx';
 
         return (new FastExcel($export->generator()))->download($filename);
     }
@@ -56,7 +56,7 @@ class ExportController extends Controller
             $request->project_id
         );
 
-        $filename = 'expenses_' . now()->format('Y-m-d_His') . '.xlsx';
+        $filename = 'expenses_'.now()->format('Y-m-d_His').'.xlsx';
 
         return (new FastExcel($export->generator()))->download($filename);
     }
@@ -73,7 +73,7 @@ class ExportController extends Controller
             $request->end_date
         );
 
-        $filename = 'financial_report_' . now()->format('Y-m-d_His') . '.xlsx';
+        $filename = 'financial_report_'.now()->format('Y-m-d_His').'.xlsx';
 
         $sheets = new SheetCollection([
             'Overview' => $export->overviewGenerator(),

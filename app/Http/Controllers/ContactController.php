@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
@@ -13,12 +13,12 @@ class ContactController extends Controller
      */
     public function index(Request $request)
     {
-        $isMobile = $request->header('User-Agent') && 
+        $isMobile = $request->header('User-Agent') &&
                    (preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $request->header('User-Agent')));
-        
+
         return view('contact.index', compact('isMobile'));
     }
-    
+
     /**
      * Submit contact form
      */
@@ -39,7 +39,7 @@ class ContactController extends Controller
             'message.required' => 'Pesan wajib diisi',
             'message.max' => 'Pesan maksimal 2000 karakter',
         ]);
-        
+
         try {
             // Send email notification
             Mail::send('emails.contact-notification', [
@@ -50,25 +50,40 @@ class ContactController extends Controller
                 'messageContent' => $validated['message'],
             ], function ($message) use ($validated) {
                 $message->to(config('mail.contact_email', 'info@bizmark.id'))
-                    ->subject('Contact Form: ' . $validated['subject'])
+                    ->subject('Contact Form: '.$validated['subject'])
                     ->replyTo($validated['email'], $validated['name']);
             });
-            
+
             // Log the contact submission
             Log::info('Contact form submitted', [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'subject' => $validated['subject'],
             ]);
-            
+
+            // Return JSON for AJAX requests, redirect for traditional form posts
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Terima kasih! Pesan Anda telah terkirim. Kami akan segera menghubungi Anda.',
+                ]);
+            }
+
             return back()->with('success', 'Terima kasih! Pesan Anda telah terkirim. Kami akan segera menghubungi Anda.');
-            
+
         } catch (\Exception $e) {
             Log::error('Contact form submission failed', [
                 'error' => $e->getMessage(),
                 'email' => $validated['email'],
             ]);
-            
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi kami via WhatsApp.',
+                ], 500);
+            }
+
             return back()
                 ->with('error', 'Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi kami via WhatsApp.')
                 ->withInput();

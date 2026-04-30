@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use App\Models\Article;
 use App\Models\SocialPost;
+use App\Services\SocialCaptionService;
 use App\Services\SocialPostingService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class SocialPostCommand extends Command
 {
@@ -21,23 +23,26 @@ class SocialPostCommand extends Command
     public function handle(SocialPostingService $service): int
     {
         try {
-        if ($this->option('process-scheduled')) {
-            return $this->processScheduled($service);
-        }
-
-        if ($articleId = $this->option('article')) {
-            $article = Article::find($articleId);
-            if (!$article) {
-                $this->error("Article #{$articleId} not found.");
-                return 1;
+            if ($this->option('process-scheduled')) {
+                return $this->processScheduled($service);
             }
-            return $this->postArticle($service, $article);
-        }
 
-        return $this->postBatch($service);
+            if ($articleId = $this->option('article')) {
+                $article = Article::find($articleId);
+                if (! $article) {
+                    $this->error("Article #{$articleId} not found.");
+
+                    return 1;
+                }
+
+                return $this->postArticle($service, $article);
+            }
+
+            return $this->postBatch($service);
         } catch (\Exception $e) {
-            \Log::error('Social post command failed: ' . $e->getMessage());
-            $this->error('Social posting failed: ' . $e->getMessage());
+            Log::error('Social post command failed: '.$e->getMessage());
+            $this->error('Social posting failed: '.$e->getMessage());
+
             return 1;
         }
     }
@@ -51,15 +56,17 @@ class SocialPostCommand extends Command
             foreach ($scheduled as $platform => $time) {
                 $this->line("  ⏰ {$platform}: scheduled for {$time}");
             }
-            $this->info("Scheduled " . count($scheduled) . " posts.");
+            $this->info('Scheduled '.count($scheduled).' posts.');
+
             return 0;
         }
 
         $platform = $this->option('platform');
         if ($platform) {
-            $caption = app(\App\Services\SocialCaptionService::class)->generateFor($article, $platform);
+            $caption = app(SocialCaptionService::class)->generateFor($article, $platform);
             $result = $service->postToPlatform($article, $platform, $caption ?? '');
             $this->outputResult($platform, $result);
+
             return 0;
         }
 
@@ -94,6 +101,7 @@ class SocialPostCommand extends Command
 
         if ($articles->isEmpty()) {
             $this->info('No articles need social posting.');
+
             return 0;
         }
 
@@ -111,11 +119,12 @@ class SocialPostCommand extends Command
                 foreach ($scheduled as $platform => $time) {
                     $this->line("  ⏰ {$platform}: {$time}");
                 }
+
                 continue;
             }
 
             if ($platform) {
-                $caption = app(\App\Services\SocialCaptionService::class)->generateFor($article, $platform);
+                $caption = app(SocialCaptionService::class)->generateFor($article, $platform);
                 $results = [
                     $platform => $service->postToPlatform($article, $platform, $caption ?? ''),
                 ];
@@ -144,6 +153,7 @@ class SocialPostCommand extends Command
         $due = SocialPost::scheduled()->count();
         if ($due === 0) {
             $this->info('No scheduled posts due.');
+
             return 0;
         }
 

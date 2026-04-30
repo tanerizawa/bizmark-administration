@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AISetting;
+use App\Models\AISettingHistory;
 use App\Services\AISettingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class AISettingsController extends Controller
 {
@@ -16,18 +16,18 @@ class AISettingsController extends Controller
     public function index(Request $request)
     {
         $category = $request->get('category', 'pricing');
-        
+
         $settings = AISetting::where('category', $category)
             ->orderBy('display_order')
             ->orderBy('key')
             ->get()
             ->groupBy('group_name');
-        
+
         $categories = AISetting::select('category')
             ->distinct()
             ->pluck('category')
             ->toArray();
-        
+
         return view('admin.ai-settings.index', compact('settings', 'category', 'categories'));
     }
 
@@ -41,29 +41,29 @@ class AISettingsController extends Controller
                 'settings' => 'required|array',
                 'settings.*' => 'required',
             ]);
-            
+
             $updatedCount = 0;
-            
+
             foreach ($validated['settings'] as $key => $value) {
                 $setting = AISetting::where('key', $key)->first();
-                
-                if (!$setting) {
+
+                if (! $setting) {
                     continue;
                 }
-                
+
                 // Validate based on data type
-                if (!$this->validateValue($value, $setting->data_type, $setting->validation_rules)) {
-                    return back()->withErrors(['settings.' . $key => "Invalid value for {$key}"]);
+                if (! $this->validateValue($value, $setting->data_type, $setting->validation_rules)) {
+                    return back()->withErrors(['settings.'.$key => "Invalid value for {$key}"]);
                 }
-                
-                AISettingService::set($key, $value, 'Updated via admin panel by ' . auth()->user()->name);
+
+                AISettingService::set($key, $value, 'Updated via admin panel by '.auth()->user()->name);
                 $updatedCount++;
             }
-            
+
             return back()->with('success', "Successfully updated {$updatedCount} settings");
-            
+
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to update settings: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to update settings: '.$e->getMessage()]);
         }
     }
 
@@ -74,11 +74,11 @@ class AISettingsController extends Controller
     {
         try {
             AISettingService::reset($key);
-            
+
             return back()->with('success', "Setting '{$key}' has been reset to default value");
-            
+
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to reset setting: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to reset setting: '.$e->getMessage()]);
         }
     }
 
@@ -88,11 +88,11 @@ class AISettingsController extends Controller
     public function history(Request $request, string $key)
     {
         $setting = AISetting::where('key', $key)->firstOrFail();
-        
+
         $history = $setting->history()
             ->with('user')
             ->paginate(20);
-        
+
         return view('admin.ai-settings.history', compact('setting', 'history'));
     }
 
@@ -102,12 +102,12 @@ class AISettingsController extends Controller
     public function recentChanges(Request $request)
     {
         $days = $request->get('days', 7);
-        
-        $changes = \App\Models\AISettingHistory::recent($days)
+
+        $changes = AISettingHistory::recent($days)
             ->with(['setting', 'user'])
             ->orderBy('created_at', 'desc')
             ->paginate(50);
-        
+
         return view('admin.ai-settings.recent-changes', compact('changes', 'days'));
     }
 
@@ -118,11 +118,11 @@ class AISettingsController extends Controller
     {
         try {
             AISettingService::clearAllCache();
-            
+
             return back()->with('success', 'All AI settings cache has been cleared');
-            
+
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to clear cache: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to clear cache: '.$e->getMessage()]);
         }
     }
 
@@ -134,18 +134,18 @@ class AISettingsController extends Controller
         // Type validation
         switch ($dataType) {
             case 'number':
-                if (!is_numeric($value)) {
+                if (! is_numeric($value)) {
                     return false;
                 }
                 $value = floatval($value);
                 break;
-            
+
             case 'boolean':
-                if (!in_array($value, [0, 1, '0', '1', true, false, 'true', 'false'], true)) {
+                if (! in_array($value, [0, 1, '0', '1', true, false, 'true', 'false'], true)) {
                     return false;
                 }
                 break;
-            
+
             case 'json':
             case 'array':
                 if (is_string($value)) {
@@ -156,20 +156,20 @@ class AISettingsController extends Controller
                 }
                 break;
         }
-        
+
         // Custom validation rules
-        if (!empty($rules)) {
+        if (! empty($rules)) {
             if (isset($rules['min']) && $value < $rules['min']) {
                 return false;
             }
             if (isset($rules['max']) && $value > $rules['max']) {
                 return false;
             }
-            if (isset($rules['pattern']) && !preg_match($rules['pattern'], $value)) {
+            if (isset($rules['pattern']) && ! preg_match($rules['pattern'], $value)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 }

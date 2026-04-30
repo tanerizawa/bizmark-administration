@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProjectExpense;
 use App\Models\Document;
 use App\Models\Invoice;
-use App\Models\Project;
+use App\Models\ProjectExpense;
 use App\Notifications\ApprovalDecisionNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ApprovalController extends Controller
 {
@@ -21,79 +20,79 @@ class ApprovalController extends Controller
     public function index(Request $request)
     {
         $type = $request->get('type', 'all'); // all, expenses, documents, invoices
-        
+
         $approvals = $this->getPendingApprovals($type);
-        
+
         $stats = [
             'total' => $approvals->count(),
             'expenses' => $this->countByType('expenses'),
             'documents' => $this->countByType('documents'),
             'invoices' => $this->countByType('invoices'),
         ];
-        
+
         return view('mobile.approvals.index', [
             'approvals' => $approvals,
             'stats' => $stats,
-            'currentType' => $type
+            'currentType' => $type,
         ]);
     }
-    
+
     /**
      * Show pending approvals only
      */
     public function pending(Request $request)
     {
         $approvals = $this->getPendingApprovals('all');
-        
+
         if ($request->expectsJson()) {
             return response()->json([
                 'approvals' => $approvals,
-                'count' => $approvals->count()
+                'count' => $approvals->count(),
             ]);
         }
-        
+
         return view('mobile.approvals.pending', compact('approvals'));
     }
-    
+
     /**
      * Show approval detail
      */
     public function show(Request $request, $type, $id)
     {
         $item = $this->getApprovalItem($type, $id);
-        
-        if (!$item) {
+
+        if (! $item) {
             abort(404, 'Item tidak ditemukan');
         }
-        
+
         return view('mobile.approvals.show', [
             'item' => $item,
-            'type' => $type
+            'type' => $type,
         ]);
     }
-    
+
     /**
      * Approve single item
      */
     public function approve(Request $request, $type, $id)
     {
         $request->validate([
-            'note' => 'nullable|string|max:500'
+            'note' => 'nullable|string|max:500',
         ]);
-        
+
         $item = $this->getApprovalItem($type, $id);
-        
-        if (!$item) {
+
+        if (! $item) {
             return response()->json([
                 'success' => false,
-                'message' => 'Item tidak ditemukan'
+                'message' => 'Item tidak ditemukan',
             ], 404);
         }
-        
+
         DB::beginTransaction();
         try {
             $this->processApproval($type, $item, 'approved', $request->note);
-            
+
             // Log activity (only if spatie/laravel-activitylog is installed)
             if (function_exists('activity')) {
                 activity()
@@ -102,30 +101,30 @@ class ApprovalController extends Controller
                     ->withProperties(['type' => $type, 'action' => 'approved'])
                     ->log('approval_approved');
             }
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Berhasil disetujui',
                 'item' => [
                     'id' => $item->id,
                     'type' => $type,
-                    'status' => 'approved'
-                ]
+                    'status' => 'approved',
+                ],
             ]);
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Approval error: ' . $e->getMessage());
-            
+            Log::error('Approval error: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menyetujui: ' . $e->getMessage()
+                'message' => 'Gagal menyetujui: '.$e->getMessage(),
             ], 500);
         }
     }
-    
+
     /**
      * Reject single item
      */
@@ -133,22 +132,22 @@ class ApprovalController extends Controller
     {
         $request->validate([
             'note' => 'required|string|max:500',
-            'reason' => 'required|string'
+            'reason' => 'required|string',
         ]);
-        
+
         $item = $this->getApprovalItem($type, $id);
-        
-        if (!$item) {
+
+        if (! $item) {
             return response()->json([
                 'success' => false,
-                'message' => 'Item tidak ditemukan'
+                'message' => 'Item tidak ditemukan',
             ], 404);
         }
-        
+
         DB::beginTransaction();
         try {
             $this->processApproval($type, $item, 'rejected', $request->note, $request->reason);
-            
+
             // Log activity (only if spatie/laravel-activitylog is installed)
             if (function_exists('activity')) {
                 activity()
@@ -157,34 +156,34 @@ class ApprovalController extends Controller
                     ->withProperties([
                         'type' => $type,
                         'action' => 'rejected',
-                        'reason' => $request->reason
+                        'reason' => $request->reason,
                     ])
                     ->log('approval_rejected');
             }
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Berhasil ditolak',
                 'item' => [
                     'id' => $item->id,
                     'type' => $type,
-                    'status' => 'rejected'
-                ]
+                    'status' => 'rejected',
+                ],
             ]);
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Rejection error: ' . $e->getMessage());
-            
+            Log::error('Rejection error: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menolak: ' . $e->getMessage()
+                'message' => 'Gagal menolak: '.$e->getMessage(),
             ], 500);
         }
     }
-    
+
     /**
      * Bulk approve multiple items
      */
@@ -194,19 +193,19 @@ class ApprovalController extends Controller
             'items' => 'required|array',
             'items.*.type' => 'required|in:expenses,documents,invoices',
             'items.*.id' => 'required|integer',
-            'note' => 'nullable|string|max:500'
+            'note' => 'nullable|string|max:500',
         ]);
-        
+
         $results = [
             'success' => [],
-            'failed' => []
+            'failed' => [],
         ];
-        
+
         DB::beginTransaction();
         try {
             foreach ($request->items as $itemData) {
                 $item = $this->getApprovalItem($itemData['type'], $itemData['id']);
-                
+
                 if ($item) {
                     try {
                         $this->processApproval($itemData['type'], $item, 'approved', $request->note);
@@ -214,35 +213,35 @@ class ApprovalController extends Controller
                     } catch (\Exception $e) {
                         $results['failed'][] = [
                             'item' => $itemData,
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ];
                     }
                 } else {
                     $results['failed'][] = [
                         'item' => $itemData,
-                        'error' => 'Item not found'
+                        'error' => 'Item not found',
                     ];
                 }
             }
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
-                'message' => count($results['success']) . ' item berhasil disetujui',
-                'results' => $results
+                'message' => count($results['success']).' item berhasil disetujui',
+                'results' => $results,
             ]);
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
-                'message' => 'Bulk approval gagal: ' . $e->getMessage()
+                'message' => 'Bulk approval gagal: '.$e->getMessage(),
             ], 500);
         }
     }
-    
+
     /**
      * Bulk reject multiple items
      */
@@ -253,19 +252,19 @@ class ApprovalController extends Controller
             'items.*.type' => 'required|in:expenses,documents,invoices',
             'items.*.id' => 'required|integer',
             'reason' => 'required|string',
-            'note' => 'nullable|string|max:500'
+            'note' => 'nullable|string|max:500',
         ]);
-        
+
         $results = [
             'success' => [],
-            'failed' => []
+            'failed' => [],
         ];
-        
+
         DB::beginTransaction();
         try {
             foreach ($request->items as $itemData) {
                 $item = $this->getApprovalItem($itemData['type'], $itemData['id']);
-                
+
                 if ($item) {
                     try {
                         $this->processApproval($itemData['type'], $item, 'rejected', $request->note, $request->reason);
@@ -273,51 +272,51 @@ class ApprovalController extends Controller
                     } catch (\Exception $e) {
                         $results['failed'][] = [
                             'item' => $itemData,
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ];
                     }
                 } else {
                     $results['failed'][] = [
                         'item' => $itemData,
-                        'error' => 'Item not found'
+                        'error' => 'Item not found',
                     ];
                 }
             }
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
-                'message' => count($results['success']) . ' item berhasil ditolak',
-                'results' => $results
+                'message' => count($results['success']).' item berhasil ditolak',
+                'results' => $results,
             ]);
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
-                'message' => 'Bulk rejection gagal: ' . $e->getMessage()
+                'message' => 'Bulk rejection gagal: '.$e->getMessage(),
             ], 500);
         }
     }
-    
+
     /**
      * Get all pending approvals by type
      */
     private function getPendingApprovals($type = 'all')
     {
         $approvals = collect();
-        
+
         // Skip expenses - ProjectExpense tidak punya status column
         // if ($type === 'all' || $type === 'expenses') { ... }
-        
+
         if ($type === 'all' || $type === 'documents') {
             $documents = Document::where('status', 'review')
                 ->where('reviewer_id', auth()->id())
                 ->with(['project'])
                 ->get()
-                ->map(function($doc) {
+                ->map(function ($doc) {
                     return [
                         'id' => $doc->id,
                         'type' => 'documents',
@@ -326,35 +325,35 @@ class ApprovalController extends Controller
                         'date' => $doc->created_at,
                         'icon' => 'file-alt',
                         'color' => 'purple',
-                        'url' => route('mobile.approvals.show', ['type' => 'documents', 'id' => $doc->id])
+                        'url' => route('mobile.approvals.show', ['type' => 'documents', 'id' => $doc->id]),
                     ];
                 });
             $approvals = $approvals->merge($documents);
         }
-        
+
         if ($type === 'all' || $type === 'invoices') {
             $invoices = Invoice::where('status', 'draft')
                 ->with(['project', 'client'])
                 ->get()
-                ->map(function($invoice) {
+                ->map(function ($invoice) {
                     return [
                         'id' => $invoice->id,
                         'type' => 'invoices',
-                        'title' => 'Invoice #' . $invoice->invoice_number,
+                        'title' => 'Invoice #'.$invoice->invoice_number,
                         'subtitle' => $invoice->client->name ?? '-',
                         'amount' => $invoice->total_amount,
                         'date' => $invoice->created_at,
                         'icon' => 'file-invoice',
                         'color' => 'green',
-                        'url' => route('mobile.approvals.show', ['type' => 'invoices', 'id' => $invoice->id])
+                        'url' => route('mobile.approvals.show', ['type' => 'invoices', 'id' => $invoice->id]),
                     ];
                 });
             $approvals = $approvals->merge($invoices);
         }
-        
+
         return $approvals->sortBy('date');
     }
-    
+
     /**
      * Get specific approval item by type and id
      */
@@ -371,7 +370,7 @@ class ApprovalController extends Controller
                 return null;
         }
     }
-    
+
     /**
      * Process approval/rejection
      */
@@ -384,20 +383,20 @@ class ApprovalController extends Controller
                     'approved_by' => auth()->id(),
                     'approved_at' => now(),
                     'approval_note' => $note,
-                    'rejection_reason' => $reason
+                    'rejection_reason' => $reason,
                 ]);
                 break;
-                
+
             case 'documents':
                 $item->update([
                     'status' => $action,
                     'reviewed_by' => auth()->id(),
                     'reviewed_at' => now(),
                     'review_note' => $note,
-                    'rejection_reason' => $reason
+                    'rejection_reason' => $reason,
                 ]);
                 break;
-                
+
             case 'invoices':
                 $status = $action === 'approved' ? 'sent' : 'rejected';
                 $item->update([
@@ -405,15 +404,15 @@ class ApprovalController extends Controller
                     'approved_by' => auth()->id(),
                     'approved_at' => now(),
                     'approval_note' => $note,
-                    'rejection_reason' => $reason
+                    'rejection_reason' => $reason,
                 ]);
                 break;
         }
-        
+
         // Send notification to requester
         $this->sendApprovalNotification($item, $action);
     }
-    
+
     /**
      * Count pending approvals by type
      */
@@ -433,7 +432,7 @@ class ApprovalController extends Controller
                 return 0;
         }
     }
-    
+
     /**
      * Send notification about approval decision
      */
@@ -441,7 +440,7 @@ class ApprovalController extends Controller
     {
         $notifiable = null;
         $itemType = 'item';
-        $itemLabel = '#' . $item->id;
+        $itemLabel = '#'.$item->id;
 
         if ($item instanceof ProjectExpense) {
             $notifiable = $item->creator ?? null;

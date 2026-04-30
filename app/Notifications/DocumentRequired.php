@@ -4,14 +4,15 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\WebPush\WebPushMessage;
 use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 class DocumentRequired extends Notification
 {
     use Queueable;
 
     protected $application;
+
     protected $documentName;
 
     /**
@@ -36,9 +37,9 @@ class DocumentRequired extends Notification
      */
     public function toWebPush($notifiable, $notification)
     {
-        $message = $this->documentName 
+        $message = $this->documentName
             ? "Dokumen diperlukan: {$this->documentName}"
-            : "Dokumen tambahan diperlukan";
+            : 'Dokumen tambahan diperlukan';
 
         return (new WebPushMessage)
             ->title('📄 Dokumen Diperlukan')
@@ -48,9 +49,9 @@ class DocumentRequired extends Notification
             ->data([
                 'url' => route('client.applications.show', $this->application->id),
                 'application_id' => $this->application->id,
-                'document' => $this->documentName
+                'document' => $this->documentName,
             ])
-            ->tag('document-required-' . $this->application->id)
+            ->tag('document-required-'.$this->application->id)
             ->requireInteraction(true)
             ->vibrate([200, 100, 200, 100, 200]);
     }
@@ -70,7 +71,7 @@ class DocumentRequired extends Notification
             'application_number' => $this->application->application_number,
             'document_name' => $this->documentName,
             'message' => $message,
-            'url' => route('client.applications.show', $this->application->id)
+            'url' => route('client.applications.show', $this->application->id),
         ];
     }
 }

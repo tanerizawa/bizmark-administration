@@ -2,12 +2,13 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\CompetitorAnalysis;
 use App\Models\SeoScore;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Services\CompetitiveIntelligenceService;
+use App\Services\CompetitorSmartFixService;
 use App\Services\SeoFixService;
 use App\Services\SeoScoringService;
 use Illuminate\Http\Request;
@@ -52,7 +53,7 @@ class SeoCompetitorsController extends Controller
             'opportunity' => CompetitorAnalysis::whereNotNull('our_position')->whereBetween('our_position', [11, 30])->count(),
             'not_ranking' => CompetitorAnalysis::whereNull('our_position')->count(),
             'total_gaps' => CompetitorAnalysis::whereNotNull('content_gaps')
-                ->get()->sum(fn($a) => count($a->content_gaps ?? [])),
+                ->get()->sum(fn ($a) => count($a->content_gaps ?? [])),
             'avg_position' => round(CompetitorAnalysis::whereNotNull('our_position')->avg('our_position') ?? 0, 1),
         ];
 
@@ -88,8 +89,8 @@ class SeoCompetitorsController extends Controller
 
         if ($newAnalysis) {
             $msg = "🔄 Re-analisis selesai untuk \"{$old->keyword}\".\nPosisi: "
-                . ($old->our_position ? "#{$old->our_position}" : 'N/A') . ' → '
-                . ($newAnalysis->our_position ? "#{$newAnalysis->our_position}" : 'N/A');
+                .($old->our_position ? "#{$old->our_position}" : 'N/A').' → '
+                .($newAnalysis->our_position ? "#{$newAnalysis->our_position}" : 'N/A');
 
             return $this->seoRouteFlash('admin.seo.competitor-detail', 'success', $msg, $newAnalysis->id);
         }
@@ -127,18 +128,18 @@ class SeoCompetitorsController extends Controller
             $slug = basename(parse_url($analysis->our_url, PHP_URL_PATH));
             $article = Article::where('slug', $slug)->first();
         }
-        if (!$article) {
+        if (! $article) {
             $article = Article::published()
                 ->where(function ($q) use ($analysis) {
                     $q->where('title', 'LIKE', "%{$analysis->keyword}%")
-                      ->orWhere('meta_keywords', 'LIKE', "%{$analysis->keyword}%")
-                      ->orWhere('meta_title', 'LIKE', "%{$analysis->keyword}%");
+                        ->orWhere('meta_keywords', 'LIKE', "%{$analysis->keyword}%")
+                        ->orWhere('meta_title', 'LIKE', "%{$analysis->keyword}%");
                 })
                 ->orderByDesc('views_count')
                 ->first();
         }
 
-        if (!$article) {
+        if (! $article) {
             return $this->seoBackFlash('error', '❌ Tidak ada artikel terkait yang ditemukan untuk keyword ini.');
         }
 
@@ -166,24 +167,24 @@ class SeoCompetitorsController extends Controller
             $slug = basename(parse_url($analysis->our_url, PHP_URL_PATH));
             $article = Article::where('slug', $slug)->first();
         }
-        if (!$article) {
+        if (! $article) {
             $article = Article::published()
                 ->where(function ($q) use ($analysis) {
                     $q->where('title', 'LIKE', "%{$analysis->keyword}%")
-                      ->orWhere('meta_keywords', 'LIKE', "%{$analysis->keyword}%")
-                      ->orWhere('meta_title', 'LIKE', "%{$analysis->keyword}%");
+                        ->orWhere('meta_keywords', 'LIKE', "%{$analysis->keyword}%")
+                        ->orWhere('meta_title', 'LIKE', "%{$analysis->keyword}%");
                 })
                 ->orderByDesc('views_count')
                 ->first();
         }
 
-        if (!$article) {
+        if (! $article) {
             return $this->seoBackFlash('error', '❌ Tidak ada artikel terkait yang ditemukan untuk keyword ini.');
         }
 
         $score = $scorer->scoreArticle($article);
 
-        $msg = "✅ Verifikasi selesai untuk \"{$article->title}\".\nSkor: {$score->total_score} ({$score->grade})\nRekomendasi tersisa: " . count($score->recommendations ?? []);
+        $msg = "✅ Verifikasi selesai untuk \"{$article->title}\".\nSkor: {$score->total_score} ({$score->grade})\nRekomendasi tersisa: ".count($score->recommendations ?? []);
 
         return $this->seoBackFlash('success', $msg);
     }
@@ -205,12 +206,12 @@ class SeoCompetitorsController extends Controller
     /**
      * Execute comprehensive smart fix via AJAX — returns JSON progress
      */
-    public function executeSmartFix(int $id, \App\Services\CompetitorSmartFixService $fixer)
+    public function executeSmartFix(int $id, CompetitorSmartFixService $fixer)
     {
         $analysis = CompetitorAnalysis::findOrFail($id);
         $article = $this->findLinkedArticle($analysis);
 
-        if (!$article) {
+        if (! $article) {
             // Auto-create article from competitor analysis context
             $result = $fixer->createAndFix($analysis);
         } else {
@@ -218,7 +219,7 @@ class SeoCompetitorsController extends Controller
         }
 
         // Defensive fallback: always provide canonical edit URL (slug-based route model binding).
-        if (empty($result['article_edit_url']) && !empty($result['article_id'])) {
+        if (empty($result['article_edit_url']) && ! empty($result['article_id'])) {
             $resultArticle = Article::find($result['article_id']);
             if ($resultArticle) {
                 $result['article_edit_url'] = route('articles.edit', $resultArticle);
@@ -245,38 +246,38 @@ class SeoCompetitorsController extends Controller
         }
 
         // Exact keyword match
-        if (!$article) {
+        if (! $article) {
             $article = Article::published()
                 ->where(function ($q) use ($analysis) {
                     $q->where('title', 'LIKE', "%{$analysis->keyword}%")
-                      ->orWhere('meta_keywords', 'LIKE', "%{$analysis->keyword}%")
-                      ->orWhere('meta_title', 'LIKE', "%{$analysis->keyword}%");
+                        ->orWhere('meta_keywords', 'LIKE', "%{$analysis->keyword}%")
+                        ->orWhere('meta_title', 'LIKE', "%{$analysis->keyword}%");
                 })
                 ->orderByDesc('views_count')
                 ->first();
         }
 
         // Fuzzy match: split keyword into significant words (>3 chars) and find best match
-        if (!$article) {
+        if (! $article) {
             $words = collect(explode(' ', $analysis->keyword))
-                ->map(fn($w) => mb_strtolower(trim($w)))
-                ->filter(fn($w) => mb_strlen($w) > 3)
+                ->map(fn ($w) => mb_strtolower(trim($w)))
+                ->filter(fn ($w) => mb_strlen($w) > 3)
                 ->values();
 
             if ($words->isNotEmpty()) {
                 $orderBindings = $words
-                    ->map(fn ($w) => '%' . $w . '%')
+                    ->map(fn ($w) => '%'.$w.'%')
                     ->all();
 
                 $article = Article::published()
                     ->where(function ($q) use ($words) {
                         foreach ($words as $word) {
                             $q->orWhere('title', 'LIKE', "%{$word}%")
-                              ->orWhere('slug', 'LIKE', "%{$word}%");
+                                ->orWhere('slug', 'LIKE', "%{$word}%");
                         }
                     })
                     ->orderByRaw(
-                        '(' . $words->map(fn () => 'CASE WHEN LOWER(title) LIKE ? THEN 1 ELSE 0 END')->implode(' + ') . ') DESC',
+                        '('.$words->map(fn () => 'CASE WHEN LOWER(title) LIKE ? THEN 1 ELSE 0 END')->implode(' + ').') DESC',
                         $orderBindings
                     )
                     ->first();

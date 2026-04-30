@@ -3,13 +3,10 @@
 namespace App\Modules\Proyek\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreDocumentRequest;
-use App\Http\Requests\UpdateDocumentRequest;
 use App\Http\Controllers\Traits\AuthorizesRequests;
 use App\Models\Document;
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -22,12 +19,13 @@ class DocumentController extends Controller
     public function __construct()
     {
         $this->authorizePermissions('documents');
-        
+
         // Additional authorization for download
         $this->middleware(function ($request, $next) {
-            if (!auth()->user()->can('documents.view')) {
+            if (! auth()->user()->can('documents.view')) {
                 abort(403, 'Anda tidak memiliki akses untuk mengunduh dokumen.');
             }
+
             return $next($request);
         })->only(['download']);
     }
@@ -62,15 +60,15 @@ class DocumentController extends Controller
         // Search by title or description
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('file_name', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('file_name', 'like', "%{$search}%");
             });
         }
 
         // Only show latest versions by default
-        if (!$request->filled('show_all_versions')) {
+        if (! $request->filled('show_all_versions')) {
             $query->where('is_latest_version', true);
         }
 
@@ -91,18 +89,18 @@ class DocumentController extends Controller
     {
         $projects = Project::orderBy('name')->get();
         $tasks = collect();
-        
+
         // Pre-select project and load tasks if coming from project or task page
-        $selectedProject = $request->filled('project_id') ? 
+        $selectedProject = $request->filled('project_id') ?
             Project::find($request->project_id) : null;
-        
+
         if ($selectedProject) {
             $tasks = Task::where('project_id', $selectedProject->id)->orderBy('title')->get();
         }
-        
-        $selectedTask = $request->filled('task_id') ? 
+
+        $selectedTask = $request->filled('task_id') ?
             Task::find($request->task_id) : null;
-        
+
         return view('documents.create', compact('projects', 'tasks', 'selectedProject', 'selectedTask'));
     }
 
@@ -127,7 +125,7 @@ class DocumentController extends Controller
         // Handle file upload
         if ($request->hasFile('document_file')) {
             $file = $request->file('document_file');
-            $fileName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $fileName = time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
             $filePath = $file->storeAs('documents', $fileName, 'public');
 
             $validated['file_name'] = $file->getClientOriginalName();
@@ -153,20 +151,20 @@ class DocumentController extends Controller
     public function show(Document $document)
     {
         $document->load(['project', 'task', 'uploader', 'parentDocument', 'childDocuments']);
-        
+
         // Update last accessed and download count
         $document->update([
             'download_count' => $document->download_count + 1,
-            'last_accessed_at' => now()
+            'last_accessed_at' => now(),
         ]);
-        
+
         // Get related documents
         $relatedDocuments = Document::where('project_id', $document->project_id)
             ->where('id', '!=', $document->id)
             ->where('is_latest_version', true)
             ->limit(5)
             ->get();
-            
+
         return view('documents.show', compact('document', 'relatedDocuments'));
     }
 
@@ -177,7 +175,7 @@ class DocumentController extends Controller
     {
         $projects = Project::orderBy('name')->get();
         $tasks = Task::where('project_id', $document->project_id)->orderBy('title')->get();
-        
+
         return view('documents.edit', compact('document', 'projects', 'tasks'));
     }
 
@@ -201,7 +199,7 @@ class DocumentController extends Controller
         // Handle file replacement
         if ($request->hasFile('document_file')) {
             $file = $request->file('document_file');
-            
+
             // Validation for new file
             $request->validate([
                 'document_file' => 'file|max:10240|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,zip,rar',
@@ -213,7 +211,7 @@ class DocumentController extends Controller
             }
 
             // Store new file
-            $fileName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $fileName = time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
             $filePath = $file->storeAs('documents', $fileName, 'public');
 
             $validated['file_name'] = $file->getClientOriginalName();
@@ -251,7 +249,7 @@ class DocumentController extends Controller
      */
     public function download(Document $document)
     {
-        if (!$document->file_path || !Storage::disk('public')->exists($document->file_path)) {
+        if (! $document->file_path || ! Storage::disk('public')->exists($document->file_path)) {
             return back()->with('error', 'File tidak ditemukan!');
         }
 

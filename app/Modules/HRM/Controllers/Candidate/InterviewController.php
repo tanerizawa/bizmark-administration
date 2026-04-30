@@ -7,7 +7,6 @@ use App\Models\InterviewSchedule;
 use App\Models\User;
 use App\Notifications\InterviewRescheduleRequestNotification;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class InterviewController extends Controller
 {
@@ -27,7 +26,7 @@ class InterviewController extends Controller
 
         // Calculate time until interview
         $timeUntil = $interview->scheduled_at->diffForHumans();
-        $canJoin = $interview->scheduled_at->subMinutes(15)->isPast() && 
+        $canJoin = $interview->scheduled_at->subMinutes(15)->isPast() &&
                    $interview->scheduled_at->addMinutes($interview->duration_minutes)->isFuture();
 
         // Get interview preparation tips
@@ -121,7 +120,7 @@ class InterviewController extends Controller
             'Login 10-15 menit sebelum jadwal',
         ];
 
-        $specificTips = match($type) {
+        $specificTips = match ($type) {
             'video' => [
                 'Test kamera dan mikrofon Anda',
                 'Pastikan background rapi dan profesional',

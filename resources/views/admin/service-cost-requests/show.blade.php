@@ -147,6 +147,51 @@
                             </a>
                         </p>
                     </div>
+                    @if($serviceRequest->applicant_type === 'badan')
+                        @if($serviceRequest->npwp)
+                            <div>
+                                <label class="text-xs font-medium text-dark-text-secondary block mb-1">NPWP</label>
+                                <p class="text-sm text-dark-text-primary">{{ $serviceRequest->npwp }}</p>
+                            </div>
+                        @endif
+                        @if($serviceRequest->nib)
+                            <div>
+                                <label class="text-xs font-medium text-dark-text-secondary block mb-1">NIB</label>
+                                <p class="text-sm text-dark-text-primary">{{ $serviceRequest->nib }}</p>
+                            </div>
+                        @endif
+                        @if($serviceRequest->business_type)
+                            <div>
+                                <label class="text-xs font-medium text-dark-text-secondary block mb-1">Jenis Badan Usaha</label>
+                                <p class="text-sm text-dark-text-primary">{{ $serviceRequest->business_type_label ?? $serviceRequest->business_type }}</p>
+                            </div>
+                        @endif
+                        @if($serviceRequest->business_sector)
+                            <div>
+                                <label class="text-xs font-medium text-dark-text-secondary block mb-1">Bidang Usaha</label>
+                                <p class="text-sm text-dark-text-primary">{{ $serviceRequest->business_sector }}</p>
+                            </div>
+                        @endif
+                        @if($serviceRequest->pic_name)
+                            <div>
+                                <label class="text-xs font-medium text-dark-text-secondary block mb-1">Contact Person (PIC)</label>
+                                <p class="text-sm text-dark-text-primary">{{ $serviceRequest->pic_name }}{{ $serviceRequest->pic_position ? ' — ' . $serviceRequest->pic_position : '' }}</p>
+                            </div>
+                        @endif
+                    @else
+                        @if($serviceRequest->nik)
+                            <div>
+                                <label class="text-xs font-medium text-dark-text-secondary block mb-1">NIK</label>
+                                <p class="text-sm text-dark-text-primary">{{ $serviceRequest->nik }}</p>
+                            </div>
+                        @endif
+                        @if($serviceRequest->occupation)
+                            <div>
+                                <label class="text-xs font-medium text-dark-text-secondary block mb-1">Pekerjaan</label>
+                                <p class="text-sm text-dark-text-primary">{{ $serviceRequest->occupation }}</p>
+                            </div>
+                        @endif
+                    @endif
                 </div>
             </div>
 
@@ -168,10 +213,14 @@
                         <div>
                             <label class="text-xs font-medium text-dark-text-secondary block mb-1">Layanan Dipilih</label>
                             <div class="space-y-1">
+                                @php
+                                    $servicesByCategory = \App\Models\ServiceCostRequest::getServicesByCategory();
+                                    $serviceMap = $servicesByCategory[$serviceRequest->service_category] ?? [];
+                                @endphp
                                 @foreach($serviceRequest->services_requested as $service)
                                     <p class="text-sm text-dark-text-primary flex items-start">
                                         <i class="fas fa-check text-green-400 mr-2 mt-1 text-xs"></i>
-                                        <span>{{ $service }}</span>
+                                        <span>{{ $serviceMap[$service] ?? $service }}</span>
                                     </p>
                                 @endforeach
                             </div>
@@ -187,6 +236,18 @@
                         <div>
                             <label class="text-xs font-medium text-dark-text-secondary block mb-1">Lokasi Proyek</label>
                             <p class="text-sm text-dark-text-primary">{{ $serviceRequest->project_location }}</p>
+                        </div>
+                    @endif
+                    @if($serviceRequest->estimated_budget)
+                        <div>
+                            <label class="text-xs font-medium text-dark-text-secondary block mb-1">Estimasi Anggaran</label>
+                            <p class="text-sm text-dark-text-primary">{{ $serviceRequest->formatted_budget ?? ('Rp ' . number_format($serviceRequest->estimated_budget,0,',','.')) }}</p>
+                        </div>
+                    @endif
+                    @if($serviceRequest->timeline_expectation)
+                        <div>
+                            <label class="text-xs font-medium text-dark-text-secondary block mb-1">Ekspektasi Timeline</label>
+                            <p class="text-sm text-dark-text-primary">{{ $serviceRequest->timeline_expectation }}</p>
                         </div>
                     @endif
                 </div>
@@ -277,16 +338,49 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('admin.service-cost-requests.send-email', $serviceRequest->request_number) }}" class="pt-2" style="border-top: 1px solid rgba(84, 84, 88, 0.65);">
+                        @if(!empty($serviceRequest->quote_details['attachments']) && is_array($serviceRequest->quote_details['attachments']))
+                            <div class="rounded-apple-lg p-3" style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator);">
+                                <label class="text-xs font-medium text-dark-text-secondary block mb-2">Lampiran Terkirim</label>
+                                <div class="space-y-2 text-sm">
+                                    @foreach($serviceRequest->quote_details['attachments'] as $att)
+                                        <div class="flex items-center justify-between p-2 rounded" style="background:#0b1220;">
+                                            <div class="truncate">
+                                                <a href="{{ asset('storage/'.$att['path']) }}" target="_blank" class="text-apple-blue hover:text-blue-400">{{ $att['name'] }}</a>
+                                                <div class="text-xs text-dark-text-secondary">{{ number_format(($att['size'] ?? 0)/1024,2) }} KB • {{ $att['uploaded_at'] ?? '-' }}</div>
+                                            </div>
+                                            <div class="ml-2">
+                                                <a href="{{ asset('storage/'.$att['path']) }}" download class="btn-secondary px-3 py-1 rounded-apple text-xs">Download</a>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('admin.service-cost-requests.send-email', $serviceRequest->request_number) }}" class="pt-2" style="border-top: 1px solid rgba(84, 84, 88, 0.65);" enctype="multipart/form-data">
                             @csrf
                             <label class="text-xs font-medium text-dark-text-secondary block mb-2">Template Email Manual</label>
                             <div class="mb-2">
                                 <label class="text-[11px] text-dark-text-secondary block mb-1">Subject</label>
                                 <input id="emailSubject" name="email_subject" type="text" value="{{ $defaultEmailSubject }}" class="w-full px-3 py-2 rounded-apple text-sm" style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator); color: var(--dark-text-primary);">
                             </div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <label class="flex items-center gap-2 text-sm text-dark-text-primary">
+                                    <input id="useAIGenerated" type="checkbox" checked>
+                                    <span>Gunakan konten AI</span>
+                                </label>
+                                <input type="hidden" id="regen_notes">
+                                <button type="button" id="regenBtn" class="btn-secondary px-3 py-1 rounded-apple text-xs">Regenerate AI</button>
+                                <p class="text-xs text-dark-text-secondary">Centang untuk mengunci ke konten yang digenerate. Klik Regenerate untuk menghasilkan ulang (halaman akan terbarui otomatis).</p>
+                            </div>
                             <div>
                                 <label class="text-[11px] text-dark-text-secondary block mb-1">Body</label>
                                 <textarea id="emailBody" name="email_body" rows="10" class="w-full px-3 py-2 rounded-apple text-sm" style="background-color: var(--dark-bg-tertiary); border: 1px solid var(--dark-separator); color: var(--dark-text-primary);">{{ $defaultEmailBody }}</textarea>
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-dark-text-secondary block mb-1">Lampiran (opsional)</label>
+                                <input type="file" name="attachments[]" multiple class="w-full text-sm" />
+                                <p class="text-xs text-dark-text-secondary mt-1">Dukung format PDF, DOC, DOCX, JPG, PNG. Maks 5MB per file.</p>
                             </div>
                             <div class="flex gap-2 mt-2">
                                 <button type="button" onclick="copyField('emailSubject')" class="btn-secondary px-3 py-2 rounded-apple text-xs font-medium">
@@ -510,12 +604,133 @@ function copyField(fieldId) {
 
     const value = el.value || el.textContent || '';
     navigator.clipboard.writeText(value).then(() => {
-        alert('Konten berhasil dicopy');
+        // try to find the triggering button element; fall back to document.activeElement
+        let btn = null;
+        try { btn = document.activeElement && document.activeElement.tagName === 'BUTTON' ? document.activeElement : null; } catch (_) { btn = null; }
+        if (!btn) {
+            // find first button that mentions 'Copy' near the field (best-effort)
+            const nearby = document.querySelectorAll('button');
+            for (const b of nearby) {
+                if (b.innerText && b.innerText.toLowerCase().includes('copy')) { btn = b; break; }
+            }
+        }
+        if (btn) { const orig = btn.innerHTML; btn.innerHTML = '<i class="fas fa-check mr-1"></i>Tersalin'; setTimeout(() => btn.innerHTML = orig, 2000); }
     }).catch(() => {
         alert('Gagal copy otomatis. Silakan copy manual.');
     });
 }
 </script>
+
+<script>
+// Toggle use of AI-generated content (lock/unlock subject & body)
+document.addEventListener('DOMContentLoaded', function(){
+    const useAi = document.getElementById('useAIGenerated');
+    const subj = document.getElementById('emailSubject');
+    const body = document.getElementById('emailBody');
+
+    // store generated originals to restore if needed
+    const generatedSubject = subj ? subj.value : '';
+    const generatedBody = body ? body.value : '';
+
+    function setLocked(locked){
+        if (!subj || !body) return;
+        subj.readOnly = locked;
+        body.readOnly = locked;
+        if (locked) {
+            subj.classList.add('opacity-90');
+            body.classList.add('opacity-90');
+        } else {
+            subj.classList.remove('opacity-90');
+            body.classList.remove('opacity-90');
+        }
+    }
+
+    if (useAi) {
+        setLocked(useAi.checked);
+        useAi.addEventListener('change', function(){
+            if (this.checked) {
+                // restore generated content
+                subj.value = generatedSubject;
+                body.value = generatedBody;
+                setLocked(true);
+            } else {
+                setLocked(false);
+            }
+        });
+    }
+
+    // Hook regen button to collect optional notes and submit regenerate request
+    const regenBtn = document.getElementById('regenBtn');
+    if (regenBtn) {
+        regenBtn.addEventListener('click', function(e){
+            const note = prompt('Arahan/penjelasan singkat untuk regenerate (opsional)');
+            const notesVal = note || '';
+
+            // build and submit a POST form to the regenerate route to avoid nested forms
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route('admin.service-cost-requests.regenerate-content', $serviceRequest->request_number) }}';
+
+            // CSRF token
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+
+            // regen_notes field
+            const rn = document.createElement('input');
+            rn.type = 'hidden';
+            rn.name = 'regen_notes';
+            rn.value = notesVal;
+            form.appendChild(rn);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+    }
+});
+</script>
+
+@if(($serviceRequest->ai_quote_status ?? '') === 'pending')
+<script>
+// Poll API status and reload when AI quote completes
+(function(){
+    const requestNumber = '{{ $serviceRequest->request_number }}';
+    let attempts = 0;
+    const maxAttempts = 120; // ~10 minutes if interval 5s
+    const intervalMs = 5000;
+
+    const statusEl = document.createElement('div');
+    statusEl.id = 'ai-poll-status';
+    statusEl.style = 'position:fixed;bottom:16px;right:16px;z-index:60;background:rgba(17,24,39,0.95);color:#fff;padding:8px 10px;border-radius:8px;font-size:12px;box-shadow:0 6px 18px rgba(2,6,23,0.5);';
+    statusEl.textContent = 'AI sedang memproses quote... Halaman akan otomatis diperbarui.';
+    document.body.appendChild(statusEl);
+
+    const timer = setInterval(async function(){
+        attempts++;
+        try {
+            const res = await fetch('/api/status/' + encodeURIComponent(requestNumber), {cache: 'no-store'});
+            if (!res.ok) throw new Error('network');
+            const json = await res.json();
+            if (json.success && json.data && json.data.status === 'quoted') {
+                clearInterval(timer);
+                statusEl.textContent = 'AI selesai. Memuat ulang...';
+                setTimeout(function(){ location.reload(); }, 600);
+                return;
+            }
+        } catch (e) {
+            // ignore transient errors
+        }
+
+        if (attempts >= maxAttempts) {
+            clearInterval(timer);
+            statusEl.textContent = 'AI masih diproses. Silakan refresh manual jika diperlukan.';
+        }
+    }, intervalMs);
+})();
+</script>
+@endif
 
 <!-- Archive Modal -->
 <div id="archiveModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">

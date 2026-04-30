@@ -9,9 +9,9 @@ use App\Models\Project;
 use App\Services\OpenRouterService;
 use App\Services\ProjectContextBuilder;
 use App\Services\TemplateExtractor;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +21,12 @@ class ParaphraseDocumentJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $timeout = 600; // 10 minutes
+
+    public array $backoff = [60, 300, 900];
+
+    public bool $deleteWhenMissingModels = true;
 
     /**
      * Create a new job instance.
@@ -42,7 +47,7 @@ class ParaphraseDocumentJob implements ShouldQueue
         ProjectContextBuilder $contextBuilder
     ): void {
         $startTime = microtime(true);
-        
+
         // Create processing log
         $log = AIProcessingLog::create([
             'template_id' => $this->templateId,
@@ -62,11 +67,11 @@ class ParaphraseDocumentJob implements ShouldQueue
 
             // Extract text from template
             $extractionResult = $extractor->extractFromFile(
-                storage_path('app/' . $template->file_path)
+                storage_path('app/'.$template->file_path)
             );
 
-            if (!$extractionResult['success']) {
-                throw new \Exception('Template extraction failed: ' . $extractionResult['error']);
+            if (! $extractionResult['success']) {
+                throw new \Exception('Template extraction failed: '.$extractionResult['error']);
             }
 
             $templateText = $extractionResult['text'];
@@ -81,9 +86,9 @@ class ParaphraseDocumentJob implements ShouldQueue
                     $context
                 );
 
-                if (!$validation['valid']) {
+                if (! $validation['valid']) {
                     throw new \Exception(
-                        'Missing required fields: ' . implode(', ', $validation['missing_fields'])
+                        'Missing required fields: '.implode(', ', $validation['missing_fields'])
                     );
                 }
             }
@@ -91,8 +96,8 @@ class ParaphraseDocumentJob implements ShouldQueue
             // Paraphrase document
             $result = $openRouter->paraphraseDocument($templateText, $context);
 
-            if (!$result['success']) {
-                throw new \Exception('AI paraphrasing failed: ' . $result['error']);
+            if (! $result['success']) {
+                throw new \Exception('AI paraphrasing failed: '.$result['error']);
             }
 
             // Calculate duration
@@ -103,7 +108,7 @@ class ParaphraseDocumentJob implements ShouldQueue
                 'project_id' => $this->projectId,
                 'template_id' => $this->templateId,
                 'ai_log_id' => $log->id,
-                'title' => $template->name . ' - ' . $project->name,
+                'title' => $template->name.' - '.$project->name,
                 'content' => $result['full_text'],
                 'sections' => $result['chunks'] ?? null,
                 'status' => 'draft',
@@ -128,7 +133,7 @@ class ParaphraseDocumentJob implements ShouldQueue
                 ],
             ]);
 
-            Log::info("Document paraphrasing completed", [
+            Log::info('Document paraphrasing completed', [
                 'project_id' => $this->projectId,
                 'template_id' => $this->templateId,
                 'draft_id' => $draft->id,
@@ -146,7 +151,7 @@ class ParaphraseDocumentJob implements ShouldQueue
                 ]),
             ]);
 
-            Log::error("Document paraphrasing failed", [
+            Log::error('Document paraphrasing failed', [
                 'project_id' => $this->projectId,
                 'template_id' => $this->templateId,
                 'error' => $e->getMessage(),

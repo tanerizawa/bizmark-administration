@@ -2,9 +2,9 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\MetaAbTest;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Services\MetaAbTestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -77,6 +77,7 @@ class SeoAbTestsController extends Controller
         ]);
 
         $winnerLabel = $winner === 'b' ? 'B (AI)' : ($winner === 'a' ? 'A (Original)' : 'Inconclusive');
+
         return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "Test #{$test->id} dievaluasi: Winner = {$winnerLabel} (confidence {$confidence}%)");
     }
 
@@ -112,7 +113,7 @@ class SeoAbTestsController extends Controller
         }
 
         $article = $test->article;
-        if (!$article) {
+        if (! $article) {
             return $this->seoRouteFlash('admin.seo.ab-tests', 'error', 'Artikel tidak ditemukan.');
         }
 
@@ -196,14 +197,25 @@ class SeoAbTestsController extends Controller
         $pPool = ($test->variant_a_clicks + $test->variant_b_clicks) / ($nA + $nB);
         $se = sqrt($pPool * (1 - $pPool) * (1 / $nA + 1 / $nB));
 
-        if ($se == 0) return 0;
+        if ($se == 0) {
+            return 0;
+        }
 
         $z = abs($pA - $pB) / $se;
 
-        if ($z >= 2.576) return 99;
-        if ($z >= 1.960) return 95;
-        if ($z >= 1.645) return 90;
-        if ($z >= 1.282) return 80;
+        if ($z >= 2.576) {
+            return 99;
+        }
+        if ($z >= 1.960) {
+            return 95;
+        }
+        if ($z >= 1.645) {
+            return 90;
+        }
+        if ($z >= 1.282) {
+            return 80;
+        }
+
         return round(min($z / 1.645 * 90, 89), 1);
     }
 
@@ -218,4 +230,3 @@ class SeoAbTestsController extends Controller
         return $this->seoRouteFlash('admin.seo.ab-tests', 'success', "A/B test generation selesai.\n{$output}");
     }
 }
-

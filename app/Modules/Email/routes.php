@@ -1,14 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Modules\Email\Controllers\Admin\EmailManagementController;
-use App\Modules\Email\Controllers\Admin\EmailCampaignController;
-use App\Modules\Email\Controllers\Admin\EmailInboxController;
-use App\Modules\Email\Controllers\Admin\EmailSubscriberController;
-use App\Modules\Email\Controllers\Admin\EmailTemplateController;
-use App\Modules\Email\Controllers\Admin\EmailSettingsController;
 use App\Modules\Email\Controllers\Admin\EmailAccountController;
 use App\Modules\Email\Controllers\Admin\EmailAssignmentController;
+use App\Modules\Email\Controllers\Admin\EmailCampaignController;
+use App\Modules\Email\Controllers\Admin\EmailInboxController;
+use App\Modules\Email\Controllers\Admin\EmailManagementController;
+use App\Modules\Email\Controllers\Admin\EmailSettingsController;
+use App\Modules\Email\Controllers\Admin\EmailSubscriberController;
+use App\Modules\Email\Controllers\Admin\EmailTemplateController;
+use Illuminate\Support\Facades\Route;
 
 Route::name('admin.')->middleware(['web', 'auth', 'email.access'])->prefix('admin')->group(function () {
     // Email Management Hub (Unified Tab Interface)
@@ -28,6 +28,9 @@ Route::name('admin.')->middleware(['web', 'auth', 'email.access'])->prefix('admi
     Route::post('campaigns/{id}/cancel', [EmailCampaignController::class, 'cancel'])
         ->middleware('permission:email.manage_campaigns')
         ->name('campaigns.cancel');
+    Route::get('campaigns/{id}/export', [EmailCampaignController::class, 'export'])
+        ->middleware('permission:email.manage_campaigns')
+        ->name('campaigns.export');
 
     // Email Inbox
     Route::get('inbox', [EmailInboxController::class, 'index'])
@@ -39,6 +42,9 @@ Route::name('admin.')->middleware(['web', 'auth', 'email.access'])->prefix('admi
     Route::post('inbox/send', [EmailInboxController::class, 'send'])
         ->middleware('permission:email.send_email')
         ->name('inbox.send');
+    Route::post('inbox/generate', [EmailInboxController::class, 'generate'])
+        ->middleware('permission:email.send_email')
+        ->name('inbox.generate');
     Route::delete('inbox/batch-delete', [EmailInboxController::class, 'batchDelete'])
         ->middleware('permission:email.manage')
         ->name('inbox.batch-delete');

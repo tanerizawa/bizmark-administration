@@ -3,148 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline - Bizmark.ID</title>
+    <title>Offline — Bizmark.ID</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
-            color: #fff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0f1e;
+            color: #f1f5f9;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 2rem;
         }
-        
-        .container {
-            text-align: center;
-            max-width: 500px;
-        }
-        
+        .container { text-align: center; max-width: 420px; }
         .icon {
-            font-size: 80px;
-            margin-bottom: 30px;
-            opacity: 0.5;
+            width: 80px; height: 80px;
+            background: rgba(59,130,246,.12);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
         }
-        
-        h1 {
-            font-size: 32px;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #007AFF 0%, #34C759 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        p {
-            font-size: 18px;
-            color: rgba(235, 235, 245, 0.7);
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
+        .icon svg { width: 36px; height: 36px; fill: none; stroke: #3b82f6; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: .75rem; color: #f1f5f9; }
+        p { color: #94a3b8; line-height: 1.6; margin-bottom: 1.5rem; }
         .btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
-            color: #fff;
-            padding: 14px 32px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 122, 255, 0.3);
+            display: inline-flex; align-items: center; gap: .5rem;
+            padding: .75rem 1.5rem; font-size: .9375rem; font-weight: 600;
+            border-radius: 10px; border: none; cursor: pointer;
+            background: #3b82f6; color: #fff;
+            text-decoration: none; transition: background .2s;
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 30px rgba(0, 122, 255, 0.4);
-        }
-        
-        .status {
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .status-text {
-            font-size: 14px;
-            color: rgba(235, 235, 245, 0.5);
-            margin-bottom: 10px;
-        }
-        
-        .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
+        .btn:hover { background: #2563eb; }
+        .btn i { font-size: .875rem; }
+        .status { font-size: .75rem; color: #475569; margin-top: 2rem; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="icon pulse">📡</div>
-        <h1>Anda Sedang Offline</h1>
-        <p>Sepertinya koneksi internet Anda terputus. Halaman ini memerlukan koneksi internet untuk ditampilkan.</p>
-        
-        <button onclick="location.reload()" class="btn">
-            🔄 Coba Lagi
-        </button>
-        
-        <div class="status">
-            <div class="status-text">Status Koneksi</div>
-            <div id="connection-status" style="font-weight: 600; font-size: 16px;">
-                🔴 Tidak Ada Koneksi
-            </div>
+        <div class="icon">
+            <svg viewBox="0 0 24 24">
+                <line x1="1" y1="1" x2="23" y2="23"/>
+                <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+                <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+                <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+                <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                <line x1="12" y1="20" x2="12.01" y2="20"/>
+            </svg>
         </div>
-        
-        <p style="margin-top: 30px; font-size: 14px;">
-            💡 Tip: Beberapa halaman mungkin masih tersedia secara offline.<br>
-            <a href="/" style="color: #007AFF; text-decoration: none;">Kembali ke Beranda</a>
-        </p>
+        <h1>Koneksi Terputus</h1>
+        <p>Anda sedang offline. Periksa koneksi internet Anda dan coba lagi. Beberapa halaman yang sudah dikunjungi sebelumnya mungkin masih bisa diakses.</p>
+        <button class="btn" onclick="window.location.reload()">
+            <span>&#x21bb;</span> Coba Lagi
+        </button>
+        <div class="status">
+            <span id="onlineStatus">Menunggu koneksi...</span>
+        </div>
     </div>
-    
     <script>
-        // Check connection status
-        function updateConnectionStatus() {
-            const statusEl = document.getElementById('connection-status');
-            
+        function updateOnlineStatus() {
+            const el = document.getElementById('onlineStatus');
             if (navigator.onLine) {
-                statusEl.innerHTML = '🟢 Koneksi Tersambung';
-                statusEl.style.color = '#34C759';
-                
-                // Auto reload after 2 seconds
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
+                el.textContent = 'Koneksi tersedia — memuat ulang...';
+                setTimeout(function() { window.location.reload(); }, 1500);
             } else {
-                statusEl.innerHTML = '🔴 Tidak Ada Koneksi';
-                statusEl.style.color = '#FF3B30';
+                el.textContent = 'Masih offline. Silakan periksa koneksi Anda.';
             }
         }
-        
-        // Listen for online/offline events
-        window.addEventListener('online', updateConnectionStatus);
-        window.addEventListener('offline', updateConnectionStatus);
-        
-        // Check immediately
-        updateConnectionStatus();
-        
-        // Check periodically
-        setInterval(updateConnectionStatus, 3000);
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
     </script>
 </body>
 </html>

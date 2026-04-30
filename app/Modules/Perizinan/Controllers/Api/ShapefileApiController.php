@@ -9,10 +9,6 @@ use App\Models\ShapefileProject;
 use App\Modules\Perizinan\Services\ShapefileService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ShapefileApiController extends Controller
@@ -56,15 +52,15 @@ class ShapefileApiController extends Controller
         $maxPoints = config('shapefile.max_points', 500);
         if (count($validated['coordinates']) > $maxPoints) {
             return response()->json([
-                'error' => "Polygon tidak boleh lebih dari {$maxPoints} titik koordinat."
+                'error' => "Polygon tidak boleh lebih dari {$maxPoints} titik koordinat.",
             ], 422);
         }
 
         // Server-side check: block registered emails from unauthenticated requests
         $clientAuth = auth('client')->user();
-        if (!$clientAuth && Client::where('email', $validated['email'])->exists()) {
+        if (! $clientAuth && Client::where('email', $validated['email'])->exists()) {
             return response()->json([
-                'error' => 'Email sudah terdaftar. Silakan login terlebih dahulu.'
+                'error' => 'Email sudah terdaftar. Silakan login terlebih dahulu.',
             ], 403);
         }
 
@@ -98,7 +94,7 @@ class ShapefileApiController extends Controller
                 'company_name' => $validated['company_name'] ?? '-',
                 'phone' => $validated['phone'],
                 'contact_person' => $validated['contact_person'] ?? $validated['name'],
-                'business_activity' => 'Pembuatan file SHP untuk lahan: ' . $validated['name'],
+                'business_activity' => 'Pembuatan file SHP untuk lahan: '.$validated['name'],
                 'form_data' => [
                     'tool' => 'polygon_shp_maker',
                     'project_name' => $validated['name'],
@@ -144,7 +140,7 @@ class ShapefileApiController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            $fullPath = storage_path('app/' . $zipPath);
+            $fullPath = storage_path('app/'.$zipPath);
             $filename = basename($zipPath);
 
             return response()->download($fullPath, $filename, [
@@ -152,7 +148,7 @@ class ShapefileApiController extends Controller
             ])->deleteFileAfterSend(false);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Gagal membuat file SHP: ' . $e->getMessage()
+                'error' => 'Gagal membuat file SHP: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -209,7 +205,7 @@ class ShapefileApiController extends Controller
         $clientAuth = auth('client')->user();
 
         if (
-            !$clientAuth &&
+            ! $clientAuth &&
             $project->session_token !== $sessionToken &&
             $project->email !== $request->input('email')
         ) {
@@ -231,7 +227,7 @@ class ShapefileApiController extends Controller
             ->setOption('isRemoteEnabled', false)
             ->setOption('defaultFont', 'DejaVu Sans');
 
-        $filename = 'Laporan-Lokasi-' . Str::slug($project->name) . '-' . $project->id . '.pdf';
+        $filename = 'Laporan-Lokasi-'.Str::slug($project->name).'-'.$project->id.'.pdf';
 
         return $pdf->download($filename);
     }
@@ -256,7 +252,7 @@ class ShapefileApiController extends Controller
         $clientAuth = auth('client')->user();
 
         if (
-            !$clientAuth &&
+            ! $clientAuth &&
             $project->session_token !== $sessionToken &&
             $project->email !== $request->input('email')
         ) {

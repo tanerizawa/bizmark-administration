@@ -12,9 +12,7 @@ class AdminNoteNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(private ApplicationNote $note)
-    {
-    }
+    public function __construct(private ApplicationNote $note) {}
 
     public function via(object $notifiable): array
     {
@@ -25,15 +23,15 @@ class AdminNoteNotification extends Notification implements ShouldQueue
     {
         $application = $this->note->application;
         $preview = \Str::limit($this->note->note, 100);
-        
+
         return (new MailMessage)
-            ->subject('Pesan Baru dari Admin - ' . $application->application_number)
-            ->greeting('Halo ' . $notifiable->name . ',')
+            ->subject('Pesan Baru dari Admin - '.$application->application_number)
+            ->greeting('Halo '.$notifiable->name.',')
             ->line('Anda menerima pesan baru dari admin terkait permohonan izin Anda:')
-            ->line('**Nomor Permohonan:** ' . $application->application_number)
-            ->line('**Dari:** ' . $this->note->author->name)
+            ->line('**Nomor Permohonan:** '.$application->application_number)
+            ->line('**Dari:** '.$this->note->author->name)
             ->line('**Pesan:**')
-            ->line('"' . $preview . '"')
+            ->line('"'.$preview.'"')
             ->action('Lihat Permohonan', route('client.applications.show', $application->id))
             ->line('Terima kasih telah menggunakan layanan kami.');
     }

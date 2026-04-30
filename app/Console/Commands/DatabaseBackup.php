@@ -33,8 +33,9 @@ class DatabaseBackup extends Command
         $type = $this->argument('type');
         $scriptPath = base_path('scripts/db-backup.sh');
 
-        if (!File::exists($scriptPath)) {
+        if (! File::exists($scriptPath)) {
             $this->error('Backup script not found!');
+
             return Command::FAILURE;
         }
 
@@ -61,6 +62,7 @@ class DatabaseBackup extends Command
         if ($process->getExitCode() !== 0) {
             $this->error('');
             $this->error('❌ Backup failed!');
+
             return Command::FAILURE;
         }
 
@@ -74,6 +76,7 @@ class DatabaseBackup extends Command
             if ($verify->getExitCode() !== 0) {
                 $this->error('');
                 $this->error('❌ Backup verification failed!');
+
                 return Command::FAILURE;
             }
         }
@@ -81,6 +84,7 @@ class DatabaseBackup extends Command
         if ($process->getExitCode() === 0) {
             $this->info('');
             $this->info('✅ Backup completed successfully!');
+
             return Command::SUCCESS;
         }
 

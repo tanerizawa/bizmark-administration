@@ -44,7 +44,7 @@ class DirectIncomeController extends Controller
                 ], 422);
             }
 
-            $payment = new ProjectPayment();
+            $payment = new ProjectPayment;
             $payment->project_id = $project->id;
             $payment->invoice_id = null;
             $payment->payment_date = $validated['payment_date'];
@@ -62,25 +62,25 @@ class DirectIncomeController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pemasukan berhasil dicatat! Jumlah: Rp ' . number_format($validated['amount'], 0, ',', '.'),
+                'message' => 'Pemasukan berhasil dicatat! Jumlah: Rp '.number_format($validated['amount'], 0, ',', '.'),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error storing direct income: ' . $e->getMessage(), [
+            Log::error('Error storing direct income: '.$e->getMessage(), [
                 'project_id' => $project->id,
                 'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mencatat pemasukan: ' . $e->getMessage(),
+                'message' => 'Gagal mencatat pemasukan: '.$e->getMessage(),
             ], 500);
         }
     }
 
     public function edit(Project $project, ProjectPayment $payment)
     {
-        if (!$this->belongsToProject($payment, $project)) {
+        if (! $this->belongsToProject($payment, $project)) {
             return response()->json(['success' => false, 'message' => 'Invalid payment'], 403);
         }
 
@@ -100,7 +100,7 @@ class DirectIncomeController extends Controller
 
     public function update(Request $request, Project $project, ProjectPayment $payment)
     {
-        if (!$this->belongsToProject($payment, $project)) {
+        if (! $this->belongsToProject($payment, $project)) {
             return response()->json(['success' => false, 'message' => 'Invalid payment'], 403);
         }
 
@@ -144,11 +144,11 @@ class DirectIncomeController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pemasukan berhasil diperbarui! Jumlah: Rp ' . number_format($validated['amount'], 0, ',', '.'),
+                'message' => 'Pemasukan berhasil diperbarui! Jumlah: Rp '.number_format($validated['amount'], 0, ',', '.'),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error updating direct income: ' . $e->getMessage(), [
+            Log::error('Error updating direct income: '.$e->getMessage(), [
                 'project_id' => $project->id,
                 'payment_id' => $payment->id,
                 'trace' => $e->getTraceAsString(),
@@ -156,14 +156,14 @@ class DirectIncomeController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memperbarui pemasukan: ' . $e->getMessage(),
+                'message' => 'Gagal memperbarui pemasukan: '.$e->getMessage(),
             ], 500);
         }
     }
 
     public function destroy(Project $project, ProjectPayment $payment)
     {
-        if (!$this->belongsToProject($payment, $project)) {
+        if (! $this->belongsToProject($payment, $project)) {
             return response()->json(['success' => false, 'message' => 'Invalid payment'], 403);
         }
 
@@ -177,11 +177,11 @@ class DirectIncomeController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pemasukan berhasil dihapus. Jumlah: Rp ' . number_format($amount, 0, ',', '.'),
+                'message' => 'Pemasukan berhasil dihapus. Jumlah: Rp '.number_format($amount, 0, ',', '.'),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error deleting direct income: ' . $e->getMessage(), [
+            Log::error('Error deleting direct income: '.$e->getMessage(), [
                 'project_id' => $project->id,
                 'payment_id' => $payment->id,
                 'trace' => $e->getTraceAsString(),
@@ -189,7 +189,7 @@ class DirectIncomeController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus pemasukan: ' . $e->getMessage(),
+                'message' => 'Gagal menghapus pemasukan: '.$e->getMessage(),
             ], 500);
         }
     }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class OpsController
 {
@@ -26,7 +26,7 @@ class OpsController
         $allOk = true;
         foreach ($targets as $name => $path) {
             $results[$name] = $this->checkDirectory((string) $path, $name, true);
-            if (!($results[$name]['ok'] ?? false)) {
+            if (! ($results[$name]['ok'] ?? false)) {
                 $allOk = false;
             }
         }
@@ -58,13 +58,14 @@ class OpsController
             'error' => null,
         ];
 
-        if (!$row['exists'] || !$row['is_dir']) {
+        if (! $row['exists'] || ! $row['is_dir']) {
             if ($create) {
                 try {
                     File::ensureDirectoryExists($path);
                     clearstatcache(true, $path);
                 } catch (\Throwable $e) {
                     $row['error'] = "Cannot create directory: {$e->getMessage()}";
+
                     return $row;
                 }
 
@@ -73,25 +74,29 @@ class OpsController
                 $row['writable'] = is_writable($path);
             } else {
                 $row['error'] = 'Directory missing';
+
                 return $row;
             }
         }
 
-        if (!$row['writable']) {
+        if (! $row['writable']) {
             $row['error'] = 'Directory not writable';
+
             return $row;
         }
 
         try {
-            $file = $path . DIRECTORY_SEPARATOR . '.permcheck-' . bin2hex(random_bytes(8));
-            file_put_contents($file, "permcheck {$name} " . date(DATE_ATOM));
+            $file = $path.DIRECTORY_SEPARATOR.'.permcheck-'.bin2hex(random_bytes(8));
+            file_put_contents($file, "permcheck {$name} ".date(DATE_ATOM));
             @unlink($file);
         } catch (\Throwable $e) {
             $row['error'] = "Write test failed: {$e->getMessage()}";
+
             return $row;
         }
 
         $row['ok'] = true;
+
         return $row;
     }
 }

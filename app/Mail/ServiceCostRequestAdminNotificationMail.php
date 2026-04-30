@@ -13,14 +13,12 @@ class ServiceCostRequestAdminNotificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public ServiceCostRequest $serviceRequest)
-    {
-    }
+    public function __construct(public ServiceCostRequest $serviceRequest) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Lead Permohonan Baru - ' . $this->serviceRequest->request_number,
+            subject: 'Lead Permohonan Baru - '.$this->serviceRequest->request_number,
         );
     }
 

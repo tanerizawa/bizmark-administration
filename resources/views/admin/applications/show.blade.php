@@ -272,7 +272,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-white mb-2">Ubah Status</label>
-                        <select name="status" class="form-control bg-dark-secondary border-dark-border text-white focus:border-apple-blue focus:ring-apple-blue" required>
+                        <select name="status" class="w-full bg-dark-secondary border border-dark-border text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-apple-blue" required>
                             <option value="pending" {{ $application->status === 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="reviewed" {{ $application->status === 'reviewed' ? 'selected' : '' }}>Direview</option>
                             <option value="interview" {{ $application->status === 'interview' ? 'selected' : '' }}>Interview</option>
@@ -285,7 +285,7 @@
                         <label class="block text-sm font-medium text-white mb-2">
                             <i class="fas fa-comment-alt mr-1"></i>Catatan
                         </label>
-                        <textarea name="notes" rows="4" class="form-control w-full bg-dark-secondary border-dark-border text-white focus:border-apple-blue focus:ring-apple-blue text-sm" placeholder="Catatan akan dikirim ke pelamar via email...">{{ $application->notes }}</textarea>
+                        <textarea name="notes" rows="4" class="w-full bg-dark-secondary border border-dark-border text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-apple-blue" placeholder="Catatan akan dikirim ke pelamar via email...">{{ $application->notes }}</textarea>
                         <p class="text-xs mt-1" style="color: rgba(235,235,245,0.5);">
                             <i class="fas fa-envelope mr-1"></i>Email notifikasi otomatis terkirim
                         </p>

@@ -29,9 +29,9 @@ class TestAssignedMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         $jobTitle = $this->testSession->jobApplication?->jobVacancy?->title ?? 'Job Position';
-        
+
         return new Envelope(
-            subject: 'Assessment Invitation - ' . $jobTitle,
+            subject: 'Assessment Invitation - '.$jobTitle,
         );
     }
 

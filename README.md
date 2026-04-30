@@ -110,8 +110,63 @@ konsultan perizinan. Platform ini mencakup:
 ### Frontend
 - **Vite 7** + **Tailwind CSS 4**
 - **Alpine.js 3** (+ collapse plugin)
+- **Blade Component Library** — 27 `x-ui.*` components di [`resources/views/components/ui/`](resources/views/components/ui/)
+- **Design Tokens (CSS Custom Properties)** — 3-layer token architecture di [`resources/css/design-tokens.css`](resources/css/design-tokens.css)
 - Bootstrap 5 (beberapa view legacy), SCSS
 - AOS (animate on scroll), Font Awesome 7
+
+### Blade Component Library (`x-ui.*`)
+
+27 komponen UI di [`resources/views/components/ui/`](resources/views/components/ui/), dipanggil dengan prefix `x-ui.*`:
+
+**Tier 1 — Core:**
+| Component | File | Deskripsi |
+|-----------|------|-----------|
+| [`x-ui.button`](resources/views/components/ui/button.blade.php) | `button.blade.php` | 5 variants, 3 sizes, link mode, loading state |
+| [`x-ui.badge`](resources/views/components/ui/badge.blade.php) | `badge.blade.php` | 5 color variants, pill/dot, dot indicator |
+| [`x-ui.card`](resources/views/components/ui/card.blade.php) | `card.blade.php` | 3 variants, 4 padding sizes, header/footer slots |
+| [`x-ui.input`](resources/views/components/ui/input.blade.php) | `input.blade.php` | 7 types, leading/trailing icon, error state, helper text |
+| [`x-ui.select`](resources/views/components/ui/select.blade.php) | `select.blade.php` | Native select + Alpine.js searchable variant |
+| [`x-ui.textarea`](resources/views/components/ui/textarea.blade.php) | `textarea.blade.php` | Character counter via Alpine.js, resize control |
+| [`x-ui.checkbox`](resources/views/components/ui/checkbox.blade.php) | `checkbox.blade.php` | 3 sizes, indeterminate state, description text |
+| [`x-ui.toggle`](resources/views/components/ui/toggle.blade.php) | `toggle.blade.php` | Alpine.js switch, 4 color variants, 3 sizes |
+| [`x-ui.alert`](resources/views/components/ui/alert.blade.php) | `alert.blade.php` | 4 variants, dismissible with Alpine.js, icon |
+| [`x-ui.stat-card`](resources/views/components/ui/stat-card.blade.php) | `stat-card.blade.php` | Trend indicator, 5 color variants, icon |
+
+**Tier 2 — Interactive (Alpine.js):**
+| Component | File | Deskripsi |
+|-----------|------|-----------|
+| [`x-ui.modal`](resources/views/components/ui/modal.blade.php) | `modal.blade.php` | Alpine.js + x-teleport, 5 sizes, backdrop |
+| [`x-ui.dropdown`](resources/views/components/ui/dropdown.blade.php) | `dropdown.blade.php` | Alpine.js, left/right align, transition |
+| [`x-ui.tabs`](resources/views/components/ui/tabs.blade.php) | `tabs.blade.php` | Alpine.js, underline/pills variants, badge support |
+| [`x-ui.table`](resources/views/components/ui/table.blade.php) | `table.blade.php` | Scoped slots per column, sortable, striped, hoverable |
+| [`x-ui.pagination`](resources/views/components/ui/pagination.blade.php) | `pagination.blade.php` | Laravel Paginator, simple/full variants |
+| [`x-ui.toast`](resources/views/components/ui/toast.blade.php) | `toast.blade.php` | Global notification via `$dispatch('toast', {...})` |
+| [`x-ui.progress`](resources/views/components/ui/progress.blade.php) | `progress.blade.php` | Determinate + indeterminate, 5 color variants |
+| [`x-ui.skeleton`](resources/views/components/ui/skeleton.blade.php) | `skeleton.blade.php` | text/circle/rect/card/table variants |
+
+**Tier 3 — Layout & Navigation:**
+| Component | File | Deskripsi |
+|-----------|------|-----------|
+| [`x-ui.breadcrumb`](resources/views/components/ui/breadcrumb.blade.php) | `breadcrumb.blade.php` | Chevron/slash/dot separators, home icon |
+| [`x-ui.avatar`](resources/views/components/ui/avatar.blade.php) | `avatar.blade.php` | Image/initials/fallback, 5 sizes, status dot |
+| [`x-ui.empty-state`](resources/views/components/ui/empty-state.blade.php) | `empty-state.blade.php` | Icon + title + description + action button |
+| [`x-ui.radio-group`](resources/views/components/ui/radio-group.blade.php) | `radio-group.blade.php` | Default + card variants, option descriptions |
+| [`x-ui.file-upload`](resources/views/components/ui/file-upload.blade.php) | `file-upload.blade.php` | Alpine.js drag & drop, accept/maxSize/maxFiles |
+| [`x-ui.tooltip`](resources/views/components/ui/tooltip.blade.php) | `tooltip.blade.php` | 4 positions, configurable delay, arrow indicator |
+| [`x-ui.accordion`](resources/views/components/ui/accordion.blade.php) | `accordion.blade.php` | Alpine.js + x-collapse, single/multiple modes |
+
+### Design Tokens
+
+3-layer CSS Custom Properties architecture di [`resources/css/design-tokens.css`](resources/css/design-tokens.css):
+
+| Layer | Tujuan | Contoh |
+|-------|--------|--------|
+| Layer 1: Base | Raw brand values | `--color-primary: #5B8DBE` |
+| Layer 2: Semantic | Context-mapped tokens | `--color-surface: var(--color-gray-50)` |
+| Layer 3: Component | Component overrides | `--btn-primary-bg: var(--color-primary)` |
+
+Dark mode: Admin menggunakan `[data-theme="dark"]` selector, Landing menggunakan `@media (prefers-color-scheme: dark)`.
 
 ### Dev Tools
 - Laravel Pint (code style)
@@ -143,8 +198,20 @@ database/
 └── factories/
 
 resources/
-├── views/              # 386 blade files across 100 subfolders
-├── js/ css/ sass/
+├── views/
+│   ├── components/
+│   │   └── ui/         # 27 Blade components (x-ui.* library)
+│   ├── admin/          # Admin panel views
+│   ├── landing/        # Landing page views
+│   ├── layouts/        # Layout templates
+│   └── ...             # 386+ blade files across 100 subfolders
+├── css/
+│   ├── design-tokens.css   # [NEW] 3-layer token architecture
+│   ├── app.css              # Global styles + imports
+│   ├── admin.css            # Admin overrides
+│   ├── landing.css          # Landing overrides
+│   └── landing-theme.css    # Legacy (to be deprecated)
+├── js/ sass/
 
 routes/
 ├── web.php             # 1.098 lines
@@ -308,14 +375,27 @@ Backup otomatis tersedia di `scripts/db-backup.sh` dan bisa dijalankan via cron 
 
 ## Dokumentasi Tambahan
 
-Dokumen planning aktif di `docs/`:
+### Design System & UI
 
-- `SEO_MASTER_PLAN.md` — SEO domination roadmap
-- `SMART_SEO_DOMINATION_PLAN.md` — Strategy companion
-- `PHASE_8_MASTER_PLAN.md` — Current phase roadmap
-- `ADMIN_DESIGN_COMPACT_PLAN.md` + `ADMIN_PANEL_RESTRUCTURE_PLAN.md`
-- `MOBILE_COMPREHENSIVE_ANALYSIS.md`
-- `RTRW_INTEGRATION_PLAN.md`
+| Dokumen | Lokasi | Deskripsi |
+|---------|--------|-----------|
+| Design System V2 (Landing) | [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) | Landing page design tokens — Fraunces/Inter, navy/gold palette |
+| UI Architecture Plan | [`plans/UI_ARCHITECTURE_LONG_TERM_PLAN.md`](plans/UI_ARCHITECTURE_LONG_TERM_PLAN.md) | 7-phase roadmap: token unification → component library → migration |
+| Global Design Rules | [`.roo/rules/global-design-system.md`](.roo/rules/global-design-system.md) | Zero inline styles, zero hardcoded colors, component library mandate |
+| Blade Component API | [`.roo/rules/blade-component-api.md`](.roo/rules/blade-component-api.md) | Component naming, props, slots, attributes forwarding |
+| Tailwind CSS Usage | [`.roo/rules/tailwind-css-usage.md`](.roo/rules/tailwind-css-usage.md) | Tailwind v4 syntax, class order convention, micro-interactions |
+| Alpine.js Patterns | [`.roo/rules/alpine-js-patterns.md`](.roo/rules/alpine-js-patterns.md) | Zero inline JS, component data, Pines UI integration |
+
+### Planning & Roadmap
+
+| Dokumen | Deskripsi |
+|---------|-----------|
+| `SEO_MASTER_PLAN.md` | SEO domination roadmap |
+| `SMART_SEO_DOMINATION_PLAN.md` | Strategy companion |
+| `PHASE_8_MASTER_PLAN.md` | Current phase roadmap |
+| `ADMIN_DESIGN_COMPACT_PLAN.md` + `ADMIN_PANEL_RESTRUCTURE_PLAN.md` | Admin panel redesign |
+| `MOBILE_COMPREHENSIVE_ANALYSIS.md` | Mobile / PWA analysis |
+| `RTRW_INTEGRATION_PLAN.md` | RTRW spatial data integration |
 
 Dokumen historis (dark mode guide, security guide, color/CSS token guide,
 RAG integration, business analysis, PWA wireframes, dll.) berada di

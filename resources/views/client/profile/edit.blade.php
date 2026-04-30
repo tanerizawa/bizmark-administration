@@ -80,9 +80,14 @@
                     </div>
                     @if($client->profile_picture)
                     <div class="mt-2">
-                        <a href="{{ route('client.profile.update') }}" onclick="event.preventDefault(); if(confirm('Yakin ingin menghapus foto profil?')) { document.getElementById('deletePhotoForm').submit(); }" class="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                        <a href="#" onclick="event.preventDefault(); if(confirm('Yakin ingin menghapus foto profil?')) { document.getElementById('deletePhotoForm').submit(); }" class="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
                             <i class="fas fa-trash mr-1"></i> Hapus foto
                         </a>
+                        <form id="deletePhotoForm" method="POST" action="{{ route('client.profile.update') }}" style="display:none">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="delete_photo" value="1">
+                        </form>
                     </div>
                     @endif
                 </div>

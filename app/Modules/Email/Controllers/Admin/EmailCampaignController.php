@@ -5,12 +5,11 @@ namespace App\Modules\Email\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\AuthorizesRequests;
 use App\Models\EmailCampaign;
-use App\Models\EmailTemplate;
-use App\Models\EmailSubscriber;
 use App\Models\EmailLog;
+use App\Models\EmailSubscriber;
+use App\Models\EmailTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class EmailCampaignController extends Controller
@@ -32,9 +31,9 @@ class EmailCampaignController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('subject', 'ilike', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'ilike', '%'.$request->search.'%')
+                    ->orWhere('subject', 'ilike', '%'.$request->search.'%');
             });
         }
 
@@ -54,6 +53,7 @@ class EmailCampaignController extends Controller
     {
         $templates = EmailTemplate::where('is_active', true)->get();
         $activeSubscribers = EmailSubscriber::where('status', 'active')->count();
+
         return view('admin.email.campaigns.create', compact('templates', 'activeSubscribers'));
     }
 
@@ -70,22 +70,22 @@ class EmailCampaignController extends Controller
         ]);
 
         // Convert comma-separated tags to array
-        if (!empty($validated['recipient_tags'])) {
+        if (! empty($validated['recipient_tags'])) {
             $validated['recipient_tags'] = array_map('trim', explode(',', $validated['recipient_tags']));
         }
 
         $validated['created_by'] = Auth::id();
-        
+
         // Determine status based on action and schedule
         if ($request->input('action') === 'send' && empty($validated['scheduled_at'])) {
             // Will be sent immediately via processSend
             $validated['status'] = 'draft'; // Create as draft first
-        } elseif (!empty($validated['scheduled_at'])) {
+        } elseif (! empty($validated['scheduled_at'])) {
             $validated['status'] = 'scheduled';
         } else {
             $validated['status'] = 'draft';
         }
-        
+
         $recipientsQuery = $this->getRecipientsQuery($validated['recipient_type'], $validated['recipient_tags'] ?? null);
         $validated['total_recipients'] = $recipientsQuery->count();
 
@@ -110,20 +110,21 @@ class EmailCampaignController extends Controller
     public function edit($id)
     {
         $campaign = EmailCampaign::findOrFail($id);
-        
+
         if (in_array($campaign->status, ['sending', 'sent'])) {
             return redirect()->route('admin.campaigns.show', $campaign)
                 ->with('error', 'Campaign yang sudah terkirim tidak bisa diedit.');
         }
 
         $templates = EmailTemplate::where('is_active', true)->get();
+
         return view('admin.email.campaigns.edit', compact('campaign', 'templates'));
     }
 
     public function update(Request $request, $id)
     {
         $campaign = EmailCampaign::findOrFail($id);
-        
+
         if (in_array($campaign->status, ['sending', 'sent'])) {
             return redirect()->route('admin.campaigns.show', $campaign)
                 ->with('error', 'Campaign yang sudah terkirim tidak bisa diedit.');
@@ -140,12 +141,12 @@ class EmailCampaignController extends Controller
         ]);
 
         // Convert comma-separated tags to array
-        if (!empty($validated['recipient_tags'])) {
+        if (! empty($validated['recipient_tags'])) {
             $validated['recipient_tags'] = array_map('trim', explode(',', $validated['recipient_tags']));
         }
 
         // Update status if scheduled_at is set
-        if (!empty($validated['scheduled_at'])) {
+        if (! empty($validated['scheduled_at'])) {
             $validated['status'] = 'scheduled';
         }
 
@@ -161,7 +162,7 @@ class EmailCampaignController extends Controller
     public function destroy($id)
     {
         $campaign = EmailCampaign::findOrFail($id);
-        
+
         if ($campaign->status === 'sending') {
             return redirect()->back()
                 ->with('error', 'Campaign yang sedang dikirim tidak bisa dihapus.');
@@ -176,7 +177,7 @@ class EmailCampaignController extends Controller
     public function send($id)
     {
         $campaign = EmailCampaign::findOrFail($id);
-        
+
         if ($campaign->status === 'sent') {
             return redirect()->route('admin.campaigns.show', $campaign)
                 ->with('error', 'Campaign ini sudah terkirim.');
@@ -193,7 +194,7 @@ class EmailCampaignController extends Controller
     public function processSend($id)
     {
         $campaign = EmailCampaign::findOrFail($id);
-        
+
         if ($campaign->status === 'sent') {
             return redirect()->route('admin.campaigns.show', $campaign)
                 ->with('error', 'Campaign ini sudah terkirim.');
@@ -208,7 +209,7 @@ class EmailCampaignController extends Controller
 
         foreach ($recipients as $subscriber) {
             $trackingId = \Illuminate\Support\Str::random(32);
-            
+
             $emailLog = EmailLog::create([
                 'campaign_id' => $campaign->id,
                 'subscriber_id' => $subscriber->id,
@@ -225,7 +226,7 @@ class EmailCampaignController extends Controller
                     $campaign->content
                 );
 
-                Mail::html($content, function($message) use ($campaign, $subscriber) {
+                Mail::html($content, function ($message) use ($campaign, $subscriber) {
                     $message->to($subscriber->email)
                         ->subject($campaign->subject)
                         ->from(config('mail.from.address'), config('mail.from.name'));
@@ -246,7 +247,7 @@ class EmailCampaignController extends Controller
     public function cancel($id)
     {
         $campaign = EmailCampaign::findOrFail($id);
-        
+
         if ($campaign->status !== 'scheduled') {
             return redirect()->route('admin.campaigns.show', $campaign)
                 ->with('error', 'Hanya campaign yang dijadwalkan yang bisa dibatalkan.');
@@ -259,6 +260,49 @@ class EmailCampaignController extends Controller
 
         return redirect()->route('admin.campaigns.show', $campaign)
             ->with('success', 'Campaign berhasil dibatalkan.');
+    }
+
+    public function export($id)
+    {
+        $campaign = EmailCampaign::with(['emailLogs'])->findOrFail($id);
+
+        if ($campaign->status !== 'sent') {
+            return redirect()->route('admin.campaigns.show', $campaign)
+                ->with('error', 'Hanya campaign yang sudah terkirim yang bisa diekspor.');
+        }
+
+        $filename = 'campaign-report-'.$campaign->id.'-'.now()->format('Ymd').'.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        $callback = function () use ($campaign) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, ['Campaign Report: '.$campaign->name]);
+            fputcsv($handle, ['Tanggal Export', now()->format('d/m/Y H:i')]);
+            fputcsv($handle, ['Status', $campaign->status]);
+            fputcsv($handle, ['Total Dikirim', $campaign->sent_count ?? 0]);
+            fputcsv($handle, ['Total Dibuka', $campaign->opened_count ?? 0]);
+            fputcsv($handle, ['Total Klik', $campaign->clicked_count ?? 0]);
+            fputcsv($handle, []);
+            fputcsv($handle, ['Email', 'Status', 'Dikirim Pada', 'Dibuka Pada']);
+
+            foreach ($campaign->emailLogs as $log) {
+                fputcsv($handle, [
+                    $log->recipient_email,
+                    $log->status,
+                    $log->created_at?->format('d/m/Y H:i'),
+                    $log->opened_at?->format('d/m/Y H:i') ?? '-',
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     private function getRecipientsQuery($recipientType, $tags = null)

@@ -226,7 +226,7 @@
                                             <a href="{{ $stageLink['route'] }}" 
                                                class="btn-secondary-sm" 
                                                style="background: rgba(255,255,255,0.05); color: {{ $stageLink['color'] }}; border-color: rgba(255,255,255,0.1);"
-                                               @if($stageLink['route'] === '#') onclick="alert('Fitur kirim offer akan segera hadir!'); return false;" @endif
+                                               @if($stageLink['route'] === '#') onclick="this.innerHTML='<i class=\'fas fa-clock mr-1\'></i>Segera Hadir'; this.style.opacity='0.5'; this.style.pointerEvents='none'; return false;" @endif
                                                @if(isset($stageLink['download']) && $stageLink['download']) target="_blank" @endif>
                                                 <i class="fas {{ $stageLink['icon'] }} mr-1"></i>{{ $stageLink['label'] }}
                                             </a>

@@ -4,9 +4,11 @@ namespace App\Modules\HRM\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\AuthorizesRequests;
+use App\Mail\JobApplicationStatusChanged;
 use App\Models\JobApplication;
 use App\Models\JobVacancy;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class JobApplicationController extends Controller
@@ -39,9 +41,9 @@ class JobApplicationController extends Controller
         // Search by name or email
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('full_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -64,12 +66,12 @@ class JobApplicationController extends Controller
         $application = JobApplication::with(['jobVacancy', 'reviewer'])->findOrFail($id);
 
         // Decode JSON fields
-        $application->work_experience = is_string($application->work_experience) 
-            ? json_decode($application->work_experience, true) 
+        $application->work_experience = is_string($application->work_experience)
+            ? json_decode($application->work_experience, true)
             : $application->work_experience;
-        
-        $application->skills = is_string($application->skills) 
-            ? json_decode($application->skills, true) 
+
+        $application->skills = is_string($application->skills)
+            ? json_decode($application->skills, true)
             : $application->skills;
 
         return view('admin.applications.show', compact('application'));
@@ -87,7 +89,7 @@ class JobApplicationController extends Controller
 
         $application = JobApplication::with('jobVacancy')->findOrFail($id);
         $previousStatus = $application->status;
-        
+
         $application->update([
             'status' => $validated['status'],
             'notes' => $validated['notes'] ?? $application->notes,
@@ -99,7 +101,7 @@ class JobApplicationController extends Controller
         if ($application->email) {
             try {
                 \Mail::to($application->email)->send(
-                    new \App\Mail\JobApplicationStatusChanged(
+                    new JobApplicationStatusChanged(
                         $application,
                         $previousStatus,
                         $validated['status'],
@@ -108,10 +110,10 @@ class JobApplicationController extends Controller
                     )
                 );
             } catch (\Exception $emailException) {
-                \Log::warning('Failed to send job application status change email', [
+                Log::warning('Failed to send job application status change email', [
                     'application_id' => $application->id,
                     'applicant_email' => $application->email,
-                    'error' => $emailException->getMessage()
+                    'error' => $emailException->getMessage(),
                 ]);
             }
         }
@@ -126,12 +128,12 @@ class JobApplicationController extends Controller
     {
         $application = JobApplication::findOrFail($id);
 
-        if (!$application->cv_path || !Storage::disk('public')->exists($application->cv_path)) {
+        if (! $application->cv_path || ! Storage::disk('public')->exists($application->cv_path)) {
             return back()->with('error', 'File CV tidak ditemukan.');
         }
 
-        return Storage::disk('public')->download($application->cv_path, 
-            'CV_' . str_replace(' ', '_', $application->full_name) . '.pdf');
+        return Storage::disk('public')->download($application->cv_path,
+            'CV_'.str_replace(' ', '_', $application->full_name).'.pdf');
     }
 
     /**
@@ -141,12 +143,12 @@ class JobApplicationController extends Controller
     {
         $application = JobApplication::findOrFail($id);
 
-        if (!$application->portfolio_path || !Storage::disk('public')->exists($application->portfolio_path)) {
+        if (! $application->portfolio_path || ! Storage::disk('public')->exists($application->portfolio_path)) {
             return back()->with('error', 'File portfolio tidak ditemukan.');
         }
 
-        return Storage::disk('public')->download($application->portfolio_path, 
-            'Portfolio_' . str_replace(' ', '_', $application->full_name));
+        return Storage::disk('public')->download($application->portfolio_path,
+            'Portfolio_'.str_replace(' ', '_', $application->full_name));
     }
 
     /**
@@ -155,7 +157,7 @@ class JobApplicationController extends Controller
     public function destroy($id)
     {
         $application = JobApplication::findOrFail($id);
-        
+
         $candidateName = $application->full_name;
 
         // Delete related test sessions (with answers)

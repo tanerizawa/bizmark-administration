@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AutoPostLog;
 use App\Models\AutoPostSchedule;
 use Illuminate\Http\Request;
 
@@ -38,12 +39,12 @@ class AutoPostLogController extends Controller
 
         return view('admin.auto-post.logs', compact('logs', 'stats'));
     }
-    
+
     public function recent(Request $request)
     {
         $limit = $request->input('limit', 50);
-        
-        $logs = \App\Models\AutoPostLog::with(['schedule.topic'])
+
+        $logs = AutoPostLog::with(['schedule.topic'])
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get()
@@ -62,7 +63,7 @@ class AutoPostLogController extends Controller
                     ] : null,
                 ];
             });
-        
+
         return response()->json([
             'success' => true,
             'logs' => $logs,

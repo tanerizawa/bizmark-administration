@@ -12,7 +12,7 @@
         </div>
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div class="space-y-2.5">
-                <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">
+                <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em] text-dark-text-secondary">
                     <a href="{{ route('admin.recruitment.index') }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
                         <i class="fas fa-arrow-left text-xs"></i> Rekrutmen
                     </a>
@@ -20,7 +20,7 @@
                     <span>Test</span>
                 </div>
                 <h1 class="text-xl font-semibold text-white leading-tight">Template & Sesi Tes</h1>
-                <p class="text-sm" style="color: rgba(235,235,245,0.7);">
+                <p class="text-sm text-dark-text-primary/70">
                     Kelola template penilaian dan pantau sesi tes kandidat.
                 </p>
             </div>
@@ -35,24 +35,24 @@
     {{-- Stats --}}
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-primary); opacity: var(--opacity-text-strong);">Total Template</p>
+            <p class="text-xs uppercase tracking-widest text-[var(--neuro-primary)] opacity-80">Total Template</p>
             <p class="text-lg font-bold text-white">{{ $stats['total_templates'] }}</p>
-            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Seluruh template tersedia</p>
+            <p class="text-xs text-dark-text-secondary/70">Seluruh template tersedia</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-success); opacity: var(--opacity-text-strong);">Template Aktif</p>
+            <p class="text-xs uppercase tracking-widest text-[var(--neuro-success)] opacity-80">Template Aktif</p>
             <p class="text-lg font-bold text-white">{{ $stats['active_templates'] }}</p>
-            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Dapat ditugaskan</p>
+            <p class="text-xs text-dark-text-secondary/70">Dapat ditugaskan</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-warning); opacity: var(--opacity-text-strong);">Sesi Aktif</p>
+            <p class="text-xs uppercase tracking-widest text-[var(--neuro-warning)] opacity-80">Sesi Aktif</p>
             <p class="text-lg font-bold text-white">{{ $stats['active_sessions'] }}</p>
-            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Kandidat sedang tes</p>
+            <p class="text-xs text-dark-text-secondary/70">Kandidat sedang tes</p>
         </div>
         <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest" style="color: var(--neuro-accent); opacity: var(--opacity-text-strong);">Selesai Hari Ini</p>
+            <p class="text-xs uppercase tracking-widest text-[var(--neuro-accent)] opacity-80">Selesai Hari Ini</p>
             <p class="text-lg font-bold text-white">{{ $stats['completed_today'] }}</p>
-            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">Tes selesai</p>
+            <p class="text-xs text-dark-text-secondary/70">Tes selesai</p>
         </div>
     </section>
 
@@ -60,22 +60,20 @@
     <section class="card-elevated rounded-apple-xl p-4 space-y-4">
         <div class="flex items-center justify-between flex-wrap gap-3">
             <div>
-                <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Filter</p>
+                <p class="text-xs uppercase tracking-[0.3em] text-dark-text-tertiary">Filter</p>
                 <h3 class="text-base font-semibold text-white">Susun Template</h3>
             </div>
-            <p class="text-xs" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-medium);">{{ $templates->total() }} template ditemukan</p>
+            <p class="text-xs text-dark-text-secondary/70">{{ $templates->total() }} template ditemukan</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div class="space-y-1">
-                <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Pencarian</label>
+                <label class="text-xs uppercase tracking-widest text-dark-text-tertiary">Pencarian</label>
                 <input type="text" id="searchTest" placeholder="Judul, tipe, deskripsi"
-                       class="w-full px-3 py-2 rounded-apple text-sm text-white placeholder-gray-500"
-                       style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                       class="w-full px-3 py-2 rounded-apple text-sm text-white placeholder-gray-500 bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]">
             </div>
             <div class="space-y-1">
-                <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Tipe Tes</label>
-                <select id="filterType" class="w-full px-3 py-2 rounded-apple text-sm text-white"
-                        style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                <label class="text-xs uppercase tracking-widest text-dark-text-tertiary">Tipe Tes</label>
+                <select id="filterType" class="w-full px-3 py-2 rounded-apple text-sm text-white bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]">
                     <option value="">Semua Tipe</option>
                     <option value="psychology">Psychology</option>
                     <option value="psychometric">Psychometric</option>
@@ -85,9 +83,8 @@
                 </select>
             </div>
             <div class="space-y-1">
-                <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Status</label>
-                <select id="filterStatus" class="w-full px-3 py-2 rounded-apple text-sm text-white"
-                        style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+                <label class="text-xs uppercase tracking-widest text-dark-text-tertiary">Status</label>
+                <select id="filterStatus" class="w-full px-3 py-2 rounded-apple text-sm text-white bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]">
                     <option value="">Semua Status</option>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
@@ -101,15 +98,15 @@
         @if($templates->count())
             <div class="overflow-x-auto">
                 <table class="min-w-full">
-                    <thead style="background: rgba(28,28,30,0.45);">
+                    <thead class="bg-[rgba(28,28,30,0.45)]">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Template</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Tipe</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Pertanyaan</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Durasi</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Sesi</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
-                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Template</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Tipe</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Pertanyaan</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Durasi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Sesi</th>
+                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Status</th>
+                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest text-dark-text-secondary">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -131,7 +128,7 @@
                                         </div>
                                         <div class="min-w-0">
                                             <p class="text-sm font-semibold text-white">{{ $template->title }}</p>
-                                            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Dibuat {{ $template->created_at->diffForHumans() }}</p>
+                                            <p class="text-xs text-dark-text-secondary">Dibuat {{ $template->created_at->diffForHumans() }}</p>
                                         </div>
                                     </div>
                                 </td>
@@ -165,7 +162,7 @@
                                         <form action="{{ route('admin.recruitment.tests.destroy', $template) }}" method="POST" onsubmit="return confirm('Hapus template ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,0.95); border-color: rgba(255,59,48,0.4);">
+                                            <button type="submit" class="btn-secondary-sm bg-apple-red/15 text-apple-red border-apple-red/40">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -182,7 +179,7 @@
                 </div>
             @endif
         @else
-            <div class="text-center py-12 space-y-3" style="color: rgba(235,235,245,0.7);">
+            <div class="text-center py-12 space-y-3 text-dark-text-primary/70">
                 <i class="fas fa-clipboard-list text-4xl"></i>
                 <p class="text-sm">Belum ada template tes.</p>
                 <a href="{{ route('admin.recruitment.tests.create') }}" class="btn-primary-sm">

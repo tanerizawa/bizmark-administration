@@ -16,63 +16,64 @@
                 <div class="space-y-1 max-w-3xl">
                     <p class="admin-label-compact">Kendali Keuangan Terintegrasi</p>
                     <h1 class="admin-hero-title">Kendali Kas & Rekening Terpadu</h1>
-                    <p class="admin-body" style="color: rgba(235,235,245,0.72);">Pantau arus kas, piutang, dan tren finansial secara ringkas dalam satu panel.</p>
+                    <p class="admin-body text-dark-text-secondary">Pantau arus kas, piutang, dan tren finansial secara ringkas dalam satu panel.</p>
                 </div>
-                <div class="space-y-1.5 text-xs" style="color: rgba(235,235,245,0.65);">
+                <div class="space-y-1.5 text-xs text-dark-text-secondary">
                     <p><i class="fas fa-sync-alt mr-1.5"></i>Sync: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
                     <p><i class="fas fa-shield-alt mr-1.5"></i>Akses Tim Keuangan</p>
                     <div class="flex gap-2 flex-wrap">
                         <a href="{{ route('cash-accounts.create') }}" class="admin-btn">
                             <i class="fas fa-plus mr-1.5"></i>Tambah Akun
                         </a>
-                        <button onclick="showPeriodFilter()" class="admin-btn" style="background: rgba(255,255,255,0.1);">
+                        <button onclick="showPeriodFilter()" class="admin-btn bg-white/10">
                             <i class="fas fa-calendar-alt mr-1.5"></i>Filter
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <div class="admin-stat-card" style="background: rgba(10,132,255,0.12);">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="admin-stat-card bg-apple-blue/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
-                            <i class="fas fa-wallet text-xs" style="color: var(--apple-blue);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-blue/25">
+                            <i class="fas fa-wallet text-xs text-apple-blue"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['liquid_assets'] / 1000000, 1) }}M</p>
+                            <p class="admin-stat text-white">Rp {{ number_format($financialSummary['liquid_assets'] / 1000000, 1) }}M</p>
                             <p class="admin-label-compact">Aset Likuid</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: rgba(255,149,0,0.12);">
+                <div class="admin-stat-card bg-apple-orange/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,149,0,0.25);">
-                            <i class="fas fa-file-invoice text-xs" style="color: var(--apple-orange);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-orange/25">
+                            <i class="fas fa-file-invoice text-xs text-apple-orange"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color:#FFFFFF;">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</p>
+                            <p class="admin-stat text-white">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</p>
                             <p class="admin-label-compact">Piutang</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: rgba(52,199,89,0.12);">
+                <div class="admin-stat-card bg-apple-green/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(52,199,89,0.25);">
-                            <i class="fas fa-arrow-down text-xs" style="color: var(--apple-green);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-green/25">
+                            <i class="fas fa-arrow-down text-xs text-apple-green"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(52,199,89,1);">Rp {{ number_format($financialSummary['cash_inflow_this_month'] / 1000000, 1) }}M</p>
+                            <p class="admin-stat text-apple-green">Rp {{ number_format($financialSummary['cash_inflow_this_month'] / 1000000, 1) }}M</p>
                             <p class="admin-label-compact">Kas Masuk</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.12)' }};">
+                @php $isPositive = $financialSummary['net_cash_flow'] >= 0; @endphp
+                <div class="admin-stat-card {{ $isPositive ? 'bg-apple-green/12' : 'bg-apple-red/12' }}">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: {{ $financialSummary['net_cash_flow'] >= 0 ? 'rgba(52,199,89,0.25)' : 'rgba(255,59,48,0.25)' }};">
-                            <i class="fas fa-chart-line text-xs" style="color: {{ $financialSummary['net_cash_flow'] >= 0 ? 'var(--apple-green)' : 'var(--apple-red)' }};"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center {{ $isPositive ? 'bg-apple-green/25' : 'bg-apple-red/25' }}">
+                            <i class="fas fa-chart-line text-xs {{ $isPositive ? 'text-apple-green' : 'text-apple-red' }}"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color:#FFFFFF;">{{ $financialSummary['net_cash_flow'] >= 0 ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</p>
+                            <p class="admin-stat text-white">{{ $isPositive ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</p>
                             <p class="admin-label-compact">Arus Bersih</p>
                         </div>
                     </div>
@@ -83,14 +84,14 @@
 
     {{-- Alerts --}}
     @if(session('success'))
-        <div class="alert alert-success flex items-center gap-2 mb-3">
+        <div class="flex items-center gap-2 bg-apple-green/10 border border-apple-green/20 text-apple-green rounded-xl px-4 py-3 mb-3">
             <i class="fas fa-check-circle"></i>
             <span class="admin-body">{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger flex items-center gap-2 mb-3">
+        <div class="flex items-center gap-2 bg-apple-red/10 border border-apple-red/20 text-apple-red rounded-xl px-4 py-3 mb-3">
             <i class="fas fa-exclamation-circle"></i>
             <span class="admin-body">{{ session('error') }}</span>
         </div>
@@ -102,51 +103,52 @@
             <div>
                 <p class="admin-label-compact">Periode Aktif</p>
                 <h2 class="admin-section text-white">{{ $startDate->isoFormat('D MMM Y') }} - {{ $endDate->isoFormat('D MMM Y') }}</h2>
-                <p class="admin-body" style="color: rgba(235,235,245,0.62);">
+                <p class="admin-body text-dark-text-secondary">
                     @php $daysDiff = $startDate->diffInDays($endDate) + 1; @endphp
                     {{ $daysDiff }} hari • {{ count($recentTransactions) }} transaksi
                 </p>
             </div>
-            <button onclick="showPeriodFilter()" class="admin-btn" style="background: rgba(255,255,255,0.1);">
+            <button onclick="showPeriodFilter()" class="admin-btn bg-white/10">
                 <i class="fas fa-calendar-alt mr-1.5"></i>Ubah
             </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
             <div class="card-elevated rounded-apple-lg p-3 space-y-2">
                 <div class="flex items-center justify-between">
                     <h3 class="admin-section text-white">Kas Keluar</h3>
-                    <span class="admin-label-compact px-2 py-0.5 rounded" style="background: rgba(255,59,48,0.18); color: rgba(255,59,48,0.9);">Expense</span>
+                    <span class="admin-label-compact px-2 py-0.5 rounded bg-apple-red/15 text-apple-red/90">Expense</span>
                 </div>
                 <p class="admin-stat text-white">Rp {{ number_format($financialSummary['cash_outflow_this_month'] / 1000000, 1) }}M</p>
-                <p class="admin-body" style="color: rgba(235,235,245,0.65);">Pengeluaran periode berjalan</p>
+                <p class="admin-body text-dark-text-secondary">Pengeluaran periode berjalan</p>
             </div>
 
+            @php $isPositiveTrend = $financialSummary['is_positive_trend'] ?? false; @endphp
             <div class="card-elevated rounded-apple-lg p-3 space-y-2">
                 <div class="flex items-center justify-between">
                     <h3 class="admin-section text-white">Arus Kas Bersih</h3>
-                    <span class="admin-label-compact px-2 py-0.5 rounded" style="background: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.18)' : 'rgba(255,59,48,0.18)' }}; color: {{ $financialSummary['is_positive_trend'] ? 'rgba(52,199,89,0.9)' : 'rgba(255,59,48,0.9)' }};">
-                        {{ $financialSummary['is_positive_trend'] ? 'Positif' : 'Negatif' }}
+                    <span class="admin-label-compact px-2 py-0.5 rounded {{ $isPositiveTrend ? 'bg-apple-green/15 text-apple-green/90' : 'bg-apple-red/15 text-apple-red/90' }}">
+                        {{ $isPositiveTrend ? 'Positif' : 'Negatif' }}
                     </span>
                 </div>
-                <p class="admin-stat text-white">{{ $financialSummary['is_positive_trend'] ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
-                <p class="admin-body" style="color: rgba(235,235,245,0.65);">vs bulan lalu</p>
+                <p class="admin-stat text-white">{{ $isPositiveTrend ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
+                <p class="admin-body text-dark-text-secondary">vs bulan lalu</p>
             </div>
 
             <div class="card-elevated rounded-apple-lg p-3 space-y-2">
                 <div class="flex items-center justify-between">
                     <h3 class="admin-section text-white">Rekening Aktif</h3>
-                    <span class="admin-label-compact px-2 py-0.5 rounded" style="background: rgba(10,132,255,0.18); color: rgba(10,132,255,0.9);">Live</span>
+                    <span class="admin-label-compact px-2 py-0.5 rounded bg-apple-blue/15 text-apple-blue/90">Live</span>
                 </div>
                 <p class="admin-stat text-white">{{ $accounts->count() }}</p>
-                <p class="admin-body" style="color: rgba(235,235,245,0.65);">Rekening dan kas</p>
+                <p class="admin-body text-dark-text-secondary">Rekening dan kas</p>
             </div>
         </div>
     </section>
 
     {{-- Tab Navigation --}}
     <section class="card-elevated rounded-apple-xl overflow-hidden">
-        <div class="border-b" style="border-color: var(--dark-separator);">
+        <div class="border-b border-dark-separator">
             <div class="flex space-x-1 p-2 overflow-x-auto" role="tablist">
                 <button onclick="switchTab('cash-flow')" id="tab-cash-flow" 
                         class="tab-button active text-sm transition-apple whitespace-nowrap">
@@ -214,14 +216,14 @@
 
 {{-- Period Filter Modal --}}
 <div id="periodModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="card-elevated rounded-apple-xl max-w-3xl w-full p-4 space-y-4" style="background: var(--dark-bg-elevated);">
+    <div class="card-elevated rounded-apple-xl max-w-3xl w-full p-4 space-y-4 bg-dark-bg-elevated">
         <div class="flex items-center justify-between">
             <div>
                 <h3 class="text-base font-semibold text-white">Filter Periode Laporan</h3>
-                <p class="text-sm mt-1" style="color: rgba(235,235,245,0.65);">Pilih rentang waktu untuk analisis finansial</p>
+                <p class="text-sm mt-1 text-dark-text-secondary">Pilih rentang waktu untuk analisis finansial</p>
             </div>
             <button onclick="closePeriodModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-apple">
-                <i class="fas fa-times" style="color: rgba(235,235,245,0.7);"></i>
+                <i class="fas fa-times text-dark-text-secondary"></i>
             </button>
         </div>
 
@@ -323,13 +325,12 @@
 
             <!-- Quick Shortcuts -->
             @if(count($availablePeriods) > 0)
-            <div class="pt-4 border-t" style="border-color: var(--dark-separator);">
+            <div class="pt-4 border-t border-dark-separator">
                 <p class="text-xs font-semibold text-white mb-2">Shortcut Periode:</p>
                 <div class="flex flex-wrap gap-2">
                     @foreach(array_slice($availablePeriods, 0, 6) as $period)
                         <a href="{{ route('cash-accounts.index', ['filter_type' => 'month', 'month' => $period['month'], 'year' => $period['year']]) }}"
-                           class="text-xs px-3 py-1.5 rounded-apple transition-apple"
-                           style="background: rgba(10,132,255,0.1); color: rgba(10,132,255,0.9); border: 1px solid rgba(10,132,255,0.2);">
+                           class="text-xs px-3 py-1.5 rounded-apple transition-apple bg-apple-blue/10 text-apple-blue/90 border border-apple-blue/20">
                             {{ \Carbon\Carbon::create($period['year'], $period['month'], 1)->locale('id')->isoFormat('MMM YYYY') }}
                         </a>
                     @endforeach

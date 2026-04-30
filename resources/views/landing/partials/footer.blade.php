@@ -19,8 +19,8 @@
 
 <footer class="site-footer mt-auto">
     <div class="container-wide py-14">
-        <div class="grid gap-10 lg:grid-cols-12">
-            <div class="lg:col-span-4">
+        <div class="grid gap-8 grid-cols-2 md:grid-cols-4 lg:grid-cols-12">
+            <div class="col-span-2 md:col-span-4 lg:col-span-4">
                 <a href="{{ $landingRoute }}" class="brand-mark mb-4 inline-flex" aria-label="Bizmark.ID">
                     <i class="fas fa-certificate"></i>
                     <span>Bizmark.ID</span>
@@ -79,9 +79,17 @@
             </div>
         @endif
 
-        <div class="mt-10 pt-6 border-t border-white/10 text-sm text-white/55 text-center">
-            <p class="mb-1">{{ __('landing.footer.copyright', ['year' => date('Y')]) }}</p>
-            <p class="mb-0">{{ __('landing.footer.tagline') }}</p>
+        <div class="mt-10 pt-8 border-t border-white/10">
+            <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
+                <span class="trust-badge"><i class="fas fa-certificate text-blue-500"></i> ISO Certified</span>
+                <span class="trust-badge"><i class="fas fa-shield-halved text-blue-500"></i> {{ $locale === 'en' ? 'Data Protected' : 'Data Terlindungi' }}</span>
+                <span class="trust-badge"><i class="fas fa-map-marked-alt text-blue-500"></i> {{ $locale === 'en' ? 'Nationwide Coverage' : 'Cakupan Se-Indonesia' }}</span>
+                <span class="trust-badge"><i class="fas fa-users text-blue-500"></i> 138+ {{ $locale === 'en' ? 'Clients Served' : 'Klien Dilayani' }}</span>
+            </div>
+            <div class="text-sm text-center text-gray-600">
+                <p class="mb-1">{{ __('landing.footer.copyright', ['year' => date('Y')]) }}</p>
+                <p class="mb-0">{{ __('landing.footer.tagline') }}</p>
+            </div>
         </div>
     </div>
 </footer>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,7 @@ class ProfileController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        
+
         return view('admin.profile.edit', compact('user'));
     }
 
@@ -30,7 +31,7 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'phone' => ['nullable', 'string', 'max:20'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
@@ -78,9 +79,9 @@ class ProfileController extends Controller
     public function notifications()
     {
         $user = Auth::user();
-        
+
         // Get real notifications from database
-        $notifications = \App\Models\Notification::forUser($user->id)
+        $notifications = Notification::forUser($user->id)
             ->latest()
             ->paginate(20);
 
@@ -92,8 +93,8 @@ class ProfileController extends Controller
      */
     public function markAsRead($id)
     {
-        $notification = \App\Models\Notification::findOrFail($id);
-        
+        $notification = Notification::findOrFail($id);
+
         // Check ownership
         if ($notification->notifiable_id !== Auth::id()) {
             abort(403);
@@ -113,7 +114,7 @@ class ProfileController extends Controller
      */
     public function markAllAsRead()
     {
-        \App\Models\Notification::forUser(Auth::id())
+        Notification::forUser(Auth::id())
             ->unread()
             ->update(['read_at' => now()]);
 

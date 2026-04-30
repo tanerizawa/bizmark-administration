@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Observers\AdminAuditObserver;
+use App\Observers\NavCountObserver;
+use App\Observers\ProjectObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ObservedBy([NavCountObserver::class, ProjectObserver::class, AdminAuditObserver::class])]
 class Project extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'description',
@@ -162,8 +168,9 @@ class Project extends Model
 
     public function updatePaymentStatus(): void
     {
-        if (!$this->contract_value || $this->contract_value == 0) {
+        if (! $this->contract_value || $this->contract_value == 0) {
             $this->payment_status = 'unpaid';
+
             return;
         }
 
@@ -192,27 +199,28 @@ class Project extends Model
         if (($this->payment_received ?? 0) > 0) {
             return ($this->net_profit / $this->payment_received) * 100;
         }
+
         return 0;
     }
 
     public function getFormattedContractValueAttribute(): string
     {
-        return 'Rp ' . number_format($this->contract_value ?? 0, 0, ',', '.');
+        return 'Rp '.number_format($this->contract_value ?? 0, 0, ',', '.');
     }
 
     public function getFormattedPaymentReceivedAttribute(): string
     {
-        return 'Rp ' . number_format($this->payment_received ?? 0, 0, ',', '.');
+        return 'Rp '.number_format($this->payment_received ?? 0, 0, ',', '.');
     }
 
     public function getFormattedOutstandingReceivableAttribute(): string
     {
-        return 'Rp ' . number_format($this->outstanding_receivable, 0, ',', '.');
+        return 'Rp '.number_format($this->outstanding_receivable, 0, ',', '.');
     }
 
     public function getFormattedNetProfitAttribute(): string
     {
-        return 'Rp ' . number_format($this->net_profit, 0, ',', '.');
+        return 'Rp '.number_format($this->net_profit, 0, ',', '.');
     }
 
     /**
@@ -222,15 +230,15 @@ class Project extends Model
     public function calculateProgressFromTasks(): int
     {
         $totalTasks = $this->tasks()->count();
-        
+
         if ($totalTasks === 0) {
             return $this->progress_percentage ?? 0;
         }
-        
+
         $completedTasks = $this->tasks()
             ->whereIn('status', ['done', 'completed', 'selesai', 'DONE', 'COMPLETED', 'SELESAI'])
             ->count();
-        
+
         return round(($completedTasks / $totalTasks) * 100);
     }
 
@@ -241,13 +249,14 @@ class Project extends Model
     public function syncProgressWithTasks(): bool
     {
         $calculatedProgress = $this->calculateProgressFromTasks();
-        
+
         // Only update if there are tasks
         if ($this->tasks()->count() > 0) {
             $this->progress_percentage = $calculatedProgress;
+
             return $this->save();
         }
-        
+
         return false;
     }
 
@@ -256,7 +265,7 @@ class Project extends Model
      */
     public function isCompleted(): bool
     {
-        return $this->progress_percentage >= 100 || 
+        return $this->progress_percentage >= 100 ||
                ($this->status && $this->status->is_final);
     }
 
@@ -265,12 +274,12 @@ class Project extends Model
      */
     public function isActive(): bool
     {
-        if (!$this->status) {
+        if (! $this->status) {
             return true;
         }
-        
-        return !$this->status->is_final && 
-               !in_array($this->status->code, ['CANCELLED', 'DIBATALKAN']);
+
+        return ! $this->status->is_final &&
+               ! in_array($this->status->code, ['CANCELLED', 'DIBATALKAN']);
     }
 
     /**
@@ -279,13 +288,13 @@ class Project extends Model
      */
     public function getCompletionStatus(): ?string
     {
-        if (!$this->completed_at || !$this->deadline) {
+        if (! $this->completed_at || ! $this->deadline) {
             return null;
         }
-        
+
         $completedDate = $this->completed_at->startOfDay();
         $deadlineDate = $this->deadline->startOfDay();
-        
+
         if ($completedDate->equalTo($deadlineDate)) {
             return 'on-time';
         } elseif ($completedDate->lessThan($deadlineDate)) {
@@ -301,10 +310,10 @@ class Project extends Model
      */
     public function getDaysOffSchedule(): ?int
     {
-        if (!$this->completed_at || !$this->deadline) {
+        if (! $this->completed_at || ! $this->deadline) {
             return null;
         }
-        
+
         return $this->completed_at->startOfDay()->diffInDays($this->deadline->startOfDay(), false);
     }
 
@@ -315,8 +324,8 @@ class Project extends Model
     {
         $status = $this->getCompletionStatus();
         $days = abs($this->getDaysOffSchedule() ?? 0);
-        
-        return match($status) {
+
+        return match ($status) {
             'on-time' => 'Selesai tepat waktu! ⏰',
             'early' => "Selesai lebih cepat {$days} hari! ⚡",
             'late' => "Terlambat {$days} hari ⚠️",
@@ -329,13 +338,11 @@ class Project extends Model
      */
     public function getCompletionStatusColor(): ?string
     {
-        return match($this->getCompletionStatus()) {
+        return match ($this->getCompletionStatus()) {
             'on-time' => '#10B981', // Green
             'early' => '#3B82F6',   // Blue
             'late' => '#EF4444',    // Red
             default => null
         };
     }
-
-
 }

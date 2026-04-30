@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Observers\AdminAuditObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([AdminAuditObserver::class])]
 class BusinessSetting extends Model
 {
     protected $table = 'system_settings';
-    
+
     protected $fillable = [
         'company_name',
         'company_email',

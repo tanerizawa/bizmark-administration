@@ -19,24 +19,24 @@
 {{-- Stats --}}
 <section class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-5">
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Pending</p>
+        <p class="text-xs uppercase tracking-widest text-[#FFD60A]/90">Pending</p>
         <p class="text-xl font-bold text-white">{{ number_format($pendingCount ?? 0) }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Perlu peninjauan</p>
+        <p class="text-xs text-dark-text-secondary">Perlu peninjauan</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(175,82,222,0.9);">Interview</p>
+        <p class="text-xs uppercase tracking-widest text-[#AF52DE]/90">Interview</p>
         <p class="text-xl font-bold text-white">{{ number_format($interviewCount ?? 0) }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Proses wawancara</p>
+        <p class="text-xs text-dark-text-secondary">Proses wawancara</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(48,209,88,0.9);">Diterima</p>
+        <p class="text-xs uppercase tracking-widest text-[#30D958]/90">Diterima</p>
         <p class="text-xl font-bold text-white">{{ number_format($offeredCount ?? 0) }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Kandidat sukses</p>
+        <p class="text-xs text-dark-text-secondary">Kandidat sukses</p>
     </div>
     <div class="card-elevated rounded-apple-lg p-4 space-y-1">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditolak</p>
+        <p class="text-xs uppercase tracking-widest text-[#FF453A]/90">Ditolak</p>
         <p class="text-xl font-bold text-white">{{ number_format($applications->where('status', 'rejected')->count()) }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Tidak sesuai kriteria</p>
+        <p class="text-xs text-dark-text-secondary">Tidak sesuai kriteria</p>
     </div>
 </section>
 
@@ -60,28 +60,26 @@
 <section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4 mb-5">
     <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
-            <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
+            <p class="text-xs uppercase tracking-[0.35em] text-dark-text-tertiary">Filter</p>
             <h2 class="text-sm font-semibold text-white">Temukan Kandidat</h2>
         </div>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $applications->total() }} lamaran ditemukan</p>
+        <p class="text-xs text-dark-text-secondary">{{ $applications->total() }} lamaran ditemukan</p>
     </div>
     <form method="GET" action="{{ route('admin.recruitment.index') }}" class="flex flex-col gap-3 md:flex-row md:items-end">
         <input type="hidden" name="tab" value="applications">
         <div class="flex-1">
-            <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Pencarian</label>
+            <label class="text-xs uppercase tracking-widest mb-2 block text-dark-text-secondary">Pencarian</label>
             <div class="flex">
-                <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
+                <span class="inline-flex items-center px-3 rounded-l-apple bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)] border-r-0 text-dark-text-secondary">
                     <i class="fas fa-search"></i>
                 </span>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama atau email"
-                       class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500"
-                       style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-left: none;">
+                       class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500 bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)] border-l-0">
             </div>
         </div>
         <div class="flex-1">
-            <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Lowongan</label>
-            <select name="job_id" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
-                    style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
+            <label class="text-xs uppercase tracking-widest mb-2 block text-dark-text-secondary">Lowongan</label>
+            <select name="job_id" class="w-full px-4 py-2.5 rounded-apple text-sm text-white bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]">
                 <option value="">Semua Lowongan</option>
                 @foreach($jobsForFilter ?? [] as $job)
                     <option value="{{ $job->id }}" {{ request('job_id') == $job->id ? 'selected' : '' }}>
@@ -106,14 +104,14 @@
     @if($applications->count() > 0)
         <div class="overflow-x-auto">
             <table class="min-w-full">
-                <thead style="background: rgba(28,28,30,0.45);">
+                <thead class="bg-[rgba(28,28,30,0.45)]">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Kandidat</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Lowongan</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Pendidikan</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Tanggal Lamar</th>
-                        <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Kandidat</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Lowongan</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Pendidikan</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Status</th>
+                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Tanggal Lamar</th>
+                        <th class="px-6 py-4 text-right text-xs uppercase tracking-widest text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -122,29 +120,29 @@
                         <tr class="border-b border-white/5 hover:bg-white/5 transition">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <span class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" style="background: rgba(255,255,255,0.1); color:#FFFFFF;">
+                                    <span class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold bg-white/10 text-white">
                                         {{ strtoupper(substr($application->full_name, 0, 1)) }}
                                     </span>
                                     <div>
                                         <p class="text-sm font-semibold text-white">{{ $application->full_name }}</p>
-                                        <p class="text-xs" style="color: rgba(235,235,245,0.6);"><i class="fas fa-envelope mr-2"></i>{{ $application->email }}</p>
-                                        <p class="text-xs" style="color: rgba(235,235,245,0.6);"><i class="fas fa-phone mr-2"></i>{{ $application->phone }}</p>
+                                        <p class="text-xs text-dark-text-secondary"><i class="fas fa-envelope mr-2"></i>{{ $application->email }}</p>
+                                        <p class="text-xs text-dark-text-secondary"><i class="fas fa-phone mr-2"></i>{{ $application->phone }}</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <p class="text-sm font-semibold text-white">{{ $application->jobVacancy->title ?? '-' }}</p>
                                 @if($application->has_experience_ukl_upl)
-                                    <span class="inline-flex px-2 py-0.5 text-[10px] rounded-apple" style="background: rgba(52,199,89,0.18); color: rgba(52,199,89,1);">
+                                    <span class="inline-flex px-2 py-0.5 text-[10px] rounded-apple bg-apple-green/20 text-apple-green">
                                         UKL-UPL Exp
                                     </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-sm" style="color:#FFFFFF;">{{ $application->education_level }} {{ $application->major }}</p>
-                                <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $application->institution }}</p>
+                                <p class="text-sm text-white">{{ $application->education_level }} {{ $application->major }}</p>
+                                <p class="text-xs text-dark-text-tertiary">{{ $application->institution }}</p>
                                 @if($application->gpa)
-                                    <p class="text-xs" style="color: rgba(235,235,245,0.55);">IPK: {{ number_format($application->gpa, 2) }}</p>
+                                    <p class="text-xs text-dark-text-tertiary">IPK: {{ number_format($application->gpa, 2) }}</p>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -153,8 +151,8 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ $application->created_at->format('d M Y') }}</p>
-                                <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $application->created_at->diffForHumans() }}</p>
+                                <p class="text-sm text-dark-text-primary/85">{{ $application->created_at->format('d M Y') }}</p>
+                                <p class="text-xs text-dark-text-tertiary">{{ $application->created_at->diffForHumans() }}</p>
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
@@ -175,8 +173,8 @@
         @endif
     @else
         <div class="text-center py-12 space-y-4">
-            <i class="fas fa-user-tie text-5xl" style="color: rgba(235,235,245,0.3);"></i>
-            <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada lamaran yang sesuai filter Anda.</p>
+            <i class="fas fa-user-tie text-5xl text-dark-text-tertiary"></i>
+            <p class="text-sm text-dark-text-secondary">Belum ada lamaran yang sesuai filter Anda.</p>
         </div>
     @endif
 </section>

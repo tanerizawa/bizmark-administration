@@ -16,7 +16,7 @@
                 <h1 class="admin-hero-title text-white">Proyek Perizinan</h1>
                 <p class="admin-hero-desc">Kelola proyek dari awal hingga selesai</p>
             </div>
-            <a href="{{ route('projects.create') }}" class="admin-btn admin-btn-sm rounded" style="background: rgba(10,132,255,0.25); color: #fff;">
+            <a href="{{ route('projects.create') }}" class="admin-btn admin-btn-sm rounded bg-apple-blue/25 text-white">
                 <i class="fas fa-plus mr-1"></i>Tambah Proyek
             </a>
         </div>
@@ -24,36 +24,36 @@
 
     {{-- Compact Stats Row --}}
     <div class="grid grid-cols-4 gap-2">
-        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" style="background: rgba(10,132,255,0.1); border: 1px solid rgba(10,132,255,0.2);">
-            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(10,132,255,0.2);">
-                <i class="fas fa-folder text-apple-blue" style="font-size: 0.7rem;"></i>
+        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2 bg-apple-blue/12 border border-apple-blue/20">
+            <div class="admin-stat-icon rounded flex items-center justify-center bg-apple-blue/20">
+                <i class="fas fa-folder text-apple-blue text-[11px]"></i>
             </div>
             <div>
                 <p class="admin-small text-apple-blue uppercase tracking-wider">Total</p>
                 <p class="admin-stat text-white">{{ $totalProjects }}</p>
             </div>
         </div>
-        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" style="background: rgba(255,149,0,0.1); border: 1px solid rgba(255,149,0,0.2);">
-            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,149,0,0.2);">
-                <i class="fas fa-spinner text-apple-orange" style="font-size: 0.7rem;"></i>
+        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2 bg-apple-orange/12 border border-apple-orange/20">
+            <div class="admin-stat-icon rounded flex items-center justify-center bg-apple-orange/20">
+                <i class="fas fa-spinner text-apple-orange text-[11px]"></i>
             </div>
             <div>
                 <p class="admin-small text-apple-orange uppercase tracking-wider">Berjalan</p>
                 <p class="admin-stat text-apple-orange">{{ $inProgressProjects }}</p>
             </div>
         </div>
-        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" style="background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.2);">
-            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(52,199,89,0.2);">
-                <i class="fas fa-check text-apple-green" style="font-size: 0.7rem;"></i>
+        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2 bg-apple-green/12 border border-apple-green/20">
+            <div class="admin-stat-icon rounded flex items-center justify-center bg-apple-green/20">
+                <i class="fas fa-check text-apple-green text-[11px]"></i>
             </div>
             <div>
                 <p class="admin-small text-apple-green uppercase tracking-wider">Selesai</p>
                 <p class="admin-stat text-apple-green">{{ $completedProjects }}</p>
             </div>
         </div>
-        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" style="background: rgba(255,69,58,0.1); border: 1px solid rgba(255,69,58,0.2);">
-            <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,69,58,0.2);">
-                <i class="fas fa-exclamation text-apple-red" style="font-size: 0.7rem;"></i>
+        <div class="admin-stat-card card-elevated rounded-apple flex items-center gap-2 bg-apple-red/12 border border-apple-red/20">
+            <div class="admin-stat-icon rounded flex items-center justify-center bg-apple-red/20">
+                <i class="fas fa-exclamation text-apple-red text-[11px]"></i>
             </div>
             <div>
                 <p class="admin-small text-apple-red uppercase tracking-wider">Terlambat</p>
@@ -70,7 +70,7 @@
                 <div class="relative">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama proyek..." 
                            class="admin-input w-full pl-7 rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2" style="font-size: 0.625rem; color: rgba(235,235,245,0.3);"></i>
+                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2 text-dark-text-tertiary text-[10px]"></i>
                 </div>
             </div>
             <div class="w-32">
@@ -116,7 +116,7 @@
     <div class="card-elevated rounded-apple-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700 text-sm">
-                <thead style="background-color: var(--dark-bg-secondary);">
+                <thead class="bg-dark-bg-secondary">
                     <tr>
                         <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Proyek</th>
                         <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Klien</th>
@@ -125,9 +125,9 @@
                         <th scope="col" class="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
+                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
                     @forelse($projects as $project)
-                        <tr class="hover-lift transition-apple" style="cursor: pointer;" onclick="window.location='{{ route('projects.show', $project) }}'">
+                        <tr class="hover-lift transition-apple cursor-pointer" onclick="window.location='{{ route('projects.show', $project) }}'">
                             <td class="px-4 py-2.5">
                                 <div class="font-semibold text-sm text-dark-text-primary">{{ $project->name }}</div>
                                 @if($project->description)
@@ -142,8 +142,7 @@
                                         <span class="text-sm text-dark-text-primary">{{ $project->client->company_name ?? $project->client->name }}</span>
                                         <a href="{{ route('clients.show', $project->client) }}" 
                                            onclick="event.stopPropagation()"
-                                           class="text-xs px-1.5 py-0.5 rounded transition-colors" 
-                                           style="background: rgba(0, 122, 255, 0.1); color: var(--apple-blue);">
+                                           class="text-xs px-1.5 py-0.5 rounded transition-colors bg-apple-blue/10 text-apple-blue">
                                             <i class="fas fa-external-link-alt"></i>
                                         </a>
                                     </div>
@@ -153,7 +152,7 @@
                             </td>
                             <td class="px-4 py-2.5 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs font-medium rounded-apple"
-                                      style="background-color: {{ $project->status->color ?? '#6B7280' }}20; color: {{ $project->status->color ?? '#6B7280' }}">
+                                      style="background-color: {{ $project->status->color ?? '#6B7280' }}33; color: {{ $project->status->color ?? '#6B7280' }}">
                                     {{ $project->status->name ?? 'N/A' }}
                                 </span>
                             </td>
@@ -183,19 +182,16 @@
                             </td>
                             <td class="px-4 py-2.5 whitespace-nowrap text-center" onclick="event.stopPropagation()">
                                 <div class="flex items-center justify-center space-x-1.5">
-                                    <a href="{{ route('projects.show', $project) }}" 
-                                       class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple" 
-                                       style="background-color: rgba(90, 200, 250, 0.15); color: var(--apple-teal); border: 1px solid rgba(90, 200, 250, 0.25);">
+                                    <a href="{{ route('projects.show', $project) }}"
+                                       class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple bg-apple-blue/15 text-apple-blue border border-apple-blue/25">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('projects.edit', $project) }}" 
-                                       class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple" 
-                                       style="background-color: rgba(255, 149, 0, 0.15); color: var(--apple-orange); border: 1px solid rgba(255, 149, 0, 0.25);">
+                                    <a href="{{ route('projects.edit', $project) }}"
+                                       class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple bg-apple-orange/15 text-apple-orange border border-apple-orange/25">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <button onclick="event.stopPropagation(); deleteProject({{ $project->id }})" 
-                                            class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple" 
-                                            style="background-color: rgba(255, 59, 48, 0.15); color: var(--apple-red); border: 1px solid rgba(255, 59, 48, 0.25);">
+                                    <button onclick="event.stopPropagation(); deleteProject({{ $project->id }})"
+                                            class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple bg-apple-red/15 text-apple-red border border-apple-red/25">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -205,9 +201,9 @@
                         <tr>
                             <td colspan="5" class="px-4 py-8 text-center">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-project-diagram text-3xl mb-3" style="color: rgba(235, 235, 245, 0.3);"></i>
-                                    <h3 class="admin-section mb-1" style="color: #FFFFFF;">Belum Ada Proyek</h3>
-                                    <p class="admin-body mb-3" style="color: rgba(235, 235, 245, 0.6);">Mulai dengan membuat proyek pertama</p>
+                                    <i class="fas fa-project-diagram text-3xl mb-3 text-dark-text-tertiary"></i>
+                                    <h3 class="admin-section mb-1 text-white">Belum Ada Proyek</h3>
+                                    <p class="admin-body mb-3 text-dark-text-secondary">Mulai dengan membuat proyek pertama</p>
                                     <a href="{{ route('projects.create') }}" class="admin-btn inline-flex items-center">
                                         <i class="fas fa-plus mr-1.5"></i>Tambah Proyek
                                     </a>
@@ -222,7 +218,7 @@
 
     <!-- Pagination -->
     @if($projects->hasPages())
-        <div class="rounded-apple-lg px-4 py-3 mt-4" style="background-color: #2C2C2E; border: 1px solid rgba(84, 84, 88, 0.65); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);">
+        <div class="rounded-apple-lg px-4 py-3 mt-4 bg-dark-bg-tertiary border border-white/10 shadow-lg">
             {{ $projects->withQueryString()->links('pagination::tailwind') }}
         </div>
     @endif

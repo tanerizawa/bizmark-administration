@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Observers\AdminAuditObserver;
+use App\Observers\PermitApplicationObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy([PermitApplicationObserver::class, AdminAuditObserver::class])]
 class PermitApplication extends Model
 {
     use HasFactory;
@@ -60,9 +64,9 @@ class PermitApplication extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($application) {
-            if (!$application->application_number) {
+            if (! $application->application_number) {
                 $application->application_number = self::generateApplicationNumber();
             }
         });
@@ -74,10 +78,10 @@ class PermitApplication extends Model
         $lastApplication = self::whereYear('created_at', $year)
             ->orderBy('id', 'desc')
             ->first();
-        
-        $nextNumber = $lastApplication ? 
+
+        $nextNumber = $lastApplication ?
             intval(substr($lastApplication->application_number, -3)) + 1 : 1;
-        
+
         return sprintf('APP-%s-%03d', $year, $nextNumber);
     }
 
@@ -188,12 +192,12 @@ class PermitApplication extends Model
 
     public function canBeCancelled(): bool
     {
-        return !in_array($this->status, ['completed', 'cancelled', 'in_progress']);
+        return ! in_array($this->status, ['completed', 'cancelled', 'in_progress']);
     }
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'draft' => '#6B7280',
             'submitted' => '#3B82F6',
             'under_review' => '#F59E0B',
@@ -212,7 +216,7 @@ class PermitApplication extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'draft' => 'Draft',
             'submitted' => 'Diajukan',
             'under_review' => 'Sedang Direview',

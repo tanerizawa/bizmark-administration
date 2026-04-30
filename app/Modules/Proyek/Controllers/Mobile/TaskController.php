@@ -4,8 +4,8 @@ namespace App\Modules\Proyek\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
 use App\Models\Task;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -15,11 +15,11 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $filter = $request->get('filter', 'all'); // all, today, week, overdue
-        
+
         $query = Task::with(['project', 'assignedUser'])
             ->where('assigned_user_id', auth()->id())
             ->select('id', 'title', 'description', 'status', 'due_date', 'project_id', 'assigned_user_id', 'priority');
-        
+
         // Apply filters
         switch ($filter) {
             case 'today':
@@ -33,7 +33,7 @@ class TaskController extends Controller
                     ->where('status', '!=', 'done');
                 break;
         }
-        
+
         // Order by priority and due date (database-agnostic)
         $today = now()->toDateString();
         $tasks = $query->orderByRaw("
@@ -44,26 +44,26 @@ class TaskController extends Controller
                 ELSE 2
             END
         ", [now(), $today])
-        ->orderBy('due_date', 'asc')
-        ->paginate(20);
-        
+            ->orderBy('due_date', 'asc')
+            ->paginate(20);
+
         $stats = $this->buildTaskStats(auth()->id());
-        
+
         if ($request->expectsJson()) {
             return response()->json([
                 'tasks' => $tasks->items(),
                 'hasMore' => $tasks->hasMorePages(),
-                'nextPage' => $tasks->currentPage() + 1
+                'nextPage' => $tasks->currentPage() + 1,
             ]);
         }
-        
+
         return view('mobile.tasks.index', [
             'tasks' => $tasks,
             'currentFilter' => $filter,
-            'stats' => $stats
+            'stats' => $stats,
         ]);
     }
-    
+
     /**
      * My tasks (assigned to current user)
      */
@@ -73,25 +73,25 @@ class TaskController extends Controller
             ->with(['project', 'assignedUser'])
             ->orderBy('due_date', 'asc')
             ->paginate(20);
-        
+
         // Transform tasks for mobile display
-        $transformedTasks = $tasks->map(function($task) {
+        $transformedTasks = $tasks->map(function ($task) {
             return $this->transformTask($task);
         });
-        
+
         $stats = $this->buildTaskStats(auth()->id());
-        
+
         if ($request->expectsJson()) {
             return response()->json([
                 'tasks' => $transformedTasks,
                 'has_more' => $tasks->hasMorePages(),
-                'stats' => $stats
+                'stats' => $stats,
             ]);
         }
-        
+
         return view('mobile.tasks.my', compact('tasks', 'stats'));
     }
-    
+
     /**
      * Transform task for mobile display
      */
@@ -99,14 +99,14 @@ class TaskController extends Controller
     {
         $now = Carbon::now();
         $dueDate = Carbon::parse($task->due_date);
-        
+
         $priorityLabels = [
             'urgent' => 'Urgent',
             'high' => 'High',
             'medium' => 'Medium',
-            'low' => 'Low'
+            'low' => 'Low',
         ];
-        
+
         return [
             'id' => $task->id,
             'title' => $task->title,
@@ -124,7 +124,7 @@ class TaskController extends Controller
             'assigned_to_name' => $task->assignedUser->name ?? null,
         ];
     }
-    
+
     /**
      * Format due date for display
      */
@@ -142,29 +142,29 @@ class TaskController extends Controller
             return $date->format('d M');
         }
     }
-    
+
     /**
      * Urgent tasks (overdue + due today)
      */
     public function urgent(Request $request)
     {
         $tasks = Task::where('assigned_user_id', auth()->id())
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->where('due_date', '<', now())
-                  ->orWhereDate('due_date', now()->toDateString());
+                    ->orWhereDate('due_date', now()->toDateString());
             })
             ->where('status', '!=', 'done')
             ->with(['project'])
             ->orderBy('due_date', 'asc')
             ->get();
-        
+
         if ($request->expectsJson()) {
             return response()->json(['tasks' => $tasks]);
         }
-        
+
         return view('mobile.tasks.urgent', compact('tasks'));
     }
-    
+
     /**
      * Task detail
      */
@@ -173,28 +173,28 @@ class TaskController extends Controller
         $this->authorizeTaskAccess($task);
 
         $task->load(['project.status', 'assignedUser']);
-        
+
         $relatedTasks = Task::where('project_id', $task->project_id)
             ->where('assigned_user_id', auth()->id())
             ->where('id', '!=', $task->id)
             ->take(5)
             ->get();
-        
+
         return view('mobile.tasks.show', compact('task', 'relatedTasks'));
     }
-    
+
     /**
      * Mark task as complete
      */
     public function complete(Request $request, Task $task)
     {
         $this->authorizeTaskAccess($task);
-        
+
         $task->update([
             'status' => 'done',
             'completed_at' => now(),
         ]);
-        
+
         // Log activity (only if spatie/laravel-activitylog is installed)
         if (function_exists('activity')) {
             activity()
@@ -202,14 +202,14 @@ class TaskController extends Controller
                 ->causedBy(auth()->user())
                 ->log('task_completed');
         }
-        
+
         return response()->json([
             'success' => true,
             'task' => $task,
-            'message' => 'Task berhasil diselesaikan!'
+            'message' => 'Task berhasil diselesaikan!',
         ]);
     }
-    
+
     /**
      * Update task status
      */
@@ -218,18 +218,18 @@ class TaskController extends Controller
         $this->authorizeTaskAccess($task);
 
         $request->validate([
-            'status' => 'required|in:todo,in_progress,done'
+            'status' => 'required|in:todo,in_progress,done',
         ]);
-        
+
         $oldStatus = $task->status;
         $task->update(['status' => $request->status]);
-        
+
         if ($request->status === 'done') {
             $task->update([
                 'completed_at' => now(),
             ]);
         }
-        
+
         // Log activity (only if spatie/laravel-activitylog is installed)
         if (function_exists('activity')) {
             activity()
@@ -237,18 +237,18 @@ class TaskController extends Controller
                 ->causedBy(auth()->user())
                 ->withProperties([
                     'old_status' => $oldStatus,
-                    'new_status' => $request->status
+                    'new_status' => $request->status,
                 ])
                 ->log('task_status_changed');
         }
-        
+
         return response()->json([
             'success' => true,
             'task' => $task,
-            'message' => 'Status berhasil diupdate'
+            'message' => 'Status berhasil diupdate',
         ]);
     }
-    
+
     /**
      * Add comment to task
      */
@@ -257,22 +257,22 @@ class TaskController extends Controller
         $this->authorizeTaskAccess($task);
 
         $request->validate([
-            'comment' => 'required|string|max:1000'
+            'comment' => 'required|string|max:1000',
         ]);
-        
+
         $comment = $task->comments()->create([
             'user_id' => auth()->id(),
             'content' => $request->comment,
-            'created_at' => now()
+            'created_at' => now(),
         ]);
-        
+
         return response()->json([
             'success' => true,
             'comment' => $comment->load('user'),
-            'message' => 'Comment berhasil ditambahkan'
+            'message' => 'Comment berhasil ditambahkan',
         ]);
     }
-    
+
     /**
      * Quick create task from bottom sheet
      */
@@ -283,23 +283,23 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'due_date' => 'required|date|after_or_equal:today',
             'priority' => 'nullable|in:low,medium,high,urgent',
-            'assigned_user_id' => 'nullable|exists:users,id'
+            'assigned_user_id' => 'nullable|exists:users,id',
         ]);
-        
+
         $task = Task::create([
             'title' => $request->title,
             'project_id' => $request->project_id,
             'due_date' => $request->due_date,
             'priority' => $request->priority ?? 'medium',
             'assigned_user_id' => $request->assigned_user_id ?? auth()->id(),
-            'status' => 'todo'
+            'status' => 'todo',
         ]);
-        
+
         return response()->json([
             'success' => true,
             'task' => $task,
             'redirect' => route('mobile.tasks.show', $task->id),
-            'message' => 'Task berhasil dibuat'
+            'message' => 'Task berhasil dibuat',
         ], 201);
     }
 

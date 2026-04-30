@@ -3,18 +3,19 @@
 namespace App\Modules\AI\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\ParaphraseDocumentJob;
 use App\Jobs\ComplianceCheckJob;
+use App\Jobs\ParaphraseDocumentJob;
 use App\Models\AIProcessingLog;
 use App\Models\DocumentDraft;
 use App\Models\DocumentTemplate;
 use App\Models\Project;
+use App\Services\ComplianceReportService;
+use App\Services\DocxExportService;
 use App\Services\TemplateExtractor;
 use App\Services\UKLUPLComplianceService;
-use App\Services\ComplianceReportService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class DocumentAIController extends Controller
 {
@@ -174,13 +175,15 @@ class DocumentAIController extends Controller
         $format = $request->get('format', 'docx');
 
         if ($format === 'docx') {
-            $docxService = app(\App\Services\DocxExportService::class);
+            $docxService = app(DocxExportService::class);
             $filePath = $docxService->exportToDocx($draft);
+
             return $docxService->downloadDocx($filePath);
         }
 
         $pdf = Pdf::loadView('ai.draft-pdf', compact('draft'));
-        $filename = str_replace(' ', '_', $draft->title) . '.pdf';
+        $filename = str_replace(' ', '_', $draft->title).'.pdf';
+
         return $pdf->download($filename);
     }
 
@@ -218,7 +221,7 @@ class DocumentAIController extends Controller
         $filePath = $file->store('templates', 'local');
 
         $extractor = app(TemplateExtractor::class);
-        $extraction = $extractor->extractFromFile(storage_path('app/' . $filePath));
+        $extraction = $extractor->extractFromFile(storage_path('app/'.$filePath));
 
         DocumentTemplate::create([
             'name' => $validated['name'],
@@ -264,7 +267,7 @@ class DocumentAIController extends Controller
 
         $latestCheck = $draft->complianceChecks()->latest()->first();
 
-        if (!$latestCheck) {
+        if (! $latestCheck) {
             return response()->json([
                 'success' => false,
                 'message' => 'Belum ada compliance check untuk draft ini',
@@ -305,7 +308,7 @@ class DocumentAIController extends Controller
 
         $latestCheck = $draft->complianceChecks()->latest()->first();
 
-        if (!$latestCheck) {
+        if (! $latestCheck) {
             return redirect()
                 ->route('ai.drafts.show', [$projectId, $draftId])
                 ->with('error', 'Belum ada compliance check. Jalankan compliance check terlebih dahulu.');
@@ -316,7 +319,7 @@ class DocumentAIController extends Controller
         } catch (\Exception $e) {
             return redirect()
                 ->route('ai.drafts.show', [$projectId, $draftId])
-                ->with('error', 'Gagal generate compliance report: ' . $e->getMessage());
+                ->with('error', 'Gagal generate compliance report: '.$e->getMessage());
         }
     }
 }

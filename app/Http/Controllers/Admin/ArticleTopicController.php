@@ -13,38 +13,38 @@ class ArticleTopicController extends Controller
     public function index(Request $request)
     {
         $query = ArticleTopic::query();
-        
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        
+
         if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
-        
+
         if ($request->filled('search')) {
-            $query->where('title', 'LIKE', '%' . $request->search . '%');
+            $query->where('title', 'LIKE', '%'.$request->search.'%');
         }
-        
+
         $topics = $query->orderBy('priority', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-        
+
         $stats = [
             'total' => ArticleTopic::count(),
             'available' => ArticleTopic::where('status', 'pending')->whereNull('scheduled_for')->count(),
             'scheduled' => ArticleTopic::where('status', 'pending')->whereNotNull('scheduled_for')->count(),
             'used' => ArticleTopic::where('status', 'published')->count(),
         ];
-        
+
         return view('admin.auto-post.topics.index', compact('topics', 'stats'));
     }
-    
+
     public function create()
     {
         return view('admin.auto-post.topics.create');
     }
-    
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -58,7 +58,7 @@ class ArticleTopicController extends Controller
             'generation_notes' => 'nullable|string|max:1000',
             'priority' => 'required|integer|min:1|max:10',
         ]);
-        
+
         if (($validated['category'] ?? null) === 'guide') {
             $validated['category'] = 'tips';
         }
@@ -68,19 +68,19 @@ class ArticleTopicController extends Controller
         $validated['status'] = 'pending';
 
         $validated = $this->normalizeTopicPayload($validated);
-        
+
         ArticleTopic::create($validated);
-        
+
         return redirect()
             ->route('auto-post.topics.index')
             ->with('success', 'Topic berhasil ditambahkan');
     }
-    
+
     public function edit(ArticleTopic $topic)
     {
         return view('admin.auto-post.topics.edit', compact('topic'));
     }
-    
+
     public function update(Request $request, ArticleTopic $topic)
     {
         $validated = $request->validate([
@@ -102,27 +102,27 @@ class ArticleTopicController extends Controller
         $validated['language'] = $validated['language'] ?? $topic->language ?? 'id';
         $validated['target_market'] = $validated['target_market'] ?? $topic->target_market ?? 'both';
         $validated = $this->normalizeTopicPayload($validated);
-        
+
         $topic->update($validated);
-        
+
         return redirect()
             ->route('auto-post.topics.index')
             ->with('success', 'Topic berhasil diperbarui');
     }
-    
+
     public function destroy(ArticleTopic $topic)
     {
         if ($topic->status === 'processing' || ($topic->status === 'pending' && $topic->scheduled_for)) {
             return back()->with('error', 'Tidak dapat menghapus topic yang sedang diproses atau dijadwalkan');
         }
-        
+
         $topic->delete();
-        
+
         return redirect()
             ->route('auto-post.topics.index')
             ->with('success', 'Topic berhasil dihapus');
     }
-    
+
     public function bulkAction(Request $request)
     {
         $validated = $request->validate([
@@ -145,30 +145,32 @@ class ArticleTopicController extends Controller
             $topics = ArticleTopic::whereIn('id', $validated['topics']);
         } elseif ($scope === 'filtered') {
             $topics = ArticleTopic::query();
-            if (!empty($validated['status'])) {
+            if (! empty($validated['status'])) {
                 $topics->where('status', $validated['status']);
             }
-            if (!empty($validated['category'])) {
+            if (! empty($validated['category'])) {
                 $topics->where('category', $validated['category']);
             }
-            if (!empty($validated['market'])) {
+            if (! empty($validated['market'])) {
                 $topics->where('target_market', $validated['market']);
             }
-            if (!empty($validated['search'])) {
+            if (! empty($validated['search'])) {
                 $driver = DB::connection()->getDriverName();
-                $like = '%' . $validated['search'] . '%';
+                $like = '%'.$validated['search'].'%';
 
                 $topics->where(function ($q) use ($validated, $driver, $like) {
-                    $q->where('title', 'LIKE', '%' . $validated['search'] . '%')
-                        ->orWhere('description', 'LIKE', '%' . $validated['search'] . '%');
+                    $q->where('title', 'LIKE', '%'.$validated['search'].'%')
+                        ->orWhere('description', 'LIKE', '%'.$validated['search'].'%');
 
                     if ($driver === 'pgsql') {
                         $q->orWhereRaw('CAST(keywords AS TEXT) ILIKE ?', [$like]);
+
                         return;
                     }
 
                     if ($driver === 'mysql' || $driver === 'mariadb') {
                         $q->orWhereRaw('CAST(keywords AS CHAR) LIKE ?', [$like]);
+
                         return;
                     }
 
@@ -178,18 +180,18 @@ class ArticleTopicController extends Controller
         } else {
             $topics = ArticleTopic::query();
         }
-        
+
         switch ($validated['action']) {
             case 'delete':
                 $topics->where('status', '!=', 'processing')->delete();
                 $message = 'Topics berhasil dihapus';
                 break;
-                
+
             case 'reset':
                 $topics->update(['status' => 'pending', 'scheduled_for' => null]);
                 $message = 'Topics berhasil direset';
                 break;
-                
+
             case 'change_priority':
                 $topics->update(['priority' => $validated['priority']]);
                 $message = 'Priority berhasil diubah';
@@ -220,7 +222,7 @@ class ArticleTopicController extends Controller
                             }
                         }
 
-                        if (!empty($dirty)) {
+                        if (! empty($dirty)) {
                             $topic->update($dirty);
                             $updated++;
                         }
@@ -230,7 +232,7 @@ class ArticleTopicController extends Controller
                 $message = "Normalisasi selesai: {$updated} dari {$processed} topic diperbarui.";
                 break;
         }
-        
+
         return back()->with('success', $message);
     }
 
@@ -309,19 +311,20 @@ class ArticleTopicController extends Controller
     private function buildDescription(string $title, string $category, string $market): string
     {
         $marketLabel = $market === 'local' ? 'pasar lokal/UMKM' : ($market === 'pma' ? 'investor PMA' : 'pasar lokal dan PMA');
+
         return "Artikel {$category} tentang {$title} dengan fokus praktis untuk {$marketLabel}.";
     }
 
     private function enrichKeywords(array $keywords, string $title, string $category): array
     {
         $result = collect($keywords)
-            ->filter(fn($k) => is_string($k) && trim($k) !== '')
-            ->map(fn($k) => trim($k))
+            ->filter(fn ($k) => is_string($k) && trim($k) !== '')
+            ->map(fn ($k) => trim($k))
             ->values();
 
         $titleTokens = collect(preg_split('/[^\p{L}\p{N}]+/u', Str::lower($title)))
-            ->filter(fn($w) => mb_strlen($w) >= 4)
-            ->reject(fn($w) => in_array($w, ['yang', 'untuk', 'dengan', 'dalam', 'pada', 'dari', 'dan', 'atau']))
+            ->filter(fn ($w) => mb_strlen($w) >= 4)
+            ->reject(fn ($w) => in_array($w, ['yang', 'untuk', 'dengan', 'dalam', 'pada', 'dari', 'dan', 'atau']))
             ->take(6)
             ->values();
 
@@ -336,7 +339,7 @@ class ArticleTopicController extends Controller
         $result = $result
             ->merge($titleTokens)
             ->merge($categoryKeywords)
-            ->unique(fn($v) => Str::lower($v))
+            ->unique(fn ($v) => Str::lower($v))
             ->take(8)
             ->values();
 
@@ -351,6 +354,7 @@ class ArticleTopicController extends Controller
     {
         $tone = $category === 'regulation' ? 'formal, akurat, dan berbasis aturan terbaru' : 'praktis, jelas, dan actionable';
         $audience = $market === 'local' ? 'UMKM dan bisnis lokal' : ($market === 'pma' ? 'investor dan perusahaan PMA' : 'UMKM dan PMA');
+
         return "Gunakan gaya {$tone}; target pembaca: {$audience}; sertakan checklist, estimasi waktu, dan risiko umum.";
     }
 

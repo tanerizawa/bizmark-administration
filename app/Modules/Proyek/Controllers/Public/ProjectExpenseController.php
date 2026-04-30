@@ -3,8 +3,8 @@
 namespace App\Modules\Proyek\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
 use App\Models\PaymentMethod;
+use App\Models\Project;
 use App\Models\ProjectExpense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +29,7 @@ class ProjectExpenseController extends Controller
         // Handle file upload
         if ($request->hasFile('receipt_file')) {
             $file = $request->file('receipt_file');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = time().'_'.$file->getClientOriginalName();
             $path = $file->storeAs('receipts/expenses', $filename, 'public');
             $validated['receipt_file'] = $path;
         }
@@ -47,7 +47,7 @@ class ProjectExpenseController extends Controller
     public function destroy(ProjectExpense $expense)
     {
         $project = $expense->project;
-        
+
         // Delete file if exists
         if ($expense->receipt_file && \Storage::disk('public')->exists($expense->receipt_file)) {
             \Storage::disk('public')->delete($expense->receipt_file);

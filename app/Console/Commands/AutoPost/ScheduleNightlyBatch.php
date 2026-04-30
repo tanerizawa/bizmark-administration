@@ -35,8 +35,9 @@ class ScheduleNightlyBatch extends Command
     {
         $config = AutoPostConfig::current();
 
-        if (!$config->is_enabled) {
+        if (! $config->is_enabled) {
             $this->warn('⚠️ Auto-posting is disabled. Skipping nightly batch scheduling.');
+
             return self::SUCCESS;
         }
 
@@ -64,7 +65,7 @@ class ScheduleNightlyBatch extends Command
                 $generated = app(TopicGenerationService::class)->replenishIfNeeded($target * 3);
                 $this->line("   ✅ Generated {$generated} additional topic(s)");
             } catch (\Throwable $e) {
-                $this->warn('   ⚠️ Topic replenishment failed: ' . $e->getMessage());
+                $this->warn('   ⚠️ Topic replenishment failed: '.$e->getMessage());
             }
         }
 
@@ -77,7 +78,7 @@ class ScheduleNightlyBatch extends Command
         $this->line("   Remaining: {$result['remaining']}");
         $this->line("   Days used: {$result['days_used']}");
 
-        if (!empty($result['scheduled'])) {
+        if (! empty($result['scheduled'])) {
             $this->newLine();
             $this->info('✅ Scheduled slots:');
             foreach ($result['scheduled'] as $schedule) {
@@ -87,6 +88,7 @@ class ScheduleNightlyBatch extends Command
 
         if ($result['remaining'] > 0) {
             $this->warn('⚠️ Some posts could not be scheduled due to limited slots/topics.');
+
             return self::FAILURE;
         }
 

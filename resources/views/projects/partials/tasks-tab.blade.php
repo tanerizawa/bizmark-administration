@@ -5,14 +5,13 @@
             <h3 class="card-title text-white">
                 <i class="fas fa-tasks mr-2 text-apple-blue-dark"></i>Task & Kegiatan Proyek
             </h3>
-            <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
+            <p class="text-sm mt-1 text-dark-text-secondary">
                 Kelola task dan monitor progress kegiatan proyek
             </p>
         </div>
         
-        <button onclick="event.stopPropagation(); showAddTaskModal()" 
-                class="btn-primary-sm" 
-                style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+        <button onclick="event.stopPropagation(); showAddTaskModal()"
+                class="btn-primary-sm bg-apple-blue/90 text-white">
             <i class="fas fa-plus mr-2"></i>Tambah Task
         </button>
     </div>
@@ -21,30 +20,30 @@
         <!-- Statistics -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
             <div class="data-block">
-                <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.65);">Total Task</p>
-                <p class="text-lg font-semibold" style="color: #FFFFFF;">{{ $project->tasks->count() }}</p>
+                <p class="text-xs mb-1 text-dark-text-secondary">Total Task</p>
+                <p class="text-lg font-semibold text-white">{{ $project->tasks->count() }}</p>
             </div>
-            <div class="data-block" style="background: rgba(52, 199, 89, 0.08); border-color: rgba(52, 199, 89, 0.2);">
-                <p class="text-xs mb-1" style="color: rgba(52, 199, 89, 0.85);">Selesai</p>
-                <p class="text-lg font-semibold" style="color: rgba(52, 199, 89, 1);">
+            <div class="data-block bg-apple-green/8 border-apple-green/20">
+                <p class="text-xs mb-1 text-apple-green/85">Selesai</p>
+                <p class="text-lg font-semibold text-apple-green">
                     {{ $project->tasks->where('status', 'done')->count() }}
                 </p>
             </div>
-            <div class="data-block" style="background: rgba(10, 132, 255, 0.08); border-color: rgba(10, 132, 255, 0.2);">
-                <p class="text-xs mb-1" style="color: rgba(10, 132, 255, 0.85);">Dalam Proses</p>
-                <p class="text-lg font-semibold" style="color: rgba(10, 132, 255, 1);">
+            <div class="data-block bg-apple-blue/8 border-apple-blue/20">
+                <p class="text-xs mb-1 text-apple-blue/85">Dalam Proses</p>
+                <p class="text-lg font-semibold text-apple-blue">
                     {{ $project->tasks->where('status', 'in_progress')->count() }}
                 </p>
             </div>
-            <div class="data-block" style="background: rgba(255, 59, 48, 0.08); border-color: rgba(255, 59, 48, 0.2);">
-                <p class="text-xs mb-1" style="color: rgba(255, 59, 48, 0.85);">Terblokir</p>
-                <p class="text-lg font-semibold" style="color: rgba(255, 59, 48, 1);">
+            <div class="data-block bg-apple-red/8 border-apple-red/20">
+                <p class="text-xs mb-1 text-apple-red/85">Terblokir</p>
+                <p class="text-lg font-semibold text-apple-red">
                     {{ $project->tasks->where('status', 'blocked')->count() }}
                 </p>
             </div>
-            <div class="data-block" style="background: rgba(255, 149, 0, 0.08); border-color: rgba(255, 149, 0, 0.2);">
-                <p class="text-xs mb-1" style="color: rgba(255, 149, 0, 0.85);">Terlambat</p>
-                <p class="text-lg font-semibold" style="color: rgba(255, 149, 0, 1);">
+            <div class="data-block bg-apple-orange/8 border-apple-orange/20">
+                <p class="text-xs mb-1 text-apple-orange/85">Terlambat</p>
+                <p class="text-lg font-semibold text-apple-orange">
                     {{ $project->tasks->filter->isOverdue()->count() }}
                 </p>
             </div>
@@ -52,13 +51,13 @@
 
         <!-- Task Flow Diagram -->
         <div id="tasks-sortable" class="space-y-4">
-            <h4 class="text-sm font-semibold" style="color: rgba(235, 235, 245, 0.8);">
+            <h4 class="text-sm font-semibold text-dark-text-primary/80">
                 <i class="fas fa-list-ol mr-2"></i>Daftar Task
-                <span class="ml-2 text-xs" style="color: rgba(235, 235, 245, 0.5);">(Drag untuk mengubah urutan)</span>
+                <span class="ml-2 text-xs text-dark-text-tertiary">(Drag untuk mengubah urutan)</span>
             </h4>
 
             @foreach($project->tasks->sortBy('sort_order') as $task)
-                <div class="relative" 
+                <div class="relative"
                      data-task-id="{{ $task->id }}"
                      data-sort-order="{{ $task->sort_order }}"
                      data-task-title="{{ $task->title }}"
@@ -78,15 +77,13 @@
                         
                         <div class="flex items-start gap-4">
                             <!-- Drag Handle -->
-                            <div class="drag-handle flex-shrink-0 cursor-move opacity-50 hover:opacity-100 transition-opacity" 
-                                 style="color: rgba(235, 235, 245, 0.6);" 
+                            <div class="drag-handle flex-shrink-0 cursor-move opacity-50 hover:opacity-100 transition-opacity text-dark-text-secondary"
                                  title="Drag untuk mengubah urutan">
                                 <i class="fas fa-grip-vertical text-xl"></i>
                             </div>
                             
                             <!-- Sort Order Badge -->
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold" 
-                                 style="background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold bg-[rgba(10,132,255,0.3)] text-apple-blue">
                                 {{ $task->sort_order }}
                             </div>
 
@@ -94,42 +91,40 @@
                                 <!-- Task Header -->
                                 <div class="flex items-start justify-between mb-2">
                                     <div class="flex-1">
-                                        <h5 class="font-semibold" style="color: #FFFFFF;">
+                                        <h5 class="font-semibold text-white">
                                             {{ $task->title }}
                                         </h5>
                                         @if($task->description)
-                                            <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.6);">
+                                            <p class="text-sm mt-1 text-dark-text-secondary">
                                                 {{ Str::limit($task->description, 100) }}
                                             </p>
                                         @endif
                                     </div>
 
                                     <div class="flex items-center gap-2 ml-4">
-                                        <!-- Priority Badge -->
-                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full" 
+                                        <!-- Priority Badge (dynamic) -->
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
                                               style="background: {{ $task->getPriorityColor() }}20; color: {{ $task->getPriorityColor() }};">
                                             {{ $task->getPriorityLabel() }}
                                         </span>
                                         
-                                        <!-- Status Badge -->
-                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full" 
+                                        <!-- Status Badge (dynamic) -->
+                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full"
                                               style="background: {{ $task->getStatusColor() }}20; color: {{ $task->getStatusColor() }};">
                                             {{ $task->getStatusLabel() }}
                                         </span>
                                         
                                         <!-- Actions -->
                                         <div class="flex gap-1">
-                                            <button onclick="event.stopPropagation(); editTask({{ $task->id }})" 
-                                                    class="p-2 rounded transition-colors"
-                                                    style="color: rgba(10, 132, 255, 1);" 
+                                            <button onclick="event.stopPropagation(); editTask({{ $task->id }})"
+                                                    class="p-2 rounded transition-colors text-apple-blue"
                                                     onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Edit Task">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="event.stopPropagation(); deleteTask({{ $task->id }})" 
-                                                    class="p-2 rounded transition-colors"
-                                                    style="color: rgba(255, 59, 48, 1);" 
+                                            <button onclick="event.stopPropagation(); deleteTask({{ $task->id }})"
+                                                    class="p-2 rounded transition-colors text-apple-red"
                                                     onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Hapus Task">
@@ -143,19 +138,18 @@
                                 <div class="grid grid-cols-3 gap-4 mt-3">
                                     <!-- Assigned User -->
                                     <div>
-                                        <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.6);">Ditugaskan Ke:</p>
+                                        <p class="text-xs mb-1 text-dark-text-secondary">Ditugaskan Ke:</p>
                                         @if($task->assignedUser)
                                             <div class="flex items-center">
-                                                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-2"
-                                                     style="background: rgba(10, 132, 255, 0.3); color: rgba(10, 132, 255, 1);">
+                                                <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-2 bg-apple-blue/30 text-apple-blue">
                                                     {{ strtoupper(substr($task->assignedUser->name, 0, 1)) }}
                                                 </div>
-                                                <span class="text-sm" style="color: rgba(235, 235, 245, 0.8);">
+                                                <span class="text-sm text-dark-text-primary/80">
                                                     {{ $task->assignedUser->name }}
                                                 </span>
                                             </div>
                                         @else
-                                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.5);">
+                                            <span class="text-sm text-dark-text-tertiary">
                                                 Belum ditugaskan
                                             </span>
                                         @endif
@@ -163,9 +157,9 @@
 
                                     <!-- Due Date -->
                                     <div>
-                                        <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.6);">Deadline:</p>
+                                        <p class="text-xs mb-1 text-dark-text-secondary">Deadline:</p>
                                         @if($task->due_date)
-                                            <span class="text-sm {{ $task->isOverdue() ? 'font-bold' : '' }}" 
+                                            <span class="text-sm {{ $task->isOverdue() ? 'font-bold' : '' }}"
                                                   style="color: {{ $task->isOverdue() ? 'rgba(255, 59, 48, 1)' : 'rgba(235, 235, 245, 0.8)' }};">
                                                 {{ $task->due_date->format('d M Y') }}
                                                 @if($task->isOverdue())
@@ -173,7 +167,7 @@
                                                 @endif
                                             </span>
                                         @else
-                                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.5);">
+                                            <span class="text-sm text-dark-text-tertiary">
                                                 Tidak ada deadline
                                             </span>
                                         @endif
@@ -181,11 +175,10 @@
 
                                     <!-- Progress -->
                                     <div>
-                                        <p class="text-xs mb-1" style="color: rgba(235, 235, 245, 0.6);">Progress:</p>
+                                        <p class="text-xs mb-1 text-dark-text-secondary">Progress:</p>
                                         <div class="flex items-center">
-                                            <div class="flex-1 h-2 rounded-full overflow-hidden" 
-                                                 style="background: rgba(58, 58, 60, 0.5);">
-                                                <div class="h-full transition-all" 
+                                            <div class="flex-1 h-2 rounded-full overflow-hidden bg-[rgba(58,58,60,0.5)]">
+                                                <div class="h-full transition-all"
                                                      style="width: {{ $task->getProgress() }}%; background: {{ $task->getStatusColor() }};"></div>
                                             </div>
                                             <span class="ml-2 text-sm font-semibold" style="color: {{ $task->getStatusColor() }};">
@@ -198,16 +191,14 @@
                                 <!-- Can Start Check -->
                                 @if($task->status === 'todo')
                                     @if($task->canStart())
-                                        <div class="mt-3 p-2 rounded-lg text-sm" 
-                                             style="background: rgba(52, 199, 89, 0.1); color: rgba(52, 199, 89, 1);">
+                                        <div class="mt-3 p-2 rounded-lg text-sm bg-apple-green/10 text-apple-green">
                                             <i class="fas fa-check-circle mr-2"></i>
                                             Siap dikerjakan - Tidak ada blocker
                                         </div>
                                     @else
-                                        <div class="mt-3 p-2 rounded-lg text-sm" 
-                                             style="background: rgba(255, 59, 48, 0.1); color: rgba(255, 59, 48, 1);">
+                                        <div class="mt-3 p-2 rounded-lg text-sm bg-apple-red/10 text-apple-red">
                                             <i class="fas fa-lock mr-2"></i>
-                                            Menunggu prasyarat: 
+                                            Menunggu prasyarat:
                                             @foreach($task->getBlockers() as $blocker)
                                                 <strong>{{ $blocker }}</strong>{{ !$loop->last ? ', ' : '' }}
                                             @endforeach
@@ -217,11 +208,11 @@
 
                                 <!-- Dependency Info -->
                                 @if($task->dependsOnTask)
-                                    <div class="mt-3 pt-3" style="border-top: 1px solid rgba(58, 58, 60, 0.8);">
-                                        <p class="text-xs font-semibold mb-2" style="color: rgba(235, 235, 245, 0.6);">
+                                    <div class="mt-3 pt-3 border-t border-white/10">
+                                        <p class="text-xs font-semibold mb-2 text-dark-text-secondary">
                                             <i class="fas fa-link mr-1"></i>PRASYARAT TASK:
                                         </p>
-                                        <span class="inline-flex items-center px-2 py-1 text-xs rounded-full" 
+                                        <span class="inline-flex items-center px-2 py-1 text-xs rounded-full"
                                               style="background: {{ $task->dependsOnTask->getStatusColor() }}20; color: {{ $task->dependsOnTask->getStatusColor() }};">
                                             <i class="fas fa-{{ $task->dependsOnTask->status === 'done' ? 'check-circle' : 'clock' }} mr-1"></i>
                                             {{ $task->dependsOnTask->title }}
@@ -232,14 +223,12 @@
 
                                 <!-- Related Permit Info -->
                                 @if($task->permit)
-                                    <div class="mt-3 pt-3" style="border-top: 1px solid rgba(58, 58, 60, 0.8);">
-                                        <p class="text-xs font-semibold mb-2" style="color: rgba(235, 235, 245, 0.6);">
+                                    <div class="mt-3 pt-3 border-t border-white/10">
+                                        <p class="text-xs font-semibold mb-2 text-dark-text-secondary">
                                             <i class="fas fa-file-contract mr-1 text-blue-400"></i>TERKAIT IZIN:
                                         </p>
-                                        <span class="inline-flex items-center px-3 py-1 text-xs rounded-full" 
-                                              style="background: rgba(10, 132, 255, 0.15); color: rgba(10, 132, 255, 1);">
-                                            <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold mr-2" 
-                                                  style="background: rgba(10, 132, 255, 0.3);">
+                                        <span class="inline-flex items-center px-3 py-1 text-xs rounded-full bg-apple-blue/15 text-apple-blue">
+                                            <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold mr-2 bg-apple-blue/30">
                                                 {{ $task->permit->sequence_order }}
                                             </span>
                                             {{ $task->permit->permitType->name ?? $task->permit->custom_permit_name }}
@@ -256,16 +245,16 @@
                                     <div class="mt-3 grid grid-cols-2 gap-4 text-sm">
                                         @if($task->estimated_hours)
                                             <div>
-                                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Estimasi:</p>
-                                                <p style="color: rgba(235, 235, 245, 0.8);">
+                                                <p class="text-xs text-dark-text-secondary">Estimasi:</p>
+                                                <p class="text-dark-text-primary/80">
                                                     {{ $task->estimated_hours }} jam
                                                 </p>
                                             </div>
                                         @endif
                                         @if($task->actual_hours)
                                             <div>
-                                                <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">Aktual:</p>
-                                                <p style="color: rgba(235, 235, 245, 0.8);">
+                                                <p class="text-xs text-dark-text-secondary">Aktual:</p>
+                                                <p class="text-dark-text-primary/80">
                                                     {{ $task->actual_hours }} jam
                                                 </p>
                                             </div>
@@ -279,7 +268,7 @@
                     <!-- Arrow to next -->
                     @if(!$loop->last)
                         <div class="flex justify-center my-2">
-                            <i class="fas fa-arrow-down text-2xl" style="color: rgba(235, 235, 245, 0.3);"></i>
+                            <i class="fas fa-arrow-down text-2xl text-dark-text-tertiary/50"></i>
                         </div>
                     @endif
                 </div>
@@ -288,14 +277,13 @@
     @else
         <!-- Empty State -->
         <div class="text-center py-12">
-            <i class="fas fa-tasks text-6xl mb-4" style="color: rgba(235, 235, 245, 0.3);"></i>
-            <h4 class="text-xl font-semibold mb-2" style="color: #FFFFFF;">Belum Ada Task</h4>
-            <p class="mb-6" style="color: rgba(235, 235, 245, 0.6);">
+            <i class="fas fa-tasks text-6xl mb-4 text-dark-text-tertiary/50"></i>
+            <h4 class="text-xl font-semibold mb-2 text-white">Belum Ada Task</h4>
+            <p class="mb-6 text-dark-text-secondary">
                 Tambahkan task untuk mulai mengelola kegiatan proyek
             </p>
-            <button onclick="event.stopPropagation(); showAddTaskModal()" 
-                    class="px-6 py-3 rounded-lg font-medium transition-colors" 
-                    style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+            <button onclick="event.stopPropagation(); showAddTaskModal()"
+                    class="px-6 py-3 rounded-lg font-medium transition-colors bg-apple-blue/90 text-white">
                 <i class="fas fa-plus mr-2"></i>Tambah Task Pertama
             </button>
         </div>
@@ -407,7 +395,7 @@
                             </option>
                         @endforeach
                     </select>
-                    <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                    <p class="text-xs mt-1 text-dark-text-tertiary">
                         Task ini hanya bisa dimulai setelah task prasyarat selesai
                     </p>
                 </div>
@@ -430,7 +418,7 @@
                             </option>
                         @endforeach
                     </select>
-                    <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                    <p class="text-xs mt-1 text-dark-text-tertiary">
                         Task ini merupakan bagian dari proses pengurusan izin tertentu
                     </p>
                 </div>

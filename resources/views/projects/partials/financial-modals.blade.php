@@ -11,12 +11,12 @@
     ])->values();
 @endphp
 <div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
-    <div class="rounded-apple-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" style="background: rgba(28, 28, 30, 0.98);">
+    <div class="rounded-apple-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto bg-[rgba(28,28,30,0.98)]">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold" style="color: #FFFFFF;">
+            <h2 class="text-2xl font-bold text-white">
                 <i class="fas fa-file-invoice mr-2 text-apple-blue-dark"></i>Create Invoice
             </h2>
-            <button onclick="closeInvoiceModal()" class="text-2xl" style="color: rgba(235, 235, 245, 0.6);">
+            <button onclick="closeInvoiceModal()" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -24,30 +24,30 @@
         <form id="invoiceForm" onsubmit="submitInvoice(event)">
             <!-- Client Information (Read-only) -->
             @if($project->client)
-            <div class="rounded-lg p-4 mb-6" style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3);">
+            <div class="rounded-lg p-4 mb-6 bg-apple-green/10 border border-apple-green/30">
                 <div class="flex items-start">
                     <div class="mr-3">
-                        <i class="fas fa-building text-xl" style="color: rgba(52, 199, 89, 0.9);"></i>
+                        <i class="fas fa-building text-xl text-apple-green/90"></i>
                     </div>
                     <div class="flex-1">
-                        <h4 class="text-sm font-semibold mb-1" style="color: rgba(52, 199, 89, 1);">
+                        <h4 class="text-sm font-semibold mb-1 text-apple-green">
                             Invoice untuk Klien:
                         </h4>
-                        <p class="text-base font-bold mb-1" style="color: #FFFFFF;">
+                        <p class="text-base font-bold mb-1 text-white">
                             {{ $project->client->name }}
                         </p>
                         @if($project->client->company)
-                        <p class="text-sm mb-1" style="color: rgba(235, 235, 245, 0.8);">
+                        <p class="text-sm mb-1 text-dark-text-primary/80">
                             <i class="fas fa-briefcase mr-1"></i>{{ $project->client->company }}
                         </p>
                         @endif
                         @if($project->client->address)
-                        <p class="text-xs" style="color: rgba(235, 235, 245, 0.6);">
+                        <p class="text-xs text-dark-text-secondary">
                             <i class="fas fa-map-marker-alt mr-1"></i>{{ $project->client->address }}
                         </p>
                         @endif
                         @if($project->client->phone)
-                        <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <p class="text-xs mt-1 text-dark-text-secondary">
                             <i class="fas fa-phone mr-1"></i>{{ $project->client->phone }}
                         </p>
                         @endif
@@ -55,14 +55,14 @@
                 </div>
             </div>
             @else
-            <div class="rounded-lg p-4 mb-6" style="background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.3);">
+            <div class="rounded-lg p-4 mb-6 bg-apple-red/10 border border-apple-red/30">
                 <div class="flex items-center">
-                    <i class="fas fa-exclamation-triangle mr-3 text-xl" style="color: rgba(255, 59, 48, 0.9);"></i>
+                    <i class="fas fa-exclamation-triangle mr-3 text-xl text-apple-red/90"></i>
                     <div>
-                        <p class="text-sm font-semibold" style="color: rgba(255, 59, 48, 1);">
+                        <p class="text-sm font-semibold text-apple-red">
                             Proyek ini belum memiliki klien
                         </p>
-                        <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <p class="text-xs mt-1 text-dark-text-secondary">
                             Silakan tambahkan klien ke proyek terlebih dahulu sebelum membuat invoice.
                         </p>
                     </div>
@@ -73,28 +73,28 @@
             <!-- Invoice Header -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tanggal Invoice<span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Tanggal Invoice<span class="text-red-500">*</span></label>
                     <input type="date" name="invoice_date" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            value="{{ date('Y-m-d') }}">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Jatuh Tempo<span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Jatuh Tempo<span class="text-red-500">*</span></label>
                     <input type="date" name="due_date" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            value="{{ date('Y-m-d', strtotime('+30 days')) }}">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Pajak (%)<span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Pajak (%)<span class="text-red-500">*</span></label>
                     <input type="number" name="tax_rate" step="0.01" min="0" max="100" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            value="11" placeholder="11.00">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">NPWP Klien (Opsional)</label>
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">NPWP Klien (Opsional)</label>
                     <input type="text" name="client_tax_id"
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            placeholder="00.000.000.0-000.000">
@@ -104,10 +104,9 @@
             <!-- Invoice Items -->
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-3">
-                    <label class="block text-sm font-medium" style="color: rgba(235, 235, 245, 0.8);">Invoice Items<span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-dark-text-primary/80">Invoice Items<span class="text-red-500">*</span></label>
                     <button type="button" onclick="addInvoiceItem()"
-                            class="px-3 py-1 rounded-lg text-sm font-medium transition-colors"
-                            style="background: rgba(0, 122, 255, 0.2); color: rgba(0, 122, 255, 1);">
+                            class="px-3 py-1 rounded-lg text-sm font-medium transition-colors bg-apple-blue/20 text-apple-blue">
                         <i class="fas fa-plus mr-1"></i>Add Item
                     </button>
                 </div>
@@ -118,26 +117,26 @@
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Notes</label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Notes</label>
                 <textarea name="notes" rows="3"
                           class="input-dark w-full px-4 py-2.5 rounded-lg"
                           placeholder="Additional notes for this invoice"></textarea>
             </div>
 
             <!-- Invoice Summary -->
-            <div class="rounded-lg p-4 mb-6" style="background: rgba(58, 58, 60, 0.5);">
+            <div class="rounded-lg p-4 mb-6 bg-[rgba(58,58,60,0.5)]">
                 <div class="space-y-2">
                     <div class="flex justify-between">
-                        <span style="color: rgba(235, 235, 245, 0.6);">Subtotal:</span>
-                        <span id="invoiceSubtotal" class="font-semibold" style="color: #FFFFFF;">Rp 0</span>
+                        <span class="text-dark-text-secondary">Subtotal:</span>
+                        <span id="invoiceSubtotal" class="font-semibold text-white">Rp 0</span>
                     </div>
                     <div class="flex justify-between">
-                        <span style="color: rgba(235, 235, 245, 0.6);">Tax (<span id="taxRateDisplay">11</span>%):</span>
-                        <span id="invoiceTax" class="font-semibold" style="color: #FFFFFF;">Rp 0</span>
+                        <span class="text-dark-text-secondary">Tax (<span id="taxRateDisplay">11</span>%):</span>
+                        <span id="invoiceTax" class="font-semibold text-white">Rp 0</span>
                     </div>
-                    <div class="flex justify-between text-lg pt-2" style="border-top: 1px solid rgba(58, 58, 60, 0.8);">
-                        <span class="font-bold" style="color: #FFFFFF;">Total:</span>
-                        <span id="invoiceTotal" class="font-bold" style="color: rgba(0, 122, 255, 1);">Rp 0</span>
+                    <div class="flex justify-between text-lg pt-2 border-t border-white/10">
+                        <span class="font-bold text-white">Total:</span>
+                        <span id="invoiceTotal" class="font-bold text-apple-blue">Rp 0</span>
                     </div>
                 </div>
             </div>
@@ -145,14 +144,12 @@
             <!-- Actions -->
             <div class="flex justify-end space-x-3">
                 <button type="button" onclick="closeInvoiceModal()"
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(58, 58, 60, 0.8); color: rgba(235, 235, 245, 0.8);">
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Batal
                 </button>
                 <button type="submit" id="submitInvoiceBtn"
                         @if(!$project->client_id) disabled @endif
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors {{ !$project->client_id ? 'opacity-50 cursor-not-allowed' : '' }}"
-                        style="background: rgba(0, 122, 255, 0.9); color: #FFFFFF;">
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-apple-blue/90 text-white {{ !$project->client_id ? 'opacity-50 cursor-not-allowed' : '' }}">
                     <i class="fas fa-save mr-2"></i>Buat Invoice
                 </button>
             </div>
@@ -162,12 +159,12 @@
 
 {{-- Payment Recording Modal --}}
 <div id="invoicePaymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
-    <div class="rounded-apple-xl p-6 max-w-md w-full mx-4" style="background: rgba(28, 28, 30, 0.98);">
+    <div class="rounded-apple-xl p-6 max-w-md w-full mx-4 bg-[rgba(28,28,30,0.98)]">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold" style="color: #FFFFFF;">
+            <h2 class="text-xl font-bold text-white">
                 <i class="fas fa-dollar-sign mr-2 text-green-500"></i>Record Payment
             </h2>
-            <button onclick="closeInvoicePaymentModal()" class="text-2xl" style="color: rgba(235, 235, 245, 0.6);">
+            <button onclick="closeInvoicePaymentModal()" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -175,33 +172,33 @@
         <form id="invoicePaymentForm" onsubmit="submitInvoicePayment(event)">
             <input type="hidden" id="payment_invoice_id" name="invoice_id">
 
-            <div class="mb-4 p-3 rounded-lg" style="background: rgba(58, 58, 60, 0.5);">
+            <div class="mb-4 p-3 rounded-lg bg-[rgba(58,58,60,0.5)]">
                 <div class="flex justify-between mb-1">
-                    <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Invoice:</span>
-                    <span id="payment_invoice_number" class="text-sm font-mono" style="color: rgba(0, 122, 255, 1);"></span>
+                    <span class="text-sm text-dark-text-secondary">Invoice:</span>
+                    <span id="payment_invoice_number" class="text-sm font-mono text-apple-blue"></span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Remaining:</span>
-                    <span id="payment_remaining" class="text-sm font-bold" style="color: rgba(255, 149, 0, 1);"></span>
+                    <span class="text-sm text-dark-text-secondary">Remaining:</span>
+                    <span id="payment_remaining" class="text-sm font-bold text-apple-orange"></span>
                 </div>
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Payment Amount<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Payment Amount<span class="text-red-500">*</span></label>
                 <input type="number" name="amount" step="0.01" min="0.01" required
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        placeholder="0.00">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Payment Date<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Payment Date<span class="text-red-500">*</span></label>
                 <input type="date" name="payment_date" required
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        value="{{ date('Y-m-d') }}">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Payment Method<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Payment Method<span class="text-red-500">*</span></label>
                 <select name="payment_method" id="payment_method" required onchange="updateCashAccountInfo()"
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Pilih metode pembayaran...</option>
@@ -211,26 +208,26 @@
                 </select>
             </div>
 
-            <div id="cash_account_info" class="mb-4 p-3 rounded-lg hidden" style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3);">
+            <div id="cash_account_info" class="mb-4 p-3 rounded-lg hidden bg-apple-green/10 border border-apple-green/30">
                 <div class="flex items-start">
-                    <i class="fas fa-info-circle mt-1 mr-2" style="color: rgba(52, 199, 89, 1);"></i>
-                    <div class="text-sm" style="color: rgba(235, 235, 245, 0.8);">
-                        <div class="font-medium mb-1" style="color: rgba(52, 199, 89, 1);">Akun Kas Terpilih:</div>
+                    <i class="fas fa-info-circle mt-1 mr-2 text-apple-green"></i>
+                    <div class="text-sm text-dark-text-primary/80">
+                        <div class="font-medium mb-1 text-apple-green">Akun Kas Terpilih:</div>
                         <div id="selected_account_name" class="font-mono"></div>
-                        <div id="selected_account_balance" class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.6);"></div>
+                        <div id="selected_account_balance" class="text-xs mt-1 text-dark-text-secondary"></div>
                     </div>
                 </div>
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Reference Number</label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Reference Number</label>
                 <input type="text" name="reference_number"
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        placeholder="Transaction reference">
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Notes</label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Notes</label>
                 <textarea name="notes" rows="2"
                           class="input-dark w-full px-4 py-2.5 rounded-lg"
                           placeholder="Payment notes"></textarea>
@@ -238,13 +235,11 @@
 
             <div class="flex justify-end space-x-3">
                 <button type="button" onclick="closeInvoicePaymentModal()"
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(58, 58, 60, 0.8); color: rgba(235, 235, 245, 0.8);">
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Cancel
                 </button>
                 <button type="submit"
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-apple-green/90 text-white">
                     <i class="fas fa-check mr-2"></i>Record Payment
                 </button>
             </div>
@@ -254,39 +249,39 @@
 
 {{-- Payment Schedule Modal --}}
 <div id="scheduleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
-    <div class="rounded-apple-xl p-6 max-w-md w-full mx-4" style="background: rgba(28, 28, 30, 0.98);">
+    <div class="rounded-apple-xl p-6 max-w-md w-full mx-4 bg-[rgba(28,28,30,0.98)]">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold" style="color: #FFFFFF;">
+            <h2 class="text-xl font-bold text-white">
                 <i class="fas fa-calendar-check mr-2 text-yellow-500"></i>Add Payment Schedule
             </h2>
-            <button onclick="closeScheduleModal()" class="text-2xl" style="color: rgba(235, 235, 245, 0.6);">
+            <button onclick="closeScheduleModal()" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
         <form id="scheduleForm" onsubmit="submitSchedule(event)">
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Description<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Description<span class="text-red-500">*</span></label>
                 <input type="text" name="description" required
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        placeholder="e.g., First Payment, Second Installment">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Amount<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Amount<span class="text-red-500">*</span></label>
                 <input type="number" name="amount" step="0.01" min="0.01" required
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        placeholder="0.00">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Due Date<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Due Date<span class="text-red-500">*</span></label>
                 <input type="date" name="due_date" required
                        class="input-dark w-full px-4 py-2.5 rounded-lg">
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Notes</label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Notes</label>
                 <textarea name="notes" rows="2"
                           class="input-dark w-full px-4 py-2.5 rounded-lg"
                           placeholder="Additional notes"></textarea>
@@ -294,13 +289,11 @@
 
             <div class="flex justify-end space-x-3">
                 <button type="button" onclick="closeScheduleModal()"
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(58, 58, 60, 0.8); color: rgba(235, 235, 245, 0.8);">
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Cancel
                 </button>
                 <button type="submit"
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(255, 204, 0, 0.9); color: #1C1C1E;">
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(255,204,0,0.9)] text-[#1C1C1E]">
                     <i class="fas fa-plus mr-2"></i>Add Schedule
                 </button>
             </div>
@@ -310,12 +303,12 @@
 
 {{-- Expense Modal --}}
 <div id="financialExpenseModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 overflow-y-auto" style="display: none;">
-    <div class="rounded-apple-xl p-6 max-w-md w-full mx-4 my-8" style="background: rgba(28, 28, 30, 0.98);">
+    <div class="rounded-apple-xl p-6 max-w-md w-full mx-4 my-8 bg-[rgba(28,28,30,0.98)]">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold" style="color: #FFFFFF;">
-                <i class="fas fa-receipt mr-2" style="color: rgba(255, 59, 48, 1);"></i>Add Expense
+            <h2 class="text-xl font-bold text-white">
+                <i class="fas fa-receipt mr-2 text-apple-red"></i>Add Expense
             </h2>
-            <button onclick="closeExpenseModal()" class="text-2xl" style="color: rgba(235, 235, 245, 0.6);">
+            <button onclick="closeExpenseModal()" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -327,28 +320,28 @@
               enctype="multipart/form-data">
             @csrf
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Description<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Description<span class="text-red-500">*</span></label>
                 <input type="text" name="description" required
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        placeholder="Expense description">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Amount<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Amount<span class="text-red-500">*</span></label>
                 <input type="number" name="amount" step="0.01" min="0.01" required
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        placeholder="0.00">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Expense Date<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Expense Date<span class="text-red-500">*</span></label>
                 <input type="date" name="expense_date" required
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        value="{{ date('Y-m-d') }}">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Category<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Category<span class="text-red-500">*</span></label>
                 <select name="category" required
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Select category...</option>
@@ -365,14 +358,14 @@
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Nama Rekanan/Penerima</label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Nama Rekanan/Penerima</label>
                 <input type="text" name="vendor_name" maxlength="255"
                        class="input-dark w-full px-4 py-2.5 rounded-lg"
                        placeholder="Nama rekanan atau penerima pembayaran">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Payment Method<span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Payment Method<span class="text-red-500">*</span></label>
                 <select name="payment_method" required
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Select method...</option>
@@ -385,7 +378,7 @@
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Bank/Cash Account</label>
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Bank/Cash Account</label>
                 <select name="bank_account_id"
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Select account...</option>
@@ -396,24 +389,21 @@
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Receipt File</label>
-                
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Receipt File</label>
                 <!-- Current file display -->
-                <div id="currentReceiptFile" class="hidden mb-3 p-3 rounded-lg" style="background: rgba(58, 58, 60, 0.5);">
+                <div id="currentReceiptFile" class="hidden mb-3 p-3 rounded-lg bg-[rgba(58,58,60,0.5)]">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <i class="fas fa-file-alt" style="color: rgba(255, 204, 0, 0.9);"></i>
-                            <span class="text-sm" style="color: rgba(235, 235, 245, 0.8);" id="currentFileName">file.pdf</span>
+                            <i class="fas fa-file-alt text-[rgba(255,204,0,0.9)]"></i>
+                            <span class="text-sm text-dark-text-primary/80" id="currentFileName">file.pdf</span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <a href="#" id="viewReceiptBtn" target="_blank"
-                               class="text-sm px-3 py-1 rounded transition-colors"
-                               style="background: rgba(0, 122, 255, 0.15); color: rgba(0, 122, 255, 1);">
+                               class="text-sm px-3 py-1 rounded transition-colors bg-apple-blue/15 text-apple-blue">
                                 <i class="fas fa-eye mr-1"></i>Lihat
                             </a>
                             <button type="button" onclick="deleteReceiptFile()"
-                                    class="text-sm px-3 py-1 rounded transition-colors"
-                                    style="background: rgba(255, 59, 48, 0.15); color: rgba(255, 59, 48, 1);">
+                                    class="text-sm px-3 py-1 rounded transition-colors bg-apple-red/15 text-apple-red">
                                 <i class="fas fa-trash mr-1"></i>Hapus
                             </button>
                         </div>
@@ -422,18 +412,16 @@
                 
                 <input type="file" name="receipt_file" accept=".pdf,.jpg,.jpeg,.png"
                        class="input-dark w-full px-4 py-2.5 rounded-lg" id="receiptFileInput">
-                <small style="color: rgba(235, 235, 245, 0.6);">PDF, JPG, PNG (max 5MB)</small>
+                <small class="text-dark-text-secondary">PDF, JPG, PNG (max 5MB)</small>
             </div>
 
             <div class="flex justify-end space-x-3">
                 <button type="button" onclick="closeExpenseModal()"
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(58, 58, 60, 0.8); color: rgba(235, 235, 245, 0.8);">
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Cancel
                 </button>
                 <button type="submit"
-                        class="px-6 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(255, 59, 48, 0.9); color: #FFFFFF;">
+                        class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-apple-red/90 text-white">
                     <i class="fas fa-plus mr-2"></i>Add Expense
                 </button>
             </div>
@@ -540,7 +528,7 @@ function addInvoiceItem() {
                 </div>
                 <div class="col-span-2 flex items-center justify-end">
                     <button type="button" onclick="removeInvoiceItem(${invoiceItemCount})"
-                            class="text-sm" style="color: rgba(255, 59, 48, 1);">
+                            class="text-sm text-apple-red">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -842,13 +830,13 @@ function markSchedulePaid(scheduleId) {
     const modalHTML = `
         <div id="paymentModal" class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center" style="display: flex;">
             <div class="card-elevated rounded-apple-lg p-6 m-4 max-w-md w-full">
-                <h3 class="text-lg font-semibold mb-4" style="color: #FFFFFF;">
-                    <i class="fas fa-check-circle mr-2" style="color: rgba(52, 199, 89, 1);"></i>
+                <h3 class="text-lg font-semibold mb-4 text-white">
+                    <i class="fas fa-check-circle mr-2 text-apple-green"></i>
                     Mark Payment as Paid
                 </h3>
                 <form id="markPaidForm" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label class="block text-sm font-medium mb-1 text-dark-text-secondary">
                             Cash Account <span class="text-red-500">*</span>
                         </label>
                         <select id="cash_account_id" required class="form-control-apple w-full">
@@ -861,7 +849,7 @@ function markSchedulePaid(scheduleId) {
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label class="block text-sm font-medium mb-1 text-dark-text-secondary">
                             Payment Method <span class="text-red-500">*</span>
                         </label>
                         <select id="payment_method" required class="form-control-apple w-full">
@@ -874,20 +862,18 @@ function markSchedulePaid(scheduleId) {
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1" style="color: rgba(235, 235, 245, 0.6);">
+                        <label class="block text-sm font-medium mb-1 text-dark-text-secondary">
                             Reference Number
                         </label>
                         <input type="text" id="reference_number" class="form-control-apple w-full" placeholder="Optional">
                     </div>
                     <div class="flex justify-end space-x-2 pt-2">
                         <button type="button" onclick="document.getElementById('paymentModal').remove()" 
-                                class="px-4 py-2 rounded-lg font-medium transition-colors"
-                                style="background: rgba(255, 255, 255, 0.1); color: rgba(235, 235, 245, 0.6);">
+                                class="px-4 py-2 rounded-lg font-medium transition-colors bg-white/10 text-dark-text-secondary">
                             Cancel
                         </button>
                         <button type="submit" 
-                                class="px-4 py-2 rounded-lg font-medium transition-colors"
-                                style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
+                                class="px-4 py-2 rounded-lg font-medium transition-colors bg-apple-green/90 text-white">
                             <i class="fas fa-check mr-2"></i>Mark as Paid
                         </button>
                     </div>
@@ -968,7 +954,7 @@ function closeExpenseModal() {
         // Reset modal title
         const modalTitle = document.querySelector('#financialExpenseModal h2');
         if (modalTitle) {
-            modalTitle.innerHTML = '<i class="fas fa-receipt mr-2" style="color: rgba(255, 59, 48, 1);"></i>Add Expense';
+            modalTitle.innerHTML = '<i class="fas fa-receipt mr-2 text-apple-red"></i>Add Expense';
         }
         
         // Reset button text
@@ -1641,18 +1627,18 @@ function formatNumber(num) {
 
 {{-- Direct Income Modal (Pemasukan Tanpa Invoice) --}}
 <div id="directIncomeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center" style="z-index: 9999;">
-    <div class="rounded-apple-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" style="background: rgba(28, 28, 30, 0.98);">
+    <div class="rounded-apple-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto bg-[rgba(28,28,30,0.98)]">
         <div class="flex justify-between items-center mb-6">
-            <h2 id="directIncomeModalTitle" class="text-2xl font-bold" style="color: #FFFFFF;">
-                <i class="fas fa-hand-holding-usd mr-2" style="color: rgba(52, 199, 89, 1);"></i>Catat Pemasukan Langsung
+            <h2 id="directIncomeModalTitle" class="text-2xl font-bold text-white">
+                <i class="fas fa-hand-holding-usd mr-2 text-apple-green"></i>Catat Pemasukan Langsung
             </h2>
-            <button onclick="window.closeDirectIncomeModal()" type="button" class="text-2xl" style="color: rgba(235, 235, 245, 0.6);">
+            <button onclick="window.closeDirectIncomeModal()" type="button" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <div class="rounded-lg p-4 mb-6" style="background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.3);">
-            <p class="text-sm" style="color: rgba(52, 199, 89, 1);">
+        <div class="rounded-lg p-4 mb-6 bg-apple-green/10 border border-apple-green/30">
+            <p class="text-sm text-apple-green">
                 <i class="fas fa-info-circle mr-2"></i>
                 Gunakan form ini untuk mencatat pemasukan yang <strong>tidak terkait dengan invoice</strong> (misal: uang muka, hibah, atau pembayaran langsung tanpa invoice formal).
             </p>
@@ -1663,7 +1649,7 @@ function formatNumber(num) {
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Tanggal Terima<span class="text-red-500">*</span>
                     </label>
                     <input type="date" id="directIncomeDate" name="payment_date" required
@@ -1672,31 +1658,31 @@ function formatNumber(num) {
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                    <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                         Jumlah (Rp)<span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="directIncomeAmount" name="amount" required
                            class="input-dark w-full px-4 py-2.5 rounded-lg"
                            placeholder="1.000.000"
                            oninput="formatCurrency(this); updateTerbilang(this.value)">
-                    <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                    <p class="text-xs mt-1 text-dark-text-tertiary">
                         Format otomatis dengan pemisah ribuan
                     </p>
                 </div>
             </div>
 
             <!-- Terbilang Display -->
-            <div id="directIncomeTerbilang" class="mb-4 px-3 py-2 rounded-lg hidden" style="background: rgba(52, 199, 89, 0.1); border-left: 3px solid rgba(52, 199, 89, 1);">
-                <p class="text-xs font-medium" style="color: rgba(52, 199, 89, 1);">
+            <div id="directIncomeTerbilang" class="mb-4 px-3 py-2 rounded-lg hidden bg-apple-green/10 border-l-[3px] border-apple-green">
+                <p class="text-xs font-medium text-apple-green">
                     <i class="fas fa-check-circle mr-1"></i>Terbilang:
                 </p>
-                <p class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.8);" id="directIncomeTerbilangText">
+                <p class="text-xs mt-1 text-dark-text-primary/80" id="directIncomeTerbilangText">
                     -
                 </p>
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                     Metode Pembayaran<span class="text-red-500">*</span>
                 </label>
                 <select name="payment_method_id" id="directIncomePaymentMethod" required
@@ -1714,7 +1700,7 @@ function formatNumber(num) {
             </div>
 
             <div id="directIncomeCashAccountContainer" class="mb-4" style="display: none;">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                     Rekening/Kas Tujuan<span class="text-red-500">*</span>
                 </label>
                 <select name="cash_account_id" id="directIncomeCashAccount"
@@ -1724,7 +1710,7 @@ function formatNumber(num) {
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                     Keterangan/Deskripsi<span class="text-red-500">*</span>
                 </label>
                 <textarea id="directIncomeDescription" name="description" required rows="3"
@@ -1733,7 +1719,7 @@ function formatNumber(num) {
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">
+                <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">
                     Referensi/Nomor Bukti (Opsional)
                 </label>
                 <input type="text" id="directIncomeReference" name="reference"
@@ -1743,13 +1729,11 @@ function formatNumber(num) {
 
             <div class="flex justify-end gap-3">
                 <button type="button" onclick="closeDirectIncomeModal()"
-                        class="px-4 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(142, 142, 147, 0.3); color: rgba(235, 235, 245, 0.8);">
+                        class="px-4 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(142,142,147,0.3)] text-dark-text-primary/80">
                     Batal
                 </button>
                 <button type="submit" id="directIncomeSubmitBtn"
-                        class="px-4 py-2.5 rounded-lg font-medium transition-colors"
-                        style="background: rgba(52, 199, 89, 0.9); color: #FFFFFF;">
+                        class="px-4 py-2.5 rounded-lg font-medium transition-colors bg-apple-green/90 text-white">
                     <i class="fas fa-save mr-2"></i>Simpan Pemasukan
                 </button>
             </div>
@@ -1780,12 +1764,12 @@ window.openDirectIncomeModal = function(paymentId = null) {
     
     if (paymentId) {
         // Edit mode: Load payment data
-        document.getElementById('directIncomeModalTitle').innerHTML = '<i class="fas fa-edit mr-2" style="color: rgba(52, 199, 89, 1);"></i>Edit Pemasukan Langsung';
+        document.getElementById('directIncomeModalTitle').innerHTML = '<i class="fas fa-edit mr-2 text-apple-green"></i>Edit Pemasukan Langsung';
         document.getElementById('directIncomeSubmitBtn').innerHTML = '<i class="fas fa-save mr-2"></i>Update Pemasukan';
         window.loadDirectIncomeData(paymentId);
     } else {
         // Create mode
-        document.getElementById('directIncomeModalTitle').innerHTML = '<i class="fas fa-hand-holding-usd mr-2" style="color: rgba(52, 199, 89, 1);"></i>Catat Pemasukan Langsung';
+        document.getElementById('directIncomeModalTitle').innerHTML = '<i class="fas fa-hand-holding-usd mr-2 text-apple-green"></i>Catat Pemasukan Langsung';
         document.getElementById('directIncomeSubmitBtn').innerHTML = '<i class="fas fa-save mr-2"></i>Simpan Pemasukan';
         // Set today's date
         document.getElementById('directIncomeDate').value = new Date().toISOString().split('T')[0];

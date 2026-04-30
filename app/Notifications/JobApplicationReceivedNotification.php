@@ -22,13 +22,13 @@ class JobApplicationReceivedNotification extends Notification implements ShouldQ
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('[Lamaran Baru] ' . ($this->application->jobVacancy->title ?? 'Posisi Baru') . ' — ' . $this->application->full_name)
+            ->subject('[Lamaran Baru] '.($this->application->jobVacancy->title ?? 'Posisi Baru').' — '.$this->application->full_name)
             ->greeting('Halo Admin,')
-            ->line('Lamaran baru telah masuk untuk posisi **' . ($this->application->jobVacancy->title ?? '-') . '**.')
-            ->line('**Nama:** ' . $this->application->full_name)
-            ->line('**Email:** ' . $this->application->email)
-            ->line('**Telepon:** ' . $this->application->phone)
-            ->action('Lihat Lamaran', url('/dashboard/job-applications/' . $this->application->id))
+            ->line('Lamaran baru telah masuk untuk posisi **'.($this->application->jobVacancy->title ?? '-').'**.')
+            ->line('**Nama:** '.$this->application->full_name)
+            ->line('**Email:** '.$this->application->email)
+            ->line('**Telepon:** '.$this->application->phone)
+            ->action('Lihat Lamaran', url('/dashboard/job-applications/'.$this->application->id))
             ->line('Segera tinjau dan proses lamaran ini.');
     }
 

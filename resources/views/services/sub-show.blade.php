@@ -78,8 +78,8 @@
 
         <div class="max-w-4xl">
             <div class="flex items-start gap-4 mb-5">
-                <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background:{{ $parentColor }}20;">
-                    <i class="fas {{ $subIcon }}" style="color:{{ $parentColor }};"></i>
+                <div class="editorial-icon-badge flex-shrink-0" style="width:3.5rem;height:3.5rem;border-radius:.875rem;">
+                    <i class="fas {{ $subIcon }} icon-xl" aria-hidden="true"></i>
                 </div>
                 <div>
                     <span class="section-badge">{{ $parentService['category'] ?? 'Layanan' }}</span>
@@ -131,7 +131,7 @@
             @foreach($subService['process_steps'] as $index => $step)
                 <div class="card">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold" style="background:{{ $parentColor }};">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm" style="background:var(--bg-overlay);border:1px solid var(--border-medium);color:var(--accent-soft);">
                             {{ $index + 1 }}
                         </div>
                         <div class="min-w-0">
@@ -212,9 +212,9 @@
             @foreach($relatedServices as $relSlug => $related)
                 <a href="{{ route('services.show.id', $relSlug) }}" class="card">
                     <div class="flex items-start justify-between gap-4 mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:{{ $related['color'] ?? '#0f172a' }}20;">
-                            <i class="fas {{ $related['icon'] ?? 'fa-layer-group' }}" style="color:{{ $related['color'] ?? '#0f172a' }};"></i>
-                        </div>
+                        <span class="editorial-icon-badge" style="width:3rem;height:3rem;border-radius:.75rem;flex-shrink:0;">
+                            <i class="fas {{ $related['icon'] ?? 'fa-layer-group' }} icon-md" aria-hidden="true"></i>
+                        </span>
                     </div>
                     <h3 class="text-lg font-bold mb-2 card-title" style="color:var(--text-primary);">{{ $related['title'] }}</h3>
                     <p class="text-sm mb-0" style="color:var(--text-secondary);">{{ $related['short_description'] ?? '' }}</p>

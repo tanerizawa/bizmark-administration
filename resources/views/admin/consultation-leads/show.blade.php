@@ -677,12 +677,13 @@ function updateStatus(newStatus) {
             if(data.success) {
                 location.reload();
             } else {
-                alert('Error updating status');
+                console.error('Error updating status:', data);
+                location.reload();
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error updating status');
+            location.reload();
         });
     }
 }

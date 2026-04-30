@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Observers\AdminAuditObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([AdminAuditObserver::class])]
 class SecuritySetting extends Model
 {
     protected $fillable = [

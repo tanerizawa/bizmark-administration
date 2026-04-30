@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Http\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use Illuminate\Http\RedirectResponse;
 use Tests\TestCase;
 
@@ -14,7 +14,8 @@ class SeoAdminFlashRedirectTest extends TestCase
 {
     public function test_seo_route_flash_without_route_parameters(): void
     {
-        $controller = new class extends Controller {
+        $controller = new class extends Controller
+        {
             use SeoAdminFlashRedirect;
 
             public function run(): RedirectResponse
@@ -32,7 +33,8 @@ class SeoAdminFlashRedirectTest extends TestCase
 
     public function test_seo_route_flash_with_route_parameters(): void
     {
-        $controller = new class extends Controller {
+        $controller = new class extends Controller
+        {
             use SeoAdminFlashRedirect;
 
             public function run(): RedirectResponse

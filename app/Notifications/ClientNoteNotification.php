@@ -12,9 +12,7 @@ class ClientNoteNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(private ApplicationNote $note)
-    {
-    }
+    public function __construct(private ApplicationNote $note) {}
 
     public function via(object $notifiable): array
     {
@@ -26,15 +24,15 @@ class ClientNoteNotification extends Notification implements ShouldQueue
         $application = $this->note->application;
         $client = $application->client;
         $preview = \Str::limit($this->note->note, 100);
-        
+
         return (new MailMessage)
-            ->subject('Balasan Klien - ' . $application->application_number)
+            ->subject('Balasan Klien - '.$application->application_number)
             ->greeting('Halo Admin,')
             ->line('Klien mengirim balasan pada permohonan izin:')
-            ->line('**Nomor Permohonan:** ' . $application->application_number)
-            ->line('**Klien:** ' . $client->name)
+            ->line('**Nomor Permohonan:** '.$application->application_number)
+            ->line('**Klien:** '.$client->name)
             ->line('**Pesan:**')
-            ->line('"' . $preview . '"')
+            ->line('"'.$preview.'"')
             ->action('Lihat Permohonan', route('admin.permit-applications.show', $application->id))
             ->line('Segera tindaklanjuti jika diperlukan.');
     }

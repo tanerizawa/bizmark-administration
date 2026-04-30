@@ -4,8 +4,8 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\WebPush\WebPushMessage;
 use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 class PermitStatusUpdated extends Notification
 {
@@ -35,7 +35,7 @@ class PermitStatusUpdated extends Notification
     public function toWebPush($notifiable, $notification)
     {
         $statusText = $this->getStatusText();
-        
+
         return (new WebPushMessage)
             ->title('📋 Status Izin Diperbarui')
             ->body("Izin {$this->application->application_number}: {$statusText}")
@@ -45,9 +45,9 @@ class PermitStatusUpdated extends Notification
                 'url' => route('client.applications.show', $this->application->id),
                 'application_id' => $this->application->id,
                 'application_number' => $this->application->application_number,
-                'status' => $this->application->status
+                'status' => $this->application->status,
             ])
-            ->tag('permit-status-' . $this->application->id)
+            ->tag('permit-status-'.$this->application->id)
             ->requireInteraction(true)
             ->vibrate([200, 100, 200, 100, 200]);
     }
@@ -62,8 +62,8 @@ class PermitStatusUpdated extends Notification
             'application_id' => $this->application->id,
             'application_number' => $this->application->application_number,
             'status' => $this->application->status,
-            'message' => "Status izin {$this->application->application_number} telah diperbarui menjadi: " . $this->getStatusText(),
-            'url' => route('client.applications.show', $this->application->id)
+            'message' => "Status izin {$this->application->application_number} telah diperbarui menjadi: ".$this->getStatusText(),
+            'url' => route('client.applications.show', $this->application->id),
         ];
     }
 
@@ -78,7 +78,7 @@ class PermitStatusUpdated extends Notification
             'approved' => 'Disetujui ✅',
             'rejected' => 'Ditolak ❌',
             'completed' => 'Selesai',
-            'cancelled' => 'Dibatalkan'
+            'cancelled' => 'Dibatalkan',
         ];
 
         return $statusMap[$this->application->status] ?? $this->application->status;

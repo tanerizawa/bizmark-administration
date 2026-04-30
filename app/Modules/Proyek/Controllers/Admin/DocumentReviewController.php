@@ -52,7 +52,8 @@ class DocumentReviewController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal approve dokumen: ' . $e->getMessage());
+
+            return back()->with('error', 'Gagal approve dokumen: '.$e->getMessage());
         }
     }
 
@@ -103,7 +104,8 @@ class DocumentReviewController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal reject dokumen: ' . $e->getMessage());
+
+            return back()->with('error', 'Gagal reject dokumen: '.$e->getMessage());
         }
     }
 
@@ -145,11 +147,12 @@ class DocumentReviewController extends Controller
 
             DB::commit();
 
-            return back()->with('success', count($documents) . ' dokumen berhasil diapprove');
+            return back()->with('success', count($documents).' dokumen berhasil diapprove');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal bulk approve: ' . $e->getMessage());
+
+            return back()->with('error', 'Gagal bulk approve: '.$e->getMessage());
         }
     }
 
@@ -182,16 +185,17 @@ class DocumentReviewController extends Controller
                 'to_status' => $documents->first()->application->status,
                 'changed_by_type' => 'user',
                 'changed_by_id' => Auth::id(),
-                'notes' => "Semua dokumen (" . count($documents) . ") diapprove",
+                'notes' => 'Semua dokumen ('.count($documents).') diapprove',
             ]);
 
             DB::commit();
 
-            return back()->with('success', count($documents) . ' dokumen berhasil diapprove');
+            return back()->with('success', count($documents).' dokumen berhasil diapprove');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal approve semua dokumen: ' . $e->getMessage());
+
+            return back()->with('error', 'Gagal approve semua dokumen: '.$e->getMessage());
         }
     }
 }

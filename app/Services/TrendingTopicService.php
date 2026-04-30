@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ArticleTopic;
 use App\Models\TrendingTopic;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -115,7 +116,7 @@ class TrendingTopicService
         foreach ($seeds as $seed) {
             $results = $this->searchNews($seed);
 
-            if (!$results['success'] || empty($results['results'])) {
+            if (! $results['success'] || empty($results['results'])) {
                 continue;
             }
 
@@ -157,11 +158,11 @@ class TrendingTopicService
      */
     protected function searchNews(string $query): array
     {
-        $cacheKey = 'trending_news_search:' . md5($query);
+        $cacheKey = 'trending_news_search:'.md5($query);
 
         return Cache::remember($cacheKey, 3600, function () use ($query) { // Cache 1 hour
             try {
-                $response = Http::timeout(20)->get($this->baseUrl . '/search', [
+                $response = Http::timeout(20)->get($this->baseUrl.'/search', [
                     'q' => $query,
                     'format' => 'json',
                     'categories' => 'news',
@@ -170,7 +171,7 @@ class TrendingTopicService
                     'pageno' => 1,
                 ]);
 
-                if (!$response->successful()) {
+                if (! $response->successful()) {
                     return [
                         'success' => false,
                         'results' => [],
@@ -216,7 +217,7 @@ class TrendingTopicService
             $phrases = $this->extractPhrases($title);
 
             foreach ($phrases as $phrase) {
-                if (!isset($keywordCounts[$phrase])) {
+                if (! isset($keywordCounts[$phrase])) {
                     $keywordCounts[$phrase] = [
                         'count' => 0,
                         'headline' => $title,
@@ -224,7 +225,7 @@ class TrendingTopicService
                     ];
                 }
                 $keywordCounts[$phrase]['count']++;
-                if (!in_array($domain, $keywordCounts[$phrase]['sources'])) {
+                if (! in_array($domain, $keywordCounts[$phrase]['sources'])) {
                     $keywordCounts[$phrase]['sources'][] = $domain;
                 }
             }
@@ -252,7 +253,7 @@ class TrendingTopicService
         }
 
         // Sort by score descending
-        usort($topics, fn($a, $b) => $b['score'] <=> $a['score']);
+        usort($topics, fn ($a, $b) => $b['score'] <=> $a['score']);
 
         // Return top 5 topics per category-seed
         return array_slice($topics, 0, 5);
@@ -277,7 +278,7 @@ class TrendingTopicService
                 $phrase = trim($phrase);
 
                 // Skip if too short or contains only stopwords
-                if (strlen($phrase) >= 8 && !$this->isStopwordPhrase($phrase)) {
+                if (strlen($phrase) >= 8 && ! $this->isStopwordPhrase($phrase)) {
                     $phrases[] = $phrase;
                 }
             }
@@ -300,7 +301,7 @@ class TrendingTopicService
         ];
 
         $words = explode(' ', $phrase);
-        $nonStopwords = array_filter($words, fn($w) => !in_array($w, $stopwords));
+        $nonStopwords = array_filter($words, fn ($w) => ! in_array($w, $stopwords));
 
         return count($nonStopwords) === 0;
     }
@@ -390,10 +391,10 @@ class TrendingTopicService
         $baseWords = explode(' ', $topic);
 
         // Add variations
-        $related[] = $topic . ' 2025';
-        $related[] = $topic . ' terbaru';
-        $related[] = 'cara ' . $topic;
-        $related[] = $topic . ' indonesia';
+        $related[] = $topic.' 2025';
+        $related[] = $topic.' terbaru';
+        $related[] = 'cara '.$topic;
+        $related[] = $topic.' indonesia';
 
         // Add individual significant words
         foreach ($baseWords as $word) {
@@ -460,8 +461,8 @@ class TrendingTopicService
     /**
      * Convert high-priority trending topics to ArticleTopics for auto-posting.
      *
-     * @param int $limit Max topics to convert
-     * @param int $minScore Minimum trend_score threshold
+     * @param  int  $limit  Max topics to convert
+     * @param  int  $minScore  Minimum trend_score threshold
      * @return array{converted: int, skipped: int, topics: array}
      */
     public function convertToArticleTopics(int $limit = 5, int $minScore = 60): array
@@ -479,11 +480,12 @@ class TrendingTopicService
 
         foreach ($trendingTopics as $trending) {
             // Check if a similar ArticleTopic already exists
-            $exists = \App\Models\ArticleTopic::where('title', 'LIKE', '%' . Str::limit($trending->topic, 30, '') . '%')
+            $exists = ArticleTopic::where('title', 'LIKE', '%'.Str::limit($trending->topic, 30, '').'%')
                 ->exists();
 
             if ($exists) {
                 $skipped++;
+
                 continue;
             }
 
@@ -494,9 +496,9 @@ class TrendingTopicService
             $title = $this->buildArticleTitle($trending);
 
             // Create ArticleTopic
-            $articleTopic = \App\Models\ArticleTopic::create([
+            $articleTopic = ArticleTopic::create([
                 'title' => $title,
-                'description' => "Artikel trending tentang: {$trending->topic}. " .
+                'description' => "Artikel trending tentang: {$trending->topic}. ".
                     ($trending->sample_headline ? "Konteks: {$trending->sample_headline}" : ''),
                 'category' => $articleCategory,
                 'language' => $trending->language,
@@ -584,6 +586,7 @@ class TrendingTopicService
         // Trending topics get high priority (70-95) to be picked up quickly
         $basePriority = 70;
         $bonus = (int) (($trending->trend_score / 100) * 25);
+
         return min(95, $basePriority + $bonus);
     }
 }

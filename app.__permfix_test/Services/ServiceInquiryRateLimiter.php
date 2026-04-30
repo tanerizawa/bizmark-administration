@@ -1,0 +1,189 @@
+<?php
+
+namespace App\Services;
+
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+
+class ServiceInquiryRateLimiter
+{
+    private const EMAIL_LIMIT = 5; // per day
+
+    private const IP_LIMIT = 10; // per day
+
+    private const EMAIL_COOLDOWN = 3600; // 1 hour in seconds
+
+    /**
+     * Check if request is allowed
+     */
+    public function check(string $email, string $ip): array
+    {
+        $locale = app()->getLocale();
+
+        // Check email limit
+        $emailKey = $this->getEmailKey($email);
+        $emailCount = Cache::get($emailKey, 0);
+
+        if ($emailCount >= self::EMAIL_LIMIT) {
+            $retryAfter = Cache::ttl($emailKey);
+            // Ensure retryAfter is positive (some drivers return -2 for non-existent keys)
+            $retryAfter = max(0, $retryAfter);
+
+            return [
+                'allowed' => false,
+                'reason' => 'email_limit',
+                'message' => $locale === 'en'
+                    ? 'You have used '.self::EMAIL_LIMIT.' free analyses today. Register for unlimited analysis.'
+                    : 'Anda sudah menggunakan '.self::EMAIL_LIMIT.'x analisis gratis hari ini. Daftar untuk akses unlimited.',
+                'retry_after' => $retryAfter,
+                'retry_after_formatted' => $this->formatRetryAfter($retryAfter, $locale),
+            ];
+        }
+
+        // Check IP limit
+        $ipKey = $this->getIpKey($ip);
+        $ipCount = Cache::get($ipKey, 0);
+
+        if ($ipCount >= self::IP_LIMIT) {
+            // Calculate TTL from end of day
+            $retryAfter = now()->endOfDay()->diffInSeconds(now());
+
+            return [
+                'allowed' => false,
+                'reason' => 'ip_limit',
+                'message' => $locale === 'en'
+                    ? 'Too many requests from your network. Please try again later or register for unlimited access.'
+                    : 'Terlalu banyak permintaan dari jaringan Anda. Silakan coba lagi nanti atau daftar untuk akses unlimited.',
+                'retry_after' => $retryAfter,
+                'retry_after_formatted' => $this->formatRetryAfter($retryAfter, $locale),
+            ];
+        }
+
+        // Check email cooldown (between requests)
+        $cooldownKey = $this->getCooldownKey($email);
+        if (Cache::has($cooldownKey)) {
+            // Get stored cooldown end timestamp
+            $cooldownEnd = Cache::get($cooldownKey);
+            $retryAfter = max(0, $cooldownEnd - now()->timestamp);
+
+            return [
+                'allowed' => false,
+                'reason' => 'cooldown',
+                'message' => $locale === 'en'
+                    ? 'Please wait '.$this->formatRetryAfter($retryAfter, $locale).' before the next analysis.'
+                    : 'Mohon tunggu '.$this->formatRetryAfter($retryAfter, $locale).' sebelum analisis berikutnya.',
+                'retry_after' => $retryAfter,
+                'retry_after_formatted' => $this->formatRetryAfter($retryAfter, $locale),
+            ];
+        }
+
+        return [
+            'allowed' => true,
+            'remaining_today' => max(0, self::EMAIL_LIMIT - $emailCount - 1),
+        ];
+    }
+
+    /**
+     * Increment counters after successful request
+     */
+    public function increment(string $email, string $ip): void
+    {
+        $now = Carbon::now();
+        $endOfDay = $now->copy()->endOfDay();
+
+        // Increment email counter (expires at end of day)
+        $emailKey = $this->getEmailKey($email);
+        $emailCount = Cache::get($emailKey, 0);
+        Cache::put($emailKey, $emailCount + 1, $endOfDay);
+
+        // Increment IP counter (expires at end of day)
+        $ipKey = $this->getIpKey($ip);
+        $ipCount = Cache::get($ipKey, 0);
+        Cache::put($ipKey, $ipCount + 1, $endOfDay);
+
+        // Set cooldown (1 hour) - store end timestamp for TTL calculation
+        $cooldownKey = $this->getCooldownKey($email);
+        $cooldownEnd = now()->addHour()->timestamp;
+        Cache::put($cooldownKey, $cooldownEnd, self::EMAIL_COOLDOWN);
+    }
+
+    /**
+     * Get current usage stats
+     */
+    public function getStats(string $email, string $ip): array
+    {
+        $emailKey = $this->getEmailKey($email);
+        $ipKey = $this->getIpKey($ip);
+
+        return [
+            'email_count' => Cache::get($emailKey, 0),
+            'email_limit' => self::EMAIL_LIMIT,
+            'email_remaining' => self::EMAIL_LIMIT - Cache::get($emailKey, 0),
+            'email_resets_at' => Carbon::now()->endOfDay()->toIso8601String(),
+            'ip_count' => Cache::get($ipKey, 0),
+            'ip_limit' => self::IP_LIMIT,
+            'ip_remaining' => self::IP_LIMIT - Cache::get($ipKey, 0),
+            'cooldown_active' => Cache::has($this->getCooldownKey($email)),
+            'cooldown_expires_in' => Cache::has($this->getCooldownKey($email))
+                ? max(0, Cache::get($this->getCooldownKey($email)) - now()->timestamp)
+                : 0,
+        ];
+    }
+
+    /**
+     * Reset limits for a user (admin function)
+     */
+    public function reset(string $email, ?string $ip = null): void
+    {
+        Cache::forget($this->getEmailKey($email));
+        Cache::forget($this->getCooldownKey($email));
+
+        if ($ip) {
+            Cache::forget($this->getIpKey($ip));
+        }
+    }
+
+    /**
+     * Cache key generators
+     */
+    private function getEmailKey(string $email): string
+    {
+        return 'inquiry_email_'.md5(strtolower($email));
+    }
+
+    private function getIpKey(string $ip): string
+    {
+        return 'inquiry_ip_'.md5($ip);
+    }
+
+    private function getCooldownKey(string $email): string
+    {
+        return 'inquiry_cooldown_'.md5(strtolower($email));
+    }
+
+    /**
+     * Format retry after seconds to human readable
+     */
+    private function formatRetryAfter(int $seconds, string $locale = 'id'): string
+    {
+        if ($seconds < 60) {
+            return $seconds.($locale === 'en' ? ' seconds' : ' detik');
+        }
+
+        $minutes = floor($seconds / 60);
+        if ($minutes < 60) {
+            return $minutes.($locale === 'en' ? ' minutes' : ' menit');
+        }
+
+        $hours = floor($minutes / 60);
+        $remainingMinutes = $minutes % 60;
+
+        if ($remainingMinutes > 0) {
+            return $locale === 'en'
+                ? $hours.' hours '.$remainingMinutes.' minutes'
+                : $hours.' jam '.$remainingMinutes.' menit';
+        }
+
+        return $hours.($locale === 'en' ? ' hours' : ' jam');
+    }
+}

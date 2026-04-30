@@ -8,8 +8,6 @@ class CacheHelper
 {
     /**
      * Clear all navigation-related caches
-     *
-     * @return void
      */
     public static function clearNavigationCache(): void
     {
@@ -21,13 +19,12 @@ class CacheHelper
     /**
      * Clear specific cache keys
      *
-     * @param string|array $keys
-     * @return void
+     * @param  string|array  $keys
      */
     public static function clearCache($keys): void
     {
         $keys = is_array($keys) ? $keys : [$keys];
-        
+
         foreach ($keys as $key) {
             Cache::forget($key);
         }

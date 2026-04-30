@@ -4,6 +4,7 @@ namespace App\Modules\Perizinan\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\PermitTemplate;
+use App\Models\PermitTemplateDependency;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,9 +17,9 @@ class PermitTemplateController extends Controller
     public function index()
     {
         $templates = PermitTemplate::with([
-                'items.permitType.institution',
-                'dependencies'
-            ])
+            'items.permitType.institution',
+            'dependencies',
+        ])
             ->withCount(['items', 'dependencies'])
             ->orderBy('category')
             ->orderBy('name')
@@ -67,29 +68,29 @@ class PermitTemplateController extends Controller
 
         // Create items and store them for dependency reference
         $itemsMap = []; // Maps sequence_order => item_id
-        
+
         foreach ($validated['items'] as $itemData) {
             $item = $template->items()->create([
                 'permit_type_id' => $itemData['permit_type_id'],
                 'sequence_order' => $itemData['sequence_order'],
                 'is_goal_permit' => $itemData['is_goal_permit'] ?? false,
             ]);
-            
+
             $itemsMap[$itemData['sequence_order']] = $item->id;
         }
 
         // Create dependencies
         foreach ($validated['items'] as $index => $itemData) {
-            if (!empty($itemData['dependencies'])) {
+            if (! empty($itemData['dependencies'])) {
                 $currentItemId = $itemsMap[$itemData['sequence_order']];
-                
+
                 foreach ($itemData['dependencies'] as $depSequence) {
                     $dependsOnItemId = $itemsMap[$depSequence] ?? null;
-                    
+
                     if ($dependsOnItemId) {
                         $dependencyType = $itemData['dependency_types'][$depSequence] ?? 'MANDATORY';
-                        
-                        \App\Models\PermitTemplateDependency::create([
+
+                        PermitTemplateDependency::create([
                             'template_id' => $template->id,
                             'permit_item_id' => $currentItemId,
                             'depends_on_item_id' => $dependsOnItemId,
@@ -112,7 +113,7 @@ class PermitTemplateController extends Controller
     {
         $permitTemplate->load([
             'items.permitType.institution',
-            'items.dependencies.dependsOnItem.permitType'
+            'items.dependencies.dependsOnItem.permitType',
         ]);
 
         return view('permit-templates.show', compact('permitTemplate'));
@@ -170,13 +171,13 @@ class PermitTemplateController extends Controller
             }
 
             foreach ($validated['items'] as $itemData) {
-                if (!empty($itemData['dependencies'])) {
+                if (! empty($itemData['dependencies'])) {
                     $currentItemId = $itemsMap[$itemData['sequence_order']];
                     foreach ($itemData['dependencies'] as $depSequence) {
                         $dependsOnItemId = $itemsMap[$depSequence] ?? null;
                         if ($dependsOnItemId) {
                             $dependencyType = $itemData['dependency_types'][$depSequence] ?? 'MANDATORY';
-                            \App\Models\PermitTemplateDependency::create([
+                            PermitTemplateDependency::create([
                                 'template_id' => $permitTemplate->id,
                                 'permit_item_id' => $currentItemId,
                                 'depends_on_item_id' => $dependsOnItemId,
@@ -195,9 +196,10 @@ class PermitTemplateController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()
                 ->withInput()
-                ->with('error', 'Gagal mengupdate template: ' . $e->getMessage());
+                ->with('error', 'Gagal mengupdate template: '.$e->getMessage());
         }
     }
 
@@ -244,19 +246,27 @@ class PermitTemplateController extends Controller
 
         // Wire up dependencies after all permits are created
         foreach ($template->items as $item) {
-            if ($item->dependencies->isEmpty()) continue;
+            if ($item->dependencies->isEmpty()) {
+                continue;
+            }
 
             $projectPermitId = $createdPermits[$item->permit_type_id] ?? null;
-            if (!$projectPermitId) continue;
+            if (! $projectPermitId) {
+                continue;
+            }
 
             $projectPermit = $project->permits()->find($projectPermitId);
 
             foreach ($item->dependencies as $dependency) {
                 $dependsOnItem = $dependency->dependsOnItem;
-                if (!$dependsOnItem || !$dependsOnItem->permit_type_id) continue;
+                if (! $dependsOnItem || ! $dependsOnItem->permit_type_id) {
+                    continue;
+                }
 
                 $dependsOnPermitId = $createdPermits[$dependsOnItem->permit_type_id] ?? null;
-                if (!$dependsOnPermitId) continue;
+                if (! $dependsOnPermitId) {
+                    continue;
+                }
 
                 $projectPermit->dependencies()->create([
                     'depends_on_permit_id' => $dependsOnPermitId,

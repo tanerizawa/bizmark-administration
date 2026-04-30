@@ -30,4 +30,3 @@ class AdminClientsAuthorizationTest extends TestCase
         $this->actingAs($user)->get("/admin/clients/{$client->id}/edit")->assertStatus(403);
     }
 }
-

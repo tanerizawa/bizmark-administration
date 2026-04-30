@@ -15,7 +15,7 @@ return new class extends Migration
             // Document submission fields
             $table->string('submitted_file_path', 500)->nullable()->after('time_taken_minutes')->comment('Path to submitted document');
             $table->timestamp('submitted_at')->nullable()->after('submitted_file_path')->comment('When candidate uploaded the file');
-            
+
             // Evaluation fields
             $table->json('evaluation_scores')->nullable()->after('submitted_at')->comment('Detailed scores per criteria');
             $table->foreignId('evaluator_id')->nullable()->after('evaluation_scores')->constrained('users')->nullOnDelete()->comment('User who evaluated');
@@ -39,7 +39,7 @@ return new class extends Migration
                 'evaluator_id',
                 'evaluator_notes',
                 'evaluated_at',
-                'requires_manual_review'
+                'requires_manual_review',
             ]);
         });
     }

@@ -5,8 +5,8 @@ namespace App\Notifications;
 use App\Models\Article;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\WebPush\WebPushMessage;
 use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 class NewArticleNotification extends Notification
 {
@@ -25,7 +25,7 @@ class NewArticleNotification extends Notification
     {
         $title = $this->article->title;
         $body = $this->article->excerpt ?: \Illuminate\Support\Str::limit(strip_tags($this->article->content), 120);
-        $url = config('app.url') . '/blog/' . $this->article->slug;
+        $url = config('app.url').'/blog/'.$this->article->slug;
 
         return (new WebPushMessage)
             ->title("📄 Artikel Baru: {$title}")
@@ -37,7 +37,7 @@ class NewArticleNotification extends Notification
                 'type' => 'new_article',
                 'article_id' => $this->article->id,
             ])
-            ->tag('article-' . $this->article->id)
+            ->tag('article-'.$this->article->id)
             ->vibrate([200, 100, 200])
             ->requireInteraction(false);
     }
@@ -48,7 +48,7 @@ class NewArticleNotification extends Notification
             'type' => 'new_article',
             'article_id' => $this->article->id,
             'title' => $this->article->title,
-            'url' => config('app.url') . '/blog/' . $this->article->slug,
+            'url' => config('app.url').'/blog/'.$this->article->slug,
         ];
     }
 }

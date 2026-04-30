@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+use App\Observers\NavCountObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
+#[ObservedBy([NavCountObserver::class])]
 class CashAccount extends Model
 {
     protected $fillable = [
@@ -26,6 +31,7 @@ class CashAccount extends Model
 
     /**
      * Internal flag to allow balance updates during recalculation
+     *
      * @var bool
      */
     public $allowBalanceUpdate = false;
@@ -39,11 +45,11 @@ class CashAccount extends Model
 
         // Prevent manual balance changes
         static::updating(function ($account) {
-            if ($account->isDirty('current_balance') && !$account->allowBalanceUpdate) {
+            if ($account->isDirty('current_balance') && ! $account->allowBalanceUpdate) {
                 throw new \Exception(
-                    'Current balance cannot be changed manually. ' .
-                    'Use recalculateBalance() method or create transactions. ' .
-                    'Account: ' . $account->account_name
+                    'Current balance cannot be changed manually. '.
+                    'Use recalculateBalance() method or create transactions. '.
+                    'Account: '.$account->account_name
                 );
             }
         });
@@ -84,17 +90,17 @@ class CashAccount extends Model
     // Helper Methods
     public function getFormattedBalanceAttribute()
     {
-        return 'Rp ' . number_format($this->current_balance, 0, ',', '.');
+        return 'Rp '.number_format($this->current_balance, 0, ',', '.');
     }
 
     /**
      * Recalculate balance from all transactions
      * This is the ONLY proper way to update current_balance
-     * 
-     * @param string|null $changeType Type of change: income, expense, adjustment, reconciliation, recalculation
-     * @param int|null $referenceId ID of related transaction
-     * @param string|null $referenceType Model class name
-     * @param string|null $description Description of change
+     *
+     * @param  string|null  $changeType  Type of change: income, expense, adjustment, reconciliation, recalculation
+     * @param  int|null  $referenceId  ID of related transaction
+     * @param  string|null  $referenceType  Model class name
+     * @param  string|null  $description  Description of change
      * @return void
      */
     public function recalculateBalance(
@@ -134,7 +140,7 @@ class CashAccount extends Model
             );
         }
 
-        \Log::info("Cash Account Balance Recalculated", [
+        Log::info('Cash Account Balance Recalculated', [
             'account_id' => $this->id,
             'account_name' => $this->account_name,
             'old_balance' => $oldBalance,
@@ -147,14 +153,7 @@ class CashAccount extends Model
 
     /**
      * Log balance change to history table
-     * 
-     * @param float $oldBalance
-     * @param float $newBalance
-     * @param float $changeAmount
-     * @param string $changeType
-     * @param int|null $referenceId
-     * @param string|null $referenceType
-     * @param string|null $description
+     *
      * @return void
      */
     public function logBalanceChange(
@@ -166,7 +165,7 @@ class CashAccount extends Model
         ?string $referenceType = null,
         ?string $description = null
     ) {
-        \DB::table('cash_account_balance_history')->insert([
+        DB::table('cash_account_balance_history')->insert([
             'cash_account_id' => $this->id,
             'old_balance' => $oldBalance,
             'new_balance' => $newBalance,
@@ -182,13 +181,12 @@ class CashAccount extends Model
 
     /**
      * Get balance history
-     * 
-     * @param int $limit
+     *
      * @return \Illuminate\Support\Collection
      */
     public function balanceHistory(int $limit = 50)
     {
-        return \DB::table('cash_account_balance_history')
+        return DB::table('cash_account_balance_history')
             ->where('cash_account_id', $this->id)
             ->orderBy('changed_at', 'desc')
             ->limit($limit)

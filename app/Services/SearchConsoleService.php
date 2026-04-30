@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\SearchConsoleData;
-use App\Models\KeywordCluster;
 use App\Models\Article;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
+use App\Models\KeywordCluster;
+use App\Models\SearchConsoleData;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SearchConsoleService
 {
@@ -38,10 +38,10 @@ class SearchConsoleService
      */
     public function hasRealCredentials(): bool
     {
-        return !empty(config('services.google.client_id'))
-            && !empty(config('services.google.client_secret'))
-            && !empty(config('services.google.refresh_token'))
-            && !empty(config('services.google.gsc_site_url'));
+        return ! empty(config('services.google.client_id'))
+            && ! empty(config('services.google.client_secret'))
+            && ! empty(config('services.google.refresh_token'))
+            && ! empty(config('services.google.gsc_site_url'));
     }
 
     /**
@@ -54,15 +54,15 @@ class SearchConsoleService
     {
         return Cache::remember('gsc_access_token', 55 * 60, function () {
             $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
-                'client_id'     => config('services.google.client_id'),
+                'client_id' => config('services.google.client_id'),
                 'client_secret' => config('services.google.client_secret'),
                 'refresh_token' => config('services.google.refresh_token'),
-                'grant_type'    => 'refresh_token',
+                'grant_type' => 'refresh_token',
             ]);
 
-            if (!$response->ok() || empty($response->json('access_token'))) {
+            if (! $response->ok() || empty($response->json('access_token'))) {
                 throw new \RuntimeException(
-                    'Failed to obtain GSC access token: ' . $response->body()
+                    'Failed to obtain GSC access token: '.$response->body()
                 );
             }
 
@@ -81,11 +81,11 @@ class SearchConsoleService
      */
     protected function fetchRealGSCData(int $days): array
     {
-        $accessToken   = $this->getAccessToken();
+        $accessToken = $this->getAccessToken();
         $configuredUrl = (string) config('services.google.gsc_site_url');
         $siteCandidates = $this->buildSiteCandidates($configuredUrl);
 
-        $endDate   = now()->subDay()->toDateString();
+        $endDate = now()->subDay()->toDateString();
         $startDate = now()->subDays($days + 1)->toDateString();
         $lastError = null;
 
@@ -102,40 +102,40 @@ class SearchConsoleService
                         ->post(
                             "https://searchconsole.googleapis.com/webmasters/v3/sites/{$encodedSite}/searchAnalytics/query",
                             [
-                                'startDate'  => $startDate,
-                                'endDate'    => $endDate,
+                                'startDate' => $startDate,
+                                'endDate' => $endDate,
                                 'dimensions' => ['query', 'page'],
-                                'rowLimit'   => $rowLimit,
-                                'startRow'   => $startRow,
-                                'dataState'  => 'all',
+                                'rowLimit' => $rowLimit,
+                                'startRow' => $startRow,
+                                'dataState' => 'all',
                             ]
                         );
 
-                    if (!$response->ok()) {
-                        throw new \RuntimeException('GSC API error: ' . $response->status() . ' ' . $response->body());
+                    if (! $response->ok()) {
+                        throw new \RuntimeException('GSC API error: '.$response->status().' '.$response->body());
                     }
 
                     $rows = $response->json('rows', []);
 
                     foreach ($rows as $row) {
-                        $query   = $row['keys'][0] ?? null;
+                        $query = $row['keys'][0] ?? null;
                         $pageUrl = $row['keys'][1] ?? null;
 
-                        if (!$query || !$pageUrl) {
+                        if (! $query || ! $pageUrl) {
                             continue;
                         }
 
                         SearchConsoleData::updateOrCreate(
                             [
                                 'page_url' => $pageUrl,
-                                'query'    => $query,
-                                'date'     => $endDate,
+                                'query' => $query,
+                                'date' => $endDate,
                             ],
                             [
-                                'clicks'      => (int) ($row['clicks'] ?? 0),
+                                'clicks' => (int) ($row['clicks'] ?? 0),
                                 'impressions' => (int) ($row['impressions'] ?? 0),
-                                'ctr'         => round(($row['ctr'] ?? 0) * 100, 2),
-                                'position'    => round($row['position'] ?? 0, 1),
+                                'ctr' => round(($row['ctr'] ?? 0) * 100, 2),
+                                'position' => round($row['position'] ?? 0, 1),
                             ]
                         );
                         $imported++;
@@ -176,21 +176,21 @@ class SearchConsoleService
 
         if (str_starts_with($configuredUrl, 'sc-domain:')) {
             $domain = str_replace('sc-domain:', '', $configuredUrl);
-            $variants[] = 'https://' . rtrim($domain, '/') . '/';
-            $variants[] = 'http://' . rtrim($domain, '/') . '/';
+            $variants[] = 'https://'.rtrim($domain, '/').'/';
+            $variants[] = 'http://'.rtrim($domain, '/').'/';
         } else {
-            $normalized = rtrim($configuredUrl, '/') . '/';
+            $normalized = rtrim($configuredUrl, '/').'/';
             $variants[] = $normalized;
             $variants[] = rtrim($normalized, '/');
 
             $host = parse_url($normalized, PHP_URL_HOST) ?: $normalized;
             $host = preg_replace('/^www\./', '', $host);
-            $variants[] = 'sc-domain:' . $host;
+            $variants[] = 'sc-domain:'.$host;
 
             if (str_starts_with($normalized, 'https://')) {
-                $variants[] = 'http://' . substr($normalized, 8);
+                $variants[] = 'http://'.substr($normalized, 8);
             } elseif (str_starts_with($normalized, 'http://')) {
-                $variants[] = 'https://' . substr($normalized, 7);
+                $variants[] = 'https://'.substr($normalized, 7);
             }
         }
 
@@ -207,7 +207,7 @@ class SearchConsoleService
         $articles = Article::published()->orderByDesc('views_count')->take(50)->get();
 
         foreach ($articles as $article) {
-            $url      = url($article->getUrl());
+            $url = url($article->getUrl());
             $keywords = array_filter(explode(',', $article->meta_keywords ?? ''));
 
             if (empty($keywords)) {
@@ -220,21 +220,21 @@ class SearchConsoleService
                     continue;
                 }
 
-                $date             = now()->subDays(rand(0, $days - 1))->toDateString();
-                $baseImpressions  = max(10, (int) ($article->views_count * 0.3));
+                $date = now()->subDays(rand(0, $days - 1))->toDateString();
+                $baseImpressions = max(10, (int) ($article->views_count * 0.3));
                 $dailyImpressions = max(1, (int) ($baseImpressions / 30));
-                $clicks           = max(0, (int) ($dailyImpressions * (rand(2, 15) / 100)));
-                $ctr              = $dailyImpressions > 0
+                $clicks = max(0, (int) ($dailyImpressions * (rand(2, 15) / 100)));
+                $ctr = $dailyImpressions > 0
                     ? round(($clicks / $dailyImpressions) * 100, 2)
                     : 0;
 
                 SearchConsoleData::updateOrCreate(
                     ['page_url' => $url, 'query' => $keyword, 'date' => $date],
                     [
-                        'clicks'      => $clicks,
+                        'clicks' => $clicks,
                         'impressions' => $dailyImpressions,
-                        'ctr'         => $ctr,
-                        'position'    => rand(1, 50),
+                        'ctr' => $ctr,
+                        'position' => rand(1, 50),
                     ]
                 );
                 $imported++;
@@ -260,20 +260,20 @@ class SearchConsoleService
      */
     public function crossReferenceWithKeywordClusters(int $days = 28): array
     {
-        $updated       = 0;
+        $updated = 0;
         $discrepancies = [];
-        $report        = [];
+        $report = [];
 
         $clusters = KeywordCluster::where('status', 'active')->get();
 
         foreach ($clusters as $cluster) {
             // Build a list of all keyword terms for this cluster
-            $terms   = array_merge(
+            $terms = array_merge(
                 (array) ($cluster->keywords ?? []),
                 (array) ($cluster->long_tail_keywords ?? []),
                 [$cluster->seed_keyword]
             );
-            $terms   = array_unique(array_filter(array_map('trim', $terms)));
+            $terms = array_unique(array_filter(array_map('trim', $terms)));
 
             if (empty($terms)) {
                 continue;
@@ -296,49 +296,49 @@ class SearchConsoleService
                 ->first();
 
             $realImpressions = (int) ($agg->total_impressions ?? 0);
-            $realClicks      = (int) ($agg->total_clicks      ?? 0);
-            $realPosition    = round((float) ($agg->avg_position ?? 0), 1);
-            $realCtr         = round((float) ($agg->avg_ctr     ?? 0), 2);
+            $realClicks = (int) ($agg->total_clicks ?? 0);
+            $realPosition = round((float) ($agg->avg_position ?? 0), 1);
+            $realCtr = round((float) ($agg->avg_ctr ?? 0), 2);
 
             if ($realImpressions === 0) {
                 continue;   // no GSC data for this cluster yet
             }
 
             // Detect discrepancy between AI estimate and real impressions
-            $aiEstimate   = $cluster->estimated_volume ?? 0;
-            $discrepancy  = $aiEstimate > 0
+            $aiEstimate = $cluster->estimated_volume ?? 0;
+            $discrepancy = $aiEstimate > 0
                 ? round((($realImpressions - $aiEstimate) / $aiEstimate) * 100, 1)
                 : null;
 
             // Update keyword_cluster with real GSC figures
             $cluster->update([
-                'gsc_clicks'      => $realClicks,
+                'gsc_clicks' => $realClicks,
                 'gsc_impressions' => $realImpressions,
-                'gsc_avg_position'=> $realPosition,
-                'gsc_ctr'         => $realCtr,
-                'gsc_synced_at'   => now(),
+                'gsc_avg_position' => $realPosition,
+                'gsc_ctr' => $realCtr,
+                'gsc_synced_at' => now(),
             ]);
             $updated++;
 
             $report[] = [
-                'cluster'          => $cluster->cluster_name,
-                'seed_keyword'     => $cluster->seed_keyword,
-                'ai_est_volume'    => $aiEstimate,
+                'cluster' => $cluster->cluster_name,
+                'seed_keyword' => $cluster->seed_keyword,
+                'ai_est_volume' => $aiEstimate,
                 'real_impressions' => $realImpressions,
-                'real_clicks'      => $realClicks,
-                'real_position'    => $realPosition,
-                'real_ctr'         => $realCtr . '%',
-                'discrepancy_pct'  => $discrepancy !== null ? $discrepancy . '%' : 'n/a',
+                'real_clicks' => $realClicks,
+                'real_position' => $realPosition,
+                'real_ctr' => $realCtr.'%',
+                'discrepancy_pct' => $discrepancy !== null ? $discrepancy.'%' : 'n/a',
             ];
 
             // Flag large discrepancies (>200% or <-50%) for review
             if ($discrepancy !== null && (abs($discrepancy) > 200 || $discrepancy < -50)) {
                 $discrepancies[] = [
-                    'cluster'    => $cluster->cluster_name,
-                    'ai_est'     => $aiEstimate,
-                    'real'       => $realImpressions,
-                    'diff_pct'   => $discrepancy . '%',
-                    'action'     => $aiEstimate > $realImpressions
+                    'cluster' => $cluster->cluster_name,
+                    'ai_est' => $aiEstimate,
+                    'real' => $realImpressions,
+                    'diff_pct' => $discrepancy.'%',
+                    'action' => $aiEstimate > $realImpressions
                         ? 'AI over-estimated — lower priority'
                         : 'AI under-estimated — consider increasing priority',
                 ];

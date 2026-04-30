@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Mail\ServiceInquiryResultEmail;
 use App\Models\ServiceInquiry;
 use App\Services\FreeAIAnalysisService;
-use App\Mail\ServiceInquiryResultEmail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -15,14 +15,23 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
     use Queueable;
 
     public $tries = 3;
+
     public $timeout = 300; // 5 min: primary model (60s×2 attempts) + fallback model (60s×2 attempts) + overhead
+
+    public $backoff = [30, 60, 120];
+
+    public bool $deleteWhenMissingModels = true;
 
     /**
      * Create a new job instance.
+     * Dispatched to 'high' queue so inquiry analysis is never starved
+     * by high-volume background jobs (e.g. GenerateAutoPostArticle) on 'default'.
      */
     public function __construct(
         public int $inquiryId
-    ) {}
+    ) {
+        $this->onQueue('high');
+    }
 
     /**
      * Execute the job.
@@ -31,14 +40,15 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
     {
         $inquiry = ServiceInquiry::find($this->inquiryId);
 
-        if (!$inquiry) {
+        if (! $inquiry) {
             Log::error('AnalyzeServiceInquiryJob: Inquiry not found', ['id' => $this->inquiryId]);
+
             return;
         }
 
         try {
             Log::info('AnalyzeServiceInquiryJob: Starting analysis', [
-                'inquiry_number' => $inquiry->inquiry_number
+                'inquiry_number' => $inquiry->inquiry_number,
             ]);
 
             // Prepare form data for AI - merge all relevant fields
@@ -73,7 +83,7 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
             Log::info('AnalyzeServiceInquiryJob: Analysis completed', [
                 'inquiry_number' => $inquiry->inquiry_number,
                 'priority' => $priority,
-                'tokens' => $analysis['ai_tokens_used'] ?? 0
+                'tokens' => $analysis['ai_tokens_used'] ?? 0,
             ]);
 
             // Send email to user with results
@@ -85,7 +95,7 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
                 Log::info('AnalyzeServiceInquiryJob: High priority inquiry', [
                     'inquiry_number' => $inquiry->inquiry_number,
                     'company' => $inquiry->company_name,
-                    'estimated_value' => $inquiry->estimated_value
+                    'estimated_value' => $inquiry->estimated_value,
                 ]);
             }
 
@@ -93,14 +103,14 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
             Log::error('AnalyzeServiceInquiryJob: Analysis failed', [
                 'inquiry_number' => $inquiry->inquiry_number,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             // Update status to indicate error for frontend polling detection
             $inquiry->update([
                 'status' => 'error',
-                'admin_notes' => ($inquiry->admin_notes ? $inquiry->admin_notes . "\n" : '') . 
-                    '[' . now()->format('Y-m-d H:i') . '] AI analysis attempt ' . ($this->attempts()) . ' failed: ' . $e->getMessage()
+                'admin_notes' => ($inquiry->admin_notes ? $inquiry->admin_notes."\n" : '').
+                    '['.now()->format('Y-m-d H:i').'] AI analysis attempt '.($this->attempts()).' failed: '.$e->getMessage(),
             ]);
 
             // Re-throw to trigger retry
@@ -115,7 +125,7 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
     {
         $complexity = $analysis['complexity_score'] ?? 5;
         $estimatedCost = $analysis['total_estimated_cost'] ?? [];
-        
+
         // Check grand_total first (AI response format), then fallback to direct min/max
         $avgCost = 0;
         if (isset($estimatedCost['grand_total']['min'], $estimatedCost['grand_total']['max'])) {
@@ -145,7 +155,7 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
     {
         Log::error('AnalyzeServiceInquiryJob: Job failed after retries', [
             'inquiry_id' => $this->inquiryId,
-            'error' => $exception->getMessage()
+            'error' => $exception->getMessage(),
         ]);
 
         // Update inquiry to indicate permanent failure - use fallback analysis
@@ -163,15 +173,15 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
                 $inquiry->form_data ?? []
             );
             $fallback = $aiService->analyze($fallbackData); // Will return fallback since AI already failed
-            
+
             $inquiry->update([
                 'ai_analysis' => $fallback,
                 'ai_model_used' => 'fallback-v2',
                 'analyzed_at' => now(),
                 'status' => 'analyzed',
                 'priority' => 'medium',
-                'admin_notes' => ($inquiry->admin_notes ? $inquiry->admin_notes . "\n" : '') .
-                    '[' . now()->format('Y-m-d H:i') . '] AI analysis failed permanently - fallback used. Error: ' . $exception->getMessage()
+                'admin_notes' => ($inquiry->admin_notes ? $inquiry->admin_notes."\n" : '').
+                    '['.now()->format('Y-m-d H:i').'] AI analysis failed permanently - fallback used. Error: '.$exception->getMessage(),
             ]);
 
             // Still send email with fallback results
@@ -183,4 +193,3 @@ class AnalyzeServiceInquiryJob implements ShouldQueue
         }
     }
 }
-

@@ -63,7 +63,7 @@
 
             <!-- Basic Information -->
             <div class="card-elevated rounded-apple-lg overflow-hidden">
-                <div class="px-6 py-5 border-b border-opacity-20" style="border-color: rgba(84, 84, 88, 0.65);">
+                <div class="px-6 py-5 border-b border-white/10">
                     <h3 class="text-lg font-semibold text-white">Informasi Proyek</h3>
                     <p class="text-sm mt-1 text-gray-400">Detail proyek, klien, dan status</p>
                 </div>
@@ -181,7 +181,7 @@
 
             <!-- Project Configuration -->
             <div class="card-elevated rounded-apple-lg overflow-hidden">
-                <div class="px-6 py-5 border-b border-opacity-20" style="border-color: rgba(84, 84, 88, 0.65);">
+                <div class="px-6 py-5 border-b border-white/10">
                     <h3 class="text-lg font-semibold text-white">Konfigurasi Proyek</h3>
                     <p class="text-sm mt-1 text-gray-400">Timeline, budget, dan pengaturan proyek</p>
                 </div>

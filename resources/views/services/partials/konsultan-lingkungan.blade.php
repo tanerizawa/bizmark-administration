@@ -99,7 +99,7 @@
                 </div>
                 <div class="flex-1">
                     <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fas fa-comments mr-3" style="color: {{ $service['color'] }};"></i>Kickoff & Identifikasi Kebutuhan</h3>
-                    <p class="text-gray-700">Diskusi ruang lingkup, target regulasi, data awal, dan timeline.</p>
+                    <p class="text-gray-700">Diskusi ruang lingkup, target regulasi, data awal, dan estimasi jadwal.</p>
                 </div>
             </div>
         </div>

@@ -1,369 +1,240 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artikel & Berita - Bizmark.ID</title>
-    
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Breadcrumb Schema -->
-    <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "BreadcrumbList",
-        "itemListElement": [
-            {
-                "@@type": "ListItem",
-                "position": 1,
-                "name": "Beranda",
-                "item": "{{ route('landing.id') }}"
-            },
-            {
-                "@@type": "ListItem",
-                "position": 2,
-                "name": "Artikel",
-                "item": "{{ route('blog.index.id') }}"
-            }
-        ]
-    }
-    </script>
-    
-    <style>
-        :root {
-            /* Professional LinkedIn-inspired blue */
-            --color-primary: #0A66C2;
-            --color-primary-dark: #004182;
-            --color-primary-light: #378FE9;
-            
-            /* Professional grays */
-            --text-primary: #000000;
-            --text-secondary: #666666;
-            --text-tertiary: #999999;
-            
-            /* Surface colors */
-            --surface: #FFFFFF;
-            --surface-secondary: #F8F9FA;
-            --surface-tertiary: #E5E5E5;
-            
-            /* Spacing scale */
-            --space-1: 0.25rem;
-            --space-2: 0.5rem;
-            --space-3: 0.75rem;
-            --space-4: 1rem;
-            --space-5: 1.5rem;
-            --space-6: 2rem;
-            
-            /* Border radius */
-            --radius-sm: 0.375rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --radius-full: 9999px;
-            
-            /* Shadows */
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        body {
-            background: white;
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
-        
-        /* Button Styles */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.875rem 1.75rem;
-            font-weight: 600;
-            font-size: 1rem;
-            border-radius: var(--radius-lg);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn-primary {
-            background: var(--color-primary);
-            color: white;
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn-primary:hover {
-            background: var(--color-primary-dark);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        /* Nav Link Styles */
-        .nav-link {
-            position: relative;
-            padding: 0.5rem 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            transition: color 0.2s ease;
-            border-radius: var(--radius-md);
-            text-decoration: none;
-        }
-        
-        .nav-link:hover {
-            color: var(--color-primary);
-            background: rgba(10, 102, 194, 0.05);
-        }
-        
-        .nav-link.active {
-            color: var(--color-primary);
-            font-weight: 600;
-        }
-        
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0.75rem;
-            right: 0.75rem;
-            height: 2px;
-            background: var(--color-primary);
-            border-radius: var(--radius-full);
-        }
-        
-        /* Article Card Styles */
-        .article-card {
-            background: white;
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            border: 1px solid var(--surface-tertiary);
-            transition: all 0.3s ease;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .article-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--color-primary-light);
-            box-shadow: var(--shadow-xl);
-        }
-        
-        .article-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-    </style>
-</head>
-<body class="font-sans antialiased bg-white text-gray-900" style="min-height: 100vh; display: flex; flex-direction: column;">
+@extends('landing.layout')
 
-<!-- Skip to main content link for accessibility -->
-<a href="#main-content" style="position: fixed; top: -100px; left: 50%; transform: translateX(-50%); z-index: 9999; padding: 0.75rem 1.5rem; background: var(--color-primary); color: white; font-weight: 600; border-radius: var(--radius-lg); text-decoration: none; transition: top 0.2s ease;" onfocus="this.style.top='1rem'" onblur="this.style.top='-100px'">Lewati ke konten utama</a>
+@section('title', 'Artikel & Berita — Bizmark.ID')
+@section('meta_description', 'Update terbaru seputar perizinan usaha, regulasi OSS-RBA, lingkungan hidup, dan tips legalitas bisnis Indonesia.')
 
-<!-- Navbar -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm" role="navigation" aria-label="Navigasi utama">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <!-- Logo -->
-            <div class="flex items-center">
-                <a href="{{ route('landing.id') }}" class="text-xl font-bold" style="color: var(--text-primary);">
-                    <i class="fas fa-certificate mr-2" style="color: var(--color-primary);"></i>
-                    Bizmark.ID
-                </a>
+@section('structured_data')
+<script type="application/ld+json">
+{
+    "@@context": "https://schema.org",
+    "@@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@@type": "ListItem",
+            "position": 1,
+            "name": "Beranda",
+            "item": "{{ route('landing.id') }}"
+        },
+        {
+            "@@type": "ListItem",
+            "position": 2,
+            "name": "Artikel",
+            "item": "{{ route('blog.index.id') }}"
+        }
+    ]
+}
+</script>
+@endsection
+
+@section('content')
+@php
+    $contact = data_get(config('landing_metrics'), 'contact', []);
+    $whatsappLink = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+    $featuredArticle = $articles->firstWhere('is_featured', true) ?? $articles->first();
+    $listArticles = $featuredArticle ? $articles->filter(fn($a) => $a->id !== $featuredArticle->id) : $articles;
+@endphp
+
+{{-- Hero / Header --}}
+<section class="relative overflow-hidden pt-28 pb-14 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
+    <div class="container-wide">
+        <span class="section-badge mb-4">Blog & Artikel</span>
+        <h1 class="section-title mb-3 text-gray-100">Artikel & Berita</h1>
+        <p class="section-description mb-0 text-gray-400">Update terbaru seputar perizinan, regulasi OSS-RBA, lingkungan hidup, dan tips legalitas bisnis Indonesia.</p>
+    </div>
+</section>
+
+{{-- Featured Article --}}
+@if($featuredArticle)
+<section class="section-sm bg-[var(--bg-base)] border-b border-white/10">
+    <div class="container-wide">
+        <a href="{{ route('blog.article', $featuredArticle->slug) }}" class="group grid lg:grid-cols-2 gap-8 items-center magazine-card p-0 overflow-hidden hover:shadow-xl transition-all">
+            <div class="relative h-72 lg:h-full min-h-[280px] overflow-hidden">
+                @if($featuredArticle->featured_image)
+                    <img src="{{ Storage::url($featuredArticle->featured_image) }}" alt="{{ $featuredArticle->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                @else
+                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-900">
+                        <i class="fas fa-newspaper text-white/30 text-5xl"></i>
+                    </div>
+                @endif
+                <div class="absolute top-4 left-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold text-white bg-[var(--color-secondary)]">
+                        <i class="fas fa-star mr-1"></i>Featured
+                    </span>
+                </div>
             </div>
-            
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex items-center space-x-1">
-                <a href="{{ route('landing.id') }}" class="nav-link">{{ __('landing.nav.home') }}</a>
-                <a href="{{ route('services.index.id') }}" class="nav-link">{{ __('landing.nav.services') }}</a>
-                <a href="{{ route('process.id') }}" class="nav-link">{{ __('landing.nav.process') }}</a>
-                <a href="{{ route('about.id') }}" class="nav-link">{{ __('landing.nav.about') }}</a>
-                <a href="{{ route('blog.index.id') }}" class="nav-link active">{{ __('landing.nav.blog') }}</a>
-                
-                <!-- Locale Switcher -->
-                <x-locale-switcher />
-                
-                <a href="{{ route('landing.service-inquiry.create') }}" class="btn btn-primary">
-                    {{ __('landing.nav.get_started') }}
-                </a>
+            <div class="p-7 lg:py-10">
+                <div class="mb-3">
+                    <span class="section-badge">{{ $featuredArticle->category_label }}</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold mb-3 leading-tight text-gray-100 group-hover:text-[var(--color-secondary)] transition-colors">
+                    {{ $featuredArticle->title }}
+                </h2>
+                <p class="text-base mb-5 line-clamp-3 text-gray-400">{{ $featuredArticle->excerpt }}</p>
+                <div class="flex items-center gap-5 text-sm mb-5 text-gray-500">
+                    <span><i class="fas fa-calendar mr-1"></i>{{ $featuredArticle->published_at->format('d M Y') }}</span>
+                    <span><i class="fas fa-clock mr-1"></i>{{ $featuredArticle->reading_time }} menit baca</span>
+                    <span><i class="fas fa-eye mr-1"></i>{{ number_format($featuredArticle->views_count) }}</span>
+                </div>
+                <span class="text-blue-400 hover:text-blue-300 inline-flex items-center gap-2 font-semibold transition-colors">Baca Artikel <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i></span>
             </div>
-            
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden flex items-center">
-                <button class="text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition" 
-                        style="color: var(--text-secondary);"
-                        onmouseover="this.style.color='var(--color-primary)'"
-                        onmouseout="this.style.color='var(--text-secondary)'"
-                        onclick="toggleMobileMenu()" 
-                        id="mobile-menu-button"
-                        aria-label="Open navigation menu" 
-                        aria-expanded="false"
-                        aria-controls="mobile-menu">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
+        </a>
+    </div>
+</section>
+@endif
+
+{{-- Search & Filter --}}
+<section class="section-sm bg-gray-900 border-b border-white/10">
+    <div class="container-wide">
+        <form action="{{ route('blog.index.id') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-1 relative">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-gray-500"></i>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel perizinan, regulasi..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-gray-800 border-white/10 text-gray-100 placeholder-gray-500">
             </div>
+            <select name="category" class="px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition bg-gray-800 border-white/10 text-gray-100">
+                <option value="">Semua Kategori</option>
+                @foreach($categories as $key => $label)
+                <option value="{{ $key }}" {{ request('category') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+            <select name="sort" class="px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition bg-gray-800 border-white/10 text-gray-100">
+                <option value="published_at" {{ request('sort', 'published_at') == 'published_at' ? 'selected' : '' }}>Terbaru</option>
+                <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Terpopuler</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm shrink-0">
+                <i class="fas fa-search"></i> Cari
+            </button>
+        </form>
+    </div>
+</section>
+
+{{-- Articles Grid + Sidebar --}}
+<section class="section">
+    <div class="container-wide">
+        <div class="grid lg:grid-cols-3 gap-10">
+
+            {{-- Articles Grid --}}
+            <div class="lg:col-span-2">
+                @if($listArticles->count() > 0)
+                <div class="grid md:grid-cols-2 gap-6">
+                    @foreach($listArticles as $article)
+                    <article class="card h-full flex flex-col group overflow-hidden p-0">
+                        <a href="{{ route('blog.article', $article->slug) }}" class="block relative overflow-hidden h-[180px]">
+                            @if($article->featured_image)
+                                <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-700">
+                                    <i class="fas fa-newspaper text-5xl text-gray-600"></i>
+                                </div>
+                            @endif
+                            @if($article->is_featured)
+                                <span class="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold text-white bg-[var(--color-secondary)]">
+                                    <i class="fas fa-star mr-0.5"></i>Featured
+                                </span>
+                            @endif
+                        </a>
+                        <div class="p-5 flex-1 flex flex-col">
+                            <div class="mb-2">
+                                <a href="{{ route('blog.category', $article->category) }}" class="section-badge text-[10px] hover:opacity-80 transition">{{ $article->category_label }}</a>
+                            </div>
+                            <h3 class="text-base font-bold mb-2 line-clamp-2 leading-snug text-gray-100">
+                                <a href="{{ route('blog.article', $article->slug) }}" class="hover:text-[var(--color-secondary)] transition-colors">
+                                    {{ $article->title }}
+                                </a>
+                            </h3>
+                            <p class="text-sm mb-4 line-clamp-2 flex-1 text-gray-400">{{ $article->excerpt }}</p>
+                            <div class="flex items-center justify-between text-xs pt-3 border-t border-white/10 mt-auto text-gray-500">
+                                <span><i class="fas fa-calendar mr-1"></i>{{ $article->published_at->format('d M Y') }}</span>
+                                <span><i class="fas fa-clock mr-1"></i>{{ $article->reading_time }} min</span>
+                                <span><i class="fas fa-eye mr-1"></i>{{ number_format($article->views_count) }}</span>
+                            </div>
+                        </div>
+                    </article>
+                    @endforeach
+                </div>
+
+                @if($articles->hasPages())
+                <div class="mt-10">
+                    {{ $articles->links() }}
+                </div>
+                @endif
+                @else
+                <div class="text-center py-20 card">
+                    <i class="fas fa-search text-5xl mb-4 text-gray-500"></i>
+                    <p class="text-lg font-semibold mb-1 text-gray-100">Tidak ada artikel ditemukan</p>
+                    <p class="text-sm mb-5 text-gray-400">Coba kata kunci lain atau lihat semua kategori.</p>
+                    <a href="{{ route('blog.index.id') }}" class="btn btn-primary btn-sm">Lihat Semua Artikel</a>
+                </div>
+                @endif
+            </div>
+
+            {{-- Sidebar --}}
+            <aside class="lg:col-span-1 space-y-6">
+
+                {{-- Kategori --}}
+                <div class="card">
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-4 text-gray-500">Kategori</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{{ route('blog.index.id') }}" class="flex items-center justify-between text-sm py-1.5 transition {{ !request('category') ? 'font-semibold' : '' }} text-gray-400">
+                                <span><i class="fas fa-layer-group mr-2 text-xs text-gray-500"></i>Semua Artikel</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-gray-500">{{ $articles->total() }}</span>
+                            </a>
+                        </li>
+                        @foreach($categories as $key => $label)
+                        <li>
+                            <a href="{{ route('blog.index.id', ['category' => $key]) }}" class="flex items-center justify-between text-sm py-1.5 transition {{ request('category') == $key ? 'font-semibold text-[var(--color-secondary)]' : 'text-gray-400 hover:text-[var(--color-secondary)]' }}">
+                                <span><i class="fas fa-tag mr-2 text-xs text-gray-500"></i>{{ $label }}</span>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                {{-- Artikel Populer --}}
+                @if($articles->count() > 0)
+                <div class="card">
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-4 text-gray-500">Artikel Populer</h4>
+                    <ul class="space-y-4">
+                        @foreach($articles->sortByDesc('views_count')->take(4) as $pop)
+                        <li>
+                            <a href="{{ route('blog.article', $pop->slug) }}" class="flex items-start gap-3 group">
+                                <div class="flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden">
+                                    @if($pop->featured_image)
+                                        <img src="{{ Storage::url($pop->featured_image) }}" alt="{{ $pop->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center bg-gray-800">
+                                            <i class="fas fa-newspaper text-lg text-gray-600"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold line-clamp-2 leading-snug text-gray-100 group-hover:text-[var(--color-secondary)] transition-colors">{{ $pop->title }}</p>
+                                    <p class="text-xs mt-1 text-gray-500">{{ $pop->published_at->format('d M Y') }}</p>
+                                </div>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                {{-- CTA Konsultasi --}}
+                <div class="card text-center bg-[var(--surface-dark)]">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 bg-orange-500/20">
+                        <i class="fas fa-comments-dollar text-xl leading-none text-[var(--color-secondary)]" aria-hidden="true"></i>
+                    </div>
+                    <h4 class="font-bold text-white mb-2">Butuh Bantuan Perizinan?</h4>
+                    <p class="text-sm mb-4 text-white/65">Konsultasikan kebutuhan izin usaha Anda secara gratis bersama tim kami.</p>
+                    <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-success w-full btn-sm">
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i> Chat WhatsApp
+                    </a>
+                    <a href="{{ route('landing.service-inquiry.create') }}" class="btn btn-secondary w-full btn-sm mt-2">
+                        <i class="fas fa-robot text-base flex-shrink-0 leading-none" aria-hidden="true"></i> Analisis AI Gratis
+                    </a>
+                </div>
+
+            </aside>
         </div>
     </div>
-</nav>
-
-@include('landing.partials.mobile-menu')
-
-<!-- Main Content -->
-<div style="flex: 1; display: flex; flex-direction: column;">
-    <!-- Header -->
-    <section id="main-content" class="pt-32 pb-12 px-4" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);">
-        <div class="container mx-auto max-w-7xl text-white">
-            <h1 class="text-5xl font-bold mb-4">Artikel & Berita</h1>
-            <p class="text-xl" style="color: rgba(255, 255, 255, 0.9);">Update terbaru seputar perizinan, regulasi, dan tips bisnis</p>
-        </div>
-    </section>
-
-    <!-- Search & Filter -->
-    <section class="py-8 px-4" style="background: var(--surface-secondary);">
-        <div class="container mx-auto max-w-7xl">
-            <form action="{{ route('blog.index.id') }}" method="GET" class="flex flex-col md:flex-row gap-4">
-                <!-- Search -->
-                <div class="flex-1">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel..." class="w-full px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition">
-                </div>
-                
-                <!-- Category Filter -->
-                <div>
-                    <select name="category" class="w-full md:w-48 px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition">
-                        <option value="">Semua Kategori</option>
-                        @foreach($categories as $key => $label)
-                        <option value="{{ $key }}" {{ request('category') == $key ? 'selected' : '' }}>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                
-                <!-- Sort -->
-                <div>
-                    <select name="sort" class="w-full md:w-48 px-4 py-3 bg-white text-gray-900 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition">
-                        <option value="published_at" {{ request('sort') == 'published_at' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Terpopuler</option>
-                    </select>
-                </div>
-                
-                <button type="submit" class="px-6 py-3 rounded-lg font-semibold transition" style="background: var(--color-primary); color: white;" onmouseover="this.style.background='var(--color-primary-dark)'" onmouseout="this.style.background='var(--color-primary)'">
-                    <i class="fas fa-search mr-2"></i>Cari
-                </button>
-            </form>
-        </div>
-    </section>
-
-    <!-- Articles Grid -->
-    <section class="py-12 px-4 bg-white">
-        <div class="container mx-auto max-w-7xl">
-            @if($articles->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                @foreach($articles as $article)
-                <div class="article-card">
-                    @if($article->featured_image)
-                    <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="article-image">
-                    @else
-                    <div class="article-image flex items-center justify-center" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);">
-                        <i class="fas fa-newspaper text-white text-5xl"></i>
-                    </div>
-                    @endif
-                    
-                    <div class="p-6 flex-1 flex flex-col">
-                        <div class="mb-3">
-                            <a href="{{ route('blog.category', $article->category) }}" class="inline-block px-3 py-1 rounded-full text-xs font-semibold transition" style="background: rgba(10, 102, 194, 0.1); color: var(--color-primary);" onmouseover="this.style.background='rgba(10, 102, 194, 0.2)'" onmouseout="this.style.background='rgba(10, 102, 194, 0.1)'">
-                                {{ $article->category_label }}
-                            </a>
-                            @if($article->is_featured)
-                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold ml-2" style="background: rgba(255, 149, 0, 0.1); color: #FF9500;">
-                                <i class="fas fa-star mr-1"></i>Featured
-                            </span>
-                            @endif
-                        </div>
-                        
-                        <h3 class="text-xl font-bold mb-3 line-clamp-2" style="color: var(--text-primary);">
-                            <a href="{{ route('blog.article', $article->slug) }}" class="transition" style="color: var(--text-primary);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-primary)'">
-                                {{ $article->title }}
-                            </a>
-                        </h3>
-                        
-                        <p class="mb-4 line-clamp-3 text-sm flex-1" style="color: var(--text-secondary);">
-                            {{ $article->excerpt }}
-                        </p>
-                        
-                        <div class="flex items-center justify-between text-sm pt-4 border-t mt-auto" style="color: var(--text-tertiary); border-color: var(--surface-tertiary);">
-                            <div class="flex items-center gap-4">
-                                <span>
-                                    <i class="fas fa-calendar mr-1"></i>
-                                    {{ $article->published_at->format('d M Y') }}
-                                </span>
-                                <span>
-                                    <i class="fas fa-clock mr-1"></i>
-                                    {{ $article->reading_time }} min
-                                </span>
-                            </div>
-                            <span>
-                                <i class="fas fa-eye mr-1"></i>
-                                {{ number_format($article->views_count) }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-            
-            <!-- Pagination -->
-            @if($articles->hasPages())
-            <div class="mt-12">
-                {{ $articles->links() }}
-            </div>
-            @endif
-            @else
-            <div class="text-center py-20">
-                <i class="fas fa-search text-6xl mb-4" style="color: var(--text-tertiary);"></i>
-                <p class="text-xl" style="color: var(--text-secondary);">Tidak ada artikel yang ditemukan</p>
-            </div>
-            @endif
-        </div>
-    </section>
-</div>
-
-    <!-- Footer -->
-    <footer class="py-8 px-4 border-t" style="background: var(--surface-secondary); border-color: var(--surface-tertiary); margin-top: auto;">
-        <div class="container mx-auto max-w-7xl">
-            <div class="text-center" style="color: var(--text-tertiary);">
-                <p>&copy; 2025 Bizmark.ID - PT Cangah Pajaratan Mandiri. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-    
-    <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            const button = document.getElementById('mobile-menu-button');
-            const isHidden = menu.classList.contains('hidden');
-            
-            if (isHidden) {
-                menu.classList.remove('hidden');
-                button.setAttribute('aria-expanded', 'true');
-                document.body.style.overflow = 'hidden';
-            } else {
-                menu.classList.add('hidden');
-                button.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            }
-        }
-    </script>
-</body>
-</html>
+</section>
+@endsection

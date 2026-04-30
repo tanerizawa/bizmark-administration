@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('template_file_path', 500)->nullable()->after('instructions')->comment('Path to template document file');
             $table->json('evaluation_criteria')->nullable()->after('template_file_path')->comment('Checklist/rubrik penilaian untuk document editing');
         });
-        
+
         if (Schema::getConnection()->getDriverName() === 'pgsql') {
-            DB::statement("ALTER TABLE test_templates ALTER COLUMN test_type TYPE VARCHAR(50)");
+            DB::statement('ALTER TABLE test_templates ALTER COLUMN test_type TYPE VARCHAR(50)');
         }
     }
 

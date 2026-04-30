@@ -1,4 +1,16 @@
 /* ============================================
+   ⚠️ DEPRECATED — DO NOT MODIFY
+   ============================================
+   This file is preserved for backward compatibility only.
+   
+   ALL design tokens have been migrated to:
+   ➡️ resources/css/design-tokens.css
+   
+   Migration completed: April 2026
+   Planned removal: Phase 2 cleanup (after admin panel migration)
+   ============================================ */
+
+/* ============================================
    NEUROSCIENCE-BASED DESIGN SYSTEM
    CSS Variables & Custom Properties
    ============================================ */

@@ -4,6 +4,7 @@ namespace App\Modules\Email\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EmailAccount;
+use App\Models\EmailInbox;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -19,10 +20,10 @@ class EmailAccountController extends Controller
         // Search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('email', 'LIKE', "%{$search}%")
-                  ->orWhere('name', 'LIKE', "%{$search}%")
-                  ->orWhere('department', 'LIKE', "%{$search}%");
+                    ->orWhere('name', 'LIKE', "%{$search}%")
+                    ->orWhere('department', 'LIKE', "%{$search}%");
             });
         }
 
@@ -51,7 +52,7 @@ class EmailAccountController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'data' => $accounts
+                'data' => $accounts,
             ]);
         }
 
@@ -60,13 +61,14 @@ class EmailAccountController extends Controller
             'total' => EmailAccount::count(),
             'shared' => EmailAccount::where('type', 'shared')->count(),
             'personal' => EmailAccount::where('type', 'personal')->count(),
-            'active_users' => User::whereHas('emailAssignments', function($q) {
+            'active_users' => User::whereHas('emailAssignments', function ($q) {
                 $q->where('is_active', true);
-            })->distinct()->count()
+            })->distinct()->count(),
         ];
 
         // For web view
         $emailAccounts = $accounts; // Rename for consistency with view
+
         return view('admin.email-accounts.index', compact('emailAccounts', 'stats'));
     }
 
@@ -87,6 +89,7 @@ class EmailAccountController extends Controller
         $users = User::orderBy('name')->get();
 
         $availableUsers = $users; // Rename for consistency with view
+
         return view('admin.email-accounts.create', compact('departments', 'availableUsers'));
     }
 
@@ -96,7 +99,7 @@ class EmailAccountController extends Controller
     public function store(Request $request)
     {
         // Backward compatibility: create form currently posts `assignments`, older API uses `assign_users`.
-        if ($request->filled('assignments') && !$request->filled('assign_users')) {
+        if ($request->filled('assignments') && ! $request->filled('assign_users')) {
             $request->merge(['assign_users' => $request->input('assignments')]);
         }
 
@@ -110,7 +113,7 @@ class EmailAccountController extends Controller
             'auto_reply_enabled' => 'boolean',
             'auto_reply_message' => 'nullable|string',
             'signature' => 'nullable|string',
-            
+
             // Assignment during creation
             'assign_users' => 'nullable|array',
             'assign_users.*.user_id' => 'required|exists:users,id',
@@ -135,7 +138,7 @@ class EmailAccountController extends Controller
         ]);
 
         // Assign users if provided
-        if (!empty($validated['assign_users'])) {
+        if (! empty($validated['assign_users'])) {
             foreach ($validated['assign_users'] as $assignment) {
                 $user = User::find($assignment['user_id']);
                 $account->assignUser($user, [
@@ -153,7 +156,7 @@ class EmailAccountController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Email account created successfully',
-                'data' => $account->load('users')
+                'data' => $account->load('users'),
             ], 201);
         }
 
@@ -168,13 +171,13 @@ class EmailAccountController extends Controller
     public function show(EmailAccount $emailAccount)
     {
         $emailAccount->load([
-            'users' => function($query) {
+            'users' => function ($query) {
                 $query->withPivot(['role', 'can_send', 'can_receive', 'can_delete', 'can_assign_others', 'is_active']);
             },
             'assignments.user',
-            'inbox' => function($query) {
+            'inbox' => function ($query) {
                 $query->latest('received_at')->limit(10);
-            }
+            },
         ]);
 
         // Statistics
@@ -190,15 +193,15 @@ class EmailAccountController extends Controller
         ];
 
         // Recent emails
-        $recentEmails = \App\Models\EmailInbox::where('email_account_id', $emailAccount->id)
+        $recentEmails = EmailInbox::where('email_account_id', $emailAccount->id)
             ->orderBy('received_at', 'desc')
             ->limit(10)
             ->get();
 
         // Available users for assignment
-        $availableUsers = \App\Models\User::whereDoesntHave('emailAssignments', function($q) use ($emailAccount) {
-                $q->where('email_account_id', $emailAccount->id);
-            })
+        $availableUsers = User::whereDoesntHave('emailAssignments', function ($q) use ($emailAccount) {
+            $q->where('email_account_id', $emailAccount->id);
+        })
             ->orderBy('name')
             ->get();
 
@@ -207,8 +210,8 @@ class EmailAccountController extends Controller
                 'success' => true,
                 'data' => [
                     'account' => $emailAccount,
-                    'stats' => $stats
-                ]
+                    'stats' => $stats,
+                ],
             ]);
         }
 
@@ -256,7 +259,7 @@ class EmailAccountController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Email account updated successfully',
-                'data' => $emailAccount
+                'data' => $emailAccount,
             ]);
         }
 
@@ -272,8 +275,8 @@ class EmailAccountController extends Controller
     {
         // Check if has active assignments
         $activeAssignments = $emailAccount->assignments()->where('is_active', true)->count();
-        
-        if ($activeAssignments > 0 && !$request->has('force')) {
+
+        if ($activeAssignments > 0 && ! $request->has('force')) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
@@ -291,7 +294,7 @@ class EmailAccountController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Email account deleted successfully'
+                'message' => 'Email account deleted successfully',
             ]);
         }
 
@@ -307,14 +310,14 @@ class EmailAccountController extends Controller
     {
         // Get users not yet assigned to this email
         $assignedUserIds = $emailAccount->users()->pluck('users.id');
-        
+
         $availableUsers = User::whereNotIn('id', $assignedUserIds)
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'department']);
 
         return response()->json([
             'success' => true,
-            'data' => $availableUsers
+            'data' => $availableUsers,
         ]);
     }
 
@@ -336,7 +339,7 @@ class EmailAccountController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $stats
+            'data' => $stats,
         ]);
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\CompetitorAnalysis;
 use App\Models\SeoScore;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Services\SeoFixService;
 use App\Services\SeoReportService;
 use App\Services\SeoScoringService;
@@ -29,7 +29,7 @@ class SeoScoresController extends Controller
         $query = SeoScore::with('article:id,title,slug,views_count,published_at,category');
 
         if ($search) {
-            $query->whereHas('article', fn($q) => $q->where('title', 'ilike', "%{$search}%"));
+            $query->whereHas('article', fn ($q) => $q->where('title', 'ilike', "%{$search}%"));
         }
 
         if ($filter === 'poor') {
@@ -65,7 +65,7 @@ class SeoScoresController extends Controller
         $article = Article::findOrFail($articleId);
         $score = SeoScore::where('article_id', $articleId)->first();
 
-        if (!$score) {
+        if (! $score) {
             // Generate score on the fly
             $scorer = app(SeoScoringService::class);
             $score = $scorer->scoreArticle($article);
@@ -75,9 +75,9 @@ class SeoScoresController extends Controller
 
         // Find matching competitor analysis for Smart Fix link
         $competitorAnalysis = CompetitorAnalysis::where(function ($q) use ($article) {
-                $q->where('our_url', 'LIKE', '%' . $article->slug . '%')
-                  ->orWhere('keyword', 'LIKE', '%' . $article->title . '%');
-            })
+            $q->where('our_url', 'LIKE', '%'.$article->slug.'%')
+                ->orWhere('keyword', 'LIKE', '%'.$article->title.'%');
+        })
             ->orWhere(function ($q) use ($article) {
                 if ($article->meta_keywords) {
                     foreach (explode(',', $article->meta_keywords) as $kw) {
@@ -127,15 +127,15 @@ class SeoScoresController extends Controller
         $result = $fixer->fixBatch([], $threshold);
 
         $details = collect($result['details'])
-            ->filter(fn($d) => $d['fixes_count'] > 0)
-            ->map(fn($d) => "• {$d['title']}: {$d['old_score']}→{$d['new_score']} (+{$d['score_change']}, {$d['fixes_count']} fix)")
+            ->filter(fn ($d) => $d['fixes_count'] > 0)
+            ->map(fn ($d) => "• {$d['title']}: {$d['old_score']}→{$d['new_score']} (+{$d['score_change']}, {$d['fixes_count']} fix)")
             ->implode("\n");
 
         $msg = "🤖 AI Batch Fix selesai!\n"
-             . "📊 {$result['total_processed']} artikel diproses, {$result['total_fixed']} diperbaiki\n"
-             . "🔧 {$result['total_fixes']} total perbaikan ({$result['ai_powered_count']} AI-powered)\n"
-             . "📈 Rata-rata skor baru: {$result['avg_new_score']} (perubahan: +{$result['avg_score_change']})\n"
-             . ($details ? "\nDetail:\n{$details}" : '');
+             ."📊 {$result['total_processed']} artikel diproses, {$result['total_fixed']} diperbaiki\n"
+             ."🔧 {$result['total_fixes']} total perbaikan ({$result['ai_powered_count']} AI-powered)\n"
+             ."📈 Rata-rata skor baru: {$result['avg_new_score']} (perubahan: +{$result['avg_score_change']})\n"
+             .($details ? "\nDetail:\n{$details}" : '');
 
         return $this->seoRouteFlash('admin.seo.scores', 'success', $msg);
     }
@@ -150,7 +150,7 @@ class SeoScoresController extends Controller
         $belowThreshold = SeoScore::where('total_score', '<', $threshold)
             ->with('article:id,title')
             ->get()
-            ->map(fn($s) => [
+            ->map(fn ($s) => [
                 'id' => $s->article_id,
                 'title' => $s->article?->title ?? 'Deleted',
                 'score' => $s->total_score,
@@ -160,7 +160,7 @@ class SeoScoresController extends Controller
             ->whereDoesntHave('seoScore')
             ->select('id', 'title')
             ->get()
-            ->map(fn($a) => [
+            ->map(fn ($a) => [
                 'id' => $a->id,
                 'title' => $a->title,
                 'score' => 0,
@@ -222,7 +222,7 @@ class SeoScoresController extends Controller
             ->whereDoesntHave('seoScore')
             ->select('id', 'title')
             ->get()
-            ->map(fn($a) => ['id' => $a->id, 'title' => $a->title]);
+            ->map(fn ($a) => ['id' => $a->id, 'title' => $a->title]);
 
         return response()->json([
             'candidates' => $unscored->values(),
@@ -230,4 +230,3 @@ class SeoScoresController extends Controller
         ]);
     }
 }
-

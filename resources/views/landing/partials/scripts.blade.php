@@ -1,6 +1,8 @@
 <script>
-// Landing Page Scripts (non-module to ensure onclick handlers work globally)
-// navbar.js features are bundled via Vite in app.js
+// Landing Page Scripts
+// Dropdown system handled by Alpine.js in navbar.blade.php
+// Mobile menu handled by Alpine.js in mobile-menu.blade.php
+// FAQ accordion now uses native <details> elements
 
 // Hide Loading Screen
 window.addEventListener('load', function() {
@@ -12,142 +14,43 @@ window.addEventListener('load', function() {
     }
 });
 
-// Mobile Menu Toggle
-function toggleMobileMenu() {
-    const menu = document.getElementById('mobileMenu');
-    if (!menu) {
-        return;
-    }
+// Back to Top button — show after 500px scroll
+(function() {
+    var backToTopBtn = document.getElementById('backToTop');
+    if (!backToTopBtn) return;
+    window.addEventListener('scroll', function() {
+        backToTopBtn.classList.toggle('show', window.scrollY > 500);
+    }, { passive: true });
+})();
 
-    const menuButton = document.getElementById('mobile-menu-button');
-    const backdrop = menu.querySelector('.mobile-menu-backdrop');
-    const panel = menu.querySelector('.mobile-menu-panel');
-    const isHidden = menu.classList.contains('hidden');
+// Scroll Progress Bar
+(function(){
+    const bar = document.createElement('div');
+    bar.id = 'scroll-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.prepend(bar);
+    const updateProgress = function() {
+        const scrolled = window.scrollY;
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = total > 0 ? ((scrolled / total) * 100).toFixed(2) + '%' : '0%';
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+})();
 
-    if (isHidden) {
-        // Open: show container, then animate in
-        menu.classList.remove('hidden');
-        // Force reflow so transitions trigger
-        menu.offsetHeight;
-        menu.classList.add('active');
-        if (backdrop) backdrop.classList.add('active');
-        if (panel) panel.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        if (menuButton) {
-            menuButton.setAttribute('aria-expanded', 'true');
-        }
-        // Trap focus inside menu
-        const firstFocusable = menu.querySelector('button, a, input');
-        if (firstFocusable) firstFocusable.focus();
-        // Haptic feedback
-        if (navigator.vibrate) navigator.vibrate(10);
-    } else {
-        // Close: animate out, then hide container
-        menu.classList.remove('active');
-        if (backdrop) backdrop.classList.remove('active');
-        if (panel) panel.classList.remove('active');
-        document.body.style.overflow = '';
-        if (menuButton) {
-            menuButton.setAttribute('aria-expanded', 'false');
-            menuButton.focus();
-        }
-        // Wait for transition to finish before hiding
-        setTimeout(function() {
-            if (!menu.classList.contains('active')) {
-                menu.classList.add('hidden');
-            }
-        }, 300);
-        if (navigator.vibrate) navigator.vibrate(10);
-    }
-}
-
-// Expose for inline onclick handlers
-window.toggleMobileMenu = toggleMobileMenu;
-
-// Close mobile menu when clicking overlay
-document.addEventListener('click', function(e) {
-    const menu = document.getElementById('mobileMenu');
-    const menuButton = document.getElementById('mobile-menu-button');
-
-    if (menu && menu.classList.contains('active') && 
-        !menu.contains(e.target) && 
-        menuButton && !menuButton.contains(e.target)) {
-        toggleMobileMenu();
-    }
-});
-
-function closeAllNavDropdowns() {
-    document.querySelectorAll('[data-dropdown-trigger]').forEach(function(trigger) {
-        const menuId = trigger.getAttribute('data-dropdown-trigger');
-        const menu = menuId ? document.getElementById(menuId) : null;
-        if (menu) {
-            menu.classList.add('hidden');
-        }
-        trigger.setAttribute('aria-expanded', 'false');
-    });
-}
-
-document.addEventListener('click', function(e) {
-    const trigger = e.target.closest('[data-dropdown-trigger]');
-    if (trigger) {
-        const menuId = trigger.getAttribute('data-dropdown-trigger');
-        const menu = menuId ? document.getElementById(menuId) : null;
-        if (!menu) {
-            return;
-        }
-
-        const isHidden = menu.classList.contains('hidden');
-        closeAllNavDropdowns();
-        if (isHidden) {
-            menu.classList.remove('hidden');
-            trigger.setAttribute('aria-expanded', 'true');
-        }
-        return;
-    }
-
-    closeAllNavDropdowns();
-});
-
-// Close mobile menu and dropdowns on ESC
-document.addEventListener('keydown', function(e) {
-    const menu = document.getElementById('mobileMenu');
-    if (menu && e.key === 'Escape' && menu.classList.contains('active')) {
-        toggleMobileMenu();
-    }
-    if (e.key === 'Escape') {
-        closeAllNavDropdowns();
-    }
-});
-
-// Back to Top Button
-const backToTopBtn = document.getElementById('backToTop');
-window.addEventListener('scroll', function() {
-    if (!backToTopBtn) {
-        return;
-    }
-    if (window.scrollY > 500) {
-        backToTopBtn.classList.add('show');
-    } else {
-        backToTopBtn.classList.remove('show');
-    }
-});
-
-// Navbar Scroll Effect
+// Navbar Scroll Effect — CSS class driven
 const navbar = document.querySelector('nav[role="navigation"]');
-window.addEventListener('scroll', function() {
-    if (!navbar) {
-        return;
-    }
+const _updateNavbar = function() {
+    if (!navbar) return;
     if (window.scrollY > 50) {
-        navbar.classList.add('shadow-md');
-        navbar.classList.remove('shadow-sm');
-        navbar.style.background = 'rgba(255,255,255,0.98)';
-    } else {
-        navbar.classList.remove('shadow-md');
-        navbar.classList.add('shadow-sm');
+        navbar.classList.add('is-scrolled');
         navbar.style.background = '';
+    } else {
+        navbar.classList.remove('is-scrolled');
     }
-});
+};
+window.addEventListener('scroll', _updateNavbar, { passive: true });
+_updateNavbar();
 
 // Smooth Scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -161,11 +64,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     behavior: 'smooth',
                     block: 'start'
                 });
-                // Close mobile menu if open
-                const mobileMenu = document.getElementById('mobileMenu');
-                if (mobileMenu && mobileMenu.classList.contains('active')) {
-                    toggleMobileMenu();
-                }
             }
         }
     });
@@ -224,11 +122,43 @@ function trackEvent(category, action, label, value = null) {
     }
 }
 
-// Expose for inline onclick handlers
+// Expose for Alpine.js @click handlers
 window.trackEvent = trackEvent;
 
-// Track WhatsApp clicks
+// ── Dark/Light Mode Toggle ─────────────────────────────────────────────────
+(function() {
+    var themeIcon = document.getElementById('themeIcon');
+    function updateThemeIcon(theme) {
+        if (!themeIcon) return;
+        themeIcon.className = 'fas ' + (theme === 'light' ? 'fa-sun' : 'fa-moon');
+    }
+    // Set icon based on current theme
+    var currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    updateThemeIcon(currentTheme);
+})();
+
+window.toggleTheme = function() {
+    var html = document.documentElement;
+    var isLight = html.getAttribute('data-theme') === 'light';
+    var newTheme = isLight ? 'dark' : 'light';
+    if (newTheme === 'light') {
+        html.setAttribute('data-theme', 'light');
+    } else {
+        html.removeAttribute('data-theme');
+    }
+    localStorage.setItem('bizmark_theme', newTheme);
+    // Update icon
+    var icon = document.getElementById('themeIcon');
+    if (icon) {
+        icon.className = 'fas ' + (newTheme === 'light' ? 'fa-sun' : 'fa-moon');
+    }
+    // Dispatch event for AOS refresh
+    window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+};
+
+// ── Analytics / Tracking ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
+    // Track WhatsApp clicks
     document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach(link => {
         link.addEventListener('click', function(e) {
             const phoneNumber = this.href.match(/(\d+)/)?.[0] || 'unknown';
@@ -379,49 +309,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // FAQ accordion
-    const faqButtons = document.querySelectorAll('.faq-trigger');
-    const toggleFaq = (button, expand) => {
-        const targetId = button.getAttribute('data-faq-target');
-        const target = targetId ? document.getElementById(targetId) : null;
-        const icon = button.querySelector('.faq-icon');
-        const faqItem = button.closest('.faq-item');
-
-        if (!target) {
-            return;
-        }
-
-        if (expand) {
-            button.setAttribute('aria-expanded', 'true');
-            target.classList.remove('hidden');
-            if (icon) icon.classList.add('rotate-180');
-            if (faqItem) faqItem.classList.add('faq-item-open');
-        } else {
-            button.setAttribute('aria-expanded', 'false');
-            target.classList.add('hidden');
-            if (icon) icon.classList.remove('rotate-180');
-            if (faqItem) faqItem.classList.remove('faq-item-open');
-        }
-    };
-
-    faqButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const isExpanded = button.getAttribute('aria-expanded') === 'true';
-
-            faqButtons.forEach(otherButton => {
-                if (otherButton !== button) {
-                    toggleFaq(otherButton, false);
-                }
-            });
-
-            toggleFaq(button, !isExpanded);
-        });
-    });
-    
-    // Device Detection (Auto-redirect disabled to prevent infinite loop)
-    // Users can manually switch using the view toggle in header
-    
-    // Screen width tracking removed - unnecessary HTTP requests
 });
 </script>

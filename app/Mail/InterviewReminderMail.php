@@ -29,7 +29,7 @@ class InterviewReminderMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reminder: Interview Tomorrow - ' . $this->interview->jobApplication->jobVacancy->title,
+            subject: 'Reminder: Interview Tomorrow - '.$this->interview->jobApplication->jobVacancy->title,
         );
     }
 

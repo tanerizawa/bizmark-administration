@@ -1,244 +1,204 @@
 @extends('landing.layout')
 
 @php
-    $isEnglish = ($locale ?? app()->getLocale()) === 'en';
-    $pageTitle = $isEnglish ? 'Our Work Process' : 'Proses Kerja Kami';
-    $pageDescription = $isEnglish 
-        ? 'Learn about our systematic 6-step business permit consultation process. From discovery to ongoing support, we ensure your permits are handled professionally.'
-        : 'Pelajari proses konsultasi perizinan usaha kami yang sistematis dalam 6 langkah. Dari analisis kebutuhan hingga dukungan berkelanjutan, kami pastikan perizinan Anda ditangani secara profesional.';
+    $locale = $locale ?? app()->getLocale();
+    $isEn = $locale === 'en';
+    $pageTitle = $isEn ? 'Our Process' : 'Proses Kami';
+    $pageDescription = $isEn
+        ? 'How Bizmark.ID delivers permits: a 6-stage process with SLA-backed results, weekly progress reporting, and a dedicated project manager per engagement.'
+        : 'Cara Bizmark.ID mengurus perizinan: proses 6 tahap dengan hasil kerja bergaransi SLA, laporan kemajuan mingguan, dan manajer proyek khusus untuk setiap proyek.';
+
+    $contact = (array) data_get(config('landing_metrics'), 'contact', []);
+    $whatsappLink = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+    $primaryCtaRoute = route('landing.service-inquiry.create');
+
+    $stages = [
+        [
+            'num' => '01',
+            'title' => $isEn ? 'Initial Consultation & Mapping' : 'Konsultasi Awal & Pemetaan',
+            'duration' => $isEn ? '1-2 days' : '1-2 hari',
+            'deliverable' => $isEn ? 'Permit gap analysis + KBLI mapping (free)' : 'Analisis celah perizinan + pemetaan KBLI (gratis)',
+            'client_input' => $isEn ? 'Business description, KBLI if known, scale' : 'Deskripsi usaha, kode KBLI jika ada, skala operasional',
+            'desc' => $isEn
+                ? 'We audit your business context and identify every permit you legally need — or already hold — across environmental, operational, and sectoral categories.'
+                : 'Kami menelaah konteks usaha Anda dan mengidentifikasi setiap izin yang wajib Anda miliki — maupun yang sudah ada — dari kategori lingkungan, operasional, hingga sektoral.',
+            'icon' => 'fa-compass',
+        ],
+        [
+            'num' => '02',
+            'title' => $isEn ? 'Proposal & SLA Agreement' : 'Proposal & Kesepakatan SLA',
+            'duration' => $isEn ? '2-3 days' : '2-3 hari',
+            'deliverable' => $isEn ? 'Formal proposal with scope, cost, SLA' : 'Proposal resmi: lingkup pekerjaan, biaya, SLA',
+            'client_input' => $isEn ? 'Internal approvals, company data sheet' : 'Persetujuan internal, lembar data perusahaan',
+            'desc' => $isEn
+                ? 'Clear scope, transparent cost, and written SLA terms — all documented before work begins. No surprises mid-project.'
+                : 'Lingkup pekerjaan, biaya, dan ketentuan SLA yang jelas — semua terdokumentasi sebelum pekerjaan dimulai. Tidak ada kejutan di tengah proyek.',
+            'icon' => 'fa-file-signature',
+        ],
+        [
+            'num' => '03',
+            'title' => $isEn ? 'Data & Document Collection' : 'Pengumpulan Data & Dokumen',
+            'duration' => $isEn ? '3-7 days' : '3-7 hari',
+            'deliverable' => $isEn ? 'Complete document checklist + validation' : 'Daftar dokumen lengkap + validasi',
+            'client_input' => $isEn ? 'Legal docs, site data, technical drawings' : 'Dokumen hukum, data lokasi, gambar teknis',
+            'desc' => $isEn
+                ? 'We provide a clear document checklist. Every document is validated before submission — no rejection cycles.'
+                : 'Kami menyediakan daftar dokumen yang jelas. Setiap dokumen divalidasi sebelum pengajuan — tanpa siklus penolakan berulang.',
+            'icon' => 'fa-folder-open',
+        ],
+        [
+            'num' => '04',
+            'title' => $isEn ? 'Submission & Field Follow-through' : 'Pengajuan & Tindak Lanjut Lapangan',
+            'duration' => $isEn ? 'Varies by permit' : 'Variatif per jenis izin',
+            'deliverable' => $isEn ? 'Submission receipts + weekly SLA report' : 'Tanda terima pengajuan + laporan SLA mingguan',
+            'client_input' => $isEn ? 'Site access for inspections (if required)' : 'Akses lokasi untuk inspeksi (jika diperlukan)',
+            'desc' => $isEn
+                ? 'Our project manager handles OSS submission, ministry coordination, and inspection scheduling. You receive weekly status reports.'
+                : 'Manajer proyek kami menangani pengajuan OSS, koordinasi kementerian, dan penjadwalan inspeksi. Anda menerima laporan status setiap minggu.',
+            'icon' => 'fa-paper-plane',
+        ],
+        [
+            'num' => '05',
+            'title' => $isEn ? 'Issuance & Quality Control' : 'Penerbitan & Kendali Mutu',
+            'duration' => $isEn ? '1-3 days' : '1-3 hari',
+            'deliverable' => $isEn ? 'Final permits + internal QC sign-off' : 'Izin final + persetujuan kendali mutu internal',
+            'client_input' => $isEn ? 'Review & approval' : 'Peninjauan & persetujuan',
+            'desc' => $isEn
+                ? 'Every permit goes through internal quality control before handover. We verify dates, scope, and all attachments.'
+                : 'Setiap izin melewati proses kendali mutu internal sebelum diserahkan. Kami memverifikasi tanggal, lingkup pekerjaan, dan semua lampiran.',
+            'icon' => 'fa-clipboard-check',
+        ],
+        [
+            'num' => '06',
+            'title' => $isEn ? 'Handover & Compliance Roadmap' : 'Serah Terima & Peta Jalan Kepatuhan',
+            'duration' => $isEn ? '1 week' : '1 minggu',
+            'deliverable' => $isEn ? 'Digital archive + renewal calendar' : 'Arsip digital + kalender perpanjangan izin',
+            'client_input' => $isEn ? 'Kick-off of ongoing monitoring (optional)' : 'Mulai pemantauan berkelanjutan (opsional)',
+            'desc' => $isEn
+                ? 'We hand over organized digital archives and a compliance roadmap. Optional ongoing monitoring keeps you renewal-ready.'
+                : 'Kami menyerahkan arsip digital yang terorganisir beserta peta jalan kepatuhan. Pemantauan berkelanjutan opsional tersedia agar perpanjangan izin Anda selalu siap.',
+            'icon' => 'fa-map',
+        ],
+    ];
 @endphp
 
-@section('title', $pageTitle . ' - Bizmark.ID')
+@section('title', $pageTitle . ' — Bizmark.ID')
 @section('meta_description', $pageDescription)
 
-@section('structured_data')
-<script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "HowTo",
-    "name": "{{ $pageTitle }}",
-    "description": "{{ $pageDescription }}",
-    "step": [
-        {
-            "@@type": "HowToStep",
-            "name": "{{ __('investment.process.discovery.title') }}",
-            "text": "{{ __('investment.process.discovery.description') }}"
-        },
-        {
-            "@@type": "HowToStep",
-            "name": "{{ __('investment.process.roadmap.title') }}",
-            "text": "{{ __('investment.process.roadmap.description') }}"
-        },
-        {
-            "@@type": "HowToStep",
-            "name": "{{ __('investment.process.preparation.title') }}",
-            "text": "{{ __('investment.process.preparation.description') }}"
-        },
-        {
-            "@@type": "HowToStep",
-            "name": "{{ __('investment.process.liaison.title') }}",
-            "text": "{{ __('investment.process.liaison.description') }}"
-        },
-        {
-            "@@type": "HowToStep",
-            "name": "{{ __('investment.process.monitoring.title') }}",
-            "text": "{{ __('investment.process.monitoring.description') }}"
-        },
-        {
-            "@@type": "HowToStep",
-            "name": "{{ __('investment.process.support.title') }}",
-            "text": "{{ __('investment.process.support.description') }}"
-        }
-    ]
-}
-</script>
-@endsection
-
 @section('content')
-<!-- Hero Section -->
-<section class="relative overflow-hidden pt-24 pb-16" style="background: linear-gradient(135deg, var(--surface-warm) 0%, var(--surface-secondary) 100%);">
+
+{{-- HERO --}}
+<section class="section-v2 bg-[var(--bg-raised)] border-b border-white/10">
     <div class="container-wide">
-        <div class="max-w-3xl mx-auto text-center">
-            <span class="section-badge mb-4">{{ __('landing.process.badge') }}</span>
-            <h1 class="text-4xl md:text-5xl font-bold mb-6" style="color: var(--text-primary);">
-                {{ $isEnglish ? 'How We Work' : 'Cara Kami Bekerja' }}
+        <div class="max-w-4xl">
+            <span class="eyebrow mb-6">{{ $isEn ? 'How We Work' : 'Cara Kerja Kami' }}</span>
+            <h1 class="display-xl mt-2 mb-6 text-gray-100">
+                {{ $isEn ? 'A process built for clarity and accountability.' : 'Proses yang mengutamakan kejelasan dan akuntabilitas.' }}
             </h1>
-            <p class="text-xl leading-relaxed mb-8" style="color: var(--text-secondary);">
-                {{ $isEnglish 
-                    ? 'A systematic and transparent approach to ensure your business permits are processed efficiently and professionally.' 
-                    : 'Pendekatan sistematis dan transparan untuk memastikan perizinan usaha Anda diproses secara efisien dan profesional.' }}
+            <p class="text-xl leading-relaxed max-w-3xl text-gray-400">
+                {{ $isEn
+                    ? 'Six stages. One dedicated project manager per engagement. SLA-backed results at every step — documented in writing and reported weekly.'
+                    : 'Enam tahap. Satu manajer proyek khusus per proyek. Hasil kerja bergaransi SLA di setiap langkah — terdokumentasi secara tertulis dan dilaporkan setiap minggu.' }}
             </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="{{ $isEnglish ? route('landing.service-inquiry.create') : route('landing.service-inquiry.create') }}" class="btn btn-primary">
-                    <i class="fas fa-paper-plane mr-2"></i>
-                    {{ $isEnglish ? 'Start Consultation' : 'Mulai Konsultasi' }}
-                </a>
-                <a href="{{ $isEnglish ? route('services.index.en') : route('services.index.id') }}" class="btn btn-outline-primary">
-                    <i class="fas fa-list mr-2"></i>
-                    {{ $isEnglish ? 'View Services' : 'Lihat Layanan' }}
-                </a>
-            </div>
         </div>
     </div>
 </section>
 
-<!-- Process Steps Section -->
-<section class="section" style="background: var(--surface-primary);">
+{{-- STAGES --}}
+<section class="section-v2">
     <div class="container-wide">
-        <div class="max-w-4xl mx-auto">
-            <!-- Timeline -->
-            <div class="relative">
-                <!-- Vertical Line -->
-                <div class="hidden md:block absolute left-8 top-0 bottom-0 w-0.5" style="background: var(--border-light);"></div>
-                
-                @foreach(['discovery', 'roadmap', 'preparation', 'liaison', 'monitoring', 'support'] as $index => $step)
-                <div class="flex gap-6 md:gap-8 mb-12 last:mb-0 animate-fade-in" style="animation-delay: {{ $index * 100 }}ms;">
-                    <!-- Step Number -->
-                    <div class="flex-shrink-0 relative z-10">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-bold text-white shadow-lg" 
-                             style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);">
-                            {{ $index + 1 }}
-                        </div>
-                    </div>
-                    
-                    <!-- Content -->
-                    <div class="flex-1 pb-8 {{ $loop->last ? '' : 'border-b' }}" style="border-color: var(--border-light);">
-                        <h3 class="text-2xl font-bold mb-3" style="color: var(--text-primary);">
-                            {{ __("investment.process.{$step}.title") }}
-                        </h3>
-                        <p class="text-lg leading-relaxed mb-6" style="color: var(--text-secondary);">
-                            {{ __("investment.process.{$step}.description") }}
-                        </p>
-                        
-                        <!-- Deliverables -->
-                        <div class="magazine-card p-5">
-                            <h4 class="text-sm font-bold uppercase tracking-wider mb-4" style="color: var(--text-tertiary);">
-                                {{ $isEnglish ? 'What You Get' : 'Yang Anda Dapatkan' }}
-                            </h4>
-                            <div class="grid sm:grid-cols-2 gap-3">
-                                @foreach(__("investment.process.{$step}.deliverables") as $deliverable)
-                                <div class="flex items-start gap-3">
-                                    <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center" style="background: rgba(22, 163, 74, 0.1);">
-                                        <i class="fas fa-check text-xs" style="color: var(--color-success);"></i>
-                                    </div>
-                                    <span class="text-sm" style="color: var(--text-secondary);">{{ $deliverable }}</span>
-                                </div>
-                                @endforeach
+        <div class="space-y-6">
+            @foreach($stages as $s)
+                <article class="premium-card grid lg:grid-cols-12 gap-6 items-start">
+                    <div class="lg:col-span-3 flex items-center gap-4">
+                        <span class="inline-flex items-center justify-center w-14 h-14 rounded-full flex-shrink-0 bg-blue-500/15 text-blue-400">
+                            <i class="fas {{ $s['icon'] }} text-xl"></i>
+                        </span>
+                        <div>
+                            <div class="font-display text-3xl font-bold leading-none text-amber-400">{{ $s['num'] }}</div>
+                            <div class="text-xs font-semibold mt-1 uppercase tracking-wider text-gray-600">
+                                {{ $s['duration'] }}
                             </div>
                         </div>
                     </div>
-                </div>
-                @endforeach
+
+                    <div class="lg:col-span-5">
+                        <h2 class="font-display font-bold text-2xl mb-2 text-gray-100">{{ $s['title'] }}</h2>
+                        <p class="text-base leading-relaxed text-gray-400">{{ $s['desc'] }}</p>
+                    </div>
+
+                    <div class="lg:col-span-4 flex flex-col gap-3">
+                        <div class="rounded-lg p-3 bg-blue-950/30">
+                            <div class="text-[10px] font-bold uppercase tracking-[.15em] mb-1.5 text-blue-400">
+                                <i class="fas fa-cube text-[10px] mr-1"></i>
+                                {{ $isEn ? 'Deliverable' : 'Hasil Kerja' }}
+                            </div>
+                            <div class="text-sm font-medium text-gray-100">{{ $s['deliverable'] }}</div>
+                        </div>
+                        <div class="rounded-lg p-3 bg-white/[.04]">
+                            <div class="text-[10px] font-bold uppercase tracking-[.15em] mb-1.5 text-gray-500">
+                                <i class="fas fa-user text-[10px] mr-1"></i>
+                                {{ $isEn ? 'From you' : 'Dari Anda' }}
+                            </div>
+                            <div class="text-sm font-medium text-gray-100">{{ $s['client_input'] }}</div>
+                        </div>
+                    </div>
+                </article>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- TRUST BAND --}}
+<section class="section-v2-sm section-premium">
+    <div class="container-wide text-center">
+        <span class="eyebrow mb-4 justify-center">{{ $isEn ? 'What we guarantee' : 'Apa yang kami jamin' }}</span>
+        <div class="grid md:grid-cols-4 gap-6 mt-8 max-w-4xl mx-auto">
+            <div>
+                <div class="font-display text-3xl font-bold text-blue-400">96%</div>
+                <div class="text-xs font-semibold mt-1 text-gray-400">{{ $isEn ? 'On-time delivery' : 'Izin selesai tepat waktu' }}</div>
+            </div>
+            <div>
+                <div class="font-display text-3xl font-bold text-blue-400"><i class="fas fa-file-contract"></i></div>
+                <div class="text-xs font-semibold mt-1 text-gray-400">{{ $isEn ? 'Written SLA' : 'SLA tertulis' }}</div>
+            </div>
+            <div>
+                <div class="font-display text-3xl font-bold text-blue-400">7</div>
+                <div class="text-xs font-semibold mt-1 text-gray-400">{{ $isEn ? 'Days weekly report' : 'Hari laporan mingguan' }}</div>
+            </div>
+            <div>
+                <div class="font-display text-3xl font-bold text-blue-400">1</div>
+                <div class="text-xs font-semibold mt-1 text-gray-400">{{ $isEn ? 'Dedicated PM' : 'Manajer proyek khusus' }}</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Why Our Process Section -->
-<section class="section" style="background: var(--surface-warm);">
+{{-- CTA --}}
+<section class="section-v2 section-ink">
     <div class="container-wide">
-        <div class="text-center mb-12">
-            <h2 class="section-title mb-4">
-                {{ $isEnglish ? 'Why Our Process Works' : 'Mengapa Proses Kami Efektif' }}
+        <div class="max-w-3xl mx-auto text-center">
+            <span class="gold-rule"></span>
+            <h2 class="display-lg mb-6">
+                {{ $isEn ? 'See how this process applies to your permits.' : 'Terapkan proses ini pada kebutuhan perizinan Anda.' }}
             </h2>
-            <p class="section-description mx-auto">
-                {{ $isEnglish 
-                    ? 'Our methodology has been refined through hundreds of successful permit applications'
-                    : 'Metodologi kami telah disempurnakan melalui ratusan aplikasi perizinan yang berhasil' }}
+            <p class="text-lg leading-relaxed mb-8 text-white/75">
+                {{ $isEn
+                    ? 'Start with a free AI permit check to get your compliance roadmap — then speak with our team.'
+                    : 'Mulai dengan cek perizinan AI gratis untuk mendapatkan peta jalan kepatuhan Anda — lalu bicara langsung dengan tim kami.' }}
             </p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Benefit 1 -->
-            <div class="magazine-card p-6 text-center hover:shadow-lg transition-shadow">
-                <div class="w-14 h-14 mx-auto rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #10b981, #059669);">
-                    <i class="fas fa-clock text-2xl text-white"></i>
-                </div>
-                <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">
-                    {{ $isEnglish ? 'Time Efficient' : 'Hemat Waktu' }}
-                </h3>
-                <p class="text-sm" style="color: var(--text-secondary);">
-                    {{ $isEnglish 
-                        ? 'Streamlined process reduces permit processing time by up to 40%'
-                        : 'Proses yang efisien mengurangi waktu pengurusan izin hingga 40%' }}
-                </p>
-            </div>
-            
-            <!-- Benefit 2 -->
-            <div class="magazine-card p-6 text-center hover:shadow-lg transition-shadow">
-                <div class="w-14 h-14 mx-auto rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
-                    <i class="fas fa-eye text-2xl text-white"></i>
-                </div>
-                <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">
-                    {{ $isEnglish ? 'Full Transparency' : 'Transparansi Penuh' }}
-                </h3>
-                <p class="text-sm" style="color: var(--text-secondary);">
-                    {{ $isEnglish 
-                        ? 'Real-time updates and progress tracking at every stage'
-                        : 'Update real-time dan pelacakan progres di setiap tahap' }}
-                </p>
-            </div>
-            
-            <!-- Benefit 3 -->
-            <div class="magazine-card p-6 text-center hover:shadow-lg transition-shadow">
-                <div class="w-14 h-14 mx-auto rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
-                    <i class="fas fa-shield-alt text-2xl text-white"></i>
-                </div>
-                <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">
-                    {{ $isEnglish ? 'Risk Mitigation' : 'Mitigasi Risiko' }}
-                </h3>
-                <p class="text-sm" style="color: var(--text-secondary);">
-                    {{ $isEnglish 
-                        ? 'Proactive identification and resolution of potential issues'
-                        : 'Identifikasi dan penyelesaian proaktif terhadap potensi masalah' }}
-                </p>
-            </div>
-            
-            <!-- Benefit 4 -->
-            <div class="magazine-card p-6 text-center hover:shadow-lg transition-shadow">
-                <div class="w-14 h-14 mx-auto rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                    <i class="fas fa-headset text-2xl text-white"></i>
-                </div>
-                <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">
-                    {{ $isEnglish ? 'Dedicated Support' : 'Dukungan Khusus' }}
-                </h3>
-                <p class="text-sm" style="color: var(--text-secondary);">
-                    {{ $isEnglish 
-                        ? 'Personal consultant assigned to your project from start to finish'
-                        : 'Konsultan personal ditugaskan untuk proyek Anda dari awal hingga selesai' }}
-                </p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="{{ $primaryCtaRoute }}" class="btn btn-gold btn-lg">
+                    <i class="fas fa-robot text-lg flex-shrink-0 leading-none" aria-hidden="true"></i>
+                    <span>{{ $isEn ? 'Start Free Permit Check' : 'Cek Perizinan Gratis' }}</span>
+                </a>
+                <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost-on-dark btn-lg">
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                    <span>{{ $isEn ? 'Chat on WhatsApp' : 'Hubungi via WhatsApp' }}</span>
+                </a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="section" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);">
-    <div class="container-wide">
-        <div class="max-w-3xl mx-auto text-center text-white">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6">
-                {{ $isEnglish ? 'Ready to Start Your Permit Journey?' : 'Siap Memulai Perjalanan Perizinan Anda?' }}
-            </h2>
-            <p class="text-xl opacity-90 mb-8">
-                {{ $isEnglish 
-                    ? 'Get a free consultation and discover how we can help streamline your business permits'
-                    : 'Dapatkan konsultasi gratis dan temukan bagaimana kami dapat membantu mempercepat perizinan usaha Anda' }}
-            </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="{{ route('landing.service-inquiry.create') }}" class="btn bg-white text-[color:var(--color-primary)] hover:bg-gray-100">
-                    <i class="fas fa-comments mr-2"></i>
-                    {{ $isEnglish ? 'Free Consultation' : 'Konsultasi Gratis' }}
-                </a>
-                @php
-                    $contact = config('landing_metrics.contact', []);
-                    $whatsappLink = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
-                @endphp
-                <a href="{{ $whatsappLink }}" target="_blank" class="btn bg-green-500 text-white hover:bg-green-600">
-                    <i class="fab fa-whatsapp mr-2"></i>
-                    WhatsApp
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
 @endsection

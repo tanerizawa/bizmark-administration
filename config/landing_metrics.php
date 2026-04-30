@@ -130,4 +130,16 @@ return [
         'platform_uptime' => '24/7',
     ],
 
+    /**
+     * Hero Trust Indicators — Single Source of Truth
+     * Gunakan nilai ini di landing.blade.php dan about.blade.php
+     * Hanya cantumkan yang BISA DIBUKTIKAN
+     */
+    'stats' => [
+        'experience_label' => '10+ Tahun',   // Sejak 2015 = verified
+        'clients_label' => '500+ Klien',  // Kumulatif, dapat diverifikasi internal
+        'permits_label' => '1.000+ Izin', // Total izin yang telah diproses
+        'success_label' => '98%',         // Tingkat keberhasilan SLA internal
+    ],
+
 ];

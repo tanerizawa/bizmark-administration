@@ -4,14 +4,15 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\WebPush\WebPushMessage;
 use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 class DeadlineReminder extends Notification
 {
     use Queueable;
 
     protected $application;
+
     protected $daysRemaining;
 
     /**
@@ -36,9 +37,9 @@ class DeadlineReminder extends Notification
      */
     public function toWebPush($notifiable, $notification)
     {
-        $message = $this->daysRemaining 
+        $message = $this->daysRemaining
             ? "Deadline dalam {$this->daysRemaining} hari"
-            : "Deadline mendekati";
+            : 'Deadline mendekati';
 
         return (new WebPushMessage)
             ->title('⏰ Pengingat Deadline')
@@ -48,9 +49,9 @@ class DeadlineReminder extends Notification
             ->data([
                 'url' => route('client.applications.show', $this->application->id),
                 'application_id' => $this->application->id,
-                'days_remaining' => $this->daysRemaining
+                'days_remaining' => $this->daysRemaining,
             ])
-            ->tag('deadline-' . $this->application->id)
+            ->tag('deadline-'.$this->application->id)
             ->requireInteraction(true)
             ->vibrate([200, 100, 200, 100, 200]);
     }
@@ -70,7 +71,7 @@ class DeadlineReminder extends Notification
             'application_number' => $this->application->application_number,
             'days_remaining' => $this->daysRemaining,
             'message' => $message,
-            'url' => route('client.applications.show', $this->application->id)
+            'url' => route('client.applications.show', $this->application->id),
         ];
     }
 }

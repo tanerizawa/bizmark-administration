@@ -14,8 +14,8 @@
 <section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
     <div class="container-wide">
         <span class="section-badge mb-4">Services</span>
-        <h1 class="section-title mb-4">One Consistent Workflow for Business Permits</h1>
-        <p class="section-description mb-8" style="margin-left:0;">Explore all services in one integrated system and continue seamlessly from landing to detail to contact.</p>
+        <h1 class="section-title mb-4">End-to-End Permit Services for Your Business</h1>
+        <p class="section-description mb-8" style="margin-left:0;">Browse all our permit services, explore the full scope and requirements for each, and connect with our team when you are ready to start.</p>
         <div class="flex flex-wrap gap-3">
             <a href="{{ $waHref }}" class="btn btn-secondary"><i class="fab fa-whatsapp"></i> Free Consultation</a>
             <a href="{{ route('contact.index') }}" class="btn btn-outline-primary"><i class="fas fa-envelope"></i> Contact Team</a>
@@ -37,9 +37,9 @@
                     @foreach($items as $slug => $service)
                         <article class="card h-full flex flex-col">
                             <div class="flex items-start justify-between gap-4 mb-4">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:{{ $service['color'] ?? '#0f172a' }}20;">
-                                    <i class="fas {{ $service['icon'] ?? 'fa-layer-group' }}" style="color:{{ $service['color'] ?? '#0f172a' }};"></i>
-                                </div>
+                                <span class="editorial-icon-badge" style="width:3rem;height:3rem;border-radius:.75rem;flex-shrink:0;">
+                                    <i class="fas {{ $service['icon'] ?? 'fa-layer-group' }} icon-md" aria-hidden="true"></i>
+                                </span>
                                 @if(!empty($service['badge']))
                                     <span class="badge-featured">{{ $service['badge'] }}</span>
                                 @endif

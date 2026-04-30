@@ -3,20 +3,25 @@
 namespace App\Modules\Proyek\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\PermitType;
-use App\Models\PermitApplication;
 use App\Models\ApplicationDocument;
+use App\Models\ApplicationNote;
+use App\Models\BusinessContext;
+use App\Models\Client as ClientModel;
+use App\Models\Kbli;
+use App\Models\KbliPermitRecommendation;
+use App\Models\Payment;
+use App\Models\PermitApplication;
 use App\Models\PermitDocument;
-use App\Models\Client;
+use App\Models\PermitType;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Str;
 use App\Notifications\ApplicationSubmittedNotification;
 use App\Notifications\NewApplicationNotification;
 use App\Services\PermitApplicationWorkflowService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ApplicationController extends Controller
 {
@@ -40,7 +45,7 @@ class ApplicationController extends Controller
 
         // Search
         if ($request->filled('search')) {
-            $query->where('application_number', 'ilike', '%' . $request->search . '%');
+            $query->where('application_number', 'ilike', '%'.$request->search.'%');
         }
 
         $applications = $query->latest('created_at')->paginate(10)->withQueryString();
@@ -61,18 +66,18 @@ class ApplicationController extends Controller
     {
         $permitTypeId = $request->get('permit_type');
         $kbliCode = $request->get('kbli_code');
-        
+
         // If kbli_code is provided, show permit selection page
-        if ($kbliCode && !$permitTypeId) {
-            $kbli = \App\Models\Kbli::where('code', $kbliCode)->first();
-            
-            if (!$kbli) {
+        if ($kbliCode && ! $permitTypeId) {
+            $kbli = Kbli::where('code', $kbliCode)->first();
+
+            if (! $kbli) {
                 return redirect()->route('client.services.index')
                     ->with('error', 'Kode KBLI tidak ditemukan.');
             }
 
             // Get recommendation if exists
-            $recommendation = \App\Models\KbliPermitRecommendation::where('kbli_code', $kbliCode)
+            $recommendation = KbliPermitRecommendation::where('kbli_code', $kbliCode)
                 ->first();
 
             // Get available permit types
@@ -82,9 +87,9 @@ class ApplicationController extends Controller
 
             return view('client.applications.select-permit', compact('kbli', 'recommendation', 'permitTypes'));
         }
-        
+
         // Original logic for direct permit_type access
-        if (!$permitTypeId) {
+        if (! $permitTypeId) {
             return redirect()->route('client.services.index')
                 ->with('error', 'Silakan pilih jenis izin terlebih dahulu.');
         }
@@ -140,8 +145,9 @@ class ApplicationController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -168,8 +174,8 @@ class ApplicationController extends Controller
             'permit_selection' => [
                 'kbli_code' => $validated['kbli_code'],
                 'kbli_description' => $validated['kbli_description'],
-                'permits' => $validated['permits']
-            ]
+                'permits' => $validated['permits'],
+            ],
         ]);
 
         return redirect()->route('client.applications.create-package')
@@ -182,7 +188,7 @@ class ApplicationController extends Controller
     public function createPackage()
     {
         // Check if permit selection exists in session
-        if (!session()->has('permit_selection')) {
+        if (! session()->has('permit_selection')) {
             return redirect()->route('client.services.index')
                 ->with('error', 'Silakan pilih izin terlebih dahulu');
         }
@@ -191,10 +197,10 @@ class ApplicationController extends Controller
         $businessContext = session('business_context');
 
         // Also try loading from DB if session expired but user has recent context for this KBLI
-        if (!$businessContext) {
+        if (! $businessContext) {
             $kbliCode = session('permit_selection.kbli_code');
             $clientId = auth('client')->id();
-            $dbContext = \App\Models\BusinessContext::where('client_id', $clientId)
+            $dbContext = BusinessContext::where('client_id', $clientId)
                 ->where('kbli_code', $kbliCode)
                 ->latest('submitted_at')
                 ->first();
@@ -232,13 +238,13 @@ class ApplicationController extends Controller
 
         // Retrieve permit selection from session
         $permitSelection = session('permit_selection');
-        if (!$permitSelection) {
+        if (! $permitSelection) {
             return redirect()->route('client.services.index')
                 ->with('error', 'Silakan pilih izin terlebih dahulu');
         }
 
         $client = auth('client')->user();
-        
+
         // Calculate permit breakdown
         $bizmarkPermits = collect($permitSelection['permits'])->where('service_type', 'bizmark')->values()->all();
         $ownedPermits = collect($permitSelection['permits'])->where('service_type', 'owned')->values()->all();
@@ -268,7 +274,7 @@ class ApplicationController extends Controller
                     'investment_value' => $validated['investment_value'],
                     'target_completion_date' => $validated['target_completion_date'] ?? null,
                     'project_description' => $validated['project_description'],
-                    
+
                     // Business context from analysis (for admin reference)
                     'business_scale' => $businessContext['business_scale'] ?? null,
                     'location_category' => $businessContext['location_category'] ?? null,
@@ -276,27 +282,27 @@ class ApplicationController extends Controller
                     'province' => $businessContext['province'] ?? null,
                     'city' => $businessContext['city'] ?? null,
                     'district' => $businessContext['district'] ?? null,
-                    
+
                     // All Selected Permits
                     'selected_permits' => $permitSelection['permits'],
-                    
+
                     // Permit Breakdown by Service Type
                     'permits_by_service' => [
                         'bizmark' => count($bizmarkPermits),
                         'owned' => count($ownedPermits),
                         'self' => count($selfPermits),
                     ],
-                    
+
                     // Detailed Lists
                     'bizmark_permits' => $bizmarkPermits,
                     'owned_permits' => $ownedPermits,
                     'self_permits' => $selfPermits,
-                    
+
                     // Source
                     'source' => 'kbli_recommendation_package',
                     'package_type' => 'multi_permit',
                 ],
-                'notes' => "Paket {$validated['project_name']} dengan " . count($permitSelection['permits']) . " izin (BizMark.ID: " . count($bizmarkPermits) . ", Sudah Ada: " . count($ownedPermits) . ", Dikerjakan Sendiri: " . count($selfPermits) . ")",
+                'notes' => "Paket {$validated['project_name']} dengan ".count($permitSelection['permits']).' izin (BizMark.ID: '.count($bizmarkPermits).', Sudah Ada: '.count($ownedPermits).', Dikerjakan Sendiri: '.count($selfPermits).')',
             ]);
 
             app(PermitApplicationWorkflowService::class)->transition(
@@ -311,7 +317,7 @@ class ApplicationController extends Controller
             if ($request->hasFile('supporting_documents')) {
                 foreach ($request->file('supporting_documents') as $file) {
                     $path = $file->store('permit-documents', 'private');
-                    
+
                     PermitDocument::create([
                         'permit_application_id' => $application->id,
                         'document_name' => $file->getClientOriginalName(),
@@ -324,31 +330,33 @@ class ApplicationController extends Controller
 
             // Send notification to admins
             $admins = User::where('is_active', true)
-                          ->whereHas('role', function($query) {
-                              $query->where('name', 'admin');
-                          })
-                          ->get();
+                ->whereHas('role', function ($query) {
+                    $query->where('name', 'admin');
+                })
+                ->get();
 
             foreach ($admins as $admin) {
                 $admin->notify(new NewApplicationNotification($application));
             }
 
             DB::commit();
-            
+
             // Clear permit selection and business context from session
             session()->forget(['permit_selection', 'business_context']);
 
             return redirect()->route('client.applications.show', $application->id)
-                ->with('success', 'Permohonan paket izin berhasil diajukan! Tim kami akan segera memproses dan memberikan quotation untuk ' . count($bizmarkPermits) . ' izin yang akan dikelola BizMark.ID.');
+                ->with('success', 'Permohonan paket izin berhasil diajukan! Tim kami akan segera memproses dan memberikan quotation untuk '.count($bizmarkPermits).' izin yang akan dikelola BizMark.ID.');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * OLD METHOD - Kept for backward compatibility but should not be used
+     *
      * @deprecated Use storeMultiple() with project form instead
      */
     public function storeMultipleOld(Request $request)
@@ -370,7 +378,7 @@ class ApplicationController extends Controller
         $bizmarkApplications = [];
         $referenceData = [
             'owned' => [],
-            'self' => []
+            'self' => [],
         ];
 
         DB::beginTransaction();
@@ -419,7 +427,7 @@ class ApplicationController extends Controller
             // Send notifications only if there are BizMark applications
             if (count($bizmarkApplications) > 0) {
                 Client::findOrFail($client->id)->notify(new ApplicationSubmittedNotification($bizmarkApplications[0]));
-                
+
                 $admins = User::where('is_active', true)->get();
                 foreach ($bizmarkApplications as $app) {
                     Notification::send($admins, new NewApplicationNotification($app));
@@ -429,13 +437,13 @@ class ApplicationController extends Controller
             // Prepare success message
             $message = '';
             if (count($bizmarkApplications) > 0) {
-                $message .= count($bizmarkApplications) . ' permohonan izin BizMark.ID berhasil dibuat! ';
+                $message .= count($bizmarkApplications).' permohonan izin BizMark.ID berhasil dibuat! ';
             }
             if (count($referenceData['owned']) > 0) {
-                $message .= count($referenceData['owned']) . ' izin sudah dimiliki. ';
+                $message .= count($referenceData['owned']).' izin sudah dimiliki. ';
             }
             if (count($referenceData['self']) > 0) {
-                $message .= count($referenceData['self']) . ' izin dikerjakan sendiri. ';
+                $message .= count($referenceData['self']).' izin dikerjakan sendiri. ';
             }
 
             if (count($bizmarkApplications) > 0) {
@@ -448,8 +456,9 @@ class ApplicationController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -465,20 +474,20 @@ class ApplicationController extends Controller
         // Check for pending payment
         $pendingPayment = null;
         if ($application->quotation) {
-            $pendingPayment = \App\Models\Payment::where('quotation_id', $application->quotation->id)
+            $pendingPayment = Payment::where('quotation_id', $application->quotation->id)
                 ->where('status', 'processing')
                 ->latest()
                 ->first();
         }
 
         // Mark all unread admin notes as read
-        \App\Models\ApplicationNote::where('application_id', $id)
+        ApplicationNote::where('application_id', $id)
             ->where('author_type', 'admin')
             ->where('is_internal', false)
             ->where('is_read', false)
             ->update([
                 'is_read' => true,
-                'read_at' => now()
+                'read_at' => now(),
             ]);
 
         return view('client.applications.show', compact('application', 'pendingPayment'));
@@ -493,7 +502,7 @@ class ApplicationController extends Controller
             ->with('permitType')
             ->findOrFail($id);
 
-        if (!$application->canBeEdited()) {
+        if (! $application->canBeEdited()) {
             return redirect()->route('client.applications.show', $id)
                 ->with('error', 'Permohonan ini tidak dapat diubah.');
         }
@@ -511,7 +520,7 @@ class ApplicationController extends Controller
         $application = PermitApplication::where('client_id', auth('client')->id())
             ->findOrFail($id);
 
-        if (!$application->canBeEdited()) {
+        if (! $application->canBeEdited()) {
             return redirect()->route('client.applications.show', $id)
                 ->with('error', 'Permohonan ini tidak dapat diubah.');
         }
@@ -553,8 +562,8 @@ class ApplicationController extends Controller
 
         try {
             $file = $request->file('file');
-            $safeFileName = (string) Str::uuid() . '.' . $file->extension();
-            $path = $file->storeAs('applications/' . $application->id, $safeFileName, 'private');
+            $safeFileName = (string) Str::uuid().'.'.$file->extension();
+            $path = $file->storeAs('applications/'.$application->id, $safeFileName, 'private');
 
             ApplicationDocument::create([
                 'application_id' => $application->id,
@@ -569,7 +578,7 @@ class ApplicationController extends Controller
             return back()->with('success', 'Dokumen berhasil diupload.');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal mengupload dokumen: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengupload dokumen: '.$e->getMessage());
         }
     }
 
@@ -594,7 +603,7 @@ class ApplicationController extends Controller
 
             return back()->with('success', 'Dokumen berhasil dihapus.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menghapus dokumen: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghapus dokumen: '.$e->getMessage());
         }
     }
 
@@ -607,7 +616,7 @@ class ApplicationController extends Controller
             ->with(['permitType', 'documents'])
             ->findOrFail($id);
 
-        if (!$application->canBeSubmitted()) {
+        if (! $application->canBeSubmitted()) {
             return redirect()->route('client.applications.show', $id)
                 ->with('error', 'Permohonan tidak dapat diajukan saat ini.');
         }
@@ -635,7 +644,7 @@ class ApplicationController extends Controller
             ->with('documents')
             ->findOrFail($id);
 
-        if (!$application->canBeSubmitted()) {
+        if (! $application->canBeSubmitted()) {
             return back()->with('error', 'Permohonan tidak dapat diajukan saat ini.');
         }
 
@@ -657,15 +666,15 @@ class ApplicationController extends Controller
             app(PermitApplicationWorkflowService::class)->transition(
                 $application,
                 'submitted',
-                'Permohonan diajukan oleh klien dengan persetujuan Syarat & Ketentuan versi ' . $validated['terms_version'],
+                'Permohonan diajukan oleh klien dengan persetujuan Syarat & Ketentuan versi '.$validated['terms_version'],
                 'App\Models\Client',
                 auth('client')->id()
             );
 
             // Send notifications
-            $client = \App\Models\Client::query()->findOrFail(auth('client')->id());
+            $client = ClientModel::query()->findOrFail(auth('client')->id());
             $client->notify(new ApplicationSubmittedNotification($application));
-            
+
             // Notify all admins
             $admins = User::where('is_active', true)->get();
             Notification::send($admins, new NewApplicationNotification($application));
@@ -677,7 +686,8 @@ class ApplicationController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -689,7 +699,7 @@ class ApplicationController extends Controller
         $application = PermitApplication::where('client_id', auth('client')->id())
             ->findOrFail($id);
 
-        if (!$application->canBeCancelled()) {
+        if (! $application->canBeCancelled()) {
             return back()->with('error', 'Permohonan ini tidak dapat dibatalkan.');
         }
 

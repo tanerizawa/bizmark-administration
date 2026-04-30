@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Verified;
-use App\Models\Client;
 use Illuminate\Support\Str;
 
 class ClientAuthController extends Controller
@@ -51,10 +51,10 @@ class ClientAuthController extends Controller
             $existingClient->update([
                 'name' => $validated['name'],
                 'company_name' => $validated['company_name'] ?? $validated['name'],
-                'phone' => $validated['phone'],
+                'phone' => $validated['phone'] ?? null,
                 'password' => Hash::make($validated['password']),
                 'status' => 'active',
-                'client_type' => $validated['company_name'] ? 'company' : 'individual',
+                'client_type' => ! empty($validated['company_name']) ? 'company' : 'individual',
                 'email_verified_at' => null,
             ]);
             $client = $existingClient;
@@ -64,10 +64,10 @@ class ClientAuthController extends Controller
                 'name' => $validated['name'],
                 'company_name' => $validated['company_name'] ?? $validated['name'],
                 'email' => $validated['email'],
-                'phone' => $validated['phone'],
+                'phone' => $validated['phone'] ?? null,
                 'password' => Hash::make($validated['password']),
                 'status' => 'active',
-                'client_type' => $validated['company_name'] ? 'company' : 'individual',
+                'client_type' => ! empty($validated['company_name']) ? 'company' : 'individual',
             ]);
         }
 
@@ -170,7 +170,7 @@ class ClientAuthController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($client, $password) {
                 $client->forceFill([
-                    'password' => Hash::make($password)
+                    'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));
 
                 $client->save();
@@ -190,11 +190,11 @@ class ClientAuthController extends Controller
     public function showVerifyEmailNotice()
     {
         $client = Auth::guard('client')->user();
-        
+
         if ($client->hasVerifiedEmail()) {
             return redirect()->route('client.dashboard');
         }
-        
+
         return view('client.auth.verify-email');
     }
 

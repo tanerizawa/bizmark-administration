@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 
 class ArticleAutoPostContentHelper
 {
-
     /**
      * Ensure content has "Baca juga" / "Artikel Terkait" section for SEO scoring bonus (+3)
      */
@@ -53,7 +52,6 @@ class ArticleAutoPostContentHelper
         }
         $section .= '</ul>';
 
-        return $content . "\n\n" . $section;
+        return $content."\n\n".$section;
     }
-
 }

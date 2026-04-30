@@ -18,16 +18,16 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('duration_minutes');
             $table->integer('passing_score')->comment('Percentage (0-100)');
-            
+
             // Test configuration
             $table->json('questions_data')->nullable()->comment('Question bank with answers');
             $table->text('instructions')->nullable();
             $table->boolean('is_active')->default(true);
-            
+
             // Metadata
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
-            
+
             // Indexes
             $table->index(['test_type', 'is_active']);
         });

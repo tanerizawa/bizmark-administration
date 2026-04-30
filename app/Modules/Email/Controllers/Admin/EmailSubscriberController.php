@@ -22,9 +22,9 @@ class EmailSubscriberController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('email', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('name', 'ilike', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('email', 'ilike', '%'.$request->search.'%')
+                    ->orWhere('name', 'ilike', '%'.$request->search.'%');
             });
         }
 
@@ -66,21 +66,23 @@ class EmailSubscriberController extends Controller
     public function show($id)
     {
         $subscriber = EmailSubscriber::with('emailLogs')->findOrFail($id);
+
         return view('admin.email.subscribers.show', compact('subscriber'));
     }
 
     public function edit($id)
     {
         $subscriber = EmailSubscriber::findOrFail($id);
+
         return view('admin.email.subscribers.edit', compact('subscriber'));
     }
 
     public function update(Request $request, $id)
     {
         $subscriber = EmailSubscriber::findOrFail($id);
-        
+
         $validated = $request->validate([
-            'email' => 'required|email|unique:email_subscribers,email,' . $id,
+            'email' => 'required|email|unique:email_subscribers,email,'.$id,
             'name' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
             'tags' => 'nullable|array',
@@ -102,4 +104,3 @@ class EmailSubscriberController extends Controller
             ->with('success', 'Subscriber berhasil dihapus.');
     }
 }
-

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Article;
 use App\Services\SeoScoringService;
 use Illuminate\Console\Command;
 
@@ -19,9 +20,10 @@ class SeoScoreArticlesCommand extends Command
         $this->newLine();
 
         if ($articleId = $this->option('article')) {
-            $article = \App\Models\Article::find($articleId);
-            if (!$article) {
+            $article = Article::find($articleId);
+            if (! $article) {
                 $this->error("Article #{$articleId} not found");
+
                 return self::FAILURE;
             }
 
@@ -35,7 +37,7 @@ class SeoScoreArticlesCommand extends Command
                 $this->line("   {$icon} {$key}: {$factor['score']}/{$factor['max']}");
             }
 
-            if (!empty($score->recommendations)) {
+            if (! empty($score->recommendations)) {
                 $this->newLine();
                 $this->info('   💡 Rekomendasi:');
                 foreach ($score->recommendations as $rec) {
@@ -47,7 +49,7 @@ class SeoScoreArticlesCommand extends Command
         }
 
         $limit = (int) $this->option('limit');
-        $this->info("Scoring " . ($limit > 0 ? "{$limit}" : "all") . " published articles...");
+        $this->info('Scoring '.($limit > 0 ? "{$limit}" : 'all').' published articles...');
 
         $results = $service->scoreAll($limit);
 

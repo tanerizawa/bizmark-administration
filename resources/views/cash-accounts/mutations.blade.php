@@ -7,12 +7,12 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-3 sm:space-y-0">
         <div class="flex items-center">
-            <a href="{{ route('cash-accounts.index') }}" class="mr-4" style="color: rgba(10, 132, 255, 0.9);">
+            <a href="{{ route('cash-accounts.index') }}" class="mr-4 text-apple-blue/90">
                 <i class="fas fa-arrow-left text-lg"></i>
             </a>
             <div>
-                <h1 class="text-2xl font-bold" style="color: #FFFFFF;">Mutasi Rekening</h1>
-                <p class="mt-1 text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                <h1 class="text-2xl font-bold text-white">Mutasi Rekening</h1>
+                <p class="mt-1 text-sm text-dark-text-secondary">
                     {{ $cashAccount->account_name }}
                     @if($cashAccount->account_number)
                         <span class="ml-2">• {{ $cashAccount->account_number }}</span>
@@ -21,10 +21,10 @@
             </div>
         </div>
         <div class="flex space-x-2">
-            <button onclick="window.print()" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors" style="background: rgba(142, 142, 147, 0.2); color: rgba(235, 235, 245, 0.9);">
+            <button onclick="window.print()" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-white/10 text-dark-text-primary/90">
                 <i class="fas fa-print mr-2"></i>Print
             </button>
-            <button onclick="exportToCSV()" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors" style="background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 1);">
+            <button onclick="exportToCSV()" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-apple-green/20 text-apple-green">
                 <i class="fas fa-file-export mr-2"></i>Export CSV
             </button>
         </div>
@@ -34,40 +34,40 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="card-elevated rounded-apple-lg p-4">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Saldo Saat Ini</span>
-                <i class="fas fa-wallet" style="color: rgba(10, 132, 255, 0.8);"></i>
+                <span class="text-sm text-dark-text-secondary">Saldo Saat Ini</span>
+                <i class="fas fa-wallet text-apple-blue/80"></i>
             </div>
-            <p class="text-2xl font-bold" style="color: #FFFFFF;">
+            <p class="text-2xl font-bold text-white">
                 {{ $cashAccount->formatted_balance }}
             </p>
         </div>
 
         <div class="card-elevated rounded-apple-lg p-4">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Total Pemasukan</span>
-                <i class="fas fa-arrow-down" style="color: rgba(52, 199, 89, 1);"></i>
+                <span class="text-sm text-dark-text-secondary">Total Pemasukan</span>
+                <i class="fas fa-arrow-down text-apple-green"></i>
             </div>
-            <p class="text-xl font-bold" style="color: rgba(52, 199, 89, 1);">
+            <p class="text-xl font-bold text-apple-green">
                 Rp {{ number_format($totalIncome, 0, ',', '.') }}
             </p>
         </div>
 
         <div class="card-elevated rounded-apple-lg p-4">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Total Pengeluaran</span>
-                <i class="fas fa-arrow-up" style="color: rgba(255, 59, 48, 1);"></i>
+                <span class="text-sm text-dark-text-secondary">Total Pengeluaran</span>
+                <i class="fas fa-arrow-up text-apple-red"></i>
             </div>
-            <p class="text-xl font-bold" style="color: rgba(255, 59, 48, 1);">
+            <p class="text-xl font-bold text-apple-red">
                 Rp {{ number_format($totalExpense, 0, ',', '.') }}
             </p>
         </div>
 
         <div class="card-elevated rounded-apple-lg p-4">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">Perubahan Bersih</span>
-                <i class="fas fa-chart-line" style="color: {{ $netChange >= 0 ? 'rgba(52, 199, 89, 1)' : 'rgba(255, 59, 48, 1)' }};"></i>
+                <span class="text-sm text-dark-text-secondary">Perubahan Bersih</span>
+                <i class="fas fa-chart-line {{ $netChange >= 0 ? 'text-apple-green' : 'text-apple-red' }}"></i>
             </div>
-            <p class="text-xl font-bold" style="color: {{ $netChange >= 0 ? 'rgba(52, 199, 89, 1)' : 'rgba(255, 59, 48, 1)' }};">
+            <p class="text-xl font-bold {{ $netChange >= 0 ? 'text-apple-green' : 'text-apple-red' }}">
                 Rp {{ number_format(abs($netChange), 0, ',', '.') }}
             </p>
         </div>
@@ -75,9 +75,9 @@
 
     <!-- Filter Card -->
     <div class="card-elevated rounded-apple-lg mb-6 overflow-hidden">
-        <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-            <h3 class="text-base font-semibold" style="color: #FFFFFF;">
-                <i class="fas fa-filter mr-2" style="color: rgba(235, 235, 245, 0.4);"></i>
+        <div class="px-4 py-3 border-b border-white/10">
+            <h3 class="text-base font-semibold text-white">
+                <i class="fas fa-filter mr-2 text-dark-text-tertiary/40"></i>
                 Filter Mutasi
             </h3>
         </div>
@@ -86,7 +86,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <!-- Transaction Type Filter -->
                     <div>
-                        <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Jenis Transaksi</label>
+                        <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Jenis Transaksi</label>
                         <select name="transaction_type" class="input-dark w-full px-4 py-2.5 rounded-lg">
                             <option value="all" {{ $transactionType === 'all' ? 'selected' : '' }}>Semua</option>
                             <option value="income" {{ $transactionType === 'income' ? 'selected' : '' }}>Pemasukan</option>
@@ -96,7 +96,7 @@
 
                     <!-- Filter Type -->
                     <div>
-                        <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Periode</label>
+                        <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Periode</label>
                         <select name="filter_type" class="input-dark w-full px-4 py-2.5 rounded-lg" onchange="toggleDateInputs(this.value)">
                             <option value="month" {{ $filterType === 'month' ? 'selected' : '' }}>Bulanan</option>
                             <option value="quarter" {{ $filterType === 'quarter' ? 'selected' : '' }}>Kuartalan</option>
@@ -107,7 +107,7 @@
 
                     <!-- Month/Year Selection -->
                     <div id="monthYearInputs" class="{{ $filterType === 'custom' ? 'hidden' : '' }}">
-                        <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Bulan/Tahun</label>
+                        <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Bulan/Tahun</label>
                         <div class="flex space-x-2">
                             <select name="month" class="input-dark w-1/2 px-3 py-2.5 rounded-lg">
                                 @for($m = 1; $m <= 12; $m++)
@@ -126,7 +126,7 @@
 
                     <!-- Custom Date Range -->
                     <div id="customDateInputs" class="{{ $filterType !== 'custom' ? 'hidden' : '' }}">
-                        <label class="block text-sm font-medium mb-2" style="color: rgba(235, 235, 245, 0.8);">Tanggal Custom</label>
+                        <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Tanggal Custom</label>
                         <div class="flex space-x-2">
                             <input type="date" name="start_date" value="{{ request('start_date', $startDate->format('Y-m-d')) }}" class="input-dark w-1/2 px-3 py-2.5 rounded-lg">
                             <input type="date" name="end_date" value="{{ request('end_date', $endDate->format('Y-m-d')) }}" class="input-dark w-1/2 px-3 py-2.5 rounded-lg">
@@ -135,7 +135,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <button type="submit" class="px-6 py-2.5 rounded-lg text-sm font-medium transition-colors" style="background: rgba(10, 132, 255, 0.9); color: #FFFFFF;">
+                    <button type="submit" class="px-6 py-2.5 rounded-lg text-sm font-medium transition-colors bg-apple-blue/90 text-white">
                         <i class="fas fa-search mr-2"></i>Terapkan Filter
                     </button>
                 </div>
@@ -145,13 +145,13 @@
 
     <!-- Mutations Table -->
     <div class="card-elevated rounded-apple-lg overflow-hidden">
-        <div class="px-4 py-3" style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
+        <div class="px-4 py-3 border-b border-white/10">
             <div class="flex justify-between items-center">
-                <h3 class="text-base font-semibold" style="color: #FFFFFF;">
-                    <i class="fas fa-list mr-2" style="color: rgba(235, 235, 245, 0.4);"></i>
+                <h3 class="text-base font-semibold text-white">
+                    <i class="fas fa-list mr-2 text-dark-text-tertiary/40"></i>
                     Riwayat Transaksi
                 </h3>
-                <span class="text-sm" style="color: rgba(235, 235, 245, 0.6);">
+                <span class="text-sm text-dark-text-secondary">
                     {{ $startDate->format('d M Y') }} - {{ $endDate->format('d M Y') }}
                 </span>
             </div>
@@ -159,65 +159,65 @@
 
         <div class="overflow-x-auto">
             <table class="w-full" id="mutationsTable">
-                <thead style="background: rgba(255, 255, 255, 0.02);">
-                    <tr style="border-bottom: 1px solid rgba(84, 84, 88, 0.65);">
-                        <th class="text-left py-3 px-4 text-xs font-semibold" style="color: rgba(235, 235, 245, 0.6);">TANGGAL</th>
-                        <th class="text-left py-3 px-4 text-xs font-semibold" style="color: rgba(235, 235, 245, 0.6);">KETERANGAN</th>
-                        <th class="text-left py-3 px-4 text-xs font-semibold" style="color: rgba(235, 235, 245, 0.6);">METODE</th>
-                        <th class="text-right py-3 px-4 text-xs font-semibold" style="color: rgba(52, 199, 89, 1);">DEBIT</th>
-                        <th class="text-right py-3 px-4 text-xs font-semibold" style="color: rgba(255, 59, 48, 1);">KREDIT</th>
-                        <th class="text-right py-3 px-4 text-xs font-semibold" style="color: rgba(235, 235, 245, 0.6);">SALDO</th>
+                <thead class="bg-white/[0.02]">
+                    <tr class="border-b border-white/10">
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-dark-text-secondary">TANGGAL</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-dark-text-secondary">KETERANGAN</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-dark-text-secondary">METODE</th>
+                        <th class="text-right py-3 px-4 text-xs font-semibold text-apple-green">DEBIT</th>
+                        <th class="text-right py-3 px-4 text-xs font-semibold text-apple-red">KREDIT</th>
+                        <th class="text-right py-3 px-4 text-xs font-semibold text-dark-text-secondary">SALDO</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($mutations as $mutation)
-                    <tr style="border-bottom: 1px solid rgba(84, 84, 88, 0.4);">
-                        <td class="py-3 px-4 text-sm whitespace-nowrap" style="color: rgba(235, 235, 245, 0.9);">
+                    <tr class="border-b border-white/5">
+                        <td class="py-3 px-4 text-sm whitespace-nowrap text-dark-text-primary">
                             {{ $mutation['date']->format('d M Y') }}
-                            <div class="text-xs" style="color: rgba(235, 235, 245, 0.5);">
+                            <div class="text-xs text-dark-text-tertiary/80">
                                 {{ $mutation['date']->format('H:i') }}
                             </div>
                         </td>
-                        <td class="py-3 px-4 text-sm" style="color: rgba(235, 235, 245, 0.9);">
+                        <td class="py-3 px-4 text-sm text-dark-text-primary">
                             <div>{{ $mutation['description'] }}</div>
                             @if(isset($mutation['reference']) && $mutation['reference'] !== '-')
-                            <div class="text-xs mt-1" style="color: rgba(235, 235, 245, 0.5);">
+                            <div class="text-xs mt-1 text-dark-text-tertiary/80">
                                 Ref: {{ $mutation['reference'] }}
                             </div>
                             @endif
                             @if(isset($mutation['category']))
-                            <span class="inline-block px-2 py-0.5 rounded text-xs mt-1" style="background: rgba(142, 142, 147, 0.2); color: rgba(235, 235, 245, 0.7);">
+                            <span class="inline-block px-2 py-0.5 rounded text-xs mt-1 bg-white/10 text-dark-text-primary/70">
                                 {{ $mutation['category'] }}
                             </span>
                             @endif
                         </td>
-                        <td class="py-3 px-4 text-sm" style="color: rgba(235, 235, 245, 0.7);">
+                        <td class="py-3 px-4 text-sm text-dark-text-primary/70">
                             @if($mutation['type'] === 'income')
-                                <span class="inline-flex items-center px-2 py-1 rounded text-xs" style="background: rgba(52, 199, 89, 0.2); color: rgba(52, 199, 89, 1);">
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-apple-green/20 text-apple-green">
                                     <i class="fas fa-arrow-down mr-1"></i>{{ ucfirst($mutation['payment_method'] ?? '-') }}
                                 </span>
                             @else
-                                <span class="inline-flex items-center px-2 py-1 rounded text-xs" style="background: rgba(255, 59, 48, 0.2); color: rgba(255, 59, 48, 1);">
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-apple-red/20 text-apple-red">
                                     <i class="fas fa-arrow-up mr-1"></i>{{ ucfirst($mutation['payment_method'] ?? '-') }}
                                 </span>
                             @endif
                         </td>
-                        <td class="py-3 px-4 text-sm text-right font-semibold" style="color: {{ $mutation['type'] === 'income' ? 'rgba(52, 199, 89, 1)' : 'rgba(235, 235, 245, 0.3)' }};">
+                        <td class="py-3 px-4 text-sm text-right font-semibold {{ $mutation['type'] === 'income' ? 'text-apple-green' : 'text-dark-text-tertiary/30' }}">
                             {{ $mutation['type'] === 'income' ? 'Rp ' . number_format($mutation['amount'], 0, ',', '.') : '-' }}
                         </td>
-                        <td class="py-3 px-4 text-sm text-right font-semibold" style="color: {{ $mutation['type'] === 'expense' ? 'rgba(255, 59, 48, 1)' : 'rgba(235, 235, 245, 0.3)' }};">
+                        <td class="py-3 px-4 text-sm text-right font-semibold {{ $mutation['type'] === 'expense' ? 'text-apple-red' : 'text-dark-text-tertiary/30' }}">
                             {{ $mutation['type'] === 'expense' ? 'Rp ' . number_format($mutation['amount'], 0, ',', '.') : '-' }}
                         </td>
-                        <td class="py-3 px-4 text-sm text-right font-bold" style="color: #FFFFFF;">
+                        <td class="py-3 px-4 text-sm text-right font-bold text-white">
                             Rp {{ number_format($mutation['balance'] ?? 0, 0, ',', '.') }}
                         </td>
                     </tr>
                     @empty
                     <tr>
                         <td colspan="6" class="py-12 text-center">
-                            <i class="fas fa-inbox text-5xl mb-4" style="color: rgba(235, 235, 245, 0.3);"></i>
-                            <p class="text-lg font-semibold" style="color: rgba(235, 235, 245, 0.9);">Tidak Ada Transaksi</p>
-                            <p class="text-sm mt-1" style="color: rgba(235, 235, 245, 0.5);">Belum ada transaksi pada periode ini</p>
+                            <i class="fas fa-inbox text-5xl mb-4 text-dark-text-tertiary/30"></i>
+                            <p class="text-lg font-semibold text-dark-text-primary">Tidak Ada Transaksi</p>
+                            <p class="text-sm mt-1 text-dark-text-tertiary/80">Belum ada transaksi pada periode ini</p>
                         </td>
                     </tr>
                     @endforelse

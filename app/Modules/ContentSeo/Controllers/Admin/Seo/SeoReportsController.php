@@ -2,9 +2,9 @@
 
 namespace App\Modules\ContentSeo\Controllers\Admin\Seo;
 
-use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Http\Controllers\Controller;
 use App\Models\SeoReport;
+use App\Modules\ContentSeo\Controllers\Admin\Concerns\SeoAdminFlashRedirect;
 use App\Services\SeoReportService;
 use App\Support\SeoDashboardCache;
 use Illuminate\Http\Request;
@@ -19,6 +19,7 @@ class SeoReportsController extends Controller
     public function reports()
     {
         $reports = SeoReport::orderBy('created_at', 'desc')->paginate(20);
+
         return view('admin.seo.reports', compact('reports'));
     }
 
@@ -28,6 +29,7 @@ class SeoReportsController extends Controller
     public function reportDetail(int $reportId)
     {
         $report = SeoReport::findOrFail($reportId);
+
         return view('admin.seo.report-detail', compact('report'));
     }
 
@@ -60,4 +62,3 @@ class SeoReportsController extends Controller
         return $this->seoRouteFlash('admin.seo.reports', 'success', $msg);
     }
 }
-

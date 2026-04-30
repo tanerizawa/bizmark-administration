@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\ApiResponse;
+use App\Notifications\TestNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use NotificationChannels\WebPush\PushSubscription;
+use Illuminate\Support\Facades\Log;
 
 class PushNotificationController extends Controller
 {
+    use ApiResponse;
+
     /**
      * Subscribe to push notifications
      */
@@ -22,11 +26,8 @@ class PushNotificationController extends Controller
 
         $client = Auth::guard('client')->user();
 
-        if (!$client) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 401);
+        if (! $client) {
+            return $this->unauthorized();
         }
 
         try {
@@ -36,15 +37,9 @@ class PushNotificationController extends Controller
                 $validated['keys']['auth']
             );
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Successfully subscribed to push notifications'
-            ]);
+            return $this->success(null, 'Berhasil berlangganan notifikasi push');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to subscribe: ' . $e->getMessage()
-            ], 500);
+            return $this->serverError('Gagal berlangganan: '.$e->getMessage());
         }
     }
 
@@ -59,25 +54,16 @@ class PushNotificationController extends Controller
 
         $client = Auth::guard('client')->user();
 
-        if (!$client) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 401);
+        if (! $client) {
+            return $this->unauthorized();
         }
 
         try {
             $client->deletePushSubscription($validated['endpoint']);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Successfully unsubscribed from push notifications'
-            ]);
+            return $this->success(null, 'Berhasil berhenti berlangganan notifikasi push');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to unsubscribe: ' . $e->getMessage()
-            ], 500);
+            return $this->serverError('Gagal berhenti berlangganan: '.$e->getMessage());
         }
     }
 
@@ -88,19 +74,15 @@ class PushNotificationController extends Controller
     {
         $client = Auth::guard('client')->user();
 
-        if (!$client) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 401);
+        if (! $client) {
+            return $this->unauthorized();
         }
 
         $subscriptions = $client->pushSubscriptions()->count();
 
-        return response()->json([
-            'success' => true,
+        return $this->success([
             'subscribed' => $subscriptions > 0,
-            'subscription_count' => $subscriptions
+            'subscription_count' => $subscriptions,
         ]);
     }
 
@@ -111,44 +93,31 @@ class PushNotificationController extends Controller
     {
         $client = Auth::guard('client')->user();
 
-        if (!$client) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 401);
+        if (! $client) {
+            return $this->unauthorized();
         }
 
         try {
             // Check if client has any push subscriptions
             $subscriptionCount = $client->pushSubscriptions()->count();
-            
+
             if ($subscriptionCount === 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No push subscriptions found. Please enable notifications first.'
-                ], 400);
+                return $this->error('Belum ada langganan notifikasi. Aktifkan notifikasi terlebih dahulu.');
             }
 
             // Send test notification to all client's devices
-            $client->notify(new \App\Notifications\TestNotification());
+            $client->notify(new TestNotification);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Test notification sent successfully!',
-                'devices' => $subscriptionCount
-            ]);
+            return $this->success(['devices' => $subscriptionCount], 'Notifikasi uji berhasil dikirim!');
 
         } catch (\Exception $e) {
-            \Log::error('Failed to send test notification', [
+            Log::error('Failed to send test notification', [
                 'client_id' => $client->id,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to send test notification: ' . $e->getMessage()
-            ], 500);
+            return $this->serverError('Gagal mengirim notifikasi uji: '.$e->getMessage());
         }
     }
 }

@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\EmailAccount;
 use App\Models\EmailAssignment;
 use App\Models\EmailInbox;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\RedirectResponse;
+use App\Services\OpenRouterService;
 
 class EmailInboxController extends Controller
 {
@@ -39,6 +40,50 @@ class EmailInboxController extends Controller
         return view('admin.email.inbox.compose', compact('fromAccounts'));
     }
 
+    public function generate(Request $request, OpenRouterService $openRouter)
+    {
+        $validated = $request->validate([
+            'to_email' => 'nullable|email',
+            'subject' => 'nullable|string|max:255',
+            'body_html' => 'nullable|string',
+        ]);
+
+        $to = $validated['to_email'] ?? 'Pelanggan';
+        $subjectHint = $validated['subject'] ?? '';
+        $bodyHint = $validated['body_html'] ?? '';
+
+        $system = "Anda adalah penulis email profesional Bahasa Indonesia. Perbaiki subjek dan buat body email HTML profesional berdasarkan input. Kembalikan JSON: {\"email_subject\": \"...\", \"email_html\": \"...\" }.";
+        $user = "To: {$to}\nSubjectHint: {$subjectHint}\nBodyHint: {$bodyHint}\n\nBerikan subjek yang singkat dan email HTML (paragraphs, bold, list jika perlu).";
+
+        $aiResponse = $openRouter->chat([
+            ['role' => 'system', 'content' => $system],
+            ['role' => 'user', 'content' => $user],
+        ], ['model' => config('services.openrouter.free_primary_model')]);
+
+        if (! ($aiResponse['success'] ?? false)) {
+            return response()->json(['success' => false, 'error' => $aiResponse['error'] ?? 'AI error'], 503);
+        }
+
+        $content = trim((string) ($aiResponse['content'] ?? ''));
+        $content = preg_replace('/^```json\s*/i', '', $content);
+        $content = preg_replace('/```$/', '', $content);
+        $decoded = json_decode($content, true);
+        if (! is_array($decoded)) {
+            if (preg_match('/\{[\s\S]*\}/', $content, $m)) {
+                $decoded = json_decode($m[0], true);
+            }
+        }
+
+        if (! is_array($decoded)) {
+            return response()->json(['success' => false, 'error' => 'Invalid AI response'], 422);
+        }
+
+        return response()->json(['success' => true, 'data' => [
+            'email_subject' => trim((string) ($decoded['email_subject'] ?? ($decoded['subject'] ?? ''))),
+            'email_html' => trim((string) ($decoded['email_html'] ?? ($decoded['email_html_body'] ?? ($decoded['body_html'] ?? '')))),
+        ]]);
+    }
+
     public function send(Request $request)
     {
         $validated = $request->validate([
@@ -46,11 +91,12 @@ class EmailInboxController extends Controller
             'subject' => 'required|string|max:255',
             'body_html' => 'required|string',
             'from_account_id' => 'nullable|exists:email_accounts,id',
+            'attachments.*' => 'file|max:10240',
         ]);
 
         $selectedAccount = $this->resolveSendAccount($request->user(), $validated['from_account_id'] ?? null);
 
-        if (($validated['from_account_id'] ?? null) && !$selectedAccount) {
+        if (($validated['from_account_id'] ?? null) && ! $selectedAccount) {
             return redirect()->back()
                 ->with('error', 'Akun pengirim tidak valid atau tidak punya izin kirim.')
                 ->withInput();
@@ -60,14 +106,40 @@ class EmailInboxController extends Controller
         $fromName = $selectedAccount?->name ?? config('mail.from.name');
 
         try {
-            Mail::html($validated['body_html'], function($message) use ($validated, $fromEmail, $fromName) {
+            $messageId = 'sent-'.\Illuminate\Support\Str::random(20);
+            $attachmentsMeta = [];
+
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    if (! $file || ! $file->isValid()) {
+                        continue;
+                    }
+                    $stored = $file->storeAs("email-inbox/{$messageId}/attachments", $file->getClientOriginalName(), 'public');
+                    $attachmentsMeta[] = [
+                        'path' => $stored,
+                        'name' => $file->getClientOriginalName(),
+                        'size' => $file->getSize(),
+                        'mime' => $file->getClientMimeType(),
+                    ];
+                }
+            }
+
+            Mail::html($validated['body_html'], function ($message) use ($validated, $fromEmail, $fromName, $attachmentsMeta) {
                 $message->to($validated['to_email'])
                     ->subject($validated['subject'])
                     ->from($fromEmail, $fromName);
+
+                foreach ($attachmentsMeta as $att) {
+                    try {
+                        $message->attachFromStorageDisk('public', $att['path'], $att['name'], ['mime' => $att['mime']]);
+                    } catch (\Exception $_) {
+                        // best-effort attach; continue
+                    }
+                }
             });
 
             EmailInbox::create([
-                'message_id' => 'sent-' . \Illuminate\Support\Str::random(20),
+                'message_id' => $messageId,
                 'from_email' => $fromEmail,
                 'from_name' => $fromName,
                 'to_email' => $validated['to_email'],
@@ -75,6 +147,7 @@ class EmailInboxController extends Controller
                 'body_html' => $validated['body_html'],
                 'category' => 'sent',
                 'is_read' => true,
+                'attachments' => $attachmentsMeta,
                 'email_account_id' => $selectedAccount?->id,
                 'department' => $selectedAccount?->department,
                 'received_at' => now(),
@@ -88,7 +161,7 @@ class EmailInboxController extends Controller
                 ->with('success', 'Email berhasil dikirim!');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal mengirim email: ' . $e->getMessage())
+                ->with('error', 'Gagal mengirim email: '.$e->getMessage())
                 ->withInput();
         }
     }
@@ -104,7 +177,7 @@ class EmailInboxController extends Controller
     public function sendReply(Request $request, $id)
     {
         $originalEmail = EmailInbox::findOrFail($id);
-        
+
         $validated = $request->validate([
             'body_html' => 'required|string',
             'from_account_id' => 'nullable|exists:email_accounts,id',
@@ -114,7 +187,7 @@ class EmailInboxController extends Controller
         $requestedAccountId = $validated['from_account_id'] ?? $defaultAccountId;
         $selectedAccount = $this->resolveSendAccount($request->user(), $requestedAccountId);
 
-        if ($requestedAccountId && !$selectedAccount) {
+        if ($requestedAccountId && ! $selectedAccount) {
             return redirect()->back()
                 ->with('error', 'Akun pengirim balasan tidak valid atau tidak punya izin kirim.')
                 ->withInput();
@@ -124,16 +197,16 @@ class EmailInboxController extends Controller
         $fromName = $selectedAccount?->name ?? config('mail.from.name');
 
         try {
-            $subject = 'Re: ' . $originalEmail->subject;
-            
-            Mail::html($validated['body_html'], function($message) use ($originalEmail, $subject, $fromEmail, $fromName) {
+            $subject = 'Re: '.$originalEmail->subject;
+
+            Mail::html($validated['body_html'], function ($message) use ($originalEmail, $subject, $fromEmail, $fromName) {
                 $message->to($originalEmail->from_email)
                     ->subject($subject)
                     ->from($fromEmail, $fromName);
             });
 
             EmailInbox::create([
-                'message_id' => 'reply-' . \Illuminate\Support\Str::random(20),
+                'message_id' => 'reply-'.\Illuminate\Support\Str::random(20),
                 'from_email' => $fromEmail,
                 'from_name' => $fromName,
                 'to_email' => $originalEmail->from_email,
@@ -158,7 +231,7 @@ class EmailInboxController extends Controller
                 ->with('success', 'Balasan berhasil dikirim!');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal mengirim balasan: ' . $e->getMessage())
+                ->with('error', 'Gagal mengirim balasan: '.$e->getMessage())
                 ->withInput();
         }
     }
@@ -167,6 +240,7 @@ class EmailInboxController extends Controller
     {
         $email = EmailInbox::findOrFail($id);
         $email->markAsRead();
+
         return response()->json(['success' => true]);
     }
 
@@ -174,6 +248,7 @@ class EmailInboxController extends Controller
     {
         $email = EmailInbox::findOrFail($id);
         $email->markAsUnread();
+
         return response()->json(['success' => true]);
     }
 
@@ -181,6 +256,7 @@ class EmailInboxController extends Controller
     {
         $email = EmailInbox::findOrFail($id);
         $email->toggleStar();
+
         return response()->json(['success' => true, 'starred' => $email->is_starred]);
     }
 
@@ -189,7 +265,7 @@ class EmailInboxController extends Controller
         $email = EmailInbox::findOrFail($id);
         $previousCategory = $email->category;
         $email->moveToTrash();
-        
+
         // Redirect back to the previous category view
         return $this->redirectToInboxHub(['folder' => $previousCategory])
             ->with('success', 'Email dipindahkan ke trash.');
@@ -198,17 +274,19 @@ class EmailInboxController extends Controller
     public function delete($id)
     {
         $email = EmailInbox::findOrFail($id);
-        
+
         // If email is in trash, delete permanently
         if ($email->category === 'trash') {
             $email->delete();
+
             return $this->redirectToInboxHub(['folder' => 'trash'])
                 ->with('success', 'Email berhasil dihapus permanen.');
         }
-        
+
         // If email is not in trash, move to trash first
         $previousCategory = $email->category;
         $email->moveToTrash();
+
         return $this->redirectToInboxHub(['folder' => $previousCategory])
             ->with('success', 'Email dipindahkan ke trash. Untuk menghapus permanen, buka folder Trash.');
     }
@@ -217,7 +295,7 @@ class EmailInboxController extends Controller
     {
         $count = EmailInbox::where('category', 'trash')->count();
         EmailInbox::where('category', 'trash')->delete();
-        
+
         return $this->redirectToInboxHub(['folder' => 'trash'])
             ->with('success', "{$count} email berhasil dihapus permanen dari trash.");
     }
@@ -226,7 +304,7 @@ class EmailInboxController extends Controller
     {
         $request->validate([
             'email_ids' => 'required|array|min:1',
-            'email_ids.*' => 'exists:email_inbox,id'
+            'email_ids.*' => 'exists:email_inbox,id',
         ]);
 
         $emails = EmailInbox::whereIn('id', $request->email_ids)->get();
@@ -251,7 +329,7 @@ class EmailInboxController extends Controller
             $message[] = "{$deletedPermanently} email dihapus permanen";
         }
 
-        return redirect()->back()->with('success', implode(' dan ', $message) . '.');
+        return redirect()->back()->with('success', implode(' dan ', $message).'.');
     }
 
     private function getSendableAccounts($user)
@@ -260,7 +338,7 @@ class EmailInboxController extends Controller
             ->where('is_active', true)
             ->orderBy('email');
 
-        if (!$user || !$user->hasRole('admin')) {
+        if (! $user || ! $user->hasRole('admin')) {
             $query->whereHas('assignments', function ($assignmentQuery) use ($user) {
                 $assignmentQuery->where('user_id', $user?->id)
                     ->where('is_active', true)
@@ -273,7 +351,7 @@ class EmailInboxController extends Controller
 
     private function resolveSendAccount($user, $accountId): ?EmailAccount
     {
-        if (!$accountId) {
+        if (! $accountId) {
             return null;
         }
 
@@ -281,7 +359,7 @@ class EmailInboxController extends Controller
             ->where('is_active', true)
             ->first();
 
-        if (!$account || !$user) {
+        if (! $account || ! $user) {
             return null;
         }
 
@@ -337,6 +415,6 @@ class EmailInboxController extends Controller
 
         $query = array_merge($query, $overrides);
 
-        return array_filter($query, static fn ($value) => !($value === null || $value === ''));
+        return array_filter($query, static fn ($value) => ! ($value === null || $value === ''));
     }
 }

@@ -3,50 +3,54 @@
 @section('title', 'Review Revisi Paket')
 
 @section('content')
-<div class="container-fluid px-4 py-4">
-    <!-- Alert Notification -->
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <i class="fas fa-info-circle me-2"></i>
-        <strong>Revisi Paket Baru!</strong> Admin telah mengusulkan perubahan pada paket aplikasi Anda. Silakan review perubahan di bawah ini.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="px-4 py-6 max-w-7xl mx-auto"
+     x-data="{ showRejectModal: false }">
+
+    {{-- Info Banner --}}
+    <div class="flex items-start gap-3 bg-blue-500/10 border border-blue-500/30 text-blue-300 rounded-xl px-4 py-3 mb-5 text-sm">
+        <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
+        <span><strong>Revisi Paket Baru!</strong> Admin telah mengusulkan perubahan pada paket aplikasi Anda. Silakan review perubahan di bawah ini.</span>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="flex items-center gap-3 bg-green-500/10 border border-green-500/30 text-green-400 rounded-xl px-4 py-3 mb-4">
+        <i class="fas fa-check-circle flex-shrink-0"></i><span>{{ session('success') }}</span>
+    </div>
     @endif
-
     @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-4">
+        <i class="fas fa-exclamation-circle flex-shrink-0"></i><span>{{ session('error') }}</span>
+    </div>
     @endif
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- Header --}}
+    <div class="flex items-start justify-between mb-6">
         <div>
-            <h1 class="h3 mb-2">Revisi Paket #{{ $revision->revision_number }}</h1>
-            <p class="text-muted mb-0">{{ $application->application_number }}</p>
+            <h1 class="text-2xl font-bold text-white">Revisi Paket #{{ $revision->revision_number }}</h1>
+            <p class="text-gray-400 mt-1">{{ $application->application_number }}</p>
         </div>
-        <a href="{{ route('client.applications.show', $application->id) }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Kembali
+        <a href="{{ route('client.applications.show', $application->id) }}"
+           class="inline-flex items-center px-4 py-2 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">
+            <i class="fas fa-arrow-left mr-2"></i>Kembali
         </a>
     </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Alasan Revisi -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header" style="background-color: #0a66c2; color: white;">
-                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Alasan Revisi</h5>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {{-- Left: Content --}}
+        <div class="lg:col-span-2 space-y-5">
+
+            {{-- Alasan Revisi --}}
+            <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
+                <div class="px-5 py-4 border-b border-blue-800 bg-blue-600/20">
+                    <h5 class="text-white font-semibold flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-400"></i>Alasan Revisi
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <strong>Tipe:</strong>
-                        <span class="badge bg-primary ms-2">
+                <div class="p-5 space-y-4 text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="text-white font-medium">Tipe:</span>
+                        <span class="inline-flex px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-xs font-medium">
                             @switch($revision->revision_type)
                                 @case('technical_adjustment') Penyesuaian Teknis @break
                                 @case('client_request') Permintaan Client @break
@@ -56,275 +60,268 @@
                             @endswitch
                         </span>
                     </div>
-                    <div class="mb-3">
-                        <strong>Penjelasan:</strong>
-                        <p class="mb-0 mt-2">{{ $revision->revision_reason }}</p>
-                    </div>
                     <div>
-                        <small class="text-muted">
-                            <i class="fas fa-user me-1"></i>Direvisi oleh: {{ $revision->revisedBy->name }} pada {{ $revision->created_at->format('d M Y H:i') }}
-                        </small>
+                        <p class="text-white font-medium mb-1">Penjelasan:</p>
+                        <p class="text-gray-300">{{ $revision->revision_reason }}</p>
                     </div>
+                    <p class="text-gray-500 text-xs">
+                        <i class="fas fa-user mr-1"></i>Direvisi oleh: {{ $revision->revisedBy->name }} pada {{ $revision->created_at->format('d M Y H:i') }}
+                    </p>
                 </div>
             </div>
 
-            <!-- Comparison: Paket Original vs Revised -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header" style="background-color: #0a66c2; color: white;">
-                    <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Perbandingan Paket</h5>
+            {{-- Perbandingan Paket --}}
+            <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
+                <div class="px-5 py-4 border-b border-blue-800 bg-blue-600/20">
+                    <h5 class="text-white font-semibold flex items-center gap-2">
+                        <i class="fas fa-exchange-alt text-blue-400"></i>Perbandingan Paket
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead class="table-light">
-                                <tr>
-                                    <th width="40%">Paket Original</th>
-                                    <th width="40%">Paket Revisi (Baru)</th>
-                                    <th width="20%" class="text-center">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Permits Comparison -->
-                                <tr>
-                                    <td colspan="3" class="bg-light"><strong>Daftar Izin</strong></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <ul class="list-unstyled mb-0">
-                                            @if(!empty($originalPackage['permits']))
-                                                @foreach($originalPackage['permits'] as $permit)
-                                                    <li class="mb-2">
-                                                        <i class="fas fa-file-alt text-muted me-2"></i>
-                                                        @if(isset($permit['permit_name']))
-                                                            {{ $permit['permit_name'] }}
-                                                        @else
-                                                            Izin #{{ $loop->iteration }}
-                                                        @endif
-                                                        <br>
-                                                        <small class="text-muted">
-                                                            Biaya: Rp {{ number_format($permit['unit_price'] ?? 0, 0, ',', '.') }}
-                                                        </small>
-                                                    </li>
-                                                @endforeach
-                                            @else
-                                                <li class="text-muted">Tidak ada data</li>
-                                            @endif
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <ul class="list-unstyled mb-0">
-                                            @foreach($revision->permits_data as $permit)
-                                                @php
-                                                    $permitType = \App\Models\PermitType::find($permit['permit_type_id']);
-                                                @endphp
-                                                <li class="mb-2">
-                                                    <i class="fas fa-file-alt text-success me-2"></i>
-                                                    {{ $permitType->name ?? 'Unknown Permit' }}
-                                                    <br>
-                                                    <small class="text-muted">
-                                                        Biaya: Rp {{ number_format($permit['unit_price'], 0, ',', '.') }} |
-                                                        {{ $permit['estimated_days'] }} hari
-                                                    </small>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </td>
-                                    <td class="text-center">
-                                        @if(count($revision->permits_data) > count($originalPackage['permits']))
-                                            <span class="badge bg-success">+{{ count($revision->permits_data) - count($originalPackage['permits']) }} Izin</span>
-                                        @elseif(count($revision->permits_data) < count($originalPackage['permits']))
-                                            <span class="badge bg-warning">-{{ count($originalPackage['permits']) - count($revision->permits_data) }} Izin</span>
-                                        @else
-                                            <span class="badge bg-info">Sama</span>
-                                        @endif
-                                    </td>
-                                </tr>
-
-                                <!-- Cost Comparison -->
-                                <tr>
-                                    <td colspan="3" class="bg-light"><strong>Total Biaya</strong></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <h4>Rp {{ number_format($originalPackage['total_cost'], 0, ',', '.') }}</h4>
-                                    </td>
-                                    <td class="text-center">
-                                        <h4 class="text-success">Rp {{ number_format($revision->total_cost, 0, ',', '.') }}</h4>
-                                    </td>
-                                    <td class="text-center">
-                                        @php
-                                            $diff = $revision->total_cost - $originalPackage['total_cost'];
-                                        @endphp
-                                        @if($diff > 0)
-                                            <span class="badge bg-danger">+Rp {{ number_format($diff, 0, ',', '.') }}</span>
-                                        @elseif($diff < 0)
-                                            <span class="badge bg-success">-Rp {{ number_format(abs($diff), 0, ',', '.') }}</span>
-                                        @else
-                                            <span class="badge bg-secondary">Sama</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-700/50 text-gray-400 text-xs uppercase">
+                                <th class="px-4 py-3 text-left w-2/5">Paket Original</th>
+                                <th class="px-4 py-3 text-left w-2/5">Paket Revisi (Baru)</th>
+                                <th class="px-4 py-3 text-center w-1/5">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            <tr>
+                                <td colspan="3" class="px-4 py-2 bg-gray-700/30 text-white font-medium text-xs uppercase tracking-wide">Daftar Izin</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 align-top">
+                                    <ul class="space-y-2">
+                                        @forelse($originalPackage['permits'] ?? [] as $permit)
+                                        <li class="flex items-start gap-2">
+                                            <i class="fas fa-file-alt text-gray-500 mt-0.5 flex-shrink-0"></i>
+                                            <div>
+                                                <p class="text-white">{{ $permit['permit_name'] ?? 'Izin #'.$loop->iteration }}</p>
+                                                <p class="text-gray-400 text-xs">Biaya: Rp {{ number_format($permit['unit_price'] ?? 0, 0, ',', '.') }}</p>
+                                            </div>
+                                        </li>
+                                        @empty
+                                        <li class="text-gray-500">Tidak ada data</li>
+                                        @endforelse
+                                    </ul>
+                                </td>
+                                <td class="px-4 py-4 align-top">
+                                    <ul class="space-y-2">
+                                        @foreach($revision->permits_data as $permit)
+                                        @php $permitType = \App\Models\PermitType::find($permit['permit_type_id']); @endphp
+                                        <li class="flex items-start gap-2">
+                                            <i class="fas fa-file-alt text-green-400 mt-0.5 flex-shrink-0"></i>
+                                            <div>
+                                                <p class="text-white">{{ $permitType->name ?? 'Unknown Permit' }}</p>
+                                                <p class="text-gray-400 text-xs">Biaya: Rp {{ number_format($permit['unit_price'], 0, ',', '.') }} | {{ $permit['estimated_days'] }} hari</p>
+                                            </div>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="px-4 py-4 text-center align-top">
+                                    @php
+                                        $origCount = count($originalPackage['permits'] ?? []);
+                                        $revCount = count($revision->permits_data);
+                                    @endphp
+                                    @if($revCount > $origCount)
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-green-500/20 text-green-400 text-xs">+{{ $revCount - $origCount }} Izin</span>
+                                    @elseif($revCount < $origCount)
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-xs">-{{ $origCount - $revCount }} Izin</span>
+                                    @else
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-gray-500/20 text-gray-400 text-xs">Sama</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="px-4 py-2 bg-gray-700/30 text-white font-medium text-xs uppercase tracking-wide">Total Biaya</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 text-center">
+                                    <p class="text-2xl font-bold text-white">Rp {{ number_format($originalPackage['total_cost'], 0, ',', '.') }}</p>
+                                </td>
+                                <td class="px-4 py-4 text-center">
+                                    <p class="text-2xl font-bold text-green-400">Rp {{ number_format($revision->total_cost, 0, ',', '.') }}</p>
+                                </td>
+                                <td class="px-4 py-4 text-center">
+                                    @php $diff = $revision->total_cost - $originalPackage['total_cost']; @endphp
+                                    @if($diff > 0)
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-xs">+Rp {{ number_format($diff, 0, ',', '.') }}</span>
+                                    @elseif($diff < 0)
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-green-500/20 text-green-400 text-xs">-Rp {{ number_format(abs($diff), 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="inline-flex px-2 py-0.5 rounded bg-gray-500/20 text-gray-400 text-xs">Sama</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Detailed Breakdown -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header" style="background-color: #0a66c2; color: white;">
-                    <h5 class="mb-0"><i class="fas fa-list-ul me-2"></i>Rincian Paket Revisi</h5>
+            {{-- Rincian Paket Revisi --}}
+            <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
+                <div class="px-5 py-4 border-b border-blue-800 bg-blue-600/20">
+                    <h5 class="text-white font-semibold flex items-center gap-2">
+                        <i class="fas fa-list-ul text-blue-400"></i>Rincian Paket Revisi
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>No</th>
-                                    <th>Jenis Izin</th>
-                                    <th>Layanan</th>
-                                    <th class="text-end">Biaya</th>
-                                    <th class="text-center">Estimasi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($revision->quotationItems as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>
-                                            <strong>{{ $item->item_name }}</strong>
-                                            @if($item->description)
-                                                <br><small class="text-muted">{{ Str::limit($item->description, 50) }}</small>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-info">{{ $item->service_type_label }}</span>
-                                        </td>
-                                        <td class="text-end">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                                        <td class="text-center">{{ $item->estimated_days }} hari</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-light">
-                                    <td colspan="3" class="text-end"><strong>TOTAL</strong></td>
-                                    <td class="text-end"><strong>Rp {{ number_format($revision->total_cost, 0, ',', '.') }}</strong></td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-700/50 text-gray-400 text-xs uppercase">
+                                <th class="px-4 py-3 text-left w-8">No</th>
+                                <th class="px-4 py-3 text-left">Jenis Izin</th>
+                                <th class="px-4 py-3 text-left">Layanan</th>
+                                <th class="px-4 py-3 text-right">Biaya</th>
+                                <th class="px-4 py-3 text-center">Estimasi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            @foreach($revision->quotationItems as $item)
+                            <tr class="hover:bg-gray-700/30 transition">
+                                <td class="px-4 py-3 text-gray-400">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-3">
+                                    <p class="text-white font-medium">{{ $item->item_name }}</p>
+                                    @if($item->description)
+                                    <p class="text-gray-400 text-xs mt-0.5">{{ Str::limit($item->description, 50) }}</p>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 text-xs">{{ $item->service_type_label }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-right text-white">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-center text-gray-300">{{ $item->estimated_days }} hari</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-gray-700/30 border-t border-gray-600">
+                                <td colspan="3" class="px-4 py-3 text-right text-white font-bold">TOTAL</td>
+                                <td class="px-4 py-3 text-right text-white font-bold">Rp {{ number_format($revision->total_cost, 0, ',', '.') }}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar: Actions -->
-        <div class="col-lg-4">
-            <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Tindakan</h5>
+        {{-- Right: Actions --}}
+        <div class="space-y-4">
+
+            {{-- Actions Card --}}
+            <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow sticky top-4">
+                <div class="px-5 py-4 border-b border-yellow-700 bg-yellow-600/20">
+                    <h5 class="text-white font-semibold flex items-center gap-2">
+                        <i class="fas fa-clipboard-check text-yellow-400"></i>Tindakan
+                    </h5>
                 </div>
-                <div class="card-body">
+                <div class="p-5">
                     @if($revision->status == 'pending_client_approval')
-                        <p class="text-muted mb-3">
-                            Revisi ini menunggu persetujuan Anda. Silakan review perubahan dan pilih tindakan yang sesuai.
-                        </p>
+                    <p class="text-gray-400 text-sm mb-4">Revisi ini menunggu persetujuan Anda. Silakan review perubahan dan pilih tindakan yang sesuai.</p>
 
-                        <!-- Approve Button -->
-                        <form action="{{ route('client.applications.revisions.approve', [$application->id, $revision->id]) }}" method="POST" class="mb-2" onsubmit="return confirm('Apakah Anda yakin ingin menyetujui revisi ini?')">
-                            @csrf
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="fas fa-check-circle me-2"></i>Setuju dengan Revisi
-                            </button>
-                        </form>
-
-                        <!-- Reject Button with Modal -->
-                        <button type="button" class="btn btn-danger w-100 mb-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                            <i class="fas fa-times-circle me-2"></i>Tolak Revisi
+                    <form action="{{ route('client.applications.revisions.approve', [$application->id, $revision->id]) }}" method="POST"
+                          class="mb-2" onsubmit="return confirm('Apakah Anda yakin ingin menyetujui revisi ini?')">
+                        @csrf
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-xl transition text-sm">
+                            <i class="fas fa-check-circle mr-2"></i>Setuju dengan Revisi
                         </button>
+                    </form>
 
-                        <!-- Discuss Button (using existing notes feature) -->
-                        <a href="{{ route('client.applications.show', $application->id) }}#communication" class="btn btn-outline-primary w-100">
-                            <i class="fas fa-comments me-2"></i>Diskusi dengan Admin
-                        </a>
+                    <button type="button" @click="showRejectModal = true"
+                            class="w-full border border-red-700 text-red-400 hover:bg-red-900/30 font-medium py-2.5 rounded-xl transition text-sm mb-2">
+                        <i class="fas fa-times-circle mr-2"></i>Tolak Revisi
+                    </button>
+
+                    <a href="{{ route('client.applications.show', $application->id) }}#communication"
+                       class="block w-full text-center border border-blue-600 text-blue-400 hover:bg-blue-600/10 font-medium py-2.5 rounded-xl transition text-sm">
+                        <i class="fas fa-comments mr-2"></i>Diskusi dengan Admin
+                    </a>
+
                     @else
-                        <div class="alert alert-{{ $revision->status == 'approved' ? 'success' : 'danger' }} mb-0">
-                            <i class="fas fa-{{ $revision->status == 'approved' ? 'check' : 'times' }}-circle me-2"></i>
-                            <strong>Status:</strong> 
+                    <div class="flex items-start gap-3 {{ $revision->status == 'approved' ? 'bg-green-500/10 border border-green-500/30 text-green-400' : 'bg-red-500/10 border border-red-500/30 text-red-400' }} rounded-xl px-4 py-3 text-sm">
+                        <i class="fas fa-{{ $revision->status == 'approved' ? 'check' : 'times' }}-circle mt-0.5 flex-shrink-0"></i>
+                        <span>
                             @if($revision->status == 'approved')
                                 Revisi ini sudah Anda setujui pada {{ $revision->client_approved_at->format('d M Y H:i') }}
                             @else
                                 Revisi ini telah ditolak
                             @endif
-                        </div>
+                        </span>
+                    </div>
                     @endif
                 </div>
-
-                <div class="card-footer">
-                    <small class="text-muted">
-                        <i class="fas fa-info-circle me-1"></i>
-                        @php
-                            $supportEmail = data_get(config('landing_metrics'), 'contact.email', 'info@bizmark.id');
-                        @endphp
-                        Perlu bantuan? <a href="mailto:{{ $supportEmail }}">Hubungi kami</a>
-                    </small>
+                <div class="px-5 py-3 border-t border-gray-700">
+                    @php $supportEmail = data_get(config('landing_metrics'), 'contact.email', 'info@bizmark.id'); @endphp
+                    <p class="text-gray-500 text-xs">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Perlu bantuan? <a href="mailto:{{ $supportEmail }}" class="text-blue-400 hover:underline">Hubungi kami</a>
+                    </p>
                 </div>
             </div>
 
-            <!-- Summary Card -->
-            <div class="card shadow-sm mt-3">
-                <div class="card-header" style="background-color: #0a66c2; color: white;">
-                    <h6 class="mb-0"><i class="fas fa-info me-2"></i>Informasi Aplikasi</h6>
+            {{-- Info Aplikasi --}}
+            <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
+                <div class="px-5 py-4 border-b border-blue-800 bg-blue-600/20">
+                    <h6 class="text-white font-semibold flex items-center gap-2 text-sm">
+                        <i class="fas fa-info text-blue-400"></i>Informasi Aplikasi
+                    </h6>
                 </div>
-                <div class="card-body">
-                    <table class="table table-sm mb-0">
-                        <tr>
-                            <td><strong>Nomor Aplikasi:</strong></td>
-                            <td>{{ $application->application_number }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Revisi:</strong></td>
-                            <td>#{{ $revision->revision_number }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Status:</strong></td>
-                            <td>
-                                <span class="badge bg-{{ $revision->status == 'approved' ? 'success' : ($revision->status == 'rejected' ? 'danger' : 'warning') }}">
-                                    {{ ucfirst($revision->status) }}
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Diajukan:</strong></td>
-                            <td>{{ $revision->created_at->format('d M Y') }}</td>
-                        </tr>
-                    </table>
+                <div class="p-4 space-y-3 text-sm">
+                    @foreach([
+                        ['Nomor Aplikasi', $application->application_number],
+                        ['Revisi', '#'.$revision->revision_number],
+                        ['Diajukan', $revision->created_at->format('d M Y')],
+                    ] as [$label, $value])
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">{{ $label }}:</span>
+                        <span class="text-white">{{ $value }}</span>
+                    </div>
+                    @endforeach
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Status:</span>
+                        <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium
+                            @if($revision->status == 'approved') bg-green-500/20 text-green-400
+                            @elseif($revision->status == 'rejected') bg-red-500/20 text-red-400
+                            @else bg-yellow-500/20 text-yellow-400
+                            @endif">
+                            {{ ucfirst($revision->status) }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Reject Modal -->
-<div class="modal fade" id="rejectModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    {{-- Reject Modal (Alpine.js) --}}
+    <div x-show="showRejectModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4"
+         @keydown.escape.window="showRejectModal = false">
+        <div class="absolute inset-0 bg-black/60" @click="showRejectModal = false"></div>
+        <div class="relative bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-lg">
             <form action="{{ route('client.applications.revisions.reject', [$application->id, $revision->id]) }}" method="POST">
                 @csrf
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Tolak Revisi</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="flex items-center justify-between px-6 py-4 border-b border-red-800 bg-red-600/20 rounded-t-2xl">
+                    <h5 class="text-white font-semibold">Tolak Revisi</h5>
+                    <button type="button" @click="showRejectModal = false" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <p>Anda yakin ingin menolak revisi ini? Silakan berikan alasan penolakan:</p>
-                    <div class="mb-3">
-                        <label class="form-label">Alasan Penolakan <span class="text-danger">*</span></label>
-                        <textarea name="rejection_reason" class="form-control" rows="4" required placeholder="Contoh: Biaya terlalu tinggi, saya ingin konsultasi lebih lanjut..."></textarea>
+                <div class="p-6">
+                    <p class="text-gray-300 text-sm mb-4">Anda yakin ingin menolak revisi ini? Silakan berikan alasan penolakan:</p>
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-1">Alasan Penolakan <span class="text-red-400">*</span></label>
+                        <textarea name="rejection_reason" rows="4" required
+                                  placeholder="Contoh: Biaya terlalu tinggi, saya ingin konsultasi lebih lanjut..."
+                                  class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">Tolak Revisi</button>
+                <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-700">
+                    <button type="button" @click="showRejectModal = false"
+                            class="px-4 py-2 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">Batal</button>
+                    <button type="submit"
+                            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition">Tolak Revisi</button>
                 </div>
             </form>
         </div>

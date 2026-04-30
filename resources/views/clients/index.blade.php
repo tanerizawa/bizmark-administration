@@ -15,10 +15,10 @@
                 <div class="space-y-1 max-w-3xl">
                     <p class="admin-label-compact">Manajemen Klien</p>
                     <h1 class="admin-hero-title">Database Klien Aktif</h1>
-                    <p class="admin-body" style="color: rgba(235,235,245,0.75);">Kelola hubungan klien, tracking proyek, dan riwayat kerja sama dalam satu platform.</p>
+                    <p class="admin-body text-dark-text-secondary">Kelola hubungan klien, tracking proyek, dan riwayat kerja sama dalam satu platform.</p>
                 </div>
                 <div>
-                    <a href="{{ route('clients.create') }}" class="admin-btn inline-flex items-center" style="background: rgba(175,82,222,0.25);">
+                    <a href="{{ route('clients.create') }}" class="admin-btn inline-flex items-center bg-apple-purple/25">
                         <i class="fas fa-plus mr-1.5"></i>Tambah Klien
                     </a>
                 </div>
@@ -26,46 +26,46 @@
 
             {{-- Compact Stats Cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <div class="admin-stat-card" style="background: rgba(10,132,255,0.12);">
+                <div class="admin-stat-card bg-apple-blue/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(10,132,255,0.25);">
-                            <i class="fas fa-users text-xs" style="color: var(--apple-blue);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-blue/25">
+                            <i class="fas fa-users text-xs text-apple-blue"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: #FFFFFF;">{{ $clients->total() }}</p>
+                            <p class="admin-stat text-white">{{ $clients->total() }}</p>
                             <p class="admin-label-compact">Total Klien</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: rgba(52,199,89,0.12);">
+                <div class="admin-stat-card bg-apple-green/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(52,199,89,0.25);">
-                            <i class="fas fa-check text-xs" style="color: var(--apple-green);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-green/25">
+                            <i class="fas fa-check text-xs text-apple-green"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(52,199,89,1);">{{ $stats['active'] ?? 0 }}</p>
+                            <p class="admin-stat text-apple-green">{{ $stats['active'] ?? 0 }}</p>
                             <p class="admin-label-compact">Aktif</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: rgba(175,82,222,0.12);">
+                <div class="admin-stat-card bg-apple-purple/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(175,82,222,0.25);">
-                            <i class="fas fa-building text-xs" style="color: rgba(175,82,222,1);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-purple/25">
+                            <i class="fas fa-building text-xs text-apple-purple"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(175,82,222,1);">{{ $stats['company'] ?? 0 }}</p>
+                            <p class="admin-stat text-apple-purple">{{ $stats['company'] ?? 0 }}</p>
                             <p class="admin-label-compact">Perusahaan</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card" style="background: rgba(255,159,10,0.12);">
+                <div class="admin-stat-card bg-apple-orange/12">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: rgba(255,159,10,0.25);">
-                            <i class="fas fa-star text-xs" style="color: var(--apple-orange);"></i>
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-orange/25">
+                            <i class="fas fa-star text-xs text-apple-orange"></i>
                         </div>
                         <div>
-                            <p class="admin-stat" style="color: rgba(255,159,10,1);">{{ $stats['potential'] ?? 0 }}</p>
+                            <p class="admin-stat text-apple-orange">{{ $stats['potential'] ?? 0 }}</p>
                             <p class="admin-label-compact">Potensial</p>
                         </div>
                     </div>
@@ -76,25 +76,25 @@
 
     <!-- Alert Messages -->
     @if(session('success'))
-        <div class="rounded-apple p-3 mb-3" style="background-color: rgba(52, 199, 89, 0.15); border: 1px solid var(--apple-green);">
+        <div class="rounded-apple p-3 mb-3 bg-apple-green/15 border border-apple-green">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <i class="fas fa-check-circle mr-2" style="color: var(--apple-green);"></i>
-                    <span class="admin-body" style="color: var(--apple-green);">{{ session('success') }}</span>
+                    <i class="fas fa-check-circle mr-2 text-apple-green"></i>
+                    <span class="admin-body text-apple-green">{{ session('success') }}</span>
                 </div>
-                <button onclick="this.parentElement.parentElement.remove()" style="color: var(--apple-green); opacity: 0.6;"><i class="fas fa-times"></i></button>
+                <button onclick="this.parentElement.parentElement.remove()" class="text-apple-green/60"><i class="fas fa-times"></i></button>
             </div>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="rounded-apple p-3 mb-3" style="background-color: rgba(255, 59, 48, 0.15); border: 1px solid var(--apple-red);">
+        <div class="rounded-apple p-3 mb-3 bg-apple-red/15 border border-apple-red">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle mr-2" style="color: var(--apple-red);"></i>
-                    <span class="admin-body" style="color: var(--apple-red);">{{ session('error') }}</span>
+                    <i class="fas fa-exclamation-circle mr-2 text-apple-red"></i>
+                    <span class="admin-body text-apple-red">{{ session('error') }}</span>
                 </div>
-                <button onclick="this.parentElement.parentElement.remove()" style="color: var(--apple-red); opacity: 0.6;"><i class="fas fa-times"></i></button>
+                <button onclick="this.parentElement.parentElement.remove()" class="text-apple-red/60"><i class="fas fa-times"></i></button>
             </div>
         </div>
     @endif
@@ -107,7 +107,7 @@
                 <div class="relative">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama, perusahaan, email..." 
                            class="admin-input w-full pl-7 rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2" style="font-size: 0.625rem; color: rgba(235,235,245,0.3);"></i>
+                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2 text-dark-text-tertiary text-[10px]"></i>
                 </div>
             </div>
             <div class="w-28">
@@ -144,7 +144,7 @@
     <div class="card-elevated rounded-apple-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700">
-                <thead style="background-color: var(--dark-bg-secondary);">
+                <thead class="bg-dark-bg-secondary">
                     <tr>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Klien</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Kontak</th>
@@ -154,9 +154,9 @@
                         <th scope="col" class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700" style="background-color: var(--dark-bg-secondary);">
+                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
                     @forelse($clients as $client)
-                        <tr class="hover-lift transition-apple" style="cursor: pointer;" onclick="window.location='{{ route('clients.show', $client) }}'">
+                        <tr class="hover-lift transition-apple cursor-pointer" onclick="window.location='{{ route('clients.show', $client) }}'">
                             <td class="px-6 py-4">
                                 <div class="font-semibold text-sm text-dark-text-primary">{{ $client->company_name ?? $client->name }}</div>
                                 <div class="text-xs text-dark-text-secondary mt-1">
@@ -189,41 +189,35 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($client->client_type == 'individual')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(90, 200, 250, 0.15); color: var(--apple-teal);">Individual</span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-blue/15 text-apple-blue">Individual</span>
                                 @elseif($client->client_type == 'company')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(0, 122, 255, 0.15); color: var(--apple-blue);">Perusahaan</span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-blue/15 text-apple-blue">Perusahaan</span>
                                 @else
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(175, 82, 222, 0.15); color: var(--apple-purple);">Pemerintah</span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-purple/15 text-apple-purple">Pemerintah</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($client->status == 'active')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(52, 199, 89, 0.15); color: var(--apple-green);">Aktif</span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-green/15 text-apple-green">Aktif</span>
                                 @elseif($client->status == 'inactive')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(255, 59, 48, 0.15); color: var(--apple-red);">Tidak Aktif</span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-red/15 text-apple-red">Tidak Aktif</span>
                                 @else
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(255, 149, 0, 0.15); color: var(--apple-orange);">Potensial</span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-orange/15 text-apple-orange">Potensial</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-medium rounded-apple" style="background-color: rgba(0, 122, 255, 0.15); color: var(--apple-blue);">
+                                <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-blue/15 text-apple-blue">
                                     <i class="fas fa-folder mr-1"></i>{{ $client->projects_count ?? 0 }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center" onclick="event.stopPropagation()">
                                 <div class="flex items-center justify-center space-x-2">
-                                    <a href="{{ route('clients.show', $client) }}" 
-                                       class="inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple" 
-                                       style="background-color: rgba(90, 200, 250, 0.15); color: var(--apple-teal); border: 1px solid rgba(90, 200, 250, 0.3);"
-                                       onmouseover="this.style.backgroundColor='rgba(90, 200, 250, 0.25)'" 
-                                       onmouseout="this.style.backgroundColor='rgba(90, 200, 250, 0.15)'">
+                                    <a href="{{ route('clients.show', $client) }}"
+                                       class="inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple bg-apple-blue/15 text-apple-blue border border-apple-blue/30 hover:bg-apple-blue/25">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('clients.edit', $client) }}" 
-                                       class="inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple" 
-                                       style="background-color: rgba(255, 149, 0, 0.15); color: var(--apple-orange); border: 1px solid rgba(255, 149, 0, 0.3);"
-                                       onmouseover="this.style.backgroundColor='rgba(255, 149, 0, 0.25)'" 
-                                       onmouseout="this.style.backgroundColor='rgba(255, 149, 0, 0.15)'">
+                                    <a href="{{ route('clients.edit', $client) }}"
+                                       class="inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple bg-apple-orange/15 text-apple-orange border border-apple-orange/30 hover:bg-apple-orange/25">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('clients.destroy', $client) }}" 
@@ -232,11 +226,8 @@
                                           onsubmit="return confirm('Yakin ingin menghapus klien ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
-                                                class="inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple" 
-                                                style="background-color: rgba(255, 59, 48, 0.15); color: var(--apple-red); border: 1px solid rgba(255, 59, 48, 0.3);"
-                                                onmouseover="this.style.backgroundColor='rgba(255, 59, 48, 0.25)'" 
-                                                onmouseout="this.style.backgroundColor='rgba(255, 59, 48, 0.15)'">
+                                        <button type="submit"
+                                                class="inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple bg-apple-red/15 text-apple-red border border-apple-red/30 hover:bg-apple-red/25">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -260,7 +251,7 @@
             </table>
         </div>
         @if($clients->hasPages())
-            <div class="px-6 py-4" style="background-color: var(--dark-bg-tertiary); border-top: 1px solid var(--dark-separator);">
+            <div class="px-6 py-4 bg-dark-bg-tertiary border-t border-dark-separator">
                 <div class="flex justify-center">
                     {{ $clients->links() }}
                 </div>

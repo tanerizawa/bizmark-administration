@@ -29,4 +29,3 @@ class HtmlSanitizerTest extends TestCase
         $this->assertStringContainsString('rel="nofollow noopener noreferrer"', $clean);
     }
 }
-

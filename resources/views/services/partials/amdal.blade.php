@@ -108,14 +108,14 @@
                 <i class="fas fa-user-tie mr-2"></i>
                 Konsultasi Langsung dengan Tenaga Ahli AMDAL Bersertifikat
             </h3>
-            <p class="text-sm" style="color: #d1fae5;">Diskusikan proyek Anda dengan ketua tim penyusun AMDAL kami yang berpengalaman 10+ tahun. Dapatkan evaluasi awal, estimasi biaya & timeline — tanpa komitmen.</p>
+            <p class="text-sm" style="color: #d1fae5;">Diskusikan proyek Anda dengan ketua tim penyusun AMDAL kami yang berpengalaman 10+ tahun. Dapatkan evaluasi awal, estimasi biaya & jadwal — tanpa komitmen.</p>
         </div>
         <div class="flex gap-3 flex-shrink-0">
             <a href="{{ $waExpertHref }}" target="_blank" rel="noopener" class="inline-flex items-center px-6 py-3 bg-white text-green-700 font-bold rounded-xl hover:bg-green-50 transition shadow-lg">
                 <i class="fab fa-whatsapp mr-2 text-lg"></i>
                 Chat dengan Ahli
             </a>
-            <a href="{{ route('landing.service-inquiry.create') }}" class="inline-flex items-center px-6 py-3 bg-green-800 text-white font-bold rounded-xl hover:bg-green-900 transition border border-green-500">
+            <a href="{{ route('permohonan.index') }}" class="inline-flex items-center px-6 py-3 bg-green-800 text-white font-bold rounded-xl hover:bg-green-900 transition border border-green-500">
                 <i class="fas fa-file-alt mr-2"></i>
                 Minta Penawaran
             </a>
@@ -555,7 +555,7 @@ $amdalFaqs = [
     ],
     [
         'q' => 'Berapa lama proses pengurusan AMDAL dari awal hingga selesai?',
-        'a' => 'Proses pengurusan AMDAL umumnya memakan waktu 4–8 bulan. Tahapannya: konsultasi awal (1–2 minggu), KA-ANDAL (2–4 minggu), survei baseline (3–6 minggu), penyusunan ANDAL & RKL-RPL (4–8 minggu), konsultasi publik (2–3 minggu), penilaian Komisi (4–8 minggu), dan revisi hingga persetujuan (2–4 minggu). Dengan pendampingan sistematis kami, timeline dapat lebih cepat.',
+        'a' => 'Proses pengurusan AMDAL umumnya memakan waktu 4–8 bulan. Tahapannya: konsultasi awal (1–2 minggu), KA-ANDAL (2–4 minggu), survei baseline (3–6 minggu), penyusunan ANDAL & RKL-RPL (4–8 minggu), konsultasi publik (2–3 minggu), penilaian Komisi (4–8 minggu), dan revisi hingga persetujuan (2–4 minggu). Dengan pendampingan sistematis kami, prosesnya dapat lebih cepat.',
     ],
     [
         'q' => 'Apa standar teknis dan metodologi analisis yang digunakan Bizmark?',
@@ -583,7 +583,7 @@ $amdalFaqs = [
     ],
     [
         'q' => 'Bagaimana cara memulai konsultasi AMDAL dengan Bizmark?',
-        'a' => 'Cukup hubungi kami melalui WhatsApp atau formulir penawaran di website. Anda akan langsung berkonsultasi dengan tenaga ahli AMDAL bersertifikat kami — bukan admin atau chatbot. Pada sesi konsultasi gratis ini, kami akan melakukan evaluasi awal proyek Anda dan memberikan estimasi biaya serta timeline.',
+        'a' => 'Cukup hubungi kami melalui WhatsApp atau formulir penawaran di website. Anda akan langsung berkonsultasi dengan tenaga ahli AMDAL bersertifikat kami — bukan admin atau chatbot. Pada sesi konsultasi gratis ini, kami akan melakukan evaluasi awal proyek Anda dan memberikan estimasi biaya serta jadwal pengerjaan.',
     ],
     [
         'q' => 'Apa yang didapat setelah AMDAL disetujui?',
