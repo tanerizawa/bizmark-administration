@@ -31,6 +31,9 @@ Homestead.yaml
 Thumbs.db
 .env.backup*
 .env.brevo
+.env.failed-pgsql.*
+.env.production.template
+.env.sqlite.backup.*
 
 # Documentation files (temporary, will be cleaned later)
 *_COMPLETE.md
@@ -96,3 +99,4 @@ resources/data/*.json
 *-v[0-9].*
 *-copy.*
 !scripts/db-backup.sh
+Added ignore patterns
