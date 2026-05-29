@@ -5,213 +5,125 @@
 @section('content')
 @php
     $pendingCount = $notifications['applications'] ?? 0;
+    $tabs = [
+        ['key' => 'jobs',         'label' => 'Lowongan Kerja', 'icon' => 'fa-briefcase', 'badge' => null],
+        ['key' => 'applications', 'label' => 'Lamaran Masuk',  'icon' => 'fa-user-tie',  'badge' => $pendingCount],
+    ];
+    $currentTab = $activeTab ?? 'jobs';
 @endphp
 
-<div class="recruitment-shell space-y-4">
-{{-- Compact Hero Section --}}
-<section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden">
-    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-12 -right-8"></div>
-    </div>
-    <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div class="flex-1 min-w-0">
-            <p class="admin-hero-subtitle">Manajemen Talenta</p>
-            <h1 class="admin-hero-title text-white">Rekrutmen & Lamaran</h1>
-            <p class="admin-hero-desc">Kelola lowongan dan proses rekrutmen kandidat</p>
-            <div class="admin-hero-meta flex flex-wrap gap-3">
-                <span><i class="fas fa-briefcase mr-1.5"></i>{{ $totalJobs }} lowongan</span>
-                <span><i class="fas fa-users mr-1.5"></i>{{ $totalApplications }} lamaran</span>
-                @if($pendingCount > 0)
-                    <span><i class="fas fa-clock mr-1.5"></i>{{ $pendingCount }} pending</span>
-                @endif
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="{{ route('admin.jobs.create') }}" class="admin-btn admin-btn-sm rounded bg-apple-blue text-white">
-                <i class="fas fa-plus mr-1"></i>Lowongan
-            </a>
-        </div>
-    </div>
-</section>
+<div style="display:flex;flex-direction:column;gap:16px">
 
-{{-- Compact Stats --}}
-<div class="grid grid-cols-4 gap-2">
-    <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
-             style="background: rgba(10,132,255,0.1); border: 1px solid rgba(10,132,255,0.2);">
-        <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(10,132,255,0.2);">
-            <i class="fas fa-briefcase text-apple-blue" style="font-size: 0.7rem;"></i>
-        </div>
-        <div>
-            <p class="admin-small text-apple-blue uppercase tracking-wider">Total</p>
-            <p class="admin-stat text-white">{{ $totalJobs }}</p>
-        </div>
-    </article>
-    <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
-             style="background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.2);">
-        <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(52,199,89,0.2);">
-            <i class="fas fa-check-circle text-apple-green" style="font-size: 0.7rem;"></i>
-        </div>
-        <div>
-            <p class="admin-small text-apple-green uppercase tracking-wider">Aktif</p>
-            <p class="admin-stat text-apple-green">{{ $activeJobs }}</p>
-        </div>
-    </article>
-    <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
-             style="background: rgba(175,82,222,0.1); border: 1px solid rgba(175,82,222,0.2);">
-        <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(175,82,222,0.2);">
-            <i class="fas fa-users" style="color: #AF52DE; font-size: 0.7rem;"></i>
-        </div>
-        <div>
-            <p class="admin-small uppercase tracking-wider" style="color: #AF52DE;">Lamaran</p>
-            <p class="admin-stat text-white">{{ $totalApplications }}</p>
-        </div>
-    </article>
-    <article class="admin-stat-card card-elevated rounded-apple flex items-center gap-2" 
-             style="background: rgba(255,214,10,0.1); border: 1px solid rgba(255,214,10,0.2);">
-        <div class="admin-stat-icon rounded flex items-center justify-center" style="background: rgba(255,214,10,0.2);">
-            <i class="fas fa-clock" style="color: #FFD60A; font-size: 0.7rem;"></i>
-        </div>
-        <div>
-            <p class="admin-small uppercase tracking-wider" style="color: #FFD60A;">Pending</p>
-            <p class="admin-stat text-white">{{ $pendingCount }}</p>
-        </div>
-    </article>
+{{-- Page Header --}}
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Manajemen Talenta</p>
+        <h1 style="font-size:1.4rem;font-weight:800;color:var(--dark-text-primary);margin:3px 0 0;line-height:1.2">Rekrutmen & Lamaran</h1>
+        <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:4px 0 0">Kelola lowongan pekerjaan dan proses rekrutmen kandidat.</p>
+    </div>
+    <a href="{{ route('admin.jobs.create') }}"
+       style="display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--apple-blue);color:#fff;border:none;border-radius:10px;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;transition:opacity .2s"
+       onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+        <i class="fas fa-plus" style="font-size:0.72rem"></i>Tambah Lowongan
+    </a>
 </div>
 
-{{-- Compact Quick Actions Grid --}}
-<section class="grid grid-cols-3 gap-2">
-    <a href="{{ route('admin.recruitment.pipeline.index') }}" class="admin-module-card card-elevated rounded-apple">
-        <div class="flex items-center gap-2">
-            <div class="admin-stat-icon rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #0A84FF, #AF52DE);">
-                <i class="fas fa-stream text-white" style="font-size: 0.65rem;"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <h3 class="admin-body font-medium text-white">Pipeline</h3>
-                <p class="admin-small text-dark-text-tertiary truncate">Pergerakan kandidat</p>
-            </div>
-            <i class="fas fa-chevron-right text-apple-blue" style="font-size: 10px;"></i>
+{{-- Session Alerts --}}
+@if(session('success'))
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:color-mix(in srgb,var(--apple-green) 10%,transparent);border:1px solid color-mix(in srgb,var(--apple-green) 30%,transparent);border-radius:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+            <i class="fas fa-check-circle" style="color:var(--apple-green)"></i>
+            <span style="font-size:0.82rem;color:var(--apple-green);font-weight:600">{{ session('success') }}</span>
         </div>
-    </a>
-    <a href="{{ route('admin.recruitment.interviews.index') }}" class="admin-module-card card-elevated rounded-apple">
-        <div class="flex items-center gap-2">
-            <div class="admin-stat-icon rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #34C759, #14B8A6);">
-                <i class="fas fa-calendar-alt text-white" style="font-size: 0.65rem;"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <h3 class="admin-body font-medium text-white">Interview</h3>
-                <p class="admin-small text-dark-text-tertiary truncate">Jadwal interview</p>
-            </div>
-            <i class="fas fa-chevron-right text-apple-green" style="font-size: 10px;"></i>
+        <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:var(--apple-green);opacity:.7"><i class="fas fa-times"></i></button>
+    </div>
+@endif
+@if(session('error'))
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:color-mix(in srgb,var(--apple-red) 10%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 30%,transparent);border-radius:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+            <i class="fas fa-exclamation-circle" style="color:var(--apple-red)"></i>
+            <span style="font-size:0.82rem;color:var(--apple-red);font-weight:600">{{ session('error') }}</span>
         </div>
-    </a>
-    <a href="{{ route('admin.recruitment.tests.index') }}" class="admin-module-card card-elevated rounded-apple">
-        <div class="flex items-center gap-2">
-            <div class="admin-stat-icon rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #F97316, #EF4444);">
-                <i class="fas fa-clipboard-list text-white" style="font-size: 0.65rem;"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <h3 class="admin-body font-medium text-white">Testing</h3>
-                <p class="admin-small text-dark-text-tertiary truncate">Template & sesi tes</p>
-            </div>
-            <i class="fas fa-chevron-right text-orange-400 text-xs"></i>
-        </div>
-    </a>
-</section>
+        <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:var(--apple-red);opacity:.7"><i class="fas fa-times"></i></button>
+    </div>
+@endif
 
-{{-- Tab Navigation --}}
-<section class="card-elevated rounded-apple-xl overflow-hidden">
-    <div class="border-b" style="border-color: var(--dark-separator);">
-        <div class="flex space-x-1 p-2 overflow-x-auto" role="tablist">
-            <button onclick="switchTab('jobs')" id="tab-jobs" 
-                    class="tab-button {{ $activeTab == 'jobs' ? 'active' : '' }} text-sm transition-apple whitespace-nowrap">
-                <i class="fas fa-briefcase mr-2"></i>Lowongan Kerja
-            </button>
-            <button onclick="switchTab('applications')" id="tab-applications"
-                    class="tab-button {{ $activeTab == 'applications' ? 'active' : '' }} text-sm transition-apple whitespace-nowrap">
-                <i class="fas fa-user-tie mr-2"></i>Lamaran Masuk
-                @if($pendingCount > 0)
-                    <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full {{ $activeTab == 'applications' ? 'bg-white text-apple-blue' : 'bg-yellow-500 text-white' }}">
-                        {{ $pendingCount }}
-                    </span>
-                @endif
-            </button>
+{{-- KPI Cards --}}
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+    @php
+    $kpis = [
+        ['label'=>'Total Lowongan', 'value'=>$totalJobs,         'sub'=>'semua posisi',     'color'=>'var(--apple-blue)',   'bg'=>'var(--apple-blue)',   'icon'=>'fa-briefcase'],
+        ['label'=>'Aktif',          'value'=>$activeJobs,        'sub'=>'sedang tayang',    'color'=>'var(--apple-green)',  'bg'=>'var(--apple-green)',  'icon'=>'fa-check-circle'],
+        ['label'=>'Total Lamaran',  'value'=>$totalApplications, 'sub'=>'semua kandidat',   'color'=>'var(--apple-purple)', 'bg'=>'var(--apple-purple)', 'icon'=>'fa-users'],
+        ['label'=>'Pending',        'value'=>$pendingCount,      'sub'=>'perlu peninjauan', 'color'=>$pendingCount > 0 ? 'var(--apple-orange)' : 'var(--apple-green)', 'bg'=>$pendingCount > 0 ? 'var(--apple-orange)' : 'var(--apple-green)', 'icon'=>'fa-clock'],
+    ];
+    @endphp
+    @foreach($kpis as $k)
+    <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $k['bg'] }} 14%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,{{ $k['bg'] }} 28%,var(--dark-separator));border-radius:16px;padding:18px 20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:12px;right:16px;font-size:1.1rem;opacity:.18;color:{{ $k['color'] }}"><i class="fas {{ $k['icon'] }}"></i></div>
+        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ $k['color'] }};opacity:.85;margin:0">{{ $k['label'] }}</p>
+        <p style="font-size:2rem;font-weight:800;color:{{ $k['color'] }};margin:5px 0 3px;line-height:1">{{ $k['value'] }}</p>
+        <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0">{{ $k['sub'] }}</p>
+    </div>
+    @endforeach
+</div>
+
+{{-- Quick Actions --}}
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    @php
+    $actions = [
+        ['href' => route('admin.recruitment.pipeline.index'),   'title' => 'Pipeline',  'sub' => 'Pergerakan kandidat',  'icon' => 'fa-stream',         'color1' => 'var(--apple-blue)',   'color2' => 'var(--apple-purple)'],
+        ['href' => route('admin.recruitment.interviews.index'), 'title' => 'Interview', 'sub' => 'Jadwal wawancara',     'icon' => 'fa-calendar-alt',   'color1' => 'var(--apple-green)',  'color2' => 'var(--apple-teal)'],
+        ['href' => route('admin.recruitment.tests.index'),      'title' => 'Testing',   'sub' => 'Template & sesi tes', 'icon' => 'fa-clipboard-list', 'color1' => 'var(--apple-orange)', 'color2' => 'var(--apple-red)'],
+    ];
+    @endphp
+    @foreach($actions as $a)
+    <a href="{{ $a['href'] }}"
+       style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;text-decoration:none;transition:border-color .15s,background .15s"
+       onmouseover="this.style.borderColor='color-mix(in srgb,var(--apple-blue) 40%,var(--dark-separator))';this.style.background='var(--dark-bg-tertiary)'"
+       onmouseout="this.style.borderColor='var(--dark-separator)';this.style.background='var(--dark-bg-secondary)'">
+        <div style="width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,{{ $a['color1'] }},{{ $a['color2'] }})">
+            <i class="fas {{ $a['icon'] }}" style="color:#fff;font-size:0.85rem"></i>
         </div>
+        <div style="flex:1;min-width:0">
+            <p style="font-size:0.85rem;font-weight:700;color:var(--dark-text-primary);margin:0">{{ $a['title'] }}</p>
+            <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:2px 0 0">{{ $a['sub'] }}</p>
+        </div>
+        <i class="fas fa-chevron-right" style="font-size:0.65rem;color:var(--dark-text-secondary)"></i>
+    </a>
+    @endforeach
+</div>
+
+
+{{-- Tab Container --}}
+<div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:18px;overflow:hidden">
+
+    {{-- Tab Bar --}}
+    <div style="display:flex;border-bottom:1px solid var(--dark-separator);overflow-x:auto;scrollbar-width:none">
+        @foreach($tabs as $tab)
+        @php $isActive = $currentTab === $tab['key']; @endphp
+        <a href="{{ route('admin.recruitment.index', ['tab' => $tab['key']]) }}"
+           style="display:inline-flex;align-items:center;gap:7px;padding:14px 20px;font-size:0.82rem;font-weight:{{ $isActive ? '700' : '500' }};color:{{ $isActive ? 'var(--dark-text-primary)' : 'var(--dark-text-secondary)' }};text-decoration:none;white-space:nowrap;border-bottom:2px solid {{ $isActive ? 'var(--apple-blue)' : 'transparent' }};margin-bottom:-1px;transition:color .15s"
+           onmouseover="if({{ $isActive ? 'false' : 'true' }})this.style.color='var(--dark-text-primary)'"
+           onmouseout="if({{ $isActive ? 'false' : 'true' }})this.style.color='var(--dark-text-secondary)'">
+            <i class="fas {{ $tab['icon'] }}" style="font-size:0.75rem"></i>
+            {{ $tab['label'] }}
+            @if(!empty($tab['badge']) && $tab['badge'] > 0)
+            <span style="display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;font-size:0.65rem;font-weight:700;background:color-mix(in srgb,var(--apple-orange) 25%,transparent);color:var(--apple-orange)">{{ $tab['badge'] }}</span>
+            @endif
+        </a>
+        @endforeach
     </div>
 
-    <div class="p-6">
-        <!-- Jobs Tab Content -->
-        <div id="content-jobs" class="tab-content {{ $activeTab != 'jobs' ? 'hidden' : '' }}">
+    {{-- Tab Content --}}
+    <div style="padding:20px">
+        @if($currentTab === 'jobs')
             @include('admin.recruitment.tabs.jobs')
-        </div>
-        
-        <!-- Applications Tab Content -->
-        <div id="content-applications" class="tab-content {{ $activeTab != 'applications' ? 'hidden' : '' }}">
+        @elseif($currentTab === 'applications')
             @include('admin.recruitment.tabs.applications')
-        </div>
+        @endif
     </div>
-</section>
 </div>
 
-@push('styles')
-<style>
-    .recruitment-shell .tab-button {
-        color: rgba(235, 235, 245, 0.6);
-        background-color: transparent;
-        padding: 0.55rem 0.85rem;
-        border: 1px solid transparent;
-        border-radius: 10px;
-        font-weight: 600;
-        min-height: 42px;
-    }
-
-    .recruitment-shell .tab-button:hover {
-        color: rgba(235, 235, 245, 0.9);
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .recruitment-shell .tab-button.active {
-        color: #FFFFFF;
-        background-color: rgba(0, 122, 255, 0.15);
-        border: 1px solid rgba(0, 122, 255, 0.3);
-        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-    }
-
-    .recruitment-shell .tab-content {
-        animation: fadeIn 0.25s ease-in;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
-@endpush
-
-@push('scripts')
-<script>
-function switchTab(tabName) {
-    const url = new URL(window.location);
-    url.searchParams.set('tab', tabName);
-    window.history.pushState({}, '', url);
-    
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-    document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
-    
-    const targetContent = document.getElementById('content-' + tabName);
-    const targetButton = document.getElementById('tab-' + tabName);
-    targetContent?.classList.remove('hidden');
-    targetButton?.classList.add('active');
-}
-
-window.addEventListener('popstate', function() {
-    const tab = new URLSearchParams(window.location.search).get('tab') || 'jobs';
-    switchTab(tab);
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    const initialTab = new URLSearchParams(window.location.search).get('tab') || 'jobs';
-    switchTab(initialTab);
-});
-</script>
-@endpush
+</div>
 @endsection

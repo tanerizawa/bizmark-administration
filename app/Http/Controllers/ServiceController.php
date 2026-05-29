@@ -133,6 +133,60 @@ class ServiceController extends Controller
         ]);
     }
 
+    public function showCategory(Request $request, string $categorySlug)
+    {
+        $locale = app()->getLocale();
+        $marketSegment = session('market_segment', 'local');
+
+        $services = $locale === 'id'
+            ? config('services_data', [])
+            : ($marketSegment === 'pma' ? config('services_pma', []) : config('services_data', []));
+
+        // Find matching category name by comparing slugs
+        $categoryName = null;
+        foreach ($services as $service) {
+            $cat = $service['category'] ?? '';
+            if (\Str::slug($cat) === $categorySlug) {
+                $categoryName = $cat;
+                break;
+            }
+        }
+
+        if (! $categoryName) {
+            abort(404);
+        }
+
+        $categoryServices = array_filter($services, fn ($s) => ($s['category'] ?? '') === $categoryName);
+
+        $contact = data_get(config('landing_metrics'), 'contact', []);
+        $whatsapp = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
+        $waText = $locale === 'en'
+            ? 'Hello, I need help with '.$categoryName.' permits'
+            : 'Halo, saya butuh bantuan perizinan kategori '.$categoryName;
+        $waHref = $whatsapp.(str_contains($whatsapp, '?') ? '&' : '?').'text='.rawurlencode($waText);
+
+        $view = $locale === 'en' ? 'services.category' : 'services.category';
+
+        $title = $locale === 'en'
+            ? $categoryName.' Services - Bizmark.ID'
+            : 'Layanan '.ucwords(strtolower($categoryName)).' - Bizmark.ID';
+
+        $meta_description = $locale === 'en'
+            ? 'Browse all '.$categoryName.' permit and compliance services by Bizmark.ID'
+            : 'Daftar lengkap layanan perizinan '.ucwords(strtolower($categoryName)).' oleh Bizmark.ID';
+
+        return view($view, [
+            'categoryName' => $categoryName,
+            'categorySlug' => $categorySlug,
+            'categoryServices' => $categoryServices,
+            'title' => $title,
+            'meta_description' => $meta_description,
+            'locale' => $locale,
+            'whatsapp' => $whatsapp,
+            'waHref' => $waHref,
+        ]);
+    }
+
     public function showSub(Request $request, $serviceSlug, $subSlug)
     {
         $locale = app()->getLocale();

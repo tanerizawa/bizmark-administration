@@ -1106,7 +1106,7 @@ function permohonanForm() {
             Object.keys(this.formData).forEach(key => {
                 if (key === 'services_requested') {
                     formData.append(key, JSON.stringify(this.formData[key]));
-                } else if (key !== 'estimated_budget_display' && key !== 'consent' && key !== 'ai_letter_body' && this.formData[key]) {
+                } else if (key !== 'estimated_budget_display' && key !== 'consent' && this.formData[key]) {
                     formData.append(key, this.formData[key]);
                 }
             });

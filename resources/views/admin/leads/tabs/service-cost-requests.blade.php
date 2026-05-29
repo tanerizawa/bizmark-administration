@@ -1,177 +1,200 @@
-{{-- Service Cost Requests Tab Content --}}
+{{-- Service Cost Requests Tab --}}
 @php
     $stats = $serviceCostRequestsStats ?? [
-        'total' => 0,
-        'pending' => 0,
-        'reviewing' => 0,
-        'quoted' => 0,
-        'accepted' => 0,
-        'rejected' => 0,
-        'this_week' => 0,
-        'this_month' => 0,
+        'total' => 0, 'pending' => 0, 'reviewing' => 0, 'quoted' => 0,
+        'accepted' => 0, 'rejected' => 0, 'this_week' => 0, 'this_month' => 0,
+    ];
+    $serviceCostRequests = $serviceCostRequests ?? collect();
+
+    $statusMap = [
+        'pending'   => ['variant' => 'warning', 'label' => 'Pending'],
+        'reviewing' => ['variant' => 'info',    'label' => 'Reviewing'],
+        'quoted'    => ['variant' => 'primary', 'label' => 'Quoted'],
+        'accepted'  => ['variant' => 'success', 'label' => 'Accepted'],
+        'rejected'  => ['variant' => 'danger',  'label' => 'Rejected'],
+        'cancelled' => ['variant' => 'neutral', 'label' => 'Cancelled'],
+    ];
+
+    $cellRenderers = [
+        'request_number' => function ($row) {
+            return '<span style="font-family:monospace;font-size:0.8rem;font-weight:700;color:var(--dark-text-primary);letter-spacing:.02em">' . e($row->request_number) . '</span>';
+        },
+        'tanggal' => function ($row) {
+            return '<span style="font-size:0.8rem;color:var(--dark-text-primary)">' . e($row->created_at->format('d M Y')) . '</span>'
+                 . '<br><span style="font-size:0.7rem;color:var(--dark-text-secondary)">' . e($row->created_at->format('H:i')) . '</span>';
+        },
+        'pemohon' => function ($row) {
+            $type = $row->applicant_type === 'badan' ? 'Badan Usaha' : 'Perorangan';
+            $typeColor = $row->applicant_type === 'badan' ? 'var(--apple-purple)' : 'var(--apple-teal)';
+            return '<span style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);display:block">' . e($row->display_name) . '</span>'
+                 . '<span style="font-size:0.68rem;font-weight:600;color:' . $typeColor . '">' . e($type) . '</span>';
+        },
+        'kontak' => function ($row) {
+            return '<span style="font-size:0.8rem;color:var(--dark-text-primary);display:block">' . e($row->email) . '</span>'
+                 . '<span style="font-size:0.7rem;color:var(--dark-text-secondary)">' . e($row->phone) . '</span>';
+        },
+        'kategori' => function ($row) {
+            $cats = \App\Models\ServiceCostRequest::getServiceCategories();
+            $label = $cats[$row->service_category] ?? $row->service_category;
+            return '<span style="font-size:0.8rem;color:var(--dark-text-primary)">' . e($label) . '</span>';
+        },
+        'status' => function ($row) use ($statusMap) {
+            $s = $statusMap[$row->status] ?? ['variant' => 'neutral', 'label' => ucfirst($row->status)];
+            return \Illuminate\Support\Facades\Blade::render('<x-ui.badge :variant="$v">{{ $l }}</x-ui.badge>', ['v' => $s['variant'], 'l' => $s['label']]);
+        },
+        'actions' => function ($row) {
+            $url = route('admin.service-cost-requests.show', $row->request_number);
+            return '<a href="' . e($url) . '" style="display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:600;color:var(--apple-blue);text-decoration:none;transition:opacity .15s" onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1"><i class="fas fa-eye"></i>Detail</a>';
+        },
     ];
 @endphp
 
-<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-lg font-bold text-white mb-1">{{ $stats['total'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Total</div>
+{{-- Stats Strip --}}
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    @php $statsData = [
+        ['label'=>'Total',    'value'=>$stats['total'],    'sub'=>'semua permohonan',  'color'=>'var(--dark-text-primary)',  'bg'=>'transparent',          'icon'=>'fa-file-alt'],
+        ['label'=>'Pending',  'value'=>$stats['pending'],  'sub'=>'perlu ditinjau',    'color'=>'var(--apple-orange)',       'bg'=>'var(--apple-orange)',   'icon'=>'fa-clock'],
+        ['label'=>'Reviewing','value'=>$stats['reviewing'],'sub'=>'sedang diproses',   'color'=>'var(--apple-blue)',         'bg'=>'var(--apple-blue)',     'icon'=>'fa-search'],
+        ['label'=>'Accepted', 'value'=>$stats['accepted'], 'sub'=>($stats['total']>0 ? round(($stats['accepted']/$stats['total'])*100).'% rate' : '—'), 'color'=>'var(--apple-green)', 'bg'=>'var(--apple-green)', 'icon'=>'fa-check-circle'],
+    ] @endphp
+    @foreach($statsData as $s)
+    <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $s['bg'] }} 12%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,{{ $s['bg'] }} 25%,var(--dark-separator));border-radius:14px;padding:16px 18px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:10px;right:14px;font-size:1rem;opacity:.2;color:{{ $s['color'] }}"><i class="fas {{ $s['icon'] }}"></i></div>
+        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ $s['color'] }};opacity:.8;margin:0">{{ $s['label'] }}</p>
+        <p style="font-size:2rem;font-weight:800;color:{{ $s['color'] }};margin:4px 0 2px;line-height:1">{{ $s['value'] }}</p>
+        <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0">{{ $s['sub'] }}</p>
     </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-yellow-400 mb-1">{{ $stats['pending'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Pending</div>
+    @endforeach
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+    @php $statsData2 = [
+        ['label'=>'Quoted',    'value'=>$stats['quoted'],    'color'=>'var(--apple-indigo)', 'bg'=>'var(--apple-indigo)', 'icon'=>'fa-file-invoice'],
+        ['label'=>'Rejected',  'value'=>$stats['rejected'],  'color'=>'var(--apple-red)',    'bg'=>'var(--apple-red)',    'icon'=>'fa-times-circle'],
+        ['label'=>'Minggu Ini','value'=>$stats['this_week'], 'color'=>'var(--dark-text-primary)', 'bg'=>'transparent',   'icon'=>'fa-calendar-week'],
+        ['label'=>'Bulan Ini', 'value'=>$stats['this_month'],'color'=>'var(--dark-text-primary)', 'bg'=>'transparent',   'icon'=>'fa-calendar'],
+    ] @endphp
+    @foreach($statsData2 as $s)
+    <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $s['bg'] }} 8%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,{{ $s['bg'] }} 20%,var(--dark-separator));border-radius:12px;padding:12px 16px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:8px;right:12px;font-size:.85rem;opacity:.18;color:{{ $s['color'] }}"><i class="fas {{ $s['icon'] }}"></i></div>
+        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:{{ $s['color'] }};opacity:.8;margin:0">{{ $s['label'] }}</p>
+        <p style="font-size:1.5rem;font-weight:700;color:{{ $s['color'] }};margin:2px 0 0;line-height:1.1">{{ $s['value'] }}</p>
     </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-blue-400 mb-1">{{ $stats['reviewing'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Reviewing</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-indigo-400 mb-1">{{ $stats['quoted'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Quoted</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-green-400 mb-1">{{ $stats['accepted'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Accepted</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-red-400 mb-1">{{ $stats['rejected'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Rejected</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-orange-400 mb-1">{{ $stats['this_week'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Minggu Ini</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-purple-400 mb-1">{{ $stats['this_month'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Bulan Ini</div>
-    </div>
+    @endforeach
 </div>
 
-<div class="card-elevated rounded-apple-lg mb-4">
-    <div class="px-4 py-3 border-b border-[rgba(84,84,88,0.65)]">
-        <h3 class="text-base font-semibold text-white">Pencarian & Filter</h3>
-    </div>
-    <div class="p-4">
-        <form method="GET" action="{{ route('admin.leads.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-            <input type="hidden" name="tab" value="service-cost-requests">
-            <div class="md:col-span-2">
-                <input type="text"
-                       name="search"
-                       class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary"
-                       placeholder="Cari nomor permohonan, nama, email, telepon..."
-                       value="{{ request('search') }}">
-            </div>
-            <div>
-                <select name="status"
-                        class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary">
-                    <option value="">Semua Status</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="reviewing" {{ request('status') == 'reviewing' ? 'selected' : '' }}>Reviewing</option>
-                    <option value="quoted" {{ request('status') == 'quoted' ? 'selected' : '' }}>Quoted</option>
-                    <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>Accepted</option>
-                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                </select>
-            </div>
-            <div>
-                <select name="applicant_type"
-                        class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary">
-                    <option value="">Semua Pemohon</option>
-                    <option value="perorangan" {{ request('applicant_type') == 'perorangan' ? 'selected' : '' }}>Perorangan</option>
-                    <option value="badan" {{ request('applicant_type') == 'badan' ? 'selected' : '' }}>Badan Usaha</option>
-                </select>
-            </div>
-            <div class="flex gap-2 md:col-span-2 lg:col-span-5">
-                <button type="submit" class="btn-primary px-4 py-2 rounded-apple text-sm font-medium">
-                    <i class="fas fa-search mr-2"></i>Filter
-                </button>
-                <a href="{{ route('admin.leads.index', ['tab' => 'service-cost-requests']) }}" class="btn-secondary px-4 py-2 rounded-apple text-sm font-medium">
-                    Reset
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
+{{-- Smart Search & Filter Toolbar --}}
+@php
+    $scrActiveFilters = collect([
+        'search'         => request('search'),
+        'status'         => request('status'),
+        'applicant_type' => request('applicant_type'),
+    ])->filter()->count();
+@endphp
+<form method="GET" action="{{ route('admin.leads.index') }}" style="margin-bottom:16px">
+    <input type="hidden" name="tab" value="service-cost-requests">
+    <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
 
-<div class="card-elevated rounded-apple-lg overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-[rgba(84,84,88,0.65)]">
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Request #</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Tanggal</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Pemohon</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Kontak</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Kategori</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Status</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-dark-text-secondary uppercase tracking-wider">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-dark-border">
-                @forelse($serviceCostRequests ?? [] as $item)
-                    @php
-                        $statusColors = [
-                            'pending' => 'bg-yellow-500/20 text-yellow-400 border-yellow-500',
-                            'reviewing' => 'bg-blue-500/20 text-blue-400 border-blue-500',
-                            'quoted' => 'bg-indigo-500/20 text-indigo-400 border-indigo-500',
-                            'accepted' => 'bg-green-500/20 text-green-400 border-green-500',
-                            'rejected' => 'bg-red-500/20 text-red-400 border-red-500',
-                            'cancelled' => 'bg-gray-500/20 text-gray-400 border-gray-500',
-                        ];
-                    @endphp
-                    <tr class="hover:bg-dark-bg-tertiary transition-colors">
-                        <td class="px-4 py-3 text-sm font-mono text-dark-text-primary">{{ $item->request_number }}</td>
-                        <td class="px-4 py-3 text-sm text-dark-text-secondary">
-                            {{ $item->created_at->format('d M Y') }}<br>
-                            <span class="text-xs">{{ $item->created_at->format('H:i') }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="font-medium text-dark-text-primary">{{ $item->display_name }}</div>
-                            <div class="text-xs text-dark-text-secondary">{{ $item->applicant_type === 'badan' ? 'Badan Usaha' : 'Perorangan' }}</div>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-dark-text-secondary">
-                            <div>{{ $item->email }}</div>
-                            <div class="text-xs">{{ $item->phone }}</div>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-dark-text-secondary">
-                            {{ \App\Models\ServiceCostRequest::getServiceCategories()[$item->service_category] ?? $item->service_category }}
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <span class="inline-flex items-center px-2 py-1 rounded-apple text-xs font-medium border {{ $statusColors[$item->status] ?? 'bg-gray-500/20 text-gray-400 border-gray-500' }}">
-                                {{ $item->status_label }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-right">
-                            <a href="{{ route('admin.service-cost-requests.show', $item->request_number) }}" class="text-apple-blue hover:text-blue-400 text-sm font-medium">
-                                Lihat Detail →
-                            </a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-dark-text-secondary">
-                            <i class="fas fa-inbox text-2xl mb-3 block opacity-30"></i>
-                            <p>Tidak ada data permohonan biaya ditemukan</p>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+        {{-- Search --}}
+        <div style="position:relative;flex:1;min-width:220px">
+            <i class="fas fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.72rem;color:var(--dark-text-tertiary);pointer-events:none;z-index:1"></i>
+            <input type="text" name="search" id="scr-search" value="{{ request('search') }}"
+                   placeholder="Nomor request, email, nama pemohon…"
+                   style="width:100%;padding:8px 36px 8px 34px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;line-height:1.4;outline:none;box-sizing:border-box;transition:border-color .18s"
+                   onfocus="this.style.borderColor='var(--apple-orange)'"
+                   onblur="this.style.borderColor='var(--dark-separator)'">
+            <button type="button"
+                    style="display:{{ request('search') ? 'flex' : 'none' }};position:absolute;right:9px;top:50%;transform:translateY(-50%);width:18px;height:18px;align-items:center;justify-content:center;background:var(--dark-text-tertiary);border:none;border-radius:50%;cursor:pointer;padding:0;color:var(--dark-bg-primary);font-size:0.55rem"
+                    onclick="document.getElementById('scr-search').value='';this.style.display='none';this.closest('form').submit()">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
 
-    @if(isset($serviceCostRequests) && $serviceCostRequests->hasPages())
-        <div class="px-4 py-3 border-t border-[rgba(84,84,88,0.65)]">
-            {{ $serviceCostRequests->appends(array_merge(request()->all(), ['tab' => 'service-cost-requests']))->links() }}
+        <div style="width:1px;height:26px;background:var(--dark-separator);flex-shrink:0"></div>
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+
+            {{-- Status pill --}}
+            <div style="position:relative">
+                <select name="status" onchange="this.closest('form').submit()"
+                        style="padding:6px 28px 6px 10px;background:{{ request('status') ? 'color-mix(in srgb,var(--apple-orange) 18%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};border:1px solid {{ request('status') ? 'color-mix(in srgb,var(--apple-orange) 45%,var(--dark-separator))' : 'var(--dark-separator)' }};border-radius:20px;color:{{ request('status') ? 'var(--apple-orange)' : 'var(--dark-text-secondary)' }};font-size:0.75rem;font-weight:{{ request('status') ? '600' : '500' }};outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;white-space:nowrap;transition:all .18s">
+                    <option value="">Status</option>
+                    <option value="pending"   {{ request('status')=='pending'   ? 'selected':'' }}>Pending</option>
+                    <option value="reviewing" {{ request('status')=='reviewing' ? 'selected':'' }}>Reviewing</option>
+                    <option value="quoted"    {{ request('status')=='quoted'    ? 'selected':'' }}>Quoted</option>
+                    <option value="accepted"  {{ request('status')=='accepted'  ? 'selected':'' }}>Accepted</option>
+                    <option value="rejected"  {{ request('status')=='rejected'  ? 'selected':'' }}>Rejected</option>
+                    <option value="cancelled" {{ request('status')=='cancelled' ? 'selected':'' }}>Cancelled</option>
+                </select>
+                <i class="fas fa-chevron-down" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:0.5rem;color:{{ request('status') ? 'var(--apple-orange)' : 'var(--dark-text-tertiary)' }};pointer-events:none"></i>
+            </div>
+
+            {{-- Pemohon pill --}}
+            <div style="position:relative">
+                <select name="applicant_type" onchange="this.closest('form').submit()"
+                        style="padding:6px 28px 6px 10px;background:{{ request('applicant_type') ? 'color-mix(in srgb,var(--apple-purple) 18%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};border:1px solid {{ request('applicant_type') ? 'color-mix(in srgb,var(--apple-purple) 45%,var(--dark-separator))' : 'var(--dark-separator)' }};border-radius:20px;color:{{ request('applicant_type') ? 'var(--apple-purple)' : 'var(--dark-text-secondary)' }};font-size:0.75rem;font-weight:{{ request('applicant_type') ? '600' : '500' }};outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;white-space:nowrap;transition:all .18s">
+                    <option value="">Pemohon</option>
+                    <option value="perorangan" {{ request('applicant_type')=='perorangan' ? 'selected':'' }}>Perorangan</option>
+                    <option value="badan"      {{ request('applicant_type')=='badan'      ? 'selected':'' }}>Badan Usaha</option>
+                </select>
+                <i class="fas fa-chevron-down" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:0.5rem;color:{{ request('applicant_type') ? 'var(--apple-purple)' : 'var(--dark-text-tertiary)' }};pointer-events:none"></i>
+            </div>
+
+            @if($scrActiveFilters > 0)
+            <a href="{{ route('admin.leads.index', ['tab' => 'service-cost-requests']) }}"
+               style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:color-mix(in srgb,var(--apple-red) 14%,var(--dark-bg-tertiary));border:1px solid color-mix(in srgb,var(--apple-red) 30%,var(--dark-separator));border-radius:20px;font-size:0.72rem;font-weight:600;color:var(--apple-red);text-decoration:none;white-space:nowrap"
+               onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                <i class="fas fa-xmark"></i>Reset
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--apple-red);color:#fff;border-radius:50%;font-size:0.6rem;font-weight:700">{{ $scrActiveFilters }}</span>
+            </a>
+            @endif
+        </div>
+    </div>
+</form>
+
+{{-- Data Table --}}
+<div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:16px;overflow:hidden;margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dark-separator)">
+        <div>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85);margin:0">Data</p>
+            <h3 style="font-size:0.95rem;font-weight:700;color:var(--dark-text-primary);margin:3px 0 0">Daftar Permohonan Biaya</h3>
+        </div>
+        <span style="font-size:0.75rem;color:var(--dark-text-secondary)">
+            @if($serviceCostRequests instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                @if($serviceCostRequests->total() === 0)
+                    0 permohonan
+                @else
+                    {{ $serviceCostRequests->firstItem() }}–{{ $serviceCostRequests->lastItem() }} dari {{ $serviceCostRequests->total() }}
+                @endif
+            @else
+                {{ $serviceCostRequests->count() }} entri
+            @endif
+        </span>
+    </div>
+    <x-ui.table
+        :columns="[
+            ['key' => 'request_number', 'label' => 'Request #'],
+            ['key' => 'tanggal',        'label' => 'Tanggal'],
+            ['key' => 'pemohon',        'label' => 'Pemohon'],
+            ['key' => 'kontak',         'label' => 'Kontak'],
+            ['key' => 'kategori',       'label' => 'Kategori'],
+            ['key' => 'status',         'label' => 'Status'],
+            ['key' => 'actions',        'label' => 'Aksi', 'align' => 'right'],
+        ]"
+        :rows="$serviceCostRequests"
+        :cellRenderers="$cellRenderers"
+        :striped="true"
+        :hoverable="true"
+        variant="compact"
+        empty-message="Tidak ada permohonan. Coba ubah filter."
+    />
+    @if($serviceCostRequests instanceof \Illuminate\Pagination\LengthAwarePaginator && $serviceCostRequests->hasPages())
+        <div style="padding:14px 20px;border-top:1px solid var(--dark-separator)">
+            <x-ui.pagination :paginator="$serviceCostRequests->appends(array_merge(request()->all(), ['tab'=>'service-cost-requests']))" variant="full" :show-info="true" />
         </div>
     @endif
 </div>
 
-<div class="mt-4 rounded-apple-lg p-4 bg-[rgba(255,149,0,0.08)] border border-[rgba(255,149,0,0.3)]">
-    <div class="flex items-start">
-        <i class="fas fa-info-circle text-orange-400 mr-3 mt-0.5"></i>
-        <div class="text-sm text-dark-text-secondary">
-            <p class="font-medium text-orange-300 mb-1">Tentang Permohonan Biaya</p>
-            <p>Data dari formulir /permohonan masuk ke tab ini untuk review cepat oleh tim admin.</p>
-        </div>
-    </div>
-</div>
+<x-ui.alert variant="warning" :icon="true">
+    <strong>Tentang Permohonan Biaya:</strong>
+    Data dari formulir <code>/permohonan</code> masuk ke tab ini untuk review tim admin sebelum diteruskan ke proses quotation.
+</x-ui.alert>

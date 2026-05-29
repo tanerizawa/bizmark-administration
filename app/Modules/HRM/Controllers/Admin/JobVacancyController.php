@@ -21,14 +21,11 @@ class JobVacancyController extends Controller
 
     /**
      * Display a listing of job vacancies (ADMIN).
+     * Redirects to the unified recruitment page (jobs tab).
      */
     public function index()
     {
-        $vacancies = JobVacancy::withCount('applications')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
-
-        return view('admin.jobs.index', compact('vacancies'));
+        return redirect()->route('admin.recruitment.index', ['tab' => 'jobs']);
     }
 
     /**

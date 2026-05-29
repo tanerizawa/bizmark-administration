@@ -24,10 +24,10 @@
                    style="background: rgba(255, 149, 0, 0.2); color: rgba(255, 149, 0, 1);">
                     <i class="fas fa-edit mr-2"></i>Edit
                 </a>
-                <form action="{{ route('permit-types.destroy', $permitType) }}" 
-                      method="POST" 
+                <form action="{{ route('permit-types.destroy', $permitType) }}"
+                      method="POST"
                       class="inline"
-                      onsubmit="return confirm('Yakin ingin menghapus jenis izin ini? Tindakan ini tidak dapat dibatalkan.')">
+                      x-data @submit.prevent="if(confirm('Yakin ingin menghapus jenis izin ini? Tindakan ini tidak dapat dibatalkan.')) $el.submit()">
                     @csrf
                     @method('DELETE')
                     <button type="submit" 

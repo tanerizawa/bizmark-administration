@@ -168,7 +168,7 @@ Contoh output yang benar: 0.75
             $response = $this->openRouter->chat(
                 [['role' => 'user', 'content' => $prompt]],
                 [
-                    'model' => 'google/gemini-2.5-flash', // Cheaper model for similarity scoring
+                    'model' => config('services.openrouter.default_model', 'openrouter/free'), // Cost-efficient model for similarity scoring
                     'temperature' => 0.3,
                     'max_tokens' => 10,
                 ]

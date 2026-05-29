@@ -10,7 +10,7 @@
             </p>
         </div>
         
-        <button onclick="event.stopPropagation(); showAddTaskModal()"
+        <button @click.stop="showAddTaskModal()"
                 class="btn-primary-sm bg-apple-blue/90 text-white">
             <i class="fas fa-plus mr-2"></i>Tambah Task
         </button>
@@ -116,14 +116,14 @@
                                         
                                         <!-- Actions -->
                                         <div class="flex gap-1">
-                                            <button onclick="event.stopPropagation(); editTask({{ $task->id }})"
+                                            <button @click.stop="editTask({{ $task->id }})"
                                                     class="p-2 rounded transition-colors text-apple-blue"
                                                     onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
                                                     title="Edit Task">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="event.stopPropagation(); deleteTask({{ $task->id }})"
+                                            <button @click.stop="deleteTask({{ $task->id }})"
                                                     class="p-2 rounded transition-colors text-apple-red"
                                                     onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
                                                     onmouseout="this.style.background='transparent'"
@@ -282,7 +282,7 @@
             <p class="mb-6 text-dark-text-secondary">
                 Tambahkan task untuk mulai mengelola kegiatan proyek
             </p>
-            <button onclick="event.stopPropagation(); showAddTaskModal()"
+            <button @click.stop="showAddTaskModal()"
                     class="px-6 py-3 rounded-lg font-medium transition-colors bg-apple-blue/90 text-white">
                 <i class="fas fa-plus mr-2"></i>Tambah Task Pertama
             </button>
@@ -296,7 +296,7 @@
         <div class="sticky top-0 bg-[#1e1e1e] border-b border-gray-700 px-6 py-4">
             <div class="flex items-center justify-between">
                 <h3 class="text-xl font-semibold text-white">Tambah Task Baru</h3>
-                <button onclick="event.stopPropagation(); closeAddTaskModal()" class="text-gray-400 hover:text-white">
+                <button @click.stop="closeAddTaskModal()" class="text-gray-400 hover:text-white">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
@@ -446,7 +446,7 @@
 
             <!-- Action Buttons -->
             <div class="flex gap-3 mt-6">
-                <button type="button" onclick="event.stopPropagation(); closeAddTaskModal()" 
+                <button type="button" @click.stop="closeAddTaskModal()"
                         class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
                     Batal
                 </button>
@@ -466,7 +466,7 @@
         <div class="sticky top-0 bg-[#1e1e1e] border-b border-gray-700 px-6 py-4">
             <div class="flex items-center justify-between">
                 <h3 class="text-xl font-semibold text-white">Edit Task</h3>
-                <button onclick="event.stopPropagation(); closeEditTaskModal()" class="text-gray-400 hover:text-white">
+                <button @click.stop="closeEditTaskModal()" class="text-gray-400 hover:text-white">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
@@ -610,7 +610,7 @@
 
             <!-- Action Buttons -->
             <div class="flex gap-3 mt-6">
-                <button type="button" onclick="event.stopPropagation(); closeEditTaskModal()" 
+                <button type="button" @click.stop="closeEditTaskModal()"
                         class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
                     Batal
                 </button>

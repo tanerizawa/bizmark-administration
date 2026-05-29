@@ -148,7 +148,7 @@
                                 </button>
                             </form>
                             @endif
-                            <form action="{{ route('admin.seo.refresh-logs.delete', $log->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus log ini?')">
+                            <form action="{{ route('admin.seo.refresh-logs.delete', $log->id) }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Hapus log ini?')) $el.submit()">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="w-6 h-6 inline-flex items-center justify-center rounded-apple transition" style="background: rgba(255,69,58,0.1); color: rgba(255,69,58,0.7);" title="Hapus Log">

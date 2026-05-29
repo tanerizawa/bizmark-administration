@@ -212,10 +212,10 @@
                                            title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <form action="{{ route('admin.applications.destroy', $application->id) }}" 
-                                              method="POST" 
+                                        <form action="{{ route('admin.applications.destroy', $application->id) }}"
+                                              method="POST"
                                               class="inline"
-                                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus kandidat {{ $application->full_name }}? Data test, interview, dan file CV/Portfolio akan terhapus.')">
+                                              x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin menghapus kandidat {{ $application->full_name }}? Data test, interview, dan file CV/Portfolio akan terhapus.')) $el.submit()">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 

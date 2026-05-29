@@ -77,23 +77,23 @@
     }
 @endphp
 
-<div class="space-y-4" data-mailbox-root data-active-inbox-folder="{{ $activeFolder }}" data-inbox-close-url="{{ route('admin.email-management.index', $closeDetailQuery) }}" data-mailbox-current-url="{{ request()->fullUrl() }}">
+<div style="display:flex;flex-direction:column;gap:16px" data-mailbox-root data-active-inbox-folder="{{ $activeFolder }}" data-inbox-close-url="{{ route('admin.email-management.index', $closeDetailQuery) }}" data-mailbox-current-url="{{ request()->fullUrl() }}">
     @if(session('success'))
-        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.3); color: rgba(52,199,89,1);">
+        <div style="border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:10px;background:rgba(52,199,89,0.12);border:1px solid rgba(52,199,89,0.3);color:rgba(52,199,89,1)">
             <i class="fas fa-check-circle"></i>
             <span class="text-sm">{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3" style="background: rgba(255,59,48,0.12); border: 1px solid rgba(255,59,48,0.3); color: rgba(255,59,48,1);">
+        <div style="border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:10px;background:rgba(255,59,48,0.12);border:1px solid rgba(255,59,48,0.3);color:rgba(255,59,48,1)">
             <i class="fas fa-exclamation-circle"></i>
             <span class="text-sm">{{ session('error') }}</span>
         </div>
     @endif
 
     @if(!$selectedEmail)
-        <section class="card-elevated rounded-apple-xl p-4 space-y-4 mailbox-shell">
+        <section class="mailbox-shell">
             <div class="mailbox-topbar">
                 <div class="min-w-0">
                     <p class="mailbox-kicker">Mailbox Workspace</p>
@@ -110,13 +110,15 @@
                     </div>
                 </div>
                 <div class="mailbox-actions">
-                    <button id="deleteSelectedBtn" class="btn-apple-sm px-3 py-2 hidden" style="background: rgba(255,69,58,0.2); color: rgba(255,69,58,1);" onclick="deleteSelected()">
+                    <button id="deleteSelectedBtn" class="hidden" style="display:inline-flex;align-items:center;padding:7px 12px;background:rgba(255,69,58,0.18);color:rgba(255,69,58,1);border:1px solid rgba(255,69,58,0.35);border-radius:10px;font-size:0.8rem;font-weight:600;cursor:pointer" onclick="deleteSelected()">
                         <i class="fas fa-trash mr-2"></i>Delete Selected (<span id="selectedCount">0</span>)
                     </button>
-                    <button type="button" class="btn-apple-sm px-3 py-2" data-mailbox-refresh>
+                    <button type="button" style="display:inline-flex;align-items:center;padding:7px 12px;border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-secondary);font-size:0.8rem;font-weight:600;cursor:pointer;background:var(--dark-bg-tertiary)" data-mailbox-refresh
+                            onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
                         <i class="fas fa-sync-alt mr-2"></i>Refresh
                     </button>
-                    <a href="{{ route('admin.inbox.compose') }}" class="btn-apple-primary-sm px-3 py-2">
+                    <a href="{{ route('admin.inbox.compose') }}" style="display:inline-flex;align-items:center;padding:7px 14px;background:var(--apple-orange);color:#fff;border:none;border-radius:10px;font-size:0.8rem;font-weight:600;text-decoration:none"
+                       onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
                         <i class="fas fa-plus mr-2"></i>Compose
                     </a>
                 </div>
@@ -149,8 +151,10 @@
                                value="{{ request('tab') === 'inbox' ? request('search') : '' }}">
                     </div>
                     <div class="mailbox-search-actions">
-                        <button type="submit" class="btn-apple-primary-sm px-4 py-2">Cari</button>
-                        <a href="{{ route('admin.email-management.index', $resetInboxQuery) }}" class="btn-apple-sm px-4 py-2">Reset</a>
+                        <button type="submit" style="padding:8px 18px;background:var(--apple-orange);color:#fff;border:none;border-radius:10px;font-size:0.8rem;font-weight:600;cursor:pointer"
+                                onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Cari</button>
+                        <a href="{{ route('admin.email-management.index', $resetInboxQuery) }}" style="padding:8px 14px;border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-secondary);font-size:0.8rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center"
+                           onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">Reset</a>
                     </div>
                 </form>
 
@@ -197,7 +201,7 @@
 
                 <div class="mailbox-selection-row">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" id="selectAll" class="rounded text-apple-blue focus:ring-apple-blue" onchange="toggleSelectAll()">
+                        <input type="checkbox" id="selectAll" style="accent-color:var(--apple-blue);width:14px;height:14px" onchange="toggleSelectAll()">
                         <span class="text-sm text-dark-text-secondary">Pilih semua email di halaman ini</span>
                     </label>
                     <p class="text-xs" style="color: rgba(235,235,245,0.55);">
@@ -214,7 +218,7 @@
     </form>
 
     @if(!$selectedEmail)
-        <div class="space-y-2">
+        <div style="display:flex;flex-direction:column;gap:8px">
             @if(isset($emails) && $emails->count() > 0)
                 @foreach($emails as $email)
                     @php
@@ -267,10 +271,10 @@
                         $accountEmail = $email->emailAccount?->email ?? $email->to_email;
                     @endphp
 
-                    <div class="card-elevated rounded-apple-lg px-3 py-2.5 transition-apple email-management-item {{ $email->is_read ? 'is-read' : 'is-unread' }}" data-email-id="{{ $email->id }}">
+                    <div class="email-management-item {{ $email->is_read ? 'is-read' : 'is-unread' }}" data-email-id="{{ $email->id }}">
                         <div class="flex items-center gap-3">
                             <div class="flex-shrink-0 pt-0.5">
-                                <input type="checkbox" class="email-checkbox rounded text-apple-blue focus:ring-apple-blue"
+                                <input type="checkbox" class="email-checkbox" style="accent-color:var(--apple-blue);width:14px;height:14px"
                                        value="{{ $email->id }}"
                                        onchange="updateSelectedCount()"
                                        onclick="event.stopPropagation()">
@@ -297,7 +301,7 @@
                                                 <span class="mailbox-row-dot"></span>
                                             @endif
                                             @if($email->is_starred)
-                                                <i class="fas fa-star text-[11px] flex-shrink-0" style="color: var(--neuro-warning);"></i>
+                                                <i class="fas fa-star text-[11px] flex-shrink-0" style="color: var(--apple-yellow);"></i>
                                             @endif
                                             @if($email->has_attachments)
                                                 <i class="fas fa-paperclip text-[11px] flex-shrink-0" style="color: rgba(235,235,245,0.6);"></i>
@@ -347,18 +351,18 @@
             @endif
         </div>
     @else
-        <section class="card-elevated rounded-apple-xl overflow-hidden email-detail-panel">
-            <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between gap-3 flex-wrap">
-                <div class="flex items-center gap-3 min-w-0">
-                    <a href="{{ route('admin.email-management.index', $closeDetailQuery) }}" class="inline-flex items-center px-3 py-2 rounded-apple bg-white/5 text-white/75 text-xs font-semibold hover:bg-white/10 transition-colors">
-                        <i class="fas fa-arrow-left mr-2"></i>Kembali ke mailbox
+        <section class="email-detail-panel">
+            <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:12px;min-width:0">
+                    <a href="{{ route('admin.email-management.index', $closeDetailQuery) }}" style="display:inline-flex;align-items:center;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.75);font-size:0.75rem;font-weight:600;text-decoration:none" onmouseover="this.style.background='rgba(255,255,255,0.10)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                        <i class="fas fa-arrow-left" style="margin-right:8px"></i>Kembali ke mailbox
                     </a>
                     <div>
                         <p class="text-xs uppercase tracking-[0.28em]" style="color: rgba(235,235,245,0.45);">Mailbox Detail</p>
                         <p class="text-sm font-semibold text-white">Detail email</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 flex-wrap text-xs">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:0.75rem">
                     <span class="mailbox-inline-tag mailbox-inline-tag-muted"><i class="fas fa-folder-open"></i>{{ ucfirst($selectedEmail->category) }}</span>
                     <span class="mailbox-inline-tag mailbox-inline-tag-muted"><i class="fas fa-clock"></i>{{ $selectedEmail->received_at?->diffForHumans() }}</span>
                     @if($selectedSenderClassification === 'relay')
@@ -367,9 +371,9 @@
                 </div>
             </div>
 
-            <div class="px-5 py-4 border-b border-white/5 space-y-4">
-                <div class="flex items-start justify-between gap-3 flex-wrap">
-                    <div class="space-y-2 min-w-0">
+            <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                    <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
                         <h3 class="text-lg font-semibold text-white break-words">{{ $selectedEmail->subject ?: '(No subject)' }}</h3>
                         <div class="flex flex-wrap gap-2 text-xs">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full" style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,0.95);">
@@ -386,26 +390,26 @@
                         <button type="button"
                                 onclick="toggleInboxStar({{ $selectedEmail->id }}, this)"
                                 data-starred="{{ $selectedEmail->is_starred ? 'true' : 'false' }}"
-                                class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-semibold transition-apple {{ $selectedEmail->is_starred ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40' : 'bg-white/5 text-white/80 border border-white/10' }}">
-                            <i class="fas fa-star mr-2 {{ $selectedEmail->is_starred ? 'text-yellow-400' : 'text-white/60' }}" data-star-icon></i>
+                                style="display:inline-flex;align-items:center;padding:6px 12px;border-radius:10px;font-size:0.75rem;font-weight:600;border:1px solid {{ $selectedEmail->is_starred ? 'color-mix(in srgb,var(--apple-yellow) 40%,transparent)' : 'rgba(255,255,255,0.1)' }};background:{{ $selectedEmail->is_starred ? 'color-mix(in srgb,var(--apple-yellow) 20%,transparent)' : 'rgba(255,255,255,0.05)' }};color:{{ $selectedEmail->is_starred ? 'var(--apple-yellow)' : 'rgba(255,255,255,0.8)' }}" data-starred-btn>
+                            <i class="fas fa-star mr-2" style="color:{{ $selectedEmail->is_starred ? 'var(--apple-yellow)' : 'rgba(255,255,255,0.6)' }}" data-star-icon></i>
                             <span data-star-label>{{ $selectedEmail->is_starred ? 'Starred' : 'Star' }}</span>
                         </button>
-                        <a href="{{ route('admin.inbox.reply', $selectedEmail->id) }}" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-semibold text-white bg-apple-blue transition-apple">
+                        <a href="{{ route('admin.inbox.reply', $selectedEmail->id) }}" style="display:inline-flex;align-items:center;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:600;color:#fff;background:var(--apple-blue);text-decoration:none">
                             <i class="fas fa-reply mr-2"></i>Balas
                         </a>
                         @if($selectedEmail->category === 'trash')
-                            <form action="{{ route('admin.inbox.delete', $selectedEmail->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus email ini secara permanen?');" data-mailbox-async>
+                            <form action="{{ route('admin.inbox.delete', $selectedEmail->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus email ini secara permanen?')" data-mailbox-async>
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-semibold text-red-300 bg-red-500/10 border border-red-400/30 transition-apple">
-                                    <i class="fas fa-times-circle mr-2"></i>Hapus permanen
+                                <button type="submit" style="display:inline-flex;align-items:center;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:600;color:#fca5a5;background:rgba(239,68,68,0.1);border:1px solid rgba(248,113,113,0.3);cursor:pointer">
+                                    <i class="fas fa-times-circle" style="margin-right:8px"></i>Hapus permanen
                                 </button>
                             </form>
                         @else
-                            <form action="{{ route('admin.inbox.trash', $selectedEmail->id) }}" method="POST" onsubmit="return confirm('Pindahkan email ini ke trash?');" data-mailbox-async>
+                            <form action="{{ route('admin.inbox.trash', $selectedEmail->id) }}" method="POST" onsubmit="return confirm('Pindahkan email ini ke trash?')" data-mailbox-async>
                                 @csrf
-                                <button type="submit" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-semibold text-red-300 bg-red-500/10 border border-red-400/30 transition-apple">
-                                    <i class="fas fa-trash mr-2"></i>Pindahkan ke trash
+                                <button type="submit" style="display:inline-flex;align-items:center;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:600;color:#fca5a5;background:rgba(239,68,68,0.1);border:1px solid rgba(248,113,113,0.3);cursor:pointer">
+                                    <i class="fas fa-trash" style="margin-right:8px"></i>Pindahkan ke trash
                                 </button>
                             </form>
                         @endif
@@ -435,27 +439,27 @@
                 </div>
             </div>
 
-            <div class="px-5 py-5 space-y-4">
+            <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
                 @if($selectedEmail->body_html || $selectedEmail->body_text)
                     <div class="flex gap-2 flex-wrap">
                         @if($selectedEmail->body_html)
-                            <button type="button" onclick="showManagementHtmlView()" id="managementBtnHtml" class="px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white">
+                            <button type="button" onclick="showManagementHtmlView()" id="managementBtnHtml" style="padding:6px 16px;font-size:0.75rem;font-weight:600;border-radius:8px;background:var(--apple-blue);color:#fff;border:none;cursor:pointer">
                                 <i class="fas fa-code mr-2"></i>HTML View
                             </button>
                         @endif
                         @if($selectedEmail->body_text)
-                            <button type="button" onclick="showManagementTextView()" id="managementBtnText" class="px-4 py-2 text-xs font-semibold rounded-apple {{ !$selectedEmail->body_html ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70' }}">
+                            <button type="button" onclick="showManagementTextView()" id="managementBtnText" style="padding:6px 16px;font-size:0.75rem;font-weight:600;border-radius:8px;{{ !$selectedEmail->body_html ? 'background:var(--apple-blue);color:#fff' : 'background:rgba(255,255,255,0.10);color:rgba(255,255,255,0.7)' }};border:none;cursor:pointer">
                                 <i class="fas fa-align-left mr-2"></i>Text View
                             </button>
                         @endif
-                        <button type="button" onclick="showManagementRawView()" id="managementBtnRaw" class="px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70">
+                        <button type="button" onclick="showManagementRawView()" id="managementBtnRaw" style="padding:6px 16px;font-size:0.75rem;font-weight:600;border-radius:8px;background:rgba(255,255,255,0.10);color:rgba(255,255,255,0.7);border:none;cursor:pointer">
                             <i class="fas fa-file-code mr-2"></i>Raw View
                         </button>
                     </div>
                 @endif
 
                 @if($selectedEmail->body_html)
-                    <div id="managementHtmlView" class="rounded-apple-xl overflow-hidden email-html-shell">
+                    <div id="managementHtmlView" class="email-html-shell">
                         <div class="email-html-meta">
                             <span class="email-html-badge">
                                 <i class="fas fa-envelope-open-text mr-2"></i>Rendered HTML Email
@@ -483,12 +487,12 @@
                 @endif
 
                 @if($selectedEmail->body_text)
-                    <div id="managementTextView" class="rounded-apple-xl p-6" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); {{ $selectedEmail->body_html ? 'display: none;' : '' }}">
+                    <div id="managementTextView" style="border-radius:14px;padding:24px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06); {{ $selectedEmail->body_html ? 'display: none;' : '' }}">
                         <div class="text-sm text-white" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; white-space: pre-wrap;">{{ $selectedEmail->clean_body_text }}</div>
                     </div>
                 @endif
 
-                <div id="managementRawView" class="rounded-apple-xl p-6" style="background: rgba(28,28,30,1); border: 1px solid rgba(255,255,255,0.06); display: none; max-height: 600px; overflow: auto;">
+                <div id="managementRawView" style="border-radius:14px;padding:24px;background:rgba(28,28,30,1);border:1px solid rgba(255,255,255,0.06);display:none;max-height:600px;overflow:auto">
                     <div class="mb-3">
                         <span class="px-3 py-1 text-xs font-semibold rounded-full" style="background: rgba(255,149,0,0.2); color: rgba(255,149,0,1);">
                             <i class="fas fa-exclamation-triangle mr-1"></i>Debug View - Raw MIME Content
@@ -498,19 +502,19 @@
                 </div>
 
                 @if($selectedEmail->attachments && count($selectedEmail->attachments) > 0)
-                    <div class="space-y-3 pt-1">
+                    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
                         <h4 class="text-sm font-semibold text-white">
                             <i class="fas fa-paperclip mr-2"></i>Lampiran ({{ count($selectedEmail->attachments) }})
                         </h4>
                         <div class="grid grid-cols-1 gap-3">
                             @foreach($selectedEmail->attachments as $attachment)
-                                <div class="p-4 rounded-apple border border-white/10 flex items-center justify-between gap-3">
+                                <div style="padding:16px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between;gap:12px">
                                     <div class="min-w-0">
                                         <p class="text-sm font-semibold text-white break-words">{{ $attachment['filename'] ?? 'Attachment' }}</p>
                                         <p class="text-xs text-white/50">{{ $attachment['content_type'] ?? 'File' }}</p>
                                     </div>
                                     @if(isset($attachment['download_url']))
-                                        <a href="{{ $attachment['download_url'] }}" class="text-xs font-semibold text-apple-blue hover:underline">Unduh</a>
+                                        <a href="{{ $attachment['download_url'] }}" style="font-size:0.75rem;font-weight:600;color:var(--apple-blue);text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Unduh</a>
                                     @endif
                                 </div>
                             @endforeach
@@ -525,7 +529,16 @@
 @push('styles')
 <style>
 .mailbox-shell {
-    border: 1px solid rgba(255,255,255,0.05);
+    background: var(--dark-bg-elevated);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.48);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
 .mailbox-topbar {
@@ -803,6 +816,8 @@
 
 .email-management-item {
     border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 10px 12px;
     position: relative;
     transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
@@ -925,7 +940,7 @@
     height: 0.45rem;
     border-radius: 999px;
     flex-shrink: 0;
-    background: var(--neuro-primary);
+    background: var(--apple-blue);
 }
 
 .mailbox-row-meta {
@@ -997,7 +1012,13 @@
 }
 
 .email-detail-panel {
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--dark-bg-elevated);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.48);
+    overflow: hidden;
 }
 
 .mailbox-detail-grid {
@@ -1502,19 +1523,15 @@ function toggleInboxStar(emailId, button) {
 
         const nextState = !!data.starred;
         button.dataset.starred = nextState ? 'true' : 'false';
-        button.classList.toggle('bg-yellow-500/20', nextState);
-        button.classList.toggle('text-yellow-400', nextState);
-        button.classList.toggle('border-yellow-500/40', nextState);
-        button.classList.toggle('border-white/10', !nextState);
-        button.classList.toggle('bg-white/5', !nextState);
-        button.classList.toggle('text-white/80', !nextState);
+        button.style.background = nextState ? 'color-mix(in srgb,var(--apple-yellow) 20%,transparent)' : 'rgba(255,255,255,0.05)';
+        button.style.color = nextState ? 'var(--apple-yellow)' : 'rgba(255,255,255,0.8)';
+        button.style.borderColor = nextState ? 'color-mix(in srgb,var(--apple-yellow) 40%,transparent)' : 'rgba(255,255,255,0.1)';
 
         const icon = button.querySelector('[data-star-icon]');
         const label = button.querySelector('[data-star-label]');
 
         if (icon) {
-            icon.classList.toggle('text-yellow-400', nextState);
-            icon.classList.toggle('text-white/60', !nextState);
+            icon.style.color = nextState ? 'var(--apple-yellow)' : 'rgba(255,255,255,0.6)';
         }
 
         if (label) {
@@ -1557,9 +1574,8 @@ function setManagementView(activeView) {
             return;
         }
 
-        node.className = key === activeView
-            ? 'px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white'
-            : 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
+        node.style.background = key === activeView ? 'var(--apple-blue)' : 'rgba(255,255,255,0.10)';
+        node.style.color = key === activeView ? '#fff' : 'rgba(255,255,255,0.7)';
     });
 }
 

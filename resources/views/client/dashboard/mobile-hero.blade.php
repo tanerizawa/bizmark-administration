@@ -68,19 +68,19 @@
         {{-- Quick Actions --}}
         <div class="mt-3 grid grid-cols-3 gap-2">
             <a href="{{ route('client.applications.create') }}"
-               class="flex flex-col items-center gap-1 px-2 py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-lg min-h-[44px] active:scale-95 transition-transform"
+               class="flex flex-col items-center gap-1 px-2 py-2.5 bg-white text-[#0a66c2] rounded-lg min-h-[44px] active:scale-95 transition-transform font-semibold shadow-sm"
                aria-label="Ajukan permohonan baru">
                 <i class="fas fa-plus text-base" aria-hidden="true"></i>
-                <span class="text-[11px] font-medium leading-tight">Ajukan</span>
+                <span class="text-[11px] font-semibold leading-tight">Ajukan</span>
             </a>
             <a href="{{ route('client.documents.index') }}"
-               class="flex flex-col items-center gap-1 px-2 py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-lg min-h-[44px] active:scale-95 transition-transform"
+               class="flex flex-col items-center gap-1 px-2 py-2.5 bg-white/20 backdrop-blur border border-white/30 rounded-lg min-h-[44px] active:scale-95 transition-transform text-white"
                aria-label="Kelola dokumen">
                 <i class="fas fa-folder text-base" aria-hidden="true"></i>
                 <span class="text-[11px] font-medium leading-tight">Dokumen</span>
             </a>
             <a href="{{ route('client.projects.index') }}"
-               class="flex flex-col items-center gap-1 px-2 py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-lg min-h-[44px] active:scale-95 transition-transform"
+               class="flex flex-col items-center gap-1 px-2 py-2.5 bg-white/20 backdrop-blur border border-white/30 rounded-lg min-h-[44px] active:scale-95 transition-transform text-white"
                aria-label="Lihat semua proyek">
                 <i class="fas fa-briefcase text-base" aria-hidden="true"></i>
                 <span class="text-[11px] font-medium leading-tight">Proyek</span>

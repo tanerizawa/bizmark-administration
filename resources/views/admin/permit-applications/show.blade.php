@@ -128,9 +128,9 @@
                                     Konversi aplikasi ini menjadi proyek untuk mulai mengelola {{ count($formData['bizmark_permits'] ?? []) }} izin
                                 </p>
                             </div>
-                            <form action="{{ route('admin.permit-applications.convert-to-project', $application->id) }}" 
-                                  method="POST" 
-                                  onsubmit="return confirm('Konversi aplikasi ini menjadi proyek?')">
+                            <form action="{{ route('admin.permit-applications.convert-to-project', $application->id) }}"
+                                  method="POST"
+                                  x-data @submit.prevent="if(confirm('Konversi aplikasi ini menjadi proyek?')) $el.submit()">
                                 @csrf
                                 <button type="submit" class="px-4 py-2 rounded-apple text-sm font-medium text-white bg-apple-green hover:opacity-80 transition-all whitespace-nowrap">
                                     <i class="fas fa-rocket mr-2"></i>Konversi ke Proyek
@@ -434,7 +434,7 @@
                             <i class="fas fa-folder mr-2 text-apple-blue"></i>Dokumen
                         </h2>
                         @if($application->status === 'under_review' && $application->documents->where('status', 'pending')->count() > 0)
-                            <form action="{{ route('admin.applications.documents.approve-all', $application->id) }}" method="POST" onsubmit="return confirm('Approve semua dokumen pending?')">
+                            <form action="{{ route('admin.applications.documents.approve-all', $application->id) }}" method="POST" x-data @submit.prevent="if(confirm('Approve semua dokumen pending?')) $el.submit()">
                                 @csrf
                                 <button type="submit" class="px-4 py-2 text-sm rounded-apple font-medium text-white bg-apple-green hover:opacity-80 transition-all">
                                     <i class="fas fa-check-double mr-2"></i>Approve All ({{ $application->documents->where('status', 'pending')->count() }})
@@ -605,7 +605,7 @@
                                         <p class="text-sm whitespace-pre-wrap text-dark-text-primary/75">{{ $note->note }}</p>
                                         
                                         @if($note->author_id === Auth::id())
-                                            <form action="{{ route('admin.applications.notes.destroy', [$application->id, $note->id]) }}" method="POST" class="mt-2" onsubmit="return confirm('Hapus catatan ini?')">
+                                            <form action="{{ route('admin.applications.notes.destroy', [$application->id, $note->id]) }}" method="POST" class="mt-2" x-data @submit.prevent="if(confirm('Hapus catatan ini?')) $el.submit()">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-xs text-[#FF453A] hover:opacity-70 transition-colors">

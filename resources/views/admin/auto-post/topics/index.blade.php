@@ -229,10 +229,10 @@
                                         <i class="fas fa-edit mr-1"></i>Edit
                                     </a>
                                     @if($topic->status !== 'processing')
-                                        <form action="{{ route('auto-post.topics.destroy', $topic) }}" method="POST" class="inline">
+                                        <form action="{{ route('auto-post.topics.destroy', $topic) }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Yakin hapus topic ini?')) $el.submit()">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Yakin hapus topic ini?')" class="text-apple-red hover:text-red-400 transition-apple">
+                                            <button type="submit" class="text-apple-red hover:text-red-400 transition-apple">
                                                 <i class="fas fa-trash mr-1"></i>Delete
                                             </button>
                                         </form>

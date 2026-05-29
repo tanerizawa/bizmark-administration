@@ -243,7 +243,7 @@
 
                 @if($template->campaigns->count() === 0)
                 <form action="{{ route('admin.templates.destroy', $template->id) }}" method="POST"
-                      onsubmit="return confirm('Delete this template? This cannot be undone.')">
+                      x-data @submit.prevent="if(confirm('Delete this template? This cannot be undone.')) $el.submit()">
                     @csrf @method('DELETE')
                     <button type="submit" class="w-full border border-red-600 text-red-400 hover:bg-red-900/30 font-medium py-2.5 rounded-xl transition text-sm">
                         <i class="fas fa-trash mr-2"></i>Delete Template

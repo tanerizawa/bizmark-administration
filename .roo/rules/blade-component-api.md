@@ -1,175 +1,196 @@
-# Blade Component API Design Rules
+# Blade Component API — Design Rules
+> **Last Updated:** 2026-05-03 | Laravel 11 · Blade Components · Alpine.js v3.15.1
+
+---
+
+## Konteks: Blade Components vs Direct HTML
+
+App ini menggunakan **dua pendekatan** tergantung konteks:
+
+| Pendekatan | Digunakan Di | Kapan |
+|-----------|-------------|-------|
+| `x-ui.*` Blade components | Landing page, generic UI | Komponen reusable dengan slot |
+| Direct HTML + inline style | Admin panel views | Styling Apple dark theme reliabel |
+
+> **Admin panel**: Prioritaskan direct HTML dengan inline style + CSS vars daripada Blade component, karena component kadang membawa class yang konflik dengan dark theme. Gunakan Blade component `x-ui.*` hanya untuk komponen yang benar-benar reusable (modal, alert, pagination).
+
+---
 
 ## Naming Convention
 
-### File naming
-Semua komponen menggunakan **kebab-case**:
+### File naming — kebab-case
 ```
 components/ui/button.blade.php        ✅
 components/ui/stat-card.blade.php     ✅
 components/ui/data-table.blade.php    ✅
 ```
 
-### Component prefix
-Gunakan prefix `x-` (bukan `ui.`):
-```
-<x-button variant="primary">         ✅
-<x-ui.button variant="primary">       ✅ (alternatif, menggunakan namespace)
-```
-
-Gunakan `.` namespace untuk organisasi di folder `components/ui/`:
+### Namespace `x-ui.*`
 ```blade
-{{-- Panggil dengan: --}}
-<x-ui.button />
-<x-ui.card />
-<x-ui.stat-card />
-
-{{-- BUKAN: --}}
-<x-button /> {{-- Terlalu generic, bentrok dengan Livewire --}}
+{{-- Gunakan namespace ui untuk organisasi --}}
+<x-ui.button variant="primary">Submit</x-ui.button>
+<x-ui.card>{{ $slot }}</x-ui.card>
+<x-ui.modal :open="$showModal" title="Konfirmasi">
 ```
+
+---
 
 ## Props API Design
 
-### Wajib: Named Parameters
+### WAJIB: Named Parameters
 ```blade
-<!-- ✅ WAJIB -->
+{{-- ✅ WAJIB --}}
 <x-ui.button variant="primary" size="lg">Submit</x-ui.button>
 
-<!-- ❌ DILARANG - Positional magic -->
+{{-- ❌ DILARANG --}}
 <x-ui.button primary large>Submit</x-ui.button>
 ```
 
-### Props dengan default values
+### `@props` dengan default values
 ```blade
 @props([
     'variant' => 'primary',   // primary | secondary | outline | ghost | danger
     'size' => 'md',           // sm | md | lg
     'disabled' => false,
     'loading' => false,
-    'type' => 'button',       // button | submit | reset
-    'href' => null,           // jika diisi render <a> bukan <button>
-    'class' => '',            // additional classes
+    'type' => 'button',
+    'href' => null,
+    'class' => '',
 ])
 ```
 
-### Boolean props harus pakai colon
+### Boolean props — WAJIB pakai colon
 ```blade
-<!-- ✅ WAJIB -->
-<x-ui.button :disabled="true" :loading="isSaving">
+{{-- ✅ WAJIB --}}
+<x-ui.button :disabled="true" :loading="$isSaving">
 
-<!-- ❌ DILARANG -->
+{{-- ❌ DILARANG --}}
 <x-ui.button disabled loading>
 ```
+
+---
+
+## Blade Component + Dark Theme
+
+Saat membuat Blade component untuk admin panel, gunakan CSS vars, bukan Tailwind color classes:
+
+```blade
+{{-- ✅ BENAR — component dengan CSS vars --}}
+<div {{ $attributes->merge(['class' => '']) }}
+     style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;padding:{{ $padding ?? '16px' }}">
+    {{ $slot }}
+</div>
+
+{{-- ❌ SALAH — Tailwind dark: di component --}}
+<div {{ $attributes->merge(['class' => 'bg-white dark:bg-gray-800 rounded-xl p-4']) }}>
+    {{ $slot }}
+</div>
+```
+
+---
 
 ## Slot System
 
 ### Default slot
 ```blade
 {{-- Component --}}
-<div {{ $attributes->merge(['class' => '...']) }}>
+<div {{ $attributes->merge(['class' => '']) }}>
     {{ $slot }}
 </div>
 
 {{-- Usage --}}
-<x-ui.button>Click Me</x-ui.button>
+<x-ui.card>Konten di sini</x-ui.card>
 ```
 
 ### Named slots
 ```blade
-{{-- Component --}}
-<div>
-    <header>{{ $header }}</header>
-    <main>{{ $slot }}</main>
-    <footer>{{ $footer }}</footer>
+{{-- Component (card.blade.php) --}}
+<div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+    @if(isset($header))
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dark-separator)">
+        {{ $header }}
+    </div>
+    @endif
+    <div style="padding:16px 20px">
+        {{ $slot }}
+    </div>
+    @if(isset($footer))
+    <div style="padding:12px 20px;border-top:1px solid var(--dark-separator)">
+        {{ $footer }}
+    </div>
+    @endif
 </div>
 
 {{-- Usage --}}
 <x-ui.card>
-    <x-slot:header>Title</x-slot:header>
-    Main content here
-    <x-slot:footer>Footer</x-slot:footer>
+    <x-slot:header>
+        <h3 style="color:var(--dark-text-primary);font-size:.9rem;font-weight:700">Judul</h3>
+    </x-slot:header>
+    Konten utama
+    <x-slot:footer>
+        <button>Simpan</button>
+    </x-slot:footer>
 </x-ui.card>
 ```
 
-### Scoped slots (for table rows etc)
-```blade
-{{-- Component --}}
-@foreach($items as $item)
-    {{ $row($item) }}
-@endforeach
+---
 
-{{-- Usage --}}
-<x-ui.table :items="$users">
-    <x-slot:row="$user">
-        <td>{{ $user->name }}</td>
-    </x-slot:row>
-</x-ui.table>
+## `$attributes` Forwarding
+
+WAJIB gunakan `$attributes->merge()` agar Livewire/Alpine directives bisa diteruskan:
+
+```blade
+{{-- ✅ WAJIB di setiap component --}}
+<button {{ $attributes->merge(['type' => $type]) }}
+        style="background:var(--apple-blue);color:#fff;...">
+    {{ $slot }}
+</button>
+
+{{-- Maka bisa digunakan: --}}
+<x-ui.button wire:click="save" @click="loading = true" type="submit">
+    Simpan
+</x-ui.button>
 ```
 
-## Attributes Forwarding
+---
 
-### Merge classes dengan parent
+## Alpine.js di Blade Components
+
 ```blade
-<div {{ $attributes->merge(['class' => 'bg-white rounded-2xl p-6']) }}>
-```
+{{-- Component bisa embed Alpine state --}}
+@props(['title' => '', 'open' => false])
 
-### Conditional class merge
-```blade
-@php
-    $classes = [
-        'bg-blue-500 text-white' => $variant === 'primary',
-        'bg-gray-100 text-gray-700' => $variant === 'ghost',
-        'px-4 py-2 text-sm' => $size === 'sm',
-        'px-6 py-3 text-base' => $size === 'md',
-    ];
-@endphp
-
-<div {{ $attributes->class($classes) }}>
-```
-
-## Alpine.js + Blade Integration
-
-### Component dengan Alpine data
-```blade
-@props(['id' => 'dropdown-'.uniqid()])
-
-<div
-    x-data="{ open: false }"
-    x-id="['dropdown-button']"
-    {{ $attributes }}
->
-    <button
-        :id="$id('dropdown-button')"
-        @click="open = !open"
-        @keydown.escape="open = false"
-        :aria-expanded="open"
-        aria-haspopup="true"
-    >
-        {{ $trigger }}
-    </button>
-
-    <div
-        x-show="open"
-        x-transition
-        @click.outside="open = false"
-        role="menu"
-    >
+<div x-data="{ open: {{ $open ? 'true' : 'false' }} }"
+     @keydown.escape.window="open = false">
+    <button @click="open = !open">{{ $title }}</button>
+    <div x-cloak x-show="open" x-transition @click.outside="open = false">
         {{ $slot }}
     </div>
 </div>
 ```
 
-## Component Testing Checklist
+---
 
-Setiap komponen WAJIB memenuhi:
+## Component Checklist
 
-| Check | Keterangan |
-|-------|-----------|
-| [ ] Props documentation | Setiap prop didokumentasikan dengan komentar |
-| [ ] Default values | Semua props punya default value |
-| [ ] Dark mode | Bekerja di `dark:` mode |
-| [ ] Accessibility | `role`, `aria-*`, keyboard navigation |
-| [ ] Responsive | Bekerja di mobile + desktop |
-| [ ] Loading state | Punya state loading jika relevan |
-| [ ] Error state | Punya state error untuk form components |
-| [ ] Edge cases | Empty state, null values, long text |
+Saat membuat Blade component baru:
+
+- [ ] `@props([...])` di baris pertama dengan defaults
+- [ ] `$attributes->merge()` di root element
+- [ ] CSS vars (bukan hardcoded hex) untuk warna
+- [ ] `x-cloak` di semua show/hide Alpine elements
+- [ ] `aria-*` attributes untuk accessibility
+- [ ] Support untuk `$slot` (default) dan named slots jika diperlukan
+- [ ] Tidak menggunakan Tailwind `dark:` color classes
+
+---
+
+## Testing
+
+```php
+// tests/Feature/BladeComponentTest.php
+it('renders button with variant', function() {
+    $view = $this->blade('<x-ui.button variant="primary">Save</x-ui.button>');
+    $view->assertSee('Save');
+});
+```

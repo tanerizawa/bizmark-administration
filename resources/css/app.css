@@ -6,8 +6,8 @@
 /* Import Design Tokens (Single Source of Truth) */
 @import './design-tokens.css';
 
-/* Import CSS Variables (Legacy — will be removed after migration) */
-@import './neuroscience-variables.css';
+/* AOS (Animate On Scroll) — from npm, not CDN */
+@import 'aos/dist/aos.css';
 
 /* Import Tailwind CSS */
 @import 'tailwindcss';

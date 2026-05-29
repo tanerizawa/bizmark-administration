@@ -13,12 +13,12 @@
     $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
 @endphp
 
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-28 pb-16 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide text-center">
-        <span class="section-badge mb-4">FAQ</span>
-        <h1 class="section-title mb-4">Pusat Bantuan &amp; FAQ</h1>
-        <p class="section-description mb-8">Temukan jawaban untuk pertanyaan umum seputar perizinan lingkungan dan industri di Indonesia.</p>
-        <a href="{{ route('contact.index') }}" class="btn btn-outline-primary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
+        <span class="eyebrow mb-4">FAQ</span>
+        <h1 class="display-lg mb-4">Pusat Bantuan &amp; FAQ</h1>
+        <p class="text-lg leading-relaxed text-gray-600 mb-8">Temukan jawaban untuk pertanyaan umum seputar perizinan lingkungan dan industri di Indonesia.</p>
+        <a href="{{ route('contact.index') }}" class="btn btn-ghost"><i class="fas fa-envelope"></i> Hubungi Tim</a>
     </div>
 </section>
 
@@ -26,16 +26,16 @@
     <div class="container-wide">
         <div class="grid sm:grid-cols-2 gap-6">
             @foreach($topics as $slug => $topic)
-                <a href="{{ url('/faq/' . $topic['slug']) }}" class="card">
+                <a href="{{ url('/faq/' . $topic['slug']) }}" class="premium-card">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(14,165,233,.12);color:var(--color-accent);">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-sky-500/10 text-amber-600">
                             <i class="fas {{ $topic['icon'] ?? 'fa-circle-question' }}"></i>
                         </div>
                         <div class="min-w-0 flex-1">
-                            <h2 class="text-lg font-bold mb-2 card-title" style="color:var(--text-primary);">{{ $topic['title'] }}</h2>
-                            <p class="text-sm mb-3" style="color:var(--text-secondary);">{{ $topic['description'] }}</p>
+                            <h2 class="text-lg font-bold mb-2 card-title text-gray-900 dark:text-white">{{ $topic['title'] }}</h2>
+                            <p class="text-sm mb-3 text-gray-600">{{ $topic['description'] }}</p>
                             <div class="flex items-center justify-between gap-4">
-                                <span class="text-xs" style="color:var(--text-tertiary);">{{ $topic['faq_count'] }} artikel terkait</span>
+                                <span class="text-xs text-gray-400">{{ $topic['faq_count'] }} artikel terkait</span>
                                 <span class="link-primary text-sm">Lihat FAQ <i class="fas fa-arrow-right ml-2"></i></span>
                             </div>
                         </div>
@@ -46,13 +46,13 @@
     </div>
 </section>
 
-<section class="section-sm" style="background:var(--surface-dark);">
+<section class="section-sm section-premium">
     <div class="container-wide text-center">
-        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Tidak Menemukan Jawaban?</h2>
-        <p class="mb-7" style="color:rgba(255,255,255,.74);">Tanya langsung, tim kami siap membantu.</p>
+        <h2 class="text-gray-900 mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Tidak Menemukan Jawaban?</h2>
+        <p class="mb-7 text-gray-600">Tanya langsung, tim kami siap membantu.</p>
         <div class="flex flex-wrap justify-center gap-3">
-            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-success"><i class="fab fa-whatsapp"></i> Tanya via WhatsApp</a>
-            <a href="{{ route('contact.index') }}" class="btn btn-secondary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
+            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-gold"><i class="fab fa-whatsapp"></i> Tanya via WhatsApp</a>
+            <a href="{{ route('contact.index') }}" class="btn btn-ghost"><i class="fas fa-envelope"></i> Hubungi Tim</a>
         </div>
     </div>
 </section>

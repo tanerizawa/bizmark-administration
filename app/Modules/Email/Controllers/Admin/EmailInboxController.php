@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\EmailAccount;
 use App\Models\EmailAssignment;
 use App\Models\EmailInbox;
+use App\Services\OpenRouterService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Services\OpenRouterService;
 
 class EmailInboxController extends Controller
 {
@@ -52,7 +52,7 @@ class EmailInboxController extends Controller
         $subjectHint = $validated['subject'] ?? '';
         $bodyHint = $validated['body_html'] ?? '';
 
-        $system = "Anda adalah penulis email profesional Bahasa Indonesia. Perbaiki subjek dan buat body email HTML profesional berdasarkan input. Kembalikan JSON: {\"email_subject\": \"...\", \"email_html\": \"...\" }.";
+        $system = 'Anda adalah penulis email profesional Bahasa Indonesia. Perbaiki subjek dan buat body email HTML profesional berdasarkan input. Kembalikan JSON: {"email_subject": "...", "email_html": "..." }.';
         $user = "To: {$to}\nSubjectHint: {$subjectHint}\nBodyHint: {$bodyHint}\n\nBerikan subjek yang singkat dan email HTML (paragraphs, bold, list jika perlu).";
 
         $aiResponse = $openRouter->chat([

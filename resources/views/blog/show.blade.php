@@ -254,6 +254,46 @@
                         <ol id="toc-list" class="space-y-2 text-sm" style="list-style: none; padding-left: 0;"></ol>
                     </nav>
 
+                    {{-- Related Tools widget — try yourself (emerald palette) --}}
+                    <div class="premium-card" style="border-color: rgba(var(--tools-rgb),.2); background: var(--tools-glow);">
+                        <div class="text-[11px] font-bold uppercase tracking-[.15em] mb-3" style="color: var(--tools);">
+                            <i class="fas fa-tools mr-1.5"></i>
+                            {{ $isEn ? 'Try the tools' : 'Coba tools-nya' }}
+                        </div>
+                        <p class="text-sm mb-4" style="color: var(--text-secondary);">
+                            {{ $isEn ? 'Free, no signup needed.' : 'Gratis, tanpa daftar.' }}
+                        </p>
+                        <div class="space-y-2">
+                            <a href="{{ $primaryCtaRoute }}" class="flex items-center gap-3 p-2.5 rounded-lg hover:no-underline transition" style="background: var(--surface); border: 1px solid rgba(var(--tools-rgb),.15);">
+                                <span class="editorial-icon-badge is-tools is-circle flex-shrink-0" style="width:2rem;height:2rem;">
+                                    <i class="fas fa-robot text-xs" aria-hidden="true"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-semibold truncate" style="color: var(--text-primary);">{{ $isEn ? 'AI Permit Checker' : 'Cek Perizinan AI' }}</span>
+                                    <span class="block text-[11px]" style="color: var(--text-secondary);">{{ $isEn ? '1.000+ KBLI mapped' : '1.000+ KBLI dipetakan' }}</span>
+                                </span>
+                            </a>
+                            <a href="{{ route('calculator.index') }}" class="flex items-center gap-3 p-2.5 rounded-lg hover:no-underline transition" style="background: var(--surface); border: 1px solid rgba(var(--tools-rgb),.15);">
+                                <span class="editorial-icon-badge is-tools is-circle flex-shrink-0" style="width:2rem;height:2rem;">
+                                    <i class="fas fa-calculator text-xs" aria-hidden="true"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-semibold truncate" style="color: var(--text-primary);">{{ $isEn ? 'Cost Calculator' : 'Kalkulator Biaya' }}</span>
+                                    <span class="block text-[11px]" style="color: var(--text-secondary);">{{ $isEn ? 'Estimate per item' : 'Estimasi per item' }}</span>
+                                </span>
+                            </a>
+                            <a href="{{ route('polygon.shp.index') }}" class="flex items-center gap-3 p-2.5 rounded-lg hover:no-underline transition" style="background: var(--surface); border: 1px solid rgba(var(--tools-rgb),.15);">
+                                <span class="editorial-icon-badge is-tools is-circle flex-shrink-0" style="width:2rem;height:2rem;">
+                                    <i class="fas fa-draw-polygon text-xs" aria-hidden="true"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-semibold truncate" style="color: var(--text-primary);">{{ $isEn ? 'SHP Polygon Maker' : 'Polygon SHP Maker' }}</span>
+                                    <span class="block text-[11px]" style="color: var(--text-secondary);">{{ $isEn ? 'For OSS RBA upload' : 'Untuk upload OSS RBA' }}</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
                     {{-- Author mini-card --}}
                     <div class="premium-card">
                         <div class="flex items-center gap-4">

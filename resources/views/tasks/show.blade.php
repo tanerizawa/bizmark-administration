@@ -24,10 +24,10 @@
                    class="btn-warning px-4 py-2 rounded-apple-lg font-medium transition-colors">
                     <i class="fas fa-edit mr-2"></i>Edit
                 </a>
-                <form action="{{ route('tasks.destroy', $task) }}" 
-                      method="POST" 
+                <form action="{{ route('tasks.destroy', $task) }}"
+                      method="POST"
                       class="inline"
-                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus tugas ini?')">
+                      x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin menghapus tugas ini?')) $el.submit()">
                     @csrf
                     @method('DELETE')
                     <button type="submit" 

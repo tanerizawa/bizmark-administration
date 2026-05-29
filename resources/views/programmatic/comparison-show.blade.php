@@ -44,27 +44,27 @@ $faqSchema = [
     $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
 @endphp
 
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-28 pb-16 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide text-center">
         <a href="{{ url('/layanan/perbandingan') }}" class="link-primary text-sm inline-flex items-center mb-5"><i class="fas fa-arrow-left mr-2"></i>Kembali ke Perbandingan</a>
         <div class="flex items-center justify-center gap-4 mb-6">
             <div class="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xl" style="background-color: {{ $serviceA['color'] ?? '#0f172a' }}">
                 <i class="fas {{ $serviceA['icon'] ?? 'fa-file-alt' }}"></i>
             </div>
-            <span class="text-sm" style="color:var(--text-tertiary);font-weight:900;letter-spacing:.12em;">VS</span>
+            <span class="text-sm text-gray-400 font-black tracking-widest">VS</span>
             <div class="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xl" style="background-color: {{ $serviceB['color'] ?? '#0f172a' }}">
                 <i class="fas {{ $serviceB['icon'] ?? 'fa-file-alt' }}"></i>
             </div>
         </div>
-        <h1 class="section-title mb-4">{{ $pageData['h1'] }}</h1>
-        <p class="section-description" style="margin-left:auto;margin-right:auto;">{{ $pageData['intro'] }}</p>
+        <h1 class="display-lg mb-4">{{ $pageData['h1'] }}</h1>
+        <p class="text-lg leading-relaxed text-gray-600" style="margin-left:auto;margin-right:auto;">{{ $pageData['intro'] }}</p>
     </div>
 </section>
 
 <section class="section">
     <div class="container-wide">
         <div class="grid md:grid-cols-2 gap-6 mb-10">
-            <div class="card" style="border-color: {{ $serviceA['color'] ?? '#0f172a' }}35;">
+            <div class="premium-card" style="border-color: {{ $serviceA['color'] ?? '#0f172a' }}35;">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background-color: {{ $serviceA['color'] ?? '#0f172a' }}">
                         <i class="fas {{ $serviceA['icon'] ?? 'fa-file-alt' }}"></i>
@@ -75,7 +75,7 @@ $faqSchema = [
                 <a href="{{ route('services.show.id', $slugA) }}" class="link-primary text-sm inline-flex items-center">Detail Layanan <i class="fas fa-arrow-right ml-2"></i></a>
             </div>
 
-            <div class="card" style="border-color: {{ $serviceB['color'] ?? '#0f172a' }}35;">
+            <div class="premium-card" style="border-color: {{ $serviceB['color'] ?? '#0f172a' }}35;">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background-color: {{ $serviceB['color'] ?? '#0f172a' }}">
                         <i class="fas {{ $serviceB['icon'] ?? 'fa-file-alt' }}"></i>
@@ -87,7 +87,7 @@ $faqSchema = [
             </div>
         </div>
 
-        <div class="card mb-10">
+        <div class="premium-card mb-10">
             <h2 class="text-xl font-bold mb-4" style="color:var(--text-primary);">Tabel Perbandingan</h2>
             <div class="content-prose">
                 <div style="overflow:auto;">
@@ -114,7 +114,7 @@ $faqSchema = [
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 mb-10">
-            <div class="card">
+            <div class="premium-card">
                 <h3 class="text-lg font-bold mb-3" style="color:var(--text-primary);">Pilih {{ $serviceA['title'] }} Jika:</h3>
                 <div class="content-prose">
                     <ul>
@@ -124,7 +124,7 @@ $faqSchema = [
                     </ul>
                 </div>
             </div>
-            <div class="card">
+            <div class="premium-card">
                 <h3 class="text-lg font-bold mb-3" style="color:var(--text-primary);">Pilih {{ $serviceB['title'] }} Jika:</h3>
                 <div class="content-prose">
                     <ul>
@@ -140,7 +140,7 @@ $faqSchema = [
 
 <section class="section-sm" style="background:var(--surface-secondary);">
     <div class="container-wide">
-        <h2 class="section-title mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">FAQ: {{ $serviceA['title'] }} vs {{ $serviceB['title'] }}</h2>
+        <h2 class="display-lg mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">FAQ: {{ $serviceA['title'] }} vs {{ $serviceB['title'] }}</h2>
         <div class="max-w-4xl space-y-3">
             @foreach($pageData['faqs'] as $i => $faq)
                 <details class="faq-item" {{ $i === 0 ? 'open' : '' }}>
@@ -161,10 +161,10 @@ $faqSchema = [
 @if($relatedArticles->count() > 0)
 <section class="section-sm">
     <div class="container-wide">
-        <h2 class="section-title mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Artikel Terkait</h2>
+        <h2 class="display-lg mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Artikel Terkait</h2>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($relatedArticles as $article)
-                <a href="{{ route('blog.article.id', $article->slug) }}" class="card overflow-hidden p-0">
+                <a href="{{ route('blog.article.id', $article->slug) }}" class="premium-card overflow-hidden p-0">
                     @if($article->featured_image)
                         <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" class="w-full" style="height:160px;object-fit:cover;" loading="lazy">
                     @endif
@@ -183,10 +183,10 @@ $faqSchema = [
 @if($otherComparisons->count() > 0)
 <section class="section-sm" style="background:var(--surface-secondary);">
     <div class="container-wide">
-        <h2 class="section-title mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Perbandingan Lainnya</h2>
+        <h2 class="display-lg mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Perbandingan Lainnya</h2>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($otherComparisons as $slug => $comp)
-                <a href="{{ url('/layanan/perbandingan/' . $slug) }}" class="card text-center">
+                <a href="{{ url('/layanan/perbandingan/' . $slug) }}" class="premium-card text-center">
                     <div class="flex items-center justify-center gap-2 mb-3">
                         <i class="fas {{ $comp['a']['icon'] ?? 'fa-file-alt' }}" style="color:var(--text-tertiary);"></i>
                         <span class="text-xs" style="color:var(--text-tertiary);font-weight:800;letter-spacing:.08em;">VS</span>
@@ -200,13 +200,13 @@ $faqSchema = [
 </section>
 @endif
 
-<section class="section-sm" style="background:var(--surface-dark);">
+<section class="section-sm section-premium">
     <div class="container-wide text-center">
-        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Butuh Bantuan Memilih?</h2>
-        <p class="mb-7" style="color:rgba(255,255,255,.74);">Tim ahli kami siap membantu menentukan perizinan yang tepat untuk usaha Anda.</p>
+        <h2 class="text-gray-900 mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Butuh Bantuan Memilih?</h2>
+        <p class="mb-7 text-gray-600">Tim ahli kami siap membantu menentukan perizinan yang tepat untuk usaha Anda.</p>
         <div class="flex flex-wrap justify-center gap-3">
-            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-success"><i class="fab fa-whatsapp"></i> Konsultasi via WhatsApp</a>
-            <a href="{{ route('contact.index') }}" class="btn btn-secondary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
+            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-gold"><i class="fab fa-whatsapp"></i> Konsultasi via WhatsApp</a>
+            <a href="{{ route('contact.index') }}" class="btn btn-ghost"><i class="fas fa-envelope"></i> Hubungi Tim</a>
         </div>
     </div>
 </section>

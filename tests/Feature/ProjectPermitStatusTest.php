@@ -22,6 +22,11 @@ class ProjectPermitStatusTest extends TestCase
     {
         parent::setUp();
 
+        // Clear route cache so dynamic test routes can be registered
+        if (app()->routesAreCached()) {
+            \Illuminate\Support\Facades\Artisan::call('route:clear');
+        }
+
         $this->withoutMiddleware(VerifyCsrfToken::class);
 
         $this->app['router']->post('testing/projects/{project}/permits', [ProjectPermitController::class, 'store'])

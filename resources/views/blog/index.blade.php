@@ -23,6 +23,14 @@
     $totalArticles = $articles->total();
     $featured = $articles->first();
     $rest = $articles->slice(1);
+
+    // Pre-compute search data JSON to avoid Blade parser issue with multi-line @json + closures
+    $searchDataJson = json_encode($articles->getCollection()->map(fn($a) => [
+        'slug' => $a->slug,
+        'title' => $a->title,
+        'excerpt' => $a->excerpt,
+        'category' => $a->category,
+    ])->values());
 @endphp
 
 @section('title', $pageTitle . ' — Bizmark.ID')
@@ -55,16 +63,32 @@
 </script>
 @endsection
 
-@section('content')
+@push('styles')
+<style>
+.blog-search-input {
+    background: var(--bg-raised);
+    color: var(--text-primary);
+    border-color: var(--border-subtle);
+}
+.blog-search-input::placeholder { color: var(--text-tertiary); }
+.blog-search-input:focus {
+    border-color: rgba(var(--accent-rgb), .5);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .15);
+}
+</style>
+@endpush
 
-{{-- HERO --}}
-<section class="section-v2" style="background: linear-gradient(180deg, #fff 0%, var(--surface-premium) 100%);">
+@section('content')
+<section class="section-v2" style="background: var(--surface);">
     <div class="container-wide">
-        <nav aria-label="Breadcrumb" class="text-xs mb-6" style="color: var(--text-tertiary);">
-            <a href="{{ url('/') }}" style="color: var(--text-secondary);">{{ $isEn ? 'Home' : 'Beranda' }}</a>
-            <span class="mx-2">/</span>
-            <span>{{ $isEn ? 'Blog' : 'Blog' }}</span>
-        </nav>
+        <x-ui.breadcrumb
+            :items="[
+                ['label' => $isEn ? 'Home' : 'Beranda', 'url' => url('/')],
+                ['label' => $isEn ? 'Blog' : 'Blog'],
+            ]"
+            separator="slash"
+            class="mb-6"
+        />
 
         <div class="max-w-4xl">
             <span class="eyebrow mb-6">{{ $isEn ? 'Insights & Expertise' : 'Wawasan & Pengetahuan' }}</span>
@@ -73,7 +97,7 @@
                     ? 'Regulatory insight, written by practitioners.'
                     : 'Wawasan regulasi dari para praktisi perizinan.' }}
             </h1>
-            <p class="text-xl leading-relaxed max-w-3xl" style="color: var(--text-secondary);">
+            <p class="text-lg leading-relaxed max-w-3xl" style="color: var(--text-secondary);">
                 {{ $isEn
                     ? 'In-depth articles on Indonesian permit regulations, real case studies, and step-by-step compliance guides from our consultant team.'
                     : 'Artikel mendalam tentang regulasi perizinan Indonesia, studi kasus nyata, dan panduan kepatuhan langkah demi langkah dari tim konsultan kami.' }}
@@ -81,8 +105,8 @@
 
             @if($totalArticles > 0)
                 <div class="mt-8 text-sm" style="color: var(--text-tertiary);">
-                    <i class="fas fa-newspaper mr-2" style="color: var(--color-gold);"></i>
-                    <strong style="color: var(--text-primary);">{{ number_format($totalArticles) }}</strong>
+                    <i class="fas fa-newspaper mr-2" style="color: var(--accent);"></i>
+                    <strong class="font-semibold" style="color: var(--text-primary);">{{ number_format($totalArticles) }}</strong>
                     {{ $isEn ? 'published articles' : 'artikel terpublikasi' }}
                 </div>
             @endif
@@ -92,17 +116,17 @@
 
 {{-- CATEGORY CHIPS (filter) --}}
 @if($availableCategories->count() > 1)
-<section class="section-v2-sm border-y" style="background: var(--bg-overlay); border-color: var(--border-subtle);">
+<section class="section-v2-sm" style="background: var(--surface); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
     <div class="container-wide">
         <div class="flex flex-wrap items-center gap-2">
-            <span class="text-[11px] font-bold uppercase tracking-[.15em] mr-3" style="color: var(--text-tertiary);">
+            <span class="text-xs font-bold uppercase tracking-[.15em] mr-3" style="color: var(--text-tertiary);">
                 {{ $isEn ? 'Browse by' : 'Jelajahi' }}:
             </span>
-            <a href="{{ route($blogIndexRoute) }}" class="cert-badge" style="background: var(--color-primary); color: #fff; border-color: var(--color-primary);">
+            <a href="{{ route($blogIndexRoute) }}" class="cert-badge" style="background: var(--text-primary); color: #fff; border-color: var(--text-primary);">
                 {{ $isEn ? 'All' : 'Semua' }}
             </a>
             @foreach($availableCategories as $cat)
-                <a href="{{ route($blogCategoryRoute, $cat) }}" class="cert-badge" style="cursor: pointer;">
+                <a href="{{ route($blogCategoryRoute, $cat) }}" class="cert-badge">
                     {{ $fmtCategory($cat) }}
                 </a>
             @endforeach
@@ -114,29 +138,20 @@
 @if($articles->isEmpty())
     {{-- EMPTY STATE --}}
     <section class="section-v2">
-        <div class="container-wide text-center py-16">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6"
-                 style="background: var(--surface-cool); color: var(--text-tertiary);">
-                <i class="fas fa-newspaper text-3xl"></i>
-            </div>
-            <h2 class="font-display text-2xl font-bold mb-2" style="color: var(--text-primary);">
-                {{ $isEn ? 'No articles yet' : 'Belum ada artikel' }}
-            </h2>
-            <p style="color: var(--text-secondary);">
-                {{ $isEn ? 'Check back soon for new insights.' : 'Nantikan insight terbaru dari tim kami.' }}
-            </p>
+        <div class="container-wide">
+            <x-ui.empty-state
+                icon="fa-solid fa-newspaper"
+                :title="$isEn ? 'No articles yet' : 'Belum ada artikel'"
+                :description="$isEn ? 'Check back soon for new insights.' : 'Nantikan insight terbaru dari tim kami.'"
+                size="lg"
+            />
         </div>
     </section>
 @else
     {{-- FEATURED + GRID --}}
     <section class="section-v2"
              x-data="blogSearch()"
-             x-init="initSearch(@json($articles->getCollection()->map(fn($a) => [
-                 'slug' => $a->slug,
-                 'title' => $a->title,
-                 'excerpt' => $a->excerpt,
-                 'category' => $a->category,
-             ])))">
+             x-init="initSearch({{ $searchDataJson }})">
         <div class="container-wide">
 
             {{-- Search Bar --}}
@@ -146,31 +161,32 @@
                  x-transition:enter-start="opacity-0 -translate-y-2"
                  x-transition:enter-end="opacity-100 translate-y-0">
                 <div class="relative max-w-xl">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-sm"
-                       :class="query.length > 0 ? 'text-accent' : ''"
-                       style="color: var(--text-tertiary);"></i>
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--text-tertiary);"
+                       :class="query.length > 0 ? '!text-[var(--accent)]' : ''"></i>
                     <input type="text"
                            x-ref="searchInput"
                            x-model="query"
                            @keydown.escape="clearSearch()"
                            @keydown.slash.prevent="$refs.searchInput.focus()"
                            placeholder="{{ $isEn ? 'Search articles by title, topic or category...' : 'Cari artikel berdasarkan judul, topik, atau kategori...' }}"
-                           class="w-full pl-10 pr-10 py-3 rounded-xl border text-sm transition"
-                           style="background: var(--bg-raised); color: var(--text-primary); border-color: var(--border-subtle);">
+                           class="blog-search-input w-full pl-10 pr-10 py-3 rounded-xl border text-sm transition focus:outline-none">
                     <button x-show="query.length > 0"
                             @click="clearSearch()"
                             class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full text-xs transition"
-                            style="background: var(--border-light); color: var(--text-tertiary);"
+                            style="background: var(--border-subtle); color: var(--text-tertiary);"
                             type="button"
                             aria-label="{{ $isEn ? 'Clear search' : 'Hapus pencarian' }}">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="flex items-center gap-2 mt-2 text-xs" style="color: var(--text-tertiary);">
-                    <span><kbd style="background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 1px 6px; font-family: inherit;">/</kbd> {{ $isEn ? 'to search' : 'untuk mencari' }}</span>
+                    <span>
+                        <kbd class="rounded px-1.5 py-0.5 font-sans" style="background: var(--bg-raised); border: 1px solid var(--border-subtle); color: var(--text-secondary);">/</kbd>
+                        {{ $isEn ? 'to search' : 'untuk mencari' }}
+                    </span>
                     <span class="mx-1">·</span>
                     <span x-show="query.length > 0" x-text="`${filteredCount} ${'{{ $isEn ? 'results' : 'hasil' }}'}`"></span>
-                    <span x-show="query.length > 0 && filteredCount === 0" style="color: var(--color-warning);">{{ $isEn ? 'No matching articles' : 'Tidak ada artikel yang cocok' }}</span>
+                    <span x-show="query.length > 0 && filteredCount === 0" style="color: var(--accent);">{{ $isEn ? 'No matching articles' : 'Tidak ada artikel yang cocok' }}</span>
                 </div>
             </div>
 
@@ -178,25 +194,19 @@
             <div x-show="query.length > 0 && filteredCount === 0"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 class="text-center py-16">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
-                     style="background: var(--surface-cool); color: var(--text-tertiary);">
-                    <i class="fas fa-search text-2xl"></i>
-                </div>
-                <h3 class="font-display text-xl font-bold mb-2" style="color: var(--text-primary);">
-                    {{ $isEn ? 'No results found' : 'Hasil tidak ditemukan' }}
-                </h3>
-                <p style="color: var(--text-secondary);">
-                    {{ $isEn ? 'Try different keywords or browse by category.' : 'Coba kata kunci lain atau jelajahi berdasarkan kategori.' }}
-                </p>
+                 x-transition:enter-end="opacity-100 scale-100">
+                <x-ui.empty-state
+                    icon="fa-solid fa-search"
+                    :title="$isEn ? 'No results found' : 'Hasil tidak ditemukan'"
+                    :description="$isEn ? 'Try different keywords or browse by category.' : 'Coba kata kunci lain atau jelajahi berdasarkan kategori.'"
+                    size="lg"
+                />
             </div>
 
             {{-- Featured (page 1 only) --}}
             @if($articles->onFirstPage() && $featured)
                 <a href="{{ route($blogArticleRoute, $featured->slug) }}"
-                   class="article-card featured block mb-12"
-                   style="display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: 2.5rem; align-items: center;"
+                   class="article-card featured block mb-12 grid grid-cols-[1.3fr_1fr] gap-10 items-center max-md:grid-cols-1 max-md:gap-5"
                    x-show="matches('{{ $featured->slug }}')">
                     <div class="article-image">
                         @if($featured->featured_image)
@@ -231,13 +241,6 @@
                         </span>
                     </div>
                 </a>
-
-                {{-- Responsive fallback: stack featured on mobile --}}
-                <style>
-                    @media (max-width: 767px) {
-                        .article-card.featured { grid-template-columns: 1fr !important; gap: 1.25rem !important; }
-                    }
-                </style>
             @endif
 
             {{-- Grid: rest of articles --}}
@@ -271,7 +274,7 @@
                                     <p class="article-excerpt flex-1">{{ \Illuminate\Support\Str::limit($article->excerpt, 140) }}</p>
                                 @endif
                                 @if($article->reading_time)
-                                    <div class="text-xs mt-4 pt-4 border-t" style="color: var(--text-tertiary); border-color: var(--border-subtle);">
+                                    <div class="text-xs mt-4 pt-4" style="color: var(--text-tertiary); border-top: 1px solid var(--border-subtle);">
                                         <i class="far fa-clock mr-1"></i>
                                         {{ $article->reading_time }} {{ $isEn ? 'min read' : 'menit baca' }}
                                     </div>

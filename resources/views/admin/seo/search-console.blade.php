@@ -26,7 +26,7 @@
                     <i class="fas fa-arrows-rotate"></i> Sync Data
                 </button>
             </form>
-            <form action="{{ route('admin.seo.search-console.clear') }}" method="POST" class="inline" onsubmit="return confirm('Clear semua data Search Console?')">
+            <form action="{{ route('admin.seo.search-console.clear') }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Clear semua data Search Console?')) $el.submit()">
                 @csrf
                 <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-apple text-xs font-semibold transition" style="background: rgba(255,69,58,0.15); color: rgba(255,69,58,1); border: 1px solid rgba(255,69,58,0.3);" title="Hapus semua data">
                     <i class="fas fa-trash-can"></i> Clear

@@ -3,517 +3,315 @@
 @section('title', 'Edit Test Template - ' . $test->title)
 
 @section('content')
-<div class="recruitment-shell max-w-6xl mx-auto space-y-5">
-    {{-- Header --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-60 h-60 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
-            <div class="w-44 h-44 bg-apple-green opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
-        </div>
-        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div class="space-y-2">
-                <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">
-                    <a href="{{ route('admin.recruitment.tests.index') }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
-                        <i class="fas fa-arrow-left text-xs"></i> Test Management
-                    </a>
-                    <span class="text-dark-text-tertiary">/</span>
-                    <a href="{{ route('admin.recruitment.tests.show', $test) }}" class="hover:text-white transition-apple">
-                        {{ Str::limit($test->title, 30) }}
-                    </a>
-                    <span class="text-dark-text-tertiary">/</span>
-                    <span>Edit</span>
-                </div>
-                <h1 class="text-xl md:text-xl font-semibold text-white leading-tight">Edit Template Tes</h1>
-                <p class="text-sm" style="color: rgba(235,235,245,0.7);">
-                    Perbarui informasi dan pertanyaan template tes.
-                </p>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.recruitment.tests.show', $test) }}" class="btn-secondary-sm">
-                    <i class="fas fa-eye mr-2"></i>Lihat Template
-                </a>
-            </div>
-        </div>
-    </section>
+<div style="display:flex;flex-direction:column;gap:16px">
 
-    {{-- Success Message --}}
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+            <a href="{{ route('admin.recruitment.tests.show', $test) }}" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);text-decoration:none;margin-bottom:6px" onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                <i class="fas fa-arrow-left" style="font-size:0.65rem"></i>{{ Str::limit($test->title, 40) }}
+            </a>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--apple-orange);margin:0 0 4px">Rekrutmen</p>
+            <h1 style="font-size:1.4rem;font-weight:800;color:var(--dark-text-primary);margin:0 0 4px;line-height:1.2">Edit Template Tes</h1>
+            <p style="font-size:0.82rem;color:var(--dark-text-secondary);margin:0">Perbarui informasi dan pertanyaan template tes</p>
+        </div>
+        <a href="{{ route('admin.recruitment.tests.show', $test) }}"
+           style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:0.8rem;font-weight:600;color:var(--dark-text-secondary);background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;text-decoration:none;align-self:flex-end"
+           onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+            <i class="fas fa-eye" style="font-size:0.7rem"></i>Lihat Template
+        </a>
+    </div>
+
     @if(session('success'))
-        <div class="card-elevated rounded-apple-xl p-4" style="background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.3);">
-            <div class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-lg" style="color: rgba(52,199,89,0.9);"></i>
-                <div>
-                    <p class="text-sm font-semibold" style="color: rgba(52,199,89,1);">{{ session('success') }}</p>
-                    @if($test->test_type === 'document-editing' && $test->template_file_path)
-                        <p class="text-xs mt-1" style="color: rgba(235,235,245,0.7);">
-                            File template: <strong>{{ basename($test->template_file_path) }}</strong>
-                        </p>
-                    @endif
-                </div>
-            </div>
-        </div>
+    <div style="background:color-mix(in srgb,var(--apple-green) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-green) 30%,transparent);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px">
+        <i class="fas fa-check-circle" style="color:var(--apple-green)"></i>
+        <p style="font-size:0.85rem;font-weight:600;color:var(--apple-green);margin:0">{{ session('success') }}</p>
+    </div>
     @endif
 
-    {{-- Error Messages --}}
     @if($errors->any())
-        <div class="card-elevated rounded-apple-xl p-4" style="background: rgba(255,69,58,0.1); border: 1px solid rgba(255,69,58,0.3);">
-            <div class="flex items-start gap-3">
-                <i class="fas fa-exclamation-circle text-lg" style="color: rgba(255,69,58,0.9);"></i>
-                <div class="flex-1">
-                    <p class="text-sm font-semibold" style="color: rgba(255,69,58,1);">Terdapat kesalahan:</p>
-                    <ul class="mt-2 space-y-1">
-                        @foreach($errors->all() as $error)
-                            <li class="text-xs" style="color: rgba(235,235,245,0.7);">• {{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <div style="background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 30%,transparent);border-radius:12px;padding:12px 16px">
+        <p style="font-size:0.85rem;font-weight:600;color:var(--apple-red);margin:0 0 6px"><i class="fas fa-exclamation-circle" style="margin-right:6px"></i>Terdapat kesalahan:</p>
+        <ul style="margin:0;padding-left:16px">
+            @foreach($errors->all() as $error)
+            <li style="font-size:0.78rem;color:var(--apple-red);margin-bottom:2px">{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
-    <form action="{{ route('admin.recruitment.tests.update', $test) }}" method="POST" enctype="multipart/form-data" id="testForm" class="space-y-4">
+    <form action="{{ route('admin.recruitment.tests.update', $test) }}" method="POST" id="testForm" enctype="multipart/form-data" onsubmit="handleSubmit(this)">
         @csrf
         @method('PUT')
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <!-- Main Content -->
-            <div class="lg:col-span-2 space-y-4">
-                <!-- Basic Information -->
-                <div class="card-elevated rounded-apple-xl p-4 space-y-4">
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Informasi Dasar</p>
-                        <h2 class="text-base font-semibold text-white">Detail Template</h2>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:flex-start">
+
+            {{-- Left --}}
+            <div style="display:flex;flex-direction:column;gap:16px">
+
+                {{-- Basic Info --}}
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+                    <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--dark-separator)">
+                        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Informasi Dasar</p>
+                        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Detail Template</h3>
                     </div>
-                    
-                    <div class="space-y-3 text-sm" style="color: rgba(235,235,245,0.85);">
-                        <div class="space-y-1">
-                            <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                                Judul Tes <span class="text-apple-red">*</span>
-                            </label>
-                            <input type="text" name="title" value="{{ old('title', $test->title) }}" required
-                                   class="w-full"
-                                   placeholder="Contoh: Technical Assessment Senior Dev">
-                            @error('title')
-                                <p class="text-xs text-apple-red">{{ $message }}</p>
-                            @enderror
-                        </div>
 
-                        <div class="space-y-1">
-                            <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                                Deskripsi
-                            </label>
-                            <textarea name="description" rows="3"
-                                      class="w-full"
-                                      placeholder="Ringkasan tujuan penilaian">{{ old('description', $test->description) }}</textarea>
-                            @error('description')
-                                <p class="text-xs text-apple-red">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div style="margin-bottom:14px">
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Judul Tes <span style="color:var(--apple-red)">*</span></label>
+                        <input type="text" name="title" value="{{ old('title', $test->title) }}" required
+                               style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                               onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"
+                               placeholder="Contoh: Technical Assessment Senior Dev">
+                        @error('title')<p style="color:var(--apple-red);font-size:0.72rem;margin:4px 0 0">{{ $message }}</p>@enderror
+                    </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="space-y-1">
-                                <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                                    Tipe Tes <span class="text-apple-red">*</span>
-                                </label>
-                                <select name="test_type" id="test_type" required class="w-full">
-                                    <option value="">Pilih tipe...</option>
-                                    <option value="psychology" {{ old('test_type', $test->test_type) == 'psychology' ? 'selected' : '' }}>Psikologi</option>
-                                    <option value="psychometric" {{ old('test_type', $test->test_type) == 'psychometric' ? 'selected' : '' }}>Psikometrik</option>
-                                    <option value="technical" {{ old('test_type', $test->test_type) == 'technical' ? 'selected' : '' }}>Teknis</option>
-                                    <option value="aptitude" {{ old('test_type', $test->test_type) == 'aptitude' ? 'selected' : '' }}>Aptitude</option>
-                                    <option value="personality" {{ old('test_type', $test->test_type) == 'personality' ? 'selected' : '' }}>Kepribadian</option>
-                                    <option value="document-editing" {{ old('test_type', $test->test_type) == 'document-editing' ? 'selected' : '' }}>Document Editing</option>
+                    <div style="margin-bottom:14px">
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Deskripsi</label>
+                        <textarea name="description" rows="3"
+                                  style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;resize:vertical;box-sizing:border-box"
+                                  onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"
+                                  placeholder="Ringkasan tujuan penilaian">{{ old('description', $test->description) }}</textarea>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+                        <div>
+                            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Tipe Tes <span style="color:var(--apple-red)">*</span></label>
+                            <div style="position:relative">
+                                <select name="test_type" id="test_type" required
+                                        style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none"
+                                        onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                    @foreach(['psychology'=>'Psikologi','psychometric'=>'Psikometrik','technical'=>'Teknis','aptitude'=>'Aptitude','personality'=>'Kepribadian','document-editing'=>'Document Editing'] as $val=>$lbl)
+                                    <option value="{{ $val }}" {{ old('test_type', $test->test_type) == $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                                    @endforeach
                                 </select>
-                                @error('test_type')
-                                    <p class="text-xs text-apple-red">{{ $message }}</p>
-                                @enderror
+                                <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
                             </div>
-
-                            <div class="space-y-1">
-                                <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                                    Durasi (menit) <span class="text-apple-red">*</span>
-                                </label>
-                                <input type="number" name="duration_minutes" value="{{ old('duration_minutes', $test->duration_minutes) }}" required min="5" max="480"
-                                       class="w-full">
-                                @error('duration_minutes')
-                                    <p class="text-xs text-apple-red">{{ $message }}</p>
-                                @enderror
-                            </div>
+                            @error('test_type')<p style="color:var(--apple-red);font-size:0.72rem;margin:4px 0 0">{{ $message }}</p>@enderror
                         </div>
-
-                        <div class="space-y-1">
-                            <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                                Nilai Lulus (%) <span class="text-apple-red">*</span>
-                            </label>
-                            <input type="number" name="passing_score" value="{{ old('passing_score', $test->passing_score) }}" required min="0" max="100" step="0.01"
-                                   class="w-full">
-                            @error('passing_score')
-                                <p class="text-xs text-apple-red">{{ $message }}</p>
-                            @enderror
+                        <div>
+                            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Durasi (menit) <span style="color:var(--apple-red)">*</span></label>
+                            <input type="number" name="duration_minutes" id="durationInput" value="{{ old('duration_minutes', $test->duration_minutes) }}" required min="5" max="480"
+                                   style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                                   onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
                         </div>
-
-                        <div class="space-y-1">
-                            <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                                Instruksi Tes
-                            </label>
-                            <textarea name="instructions" 
-                                      rows="8" 
-                                      class="w-full text-sm font-mono"
-                                      placeholder="Instruksi yang akan dibaca kandidat sebelum memulai tes...">{{ old('instructions', $test->instructions) }}</textarea>
-                            <p class="text-xs" style="color: rgba(235,235,245,0.5);">
-                                Gunakan format plain text dengan line breaks. Simbol seperti ▸, [ ], •, ▪ akan ditampilkan dengan styling otomatis.
-                            </p>
-                            @error('instructions')
-                                <p class="text-xs text-apple-red">{{ $message }}</p>
-                            @enderror
+                        <div>
+                            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Passing Score (%) <span style="color:var(--apple-red)">*</span></label>
+                            <input type="number" name="passing_score" value="{{ old('passing_score', $test->passing_score) }}" required min="0" max="100"
+                                   style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                                   onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
                         </div>
+                    </div>
+
+                    <div>
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Instruksi Tes</label>
+                        <textarea name="instructions" rows="7"
+                                  style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.83rem;outline:none;resize:vertical;box-sizing:border-box;font-family:monospace;line-height:1.5"
+                                  onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"
+                                  placeholder="Instruksi yang akan dibaca kandidat sebelum memulai tes...">{{ old('instructions', $test->instructions) }}</textarea>
+                        <p style="font-size:0.7rem;color:var(--dark-text-secondary);margin:4px 0 0">Plain text. Simbol ▸ [ ] • akan di-style otomatis oleh sistem.</p>
                     </div>
                 </div>
 
-                <!-- Questions -->
-                <div class="card-elevated rounded-apple-xl p-4 space-y-4" id="questionsSection" style="display: {{ $test->test_type === 'document-editing' ? 'none' : 'block' }};">
-                    <div class="flex justify-between items-center">
+                {{-- Questions Section --}}
+                <div id="questionsSection" style="display:{{ old('test_type', $test->test_type) === 'document-editing' ? 'none' : '' }};background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--dark-separator)">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Soal Tes</p>
-                            <h2 class="text-base font-semibold text-white">Daftar Pertanyaan</h2>
+                            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Pertanyaan</p>
+                            <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Daftar Pertanyaan</h3>
                         </div>
-                        <button type="button" onclick="addQuestion()" class="btn-primary-sm">
-                            <i class="fas fa-plus mr-1"></i> Tambah Soal
+                        <button type="button" id="addQuestion"
+                                style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--apple-blue);color:#fff;border:none;border-radius:9px;font-size:0.78rem;font-weight:700;cursor:pointer"
+                                onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                            <i class="fas fa-plus" style="font-size:0.65rem"></i>Tambah Pertanyaan
                         </button>
                     </div>
-
-                    <div id="questions-container" class="space-y-3">
-                        @if(old('questions'))
-                            @foreach(old('questions') as $index => $question)
-                                <div class="question-item card-nested p-3 space-y-2" data-index="{{ $index }}">
-                                    <div class="flex justify-between items-start gap-2">
-                                        <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">SOAL #<span class="question-number">{{ $index + 1 }}</span></p>
-                                        <button type="button" onclick="removeQuestion(this)" class="text-apple-red hover:text-red-400 text-xs">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-
-                                    <div class="space-y-2">
-                                        <textarea name="questions[{{ $index }}][question_text]" required
-                                                  class="w-full text-sm" rows="2"
-                                                  placeholder="Tulis pertanyaan di sini...">{{ $question['question_text'] }}</textarea>
-
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <select name="questions[{{ $index }}][question_type]" required class="question-type-select text-sm">
-                                                <option value="">Pilih tipe...</option>
-                                                <option value="multiple-choice" {{ $question['question_type'] == 'multiple-choice' ? 'selected' : '' }}>Pilihan Ganda</option>
-                                                <option value="true-false" {{ $question['question_type'] == 'true-false' ? 'selected' : '' }}>Benar/Salah</option>
-                                                <option value="essay" {{ $question['question_type'] == 'essay' ? 'selected' : '' }}>Essay</option>
-                                                <option value="rating" {{ $question['question_type'] == 'rating' ? 'selected' : '' }}>Rating (1-5)</option>
+                    <div id="questionsContainer" style="display:flex;flex-direction:column;gap:12px">
+                        @php $questionsData = old('questions', $test->questions ?? []); @endphp
+                        @foreach((array)$questionsData as $index => $question)
+                        @php
+                            $qText = is_array($question) ? ($question['question_text'] ?? '') : ($question->question_text ?? '');
+                            $qType = is_array($question) ? ($question['question_type'] ?? 'multiple-choice') : ($question->question_type ?? 'multiple-choice');
+                            $qPts = is_array($question) ? ($question['points'] ?? 1) : ($question->points ?? 1);
+                            $qOpts = is_array($question) ? ($question['options'] ?? []) : ($question->options ?? []);
+                            $qAnswer = is_array($question) ? ($question['correct_answer'] ?? '') : ($question->correct_answer ?? '');
+                        @endphp
+                        <div class="question-item" style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:12px;padding:16px">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                                <span style="font-size:0.78rem;font-weight:700;color:var(--apple-blue)">Pertanyaan {{ $index + 1 }}</span>
+                                <button type="button" class="remove-question" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;color:var(--apple-red);background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);cursor:pointer;font-size:0.72rem">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:10px">
+                                <div>
+                                    <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Teks Pertanyaan *</label>
+                                    <textarea name="questions[{{ $index }}][question_text]" rows="2" required style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box;resize:vertical" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">{{ $qText }}</textarea>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                                    <div>
+                                        <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Jenis *</label>
+                                        <div style="position:relative">
+                                            <select name="questions[{{ $index }}][question_type]" class="question-type-select" style="width:100%;padding:8px 28px 8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                                @foreach(['multiple-choice'=>'Multiple Choice','true-false'=>'True/False','essay'=>'Essay','rating'=>'Rating Scale'] as $tv=>$tl)
+                                                <option value="{{ $tv }}" {{ $qType == $tv ? 'selected' : '' }}>{{ $tl }}</option>
+                                                @endforeach
                                             </select>
-
-                                            <input type="number" name="questions[{{ $index }}][points]" required
-                                                   min="0" step="0.5" value="{{ $question['points'] }}"
-                                                   class="text-sm" placeholder="Poin">
+                                            <i class="fas fa-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.6rem;pointer-events:none"></i>
                                         </div>
-
-                                        <div class="options-container {{ in_array($question['question_type'], ['multiple-choice', 'true-false']) ? '' : 'hidden' }}">
-                                            <div class="space-y-1">
-                                                @if($question['question_type'] == 'multiple-choice' && isset($question['options']))
-                                                    @foreach($question['options'] as $optIndex => $option)
-                                                        <div class="flex gap-2">
-                                                            <input type="text" name="questions[{{ $index }}][options][]" value="{{ $option }}"
-                                                                   class="flex-1 text-sm" placeholder="Pilihan {{ chr(65 + $optIndex) }}">
-                                                            @if($optIndex > 1)
-                                                                <button type="button" onclick="this.parentElement.remove()" class="text-apple-red text-xs">
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            @endif
-                                                        </div>
-                                                    @endforeach
-                                                @endif
-                                                @if($question['question_type'] == 'multiple-choice')
-                                                    <button type="button" onclick="addOption(this)" class="text-xs text-apple-blue hover:text-blue-400">
-                                                        + Tambah Pilihan
-                                                    </button>
-                                                @endif
-                                            </div>
-
-                                            <input type="text" name="questions[{{ $index }}][correct_answer]" value="{{ $question['correct_answer'] ?? '' }}"
-                                                   class="w-full text-sm mt-2" 
-                                                   placeholder="{{ $question['question_type'] == 'true-false' ? 'true / false' : 'Jawaban benar (A, B, C, dst)' }}">
+                                    </div>
+                                    <div>
+                                        <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Poin *</label>
+                                        <input type="number" name="questions[{{ $index }}][points]" value="{{ $qPts }}" min="0" step="0.5" required class="question-points" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                    </div>
+                                </div>
+                                <div class="options-wrap" style="{{ in_array($qType, ['essay']) ? 'display:none' : '' }}">
+                                    <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Pilihan Jawaban</label>
+                                    <div class="options-list" style="display:flex;flex-direction:column;gap:6px">
+                                        @foreach((array)$qOpts as $opt)
+                                        <div style="display:flex;gap:6px;align-items:center">
+                                            <input type="text" name="questions[{{ $index }}][options][]" value="{{ $opt }}" placeholder="Pilihan jawaban" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                            <button type="button" style="width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:7px;color:var(--apple-red);background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);cursor:pointer;font-size:0.7rem" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                                        </div>
+                                        @endforeach
+                                        <div style="display:flex;gap:6px;align-items:center">
+                                            <input type="text" name="questions[{{ $index }}][options][]" placeholder="Tambah pilihan" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                            <button type="button" class="add-option" style="width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:7px;color:var(--apple-green);background:color-mix(in srgb,var(--apple-green) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-green) 25%,transparent);cursor:pointer;font-size:0.7rem"><i class="fas fa-plus"></i></button>
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
-                        @elseif($test->questions)
-                            @foreach($test->questions as $index => $question)
-                                <div class="question-item card-nested p-3 space-y-2" data-index="{{ $index }}">
-                                    <div class="flex justify-between items-start gap-2">
-                                        <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">SOAL #<span class="question-number">{{ $index + 1 }}</span></p>
-                                        <button type="button" onclick="removeQuestion(this)" class="text-apple-red hover:text-red-400 text-xs">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-
-                                    <div class="space-y-2">
-                                        <textarea name="questions[{{ $index }}][question_text]" required
-                                                  class="w-full text-sm" rows="2"
-                                                  placeholder="Tulis pertanyaan di sini...">{{ $question['question_text'] }}</textarea>
-
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <select name="questions[{{ $index }}][question_type]" required class="question-type-select text-sm">
-                                                <option value="">Pilih tipe...</option>
-                                                <option value="multiple-choice" {{ $question['question_type'] == 'multiple-choice' ? 'selected' : '' }}>Pilihan Ganda</option>
-                                                <option value="true-false" {{ $question['question_type'] == 'true-false' ? 'selected' : '' }}>Benar/Salah</option>
-                                                <option value="essay" {{ $question['question_type'] == 'essay' ? 'selected' : '' }}>Essay</option>
-                                                <option value="rating" {{ $question['question_type'] == 'rating' ? 'selected' : '' }}>Rating (1-5)</option>
-                                            </select>
-
-                                            <input type="number" name="questions[{{ $index }}][points]" required
-                                                   min="0" step="0.5" value="{{ $question['points'] }}"
-                                                   class="text-sm" placeholder="Poin">
-                                        </div>
-
-                                        <div class="options-container {{ in_array($question['question_type'], ['multiple-choice', 'true-false']) ? '' : 'hidden' }}">
-                                            <div class="space-y-1">
-                                                @if($question['question_type'] == 'multiple-choice' && isset($question['options']))
-                                                    @foreach($question['options'] as $optIndex => $option)
-                                                        <div class="flex gap-2">
-                                                            <input type="text" name="questions[{{ $index }}][options][]" value="{{ $option }}"
-                                                                   class="flex-1 text-sm" placeholder="Pilihan {{ chr(65 + $optIndex) }}">
-                                                            @if($optIndex > 1)
-                                                                <button type="button" onclick="this.parentElement.remove()" class="text-apple-red text-xs">
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            @endif
-                                                        </div>
-                                                    @endforeach
-                                                @endif
-                                                @if($question['question_type'] == 'multiple-choice')
-                                                    <button type="button" onclick="addOption(this)" class="text-xs text-apple-blue hover:text-blue-400">
-                                                        + Tambah Pilihan
-                                                    </button>
-                                                @endif
-                                            </div>
-
-                                            <input type="text" name="questions[{{ $index }}][correct_answer]" value="{{ $question['correct_answer'] ?? '' }}"
-                                                   class="w-full text-sm mt-2" 
-                                                   placeholder="{{ $question['question_type'] == 'true-false' ? 'true / false' : 'Jawaban benar (A, B, C, dst)' }}">
-                                        </div>
-                                    </div>
+                                <div class="correct-wrap" style="{{ $qType === 'essay' ? 'display:none' : '' }}">
+                                    <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Jawaban Benar</label>
+                                    <input type="text" name="questions[{{ $index }}][correct_answer]" value="{{ $qAnswer }}" placeholder="Nomor pilihan benar (mis: 1)" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
                                 </div>
-                            @endforeach
-                        @endif
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
-
-                    @if((!$test->questions || $test->questions->isEmpty()) && !old('questions'))
-                        <p class="text-sm text-center py-8" style="color: rgba(235,235,245,0.5);">
-                            Belum ada soal. Klik "Tambah Soal" untuk mulai.
-                        </p>
+                    @if(empty($questionsData) || (is_object($questionsData) && $questionsData->isEmpty()))
+                    <div id="emptyState" style="text-align:center;padding:32px">
+                        <i class="fas fa-clipboard-list" style="font-size:1.8rem;color:var(--dark-text-secondary);opacity:.4;display:block;margin-bottom:10px"></i>
+                        <p style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 3px">Belum Ada Pertanyaan</p>
+                        <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:0">Klik "Tambah Pertanyaan" untuk memulai</p>
+                    </div>
+                    @else
+                    <div id="emptyState" style="display:none;text-align:center;padding:32px"></div>
                     @endif
                 </div>
 
-                <!-- Document Editing Section (Hidden by default) -->
-                <div class="card-elevated rounded-apple-xl p-4 space-y-4" id="documentEditingSection" style="display: {{ $test->test_type === 'document-editing' ? 'block' : 'none' }};">
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Document Editing</p>
-                        <h2 class="text-base font-semibold text-white">Template & Kriteria Penilaian</h2>
+                {{-- Document Editing Section --}}
+                <div id="documentEditingSection" style="display:{{ old('test_type', $test->test_type) === 'document-editing' ? '' : 'none' }};background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+                    <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--dark-separator)">
+                        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Document Editing</p>
+                        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Template & Kriteria Penilaian</h3>
                     </div>
 
-                    {{-- Template File Upload --}}
-                    <div class="space-y-1">
-                        <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                            Template File (Word Document)
-                        </label>
-                        @if($test->template_file_path)
-                            <div class="bg-dark-surface-secondary rounded-lg p-3 mb-2">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-file-word text-apple-blue"></i>
-                                        <span class="text-sm text-white">{{ basename($test->template_file_path) }}</span>
-                                    </div>
-                                    <a href="{{ route('admin.recruitment.tests.download-template', $test) }}" class="text-xs text-apple-blue hover:text-blue-400">
-                                        <i class="fas fa-download"></i> Download
-                                    </a>
-                                </div>
+                    @if($test->template_file_path)
+                    <div style="margin-bottom:14px;padding:12px 14px;background:var(--dark-bg-secondary);border-radius:10px;border:1px solid var(--dark-separator);display:flex;align-items:center;justify-content:space-between">
+                        <div style="display:flex;align-items:center;gap:10px">
+                            <i class="fas fa-file-word" style="color:var(--apple-blue);font-size:1.1rem"></i>
+                            <div>
+                                <p style="font-size:0.82rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 2px">{{ basename($test->template_file_path) }}</p>
+                                <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0">Template saat ini</p>
                             </div>
-                        @endif
-                        <input type="file" name="template_file" accept=".doc,.docx" class="w-full text-sm"
-                               style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-radius: 10px; padding: 8px;">
-                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">
-                            Upload file Word yang akan diperbaiki kandidat (Max: 10MB) - Kosongkan jika tidak ingin mengubah
-                        </p>
+                        </div>
+                        <a href="{{ route('admin.recruitment.tests.download-template', $test) }}" style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--apple-blue);background:color-mix(in srgb,var(--apple-blue) 12%,transparent);padding:5px 10px;border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-blue) 25%,transparent);text-decoration:none">
+                            <i class="fas fa-download" style="font-size:0.6rem"></i>Download
+                        </a>
+                    </div>
+                    @endif
+
+                    <div style="margin-bottom:16px">
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">{{ $test->template_file_path ? 'Ganti' : 'Upload' }} Template File (Word Document)</label>
+                        <input type="file" name="template_file" accept=".doc,.docx"
+                               style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box">
+                        <p style="font-size:0.7rem;color:var(--dark-text-secondary);margin:4px 0 0">Upload file Word yang akan diperbaiki kandidat (Max: 10MB)</p>
                     </div>
 
-                    {{-- Reference Attachments --}}
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                                Lampiran Referensi (Opsional)
-                            </label>
-                            <button type="button" id="addAttachment" class="btn-secondary-sm">
-                                <i class="fas fa-paperclip mr-1"></i>Tambah Lampiran
+                    <div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                            <label style="font-size:0.78rem;font-weight:600;color:var(--dark-text-primary)">Kriteria Penilaian</label>
+                            <button type="button" id="addCriteria"
+                                    style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--apple-green);background:color-mix(in srgb,var(--apple-green) 12%,transparent);padding:5px 10px;border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-green) 25%,transparent);cursor:pointer">
+                                <i class="fas fa-plus" style="font-size:0.6rem"></i>Tambah Kriteria
                             </button>
                         </div>
-                        
-                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">
-                            Tambahkan dokumen referensi yang akan membantu kandidat menyelesaikan tes (panduan, data, contoh format, dll)
-                        </p>
-                        
-                        <div id="attachmentsContainer" class="space-y-3">
-                            @if($test->reference_attachments && count($test->reference_attachments) > 0)
-                                @foreach($test->reference_attachments as $index => $attachment)
-                                    <div class="card-nested p-3 space-y-2">
-                                        <div class="flex justify-between items-start">
-                                            <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
-                                                LAMPIRAN #<span class="attachment-number">{{ $index + 1 }}</span>
-                                            </p>
-                                            <button type="button" class="remove-attachment text-apple-red hover:text-red-400 text-xs">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                        
-                                        <input type="text" name="reference_attachments[{{ $index }}][name]" 
-                                               value="{{ $attachment['name'] }}"
-                                               placeholder="Nama file (e.g., Panduan Penyusunan UKL-UPL)" 
-                                               class="w-full text-sm" required>
-                                        
-                                        <textarea name="reference_attachments[{{ $index }}][description]" 
-                                                  placeholder="Deskripsi singkat tentang file ini" 
-                                                  class="w-full text-sm" rows="2" required>{{ $attachment['description'] }}</textarea>
-                                        
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <input type="text" name="reference_attachments[{{ $index }}][file_url]" 
-                                                   value="{{ $attachment['file_url'] }}"
-                                                   placeholder="URL file atau path storage" 
-                                                   class="text-sm" required>
-                                            
-                                            <select name="reference_attachments[{{ $index }}][file_type]" class="text-sm" required>
-                                                <option value="pdf" {{ $attachment['file_type'] == 'pdf' ? 'selected' : '' }}>PDF</option>
-                                                <option value="doc" {{ $attachment['file_type'] == 'doc' ? 'selected' : '' }}>DOC</option>
-                                                <option value="docx" {{ $attachment['file_type'] == 'docx' ? 'selected' : '' }}>DOCX</option>
-                                                <option value="xls" {{ $attachment['file_type'] == 'xls' ? 'selected' : '' }}>XLS</option>
-                                                <option value="xlsx" {{ $attachment['file_type'] == 'xlsx' ? 'selected' : '' }}>XLSX</option>
-                                                <option value="ppt" {{ $attachment['file_type'] == 'ppt' ? 'selected' : '' }}>PPT</option>
-                                                <option value="pptx" {{ $attachment['file_type'] == 'pptx' ? 'selected' : '' }}>PPTX</option>
-                                                <option value="zip" {{ $attachment['file_type'] == 'zip' ? 'selected' : '' }}>ZIP</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <input type="text" name="reference_attachments[{{ $index }}][file_size]" 
-                                               value="{{ $attachment['file_size'] }}"
-                                               placeholder="Ukuran file (e.g., 2.5 MB)" 
-                                               class="w-full text-sm" required>
+                        <div id="criteriaContainer" style="display:flex;flex-direction:column;gap:10px">
+                            @if($test->evaluation_criteria && count($test->evaluation_criteria) > 0)
+                                @foreach($test->evaluation_criteria as $ci => $crit)
+                                @php
+                                    $cr = is_array($crit) ? $crit : (array)$crit;
+                                @endphp
+                                <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;padding:14px">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                                        <span style="font-size:0.72rem;font-weight:700;color:var(--dark-text-secondary);text-transform:uppercase;letter-spacing:.06em">Kriteria #{{ $ci + 1 }}</span>
+                                        <button type="button" class="rm-criteria" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:var(--apple-red);background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);cursor:pointer;font-size:0.7rem"><i class="fas fa-times"></i></button>
                                     </div>
+                                    <div style="display:flex;flex-direction:column;gap:8px">
+                                        <input type="text" name="evaluation_criteria[{{ $ci }}][category]" value="{{ $cr['category'] ?? '' }}" placeholder="Kategori" required style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                        <textarea name="evaluation_criteria[{{ $ci }}][description]" rows="2" required style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;resize:vertical;box-sizing:border-box" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'" placeholder="Deskripsi kriteria">{{ $cr['description'] ?? '' }}</textarea>
+                                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                                            <input type="number" name="evaluation_criteria[{{ $ci }}][points]" value="{{ $cr['points'] ?? '' }}" placeholder="Poin" min="0" step="0.5" required style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                            <div style="position:relative">
+                                                <select name="evaluation_criteria[{{ $ci }}][type]" style="width:100%;padding:8px 28px 8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                                    @foreach(['Technical','Analysis','Quality','checkbox','rating','numeric'] as $ct)
+                                                    <option value="{{ $ct }}" {{ ($cr['type'] ?? '') == $ct ? 'selected' : '' }}>{{ $ct }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <i class="fas fa-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.6rem;pointer-events:none"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 @endforeach
                             @endif
                         </div>
-
-                        <div id="attachmentsEmptyState" class="text-center py-6" style="color: rgba(235,235,245,0.5); display: {{ ($test->reference_attachments && count($test->reference_attachments) > 0) ? 'none' : 'block' }};">
-                            <i class="fas fa-paperclip text-2xl mb-2"></i>
-                            <p class="text-xs">Belum ada lampiran referensi. Klik "Tambah Lampiran" untuk menambahkan.</p>
-                        </div>
-                    </div>
-
-                    {{-- Kriteria Penilaian --}}
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <label class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">
-                                Kriteria Penilaian
-                            </label>
-                            <button type="button" id="addCriteria" class="btn-secondary-sm">
-                                <i class="fas fa-plus mr-1"></i>Tambah Kriteria
-                            </button>
-                        </div>
-                        
-                        <div id="criteriaContainer" class="space-y-3">
-                            @if($test->test_type === 'document-editing' && isset($test->evaluation_criteria['criteria']))
-                                @foreach($test->evaluation_criteria['criteria'] as $index => $criterion)
-                                    <div class="card-nested p-3 space-y-2">
-                                        <div class="flex justify-between items-start">
-                                            <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">KRITERIA #<span class="criteria-number">{{ $index + 1 }}</span></p>
-                                            <button type="button" class="remove-criteria text-apple-red hover:text-red-400 text-xs">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                        
-                                        <input type="text" name="evaluation_criteria[{{ $index }}][category]" 
-                                               value="{{ $criterion['category'] }}"
-                                               placeholder="Kategori (e.g., Formatting, Content)" 
-                                               class="w-full text-sm" required>
-                                        
-                                        <textarea name="evaluation_criteria[{{ $index }}][description]" 
-                                                  placeholder="Deskripsi kriteria penilaian" 
-                                                  class="w-full text-sm" rows="2" required>{{ $criterion['description'] }}</textarea>
-                                        
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <input type="number" name="evaluation_criteria[{{ $index }}][points]" 
-                                                   value="{{ $criterion['points'] }}"
-                                                   placeholder="Poin" min="0" step="0.5"
-                                                   class="text-sm" required>
-                                            
-                                            <select name="evaluation_criteria[{{ $index }}][type]" class="text-sm" required>
-                                                <option value="Technical" {{ $criterion['type'] == 'Technical' ? 'selected' : '' }}>Technical</option>
-                                                <option value="Analysis" {{ $criterion['type'] == 'Analysis' ? 'selected' : '' }}>Analysis</option>
-                                                <option value="Quality" {{ $criterion['type'] == 'Quality' ? 'selected' : '' }}>Quality</option>
-                                                <option value="checkbox" {{ $criterion['type'] == 'checkbox' ? 'selected' : '' }}>Checkbox</option>
-                                                <option value="rating" {{ $criterion['type'] == 'rating' ? 'selected' : '' }}>Rating</option>
-                                                <option value="numeric" {{ $criterion['type'] == 'numeric' ? 'selected' : '' }}>Numeric</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
-
-                        <div id="criteriaEmptyState" class="text-center py-6" style="color: rgba(235,235,245,0.5); display: {{ ($test->test_type === 'document-editing' && isset($test->evaluation_criteria['criteria']) && count($test->evaluation_criteria['criteria']) > 0) ? 'none' : 'block' }};">
-                            <i class="fas fa-check-circle text-2xl mb-2"></i>
-                            <p class="text-xs">Belum ada kriteria. Klik "Tambah Kriteria" untuk memulai.</p>
+                        <div id="criteriaEmptyState" style="{{ ($test->evaluation_criteria && count($test->evaluation_criteria) > 0) ? 'display:none' : '' }};text-align:center;padding:20px;color:var(--dark-text-secondary)">
+                            <i class="fas fa-check-circle" style="font-size:1.2rem;opacity:.4;display:block;margin-bottom:6px"></i>
+                            <p style="font-size:0.75rem;margin:0">Belum ada kriteria. Klik tombol di atas untuk menambah.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar -->
-            <div class="space-y-4">
-                <!-- Status -->
-                <div class="card-elevated rounded-apple-xl p-4 space-y-3">
-                    <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Status</p>
-                    
-                    <div class="space-y-2">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="is_active" value="1" {{ old('is_active', $test->is_active) ? 'checked' : '' }}
-                                   class="rounded">
-                            <span class="text-sm" style="color: rgba(235,235,245,0.85);">Template Aktif</span>
-                        </label>
-                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">
-                            Hanya template aktif yang dapat diassign ke kandidat.
-                        </p>
+            {{-- Right Sidebar --}}
+            <div style="position:sticky;top:16px;display:flex;flex-direction:column;gap:14px">
+
+                {{-- Status --}}
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 20px">
+                    <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 12px">Status Template</h3>
+                    <div style="padding:10px 14px;background:var(--dark-bg-secondary);border-radius:10px;display:flex;align-items:center;gap:10px">
+                        <input type="checkbox" name="is_active" value="1" id="is_active"
+                               {{ old('is_active', $test->is_active) ? 'checked' : '' }}
+                               style="width:16px;height:16px;accent-color:var(--apple-blue);flex-shrink:0;cursor:pointer">
+                        <label for="is_active" style="font-size:0.82rem;font-weight:600;color:var(--dark-text-primary);cursor:pointer;margin:0">Template Aktif</label>
+                    </div>
+                    <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:8px 0 0">Template aktif dapat diberikan ke kandidat.</p>
+                </div>
+
+                {{-- Summary --}}
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 20px">
+                    <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 12px">Ringkasan</h3>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        @foreach(['totalQuestions'=>'Total Pertanyaan','totalPoints'=>'Total Poin','durationDisplay'=>'Durasi'] as $id => $label)
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--dark-bg-secondary);border-radius:8px">
+                            <span style="font-size:0.78rem;color:var(--dark-text-secondary)">{{ $label }}</span>
+                            <span id="{{ $id }}" style="font-size:0.85rem;font-weight:700;color:var(--dark-text-primary)">{{ $id === 'durationDisplay' ? $test->duration_minutes.' menit' : ($id === 'totalQuestions' ? (is_array($test->questions) ? count($test->questions) : ($test->questions ? $test->questions->count() : 0)) : '') }}</span>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
 
-                <!-- Statistics -->
-                <div class="card-elevated rounded-apple-xl p-4 space-y-3">
-                    <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Statistik</p>
-                    
-                    <div class="space-y-2 text-sm" style="color: rgba(235,235,245,0.85);">
-                        <div class="flex justify-between">
-                            <span style="color: rgba(235,235,245,0.6);">Total Soal:</span>
-                            <strong id="total-questions">{{ $test->questions ? count($test->questions) : 0 }}</strong>
-                        </div>
-                        <div class="flex justify-between">
-                            <span style="color: rgba(235,235,245,0.6);">Total Poin:</span>
-                            <strong id="total-points">{{ $test->questions ? collect($test->questions)->sum('points') : 0 }}</strong>
-                        </div>
-                        <div class="flex justify-between">
-                            <span style="color: rgba(235,235,245,0.6);">Sesi Digunakan:</span>
-                            <strong>{{ $test->testSessions->count() }}</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="space-y-2">
-                    <button type="submit" class="btn-primary w-full">
-                        <i class="fas fa-save mr-2"></i>Update Template
+                {{-- Actions --}}
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+                    <button type="submit" id="submit-btn"
+                            style="width:100%;padding:11px 20px;background:var(--apple-blue);color:#fff;border:none;border-radius:11px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"
+                            onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                        <i class="fas fa-save" id="submit-icon"></i>
+                        <span id="submit-label">Update Template</span>
                     </button>
-                    <a href="{{ route('admin.recruitment.tests.show', $test) }}" class="btn-secondary w-full">
-                        <i class="fas fa-times mr-2"></i>Batal
+                    <a href="{{ route('admin.recruitment.tests.show', $test) }}"
+                       style="display:flex;align-items:center;justify-content:center;padding:10px 20px;color:var(--dark-text-secondary);border:1px solid var(--dark-separator);border-radius:11px;font-size:0.85rem;font-weight:600;text-decoration:none"
+                       onmouseover="this.style.color='var(--dark-text-primary)';this.style.borderColor='var(--dark-text-secondary)'" onmouseout="this.style.color='var(--dark-text-secondary)';this.style.borderColor='var(--dark-separator)'">
+                        Batal
                     </a>
                 </div>
             </div>
@@ -521,317 +319,145 @@
     </form>
 </div>
 
+@push('scripts')
 <script>
-let questionIndex = {{ old('questions') ? count(old('questions')) : ($test->questions ? count($test->questions) : 0) }};
+let questionIndex = {{ is_array($test->questions) ? count($test->questions) : ($test->questions ? $test->questions->count() : 0) }};
 
-function addQuestion() {
-    const container = document.getElementById('questions-container');
-    const emptyMessage = container.querySelector('p');
-    if (emptyMessage) emptyMessage.remove();
-    
-    const html = `
-        <div class="question-item card-nested p-3 space-y-2" data-index="${questionIndex}">
-            <div class="flex justify-between items-start gap-2">
-                <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">SOAL #<span class="question-number">${questionIndex + 1}</span></p>
-                <button type="button" onclick="removeQuestion(this)" class="text-apple-red hover:text-red-400 text-xs">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
+const inputStyle = 'width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box';
+const selectStyle = inputStyle + ';appearance:none';
 
-            <div class="space-y-2">
-                <textarea name="questions[${questionIndex}][question_text]" required
-                          class="w-full text-sm" rows="2"
-                          placeholder="Tulis pertanyaan di sini..."></textarea>
+document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.getElementById('addQuestion');
+    const container = document.getElementById('questionsContainer');
+    const emptyState = document.getElementById('emptyState');
+    const durationInput = document.getElementById('durationInput');
 
-                <div class="grid grid-cols-2 gap-2">
-                    <select name="questions[${questionIndex}][question_type]" required class="question-type-select text-sm">
-                        <option value="">Pilih tipe...</option>
-                        <option value="multiple-choice">Pilihan Ganda</option>
-                        <option value="true-false">Benar/Salah</option>
-                        <option value="essay">Essay</option>
-                        <option value="rating">Rating (1-5)</option>
-                    </select>
-
-                    <input type="number" name="questions[${questionIndex}][points]" required
-                           min="0" step="0.5" value="1"
-                           class="text-sm" placeholder="Poin">
-                </div>
-
-                <div class="options-container hidden">
-                    <div class="space-y-1"></div>
-                    <input type="text" name="questions[${questionIndex}][correct_answer]"
-                           class="w-full text-sm mt-2" placeholder="Jawaban benar">
-                </div>
-            </div>
-        </div>
-    `;
-    
-    container.insertAdjacentHTML('beforeend', html);
-    questionIndex++;
-    updateStatistics();
-}
-
-function removeQuestion(btn) {
-    if (confirm('Hapus soal ini?')) {
-        btn.closest('.question-item').remove();
-        updateQuestionNumbers();
-        updateStatistics();
+    // Bind existing question interactions
+    function bindQuestion(item, idx) {
+        item.querySelector('.remove-question').addEventListener('click', function() {
+            item.remove();
+            updateSummary();
+            if (!container.querySelectorAll('.question-item').length) emptyState.style.display = '';
+        });
+        item.querySelector('.question-points')?.addEventListener('input', updateSummary);
+        const typeSelect = item.querySelector('.question-type-select');
+        const optWrap = item.querySelector('.options-wrap');
+        const corrWrap = item.querySelector('.correct-wrap');
+        if (typeSelect) {
+            typeSelect.addEventListener('change', function() {
+                if (this.value === 'essay') { if(optWrap) optWrap.style.display='none'; if(corrWrap) corrWrap.style.display='none'; }
+                else if (this.value === 'true-false') { if(optWrap) optWrap.style.display='none'; if(corrWrap) corrWrap.style.display=''; if(corrWrap) corrWrap.querySelector('input').placeholder='"true" atau "false"'; }
+                else { if(optWrap) optWrap.style.display=''; if(corrWrap) corrWrap.style.display=''; if(corrWrap) corrWrap.querySelector('input').placeholder='Nomor pilihan benar (mis: 1)'; }
+            });
+        }
+        item.querySelectorAll('.add-option').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const list = item.querySelector('.options-list');
+                const row = document.createElement('div');
+                row.style.cssText = 'display:flex;gap:6px;align-items:center';
+                row.innerHTML = `<input type="text" name="questions[${idx}][options][]" placeholder="Pilihan baru" style="${inputStyle}" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"><button type="button" style="width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:7px;color:var(--apple-red);background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);cursor:pointer;font-size:0.7rem" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`;
+                list.appendChild(row);
+            });
+        });
     }
-}
 
-function updateQuestionNumbers() {
-    document.querySelectorAll('.question-number').forEach((el, idx) => {
-        el.textContent = idx + 1;
+    document.querySelectorAll('.question-item').forEach(function(item, i) { bindQuestion(item, i); });
+
+    addBtn.addEventListener('click', function() {
+        const idx = questionIndex++;
+        const item = document.createElement('div');
+        item.className = 'question-item';
+        item.style.cssText = 'background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:12px;padding:16px';
+        item.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                <span style="font-size:0.78rem;font-weight:700;color:var(--apple-blue)">Pertanyaan Baru</span>
+                <button type="button" class="remove-question" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;color:var(--apple-red);background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);cursor:pointer;font-size:0.72rem"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <div>
+                    <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Teks Pertanyaan *</label>
+                    <textarea name="questions[${idx}][question_text]" rows="2" required style="${inputStyle};resize:vertical" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'" placeholder="Tuliskan pertanyaan..."></textarea>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                    <div>
+                        <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Jenis *</label>
+                        <div style="position:relative"><select name="questions[${idx}][question_type]" class="question-type-select" style="${selectStyle}" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"><option value="multiple-choice">Multiple Choice</option><option value="true-false">True/False</option><option value="essay">Essay</option><option value="rating">Rating Scale</option></select><i class="fas fa-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.6rem;pointer-events:none"></i></div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Poin *</label>
+                        <input type="number" name="questions[${idx}][points]" value="1" min="0" step="0.5" required class="question-points" style="${inputStyle}" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                    </div>
+                </div>
+                <div class="options-wrap">
+                    <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Pilihan Jawaban</label>
+                    <div class="options-list" style="display:flex;flex-direction:column;gap:6px">
+                        <div style="display:flex;gap:6px;align-items:center">
+                            <input type="text" name="questions[${idx}][options][]" placeholder="Pilihan 1" style="${inputStyle}" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                            <button type="button" class="add-option" style="width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:7px;color:var(--apple-green);background:color-mix(in srgb,var(--apple-green) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-green) 25%,transparent);cursor:pointer;font-size:0.7rem"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="correct-wrap">
+                    <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Jawaban Benar</label>
+                    <input type="text" name="questions[${idx}][correct_answer]" placeholder="Nomor pilihan benar (mis: 1)" style="${inputStyle}" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                </div>
+            </div>
+        `;
+        container.appendChild(item);
+        emptyState.style.display = 'none';
+        updateSummary();
+        bindQuestion(item, idx);
     });
-}
 
-function addOption(btn) {
-    const container = btn.previousElementSibling;
-    const optionCount = container.querySelectorAll('input[type="text"]').length;
-    
-    const html = `
-        <div class="flex gap-2">
-            <input type="text" name="${btn.closest('.question-item').querySelector('select').name.replace('[question_type]', '[options][]')}"
-                   class="flex-1 text-sm" placeholder="Pilihan ${String.fromCharCode(65 + optionCount)}">
-            <button type="button" onclick="this.parentElement.remove()" class="text-apple-red text-xs">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `;
-    
-    container.insertAdjacentHTML('beforeend', html);
-}
+    durationInput.addEventListener('input', function() {
+        document.getElementById('durationDisplay').textContent = this.value + ' menit';
+    });
 
-function updateStatistics() {
-    const questions = document.querySelectorAll('.question-item').length;
+    const testTypeSelect = document.getElementById('test_type');
+    const questionsSection = document.getElementById('questionsSection');
+    const docSection = document.getElementById('documentEditingSection');
+    testTypeSelect.addEventListener('change', function() {
+        if (this.value === 'document-editing') { questionsSection.style.display='none'; docSection.style.display=''; }
+        else { questionsSection.style.display=''; docSection.style.display='none'; }
+    });
+
+    let criteriaIndex = {{ $test->evaluation_criteria ? count($test->evaluation_criteria) : 0 }};
+    const criteriaContainer = document.getElementById('criteriaContainer');
+    const criteriaEmpty = document.getElementById('criteriaEmptyState');
+    document.getElementById('addCriteria').addEventListener('click', function() {
+        criteriaEmpty.style.display = 'none';
+        const ci = criteriaIndex++;
+        const row = document.createElement('div');
+        row.style.cssText = 'background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;padding:14px';
+        row.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span style="font-size:0.72rem;font-weight:700;color:var(--dark-text-secondary);text-transform:uppercase;letter-spacing:.06em">Kriteria #${ci+1}</span><button type="button" class="rm-criteria" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:var(--apple-red);background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);cursor:pointer;font-size:0.7rem"><i class="fas fa-times"></i></button></div><div style="display:flex;flex-direction:column;gap:8px"><input type="text" name="evaluation_criteria[${ci}][category]" placeholder="Kategori" required style="${inputStyle}" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"><textarea name="evaluation_criteria[${ci}][description]" rows="2" required style="${inputStyle};resize:vertical" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'" placeholder="Deskripsi"></textarea><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input type="number" name="evaluation_criteria[${ci}][points]" placeholder="Poin" min="0" step="0.5" required style="${inputStyle}" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"><div style="position:relative"><select name="evaluation_criteria[${ci}][type]" style="${selectStyle}" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"><option>Technical</option><option>Analysis</option><option>Quality</option><option>checkbox</option><option>rating</option><option>numeric</option></select><i class="fas fa-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.6rem;pointer-events:none"></i></div></div></div>`;
+        criteriaContainer.appendChild(row);
+        row.querySelector('.rm-criteria').addEventListener('click', function() { row.remove(); if (!criteriaContainer.children.length) criteriaEmpty.style.display = ''; });
+    });
+
+    document.querySelectorAll('.rm-criteria').forEach(function(btn) {
+        btn.addEventListener('click', function() { btn.closest('div[style*="border-radius:10px"]').remove(); if (!criteriaContainer.children.length) criteriaEmpty.style.display = ''; });
+    });
+
+    updateSummary();
+});
+
+function updateSummary() {
+    const questions = document.querySelectorAll('.question-item');
     let totalPoints = 0;
-    
-    document.querySelectorAll('input[name*="[points]"]').forEach(input => {
-        totalPoints += parseFloat(input.value) || 0;
+    questions.forEach(function(q) {
+        const pts = parseFloat(q.querySelector('.question-points')?.value) || 0;
+        totalPoints += pts;
     });
-    
-    document.getElementById('total-questions').textContent = questions;
-    document.getElementById('total-points').textContent = totalPoints.toFixed(1);
+    document.getElementById('totalQuestions').textContent = questions.length;
+    document.getElementById('totalPoints').textContent = totalPoints;
 }
 
-// Handle question type change
-document.addEventListener('change', function(e) {
-    if (e.target.classList.contains('question-type-select')) {
-        const questionItem = e.target.closest('.question-item');
-        const optionsContainer = questionItem.querySelector('.options-container');
-        const optionsDiv = optionsContainer.querySelector('.space-y-1');
-        const correctAnswerInput = optionsContainer.querySelector('input[type="text"]');
-        const type = e.target.value;
-        
-        if (type === 'multiple-choice') {
-            optionsContainer.classList.remove('hidden');
-            optionsDiv.innerHTML = `
-                <div class="flex gap-2">
-                    <input type="text" name="${e.target.name.replace('[question_type]', '[options][]')}"
-                           class="flex-1 text-sm" placeholder="Pilihan A" required>
-                </div>
-                <div class="flex gap-2">
-                    <input type="text" name="${e.target.name.replace('[question_type]', '[options][]')}"
-                           class="flex-1 text-sm" placeholder="Pilihan B" required>
-                </div>
-            `;
-            optionsDiv.insertAdjacentHTML('beforeend', '<button type="button" onclick="addOption(this)" class="text-xs text-apple-blue hover:text-blue-400">+ Tambah Pilihan</button>');
-            correctAnswerInput.placeholder = 'Jawaban benar (A, B, C, dst)';
-            correctAnswerInput.required = true;
-        } else if (type === 'true-false') {
-            optionsContainer.classList.remove('hidden');
-            optionsDiv.innerHTML = '';
-            correctAnswerInput.placeholder = 'true / false';
-            correctAnswerInput.required = true;
-        } else {
-            optionsContainer.classList.add('hidden');
-            correctAnswerInput.required = false;
-        }
-    }
-});
-
-// Update points dynamically
-document.addEventListener('input', function(e) {
-    if (e.target.name && e.target.name.includes('[points]')) {
-        updateStatistics();
-    }
-});
-
-// Toggle between Questions and Document Editing sections based on test type
-const testTypeSelect = document.getElementById('test_type');
-const questionsSection = document.getElementById('questionsSection');
-const documentEditingSection = document.getElementById('documentEditingSection');
-
-testTypeSelect.addEventListener('change', function() {
-    if (this.value === 'document-editing') {
-        questionsSection.style.display = 'none';
-        documentEditingSection.style.display = 'block';
-    } else {
-        questionsSection.style.display = 'block';
-        documentEditingSection.style.display = 'none';
-    }
-});
-
-// Add Criteria for Document Editing
-let criteriaIndex = {{ $test->test_type === 'document-editing' && isset($test->evaluation_criteria['criteria']) ? count($test->evaluation_criteria['criteria']) : 0 }};
-const criteriaContainer = document.getElementById('criteriaContainer');
-const criteriaEmptyState = document.getElementById('criteriaEmptyState');
-
-document.getElementById('addCriteria').addEventListener('click', function() {
-    criteriaEmptyState.style.display = 'none';
-    
-    const criteriaItem = document.createElement('div');
-    criteriaItem.className = 'card-nested p-3 space-y-2';
-    criteriaItem.innerHTML = `
-        <div class="flex justify-between items-start">
-            <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">KRITERIA #<span class="criteria-number">${criteriaIndex + 1}</span></p>
-            <button type="button" class="remove-criteria text-apple-red hover:text-red-400 text-xs">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
-        
-        <input type="text" name="evaluation_criteria[${criteriaIndex}][category]" 
-               placeholder="Kategori (e.g., Formatting, Content)" 
-               class="w-full text-sm" required>
-        
-        <textarea name="evaluation_criteria[${criteriaIndex}][description]" 
-                  placeholder="Deskripsi kriteria penilaian (e.g., Perbaiki font menjadi Arial 11pt)" 
-                  class="w-full text-sm" rows="2" required></textarea>
-        
-        <div class="grid grid-cols-2 gap-2">
-            <input type="number" name="evaluation_criteria[${criteriaIndex}][points]" 
-                   placeholder="Poin" min="0" step="0.5"
-                   class="text-sm" required>
-            
-            <select name="evaluation_criteria[${criteriaIndex}][type]" class="text-sm" required>
-                <option value="Technical">Technical</option>
-                <option value="Analysis">Analysis</option>
-                <option value="Quality">Quality</option>
-                <option value="checkbox">Checkbox</option>
-                <option value="rating">Rating</option>
-                <option value="numeric">Numeric</option>
-            </select>
-        </div>
-    `;
-    
-    criteriaContainer.appendChild(criteriaItem);
-    criteriaIndex++;
-    
-    // Remove criteria handler
-    criteriaItem.querySelector('.remove-criteria').addEventListener('click', function() {
-        if (confirm('Hapus kriteria ini?')) {
-            criteriaItem.remove();
-            updateCriteriaNumbers();
-            if (criteriaContainer.children.length === 0) {
-                criteriaEmptyState.style.display = 'block';
-            }
-        }
-    });
-});
-
-// Add remove handlers for existing criteria
-document.querySelectorAll('.remove-criteria').forEach(btn => {
-    btn.addEventListener('click', function() {
-        if (confirm('Hapus kriteria ini?')) {
-            this.closest('.card-nested').remove();
-            updateCriteriaNumbers();
-            if (criteriaContainer.children.length === 0) {
-                criteriaEmptyState.style.display = 'block';
-            }
-        }
-    });
-});
-
-function updateCriteriaNumbers() {
-    const criteria = criteriaContainer.querySelectorAll('.card-nested');
-    criteria.forEach((c, index) => {
-        c.querySelector('.criteria-number').textContent = index + 1;
-    });
-}
-
-// Reference Attachments Management
-let attachmentIndex = {{ $test->reference_attachments && count($test->reference_attachments) > 0 ? count($test->reference_attachments) : 0 }};
-const attachmentsContainer = document.getElementById('attachmentsContainer');
-const attachmentsEmptyState = document.getElementById('attachmentsEmptyState');
-
-document.getElementById('addAttachment').addEventListener('click', function() {
-    attachmentsEmptyState.style.display = 'none';
-    
-    const attachmentItem = document.createElement('div');
-    attachmentItem.className = 'card-nested p-3 space-y-2';
-    attachmentItem.innerHTML = `
-        <div class="flex justify-between items-start">
-            <p class="text-xs font-semibold" style="color: rgba(235,235,245,0.7);">
-                LAMPIRAN #<span class="attachment-number">${attachmentIndex + 1}</span>
-            </p>
-            <button type="button" class="remove-attachment text-apple-red hover:text-red-400 text-xs">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
-        
-        <input type="text" name="reference_attachments[${attachmentIndex}][name]" 
-               placeholder="Nama file (e.g., Panduan Penyusunan UKL-UPL)" 
-               class="w-full text-sm" required>
-        
-        <textarea name="reference_attachments[${attachmentIndex}][description]" 
-                  placeholder="Deskripsi singkat tentang file ini" 
-                  class="w-full text-sm" rows="2" required></textarea>
-        
-        <div class="grid grid-cols-2 gap-2">
-            <input type="text" name="reference_attachments[${attachmentIndex}][file_url]" 
-                   placeholder="URL file atau path storage" 
-                   class="text-sm" required>
-            
-            <select name="reference_attachments[${attachmentIndex}][file_type]" class="text-sm" required>
-                <option value="pdf">PDF</option>
-                <option value="doc">DOC</option>
-                <option value="docx">DOCX</option>
-                <option value="xls">XLS</option>
-                <option value="xlsx">XLSX</option>
-                <option value="ppt">PPT</option>
-                <option value="pptx">PPTX</option>
-                <option value="zip">ZIP</option>
-            </select>
-        </div>
-        
-        <input type="text" name="reference_attachments[${attachmentIndex}][file_size]" 
-               placeholder="Ukuran file (e.g., 2.5 MB)" 
-               class="w-full text-sm" required>
-    `;
-    
-    attachmentsContainer.appendChild(attachmentItem);
-    attachmentIndex++;
-    
-    // Remove attachment handler
-    attachmentItem.querySelector('.remove-attachment').addEventListener('click', function() {
-        if (confirm('Hapus lampiran ini?')) {
-            attachmentItem.remove();
-            updateAttachmentNumbers();
-            if (attachmentsContainer.children.length === 0) {
-                attachmentsEmptyState.style.display = 'block';
-            }
-        }
-    });
-});
-
-// Add remove handlers for existing attachments
-document.querySelectorAll('.remove-attachment').forEach(btn => {
-    btn.addEventListener('click', function() {
-        if (confirm('Hapus lampiran ini?')) {
-            this.closest('.card-nested').remove();
-            updateAttachmentNumbers();
-            if (attachmentsContainer.children.length === 0) {
-                attachmentsEmptyState.style.display = 'block';
-            }
-        }
-    });
-});
-
-function updateAttachmentNumbers() {
-    const attachments = attachmentsContainer.querySelectorAll('.card-nested');
-    attachments.forEach((a, index) => {
-        a.querySelector('.attachment-number').textContent = index + 1;
-    });
+function handleSubmit(form) {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true; btn.style.opacity = '0.6'; btn.style.cursor = 'not-allowed';
+    document.getElementById('submit-icon').className = 'fas fa-spinner fa-spin';
+    document.getElementById('submit-label').textContent = 'Menyimpan...';
 }
 </script>
+@endpush
 @endsection

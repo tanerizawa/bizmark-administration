@@ -28,7 +28,7 @@ class InternalLinkService
      */
     public function addInternalLinks(string $content, ArticleTopic $topic, int $targetCount = 3): string
     {
-        \Illuminate\Support\FacadesLog::info('🔗 Adding internal links', [
+        \Illuminate\Support\Facades\Log::info('🔗 Adding internal links', [
             'topic_id' => $topic->id,
             'target_count' => $targetCount,
         ]);
@@ -37,7 +37,7 @@ class InternalLinkService
         $relatedArticles = $this->findRelatedArticles($topic, $targetCount * 2);
 
         if ($relatedArticles->isEmpty()) {
-            \Illuminate\Support\FacadesLog::warning('⚠️  No related articles found for internal linking', [
+            \Illuminate\Support\Facades\Log::warning('⚠️  No related articles found for internal linking', [
                 'topic_id' => $topic->id,
             ]);
 
@@ -48,7 +48,7 @@ class InternalLinkService
         $opportunities = $this->findAnchorOpportunities($content, $relatedArticles);
 
         if (empty($opportunities)) {
-            \Illuminate\Support\FacadesLog::warning('⚠️  No anchor opportunities found in content', [
+            \Illuminate\Support\Facades\Log::warning('⚠️  No anchor opportunities found in content', [
                 'topic_id' => $topic->id,
                 'related_articles' => $relatedArticles->count(),
             ]);
@@ -60,7 +60,7 @@ class InternalLinkService
         $opportunities = array_slice($opportunities, 0, $targetCount);
         $contentWithLinks = $this->insertLinks($content, $opportunities);
 
-        \Illuminate\Support\FacadesLog::info('✅ Internal links added', [
+        \Illuminate\Support\Facades\Log::info('✅ Internal links added', [
             'topic_id' => $topic->id,
             'links_added' => count($opportunities),
         ]);
@@ -208,7 +208,7 @@ class InternalLinkService
             try {
                 $url = route('blog.article.id', $article->slug);
             } catch (\Exception $e) {
-                \Illuminate\Support\FacadesLog::warning('Failed to generate route for internal link', [
+                \Illuminate\Support\Facades\Log::warning('Failed to generate route for internal link', [
                     'article_slug' => $article->slug,
                     'error' => $e->getMessage(),
                 ]);
@@ -270,7 +270,7 @@ class InternalLinkService
      */
     public function injectBacklinks(Article $newArticle, int $maxUpdates = 5): int
     {
-        \Illuminate\Support\FacadesLog::info('🔗 Injecting backlinks for new article', [
+        \Illuminate\Support\Facades\Log::info('🔗 Injecting backlinks for new article', [
             'article_id' => $newArticle->id,
             'slug' => $newArticle->slug,
         ]);
@@ -313,7 +313,7 @@ class InternalLinkService
             ->get();
 
         if ($candidates->isEmpty()) {
-            \Illuminate\Support\FacadesLog::info('⚠️ No candidate articles for backlink injection');
+            \Illuminate\Support\Facades\Log::info('⚠️ No candidate articles for backlink injection');
 
             return 0;
         }
@@ -361,7 +361,7 @@ class InternalLinkService
                         $updated++;
                         $injected = true;
 
-                        \Illuminate\Support\FacadesLog::info('✅ Backlink injected', [
+                        \Illuminate\Support\Facades\Log::info('✅ Backlink injected', [
                             'target_article' => $candidate->slug,
                             'anchor' => $anchorText,
                             'links_to' => $newArticle->slug,
@@ -372,7 +372,7 @@ class InternalLinkService
             }
         }
 
-        \Illuminate\Support\FacadesLog::info('🔗 Backlink injection complete', [
+        \Illuminate\Support\Facades\Log::info('🔗 Backlink injection complete', [
             'new_article' => $newArticle->slug,
             'articles_updated' => $updated,
         ]);
@@ -404,7 +404,7 @@ class InternalLinkService
             }
         }
 
-        \Illuminate\Support\FacadesLog::info('🔗 Batch backlink scan complete', $stats);
+        \Illuminate\Support\Facades\Log::info('🔗 Batch backlink scan complete', $stats);
 
         return $stats;
     }
@@ -494,7 +494,7 @@ class InternalLinkService
                     $linksInjected++;
                     $linkedServices[] = $serviceSlug;
 
-                    \Illuminate\Support\FacadesLog::info('🔗 pSEO cross-link injected', [
+                    \Illuminate\Support\Facades\Log::info('🔗 pSEO cross-link injected', [
                         'keyword' => $keyword,
                         'service' => $serviceSlug,
                         'city' => $citySlug,
@@ -551,7 +551,7 @@ class InternalLinkService
             }
         }
 
-        \Illuminate\Support\FacadesLog::info('🔗 Batch pSEO link scan complete', $stats);
+        \Illuminate\Support\Facades\Log::info('🔗 Batch pSEO link scan complete', $stats);
 
         return $stats;
     }

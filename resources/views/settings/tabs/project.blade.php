@@ -68,7 +68,7 @@
                             <span class="px-2 py-0.5 text-xs rounded-apple" style="background: {{ $status->is_active ? 'rgba(0, 122, 255, 0.15)' : 'rgba(142, 142, 147, 0.2)' }}; color: {{ $status->is_active ? 'rgba(0, 122, 255, 1)' : 'rgba(142, 142, 147, 0.9)' }};">
                                 {{ $status->is_active ? 'Active' : 'Inactive' }}
                             </span>
-                            <form method="POST" action="{{ route('settings.project.statuses.delete', $status) }}" onsubmit="return confirm('Hapus status {{ $status->name }}?');">
+                            <form method="POST" action="{{ route('settings.project.statuses.delete', $status) }}" x-data @submit.prevent="if(confirm('Hapus status {{ $status->name }}?')) $el.submit()">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="px-2 py-1 rounded-apple text-xs" style="background: rgba(255, 59, 48, 0.15); color: rgba(255, 59, 48, 1);" {{ $status->projects()->exists() ? 'disabled' : '' }}>

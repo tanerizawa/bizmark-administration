@@ -8,15 +8,28 @@
 
     <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         :root {
-            --brand-primary: #0b63c7;
-            --brand-primary-dark: #0a4b93;
+            --brand-primary: #b8860b;
+            --brand-primary-dark: #8b6508;
+            --brand-ink: #0f172a;
         }
         * { font-family: 'Inter', -apple-system, system-ui, sans-serif; }
-        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; }
+        .auth-title { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.02em; }
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(184, 134, 11, 0.14), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.08), transparent 26%),
+                linear-gradient(145deg, #faf8f3 0%, #f5efe2 48%, #ffffff 100%);
+            min-height: 100vh;
+            color: var(--brand-ink);
+        }
+        .form-input-gold:focus { border-color: var(--brand-primary); outline: none; box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.18); }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen py-12 px-4">
@@ -28,18 +41,18 @@
             <a href="/">
                 <img src="{{ asset('images/logo-white.png') }}" alt="Bizmark.ID" class="h-10 mx-auto"
                      onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block'">
-                <p id="logo-fallback" style="display:none;" class="text-2xl font-bold text-white">Bizmark.ID</p>
+                <p id="logo-fallback" class="auth-title text-2xl font-bold" style="display:none; color: var(--brand-ink);">Bizmark.ID</p>
             </a>
         </div>
 
         <!-- Card -->
-        <div class="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
+        <div class="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8" style="border: 1px solid rgba(184, 134, 11, 0.18);">
 
             <div class="text-center mb-6">
-                <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-key text-2xl text-blue-600"></i>
+                <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background: rgba(184, 134, 11, 0.12);">
+                    <i class="fas fa-key text-2xl" style="color: var(--brand-primary);"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900">Lupa Password?</h1>
+                <h1 class="auth-title text-2xl font-bold text-gray-900">Lupa Password?</h1>
                 <p class="text-sm text-gray-500 mt-2">
                     Masukkan alamat email Anda dan kami akan mengirimkan link untuk mereset password.
                 </p>
@@ -81,7 +94,7 @@
                             required
                             autofocus
                             placeholder="email@example.com"
-                            class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                            class="form-input-gold w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm transition"
                         >
                     </div>
                 </div>
@@ -98,13 +111,13 @@
             </form>
 
             <div class="mt-6 text-center">
-                <a href="{{ route('login') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                <a href="{{ route('login') }}" class="text-sm font-medium hover:underline" style="color: var(--brand-primary);">
                     <i class="fas fa-arrow-left mr-1"></i>Kembali ke halaman login
                 </a>
             </div>
         </div>
 
-        <p class="text-center text-xs text-white/40 mt-6">
+        <p class="text-center text-xs mt-6" style="color: rgba(15, 23, 42, 0.45);">
             &copy; {{ date('Y') }} Bizmark.ID · Semua hak dilindungi
         </p>
     </div>

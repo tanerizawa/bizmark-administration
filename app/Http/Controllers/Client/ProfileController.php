@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
@@ -106,5 +108,73 @@ class ProfileController extends Controller
         $client->update($validated);
 
         return back()->with('success', 'Profil berhasil diperbarui');
+    }
+
+    /**
+     * Update notification preferences.
+     */
+    public function updateNotifications(Request $request)
+    {
+        $client = Auth::guard('client')->user();
+
+        $client->update([
+            'notif_email' => $request->boolean('notif_email'),
+            'notif_whatsapp' => $request->boolean('notif_whatsapp'),
+            'notif_push' => $request->boolean('notif_push'),
+        ]);
+
+        return back()->with('success', 'Preferensi notifikasi berhasil disimpan.');
+    }
+
+    /**
+     * Update the client's password.
+     */
+    public function updatePassword(Request $request)
+    {
+        $client = Auth::guard('client')->user();
+
+        $request->validate([
+            'current_password' => ['required', 'current_password:client'],
+            'password' => ['required', 'confirmed', Password::min(8)],
+        ]);
+
+        $client->update(['password' => Hash::make($request->password)]);
+
+        return back()->with('success', 'Password berhasil diubah.');
+    }
+
+    /**
+     * Redirect to 2FA setup (stub — feature not yet implemented).
+     */
+    public function twoFactorEnable()
+    {
+        return back()->with('error', 'Fitur 2FA belum tersedia. Segera hadir!');
+    }
+
+    /**
+     * Disable 2FA (stub).
+     */
+    public function twoFactorDisable(Request $request)
+    {
+        $client = Auth::guard('client')->user();
+        $client->update(['two_factor_secret' => null]);
+
+        return back()->with('success', '2FA berhasil dinonaktifkan.');
+    }
+
+    /**
+     * Delete the client account.
+     */
+    public function destroy(Request $request)
+    {
+        $client = Auth::guard('client')->user();
+
+        Auth::guard('client')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        $client->delete();
+
+        return redirect('/')->with('success', 'Akun Anda telah dihapus.');
     }
 }

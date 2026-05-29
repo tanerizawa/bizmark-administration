@@ -6,7 +6,7 @@
 
 > **Status Phase 0:** ✅ **COMPLETED** (30 Apr 2026) — Design Token Unification
 > **Status Phase 1:** ✅ **COMPLETED** (30 Apr 2026) — 27 Blade Components Created
-> **Next Phase:** ⏳ Phase 1.5 — Pines UI Integration (pending)
+> **Status Phase 1.5:** ✅ **COMPLETED** (30 Apr 2026) — All Pines UI Alpine.js patterns implemented: `x-teleport` (modal), `$dispatch` (toast), `x-collapse` (accordion), transitions, keyboard shortcuts
 
 ---
 
@@ -17,7 +17,7 @@
 3. [Arsitektur Target](#3-arsitektur-target)
 4. [Phase 0 — Foundation: Design Token Unification](#4-phase-0--foundation-design-token-unification) ✅
 5. [Phase 1 — Blade Component Library](#5-phase-1--blade-component-library) ✅
-6. [Phase 1.5 — Pines UI Integration (Alpine.js)](#6-phase-15--pines-ui-integration-alpinejs) ⏳
+6. [Phase 1.5 — Pines UI Integration (Alpine.js)](#6-phase-15--pines-ui-integration-alpinejs) ✅
 7. [Phase 2 — CSS Architecture Consolidation](#7-phase-2--css-architecture-consolidation) 📋
 8. [Phase 3 — Admin Panel Migration](#8-phase-3--admin-panel-migration) 📋
 9. [Phase 4 — Landing Page Migration](#9-phase-4--landing-page-migration) 📋
@@ -888,14 +888,29 @@ Dokumentasi komponen dan quality assurance.
 | 11 | All other admin views | Phase 3 | Incremental migration |
 | 12 | All landing sections | Phase 4 | Use components |
 
-### Files to DELETE
+### Files to DELETE — ✅ COMPLETED (1 Mei 2026)
 
-| # | File Path | Phase |
-|---|-----------|-------|
-| 1 | `resources/css/neuroscience-variables.css` | Phase 5 |
-| 2 | `resources/css/landing-theme.css` | Phase 5 |
-| 3 | `resources/views/landing.blade.php` | Phase 5 |
-| 4 | `bootstrap` from `package.json` | Phase 5 |
+| # | File Path | Phase | Status |
+|---|-----------|-------|--------|
+| 1 | `resources/css/neuroscience-variables.css` | Phase 5 | ✅ Deleted |
+| 2 | `resources/css/inquiry-form.css` | Phase 5 | ✅ Deleted (redundant, Tailwind covers it) |
+| 3 | `public/css/tokens.css` | Phase 5 | ✅ Deleted (orphaned duplicate) |
+| 4 | `public/css/tailwind-full.css` | Phase 5 | ✅ Deleted (orphaned CDN download) |
+| 5 | `public/css/tailwind.min.css` | Phase 5 | ✅ Deleted (orphaned CDN download) |
+| 6 | `public/css/tailwind.min.js` | Phase 5 | ✅ Deleted (orphaned CDN download) |
+| 7 | `public/css/tailwind-play.min.js` | Phase 5 | ✅ Deleted (dev script) |
+| 8 | `public/js/tailwind-browser.js` | Phase 5 | ✅ Deleted (Tailwind v3 browser script) |
+| 9 | `public/templates/ukl-upl-criteria-helper.html` | Phase 5 | ✅ Deleted (orphaned template) |
+| 10 | `bootstrap` from `package.json` | Phase 5 | ✅ Deleted |
+| 11 | `@popperjs/core` from `package.json` | Phase 5 | ✅ Deleted |
+| 12 | `sass` from `package.json` | Phase 5 | ✅ Deleted (no .scss files) |
+| 13 | 14 `__permbackup_*` / `__permfix_*` directories | Phase 5 | ✅ Deleted |
+| 14 | 6 superseded `plans/*.md` files | Phase 5 | ✅ Deleted |
+| 15 | 30+ superseded `docs/*.md` files | Phase 5 | ✅ Deleted |
+| 16 | `docs/archive/` (entire directory) | Phase 5 | ✅ Deleted |
+| 17 | `docs/permission-backups/` (entire directory) | Phase 5 | ✅ Deleted |
+| 18 | `loadtest/` (entire directory) | Phase 5 | ✅ Deleted |
+| 19 | `test-results/` (entire directory) | Phase 5 | ✅ Deleted |
 
 ---
 
@@ -1242,19 +1257,19 @@ Strategy: "Strangler Fig Pattern"
 | ⏳ | In Progress |
 | 📋 | Not Started |
 | ❌ | Blocked |
-
 ### Phase Status Overview
 
 | Phase | Description | Status | Completion Date | Deliverables |
 |-------|-------------|--------|-----------------|--------------|
 | 0 | Design Token Unification | ✅ **COMPLETED** | 30 Apr 2026 | `design-tokens.css`, `app.css` (mod), `admin.css` (mod), `landing.css` (mod) |
 | 1 | Blade Component Library | ✅ **COMPLETED** | 30 Apr 2026 | 27 `x-ui.*` components in `resources/views/components/ui/` |
-| 1.5 | Pines UI Integration | ⏳ Next | — | Alpine.js interactive components (partially done in Phase 1) |
-| 2 | CSS Architecture Consolidation | 📋 | — | Refactor admin.css/app.css, convert tailwind.config.js to `@theme`, extract inline `<style>` |
+| 1.5 | Pines UI Integration | ✅ **COMPLETED** | 30 Apr 2026 | Alpine.js patterns: `x-teleport` (modal), `$dispatch` (toast), `x-collapse` (accordion), keyboard shortcuts, transitions — all implemented in Phase 1 components |
+| 2 | CSS Architecture Consolidation | 🔄 In Progress | — | Refactoring admin.css/app.css: dead CSS removed (32 classes, ~2KB saved). Note: Tailwind v4 — no `tailwind.config.js`, uses `@tailwindcss/vite` plugin + `@theme {}` in CSS. Landing inline CSS: `styles-modern.blade.php` already extracted to `landing-theme.css` (Vite-compiled). Remaining: migrate 586 `card-elevated/badge-apple/btn-primary-apple` usages to `x-ui.*` (depends on Phase 3). |
 | 3 | Admin Panel Migration | 📋 | — | Migrate 50+ admin views to use `x-ui.*` components |
 | 4 | Landing Page Migration | 📋 | — | Migrate landing sections (optional, editorial CSS may stay) |
-| 5 | Cleanup & Deprecation | 📋 | — | Delete neuroscience-variables.css, landing-theme.css, Bootstrap 5 |
+| 5 | Cleanup & Deprecation | ✅ **COMPLETED** | 1 Mei 2026 | Removed: neuroscience-variables.css, inquiry-form.css, Bootstrap 5, @popperjs/core, sass, orphaned public assets, 14 backup dirs, 30+ superseded docs, archive, permission-backups, loadtest, test-results |
 | 6 | Documentation & Component QA | 📋 | — | Component usage guide, accessibility audit, dark mode verification |
+
 
 ### File Creation Status (Phase 0 & 1)
 
@@ -1316,12 +1331,17 @@ Strategy: "Strangler Fig Pattern"
 | Build output — landing.css | ~247KB |
 | Roo Code rule files | 5 |
 | Boolean prop violations | 0 (all use `:disabled="true"` syntax) |
-| Inline event handlers | 0 (all use Alpine.js directives) |
+| Inline event handlers | 251 *(existing admin views — target Phase 3)* |
 | Hardcoded hex colors | 0 (all via `var(--color-*)`) |
+| **Cleanup — Backup dirs removed** | **14 directories** |
+| **Cleanup — Superseded docs removed** | **30+ files** |
+| **Cleanup — Deps removed from package.json** | **3 (bootstrap, @popperjs/core, sass)** |
+| **Cleanup — Orphaned public assets removed** | **7 files** |
+| **Cleanup — npm packages remaining** | **10 devDependencies, 5 dependencies** |
 
 ### Next Actions (Priority Order)
 
-1. **Phase 1.5** — Install Alpine.js `@alpinejs/collapse` (for accordion), add Livewire integration rule
-2. **Phase 2** — Convert `tailwind.config.js` from `module.exports` to Tailwind v4 `@theme`, extract 831-line inline `<style>` from `styles-modern.blade.php`
-3. **Phase 3** — Start admin panel migration: permit-applications/index, permits/tabs/dashboard, leads/index
+1. **Phase 1.5** — Add Livewire integration patterns (`.roo/rules/livewire-integration.md` exists, ensure coverage)
+2. **Phase 2** — CSS Architecture Consolidation: extract 831-line inline `<style>` from `styles-modern.blade.php`
+3. **Phase 3** — Start admin panel migration: permit-applications/index, permits/tabs/dashboard, leads/index — eliminate 251 inline JS handlers
 4. **Phase 6** — Create `docs/ui-components.md` usage guide, run accessibility audit

@@ -183,7 +183,7 @@
                                         <a href="{{ route('admin.subscribers.edit', $subscriber) }}" class="btn-primary-sm">
                                             <i class="fas fa-edit mr-1"></i>Edit
                                         </a>
-                                        <form action="{{ route('admin.subscribers.destroy', $subscriber) }}" method="POST" onsubmit="return confirm('Hapus subscriber ini?');">
+                                        <form action="{{ route('admin.subscribers.destroy', $subscriber) }}" method="POST" x-data @submit.prevent="if(confirm('Hapus subscriber ini?')) $el.submit()">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9); border: 1px solid rgba(255,59,48,0.3);">

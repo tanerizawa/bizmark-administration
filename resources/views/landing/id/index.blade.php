@@ -36,6 +36,16 @@
         "https://www.facebook.com/bizmark.id",
         "https://www.instagram.com/bizmark.id"
     ]
+    @php $ar = config('landing_metrics.aggregate_rating', []); @endphp
+    @if(!empty($ar['rating_value']) && !empty($ar['review_count']))
+    ,"aggregateRating": {
+        "@@type": "AggregateRating",
+        "ratingValue": "{{ $ar['rating_value'] }}",
+        "bestRating": "{{ $ar['best_rating'] ?? '5' }}",
+        "worstRating": "{{ $ar['worst_rating'] ?? '1' }}",
+        "reviewCount": "{{ $ar['review_count'] }}"
+    }
+    @endif
 }
 </script>
 @endsection

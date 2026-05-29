@@ -133,7 +133,7 @@
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">Verifikasi Pembayaran</h2>
                     
                     <!-- Approve Form -->
-                    <form action="{{ route('admin.payments.verify', $payment->id) }}" method="POST" class="mb-4">
+                    <form action="{{ route('admin.payments.verify', $payment->id) }}" method="POST" class="mb-4" x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin memverifikasi pembayaran ini?')) $el.submit()">
                         @csrf
                         
                         <div class="mb-4">
@@ -145,33 +145,31 @@
                                 placeholder="Tambahkan catatan verifikasi..."></textarea>
                         </div>
                         
-                        <button 
+                        <button
                             type="submit"
-                            onclick="return confirm('Apakah Anda yakin ingin memverifikasi pembayaran ini?')"
                             class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition">
                             <i class="fas fa-check-circle mr-2"></i>Verifikasi Pembayaran
                         </button>
                     </form>
 
                     <!-- Reject Form -->
-                    <form action="{{ route('admin.payments.reject', $payment->id) }}" method="POST">
+                    <form action="{{ route('admin.payments.reject', $payment->id) }}" method="POST" x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin menolak pembayaran ini?')) $el.submit()">
                         @csrf
                         
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Alasan Penolakan <span class="text-red-500">*</span>
                             </label>
-                            <textarea 
-                                name="notes" 
-                                rows="3" 
+                            <textarea
+                                name="notes"
+                                rows="3"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
                                 placeholder="Jelaskan alasan penolakan..."
                                 required></textarea>
                         </div>
                         
-                        <button 
+                        <button
                             type="submit"
-                            onclick="return confirm('Apakah Anda yakin ingin menolak pembayaran ini?')"
                             class="w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
                             <i class="fas fa-times-circle mr-2"></i>Tolak Pembayaran
                         </button>

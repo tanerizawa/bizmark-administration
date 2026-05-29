@@ -11,7 +11,7 @@
  * - Automatic retry on reconnection
  */
 
-const CACHE_VERSION = 'v1.1.0';
+const CACHE_VERSION = 'v1.1.1';
 const STATIC_CACHE = `bizmark-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `bizmark-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `bizmark-api-${CACHE_VERSION}`;
@@ -133,9 +133,9 @@ self.addEventListener('fetch', (event) => {
         return;
     }
     
-    // Strategy: Stale While Revalidate for mobile pages
+    // Strategy: Network First for mobile pages to prevent stale HTML/CSS references
     if (isMobilePage(url)) {
-        event.respondWith(staleWhileRevalidate(request));
+        event.respondWith(pageNetworkFirst(request));
         return;
     }
     
@@ -313,20 +313,23 @@ async function networkFirst(request) {
 }
 
 /**
- * Stale While Revalidate - best for pages
+ * Network First - best for pages to avoid stale asset references after deploy
  */
-async function staleWhileRevalidate(request) {
+async function pageNetworkFirst(request) {
     const cache = await caches.open(DYNAMIC_CACHE);
-    const cached = await cache.match(request);
-    
-    const fetchPromise = fetch(request).then(response => {
+    try {
+        const response = await fetch(request, { cache: 'no-store' });
         if (response.ok) {
             cache.put(request, response.clone());
         }
         return response;
-    }).catch(() => cached);
-    
-    return cached || fetchPromise;
+    } catch (error) {
+        const cached = await cache.match(request);
+        if (cached) {
+            return cached;
+        }
+        return caches.match('/m/offline');
+    }
 }
 
 /**

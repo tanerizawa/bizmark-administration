@@ -53,10 +53,11 @@ return [
     /**
      * Company Experience
      * NOTE: Waktu operasional = factual, bisa dibuktikan
+     * Founded 2014 (as documented in about page story, first client 2014)
      */
     'experience' => [
-        'years' => (int) date('Y') - 2015, // Dynamic calculation from since_year
-        'since_year' => 2015,              // Berdiri sejak tahun
+        'years' => (int) date('Y') - 2014, // Dynamic calculation from since_year
+        'since_year' => 2014,              // Berdiri sejak tahun (bukan 2015 — PT terdaftar 2014)
     ],
 
     /**
@@ -131,15 +132,46 @@ return [
     ],
 
     /**
-     * Hero Trust Indicators — Single Source of Truth
-     * Gunakan nilai ini di landing.blade.php dan about.blade.php
-     * Hanya cantumkan yang BISA DIBUKTIKAN
+     * Hero Trust Indicators + Shared Stats — Single Source of Truth
+     *
+     * AUDIT MAY 2026 — Per request user: hapus semua data fake/halusinasi.
+     * Hanya "berdiri sejak 2014" yang dapat diverifikasi. Semua angka spesifik
+     * lainnya (klien, izin, SLA, success rate) di-null-kan sampai ada data riil
+     * yang bisa dipertanggungjawabkan.
+     *
+     * Untuk mengaktifkan kembali: ubah null → string angka, view sudah handle nullable.
      */
     'stats' => [
-        'experience_label' => '10+ Tahun',   // Sejak 2015 = verified
-        'clients_label' => '500+ Klien',  // Kumulatif, dapat diverifikasi internal
-        'permits_label' => '1.000+ Izin', // Total izin yang telah diproses
-        'success_label' => '98%',         // Tingkat keberhasilan SLA internal
+        'experience_label' => ((int) date('Y') - 2014).'+ Tahun', // Dynamic, factual
+        'clients_label' => null, // Tidak diverifikasi
+        'clients_since_label' => 'Sejak 2014',                          // Factual: tanggal pendirian
+        'clients_active_label' => null, // Tidak diverifikasi
+        'permits_label' => null, // Tidak diverifikasi
+        'permits_issued_label' => null, // Tidak diverifikasi
+        'success_label' => null, // Unverifiable
+        'sla_ontime_label' => null, // Unverifiable
+    ],
+
+    /**
+     * AggregateRating — schema.org
+     * Disabled per audit May 2026: rating dan review count tidak dapat
+     * diverifikasi secara internal saat ini.
+     */
+    'aggregate_rating' => [
+        'enabled' => false,
+        'rating_value' => null,
+        'best_rating' => '5',
+        'worst_rating' => '1',
+        'review_count' => null,
+    ],
+
+    /**
+     * Newsletter — subscriber count
+     * Disabled per audit May 2026: angka subscriber tidak dapat diverifikasi.
+     */
+    'newsletter' => [
+        'subscriber_count' => null,
+        'subscriber_count_en' => null,
     ],
 
 ];

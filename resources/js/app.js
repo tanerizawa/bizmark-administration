@@ -17,11 +17,13 @@ Alpine.start();
 window.Chart = Chart;
 
 // Initialize AOS (Animate On Scroll)
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 AOS.init({
     duration: 800,
-    easing: 'ease-in-out',
+    easing: 'ease-out-cubic',
     once: true,
-    offset: 100
+    offset: 100,
+    disable: prefersReducedMotion,
 });
 
 /**

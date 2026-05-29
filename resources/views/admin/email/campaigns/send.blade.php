@@ -172,7 +172,7 @@
                 {{-- Send Actions --}}
                 <div class="px-5 pb-5 space-y-3">
                     <form action="{{ route('admin.campaigns.process-send', $campaign->id) }}" method="POST"
-                          onsubmit="return confirm('Are you sure you want to send this campaign to {{ number_format($recipients->count()) }} recipients? This action cannot be undone.')">
+                          x-data @submit.prevent="if(confirm('Are you sure you want to send this campaign to {{ number_format($recipients->count()) }} recipients? This action cannot be undone.')) $el.submit()">
                         @csrf
                         <button type="submit" class="w-full font-medium py-2.5 rounded-xl transition text-sm"
                                 :disabled="!checks.every(c => c)"

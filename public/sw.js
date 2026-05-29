@@ -2,7 +2,7 @@
 // Cache-First for static assets, Stale-While-Revalidate for navigation,
 // Network-First for API calls, with offline fallback.
 
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const STATIC_CACHE = 'bizmark-static-' + CACHE_VERSION;
 const NAV_CACHE    = 'bizmark-navigation-' + CACHE_VERSION;
 const ASSET_CACHE  = 'bizmark-assets-' + CACHE_VERSION;
@@ -27,23 +27,22 @@ function shouldPrecache(url) {
     return precachePatterns.some(pattern => pattern.test(path));
 }
 
-function isNavigation(url) {
-    return url.mode === 'navigate' ||
-           (url.request && url.request.mode === 'navigate');
+function isNavigation(request) {
+    return request.mode === 'navigate' || request.destination === 'document';
 }
 
-function isAsset(url) {
-    return /\.(css|js|png|jpg|jpeg|gif|svg|webp|woff2?|ttf|eot|ico)$/i.test(url.url) ||
-           url.destination === 'style' ||
-           url.destination === 'script' ||
-           url.destination === 'image' ||
-           url.destination === 'font';
+function isAsset(request) {
+    return /\.(css|js|png|jpg|jpeg|gif|svg|webp|woff2?|ttf|eot|ico)$/i.test(request.url) ||
+           request.destination === 'style' ||
+           request.destination === 'script' ||
+           request.destination === 'image' ||
+           request.destination === 'font';
 }
 
-function isApiCall(url) {
-    return /\/api\//.test(url.url) ||
-           /\/__clockwork\//.test(url.url) ||
-           /(gtag|googletagmanager|google-analytics|cloudflareinsights)/.test(url.url);
+function isApiCall(urlString) {
+    return /\/api\//.test(urlString) ||
+           /\/__clockwork\//.test(urlString) ||
+           /(gtag|googletagmanager|google-analytics|cloudflareinsights)/.test(urlString);
 }
 
 // ─── Install: Pre-cache critical assets ─────────────────────────────────────
@@ -84,50 +83,58 @@ self.addEventListener('activate', (event) => {
 
 // ─── Fetch: Strategy-based routing ─────────────────────────────────────────
 self.addEventListener('fetch', (event) => {
+    const request = event.request;
+
     // Skip non-GET requests
-    if (event.request.method !== 'GET') return;
+    if (request.method !== 'GET') return;
+
+    // Skip unsupported protocols
+    if (!request.url.startsWith('http')) return;
 
     // Skip Chrome extension requests
-    if (event.request.url.startsWith('chrome-extension://')) return;
+    if (request.url.startsWith('chrome-extension://')) return;
 
     // Skip API calls / analytics — network only
-    if (isApiCall(event)) {
+    if (isApiCall(request.url)) {
         return;
     }
 
-    // Navigation requests — Stale-While-Revalidate
-    if (isNavigation(event)) {
-        event.respondWith(navStrategy(event.request));
+    // Navigation requests — Network-First to avoid stale HTML referencing old hashed CSS/JS
+    if (isNavigation(request)) {
+        event.respondWith(navNetworkFirst(request));
         return;
     }
 
     // Static assets — Cache-First
-    if (isAsset(event)) {
-        event.respondWith(cacheFirst(event.request));
+    if (isAsset(request)) {
+        event.respondWith(cacheFirst(request));
         return;
     }
 
     // Everything else — Network-First with offline fallback
-    event.respondWith(networkFirst(event.request));
+    event.respondWith(networkFirst(request));
 });
 
 // ─── Strategies ────────────────────────────────────────────────────────────
 
-// Stale-While-Revalidate for navigation
-async function navStrategy(request) {
+// Network-First for navigation to prevent stale HTML assets mismatch
+async function navNetworkFirst(request) {
     const cache = await caches.open(NAV_CACHE);
-    const cachedResponse = await cache.match(request);
-    const fetchPromise = fetch(request).then(async (networkResponse) => {
+    try {
+        const networkResponse = await fetch(request, { cache: 'no-store' });
         if (networkResponse && networkResponse.ok) {
             try {
                 await cache.put(request, networkResponse.clone());
             } catch (_) { /* quota exceeded */ }
         }
         return networkResponse;
-    }).catch(() => cachedResponse);
-
-    // Return cached immediately if available, otherwise wait for network
-    return cachedResponse || fetchPromise;
+    } catch (_) {
+        const cachedResponse = await cache.match(request);
+        if (cachedResponse) return cachedResponse;
+        const fallback = await caches.match('/offline.html');
+        if (fallback) return fallback;
+        return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+    }
 }
 
 // Cache-First for static assets
@@ -219,6 +226,12 @@ self.addEventListener('notificationclick', (event) => {
             }
         })
     );
+});
+
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });
 
 console.log('[SW] Pre-caching service worker loaded');

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\CivicStackController;
 use App\Http\Controllers\Api\ConsultationController;
+use App\Http\Controllers\Api\LandingStatsController;
 use App\Http\Controllers\Api\OpsController;
 use App\Http\Controllers\Api\PaymentCallbackController;
 use App\Modules\Perizinan\Controllers\Api\KbliController;
@@ -12,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
+
+// Landing live stats (aggregate ranges, 5-min cache, public)
+Route::get('landing/live-stats', LandingStatsController::class)
+    ->middleware('throttle:120,1')
+    ->name('api.landing.live-stats');
 
 // KBLI Search & Autocomplete (Public with rate limiting)
 Route::prefix('kbli')->middleware('throttle:60,1')->group(function () {
@@ -59,4 +66,31 @@ Route::prefix('rtrw')->middleware('throttle:30,1')->group(function () {
 
 Route::prefix('internal/ops')->middleware(['internal.api', 'throttle:30,1'])->group(function () {
     Route::get('permissions', [OpsController::class, 'permissions']);
+});
+
+// P3 — WhatsApp Bot Webhook (no auth — signed by Meta HMAC)
+Route::prefix('whatsapp')->group(function () {
+    Route::get('webhook', [App\Http\Controllers\Api\WhatsAppWebhookController::class, 'verify']);
+    Route::post('webhook', [App\Http\Controllers\Api\WhatsAppWebhookController::class, 'handle'])->middleware('throttle:60,1');
+});
+
+// P5 — KBLI Semantic Search
+Route::post('kbli/semantic-search', [App\Http\Controllers\Api\KbliSemanticSearchController::class, 'search'])
+    ->middleware('throttle:20,1')
+    ->name('api.kbli.semantic-search');
+
+// ─── P8: B2B API Platform — v2 endpoints (ApiKeyAuth middleware) ────────────
+Route::prefix('v2')->middleware(\App\Http\Middleware\ApiKeyAuth::class)->name('api.v2.')->group(function () {
+    Route::post('kbli/search', [App\Http\Controllers\Api\KbliSemanticSearchController::class, 'search'])->name('kbli.search');
+    Route::get('kbli/{code}', [App\Http\Controllers\Api\KbliSemanticSearchController::class, 'show'])->name('kbli.show');
+});
+
+// ─── Civic Stack — Indonesia government data microservice ────────────────────
+// Proxies to bizmark_civic_stack Docker container (FastAPI, internal network).
+// Endpoints used by the perizinan context form (v2-context.blade.php).
+Route::prefix('civic')->middleware('throttle:30,1')->group(function () {
+    Route::get('simbg-hints', [CivicStackController::class, 'simbgHints']);   // Step 2: building permit hints
+    Route::get('bpjph-check', [CivicStackController::class, 'bpjphCheck']);   // Step 3: halal cert (F&B only)
+    Route::get('nib-lookup', [CivicStackController::class, 'nibLookup']);    // Pre-step 1: auto-fill from NIB
+    Route::get('jdih-search', [CivicStackController::class, 'jdihSearch']);   // Step 4: relevant regulations
 });

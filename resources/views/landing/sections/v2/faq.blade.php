@@ -12,13 +12,17 @@
 ──────────────────────────────────────────────── --}}
 <section class="section-v2 section-premium" aria-labelledby="faq-heading">
     <div class="container-wide">
-        <div class="grid lg:grid-cols-12 gap-10">
+        <div class="grid lg:grid-cols-12 gap-8">
             <div class="lg:col-span-4" data-aos="fade-up">
-                <span class="eyebrow mb-4">FAQ</span>
-                <h2 id="faq-heading" class="display-lg mt-2 mb-4 text-gray-100">
+                <div class="chapter-mark">
+                    <span class="chapter-mark__num">FAQ</span>
+                    <span class="chapter-mark__rule"></span>
+                    <span>{{ $isEn ? 'Frequently asked' : 'Pertanyaan umum' }}</span>
+                </div>
+                <h2 id="faq-heading" class="display-md mb-3">
                     {{ $isEn ? 'Common questions.' : 'Pertanyaan umum.' }}
                 </h2>
-                <p class="text-base leading-relaxed mb-6 text-gray-400">
+                <p class="text-base leading-relaxed mb-5 text-gray-600">
                     {{ $isEn
                         ? 'Still not sure? Reach out to our team and we\'ll walk you through it.'
                         : 'Masih ragu? Hubungi tim kami dan kami akan bantu jelaskan.' }}
@@ -28,23 +32,17 @@
                     <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
                 </a>
 
-                <div class="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
-                    <div class="flex items-center gap-2.5 text-sm text-gray-400">
-                        <i class="fas fa-certificate flex-shrink-0 text-blue-500"></i>
-                        <span>ISO 9001:2015 {{ $isEn ? 'Certified' : 'Tersertifikasi' }}</span>
-                    </div>
-                    <div class="flex items-center gap-2.5 text-sm text-gray-400">
-                        <i class="fas fa-file-contract flex-shrink-0 text-blue-400"></i>
-                        <span>{{ $isEn ? 'NDA available on request' : 'NDA tersedia atas permintaan' }}</span>
-                    </div>
-                    <div class="flex items-center gap-2.5 text-sm text-gray-400">
-                        <i class="fas fa-globe flex-shrink-0 text-green-500"></i>
-                        <span>{{ $isEn ? 'Bilingual support ID / EN' : 'Dukungan bilingual ID / EN' }}</span>
-                    </div>
-                    <div class="flex items-center gap-2.5 text-sm text-gray-400">
-                        <i class="fas fa-map-marked-alt flex-shrink-0 text-blue-500"></i>
-                        <span>{{ $isEn ? 'Nationwide coverage' : 'Cakupan seluruh Indonesia' }}</span>
-                    </div>
+                {{-- Trust badges removed: already shown in trust-strip (early) and final-cta (closing).
+                     Repeating them here was the 3rd duplicate render of the same ISO/NDA/bilingual
+                     row — see audit May 2026. The sidebar now stays focused on "still have questions?". --}}
+
+                {{-- Decorative illustration --}}
+                <div class="hidden lg:block mt-8 max-w-[260px]" aria-hidden="true">
+                    <img src="{{ asset('images/illustrations/questions-bubble.svg') }}"
+                         alt=""
+                         loading="lazy"
+                         class="w-full h-auto select-none pointer-events-none opacity-90"
+                         draggable="false">
                 </div>
             </div>
 

@@ -1,263 +1,224 @@
-{{-- Service Inquiries Tab Content --}}
+{{-- Service Inquiries Tab --}}
 @php
     $stats = $serviceInquiriesStats ?? [
-        'total' => 0, 'new' => 0, 'analyzed' => 0, 'contacted' => 0, 
-        'converted' => 0, 'high_priority' => 0, 'this_week' => 0, 'this_month' => 0
+        'total' => 0, 'new' => 0, 'analyzed' => 0, 'contacted' => 0,
+        'converted' => 0, 'high_priority' => 0, 'this_week' => 0, 'this_month' => 0,
+    ];
+    $inquiries = $inquiries ?? collect();
+
+    $statusMap = [
+        'new'        => ['color' => 'var(--apple-blue)',   'label' => 'Baru'],
+        'processing' => ['color' => 'var(--apple-teal)',   'label' => 'Diproses'],
+        'analyzed'   => ['color' => 'var(--apple-yellow)', 'label' => 'Dianalisis'],
+        'contacted'  => ['color' => 'var(--apple-green)',  'label' => 'Dihubungi'],
+        'qualified'  => ['color' => 'var(--apple-purple)', 'label' => 'Qualified'],
+        'converted'  => ['color' => 'var(--apple-green)',  'label' => 'Konversi'],
+        'registered' => ['color' => 'var(--dark-text-secondary)', 'label' => 'Terdaftar'],
+        'lost'       => ['color' => 'var(--apple-red)',    'label' => 'Lost'],
+    ];
+    $priorityColors = ['high' => 'var(--apple-red)', 'medium' => 'var(--apple-orange)', 'low' => 'var(--dark-text-secondary)'];
+
+    $cellRenderers = [
+        'inquiry_number' => function ($row) {
+            return '<span style="font-family:monospace;font-size:0.8rem;font-weight:700;color:var(--dark-text-primary);letter-spacing:.02em">' . e($row->inquiry_number) . '</span>';
+        },
+        'tanggal' => function ($row) {
+            return '<span style="font-size:0.8rem;color:var(--dark-text-primary)">' . e($row->created_at->format('d M Y')) . '</span>'
+                 . '<br><span style="font-size:0.7rem;color:var(--dark-text-secondary)">' . e($row->created_at->format('H:i')) . '</span>';
+        },
+        'perusahaan' => function ($row) {
+            return '<span style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);display:block">' . e($row->company_name) . '</span>'
+                 . '<span style="font-size:0.7rem;color:var(--dark-text-secondary)">' . e($row->company_type ?? '-') . '</span>';
+        },
+        'kontak' => function ($row) {
+            return '<span style="font-size:0.8rem;font-weight:500;color:var(--dark-text-primary);display:block">' . e($row->contact_person) . '</span>'
+                 . '<span style="font-size:0.7rem;color:var(--dark-text-secondary);display:block">' . e($row->email) . '</span>'
+                 . '<span style="font-size:0.7rem;color:var(--dark-text-secondary)">' . e($row->phone ?? '-') . '</span>';
+        },
+        'status' => function ($row) use ($statusMap) {
+            $s = $statusMap[$row->status] ?? ['color' => 'var(--dark-text-secondary)', 'label' => ucfirst($row->status)];
+            $variantMap = ['var(--apple-blue)'=>'info','var(--apple-teal)'=>'info','var(--apple-yellow)'=>'warning','var(--apple-green)'=>'success','var(--apple-purple)'=>'primary','var(--apple-red)'=>'danger','var(--dark-text-secondary)'=>'neutral'];
+            $v = $variantMap[$s['color']] ?? 'neutral';
+            return \Illuminate\Support\Facades\Blade::render('<x-ui.badge :variant="$v">{{ $l }}</x-ui.badge>', ['v' => $v, 'l' => $s['label']]);
+        },
+        'priority' => function ($row) use ($priorityColors) {
+            if (!$row->priority) return '<span style="color:var(--dark-text-secondary);font-size:0.75rem">—</span>';
+            $c = $priorityColors[$row->priority] ?? 'var(--dark-text-secondary)';
+            $labels = ['high' => 'High', 'medium' => 'Medium', 'low' => 'Low'];
+            $v = ['high' => 'danger', 'medium' => 'warning', 'low' => 'neutral'][$row->priority] ?? 'neutral';
+            return \Illuminate\Support\Facades\Blade::render('<x-ui.badge :variant="$v">{{ $l }}</x-ui.badge>', ['v' => $v, 'l' => $labels[$row->priority] ?? ucfirst($row->priority)]);
+        },
+        'est_value' => function ($row) {
+            if ($row->estimated_value) {
+                $val = (float) $row->estimated_value;
+                if ($val >= 1_000_000_000) {
+                    return '<span style="font-size:0.85rem;font-weight:700;color:var(--apple-green)">Rp ' . e(number_format($val / 1_000_000_000, 1)) . ' M</span>'
+                         . '<span style="display:block;font-size:0.65rem;color:var(--dark-text-tertiary)">Miliar</span>';
+                }
+                return '<span style="font-size:0.85rem;font-weight:700;color:var(--apple-green)">Rp ' . e(number_format($val / 1_000_000, 0)) . ' Jt</span>'
+                     . '<span style="display:block;font-size:0.65rem;color:var(--dark-text-tertiary)">Juta</span>';
+            }
+            return '<span style="font-size:0.75rem;color:var(--dark-text-secondary)">—</span>';
+        },
+        'actions' => function ($row) {
+            $url = route('admin.service-inquiries.show', $row);
+            return '<a href="' . e($url) . '" style="display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:600;color:var(--apple-blue);text-decoration:none;transition:opacity .15s" onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1"><i class="fas fa-eye"></i>Detail</a>';
+        },
     ];
 @endphp
 
-<!-- Stats Cards -->
-<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-6">
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-lg font-bold text-white mb-1">{{ $stats['total'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Total</div>
+{{-- Stats Strip --}}
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    @php $statsData = [
+        ['label'=>'Total',         'value'=>$stats['total'],         'sub'=>'semua inquiry',     'color'=>'var(--dark-text-primary)',   'bg'=>'transparent',             'icon'=>'fa-inbox'],
+        ['label'=>'Baru',          'value'=>$stats['new'],           'sub'=>'perlu ditindak',    'color'=>'var(--apple-blue)',          'bg'=>'var(--apple-blue)',        'icon'=>'fa-star'],
+        ['label'=>'Dihubungi',     'value'=>$stats['contacted'],     'sub'=>'sudah follow-up',   'color'=>'var(--apple-green)',         'bg'=>'var(--apple-green)',       'icon'=>'fa-phone'],
+        ['label'=>'Konversi',      'value'=>$stats['converted'],     'sub'=>($stats['total']>0 ? round(($stats['converted']/$stats['total'])*100).'% rate' : '—'), 'color'=>'var(--apple-purple)', 'bg'=>'var(--apple-purple)', 'icon'=>'fa-trophy'],
+    ] @endphp
+    @foreach($statsData as $s)
+    <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $s['bg'] }} 12%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,{{ $s['bg'] }} 25%,var(--dark-separator));border-radius:14px;padding:16px 18px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:10px;right:14px;font-size:1rem;opacity:.2;color:{{ $s['color'] }}"><i class="fas {{ $s['icon'] }}"></i></div>
+        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ $s['color'] }};opacity:.8;margin:0">{{ $s['label'] }}</p>
+        <p style="font-size:2rem;font-weight:800;color:{{ $s['color'] }};margin:4px 0 2px;line-height:1">{{ $s['value'] }}</p>
+        <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0">{{ $s['sub'] }}</p>
     </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-blue-400 mb-1">{{ $stats['new'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Baru</div>
+    @endforeach
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+    @php $statsData2 = [
+        ['label'=>'Dianalisis',    'value'=>$stats['analyzed'],      'color'=>'var(--apple-teal)',  'bg'=>'var(--apple-teal)',   'icon'=>'fa-search'],
+        ['label'=>'High Priority', 'value'=>$stats['high_priority'], 'color'=>'var(--apple-red)',   'bg'=>'var(--apple-red)',    'icon'=>'fa-fire'],
+        ['label'=>'Minggu Ini',    'value'=>$stats['this_week'],     'color'=>'var(--dark-text-primary)', 'bg'=>'transparent',  'icon'=>'fa-calendar-week'],
+        ['label'=>'Bulan Ini',     'value'=>$stats['this_month'],    'color'=>'var(--dark-text-primary)', 'bg'=>'transparent',  'icon'=>'fa-calendar'],
+    ] @endphp
+    @foreach($statsData2 as $s)
+    <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $s['bg'] }} 8%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,{{ $s['bg'] }} 20%,var(--dark-separator));border-radius:12px;padding:12px 16px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:8px;right:12px;font-size:.85rem;opacity:.18;color:{{ $s['color'] }}"><i class="fas {{ $s['icon'] }}"></i></div>
+        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:{{ $s['color'] }};opacity:.8;margin:0">{{ $s['label'] }}</p>
+        <p style="font-size:1.5rem;font-weight:700;color:{{ $s['color'] }};margin:2px 0 0;line-height:1.1">{{ $s['value'] }}</p>
     </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-indigo-400 mb-1">{{ $stats['analyzed'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Dianalisis</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-green-400 mb-1">{{ $stats['contacted'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Dihubungi</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-purple-400 mb-1">{{ $stats['converted'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Konversi</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-red-400 mb-1">{{ $stats['high_priority'] }}</div>
-        <div class="text-xs text-dark-text-secondary">High Priority</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-yellow-400 mb-1">{{ $stats['this_week'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Minggu Ini</div>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-3">
-        <div class="text-2xl font-bold text-orange-400 mb-1">{{ $stats['this_month'] }}</div>
-        <div class="text-xs text-dark-text-secondary">Bulan Ini</div>
-    </div>
+    @endforeach
 </div>
 
-<!-- Filter & Search Card -->
-<div class="card-elevated rounded-apple-lg mb-4">
-    <div class="px-4 py-3 border-b border-[rgba(84,84,88,0.65)]">
-        <h3 class="text-base font-semibold text-white">Pencarian & Filter</h3>
-    </div>
-    <div class="p-4">
-        <form method="GET" action="{{ route('admin.leads.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-            <input type="hidden" name="tab" value="service-inquiries">
-            <div class="md:col-span-2">
-                <input type="text" 
-                       name="search" 
-                       class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary"
-                       placeholder="Cari nomor inquiry, email, perusahaan, nama kontak..." 
-                       value="{{ request('search') }}">
-            </div>
-            <div>
-                <select name="status" 
-                        class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary">
-                    <option value="">Semua Status</option>
-                    <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>Baru</option>
-                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Diproses</option>
-                    <option value="analyzed" {{ request('status') == 'analyzed' ? 'selected' : '' }}>Dianalisis</option>
-                    <option value="contacted" {{ request('status') == 'contacted' ? 'selected' : '' }}>Dihubungi</option>
-                    <option value="qualified" {{ request('status') == 'qualified' ? 'selected' : '' }}>Qualified</option>
-                    <option value="converted" {{ request('status') == 'converted' ? 'selected' : '' }}>Konversi</option>
-                    <option value="registered" {{ request('status') == 'registered' ? 'selected' : '' }}>Terdaftar</option>
-                    <option value="lost" {{ request('status') == 'lost' ? 'selected' : '' }}>Lost</option>
-                </select>
-            </div>
-            <div>
-                <select name="priority" 
-                        class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary">
-                    <option value="">Semua Prioritas</option>
-                    <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
-                    <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
-                    <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
-                </select>
-            </div>
-            <div class="flex gap-2">
-                <button type="submit" class="btn-primary px-4 py-2 rounded-apple text-sm font-medium flex-1">
-                    <i class="fas fa-search mr-2"></i>Filter
-                </button>
-                <a href="{{ route('admin.leads.index', ['tab' => 'service-inquiries']) }}" class="btn-secondary px-4 py-2 rounded-apple text-sm font-medium">
-                    Reset
-                </a>
-            </div>
-        </form>
-        
-        <!-- Date Range Filter -->
-        <form method="GET" action="{{ route('admin.leads.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-            <input type="hidden" name="tab" value="service-inquiries">
-            <input type="hidden" name="search" value="{{ request('search') }}">
-            <input type="hidden" name="status" value="{{ request('status') }}">
-            <input type="hidden" name="priority" value="{{ request('priority') }}">
-            <div>
-                <label class="text-xs text-dark-text-secondary mb-1 block">Dari Tanggal</label>
-                <input type="date" 
-                       name="date_from" 
-                       class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary"
-                       value="{{ request('date_from') }}">
-            </div>
-            <div>
-                <label class="text-xs text-dark-text-secondary mb-1 block">Sampai Tanggal</label>
-                <input type="date" 
-                       name="date_to" 
-                       class="w-full px-3 py-2 rounded-apple text-sm bg-dark-bg-tertiary border border-dark-border text-dark-text-primary"
-                       value="{{ request('date_to') }}">
-            </div>
-            <div class="flex items-end">
-                <button type="submit" class="btn-primary px-4 py-2 rounded-apple text-sm font-medium w-full">
-                    Filter Tanggal
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+{{-- Smart Search & Filter Toolbar --}}
+@php
+    $siActiveFilters = collect([
+        'search'    => request('search'),
+        'status'    => request('status'),
+        'priority'  => request('priority'),
+        'date_from' => request('date_from'),
+    ])->filter()->count();
+@endphp
+<form method="GET" action="{{ route('admin.leads.index') }}" style="margin-bottom:16px">
+    <input type="hidden" name="tab" value="service-inquiries">
+    <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
 
-<!-- Service Inquiries Table -->
-<div class="card-elevated rounded-apple-lg overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-[rgba(84,84,88,0.65)]">
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
-                        Inquiry #
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
-                        Tanggal
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
-                        Perusahaan
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
-                        Kontak
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
-                        Status
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
-                        Prioritas
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
-                        Est. Value
-                    </th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-dark-text-secondary uppercase tracking-wider">
-                        Aksi
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-dark-border">
-                @forelse($inquiries ?? [] as $inquiry)
-                    <tr class="hover:bg-dark-bg-tertiary transition-colors">
-                        <td class="px-4 py-3 text-sm">
-                            <span class="font-mono text-dark-text-primary">{{ $inquiry->inquiry_number }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-dark-text-secondary">
-                            {{ $inquiry->created_at->format('d M Y') }}<br>
-                            <span class="text-xs">{{ $inquiry->created_at->format('H:i') }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="font-medium text-dark-text-primary">{{ $inquiry->company_name }}</div>
-                            <div class="text-xs text-dark-text-secondary">{{ $inquiry->company_type ?? '-' }}</div>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="font-medium text-dark-text-primary">{{ $inquiry->contact_person }}</div>
-                            <div class="text-xs text-dark-text-secondary">{{ $inquiry->email }}</div>
-                            <div class="text-xs text-dark-text-secondary">{{ $inquiry->phone ?? '-' }}</div>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            @php
-                                $statusColors = [
-                                    'new' => 'bg-gray-500/20 text-gray-400 border-gray-500',
-                                    'processing' => 'bg-blue-500/20 text-blue-400 border-blue-500',
-                                    'analyzed' => 'bg-indigo-500/20 text-indigo-400 border-indigo-500',
-                                    'contacted' => 'bg-green-500/20 text-green-400 border-green-500',
-                                    'qualified' => 'bg-teal-500/20 text-teal-400 border-teal-500',
-                                    'converted' => 'bg-purple-500/20 text-purple-400 border-purple-500',
-                                    'registered' => 'bg-cyan-500/20 text-cyan-400 border-cyan-500',
-                                    'lost' => 'bg-red-500/20 text-red-400 border-red-500',
-                                ];
-                                $statusLabels = [
-                                    'new' => 'Baru',
-                                    'processing' => 'Diproses',
-                                    'analyzed' => 'Dianalisis',
-                                    'contacted' => 'Dihubungi',
-                                    'qualified' => 'Qualified',
-                                    'converted' => 'Konversi',
-                                    'registered' => 'Terdaftar',
-                                    'lost' => 'Lost',
-                                ];
-                            @endphp
-                            <span class="inline-flex items-center px-2 py-1 rounded-apple text-xs font-medium border {{ $statusColors[$inquiry->status] ?? 'bg-gray-500/20 text-gray-400 border-gray-500' }}">
-                                {{ $statusLabels[$inquiry->status] ?? ucfirst($inquiry->status) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            @php
-                                $priorityColors = [
-                                    'high' => 'bg-red-500/20 text-red-400 border-red-500',
-                                    'medium' => 'bg-yellow-500/20 text-yellow-400 border-yellow-500',
-                                    'low' => 'bg-gray-500/20 text-gray-400 border-gray-500',
-                                ];
-                            @endphp
-                            @if($inquiry->priority)
-                                <span class="inline-flex items-center px-2 py-1 rounded-apple text-xs font-medium border {{ $priorityColors[$inquiry->priority] ?? 'bg-gray-500/20 text-gray-400 border-gray-500' }}">
-                                    {{ ucfirst($inquiry->priority) }}
-                                </span>
-                            @else
-                                <span class="text-dark-text-secondary text-xs">-</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 text-sm text-dark-text-primary">
-                            @if($inquiry->estimated_value)
-                                Rp {{ number_format($inquiry->estimated_value / 1000000, 0) }}M
-                            @else
-                                <span class="text-dark-text-secondary">-</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 text-sm text-right">
-                            <a href="{{ route('admin.service-inquiries.show', $inquiry) }}" class="text-apple-blue hover:text-blue-400 text-sm font-medium">
-                                Lihat Detail →
-                            </a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="px-4 py-8 text-center text-dark-text-secondary">
-                            <i class="fas fa-inbox text-2xl mb-3 block opacity-30"></i>
-                            <p>Tidak ada inquiry ditemukan</p>
-                            @if(request()->hasAny(['search', 'status', 'priority', 'date_from', 'date_to']))
-                                <a href="{{ route('admin.leads.index', ['tab' => 'service-inquiries']) }}" class="text-apple-blue hover:text-blue-400 text-sm mt-2 inline-block">
-                                    Reset Filter
-                                </a>
-                            @endif
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+        {{-- Search --}}
+        <div style="position:relative;flex:1;min-width:220px">
+            <i class="fas fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.72rem;color:var(--dark-text-tertiary);pointer-events:none;z-index:1"></i>
+            <input type="text" name="search" id="si-search" value="{{ request('search') }}"
+                   placeholder="Nomor inquiry, email, perusahaan…"
+                   style="width:100%;padding:8px 36px 8px 34px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;line-height:1.4;outline:none;box-sizing:border-box;transition:border-color .18s"
+                   onfocus="this.style.borderColor='var(--apple-blue)'"
+                   onblur="this.style.borderColor='var(--dark-separator)'">
+            <button type="button" id="si-clear-search"
+                    style="display:{{ request('search') ? 'flex' : 'none' }};position:absolute;right:9px;top:50%;transform:translateY(-50%);width:18px;height:18px;align-items:center;justify-content:center;background:var(--dark-text-tertiary);border:none;border-radius:50%;cursor:pointer;padding:0;color:var(--dark-bg-primary);font-size:0.55rem"
+                    onclick="document.getElementById('si-search').value='';this.style.display='none';this.closest('form').submit()">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
 
-    <!-- Pagination -->
-    @if(isset($inquiries) && $inquiries->hasPages())
-        <div class="px-4 py-3 border-t border-[rgba(84,84,88,0.65)]">
-            {{ $inquiries->appends(array_merge(request()->all(), ['tab' => 'service-inquiries']))->links() }}
+        <div style="width:1px;height:26px;background:var(--dark-separator);flex-shrink:0"></div>
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+
+            {{-- Status pill --}}
+            <div style="position:relative">
+                <select name="status" onchange="this.closest('form').submit()"
+                        style="padding:6px 28px 6px 10px;background:{{ request('status') ? 'color-mix(in srgb,var(--apple-blue) 18%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};border:1px solid {{ request('status') ? 'color-mix(in srgb,var(--apple-blue) 45%,var(--dark-separator))' : 'var(--dark-separator)' }};border-radius:20px;color:{{ request('status') ? 'var(--apple-blue)' : 'var(--dark-text-secondary)' }};font-size:0.75rem;font-weight:{{ request('status') ? '600' : '500' }};outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;white-space:nowrap;transition:all .18s">
+                    <option value="">Status</option>
+                    <option value="new"        {{ request('status')=='new'        ? 'selected':'' }}>Baru</option>
+                    <option value="processing" {{ request('status')=='processing' ? 'selected':'' }}>Diproses</option>
+                    <option value="analyzed"   {{ request('status')=='analyzed'   ? 'selected':'' }}>Dianalisis</option>
+                    <option value="contacted"  {{ request('status')=='contacted'  ? 'selected':'' }}>Dihubungi</option>
+                    <option value="qualified"  {{ request('status')=='qualified'  ? 'selected':'' }}>Qualified</option>
+                    <option value="converted"  {{ request('status')=='converted'  ? 'selected':'' }}>Konversi</option>
+                    <option value="lost"       {{ request('status')=='lost'       ? 'selected':'' }}>Lost</option>
+                </select>
+                <i class="fas fa-chevron-down" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:0.5rem;color:{{ request('status') ? 'var(--apple-blue)' : 'var(--dark-text-tertiary)' }};pointer-events:none"></i>
+            </div>
+
+            {{-- Priority pill --}}
+            <div style="position:relative">
+                <select name="priority" onchange="this.closest('form').submit()"
+                        style="padding:6px 28px 6px 10px;background:{{ request('priority') ? 'color-mix(in srgb,var(--apple-red) 18%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};border:1px solid {{ request('priority') ? 'color-mix(in srgb,var(--apple-red) 45%,var(--dark-separator))' : 'var(--dark-separator)' }};border-radius:20px;color:{{ request('priority') ? 'var(--apple-red)' : 'var(--dark-text-secondary)' }};font-size:0.75rem;font-weight:{{ request('priority') ? '600' : '500' }};outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;white-space:nowrap;transition:all .18s">
+                    <option value="">Prioritas</option>
+                    <option value="high"   {{ request('priority')=='high'   ? 'selected':'' }}>High</option>
+                    <option value="medium" {{ request('priority')=='medium' ? 'selected':'' }}>Medium</option>
+                    <option value="low"    {{ request('priority')=='low'    ? 'selected':'' }}>Low</option>
+                </select>
+                <i class="fas fa-chevron-down" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:0.5rem;color:{{ request('priority') ? 'var(--apple-red)' : 'var(--dark-text-tertiary)' }};pointer-events:none"></i>
+            </div>
+
+            {{-- Date from --}}
+            <div style="position:relative">
+                <input type="date" name="date_from" value="{{ request('date_from') }}"
+                       onchange="this.closest('form').submit()"
+                       style="padding:6px 10px;background:{{ request('date_from') ? 'color-mix(in srgb,var(--apple-teal) 18%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};border:1px solid {{ request('date_from') ? 'color-mix(in srgb,var(--apple-teal) 45%,var(--dark-separator))' : 'var(--dark-separator)' }};border-radius:20px;color:{{ request('date_from') ? 'var(--apple-teal)' : 'var(--dark-text-secondary)' }};font-size:0.75rem;font-weight:{{ request('date_from') ? '600' : '500' }};outline:none;cursor:pointer;white-space:nowrap;transition:all .18s">
+            </div>
+
+            @if($siActiveFilters > 0)
+            <a href="{{ route('admin.leads.index', ['tab' => 'service-inquiries']) }}"
+               style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:color-mix(in srgb,var(--apple-red) 14%,var(--dark-bg-tertiary));border:1px solid color-mix(in srgb,var(--apple-red) 30%,var(--dark-separator));border-radius:20px;font-size:0.72rem;font-weight:600;color:var(--apple-red);text-decoration:none;white-space:nowrap"
+               onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                <i class="fas fa-xmark"></i>Reset
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--apple-red);color:#fff;border-radius:50%;font-size:0.6rem;font-weight:700">{{ $siActiveFilters }}</span>
+            </a>
+            @endif
+        </div>
+    </div>
+</form>
+
+{{-- Data Table --}}
+<div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:16px;overflow:hidden;margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dark-separator)">
+        <div>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85);margin:0">Data</p>
+            <h3 style="font-size:0.95rem;font-weight:700;color:var(--dark-text-primary);margin:3px 0 0">Daftar Service Inquiry</h3>
+        </div>
+        <span style="font-size:0.75rem;color:var(--dark-text-secondary)">
+            @if($inquiries instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                @if($inquiries->total() === 0)
+                    0 inquiry
+                @else
+                    {{ $inquiries->firstItem() }}–{{ $inquiries->lastItem() }} dari {{ $inquiries->total() }}
+                @endif
+            @else
+                {{ $inquiries->count() }} entri
+            @endif
+        </span>
+    </div>
+    <x-ui.table
+        :columns="[
+            ['key' => 'inquiry_number', 'label' => 'Inquiry #'],
+            ['key' => 'tanggal',        'label' => 'Tanggal'],
+            ['key' => 'perusahaan',     'label' => 'Perusahaan'],
+            ['key' => 'kontak',         'label' => 'Kontak'],
+            ['key' => 'status',         'label' => 'Status'],
+            ['key' => 'priority',       'label' => 'Prioritas'],
+            ['key' => 'est_value',      'label' => 'Est. Value'],
+            ['key' => 'actions',        'label' => 'Aksi', 'align' => 'right'],
+        ]"
+        :rows="$inquiries"
+        :cellRenderers="$cellRenderers"
+        :striped="true"
+        :hoverable="true"
+        variant="compact"
+        empty-message="Tidak ada inquiry. Coba ubah filter."
+    />
+    @if($inquiries instanceof \Illuminate\Pagination\LengthAwarePaginator && $inquiries->hasPages())
+        <div style="padding:14px 20px;border-top:1px solid var(--dark-separator)">
+            <x-ui.pagination :paginator="$inquiries->appends(array_merge(request()->all(), ['tab'=>'service-inquiries']))" variant="full" :show-info="true" />
         </div>
     @endif
-</div>
-
-<!-- Info Box -->
-<div class="mt-4 rounded-apple-lg p-4 bg-apple-blue/10 border border-apple-blue/30">
-    <div class="flex items-start">
-        <i class="fas fa-info-circle text-apple-blue mr-3 mt-0.5"></i>
-        <div class="text-sm text-dark-text-secondary">
-            <p class="font-medium text-apple-blue mb-1">Tentang Service Inquiries</p>
-            <p>Data inquiry dari formulir konsultasi gratis AI di landing page. Gunakan fitur ini untuk tracking dan konversi leads menjadi klien terdaftar.</p>
-        </div>
-    </div>
 </div>

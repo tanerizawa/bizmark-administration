@@ -73,8 +73,8 @@
         </div>
 
         @if($stats['unmatched'] == 0)
-        <form action="{{ route('reconciliations.complete', $reconciliation) }}" method="POST" 
-              onsubmit="return confirm('Yakin ingin menyelesaikan rekonsiliasi ini?');">
+        <form action="{{ route('reconciliations.complete', $reconciliation) }}" method="POST"
+              x-data @submit.prevent="if(confirm('Yakin ingin menyelesaikan rekonsiliasi ini?')) $el.submit()">
             @csrf
             <button type="submit" 
                     class="px-4 py-2 rounded-apple text-sm font-medium transition-all hover:opacity-90"
@@ -306,7 +306,7 @@
                     @if($entry->is_matched)
                     <!-- Unmatch Button -->
                     <form action="{{ route('reconciliations.unmatch', $reconciliation) }}" method="POST" class="mt-2"
-                          onsubmit="return confirm('Yakin ingin membatalkan matching ini?');">
+                          x-data @submit.prevent="if(confirm('Yakin ingin membatalkan matching ini?')) $el.submit()">
                         @csrf
                         <input type="hidden" name="bank_entry_id" value="{{ $entry->id }}">
                         <button type="submit" class="text-xs hover:underline text-apple-red/80">

@@ -45,55 +45,50 @@ $faqSchema = [
 @endif
 
 {{-- Hero --}}
-<section class="relative overflow-hidden" style="min-height: clamp(380px, 50vh, 520px);">
-    <div class="absolute inset-0 gradient-hero"></div>
-    <div class="absolute inset-0 opacity-[.07]">
-        <div class="absolute top-10 right-10 w-80 h-80 rounded-full blur-3xl" style="background: {{ $svcColor }};"></div>
-        <div class="absolute bottom-10 left-10 w-64 h-64 rounded-full blur-3xl" style="background: var(--color-secondary);"></div>
-    </div>
+<section class="relative overflow-hidden bg-[var(--bg-raised)] border-b border-gray-200" style="min-height: clamp(380px, 50vh, 520px);">
     <div class="container-wide relative z-10 flex flex-col justify-end h-full" style="min-height: clamp(380px, 50vh, 520px);">
         <div class="pb-10 pt-32 lg:pt-40 lg:pb-14">
             <div class="flex flex-col lg:flex-row items-end lg:items-end gap-10">
                 <div class="lg:w-2/3">
                     {{-- Breadcrumb --}}
                     <nav class="mb-6">
-                        <ol class="flex items-center gap-2 text-sm" style="color: rgba(255,255,255,.5);">
-                            <li><a href="/" class="hover:opacity-80 transition"><i class="fas fa-home text-xs"></i></a></li>
-                            <li><i class="fas fa-chevron-right text-[10px]" style="color: rgba(255,255,255,.3);"></i></li>
-                            <li><a href="{{ route('services.index.id') }}" class="hover:opacity-80 transition">Layanan</a></li>
-                            <li><i class="fas fa-chevron-right text-[10px]" style="color: rgba(255,255,255,.3);"></i></li>
-                            <li><a href="{{ route('services.show.id', $serviceSlug) }}" class="hover:opacity-80 transition">{{ $service['title'] }}</a></li>
-                            <li><i class="fas fa-chevron-right text-[10px]" style="color: rgba(255,255,255,.3);"></i></li>
-                            <li class="font-medium" style="color: rgba(255,255,255,.9);">{{ $city['name'] }}</li>
+                        <ol class="flex items-center gap-2 text-sm text-gray-400">
+                            <li><a href="/" class="hover:text-gray-600 transition"><i class="fas fa-home text-xs"></i></a></li>
+                            <li><i class="fas fa-chevron-right text-[10px] text-gray-300"></i></li>
+                            <li><a href="{{ route('services.index.id') }}" class="hover:text-gray-600 transition text-gray-500">Layanan</a></li>
+                            <li><i class="fas fa-chevron-right text-[10px] text-gray-300"></i></li>
+                            <li><a href="{{ route('services.show.id', $serviceSlug) }}" class="hover:text-gray-600 transition text-gray-500">{{ $service['title'] }}</a></li>
+                            <li><i class="fas fa-chevron-right text-[10px] text-gray-300"></i></li>
+                            <li class="font-medium text-gray-900">{{ $city['name'] }}</li>
                         </ol>
                     </nav>
 
                     {{-- Badges --}}
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm" style="background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);">
-                            <i class="fas fa-map-marker-alt text-xs" style="color: var(--color-accent);"></i>
-                            <span class="text-sm font-semibold" style="color: rgba(255,255,255,.9);">{{ $city['name'] }}, {{ $city['province'] }}</span>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 border border-gray-200">
+                            <i class="fas fa-map-marker-alt text-xs text-amber-500"></i>
+                            <span class="text-sm font-semibold text-gray-900">{{ $city['name'] }}, {{ $city['province'] }}</span>
                         </div>
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm" style="background: {{ $svcColor }}20; border: 1px solid {{ $svcColor }}30;">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full" style="background: {{ $svcColor }}12; border: 1px solid {{ $svcColor }}25;">
                             <i class="fas {{ $service['icon'] ?? 'fa-file-alt' }} text-xs" style="color: {{ $svcColor }};"></i>
-                            <span class="text-sm font-semibold" style="color: rgba(255,255,255,.9);">{{ $service['category'] ?? 'PERIZINAN' }}</span>
+                            <span class="text-sm font-semibold text-gray-900">{{ $service['category'] ?? 'PERIZINAN' }}</span>
                         </div>
                     </div>
 
                     {{-- Headline --}}
-                    <h1 class="font-black leading-[1.1] mb-5" style="font-size: clamp(2rem,4.5vw,3.5rem); letter-spacing: -0.03em; color: #fff;">
+                    <h1 class="font-black leading-[1.1] mb-5 text-gray-900" style="font-size: clamp(2rem,4.5vw,3.5rem); letter-spacing: -0.03em;">
                         {{ $pageData['h1'] }}
                     </h1>
 
                     {{-- Description --}}
-                    <p class="text-lg leading-relaxed max-w-2xl mb-8 font-light" style="color: rgba(255,255,255,.65);">
+                    <p class="text-lg leading-relaxed max-w-2xl mb-8 font-light text-gray-600">
                         {{ $pageData['intro'] }}
                     </p>
 
                     {{-- CTA Buttons --}}
                     <div class="flex flex-wrap gap-4">
                         <a href="{{ $pageData['cta_whatsapp'] }}" target="_blank" rel="noopener"
-                           class="btn btn-success btn-lg" style="background: var(--color-success); border-radius: var(--radius-full);">
+                           class="btn btn-gold btn-lg" style="border-radius: var(--radius-full);">
                             <i class="fab fa-whatsapp text-lg"></i> Konsultasi Gratis
                         </a>
                         <a href="{{ route('services.show.id', $serviceSlug) }}"
@@ -105,14 +100,14 @@ $faqSchema = [
 
                 {{-- Advantage Card --}}
                 <div class="lg:w-1/3 hidden lg:block">
-                    <div class="rounded-2xl p-6 backdrop-blur-sm" style="background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);">
-                        <h3 class="text-lg font-bold mb-4" style="color: #fff;">Keunggulan Kami</h3>
-                        <ul class="space-y-3 text-sm" style="color: rgba(255,255,255,.75);">
-                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5" style="color: var(--color-success);"></i> Tim berpengalaman di {{ $city['name'] }}</li>
-                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5" style="color: var(--color-success);"></i> Proses transparan & terpantau</li>
-                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5" style="color: var(--color-success);"></i> Koordinasi langsung ke {{ $pageData['government_office'] ?: 'dinas terkait' }}</li>
-                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5" style="color: var(--color-success);"></i> Garansi kelengkapan dokumen</li>
-                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5" style="color: var(--color-success);"></i> Konsultasi awal gratis</li>
+                    <div class="rounded-2xl p-6 bg-white border border-gray-200 shadow-sm">
+                        <h3 class="text-lg font-bold mb-4 text-gray-900">Keunggulan Kami</h3>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5 text-amber-500"></i> Tim berpengalaman di {{ $city['name'] }}</li>
+                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5 text-amber-500"></i> Proses transparan & terpantau</li>
+                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5 text-amber-500"></i> Koordinasi langsung ke {{ $pageData['government_office'] ?: 'dinas terkait' }}</li>
+                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5 text-amber-500"></i> Garansi kelengkapan dokumen</li>
+                            <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-0.5 text-amber-500"></i> Konsultasi awal gratis</li>
                         </ul>
                     </div>
                 </div>
@@ -183,10 +178,10 @@ $faqSchema = [
                     <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style="background: {{ $svcColor }}12; color: {{ $svcColor }};">
                         <i class="fas {{ $service['icon'] ?? 'fa-file-alt' }} text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">Butuh {{ $service['title'] }}?</h3>
-                    <p class="text-sm mb-5" style="color: var(--text-secondary);">Hubungi kami sekarang untuk konsultasi gratis tentang {{ $service['title'] }} di {{ $city['name'] }}.</p>
+                    <h3 class="text-lg font-bold mb-2 text-gray-900">Butuh {{ $service['title'] }}?</h3>
+                    <p class="text-sm mb-5 text-gray-600">Hubungi kami sekarang untuk konsultasi gratis tentang {{ $service['title'] }} di {{ $city['name'] }}.</p>
                     <a href="{{ $pageData['cta_whatsapp'] }}" target="_blank" rel="noopener"
-                       class="btn btn-success mb-3" style="border-radius: var(--radius-lg); width: 100%;">
+                       class="btn btn-gold mb-3" style="border-radius: var(--radius-lg); width: 100%;">
                         <i class="fab fa-whatsapp"></i> WhatsApp Kami
                     </a>
                     <a href="{{ route('contact.index') }}" class="btn btn-outline-primary" style="border-radius: var(--radius-lg); width: 100%;">
@@ -232,11 +227,11 @@ $faqSchema = [
 <section class="py-12 md:py-16" style="background: var(--surface-cool);">
     <div class="container-wide max-w-4xl mx-auto">
         <div class="text-center mb-10">
-            <div class="section-badge mx-auto">
+            <div class="eyebrow mx-auto">
                 <i class="fas fa-question-circle text-xs" style="color: var(--color-accent);"></i>
                 <span>FAQ</span>
             </div>
-            <h2 class="section-title" style="color: var(--text-primary);">FAQ: {{ $service['title'] }} di {{ $city['name'] }}</h2>
+            <h2 class="display-lg" style="color: var(--text-primary);">FAQ: {{ $service['title'] }} di {{ $city['name'] }}</h2>
         </div>
         <div class="space-y-3">
             @foreach($pageData['faqs'] as $i => $faq)
@@ -260,11 +255,11 @@ $faqSchema = [
 <section class="py-12 md:py-16" style="background: var(--surface);">
     <div class="container-wide">
         <div class="text-center mb-10">
-            <div class="section-badge mx-auto">
+            <div class="eyebrow mx-auto">
                 <i class="fas fa-newspaper text-xs" style="color: var(--color-secondary);"></i>
                 <span>Artikel</span>
             </div>
-            <h2 class="section-title" style="color: var(--text-primary);">Artikel Terkait {{ $service['title'] }}</h2>
+            <h2 class="display-lg" style="color: var(--text-primary);">Artikel Terkait {{ $service['title'] }}</h2>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
             @foreach($relatedArticles as $article)
@@ -286,16 +281,12 @@ $faqSchema = [
 @endif
 
 {{-- CTA Bottom --}}
-<section class="relative py-16 md:py-20 overflow-hidden gradient-hero text-center">
-    <div class="absolute inset-0 opacity-[.07]">
-        <div class="absolute top-10 right-20 w-64 h-64 rounded-full blur-3xl" style="background: {{ $svcColor }};"></div>
-        <div class="absolute bottom-10 left-20 w-48 h-48 rounded-full blur-3xl" style="background: var(--color-secondary);"></div>
-    </div>
-    <div class="container-wide relative z-10 max-w-3xl mx-auto">
-        <h2 class="font-black mb-4" style="font-size: clamp(1.5rem,3vw,2.25rem); letter-spacing: -0.02em; color: #fff;">Siap Mengurus {{ $service['title'] }} di {{ $city['name'] }}?</h2>
-        <p class="text-lg mb-8 font-light" style="color: rgba(255,255,255,.6);">Konsultasi gratis dengan tim ahli kami. Proses cepat, transparan, dan terpercaya.</p>
+<section class="section-premium text-center">
+    <div class="container-wide max-w-3xl mx-auto">
+        <h2 class="font-black mb-4 text-gray-900" style="font-size: clamp(1.5rem,3vw,2.25rem); letter-spacing: -0.02em;">Siap Mengurus {{ $service['title'] }} di {{ $city['name'] }}?</h2>
+        <p class="text-lg mb-8 font-light text-gray-600">Konsultasi gratis dengan tim ahli kami. Proses cepat, transparan, dan terpercaya.</p>
         <a href="{{ $pageData['cta_whatsapp'] }}" target="_blank" rel="noopener"
-           class="btn btn-success btn-lg" style="background: var(--color-success); border-radius: var(--radius-full);">
+           class="btn btn-gold btn-lg" style="border-radius: var(--radius-full);">
             <i class="fab fa-whatsapp text-xl"></i> Hubungi Kami Sekarang
         </a>
     </div>

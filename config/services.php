@@ -37,19 +37,23 @@ return [
 
     'openrouter' => [
         'api_key' => env('OPENROUTER_API_KEY'),
+        'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
+
+        // ── Default model untuk operasi AI umum ──
+        'default_model' => env('OPENROUTER_DEFAULT_MODEL', 'openrouter/free'),
 
         // Legacy (backward compat) — not used directly by tiered system
-        'model' => env('OPENROUTER_MODEL', 'google/gemini-2.5-flash'),
+        'model' => env('OPENROUTER_MODEL', 'openrouter/free'),
 
         // ── Free tier (konsultasi-gratis, public landing page) ──
-        // Cost-optimized: good quality at minimal cost per request
-        'free_primary_model' => env('OPENROUTER_FREE_PRIMARY_MODEL', 'google/gemini-2.5-flash'),
-        'free_fallback_model' => env('OPENROUTER_FREE_FALLBACK_MODEL', 'deepseek/deepseek-v3.2'),
+        // Cost-optimized: menggunakan openrouter/free untuk konsistensi
+        'free_primary_model' => env('OPENROUTER_FREE_PRIMARY_MODEL', 'openrouter/free'),
+        'free_fallback_model' => env('OPENROUTER_FREE_FALLBACK_MODEL', 'openrouter/free'),
 
         // ── Premium tier (client portal, authenticated users) ──
-        // Quality-optimized: best reasoning accuracy for paying clients
-        'premium_primary_model' => env('OPENROUTER_PREMIUM_PRIMARY_MODEL', 'anthropic/claude-3.5-sonnet'),
-        'premium_fallback_model' => env('OPENROUTER_PREMIUM_FALLBACK_MODEL', 'google/gemini-2.5-flash'),
+        // Quality-optimized: menggunakan openrouter/free untuk konsistensi
+        'premium_primary_model' => env('OPENROUTER_PREMIUM_PRIMARY_MODEL', 'openrouter/free'),
+        'premium_fallback_model' => env('OPENROUTER_PREMIUM_FALLBACK_MODEL', 'openrouter/free'),
     ],
 
     // SearXNG — Open-source self-hosted metasearch (Priority 1: gratis, unlimited)
@@ -137,6 +141,35 @@ return [
 
     'social_posting' => [
         'free_only' => env('SOCIAL_POSTING_FREE_ONLY', true),
+    ],
+
+    // WhatsApp Business Cloud API (Meta)
+    'whatsapp' => [
+        'phone_number_id' => env('WA_PHONE_NUMBER_ID'),
+        'access_token' => env('WA_ACCESS_TOKEN'),
+        'verify_token' => env('WA_VERIFY_TOKEN', 'bizmark_webhook_verify_2026'),
+        'app_secret' => env('WA_APP_SECRET'),
+        'api_version' => env('WA_API_VERSION', 'v21.0'),
+        'admin_phone' => env('WA_ADMIN_PHONE'),
+    ],
+
+    'tawk' => [
+        'property_id' => env('TAWK_PROPERTY_ID', '69f84236394ff41c326e2175'),
+        'widget_id' => env('TAWK_WIDGET_ID', '1jnos59bv'),
+        'api_key' => env('TAWK_API_KEY'),
+    ],
+
+    'google' => [
+        'analytics_id' => env('GOOGLE_ANALYTICS_ID'),
+    ],
+
+    // Indonesia Civic Stack — internal Docker microservice (FastAPI)
+    // Container: bizmark_civic_stack (port 8100 host, 8000 internal)
+    // Modules: simbg, bpjph, oss_nib, jdih (+ bpom, ahu, kpu, ojk, lpse, lhkpn, bps, bmkg)
+    // Docs: http://127.0.0.1:8100/docs (when container running)
+    'civic_stack' => [
+        'url' => env('CIVIC_STACK_URL', 'http://bizmark_civic_stack:8000'),
+        'timeout' => (int) env('CIVIC_STACK_TIMEOUT', 15),
     ],
 
 ];

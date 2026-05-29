@@ -5,7 +5,7 @@
     $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
 @endphp
 
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-28 pb-16 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide">
         <a href="{{ route('career.show', $vacancy->slug) }}" class="link-primary text-sm inline-flex items-center mb-5"><i class="fas fa-arrow-left mr-2"></i>Kembali ke detail lowongan</a>
         <span class="section-badge mb-4">Lamaran</span>
@@ -153,7 +153,7 @@
 
                     <div class="mt-6 flex flex-col sm:flex-row gap-3">
                         <button type="submit" class="btn btn-primary btn-lg w-full sm:w-auto"><i class="fas fa-paper-plane"></i> Kirim Lamaran</button>
-                        <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-lg w-full sm:w-auto"><i class="fab fa-whatsapp"></i> Tanya via WhatsApp</a>
+                        <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg w-full sm:w-auto"><i class="fab fa-whatsapp"></i> Tanya via WhatsApp</a>
                     </div>
                 </div>
             </div>

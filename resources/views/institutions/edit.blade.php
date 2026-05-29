@@ -263,9 +263,9 @@
 
                         @if($institution->projects->count() === 0)
                             <hr class="my-4" style="border-color: rgba(142, 142, 147, 0.3);">
-                            <form action="{{ route('institutions.destroy', $institution) }}" 
-                                  method="POST" 
-                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus institusi ini?')">
+                            <form action="{{ route('institutions.destroy', $institution) }}"
+                                  method="POST"
+                                  x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin menghapus institusi ini?')) $el.submit()">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" 

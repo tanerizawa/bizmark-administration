@@ -85,22 +85,21 @@
                     </div>
 
                     {{-- Footer --}}
-                    @if(!empty($footer) || $submitLabel)
+                    @if((isset($footer) && $footer->isNotEmpty()) || $submitLabel)
                         <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 dark:border-gray-700">
-                            @isset($footer)
+                            @if(isset($footer) && $footer->isNotEmpty())
                                 {{ $footer }}
                             @else
-                                <x-ui.button variant="ghost" @click="open = false" size="sm">
+                                <button type="button" @click="open = false"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50">
                                     {{ $cancelLabel }}
-                                </x-ui.button>
-                                <x-ui.button
-                                    variant="primary"
-                                    size="sm"
+                                </button>
+                                <button type="button"
                                     @if($submitAction) @click="{{ $submitAction }}" @endif
-                                >
+                                    class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50">
                                     {{ $submitLabel }}
-                                </x-ui.button>
-                            @endisset
+                                </button>
+                            @endif
                         </div>
                     @endif
                 </div>

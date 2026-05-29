@@ -6,12 +6,12 @@
   "start_url": "/?utm_source=pwa&utm_medium=homescreen&v=2.2.0",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0077B5",
+  "theme_color": "#00a1e9",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [
     {
-      "src": "/images/logo-bizmark.svg",
+      "src": "/images/logo-mark.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
@@ -23,8 +23,20 @@
       "purpose": "any"
     },
     {
+      "src": "/images/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "/favicon.ico",
-      "sizes": "48x48",
+      "sizes": "16x16 32x32 48x48 64x64",
       "type": "image/x-icon",
       "purpose": "any"
     }

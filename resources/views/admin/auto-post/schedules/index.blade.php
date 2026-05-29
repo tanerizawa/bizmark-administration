@@ -252,11 +252,10 @@
                                     </form>
                                 @endif
                                 @if($schedule->status !== 'completed')
-                                    <form action="{{ route('auto-post.schedules.destroy', $schedule) }}" method="POST" class="inline">
+                                    <form action="{{ route('auto-post.schedules.destroy', $schedule) }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Yakin hapus jadwal ini?')) $el.submit()">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
-                                                onclick="return confirm('Yakin hapus jadwal ini?')" 
+                                        <button type="submit"
                                                 class="inline-flex items-center px-3 py-1.5 rounded-apple text-xs font-medium transition-apple"
                                                 style="background: rgba(255,69,58,0.15); color: rgba(255,69,58,1); border: 1px solid rgba(255,69,58,0.3);">
                                             <i class="fas fa-trash mr-1.5"></i>Delete

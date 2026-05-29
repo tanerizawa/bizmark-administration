@@ -1,0 +1,62 @@
+<svg width="640" height="520" viewBox="0 0 640 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="faqBg" x1="97" y1="41" x2="512" y2="472" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF9EE"/>
+      <stop offset="1" stop-color="#F3E6CB"/>
+    </linearGradient>
+    <linearGradient id="desk" x1="179" y1="286" x2="452" y2="395" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1A2841"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="348" y1="116" x2="462" y2="191" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9AF54"/>
+      <stop offset="1" stop-color="#B8860B"/>
+    </linearGradient>
+    <filter id="softShadow" x="119" y="74" width="399" height="344" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="22"/>
+      <feGaussianBlur stdDeviation="20"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.0588235 0 0 0 0 0.0901961 0 0 0 0 0.164706 0 0 0 0.12 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+  </defs>
+  <rect width="640" height="520" rx="36" fill="url(#faqBg)"/>
+  <circle cx="111" cy="122" r="70" fill="#FFF0C9"/>
+  <circle cx="529" cy="427" r="89" fill="#F1E2BD"/>
+  <g filter="url(#softShadow)">
+    <rect x="159" y="92" width="319" height="264" rx="28" fill="#FFFDF7"/>
+  </g>
+  <rect x="190" y="309" width="258" height="30" rx="15" fill="url(#desk)"/>
+  <rect x="230" y="198" width="178" height="98" rx="20" fill="#F8F2E3" stroke="#E8D8B1"/>
+  <rect x="252" y="217" width="90" height="10" rx="5" fill="#22304B"/>
+  <rect x="252" y="236" width="126" height="8" rx="4" fill="#8B97A9" fill-opacity="0.65"/>
+  <rect x="252" y="258" width="65" height="16" rx="8" fill="url(#accent)"/>
+  <path d="M286 355C286 331.252 305.252 312 329 312C352.748 312 372 331.252 372 355V363H286V355Z" fill="#B8860B"/>
+  <path d="M301 352C301 336.536 313.536 324 329 324C344.464 324 357 336.536 357 352V368H301V352Z" fill="#0F172A"/>
+  <circle cx="329" cy="238" r="41" fill="#E7B98C"/>
+  <circle cx="315" cy="233" r="4" fill="#362116"/>
+  <circle cx="343" cy="233" r="4" fill="#362116"/>
+  <path d="M317 250C320.876 255.148 324.927 257 329 257C333.073 257 337.124 255.148 341 250" stroke="#7F4C2B" stroke-width="4" stroke-linecap="round"/>
+  <path d="M287 197C294.266 176.763 309.904 166 329 166C348.096 166 363.734 176.763 371 197V209H287V197Z" fill="#C7D2DE"/>
+  <path d="M300 206C304.85 190.265 315.684 182.398 329 182.398C342.316 182.398 353.15 190.265 358 206" stroke="#F8F4EC" stroke-width="10" stroke-linecap="round"/>
+  <path d="M279 279H379L399 309H259L279 279Z" fill="#D8DEE7"/>
+  <rect x="245" y="108" width="109" height="57" rx="18" fill="#FFFFFF" stroke="#EDDDB3"/>
+  <path d="M269 132H330" stroke="#39475D" stroke-width="8" stroke-linecap="round"/>
+  <path d="M269 148H315" stroke="#8B97A9" stroke-width="6" stroke-linecap="round"/>
+  <path d="M286 165L275 177L274 165H286Z" fill="#FFFFFF" stroke="#EDDDB3"/>
+  <rect x="377" y="124" width="79" height="52" rx="18" fill="#FFF8E6" stroke="#EACF8C"/>
+  <path d="M397 144H436" stroke="#B8860B" stroke-width="7" stroke-linecap="round"/>
+  <path d="M397 159H424" stroke="#D1B16A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M426 176L435 188L438 176H426Z" fill="#FFF8E6" stroke="#EACF8C"/>
+  <rect x="169" y="361" width="130" height="72" rx="20" fill="#F8F2E5" stroke="#E6D6AF"/>
+  <circle cx="204" cy="396" r="16" fill="#0F172A"/>
+  <path d="M203 389L208 395L218 383" stroke="#F7D67D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="228" y="384" width="48" height="9" rx="4.5" fill="#2A3955"/>
+  <rect x="228" y="401" width="33" height="7" rx="3.5" fill="#98A2B3"/>
+  <rect x="328" y="374" width="143" height="82" rx="22" fill="#0F172A"/>
+  <rect x="346" y="394" width="107" height="9" rx="4.5" fill="#F3E2B6"/>
+  <rect x="346" y="411" width="70" height="7" rx="3.5" fill="#CBB88B"/>
+  <rect x="346" y="430" width="85" height="7" rx="3.5" fill="#CBB88B"/>
+</svg>

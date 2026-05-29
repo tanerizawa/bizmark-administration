@@ -12,17 +12,17 @@
     $schemaPhone = preg_replace('/\s+/', '', $schemaPhone);
     $schemaWhatsapp = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
     $defaultTitle = app()->getLocale() == 'id' 
-        ? "Bizmark.ID - Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang | {$companyName}" 
-        : "Bizmark.ID - Environmental Permit Consultant | {$companyName}";
+        ? "Bizmark.ID – Platform Legal-Tech Perizinan & Kepatuhan Usaha Indonesia" 
+        : "Bizmark.ID – Legal-Tech Platform for Business Permits & Compliance in Indonesia";
     $defaultMetaTitle = app()->getLocale() == 'id' 
-        ? 'Bizmark.ID - Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang' 
-        : 'Bizmark.ID - Environmental Permit Consultant Karawang';
+        ? 'Bizmark.ID – Platform Legal-Tech Perizinan & Kepatuhan Usaha Indonesia' 
+        : 'Bizmark.ID – Legal-Tech Platform for Business Permits & Compliance in Indonesia';
     $defaultDescription = app()->getLocale() == 'id' 
-        ? "{$companyName} (Bizmark.ID) - Spesialis perizinan Limbah B3, AMDAL, UKL-UPL untuk industri manufaktur dengan proses yang transparan dan terpercaya." 
-        : "{$companyName} (Bizmark.ID) - Environmental permit specialist for B3 Waste, AMDAL, UKL-UPL in the manufacturing industry. Fast, transparent, and trusted.";
+        ? "Bizmark.ID adalah platform legal-tech untuk perizinan usaha, kepatuhan lingkungan (LB3, AMDAL, UKL-UPL), dan legalitas usaha. AI Permit Checker, Client Portal, dan konsultan berpengalaman untuk UMKM hingga korporasi di seluruh Indonesia." 
+        : "Bizmark.ID is an AI-powered legal-tech platform for business licensing, environmental compliance (AMDAL, UKL-UPL, B3 Waste), and regulatory affairs in Indonesia. Trusted by 150+ companies from SMEs to multinationals.";
     $defaultKeywords = app()->getLocale() == 'id' 
-        ? 'konsultan perizinan karawang, jasa perizinan lb3, limbah b3, amdal karawang, ukl upl karawang, perizinan industri manufaktur, konsultan lingkungan' 
-        : 'environmental consultant karawang, b3 waste permit, hazardous waste, amdal karawang, environmental permit, manufacturing industry permit';
+        ? 'platform perizinan usaha, konsultan perizinan indonesia, ai permit checker, lb3 amdal ukl-upl, oss rba, perizinan lingkungan, legalitas usaha, konsultan karawang jawa barat' 
+        : 'business permit indonesia, legal tech indonesia, ai permit checker, environmental compliance indonesia, amdal ukl-upl, oss rba permit, pma establishment, indonesia regulatory affairs';
 @endphp
 <title>@yield('title', $defaultTitle)</title>
 <meta name="title" content="@yield('meta_title', $defaultMetaTitle)">
@@ -65,11 +65,11 @@
 <!-- Open Graph / Facebook -->
 @php
     $defaultOgTitle = app()->getLocale() == 'id' 
-        ? 'Bizmark.ID - Konsultan Perizinan LB3, AMDAL, UKL-UPL Karawang' 
-        : 'Bizmark.ID - Environmental Permit Consultant Karawang';
+        ? 'Bizmark.ID – Platform Legal-Tech Perizinan & Kepatuhan Usaha Indonesia' 
+        : 'Bizmark.ID – Legal-Tech Platform for Business Permits & Compliance in Indonesia';
     $defaultOgDescription = app()->getLocale() == 'id' 
-        ? 'Spesialis perizinan Limbah B3, AMDAL, UKL-UPL untuk industri manufaktur. Proses cepat, transparan, dan terpercaya.' 
-        : 'Environmental permit specialist for B3 Waste, AMDAL, UKL-UPL for manufacturing industry. Fast, transparent and trusted.';
+        ? 'Platform legal-tech untuk perizinan usaha, kepatuhan lingkungan (LB3, AMDAL, UKL-UPL), dan legalitas usaha. AI Permit Checker & Client Portal.' 
+        : 'AI-powered legal-tech platform for business licensing, environmental compliance, and regulatory affairs in Indonesia. Operating since 2014.';
 @endphp
 <meta property="og:type" content="@yield('og_type', 'website')">
 <meta property="og:url" content="{{ url()->current() }}">
@@ -79,6 +79,7 @@
     $ogImage = app()->getLocale() == 'id' ? asset('images/og-image-id.jpg') : asset('images/og-image-en.jpg');
 @endphp
 <meta property="og:image" content="@yield('og_image', $ogImage)">
+<meta property="og:image:alt" content="@yield('og_image_alt', app()->getLocale() == 'id' ? 'Bizmark.ID — Platform Legal-Tech Perizinan & Kepatuhan Usaha Indonesia' : 'Bizmark.ID — Legal-Tech Platform for Business Permits & Compliance in Indonesia')">
 @hasSection('article_published_time')
 <meta property="article:published_time" content="@yield('article_published_time')">
 <meta property="article:modified_time" content="@yield('article_modified_time')">
@@ -92,22 +93,26 @@
 <!-- Twitter -->
 @php
     $defaultTwitterTitle = app()->getLocale() == 'id' 
-        ? 'Bizmark.ID - Konsultan Perizinan LB3, AMDAL, UKL-UPL' 
-        : 'Bizmark.ID - Environmental Permit Consultant';
+        ? 'Bizmark.ID – Platform Legal-Tech Perizinan & Kepatuhan Usaha' 
+        : 'Bizmark.ID – Legal-Tech Platform for Business Permits & Compliance';
     $defaultTwitterDescription = app()->getLocale() == 'id' 
-        ? 'Perizinan industri lebih cepat, transparan, dan terpercaya.' 
-        : 'Faster, transparent, and trusted industrial permits.';
+        ? 'Platform AI untuk perizinan usaha, AMDAL, LB3, dan kepatuhan lingkungan. Sederhanakan Birokrasi, percepat Perizinan.' 
+        : 'AI-powered platform for business permits, AMDAL, B3 Waste, and environmental compliance. Simplify bureaucracy. Accelerate licensing.';
 @endphp
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="{{ url()->current() }}">
 <meta name="twitter:title" content="@yield('twitter_title', $defaultTwitterTitle)">
 <meta name="twitter:description" content="@yield('twitter_description', $defaultTwitterDescription)">
 <meta name="twitter:image" content="{{ $ogImage }}">
+<meta name="twitter:image:alt" content="@yield('og_image_alt', app()->getLocale() == 'id' ? 'Bizmark.ID — Platform Legal-Tech Perizinan & Kepatuhan Usaha Indonesia' : 'Bizmark.ID — Legal-Tech Platform for Business Permits & Compliance in Indonesia')">
 
 <!-- Favicons -->
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="/images/icon-192.png">
-<meta name="theme-color" content="#0077B5">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon.png') }}">
+<link rel="icon" type="image/svg+xml" href="{{ asset('images/logo-mark.svg') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
+<link rel="mask-icon" href="{{ asset('images/logo-mark.svg') }}" color="#00a1e9">
+<meta name="theme-color" content="#00a1e9">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Bizmark.ID">
@@ -118,18 +123,22 @@
 <!-- Preconnect for external resources -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-<!-- Font Awesome (low priority, not render-critical) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+<link rel="dns-prefetch" href="https://wa.me">
+<link rel="dns-prefetch" href="https://api.whatsapp.com">
+@if(config('services.tawk.property_id'))
+<link rel="preconnect" href="https://embed.tawk.to">
+<link rel="dns-prefetch" href="https://embed.tawk.to">
+<link rel="dns-prefetch" href="https://va.tawk.to">
+@endif
 
-<!-- Google Fonts - Inter (body/UI) + Fraunces (display serif) - preloaded for performance -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap">
+<!-- Google Fonts - Inter (body/UI) + Fraunces (display serif) - non-blocking load -->
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap"
+      onload="this.rel='stylesheet'">
+<noscript>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap">
-
-<!-- AOS.js Scroll Animation Library -->
-<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" media="print" onload="this.media='all'">
+</noscript>
 
 <!-- Tailwind CSS (compiled) -->
 @vite('resources/css/landing.css')
@@ -166,17 +175,48 @@
 }
 </script>
 
+<!-- SoftwareApplication Schema (AI Tools) -->
+<script type="application/ld+json">
+[
+  {
+    "@@context": "https://schema.org",
+    "@@type": "SoftwareApplication",
+    "name": "{{ app()->getLocale() == 'id' ? 'AI Permit Checker' : 'AI Permit Checker' }}",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "url": "{{ url('/kalkulator-perizinan') }}",
+    "description": "{{ app()->getLocale() == 'id' ? 'Cek jenis izin yang dibutuhkan usaha Anda secara otomatis menggunakan AI. Gratis.' : 'Automatically check what permits your business needs using AI. Free.' }}",
+    "offers": { "@@type": "Offer", "price": "0", "priceCurrency": "IDR" },
+    "provider": { "@@type": "Organization", "name": "Bizmark.ID" }
+  },
+  {
+    "@@context": "https://schema.org",
+    "@@type": "SoftwareApplication",
+    "name": "{{ app()->getLocale() == 'id' ? 'Polygon SHP Maker' : 'Polygon SHP Maker' }}",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "url": "{{ url('/polygon-shp-maker') }}",
+    "description": "{{ app()->getLocale() == 'id' ? 'Buat peta poligon lokasi usaha format SHP untuk keperluan perizinan lingkungan.' : 'Create business location polygon maps in SHP format for environmental permits.' }}",
+    "offers": { "@@type": "Offer", "price": "0", "priceCurrency": "IDR" },
+    "provider": { "@@type": "Organization", "name": "Bizmark.ID" }
+  }
+]
+</script>
+
 <!-- Page-specific head content -->
 @stack('head')
 
 <!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DT71N7BSW9" fetchpriority="low"></script>
+@php $gaId = config('services.google.analytics_id'); @endphp
+@if($gaId)
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}" fetchpriority="low"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-DT71N7BSW9');
+    gtag('config', '{{ $gaId }}');
 </script>
+@endif
 
 <!-- Service Worker Registration -->
 <script>
@@ -184,15 +224,45 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js', { scope: '/' })
             .then((registration) => {
+                // Show a non-intrusive update banner instead of force-reloading.
+                const showUpdateBanner = () => {
+                    if (document.getElementById('sw-update-banner')) return;
+                    const banner = document.createElement('div');
+                    banner.id = 'sw-update-banner';
+                    banner.setAttribute('role', 'status');
+                    banner.style.cssText = 'position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:9999;background:#1e293b;color:#fff;padding:.75rem 1.5rem;border-radius:.75rem;font-size:.875rem;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 16px rgba(0,0,0,.25)';
+                    banner.innerHTML = '<span>{{ app()->getLocale() === "id" ? "Pembaruan tersedia" : "Update available" }}</span>'
+                        + '<button onclick="window.location.reload()" style="background:#f59e0b;color:#1e293b;border:none;padding:.375rem .875rem;border-radius:.5rem;font-weight:600;cursor:pointer;font-size:.8125rem">{{ app()->getLocale() === "id" ? "Perbarui" : "Refresh" }}</button>'
+                        + '<button onclick="this.parentNode.remove()" aria-label="Tutup" style="background:transparent;border:none;color:#94a3b8;cursor:pointer;font-size:1.25rem;line-height:1">&times;</button>';
+                    document.body.appendChild(banner);
+                };
+
+                const activateWaitingWorker = () => {
+                    if (registration.waiting) {
+                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                };
+
+                // When the new SW takes control, show banner instead of hard reload.
+                navigator.serviceWorker.addEventListener('controllerchange', showUpdateBanner);
+
+                // Check for updates in the background (not on every load — only on focus).
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') {
+                        registration.update().catch(() => {});
+                    }
+                });
+
                 registration.addEventListener('updatefound', () => {
                     const newWorker = registration.installing;
-                    if (newWorker) {
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
-                                // New SW activated, optionally notify user
-                            }
-                        });
-                    }
+                    if (!newWorker) return;
+
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // A new version is ready — activate it, banner will appear on controllerchange.
+                            activateWaitingWorker();
+                        }
+                    });
                 });
             })
             .catch(() => {

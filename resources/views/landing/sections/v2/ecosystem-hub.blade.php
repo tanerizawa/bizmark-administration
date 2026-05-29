@@ -11,9 +11,11 @@
             'desc' => $isEn
                 ? 'Tell us about your business and our AI instantly maps every permit you need — at no cost.'
                 : 'Ceritakan jenis usaha Anda, dan AI kami langsung memetakan semua izin yang perlu Anda urus — tanpa biaya.',
-            'stat' => $isEn ? '1,000+ KBLI · Free' : '1.000+ KBLI · Gratis',
+            'stat' => $isEn ? 'KBLI 2020 database · Free' : 'Database KBLI 2020 · Gratis',
             'cta' => $isEn ? 'Check now' : 'Cek sekarang',
             'href' => $primaryCtaRoute,
+            'mockup' => 'ai',
+            'eyebrow' => $isEn ? 'Guided intake' : 'Intake terpandu',
         ],
         [
             'icon' => 'fa-brain',
@@ -25,6 +27,8 @@
             'stat' => $isEn ? 'Real-time · AI' : 'Real-time · AI',
             'cta' => $isEn ? 'Estimate now' : 'Hitung Biaya',
             'href' => route('consultation.index'),
+            'mockup' => 'estimator',
+            'eyebrow' => $isEn ? 'Cost visibility' : 'Visibilitas biaya',
         ],
         [
             'icon' => 'fa-draw-polygon',
@@ -36,6 +40,8 @@
             'stat' => $isEn ? 'OSS-RBA ready' : 'Siap OSS-RBA',
             'cta' => $isEn ? 'Create SHP' : 'Buat SHP',
             'href' => route('polygon.shp.index'),
+            'mockup' => 'map',
+            'eyebrow' => $isEn ? 'Spatial planning' : 'Perencanaan spasial',
         ],
         [
             'icon' => 'fa-calculator',
@@ -47,6 +53,8 @@
             'stat' => $isEn ? '50+ permit types' : '50+ jenis izin',
             'cta' => $isEn ? 'Calculate now' : 'Hitung Biaya',
             'href' => route('calculator.index'),
+            'mockup' => 'calculator',
+            'eyebrow' => $isEn ? 'Scenario planning' : 'Simulasi biaya',
         ],
     ];
 
@@ -55,7 +63,7 @@
 
     $secondaryTools = [
         ['icon' => 'fa-newspaper', 'label' => $isEn ? 'Insights & Guides' : 'Artikel & Panduan', 'sub' => $blogSub, 'href' => $isEn ? route('blog.index.en') : route('blog.index.id')],
-        ['icon' => 'fa-user-lock',  'label' => $isEn ? 'Client Portal' : 'Portal Klien',        'sub' => $isEn ? 'Track your projects' : 'Pantau proyek Anda', 'href' => route('login')],
+        ['icon' => 'fa-list-check',  'label' => $isEn ? 'Document Checklist AI' : 'Checklist Dokumen AI', 'sub' => $isEn ? 'Free · AI-generated' : 'Gratis · Dibuat AI', 'href' => route('checklist.index')],
         ['icon' => 'fa-envelope',   'label' => $isEn ? 'Newsletter' : 'Buletin Regulasi',        'sub' => $isEn ? 'Monthly regulatory digest' : 'Pembaruan regulasi bulanan', 'href' => '#newsletter'],
         ['icon' => 'fa-briefcase',  'label' => $isEn ? 'Careers' : 'Karir',                      'sub' => $isEn ? 'Join our team' : 'Bergabung bersama kami', 'href' => route('career.index')],
     ];
@@ -65,51 +73,58 @@
      ECOSYSTEM HUB — Feature showcase (the highlight)
      Reciprocity: free tools build trust + qualified leads
 ──────────────────────────────────────────────── --}}
-<section class="section-v2" aria-labelledby="ecosystem-heading">
+<section class="section-v2 ecosystem-hub relative" aria-labelledby="ecosystem-heading">
     <div class="container-wide">
-        <div class="max-w-3xl mb-8">
-            <span class="eyebrow mb-4">{{ $isEn ? 'Digital Ecosystem' : 'Ekosistem Digital' }}</span>
-            <h2 id="ecosystem-heading" class="display-lg mt-2 mb-4 text-gray-100">
-                {{ $isEn ? 'Free tools built for Indonesia\'s permit ecosystem.' : 'Alat gratis untuk mempercepat perizinan usaha Anda.' }}
+        <div class="max-w-2xl mb-5">
+            <div class="chapter-mark" style="color: var(--tools);">
+                <span class="chapter-mark__num" style="color: var(--tools);">PLATFORM</span>
+                <span class="chapter-mark__rule" style="background: var(--tools);"></span>
+                <span>{{ $isEn ? 'Self-serve toolkit' : 'Toolkit Mandiri' }}</span>
+            </div>
+            <h2 id="ecosystem-heading" class="display-md mb-2">
+                {{ $isEn ? 'Use the platform yourself. Pay nothing.' : 'Pakai platformnya sendiri. Tanpa biaya.' }}
             </h2>
-            <p class="text-lg leading-relaxed text-gray-400">
+            <p class="text-sm leading-relaxed text-gray-600">
                 {{ $isEn
-                    ? 'Built on over a decade of hands-on permit consultancy. Use any tool for free — and when you need expert guidance, our team is ready.'
-                    : 'Dikembangkan dari lebih dari satu dekade pengalaman langsung di bidang konsultansi perizinan. Gunakan semua alat secara gratis — dan saat Anda membutuhkan pendampingan ahli, tim kami siap membantu.' }}
+                    ? 'Built on ' . config('landing_metrics.experience.years', 12) . '+ years of real permit cases across Indonesia. Run the AI checker, estimate cost, draw your polygon — yourself. When you need on-the-ground execution, our specialists step in.'
+                    : 'Dibangun dari ' . config('landing_metrics.experience.years', 12) . '+ tahun pengalaman izin nyata di Indonesia. Jalankan AI checker, estimasi biaya, gambar poligon — sendiri. Saat Anda butuh eksekusi lapangan, tim spesialis kami turun tangan.' }}
             </p>
         </div>
 
-        {{-- Primary tools: 4 cards in 2×2 grid, equal height --}}
-        <div class="grid md:grid-cols-2 gap-5 mb-10 grid-equal">
-            @foreach($primaryTools as $tool)
-                <a href="{{ $tool['href'] }}" class="tool-card">
-                    <div class="flex items-start justify-between gap-4">
-                        <span class="editorial-icon-badge">
-                            <i class="fas {{ $tool['icon'] }} icon-xl" aria-hidden="true"></i>
-                        </span>
-                        <span class="tool-stat">{{ $tool['stat'] }}</span>
-                    </div>
-                    <div>
-                        <div class="tool-title mb-1.5">{{ $tool['title'] }}</div>
-                        <div class="tool-desc">{{ $tool['desc'] }}</div>
-                    </div>
-                    <div class="tool-cta pt-2">
-                        <span>{{ $tool['cta'] }}</span>
-                        <i class="fas fa-arrow-right text-xs flex-shrink-0 leading-none" aria-hidden="true"></i>
+        {{-- Primary tools: Bento grid layout --}}
+        <div class="bento-grid mb-4">
+            @foreach($primaryTools as $index => $tool)
+                <a href="{{ $tool['href'] }}" class="tool-card is-tools {{ $index === 0 ? 'bento-featured' : ($index === 3 ? 'bento-wide' : 'bento-medium') }}">
+                    <div class="tool-card-copy">
+                        <div class="flex items-start justify-between gap-4 flex-wrap">
+                            <span class="editorial-icon-badge">
+                                <i class="fas {{ $tool['icon'] }} icon-xl" aria-hidden="true"></i>
+                            </span>
+                            <span class="tool-stat">{{ $tool['stat'] }}</span>
+                        </div>
+                        <div>
+                            <div class="tool-kicker mb-2">{{ $tool['eyebrow'] }}</div>
+                            <div class="tool-title mb-1.5">{{ $tool['title'] }}</div>
+                            <div class="tool-desc">{{ $tool['desc'] }}</div>
+                        </div>
+                        <div class="tool-cta pt-1">
+                            <span>{{ $tool['cta'] }}</span>
+                            <i class="fas fa-arrow-right text-xs flex-shrink-0 leading-none" aria-hidden="true"></i>
+                        </div>
                     </div>
                 </a>
             @endforeach
         </div>
 
         {{-- Secondary ecosystem links --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-6 border-t border-white/10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-gray-200">
             @foreach($secondaryTools as $s)
                 <a href="{{ $s['href'] }}" class="subtle-link-card">
                     <span class="editorial-icon-badge">
                         <i class="fas {{ $s['icon'] }} icon-md flex-shrink-0" aria-hidden="true"></i>
                     </span>
                     <div class="min-w-0">
-                        <div class="text-sm font-semibold leading-tight text-gray-100">{{ $s['label'] }}</div>
+                        <div class="text-sm font-semibold leading-tight text-gray-900">{{ $s['label'] }}</div>
                         <div class="text-xs leading-tight mt-0.5 text-gray-500">{{ $s['sub'] }}</div>
                     </div>
                 </a>

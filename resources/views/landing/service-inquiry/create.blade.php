@@ -1,5 +1,4 @@
-{{-- Styles moved to dedicated CSS file for Vite compilation (see M5) --}}
-@vite('resources/css/inquiry-form.css')
+@extends('landing.layout')
 
 @section('title', 'Cek Kebutuhan Izin Usaha — Gratis | Bizmark.ID')
 @section('meta_description', 'Cek kebutuhan perizinan usaha Anda secara gratis menggunakan AI Bizmark.ID. Hasil dalam 30 detik, akurat, dan tanpa biaya apa pun.')
@@ -9,6 +8,7 @@
     @php
         $contact = config('landing_metrics.contact');
         $experience = config('landing_metrics.experience');
+        $expYears = $experience['years'] ?? ((int) date('Y') - 2014);
         $benefits = [
             'AI kami memetakan izin yang Anda butuhkan hanya dalam 30 detik',
             'Tim konsultan senior memvalidasi hasil sebelum dikirim ke Anda',
@@ -50,8 +50,8 @@
             <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-400 mb-10 animate-fade-in delay-300">
                 <span class="flex items-center gap-1.5"><i class="fas fa-shield-alt text-primary-500"></i> Data Terenkripsi</span>
                 <span class="flex items-center gap-1.5"><i class="fas fa-clock text-primary-500"></i> Hasil 30 Detik</span>
-                <span class="flex items-center gap-1.5"><i class="fas fa-users text-primary-500"></i> 138+ Perusahaan</span>
-                <span class="flex items-center gap-1.5"><i class="fas fa-star text-accent-500"></i> {{ $experience['years'] ?? '10+' }} Tahun</span>
+                <span class="flex items-center gap-1.5"><i class="fas fa-globe text-primary-500"></i> Bilingual ID / EN</span>
+                <span class="flex items-center gap-1.5"><i class="fas fa-star text-accent-500"></i> {{ $expYears }}+ Tahun Sejak 2014</span>
             </div>
 
             <!-- Progress Bar -->
@@ -192,6 +192,30 @@
 
                 <!-- Form Container -->
                 <div class="lg:col-span-2 space-y-6 order-1 lg:order-2">
+
+                    <!-- Hero search context banner — appears when user came from /?q=... -->
+                    @if(request()->filled('q'))
+                        <div class="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100/40 px-5 py-4 shadow-soft animate-fade-in" role="status">
+                            <div class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center">
+                                    <i class="fas fa-magnifying-glass text-sm"></i>
+                                </span>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-[11px] font-bold uppercase tracking-[.18em] text-emerald-700 mb-1">
+                                        Pencarian Anda
+                                    </p>
+                                    <p class="text-sm text-gray-700 mb-1">
+                                        <span class="font-semibold text-gray-900">"{{ \Illuminate\Support\Str::limit(request('q'), 120) }}"</span>
+                                        sudah kami catat di Tahap 2.
+                                    </p>
+                                    <p class="text-xs text-gray-500 leading-relaxed">
+                                        AI butuh info kontak singkat dulu (Tahap 1, ±30 detik) supaya hasil analisis bisa dikirim langsung ke email Anda. Tidak ada pendaftaran akun.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <form @submit.prevent="submitForm" @input.debounce.500ms="saveDraft()" class="bg-white rounded-2xl shadow-soft-lg border border-gray-100 overflow-hidden card-accent-bar">
                     
                     <!-- Step 1: Contact & Company Info -->
@@ -542,7 +566,18 @@
                     location_category: '', estimated_investment: '', timeline: '', additional_notes: '',
                     utm_source: urlParams.get('utm_source') || '', utm_medium: urlParams.get('utm_medium') || '', utm_campaign: urlParams.get('utm_campaign') || '',
                 },
-                init() { this.loadDraft(); },
+                init() {
+                    this.loadDraft();
+                    // Prefill from hero quick-check (?q=...) or estimator handoff (?kbli=...)
+                    const heroQuery = urlParams.get('q');
+                    const kbliCode = urlParams.get('kbli');
+                    if (heroQuery && !this.formData.business_activity) {
+                        this.formData.business_activity = heroQuery.slice(0, 500);
+                    }
+                    if (kbliCode && !this.formData.kbli_code) {
+                        this.formData.kbli_code = kbliCode.slice(0, 20);
+                    }
+                },
                 get progress() { return this.step === 1 ? 50 : 100; },
                 get savedAtLabel() {
                     if (!this.lastSavedAt) return '';

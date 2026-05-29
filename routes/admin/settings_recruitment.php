@@ -43,10 +43,12 @@ Route::middleware(['permission:settings.manage', '2fa'])->group(function () {
 // Career Management Routes (Admin)
 Route::name('admin.')->middleware('permission:recruitment.view')->group(function () {
     // Job Vacancy Management
-    Route::resource('jobs', App\Modules\HRM\Controllers\Admin\JobVacancyController::class)->only(['index', 'show']);
+    // NOTE: create/store/edit/update/destroy must be registered BEFORE show
+    // so that /jobs/create is not captured by the {job} wildcard as show.
     Route::resource('jobs', App\Modules\HRM\Controllers\Admin\JobVacancyController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('permission:recruitment.manage_jobs');
+    Route::resource('jobs', App\Modules\HRM\Controllers\Admin\JobVacancyController::class)->only(['index', 'show']);
 
     // Tab Views for Job Detail Hub
     Route::get('jobs/{id}/applications', [App\Modules\HRM\Controllers\Admin\JobVacancyController::class, 'applications'])->name('jobs.applications');

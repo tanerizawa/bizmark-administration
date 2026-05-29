@@ -2,8 +2,6 @@
 
 namespace App\Helpers;
 
-use Illuminate\Support\Arr;
-
 /**
  * ContactHelper — Single Source of Truth for Contact Information
  *
@@ -30,11 +28,11 @@ class ContactHelper
      * Override these via config('landing_metrics.contact').
      */
     private static array $defaults = [
-        'phone'         => '+62 838 7960 2855',
-        'whatsapp'      => '6283879602855',
+        'phone' => '+62 838 7960 2855',
+        'whatsapp' => '6283879602855',
         'whatsapp_link' => 'https://wa.me/6283879602855',
-        'email'         => 'info@bizmark.id',
-        'address'       => 'Karawang, Jawa Barat, Indonesia',
+        'email' => 'info@bizmark.id',
+        'address' => 'Karawang, Jawa Barat, Indonesia',
     ];
 
     /**
@@ -52,7 +50,6 @@ class ContactHelper
      * Get a single contact field by key, with fallback to default.
      *
      * @param  string  $key  e.g. 'phone', 'whatsapp', 'whatsapp_link', 'email'
-     * @return string
      */
     public static function get(string $key): string
     {
@@ -92,7 +89,7 @@ class ContactHelper
      */
     public static function whatsappLink(): string
     {
-        return static::get('whatsapp_link') ?: 'https://wa.me/' . static::whatsapp();
+        return static::get('whatsapp_link') ?: 'https://wa.me/'.static::whatsapp();
     }
 
     /**

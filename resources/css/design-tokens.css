@@ -25,11 +25,15 @@
   --color-secondary-dark: #C96535;
   --color-secondary-darker: #A93500;
 
-  --color-accent: #7CB342;
-  --color-accent-light: #A3CF73;
-  --color-accent-lighter: #BADB96;
-  --color-accent-dark: #5A8328;
-  --color-accent-darker: #38530E;
+  /* NOTE: Landing/editorial palette is defined in landing-theme.css and overrides
+     the values below for landing pages. These remain for legacy admin/non-landing
+     contexts. --color-accent is aliased to brand gold to prevent green drift if
+     a landing component falls through to the base layer. */
+  --color-accent: #b8860b;
+  --color-accent-light: #d4a843;
+  --color-accent-lighter: #e8c55a;
+  --color-accent-dark: #9a7209;
+  --color-accent-darker: #7a5c07;
 
   /* ---- Status Colors ---- */
   --color-success: #7CB342;

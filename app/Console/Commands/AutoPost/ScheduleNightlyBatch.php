@@ -88,8 +88,6 @@ class ScheduleNightlyBatch extends Command
 
         if ($result['remaining'] > 0) {
             $this->warn('⚠️ Some posts could not be scheduled due to limited slots/topics.');
-
-            return self::FAILURE;
         }
 
         return self::SUCCESS;

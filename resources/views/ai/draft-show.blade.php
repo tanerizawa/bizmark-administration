@@ -22,7 +22,7 @@
         <div class="flex space-x-3">
             @if($draft->status === 'draft' || $draft->status === 'reviewed')
             <form action="{{ route('ai.drafts.approve', [$project, $draft]) }}" method="POST" class="inline"
-                  onsubmit="return confirm('Apakah Anda yakin ingin menyetujui draft ini?')">
+                  x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin menyetujui draft ini?')) $el.submit()">
                 @csrf
                 @method('POST')
                 <button type="submit" class="px-4 py-2 rounded-lg font-medium transition-colors"
@@ -32,7 +32,7 @@
             </form>
 
             <form action="{{ route('ai.drafts.reject', [$project, $draft]) }}" method="POST" class="inline"
-                  onsubmit="return confirm('Apakah Anda yakin ingin menolak draft ini?')">
+                  x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin menolak draft ini?')) $el.submit()">
                 @csrf
                 @method('POST')
                 <button type="submit" class="px-4 py-2 rounded-lg font-medium transition-colors"
@@ -45,7 +45,7 @@
             @if($draft->status !== 'approved')
             <!-- Delete Button (only for non-approved drafts) -->
             <form action="{{ route('ai.drafts.destroy', [$project, $draft]) }}" method="POST" class="inline"
-                  onsubmit="return confirm('⚠️ PERHATIAN: Draft akan dihapus permanen!\n\nApakah Anda yakin ingin menghapus draft ini?')">
+                  x-data @submit.prevent="if(confirm('⚠️ PERHATIAN: Draft akan dihapus permanen!\n\nApakah Anda yakin ingin menghapus draft ini?')) $el.submit()">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="px-4 py-2 rounded-lg font-medium transition-colors"

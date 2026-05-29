@@ -354,8 +354,8 @@ class ShapefileApiTest extends TestCase
         $response = $this->get('/polygon-shp-maker');
 
         $response->assertOk();
-        // Navbar shows login link for guests (text depends on locale)
-        $response->assertSee('Login /', false);
+        // Navbar shows login link for guests — Indonesian locale shows 'Masuk ke Portal'
+        $response->assertSee('Masuk', false);
         $response->assertSee('/login', false);
     }
 

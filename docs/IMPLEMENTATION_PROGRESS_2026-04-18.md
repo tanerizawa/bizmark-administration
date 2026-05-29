@@ -92,19 +92,29 @@ Urutan prioritas yang dipakai:
 ## 3) Testing yang sudah dilakukan
 
 ### Automated (Unit/Feature/Integration)
-- Test suite dijalankan: `php artisan test` (lulus).
-- Penambahan factory untuk mempercepat pembuatan data test:
-  - [database/factories](file:///home/bizmark/bizmark.id/database/factories)
-- Penambahan feature tests untuk skenario kritikal:
-  - API key internal KBLI: [KbliInternalApiKeyTest.php](file:///home/bizmark/bizmark.id/tests/Feature/KbliInternalApiKeyTest.php)
-  - Auth admin payment permission: [AdminPaymentAuthorizationTest.php](file:///home/bizmark/bizmark.id/tests/Feature/AdminPaymentAuthorizationTest.php)
-  - Signature callback Midtrans: [MidtransCallbackSignatureTest.php](file:///home/bizmark/bizmark.id/tests/Feature/MidtransCallbackSignatureTest.php)
-  - Deduplikasi email webhook: [EmailWebhookDedupTest.php](file:///home/bizmark/bizmark.id/tests/Feature/EmailWebhookDedupTest.php)
-  - Workflow admin permit: [AdminPermitApplicationWorkflowTest.php](file:///home/bizmark/bizmark.id/tests/Feature/AdminPermitApplicationWorkflowTest.php)
-  - Throttle candidate portal: [CandidateThrottleTest.php](file:///home/bizmark/bizmark.id/tests/Feature/CandidateThrottleTest.php)
-  - Replay protection middleware webhook: [EmailWebhookReplayProtectionTest.php](file:///home/bizmark/bizmark.id/tests/Feature/EmailWebhookReplayProtectionTest.php)
-  - Unit test workflow service: [PermitApplicationWorkflowServiceTest.php](file:///home/bizmark/bizmark.id/tests/Unit/Services/PermitApplicationWorkflowServiceTest.php)
-  - 2FA enforcement: [AdminTwoFactorEnforcementTest.php](file:///home/bizmark/bizmark.id/tests/Feature/AdminTwoFactorEnforcementTest.php)
+- Test suite dijalankan: 673 tests, 1741 assertions (W22: +25 tests).
+- **4 pre-existing failures** (AdminDashboardIntegrationTest) — unrelated to new tests.
+- W22 Sprint completed: 5 test files, 25 new tests.
+
+#### New Test Files (W22)
+| File | Tests | Coverage Area |
+|------|-------|--------------|
+| [`ClientPortalDashboardTest.php`](/tests/Feature/ClientPortalDashboardTest.php) | +6 | Investment metrics, permit info, contract value, doc download, cross-client auth |
+| [`AiDocumentParaphraseTest.php`](/tests/Feature/AiDocumentParaphraseTest.php) | +4 | ParaphraseDocumentJob dispatch, queue config, context handling, exception |
+| [`AiAnalysisJobTest.php`](/tests/Feature/AiAnalysisJobTest.php) | +5 | Article meta optimize, unknown task, summary, SEO title, failed() |
+| [`GeneratePdfJobTest.php`](/tests/Feature/GeneratePdfJobTest.php) | +4 | DomPDF output, HTML fallback, failed(), exception rethrow |
+| [`SeoIntegrationTest.php`](/tests/Feature/SeoIntegrationTest.php) | +6 | Bilingual articles, admin scores/positions/logs pages, guest redirect |
+
+#### Pre-W22 Test Files
+- API key internal KBLI: [KbliInternalApiKeyTest.php](file:///home/bizmark/bizmark.id/tests/Feature/KbliInternalApiKeyTest.php)
+- Auth admin payment permission: [AdminPaymentAuthorizationTest.php](file:///home/bizmark/bizmark.id/tests/Feature/AdminPaymentAuthorizationTest.php)
+- Signature callback Midtrans: [MidtransCallbackSignatureTest.php](file:///home/bizmark/bizmark.id/tests/Feature/MidtransCallbackSignatureTest.php)
+- Deduplikasi email webhook: [EmailWebhookDedupTest.php](file:///home/bizmark/bizmark.id/tests/Feature/EmailWebhookDedupTest.php)
+- Workflow admin permit: [AdminPermitApplicationWorkflowTest.php](file:///home/bizmark/bizmark.id/tests/Feature/AdminPermitApplicationWorkflowTest.php)
+- Throttle candidate portal: [CandidateThrottleTest.php](file:///home/bizmark/bizmark.id/tests/Feature/CandidateThrottleTest.php)
+- Replay protection middleware webhook: [EmailWebhookReplayProtectionTest.php](file:///home/bizmark/bizmark.id/tests/Feature/EmailWebhookReplayProtectionTest.php)
+- Unit test workflow service: [PermitApplicationWorkflowServiceTest.php](file:///home/bizmark/bizmark.id/tests/Unit/Services/PermitApplicationWorkflowServiceTest.php)
+- 2FA enforcement: [AdminTwoFactorEnforcementTest.php](file:///home/bizmark/bizmark.id/tests/Feature/AdminTwoFactorEnforcementTest.php)
 
 ### User Acceptance Testing (UAT)
 UAT membutuhkan eksekusi manual di staging oleh user bisnis. Checklist UAT ada di bagian 5.
@@ -157,3 +167,29 @@ UAT membutuhkan eksekusi manual di staging oleh user bisnis. Checklist UAT ada d
    - Terapkan workflow service juga pada payment verify manual & conversion service (agar semua perubahan status lewat satu jalur).
 4. Observability:
    - Logging terstruktur untuk payment/webhook + alerting bila terjadi retry tinggi.
+
+---
+
+## 7) Project Cleanup — ✅ COMPLETED (1 Mei 2026)
+
+Mass cleanup of orphaned/unnecessary files, dependencies, and documentation:
+
+### Removed
+- **14 backup directories** from April 19 permfix operation (`__permbackup_*`, `__permfix_*`, `.permfix_*`)
+- **Deprecated CSS**: `neuroscience-variables.css` (all tokens migrated to `design-tokens.css`)
+- **Redundant CSS**: `inquiry-form.css` (Tailwind v4 covers all utilities), removed `@vite()` reference from `service-inquiry/create.blade.php`
+- **Stale npm dependencies**: `bootstrap ^5.2.3`, `@popperjs/core ^2.11.6`, `sass ^1.56.1`
+- **Orphaned public assets**: `tokens.css`, `tailwind-full.css`, `tailwind.min.css`, `tailwind.min.js`, `tailwind-play.min.js`, `tailwind-browser.js`, `ukl-upl-criteria-helper.html`
+- **Superseded plan documents**: 6 files from `plans/`
+- **Completed/outdated sprint docs**: W16-W19 from `docs/sprints/`
+- **Superseded analysis docs**: 30+ files from `docs/`
+- **Archive directory**: `docs/archive/` (9 files)
+- **Permission backups**: `docs/permission-backups/`
+- **Loadtest**: `loadtest/` directory
+- **Test artifacts**: `test-results/` directory
+
+### Modified Files
+- `resources/css/app.css` — Removed `@import './neuroscience-variables.css'`
+- `resources/views/landing/service-inquiry/create.blade.php` — Removed `@vite('resources/css/inquiry-form.css')`
+- `package.json` — Removed 3 stale devDependencies
+- `plans/UI_ARCHITECTURE_LONG_TERM_PLAN.md` — Updated Phase 5 to ✅ COMPLETED, updated Files to DELETE, Key Metrics, and Next Actions

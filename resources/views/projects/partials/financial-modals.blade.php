@@ -16,12 +16,12 @@
             <h2 class="text-2xl font-bold text-white">
                 <i class="fas fa-file-invoice mr-2 text-apple-blue-dark"></i>Create Invoice
             </h2>
-            <button onclick="closeInvoiceModal()" class="text-2xl text-dark-text-secondary">
+            <button @click="closeInvoiceModal()" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <form id="invoiceForm" onsubmit="submitInvoice(event)">
+        <form id="invoiceForm" @submit.prevent="submitInvoice()">
             <!-- Client Information (Read-only) -->
             @if($project->client)
             <div class="rounded-lg p-4 mb-6 bg-apple-green/10 border border-apple-green/30">
@@ -105,7 +105,7 @@
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-3">
                     <label class="block text-sm font-medium text-dark-text-primary/80">Invoice Items<span class="text-red-500">*</span></label>
-                    <button type="button" onclick="addInvoiceItem()"
+                    <button type="button" @click="addInvoiceItem()"
                             class="px-3 py-1 rounded-lg text-sm font-medium transition-colors bg-apple-blue/20 text-apple-blue">
                         <i class="fas fa-plus mr-1"></i>Add Item
                     </button>
@@ -143,7 +143,7 @@
 
             <!-- Actions -->
             <div class="flex justify-end space-x-3">
-                <button type="button" onclick="closeInvoiceModal()"
+                <button type="button" @click="closeInvoiceModal()"
                         class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Batal
                 </button>
@@ -164,12 +164,12 @@
             <h2 class="text-xl font-bold text-white">
                 <i class="fas fa-dollar-sign mr-2 text-green-500"></i>Record Payment
             </h2>
-            <button onclick="closeInvoicePaymentModal()" class="text-2xl text-dark-text-secondary">
+            <button @click="closeInvoicePaymentModal()" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <form id="invoicePaymentForm" onsubmit="submitInvoicePayment(event)">
+        <form id="invoicePaymentForm" @submit.prevent="submitInvoicePayment()">
             <input type="hidden" id="payment_invoice_id" name="invoice_id">
 
             <div class="mb-4 p-3 rounded-lg bg-[rgba(58,58,60,0.5)]">
@@ -199,7 +199,7 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Payment Method<span class="text-red-500">*</span></label>
-                <select name="payment_method" id="payment_method" required onchange="updateCashAccountInfo()"
+                <select name="payment_method" id="payment_method" required @change="updateCashAccountInfo()"
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">Pilih metode pembayaran...</option>
                     @foreach($cashRequiredPaymentMethods as $method)
@@ -234,7 +234,7 @@
             </div>
 
             <div class="flex justify-end space-x-3">
-                <button type="button" onclick="closeInvoicePaymentModal()"
+                <button type="button" @click="closeInvoicePaymentModal()"
                         class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Cancel
                 </button>
@@ -254,12 +254,12 @@
             <h2 class="text-xl font-bold text-white">
                 <i class="fas fa-calendar-check mr-2 text-yellow-500"></i>Add Payment Schedule
             </h2>
-            <button onclick="closeScheduleModal()" class="text-2xl text-dark-text-secondary">
+            <button @click="closeScheduleModal()" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <form id="scheduleForm" onsubmit="submitSchedule(event)">
+        <form id="scheduleForm" @submit.prevent="submitSchedule()">
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Description<span class="text-red-500">*</span></label>
                 <input type="text" name="description" required
@@ -288,7 +288,7 @@
             </div>
 
             <div class="flex justify-end space-x-3">
-                <button type="button" onclick="closeScheduleModal()"
+                <button type="button" @click="closeScheduleModal()"
                         class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Cancel
                 </button>
@@ -308,7 +308,7 @@
             <h2 class="text-xl font-bold text-white">
                 <i class="fas fa-receipt mr-2 text-apple-red"></i>Add Expense
             </h2>
-            <button onclick="closeExpenseModal()" class="text-2xl text-dark-text-secondary">
+            <button @click="closeExpenseModal()" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -316,7 +316,7 @@
         <form id="financialExpenseForm" 
               action="{{ route('projects.financial-expenses.store', $project) }}"
               method="POST"
-              onsubmit="handleExpenseSubmit(event)" 
+              @submit.prevent="handleExpenseSubmit()"
               enctype="multipart/form-data">
             @csrf
             <div class="mb-4">
@@ -402,7 +402,7 @@
                                class="text-sm px-3 py-1 rounded transition-colors bg-apple-blue/15 text-apple-blue">
                                 <i class="fas fa-eye mr-1"></i>Lihat
                             </a>
-                            <button type="button" onclick="deleteReceiptFile()"
+                            <button type="button" @click="deleteReceiptFile()"
                                     class="text-sm px-3 py-1 rounded transition-colors bg-apple-red/15 text-apple-red">
                                 <i class="fas fa-trash mr-1"></i>Hapus
                             </button>
@@ -416,7 +416,7 @@
             </div>
 
             <div class="flex justify-end space-x-3">
-                <button type="button" onclick="closeExpenseModal()"
+                <button type="button" @click="closeExpenseModal()"
                         class="px-6 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Cancel
                 </button>
@@ -519,15 +519,15 @@ function addInvoiceItem() {
                 <div class="col-span-2">
                     <input type="number" name="items[${invoiceItemCount}][quantity]" min="1" value="1" required
                            class="item-quantity input-dark w-full px-3 py-2 rounded-lg text-sm"
-                           placeholder="Qty" onchange="calculateInvoiceTotal()">
+                           placeholder="Qty" @change="calculateInvoiceTotal()">
                 </div>
                 <div class="col-span-3">
                     <input type="number" name="items[${invoiceItemCount}][unit_price]" step="0.01" min="0" required
                            class="item-price input-dark w-full px-3 py-2 rounded-lg text-sm"
-                           placeholder="Unit Price" onchange="calculateInvoiceTotal()">
+                           placeholder="Unit Price" @change="calculateInvoiceTotal()">
                 </div>
                 <div class="col-span-2 flex items-center justify-end">
-                    <button type="button" onclick="removeInvoiceItem(${invoiceItemCount})"
+                    <button type="button" @click="removeInvoiceItem(${invoiceItemCount})"
                             class="text-sm text-apple-red">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -868,7 +868,7 @@ function markSchedulePaid(scheduleId) {
                         <input type="text" id="reference_number" class="form-control-apple w-full" placeholder="Optional">
                     </div>
                     <div class="flex justify-end space-x-2 pt-2">
-                        <button type="button" onclick="document.getElementById('paymentModal').remove()" 
+                        <button type="button" @click="document.getElementById('paymentModal').remove()"
                                 class="px-4 py-2 rounded-lg font-medium transition-colors bg-white/10 text-dark-text-secondary">
                             Cancel
                         </button>
@@ -1632,7 +1632,7 @@ function formatNumber(num) {
             <h2 id="directIncomeModalTitle" class="text-2xl font-bold text-white">
                 <i class="fas fa-hand-holding-usd mr-2 text-apple-green"></i>Catat Pemasukan Langsung
             </h2>
-            <button onclick="window.closeDirectIncomeModal()" type="button" class="text-2xl text-dark-text-secondary">
+            <button @click="window.closeDirectIncomeModal()" type="button" class="text-2xl text-dark-text-secondary">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -1644,7 +1644,7 @@ function formatNumber(num) {
             </p>
         </div>
 
-        <form id="directIncomeForm" onsubmit="window.submitDirectIncome(event); return false;">
+        <form id="directIncomeForm" @submit.prevent="window.submitDirectIncome()">
             <input type="hidden" id="directIncomeId" name="payment_id" value="">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -1686,7 +1686,7 @@ function formatNumber(num) {
                     Metode Pembayaran<span class="text-red-500">*</span>
                 </label>
                 <select name="payment_method_id" id="directIncomePaymentMethod" required
-                        onchange="window.handleDirectIncomePaymentMethodChange()"
+                        @change="window.handleDirectIncomePaymentMethodChange()"
                         class="input-dark w-full px-4 py-2.5 rounded-lg">
                     <option value="">-- Pilih Metode --</option>
                     @foreach($activePaymentMethods as $method)
@@ -1728,7 +1728,7 @@ function formatNumber(num) {
             </div>
 
             <div class="flex justify-end gap-3">
-                <button type="button" onclick="closeDirectIncomeModal()"
+                <button type="button" @click="closeDirectIncomeModal()"
                         class="px-4 py-2.5 rounded-lg font-medium transition-colors bg-[rgba(142,142,147,0.3)] text-dark-text-primary/80">
                     Batal
                 </button>

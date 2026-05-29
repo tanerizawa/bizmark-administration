@@ -119,7 +119,7 @@
                                     <a href="{{ route('admin.templates.edit', $template) }}" class="btn-primary-sm" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.templates.destroy', $template) }}" method="POST" class="inline" onsubmit="return confirm('Hapus template ini?')">
+                                    <form action="{{ route('admin.templates.destroy', $template) }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Hapus template ini?')) $el.submit()">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9); border: 1px solid rgba(255,59,48,0.3);" title="Hapus">

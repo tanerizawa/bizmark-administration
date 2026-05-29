@@ -374,9 +374,9 @@
                     <i class="fas fa-cog" style="color: rgba(142,142,147,1);"></i>
                     Aksi
                 </h3>
-                <form action="{{ route('admin.applications.destroy', $application->id) }}" 
-                      method="POST" 
-                      onsubmit="return confirm('Yakin ingin menghapus lamaran ini? Data test, interview, dan file CV/Portfolio akan terhapus.')">
+                <form action="{{ route('admin.applications.destroy', $application->id) }}"
+                      method="POST"
+                      x-data @submit.prevent="if(confirm('Yakin ingin menghapus lamaran ini? Data test, interview, dan file CV/Portfolio akan terhapus.')) $el.submit()">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn-secondary w-full" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,1); border-color: rgba(255,59,48,0.3);">

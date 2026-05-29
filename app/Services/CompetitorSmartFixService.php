@@ -172,7 +172,7 @@ PROMPT;
         $response = $this->ai->chat([
             ['role' => 'user', 'content' => $prompt],
         ], [
-            'model' => 'google/gemini-2.5-flash',
+            'model' => config('services.openrouter.default_model', 'openrouter/free'),
             'temperature' => 0.3,
             'max_tokens' => 1000,
         ]);
@@ -308,7 +308,7 @@ PROMPT;
         $response = $this->ai->chat([
             ['role' => 'user', 'content' => $prompt],
         ], [
-            'model' => 'google/gemini-2.5-flash',
+            'model' => config('services.openrouter.default_model', 'openrouter/free'),
             'temperature' => 0.5,
             'max_tokens' => 4000,
         ]);
@@ -512,7 +512,7 @@ PROMPT;
         $response = $this->ai->chat([
             ['role' => 'user', 'content' => $prompt],
         ], [
-            'model' => 'google/gemini-2.5-flash',
+            'model' => config('services.openrouter.default_model', 'openrouter/free'),
             'temperature' => 0.5,
             'max_tokens' => 6000,
         ]);

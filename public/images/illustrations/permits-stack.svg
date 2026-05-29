@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" fill="none" aria-hidden="true">
+    <defs>
+        <linearGradient id="permitGold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#d4a847" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#b8860b" stop-opacity="0.04"/>
+        </linearGradient>
+        <linearGradient id="permitInk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1e293b"/>
+            <stop offset="100%" stop-color="#0f172a"/>
+        </linearGradient>
+    </defs>
+    <!-- Soft background blob -->
+    <ellipse cx="160" cy="200" rx="120" ry="20" fill="#b8860b" opacity="0.06"/>
+
+    <!-- Back document (tilted) -->
+    <g transform="translate(60 30) rotate(-7)">
+        <rect width="160" height="200" rx="10" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+        <rect x="20" y="24" width="60" height="6" rx="3" fill="#cbd5e1"/>
+        <rect x="20" y="40" width="100" height="4" rx="2" fill="#e5e7eb"/>
+        <rect x="20" y="50" width="80" height="4" rx="2" fill="#e5e7eb"/>
+        <rect x="20" y="68" width="120" height="4" rx="2" fill="#e5e7eb"/>
+        <rect x="20" y="78" width="100" height="4" rx="2" fill="#e5e7eb"/>
+        <rect x="20" y="88" width="90" height="4" rx="2" fill="#e5e7eb"/>
+    </g>
+
+    <!-- Middle document (tilted other way) -->
+    <g transform="translate(80 50) rotate(4)">
+        <rect width="160" height="200" rx="10" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+        <rect x="20" y="24" width="70" height="6" rx="3" fill="#94a3b8"/>
+        <rect x="20" y="40" width="110" height="4" rx="2" fill="#e2e8f0"/>
+        <rect x="20" y="50" width="90" height="4" rx="2" fill="#e2e8f0"/>
+        <rect x="20" y="68" width="120" height="4" rx="2" fill="#e2e8f0"/>
+        <!-- Stamp/seal -->
+        <circle cx="125" cy="160" r="22" fill="url(#permitGold)" stroke="#b8860b" stroke-width="1.5" stroke-dasharray="2 2"/>
+        <text x="125" y="164" text-anchor="middle" font-family="serif" font-size="9" font-weight="bold" fill="#b8860b">APPROVED</text>
+    </g>
+
+    <!-- Front document (main, with checkmark) -->
+    <g transform="translate(100 70)">
+        <rect width="160" height="160" rx="12" fill="#fff" stroke="#b8860b" stroke-width="1.5" opacity="0.95"/>
+        <!-- Header bar -->
+        <rect x="0" y="0" width="160" height="36" rx="12" fill="url(#permitInk)"/>
+        <rect x="0" y="24" width="160" height="12" fill="url(#permitInk)"/>
+        <circle cx="20" cy="18" r="5" fill="#b8860b"/>
+        <rect x="32" y="14" width="60" height="4" rx="2" fill="#fff" opacity="0.9"/>
+        <rect x="32" y="22" width="40" height="3" rx="1.5" fill="#fff" opacity="0.5"/>
+
+        <!-- Body -->
+        <rect x="16" y="52" width="100" height="5" rx="2.5" fill="#0f172a"/>
+        <rect x="16" y="66" width="128" height="3" rx="1.5" fill="#cbd5e1"/>
+        <rect x="16" y="74" width="110" height="3" rx="1.5" fill="#cbd5e1"/>
+        <rect x="16" y="82" width="120" height="3" rx="1.5" fill="#cbd5e1"/>
+
+        <!-- Big check -->
+        <circle cx="125" cy="120" r="22" fill="#b8860b"/>
+        <path d="M115 120 l7 7 l13 -14" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+        <rect x="16" y="100" width="80" height="3" rx="1.5" fill="#e2e8f0"/>
+        <rect x="16" y="110" width="60" height="3" rx="1.5" fill="#e2e8f0"/>
+        <rect x="16" y="132" width="70" height="3" rx="1.5" fill="#e2e8f0"/>
+    </g>
+
+    <!-- Floating accent dots -->
+    <circle cx="40" cy="60" r="3" fill="#b8860b" opacity="0.5"/>
+    <circle cx="290" cy="40" r="4" fill="#b8860b" opacity="0.4"/>
+    <circle cx="270" cy="200" r="3" fill="#b8860b" opacity="0.5"/>
+</svg>

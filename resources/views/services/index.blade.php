@@ -11,31 +11,64 @@
     $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
 @endphp
 
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-28 pb-16 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide">
-        <span class="section-badge mb-4">Layanan</span>
-        <h1 class="section-title mb-4">Solusi Perizinan End-to-End untuk Bisnis Anda</h1>
-        <p class="section-description mb-8" style="margin-left:0;">Pilih layanan sesuai kebutuhan usaha Anda dan pelajari cakupan, proses, persyaratan, serta langkah pelaksanaannya secara lengkap.</p>
+        <span class="eyebrow mb-4 inline-block">Layanan</span>
+        <h1 class="display-lg mb-4">Solusi Perizinan End-to-End untuk Bisnis Anda</h1>
+        <p class="text-lg leading-relaxed max-w-3xl mb-8" style="color: var(--text-secondary);">Pilih layanan sesuai kebutuhan usaha Anda dan pelajari cakupan, proses, persyaratan, serta langkah pelaksanaannya secara lengkap.</p>
+
+        {{-- Tools-First Ribbon --}}
+        <a href="{{ route('landing.service-inquiry.create') }}" class="inline-flex items-center gap-3 px-4 py-3 rounded-xl no-underline mb-6 group" style="background: var(--tools-glow); border: 1px solid rgba(var(--tools-rgb),.25); transition: border-color .2s, transform .2s;">
+            <span class="editorial-icon-badge is-tools is-circle" style="width:2.25rem;height:2.25rem;flex-shrink:0;">
+                <i class="fas fa-robot text-sm" aria-hidden="true"></i>
+            </span>
+            <span class="flex-1">
+                <span class="block text-[10px] font-bold uppercase tracking-[.14em]" style="color: var(--tools);">Belum yakin izin apa?</span>
+                <span class="block text-sm font-semibold" style="color: var(--text-primary);">Cek pakai AI gratis dulu — tanpa daftar</span>
+            </span>
+            <i class="fas fa-arrow-right" style="color: var(--tools);" aria-hidden="true"></i>
+        </a>
+
         <div class="flex flex-wrap gap-3">
-            <a href="{{ $waHref }}" class="btn btn-secondary"><i class="fab fa-whatsapp"></i> Konsultasi Gratis</a>
-            <a href="{{ route('contact.index') }}" class="btn btn-outline-primary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
+            <a href="{{ $waHref }}" class="btn btn-secondary"><i class="fab fa-whatsapp"></i> Konsultasi Gratis — Langsung Jawab</a>
+            <a href="{{ route('landing.service-inquiry.create') }}" class="btn btn-ghost"><i class="fas fa-robot"></i> Cek Kebutuhan Izin via AI</a>
         </div>
     </div>
 </section>
 
-<section class="section">
+{{-- Sticky category anchor nav --}}
+<div class="sticky top-16 z-30 bg-white border-b border-gray-200 shadow-sm">
+    <div class="container-wide overflow-x-auto">
+        <div class="flex items-center gap-1 py-2 min-w-max">
+            @foreach($groupedServices as $categoryName => $_)
+            <a href="#cat-{{ \Str::slug($categoryName) }}"
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-gray-600 hover:text-amber-700 hover:bg-amber-50 border border-transparent hover:border-amber-200 transition-all duration-200 whitespace-nowrap">
+                {{ $categoryName }}
+            </a>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+<section class="section overflow-hidden">
     <div class="container-wide">
         @foreach($groupedServices as $categoryName => $items)
-            <div class="mb-14 last:mb-0">
-                <div class="mb-6">
-                    <span class="section-badge">{{ $categoryName }}</span>
-                    <h2 class="text-2xl font-bold mb-1" style="color:var(--text-primary);">{{ $categoryName }}</h2>
-                    <p class="text-sm mb-0" style="color:var(--text-secondary);">{{ count($items) }} layanan tersedia</p>
+            @php
+                $totalInCat = count($items);
+                $displayItems = $totalInCat > 3 ? array_slice($items, 0, 3, true) : $items;
+                $catSlug = \Str::slug($categoryName);
+            @endphp
+            <div id="cat-{{ $catSlug }}" class="mb-14 last:mb-0 scroll-mt-24">
+                {{-- Category header: badge + count inline (no repetitive h2) --}}
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="eyebrow">{{ $categoryName }}</span>
+                    <span class="text-sm" style="color: var(--text-muted);">{{ $totalInCat }} layanan tersedia</span>
+                    <h2 class="sr-only">{{ $categoryName }}</h2>
                 </div>
 
                 <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    @foreach($items as $slug => $service)
-                        <article class="card h-full flex flex-col">
+                    @foreach($displayItems as $slug => $service)
+                        <article class="premium-card h-full flex flex-col">
                             <div class="flex items-start justify-between gap-4 mb-4">
                                 <span class="editorial-icon-badge" style="width:3rem;height:3rem;border-radius:.75rem;flex-shrink:0;">
                                     <i class="fas {{ $service['icon'] ?? 'fa-layer-group' }} icon-md" aria-hidden="true"></i>
@@ -45,43 +78,62 @@
                                 @endif
                             </div>
 
-                            <h3 class="text-lg font-bold mb-2 card-title" style="color:var(--text-primary);">{{ $service['title'] ?? '' }}</h3>
-                            <p class="text-sm mb-4" style="color:var(--text-secondary);">{{ $service['short_description'] ?? '' }}</p>
+                            <h3 class="text-lg font-bold mb-2 card-title line-clamp-2" style="color: var(--text-primary);">{{ $service['title'] ?? '' }}</h3>
+                            <p class="text-sm mb-4 line-clamp-3" style="color: var(--text-secondary);">{{ $service['short_description'] ?? '' }}</p>
 
                             @if(!empty($service['process_time']) || !empty($service['price_range']))
                                 <div class="flex flex-wrap gap-2 mb-4">
                                     @if(!empty($service['process_time']))
-                                        <span class="text-xs px-2 py-1 rounded-full" style="background:var(--surface-cool);color:var(--text-secondary);"><i class="fas fa-clock mr-1"></i>{{ $service['process_time'] }}</span>
+                                        <span class="text-xs px-2 py-1 rounded-full" style="background: rgba(15,23,42,.05); color: var(--text-secondary);"><i class="fas fa-clock mr-1"></i>{{ $service['process_time'] }}</span>
                                     @endif
                                     @if(!empty($service['price_range']))
-                                        <span class="text-xs px-2 py-1 rounded-full font-semibold" style="background:rgba(22,163,74,.12);color:var(--color-success);"><i class="fas fa-tag mr-1"></i>Mulai {{ $service['price_range'] }}</span>
+                                        <span class="text-xs px-2 py-1 rounded-full font-semibold" style="background: var(--accent-glow); color: var(--accent-text);"><i class="fas fa-tag mr-1"></i>{{ $service['price_range'] }}</span>
                                     @endif
                                 </div>
                             @endif
 
-                            <div class="mt-auto pt-3 border-t space-y-2" style="border-color:var(--border-light);">
+                            <div class="mt-auto pt-3 space-y-2" style="border-top: 1px solid var(--border-subtle);">
                                 <a href="{{ route('services.show.id', $slug) }}" class="link-primary text-sm inline-flex items-center w-full">
                                     Pelajari Lebih Lanjut <i class="fas fa-arrow-right ml-2"></i>
                                 </a>
-                                <a href="{{ $waHref }}&text={{ rawurlencode('Halo, saya ingin konsultasi layanan ' . ($service['title'] ?? '')) }}" target="_blank" rel="noopener noreferrer" class="btn btn-success w-full btn-sm">
-                                    <i class="fab fa-whatsapp"></i> Konsultasi Gratis
+                                <a href="https://wa.me/6283879602855?text={{ rawurlencode('Halo, saya tertarik layanan ' . ($service['title'] ?? '') . '. Bisa jelaskan proses dan biayanya?') }}"
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="btn btn-primary w-full btn-sm">
+                                    <i class="fab fa-whatsapp"></i> Tanya Biaya & Proses
                                 </a>
                             </div>
                         </article>
                     @endforeach
+
+                    {{-- "Lihat Layanan Lainnya" card — only when category > 3 --}}
+                    @if($totalInCat > 3)
+                        <a href="{{ route('services.category.id', $catSlug) }}"
+                           class="premium-card h-full flex flex-col items-center justify-center text-center border-dashed hover:border-amber-400 hover:bg-amber-50/30 transition-all duration-200 group min-h-[220px]">
+                            <span class="editorial-icon-badge mb-4 group-hover:scale-110 transition-transform" style="width:3rem;height:3rem;border-radius:.75rem;">
+                                <i class="fas fa-layer-group icon-md" aria-hidden="true"></i>
+                            </span>
+                            <p class="text-sm font-semibold mb-1" style="color: var(--text-primary);">
+                                +{{ $totalInCat - 3 }} Layanan Lainnya
+                            </p>
+                            <p class="text-xs mb-3" style="color: var(--text-muted);">di kategori {{ $categoryName }}</p>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full" style="background: var(--accent-glow); color: var(--accent-text);">
+                                Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
+                            </span>
+                        </a>
+                    @endif
                 </div>
             </div>
         @endforeach
     </div>
 </section>
 
-<section class="section-sm" style="background:var(--surface-dark);">
+<section class="section-sm section-premium">
     <div class="container-wide text-center">
-        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Perlu Rekomendasi Layanan yang Paling Tepat?</h2>
-        <p class="mb-7" style="color:rgba(255,255,255,.74);">Ceritakan konteks usaha Anda, kami bantu susun peta izin prioritas.</p>
+        <h2 class="display-md mb-3" style="color: var(--text-primary);">Perlu Rekomendasi Layanan yang Paling Tepat?</h2>
+        <p class="mb-7" style="color: var(--text-secondary);">Ceritakan konteks usaha Anda, kami bantu susun peta izin prioritas.</p>
         <div class="flex flex-wrap justify-center gap-3">
-            <a href="{{ $waHref }}" class="btn btn-success"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            <a href="{{ route('landing.service-inquiry.create') }}" class="btn btn-secondary"><i class="fas fa-robot"></i> Analisis Perizinan AI</a>
+            <a href="{{ $waHref }}" class="btn btn-primary"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a href="{{ route('landing.service-inquiry.create') }}" class="btn btn-ghost"><i class="fas fa-robot"></i> Analisis Perizinan AI</a>
         </div>
     </div>
 </section>

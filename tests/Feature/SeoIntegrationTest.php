@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\EnsureTwoFactorVerified;
 use App\Models\Article;
 use App\Models\ArticleTopic;
 use App\Models\AutoPostSchedule;
 use App\Models\KeywordCluster;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\TopicCluster;
 use App\Models\User;
 use App\Services\SmartMetaOptimizerService;
@@ -17,12 +20,32 @@ class SeoIntegrationTest extends TestCase
     use RefreshDatabase;
 
     private User $author;
+
+    private User $adminUser;
+
+    private User $viewerUser;
+
     private TopicCluster $topicCluster;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->withoutMiddleware(EnsureTwoFactorVerified::class);
+
         $this->author = User::factory()->create();
+
+        // Create roles and permissions for SEO admin tests
+        $roleAdmin = Role::firstOrCreate(['name' => 'seo_admin'], ['display_name' => 'SEO Admin']);
+        $roleViewer = Role::firstOrCreate(['name' => 'viewer'], ['display_name' => 'Viewer']);
+
+        $permManage = Permission::firstOrCreate(['name' => 'content.manage'], ['display_name' => 'Manage Content', 'group' => 'content']);
+
+        $roleAdmin->permissions()->syncWithoutDetaching([$permManage->id]);
+
+        $this->adminUser = User::factory()->create(['role_id' => $roleAdmin->id]);
+        $this->viewerUser = User::factory()->create(['role_id' => $roleViewer->id]);
+
         $this->topicCluster = TopicCluster::create([
             'pillar_title' => 'Panduan Lengkap AMDAL 2026',
             'pillar_slug' => 'panduan-lengkap-amdal-2026',
@@ -181,5 +204,50 @@ class SeoIntegrationTest extends TestCase
 
         $this->assertEquals('id', $indonesian->language);
         $this->assertEquals('en', $english->language);
+    }
+
+    // ──────────────────────────────────────────────
+    //  SEO Admin Route Tests (W22-06)
+    // ──────────────────────────────────────────────
+
+    public function test_seo_admin_scores_page_accessible_with_permission(): void
+    {
+        $this->actingAs($this->adminUser)
+            ->get(route('admin.seo.scores'))
+            ->assertOk();
+    }
+
+    public function test_seo_admin_scores_page_blocked_without_permission(): void
+    {
+        $this->actingAs($this->viewerUser)
+            ->get(route('admin.seo.scores'))
+            ->assertForbidden();
+    }
+
+    public function test_seo_admin_positions_page_accessible_with_permission(): void
+    {
+        $this->actingAs($this->adminUser)
+            ->get(route('admin.seo.positions'))
+            ->assertOk();
+    }
+
+    public function test_seo_admin_refresh_logs_page_accessible_with_permission(): void
+    {
+        $this->actingAs($this->adminUser)
+            ->get(route('admin.seo.refresh-logs'))
+            ->assertOk();
+    }
+
+    public function test_seo_admin_command_center_accessible_with_permission(): void
+    {
+        $this->actingAs($this->adminUser)
+            ->get(route('admin.seo.command-center'))
+            ->assertOk();
+    }
+
+    public function test_seo_admin_guest_redirected_to_login(): void
+    {
+        $this->get(route('admin.seo.scores'))
+            ->assertRedirect();
     }
 }

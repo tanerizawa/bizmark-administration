@@ -29,7 +29,7 @@
         <div class="flex space-x-2">
             @if($serviceInquiry->ai_analysis)
                 <form method="POST" action="{{ route('admin.service-inquiries.send-result', $serviceInquiry) }}"
-                      onsubmit="return confirm('Kirim email hasil analisis AI ke {{ $serviceInquiry->email }}?')">
+                      x-data @submit.prevent="if(confirm('Kirim email hasil analisis AI ke {{ $serviceInquiry->email }}?')) $el.submit()">
                     @csrf
                     <button type="submit"
                             class="px-3 py-2 rounded-apple text-sm font-medium transition-colors inline-flex items-center"

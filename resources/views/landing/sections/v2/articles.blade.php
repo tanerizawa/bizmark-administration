@@ -37,16 +37,20 @@
 ──────────────────────────────────────────────── --}}
 <section class="section-v2" aria-labelledby="articles-heading">
     <div class="container-wide">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-7">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
             <div class="max-w-2xl">
-                <span class="eyebrow mb-4">{{ $isEn ? 'Insights & Expertise' : 'Wawasan & Pengetahuan' }}</span>
-                <h2 id="articles-heading" class="display-lg mt-2 mb-4 text-gray-100">
+                <div class="chapter-mark">
+                    <span class="chapter-mark__num">06</span>
+                    <span class="chapter-mark__rule"></span>
+                    <span>{{ $isEn ? 'Insights & Expertise' : 'Wawasan & Pengetahuan' }}</span>
+                </div>
+                <h2 id="articles-heading" class="display-md mb-3">
                     {{ $isEn ? 'Regulatory insight, written by practitioners.' : 'Wawasan regulasi dari para praktisi perizinan.' }}
                 </h2>
-                <p class="text-lg leading-relaxed text-gray-400">
+                <p class="text-lg leading-relaxed text-gray-600">
                     {{ $isEn
-                        ? 'In-depth articles on Indonesian permit regulations, real case studies, and step-by-step compliance guides from our consultant team.'
-                        : 'Artikel mendalam tentang regulasi perizinan Indonesia, studi kasus nyata, dan panduan kepatuhan langkah demi langkah dari tim konsultan kami.' }}
+                        ? 'Deep-dive articles on Indonesian permit law, real case breakdowns, and practical compliance playbooks — written by our regulatory specialists.'
+                        : 'Ulasan mendalam regulasi perizinan Indonesia, bedah kasus nyata, dan panduan kepatuhan yang langsung bisa diterapkan — ditulis oleh para spesialis regulasi kami.' }}
                 </p>
             </div>
             <a href="{{ $blogIndex }}" class="btn btn-outline-primary btn-sm flex-shrink-0">
@@ -89,13 +93,13 @@
             </a>
 
             {{-- Sub-artikel (right, text-only list, 4 items) --}}
-            <div class="lg:col-span-5 flex flex-col divide-y divide-white/10 border-t border-white/10">
+            <div class="lg:col-span-5 flex flex-col divide-y divide-gray-200 border-t border-gray-200">
                 @foreach($articles->slice(1) as $article)
                     <a href="{{ route($blogShow, $article->slug) }}" class="article-list-item">
                         <div class="flex items-center gap-2 mb-1.5">
                             <span class="article-cat">{{ $fmtCategory($article->category) }}</span>
-                            <span class="text-gray-600 text-[.7rem]">·</span>
-                            <time datetime="{{ optional($article->published_at)->toIso8601String() }}" class="text-gray-600 text-[.75rem];">
+                            <span class="text-gray-400 text-[.7rem]">·</span>
+                            <time datetime="{{ optional($article->published_at)->toIso8601String() }}" class="text-gray-400 text-[.75rem];">
                                 {{ optional($article->published_at)->translatedFormat('d M Y') }}
                             </time>
                         </div>

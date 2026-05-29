@@ -212,7 +212,7 @@
             <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 space-y-3">
                 @if($campaign->status === 'draft')
                 <form action="{{ route('admin.campaigns.send', $campaign->id) }}" method="POST"
-                      onsubmit="return confirm('Send this campaign now?')">
+                      x-data @submit.prevent="if(confirm('Send this campaign now?')) $el.submit()">
                     @csrf
                     <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-xl transition text-sm">
                         <i class="fas fa-paper-plane mr-2"></i>Send Now
@@ -224,7 +224,7 @@
                 </a>
                 @elseif($campaign->status === 'scheduled')
                 <form action="{{ route('admin.campaigns.cancel', $campaign->id) }}" method="POST"
-                      onsubmit="return confirm('Cancel this scheduled campaign?')">
+                      x-data @submit.prevent="if(confirm('Cancel this scheduled campaign?')) $el.submit()">
                     @csrf
                     <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium py-2.5 rounded-xl transition text-sm">
                         <i class="fas fa-times mr-2"></i>Cancel Schedule
@@ -241,7 +241,7 @@
 
                 @if($campaign->status === 'draft' || $campaign->status === 'cancelled')
                 <form action="{{ route('admin.campaigns.destroy', $campaign->id) }}" method="POST"
-                      onsubmit="return confirm('Delete this campaign? This cannot be undone.')">
+                      x-data @submit.prevent="if(confirm('Delete this campaign? This cannot be undone.')) $el.submit()">
                     @csrf @method('DELETE')
                     <button type="submit" class="w-full border border-red-600 text-red-400 hover:bg-red-900/30 font-medium py-2.5 rounded-xl transition text-sm">
                         <i class="fas fa-trash mr-2"></i>Delete Campaign

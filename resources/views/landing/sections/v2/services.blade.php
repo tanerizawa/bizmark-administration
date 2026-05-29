@@ -73,47 +73,60 @@
 ──────────────────────────────────────────────── --}}
 <section class="section-v2" aria-labelledby="services-heading" id="services">
     <div class="container-wide">
-        <div class="max-w-3xl mb-12" data-aos="fade-up">
-            <span class="eyebrow mb-4">{{ $isEn ? 'Core Services' : 'Layanan Utama' }}</span>
-            <h2 id="services-heading" class="display-lg mt-2 mb-4 text-gray-100">
-                {{ $isEn ? 'End-to-end permit consultancy.' : 'Konsultasi perizinan dari awal hingga terbit.' }}
-            </h2>
-            <p class="text-lg leading-relaxed text-gray-400">
-                {{ $isEn
-                    ? 'Six core practice areas. One accountable team per project. Transparent SLA — always.'
-                    : 'Enam bidang layanan utama. Satu tim yang akuntabel per proyek. SLA transparan — selalu.' }}
-            </p>
+        <div class="services-intro-row flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-5" data-aos="fade-up">
+            <div class="services-intro-copy max-w-2xl">
+                <div class="chapter-mark">
+                    <span class="chapter-mark__num">03</span>
+                    <span class="chapter-mark__rule"></span>
+                    <span>{{ $isEn ? 'Core Services' : 'Layanan Utama' }}</span>
+                </div>
+                <h2 id="services-heading" class="display-md mb-2">
+                    {{ $isEn ? 'Fully managed permits. Expert-backed.' : 'Perizinan dikelola penuh. Dijamin para ahli.' }}
+                </h2>
+                <p class="text-sm leading-relaxed text-gray-600">
+                    {{ $isEn
+                        ? 'Six permit categories covered. One dedicated team assigned to your project. Clear SLA commitments from day one.'
+                        : 'Enam kategori perizinan tersedia. Satu tim khusus untuk setiap proyek Anda. Komitmen SLA yang jelas sejak hari pertama.' }}
+                </p>
+            </div>
+            <div class="services-intro-visual hidden md:block flex-shrink-0 w-64 lg:w-72" aria-hidden="true">
+                <img src="{{ asset('images/illustrations/permits-stack.svg') }}"
+                     alt=""
+                     loading="lazy"
+                     class="w-full h-auto select-none pointer-events-none opacity-[.96]"
+                     draggable="false">
+            </div>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 grid-equal">
+        <div class="services-grid grid md:grid-cols-2 lg:grid-cols-3 gap-5 grid-equal">
             @foreach($coreServices as $idx => $svc)
                 <a href="{{ $isEn ? route('services.show.en', $svc['slug']) : route('services.show.id', $svc['slug']) }}"
-                   class="premium-card group flex flex-col no-underline"
+                   class="platform-card services-card group flex flex-col no-underline"
                    data-aos="fade-up" data-aos-delay="{{ ($idx % 3) * 100 }}">
-                    <div class="mb-5">
-                        <span class="editorial-icon-badge">
-                            <i class="fas {{ $svc['icon'] }} icon-xl" aria-hidden="true"></i>
-                        </span>
+                    <div class="platform-card__head">
+                        <span class="platform-card__num">{{ str_pad($idx + 1, 2, '0', STR_PAD_LEFT) }} / {{ str_pad(count($coreServices), 2, '0', STR_PAD_LEFT) }}</span>
+                        <span class="platform-card__status">{{ $isEn ? 'Live SLA' : 'SLA aktif' }}</span>
                     </div>
-                    <h3 class="font-display font-bold text-xl mb-2 text-gray-100">{{ $svc['title'] }}</h3>
-                    <p class="text-sm leading-relaxed mb-4 text-gray-400">{{ $svc['desc'] }}</p>
-                    <ul class="space-y-1.5 mb-5 flex-1">
+                    <i class="fas {{ $svc['icon'] }} text-2xl mb-3" style="color: {{ $svc['color'] }};" aria-hidden="true"></i>
+                    <h3 class="platform-card__title">{{ $svc['title'] }}</h3>
+                    <p class="platform-card__body mb-3">{{ $svc['desc'] }}</p>
+                    <ul class="space-y-1.5 mb-4 flex-1">
                         @foreach($svc['bullets'] as $b)
-                            <li class="flex items-start gap-2 text-sm text-gray-400">
-                                <i class="fas fa-check text-[10px] mt-1.5 flex-shrink-0 text-blue-400"></i>
+                            <li class="flex items-start gap-2 text-sm text-gray-600">
+                                <i class="fas fa-check text-[10px] mt-1.5 flex-shrink-0" style="color: var(--accent);"></i>
                                 <span>{{ $b }}</span>
                             </li>
                         @endforeach
                     </ul>
-                    <span class="text-sm font-semibold inline-flex items-center gap-1.5 text-gray-400">
-                        {{ $isEn ? 'Learn more' : 'Pelajari' }}
-                        <i class="fas fa-arrow-right text-xs transition-transform group-hover:translate-x-1" aria-hidden="true"></i>
-                    </span>
+                    <div class="platform-card__meta">
+                        <span>{{ $isEn ? 'Service detail' : 'Detail layanan' }}</span>
+                        <span class="font-semibold" style="color: var(--accent);">{{ $isEn ? 'Learn more' : 'Pelajari' }} <i class="fas fa-arrow-right text-[10px] transition-transform group-hover:translate-x-1"></i></span>
+                    </div>
                 </a>
             @endforeach
         </div>
 
-        <div class="text-center mt-10">
+        <div class="text-center mt-8">
             <a href="{{ $servicesIndexRoute }}" class="btn btn-outline-primary">
                 <span>{{ $isEn ? 'View all 20+ services' : 'Lihat semua 20+ layanan' }}</span>
                 <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>

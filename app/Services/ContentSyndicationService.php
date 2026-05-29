@@ -104,7 +104,7 @@ PROMPT;
             ['role' => 'system', 'content' => "Kamu adalah content writer profesional untuk platform {$platform}."],
             ['role' => 'user', 'content' => $prompt],
         ], [
-            'model' => 'google/gemini-2.5-flash',
+            'model' => config('services.openrouter.default_model', 'openrouter/free'),
             'temperature' => 0.6,
             'max_tokens' => 2000,
         ]);

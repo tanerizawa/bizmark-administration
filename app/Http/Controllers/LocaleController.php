@@ -41,6 +41,12 @@ class LocaleController extends Controller
             $normalizedPath = '/';
         }
 
+        // Guard: if the referer path is a static asset (e.g. /sw.js, /manifest.json),
+        // fall back to the locale landing instead of redirecting to the file.
+        if (preg_match('/\.[a-zA-Z0-9]+$/', $normalizedPath)) {
+            return $locale === 'en' ? redirect()->route('landing.en') : redirect()->route('landing.id');
+        }
+
         $previousIsEnglish = ($normalizedPath === '/en') || str_starts_with($normalizedPath, '/en/');
         $pathWithoutPrefix = $previousIsEnglish
             ? (substr($normalizedPath, 3) ?: '/')

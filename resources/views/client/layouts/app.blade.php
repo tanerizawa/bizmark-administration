@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" x-data x-bind:data-theme="$store.theme ? $store.theme.current : null">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,16 +7,24 @@
     <meta name="theme-color" content="#0a66c2">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Portal Klien Bizmark.ID — Kelola permohonan izin usaha, dokumen, dan status proyek Anda.">
     <title>@yield('title', 'Client Portal') - Bizmark.id</title>
     
     <!-- Favicons -->
     <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/pavicon.png') }}">
     
-    <!-- External CSS - CDN Only -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Client Portal Assets (Vite — no CDN) -->
+    @vite(['resources/css/client.css', 'resources/js/client.js'])
+
+    <!-- Preload critical fonts (FA solid) -->
+    @php
+        $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        $faSolidFile = $manifest['node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2']['file'] ?? null;
+    @endphp
+    @if($faSolidFile)
+    <link rel="preload" href="{{ asset('build/' . $faSolidFile) }}" as="font" type="font/woff2" crossorigin="anonymous">
+    @endif
     
     <style>
         /* LinkedIn-style font stack */
@@ -37,6 +45,18 @@
         }
         
         [x-cloak] { display: none !important; }
+
+        /* Focus-visible ring for keyboard navigation (WCAG 2.2) */
+        :focus-visible {
+            outline: 2px solid #0a66c2;
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        /* Suppress outline for mouse/touch (only show for keyboard) */
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
         
         /* Touch optimization */
         * {
@@ -275,6 +295,11 @@
             font-size: 0.65rem;
             line-height: 1;
         }
+
+        /* Portal v2: hide legacy title block in header — v2 hero provides full context */
+        body.portal-v2 .portal-v2-hidden {
+            display: none !important;
+        }
         
         /* Mobile browser fallback when JS is disabled */
         @media (max-width: 1023px) {
@@ -358,7 +383,22 @@
     <!-- PWA Update Handler -->
     <script src="/js/pwa-update-handler.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-900">
+@php
+    // Portal redesign v2 feature flag (config/portal_redesign.php)
+    $portalV2Master  = (bool) config('portal_redesign.enabled', false);
+    $portalV2Routes  = (array) config('portal_redesign.enabled_routes', []);
+    $portalV2Allowed = $portalV2Master || in_array(optional(request()->route())->getName(), $portalV2Routes, true);
+    $portalLegacy    = config('portal_redesign.allow_legacy_query', true) && request()->boolean('legacy');
+    $portalV2        = $portalV2Allowed && ! $portalLegacy;
+    $portalCmdk      = $portalV2 && (bool) config('portal_redesign.command_palette', true);
+@endphp
+<body class="min-h-screen {{ $portalV2 ? 'portal-v2' : '' }}" style="background: var(--surface-cool); color: var(--text-primary);">
+    @if($portalV2)
+        {{-- Hidden logout form referenced by command palette --}}
+        <form id="client-logout-form" method="POST" action="{{ route('client.logout') }}" class="hidden">
+            @csrf
+        </form>
+    @endif
     @php
         $client = auth('client')->user();
         $draftCount = \App\Models\PermitApplication::where('client_id', $client->id)
@@ -401,12 +441,14 @@
                 'icon' => 'fa-house',
                 'route' => route('client.dashboard'),
                 'active' => request()->routeIs('client.dashboard'),
+                'group' => 'Utama',
             ],
             [
                 'label' => 'Katalog Izin',
                 'icon' => 'fa-layer-group',
                 'route' => route('client.services.index'),
                 'active' => request()->routeIs('client.services.*') && !request()->routeIs('client.applications.*'),
+                'group' => 'Utama',
             ],
             [
                 'label' => 'Permohonan Saya',
@@ -414,7 +456,8 @@
                 'route' => route('client.applications.index'),
                 'active' => request()->routeIs('client.applications.*'),
                 'badge' => $submittedCount + $draftCount,
-                'badge_color' => 'bg-[#0a66c2]'
+                'badge_color' => 'bg-blue-600',
+                'group' => 'Utama',
             ],
             [
                 'label' => 'Proyek Aktif',
@@ -422,7 +465,8 @@
                 'route' => route('client.projects.index'),
                 'active' => request()->routeIs('client.projects.*'),
                 'badge' => $activeProjects,
-                'badge_color' => 'bg-green-600'
+                'badge_color' => 'bg-green-600',
+                'group' => 'Utama',
             ],
             [
                 'label' => 'Dokumen',
@@ -430,17 +474,48 @@
                 'route' => route('client.documents.index'),
                 'active' => request()->routeIs('client.documents.*'),
                 'badge' => $pendingDocuments,
-                'badge_color' => 'bg-amber-600'
+                'badge_color' => 'bg-amber-600',
+                'group' => 'Utama',
+            ],
+            [
+                'label' => 'Vault Dokumen',
+                'icon' => 'fa-vault',
+                'route' => route('client.vault.index'),
+                'active' => request()->routeIs('client.vault.*'),
+                'group' => 'Alat Lanjutan',
+            ],
+            [
+                'label' => 'OSS Tracker',
+                'icon' => 'fa-circle-check',
+                'route' => route('client.oss-tracker.index'),
+                'active' => request()->routeIs('client.oss-tracker.*'),
+                'group' => 'Alat Lanjutan',
+            ],
+            [
+                'label' => 'API Keys',
+                'icon' => 'fa-key',
+                'route' => route('client.api-keys.index'),
+                'active' => request()->routeIs('client.api-keys.*'),
+                'group' => 'Alat Lanjutan',
+            ],
+            [
+                'label' => 'Laporan Compliance',
+                'icon' => 'fa-file-pdf',
+                'route' => route('client.compliance-reports.index'),
+                'active' => request()->routeIs('client.compliance-reports.*'),
+                'group' => 'Alat Lanjutan',
             ],
             [
                 'label' => 'Profil & Akun',
                 'icon' => 'fa-id-card',
                 'route' => route('client.profile.edit'),
                 'active' => request()->routeIs('client.profile.*'),
+                'group' => 'Utama',
             ],
         ];
+        $navGroups = collect($navItems)->groupBy('group');
     @endphp
-    <div x-data="{ sidebarOpen: false, searchOpen: false, searchQuery: '', profileOpen: false }" class="flex min-h-screen overflow-hidden">
+    <div x-data="{ sidebarOpen: false, profileOpen: false }" class="flex min-h-screen overflow-hidden">
         
         <!-- Profile Dropdown Menu (LinkedIn-style - Full Height Slide from Left) - PORTAL LEVEL -->
         <div 
@@ -464,23 +539,25 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="translate-x-0"
                 x-transition:leave-end="-translate-x-full"
-                class="absolute top-0 left-0 bottom-0 w-[70%] max-w-xs bg-white shadow-2xl overflow-y-auto flex flex-col"
-                style="padding-bottom: env(safe-area-inset-bottom); z-index: 10000;"
+                class="absolute top-0 left-0 bottom-0 w-[70%] max-w-xs shadow-2xl overflow-y-auto flex flex-col"
+                style="background: var(--surface-elevated); padding-bottom: env(safe-area-inset-bottom); z-index: 10000;"
             >
                 <!-- Close Button -->
                 <button 
                     @click="profileOpen = false"
-                    class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors z-10"
+                    class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-colors z-10"
+                    style="background: var(--surface-sunken); color: var(--text-secondary);"
                 >
                     <i class="fas fa-times"></i>
                 </button>
                 
                 <!-- User Info Header -->
-                <div class="p-6 bg-[#0a66c2] text-white flex-shrink-0">
+                <div class="p-6 flex-shrink-0" style="background: var(--client-primary); color: #fff;">
                     <div class="flex items-start gap-4">
                         @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
                         <img src="{{ asset('storage/' . $client->profile_picture) }}" 
                              alt="{{ $client->name }}" 
+                             loading="lazy"
                              class="w-16 h-16 rounded-full object-cover border-2 border-white/20 flex-shrink-0">
                         @else
                         <div class="w-16 h-16 rounded-full bg-white/20 text-white flex items-center justify-center text-2xl border-2 border-white/20 flex-shrink-0">
@@ -503,91 +580,104 @@
                     <!-- Profile -->
                     <a href="{{ route('client.profile.edit') }}" 
                        @click="profileOpen = false"
-                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                        <i class="fas fa-id-card text-gray-600 w-5 text-center"></i>
-                        <span class="text-sm font-medium text-gray-900 flex-1">Profil Saya</span>
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                       class="flex items-center gap-3 px-6 py-3 transition-colors"
+                       style="color: var(--text-primary);"
+                       onmouseover="this.style.background='var(--surface-sunken)'" onmouseout="this.style.background=''">
+                        <i class="fas fa-id-card w-5 text-center flex-shrink-0" style="color: var(--text-secondary);"></i>
+                        <span class="text-sm font-medium flex-1">Profil Saya</span>
+                        <i class="fas fa-chevron-right text-xs" style="color: var(--text-tertiary);"></i>
                     </a>
                     
                     <!-- Payments -->
                     <a href="{{ route('client.applications.index', ['status' => 'payment_pending']) }}" 
                        @click="profileOpen = false"
-                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                        <i class="fas fa-wallet text-gray-600 w-5 text-center"></i>
-                        <span class="text-sm font-medium text-gray-900 flex-1">Pembayaran</span>
+                       class="flex items-center gap-3 px-6 py-3 transition-colors"
+                       style="color: var(--text-primary);"
+                       onmouseover="this.style.background='var(--surface-sunken)'" onmouseout="this.style.background=''">
+                        <i class="fas fa-wallet w-5 text-center flex-shrink-0" style="color: var(--text-secondary);"></i>
+                        <span class="text-sm font-medium flex-1">Pembayaran</span>
                         @php
                             $pendingPayments = \App\Models\PermitApplication::where('client_id', $client->id)
                                 ->where('status', 'payment_pending')
                                 ->count();
                         @endphp
                         @if($pendingPayments > 0)
-                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full bg-red-600 min-w-[20px] text-center">
+                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full min-w-[20px] text-center" style="background: var(--apple-red);">
                             {{ $pendingPayments }}
                         </span>
                         @else
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                        <i class="fas fa-chevron-right text-xs" style="color: var(--text-tertiary);"></i>
                         @endif
                     </a>
                     
                     <!-- Quotations -->
                     <a href="{{ route('client.applications.index', ['status' => 'quoted']) }}" 
                        @click="profileOpen = false"
-                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                        <i class="fas fa-file-invoice-dollar text-gray-600 w-5 text-center"></i>
-                        <span class="text-sm font-medium text-gray-900 flex-1">Penawaran</span>
+                       class="flex items-center gap-3 px-6 py-3 transition-colors"
+                       style="color: var(--text-primary);"
+                       onmouseover="this.style.background='var(--surface-sunken)'" onmouseout="this.style.background=''">
+                        <i class="fas fa-file-invoice-dollar w-5 text-center flex-shrink-0" style="color: var(--text-secondary);"></i>
+                        <span class="text-sm font-medium flex-1">Penawaran</span>
                         @php
                             $pendingQuotations = \App\Models\PermitApplication::where('client_id', $client->id)
                                 ->where('status', 'quoted')
                                 ->count();
                         @endphp
                         @if($pendingQuotations > 0)
-                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full bg-red-600 min-w-[20px] text-center">
+                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full min-w-[20px] text-center" style="background: var(--apple-red);">
                             {{ $pendingQuotations }}
                         </span>
                         @else
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                        <i class="fas fa-chevron-right text-xs" style="color: var(--text-tertiary);"></i>
                         @endif
                     </a>
                     
                     <!-- Notifications -->
                     <a href="{{ route('client.notifications.index') }}" 
                        @click="profileOpen = false"
-                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                        <i class="fas fa-bell text-gray-600 w-5 text-center"></i>
-                        <span class="text-sm font-medium text-gray-900 flex-1">Notifikasi</span>
+                       class="flex items-center gap-3 px-6 py-3 transition-colors"
+                       style="color: var(--text-primary);"
+                       onmouseover="this.style.background='var(--surface-sunken)'" onmouseout="this.style.background=''">
+                        <i class="fas fa-bell w-5 text-center flex-shrink-0" style="color: var(--text-secondary);"></i>
+                        <span class="text-sm font-medium flex-1">Notifikasi</span>
                         @if($notificationCount > 0)
-                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full bg-red-600 min-w-[20px] text-center">
+                        <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full min-w-[20px] text-center" style="background: var(--apple-red);">
                             {{ $notificationCount > 9 ? '9+' : $notificationCount }}
                         </span>
                         @else
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                        <i class="fas fa-chevron-right text-xs" style="color: var(--text-tertiary);"></i>
                         @endif
                     </a>
                     
                     <!-- Divider -->
-                    <div class="my-2 border-t border-gray-200"></div>
+                    <div class="my-2 border-t" style="border-color: var(--border-subtle);"></div>
                     
                     <!-- Support -->
-                          <a href="{{ config('landing_metrics.contact.whatsapp_link') }}" 
+                    <a href="{{ config('landing_metrics.contact.whatsapp_link') }}" 
                        target="_blank"
-                              rel="noopener noreferrer"
+                       rel="noopener noreferrer"
                        @click="profileOpen = false"
-                       class="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                        <i class="fab fa-whatsapp text-gray-600 w-5 text-center"></i>
-                        <span class="text-sm font-medium text-gray-900 flex-1">Bantuan</span>
-                        <i class="fas fa-external-link-alt text-gray-400 text-xs"></i>
+                       class="flex items-center gap-3 px-6 py-3 transition-colors"
+                       style="color: var(--text-primary);"
+                       onmouseover="this.style.background='var(--surface-sunken)'" onmouseout="this.style.background=''">
+                        <i class="fab fa-whatsapp w-5 text-center flex-shrink-0" style="color: var(--text-secondary);"></i>
+                        <span class="text-sm font-medium flex-1">Bantuan</span>
+                        <i class="fas fa-external-link-alt text-xs" style="color: var(--text-tertiary);"></i>
                     </a>
                 </div>
                 
                 <!-- Footer - Logout (Sticky) -->
-                <div class="flex-shrink-0 border-t border-gray-200 bg-white">
+                <div class="flex-shrink-0 border-t" style="border-color: var(--border-subtle); background: var(--surface-elevated);">
                     <form method="POST" action="{{ route('client.logout') }}">
                         @csrf
                         <button type="submit" 
-                                class="w-full flex items-center gap-3 px-6 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                            <i class="fas fa-sign-out-alt text-gray-600 w-5 text-center"></i>
-                            <span class="text-sm font-medium text-gray-900 flex-1 text-left">Logout</span>
-                            <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                                class="w-full flex items-center gap-3 px-6 py-3 transition-colors text-left"
+                                style="color: var(--text-primary);"
+                                onmouseover="this.style.background='color-mix(in oklab, var(--apple-red) 10%, transparent)'; this.style.color='var(--apple-red)'"
+                                onmouseout="this.style.background=''; this.style.color='var(--text-primary)'">
+                            <i class="fas fa-sign-out-alt w-5 text-center flex-shrink-0"></i>
+                            <span class="text-sm font-medium flex-1">Logout</span>
+                            <i class="fas fa-chevron-right text-xs" style="color: var(--text-tertiary);"></i>
                         </button>
                     </form>
                 </div>
@@ -609,6 +699,7 @@
                         @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
                         <img src="{{ asset('storage/' . $client->profile_picture) }}" 
                              alt="{{ $client->name }}" 
+                             loading="lazy"
                              class="w-8 h-8 rounded-full object-cover border-2 transition-all"
                              :class="profileOpen ? 'border-white' : 'border-white/70'">
                         @else
@@ -622,11 +713,11 @@
                 
                 <!-- Center: Search Bar -->
                 <button 
-                    @click="searchOpen = true"
+                    @click="$dispatch('cmdk-open')"
                     class="flex-1 flex items-center gap-2 bg-white/20 hover:bg-white/30 rounded-lg px-3 py-1.5 text-left transition-colors backdrop-blur-sm"
                 >
                     <i class="fas fa-search text-white/80 text-sm"></i>
-                    <span class="text-sm text-white/90 truncate">Cari...</span>
+                    <span class="text-sm text-white/90 truncate">Cari proyek, dokumen, KBLI...</span>
                 </button>
                 
                 <!-- Right: Notifications (Quick Access) -->
@@ -645,112 +736,6 @@
             </div>
         </header>
         
-        <!-- Search Overlay (Full Screen) -->
-        <div 
-            x-show="searchOpen" 
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-black/50 z-[60] lg:hidden"
-            @click="searchOpen = false"
-            x-cloak
-        ></div>
-        
-        <div 
-            x-show="searchOpen"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 translate-y-4"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 translate-y-4"
-            class="fixed inset-x-0 top-0 bg-white z-[70] lg:hidden shadow-lg"
-            @click.away="searchOpen = false"
-            x-cloak
-        >
-            <!-- Search Header -->
-            <div class="flex items-center gap-3 p-4 border-b border-gray-200">
-                <button @click="searchOpen = false" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-arrow-left text-lg"></i>
-                </button>
-                <div class="flex-1 relative">
-                    <input 
-                        type="search"
-                        x-model="searchQuery"
-                        placeholder="Cari proyek, dokumen, izin..."
-                        class="w-full bg-gray-100 rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
-                        autofocus
-                        @keyup.escape="searchOpen = false"
-                    >
-                    <button 
-                        x-show="searchQuery.length > 0"
-                        @click="searchQuery = ''"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                        <i class="fas fa-times text-sm"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Search Results -->
-            <div class="overflow-y-auto" style="max-height: calc(100vh - 120px);">
-                <!-- Recent Searches -->
-                <div x-show="searchQuery.length === 0" class="p-4">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Pencarian Terkini</p>
-                    <div class="space-y-2">
-                        <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                            <i class="fas fa-clock-rotate-left text-gray-400 text-sm"></i>
-                            <span class="text-sm text-gray-700">Proyek Konstruksi</span>
-                        </a>
-                        <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                            <i class="fas fa-clock-rotate-left text-gray-400 text-sm"></i>
-                            <span class="text-sm text-gray-700">IMB Jakarta</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Search Results (when typing) -->
-                <div x-show="searchQuery.length > 0" class="divide-y divide-gray-100">
-                    <!-- Projects -->
-                    <div class="p-4">
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Proyek</p>
-                        <a href="#" class="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50">
-                            <div class="w-10 h-10 rounded-lg bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-diagram-project"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 truncate">Proyek Konstruksi Gedung</p>
-                                <p class="text-xs text-gray-500">Dalam Proses • 5 dokumen</p>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <!-- Documents -->
-                    <div class="p-4">
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Dokumen</p>
-                        <a href="#" class="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50">
-                            <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-file-pdf"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 truncate">KTP Direktur.pdf</p>
-                                <p class="text-xs text-gray-500">Diupload 2 hari lalu</p>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <!-- No Results -->
-                    <div x-show="false" class="p-8 text-center">
-                        <i class="fas fa-search text-gray-300 text-4xl mb-3"></i>
-                        <p class="text-sm text-gray-500">Tidak ada hasil untuk "<span x-text="searchQuery"></span>"</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
         <div 
             class="fixed inset-0 bg-black/40 z-40 lg:hidden"
             x-show="sidebarOpen"
@@ -761,82 +746,123 @@
         </div>
         
         <!-- Sidebar (Browser Mode) - Hidden in PWA standalone -->
-        <aside 
+        <aside
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="browser-only fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:shadow-none"
+            class="browser-only fixed inset-y-0 left-0 z-50 w-64 border-r transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:shadow-none flex flex-col"
+            style="background: var(--surface-elevated); border-color: var(--border-subtle); box-shadow: var(--shadow-md);"
         >
-            <div class="flex items-center justify-between h-16 px-6 border-b border-gray-100">
-                <!-- Logo BizMark Official -->
-                <a href="{{ route('client.dashboard') }}" class="flex items-center gap-2 group">
-                    <img src="{{ asset('images/logo-bizmark.svg') }}" 
-                         alt="BizMark Indonesia" 
-                         class="h-10 w-10 transition-transform group-hover:scale-105">
-                    <div class="flex flex-col">
-                        <span class="text-lg font-bold text-gray-800 leading-tight">BizMark</span>
-                        <span class="text-[9px] text-gray-500 tracking-wider leading-tight">INDONESIA</span>
+            {{-- Logo Header --}}
+            <div class="flex items-center justify-between h-16 px-5 flex-shrink-0 border-b"
+                 style="border-color: var(--border-subtle);">
+                <a href="{{ route('client.dashboard') }}" class="flex items-center gap-2.5 group">
+                    <img src="{{ asset('images/logo-bizmark.svg') }}"
+                         alt="BizMark Indonesia"
+                         class="h-9 w-9 transition-transform group-hover:scale-105">
+                    <div class="flex flex-col leading-none">
+                        <span class="text-base font-bold" style="color: var(--text-primary);">BizMark</span>
+                        <span class="text-[9px] tracking-widest font-medium" style="color: var(--text-tertiary);">INDONESIA</span>
                     </div>
                 </a>
-                <button @click="sidebarOpen = false" class="lg:hidden text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times text-xl"></i>
+                <button @click="sidebarOpen = false"
+                        class="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg transition-colors"
+                        style="color: var(--text-tertiary);"
+                        onmouseover="this.style.background='var(--surface-sunken)'" onmouseout="this.style.background=''">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <div class="px-6 py-5 border-b border-gray-100">
+            {{-- User Profile Card --}}
+            <div class="px-4 py-4 flex-shrink-0 border-b" style="border-color: var(--border-subtle);">
                 <div class="flex items-center gap-3">
                     @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
-                    <img src="{{ asset('storage/' . $client->profile_picture) }}" 
-                         alt="{{ $client->name }}" 
-                         class="w-12 h-12 rounded-2xl object-cover border-2 border-[#0a66c2]/20">
+                    <img src="{{ asset('storage/' . $client->profile_picture) }}"
+                         alt="{{ $client->name }}"
+                         loading="lazy"
+                         class="w-11 h-11 rounded-xl object-cover flex-shrink-0"
+                         style="border: 2px solid var(--client-primary-border);">
                     @else
-                    <div class="w-12 h-12 rounded-2xl bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center text-lg">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-base flex-shrink-0"
+                         style="background: var(--client-primary-light); color: var(--client-primary); border: 2px solid var(--client-primary-border);">
                         <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }}"></i>
                     </div>
                     @endif
-                    <div class="min-w-0">
-                        <p class="font-semibold text-gray-900 truncate">{{ $client->name }}</p>
-                        <p class="text-sm text-gray-500 truncate flex items-center gap-1">
-                            <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }} text-xs"></i>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-semibold text-sm truncate" style="color: var(--text-primary);">{{ $client->name }}</p>
+                        <p class="text-xs flex items-center gap-1 mt-0.5" style="color: var(--text-tertiary);">
+                            <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }} text-[10px]"></i>
                             {{ $client->client_type === 'company' ? 'Perusahaan' : 'Perorangan' }}
                         </p>
                     </div>
+                    @if($notificationCount > 0)
+                    <a href="{{ route('client.notifications.index') }}"
+                       class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full text-white text-xs font-bold"
+                       style="background: var(--apple-red);"
+                       title="{{ $notificationCount }} notifikasi belum dibaca">
+                        {{ $notificationCount > 9 ? '9+' : $notificationCount }}
+                    </a>
+                    @endif
                 </div>
-                <p class="mt-4 text-xs text-gray-500 leading-relaxed">
-                    Akses cepat ke navigasi utama. Detail status, notifikasi, dan statistik tampil di header halaman.
-                </p>
             </div>
 
-            <nav class="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-                @foreach($navItems as $item)
-                    <a 
-                        href="{{ $item['route'] }}" 
-                        class="flex items-center px-4 py-3 rounded-lg text-sm font-medium transition {{ $item['active'] ? 'bg-[#0a66c2]/10 text-[#0a66c2] border border-[#0a66c2]/20' : 'text-gray-600 hover:bg-gray-50' }}"
-                    >
-                        <i class="fas {{ $item['icon'] }} w-5"></i>
-                        <span class="ml-3 flex-1">{{ $item['label'] }}</span>
-                        @if(!empty($item['badge']))
-                            <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full {{ $item['badge_color'] ?? 'bg-gray-500' }}">
-                                {{ $item['badge'] }}
+            {{-- Navigation --}}
+            <nav class="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+                @foreach($navGroups as $groupLabel => $groupItems)
+                <div>
+                    <p class="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em]"
+                       style="color: var(--text-tertiary);">{{ $groupLabel }}</p>
+                    <div class="space-y-0.5">
+                        @foreach($groupItems as $item)
+                        @php $isActive = $item['active']; @endphp
+                        <a href="{{ $item['route'] }}"
+                           class="relative flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group"
+                           style="{{ $isActive ? 'background: var(--client-primary-light); color: var(--client-primary);' : 'color: var(--text-secondary);' }}"
+                           @if(!$isActive)
+                           onmouseover="this.style.background='var(--surface-sunken)'; this.style.color='var(--text-primary)'"
+                           onmouseout="this.style.background=''; this.style.color='var(--text-secondary)'"
+                           @endif
+                        >
+                            @if($isActive)
+                            <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full"
+                                  style="background: var(--client-primary);"></span>
+                            @endif
+                            <i class="fas {{ $item['icon'] }} w-5 text-center flex-shrink-0 text-sm" aria-hidden="true"></i>
+                            <span class="ml-2.5 flex-1 truncate">{{ $item['label'] }}</span>
+                            @if(!empty($item['badge']) && $item['badge'] > 0)
+                            <span class="text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full flex-shrink-0 min-w-[20px] text-center"
+                                  style="background: {{ $isActive ? 'var(--client-primary)' : ($item['badge_color'] === 'bg-blue-600' ? 'var(--client-primary)' : ($item['badge_color'] === 'bg-green-600' ? 'var(--apple-green)' : 'var(--apple-orange)')) }};">
+                                {{ $item['badge'] > 99 ? '99+' : $item['badge'] }}
                             </span>
-                        @endif
-                    </a>
+                            @endif
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
                 @endforeach
             </nav>
 
-            <div class="p-4 border-t border-gray-100 space-y-3">
-                <div class="text-xs text-gray-500">
-                    <p class="font-semibold text-gray-600 mb-1">Butuh Bantuan?</p>
-                    @php
-                        $supportEmail = data_get(config('landing_metrics'), 'contact.email', 'info@bizmark.id');
-                    @endphp
-                    <a href="mailto:{{ $supportEmail }}" class="inline-flex items-center gap-2 text-[#0a66c2] font-semibold hover:text-[#004182]">
-                        <i class="fas fa-headset"></i> {{ $supportEmail }}
-                    </a>
-                </div>
+            {{-- Footer --}}
+            <div class="flex-shrink-0 border-t px-3 py-3 space-y-1" style="border-color: var(--border-subtle);">
+                {{-- Support link --}}
+                @php $supportEmail = data_get(config('landing_metrics'), 'contact.email', 'info@bizmark.id'); @endphp
+                <a href="mailto:{{ $supportEmail }}"
+                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all duration-150"
+                   style="color: var(--text-tertiary);"
+                   onmouseover="this.style.background='var(--surface-sunken)'; this.style.color='var(--client-primary)'"
+                   onmouseout="this.style.background=''; this.style.color='var(--text-tertiary)'">
+                    <i class="fas fa-headset w-5 text-center text-sm flex-shrink-0" aria-hidden="true"></i>
+                    <span class="flex-1 truncate">Bantuan: {{ $supportEmail }}</span>
+                </a>
+
+                {{-- Logout --}}
                 <form method="POST" action="{{ route('client.logout') }}">
                     @csrf
-                    <button type="submit" class="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-lg transition">
-                        <i class="fas fa-sign-out-alt w-5"></i>
-                        <span class="ml-3">Logout</span>
+                    <button type="submit"
+                            class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 text-left"
+                            style="color: var(--text-tertiary);"
+                            onmouseover="this.style.background='color-mix(in oklab, var(--apple-red) 10%, transparent)'; this.style.color='var(--apple-red)'"
+                            onmouseout="this.style.background=''; this.style.color='var(--text-tertiary)'">
+                        <i class="fas fa-sign-out-alt w-5 text-center text-sm flex-shrink-0" aria-hidden="true"></i>
+                        <span>Logout</span>
                     </button>
                 </form>
             </div>
@@ -846,71 +872,134 @@
         <div class="flex-1 flex flex-col overflow-hidden lg:ml-64">
             
             <!-- Desktop/Browser Header (Hidden in PWA Standalone) -->
-            <header class="browser-only desktop-header bg-white shadow-sm z-10 sticky top-0">
-                <div class="flex items-center justify-between h-20 px-4 sm:px-6">
+            <header class="browser-only desktop-header z-10 sticky top-0 border-b"
+                    style="background: var(--surface-elevated); border-color: var(--border-subtle); box-shadow: var(--shadow-xs);">
+                <div class="flex items-center h-14 px-4 sm:px-6 gap-3">
                     <!-- Hamburger Menu (Mobile Browser Only) -->
-                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-600 hover:text-[#0a66c2] transition-colors">
-                        <i class="fas fa-bars text-xl"></i>
+                    <button @click="sidebarOpen = !sidebarOpen"
+                            class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg transition-colors"
+                            style="color: var(--text-secondary);"
+                            onmouseover="this.style.background='var(--surface-sunken)'" onmouseout="this.style.background=''">
+                        <i class="fas fa-bars"></i>
                     </button>
-                    
-                    <div class="flex-1 flex items-center justify-between gap-4 lg:gap-0">
-                        <div class="space-y-0.5">
-                            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight">@yield('page-title', 'Portal Klien')</h2>
-                            <p class="text-sm text-gray-500 hidden sm:block">@yield('page-subtitle', 'Selamat datang kembali, ' . $client->name . '!')</p>
-                            <div class="hidden md:flex items-center gap-2">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-[#0a66c2]/10 text-[#0a66c2]">
-                                    Draft: {{ $draftCount }}
+
+                    {{-- Left: Page title (legacy) OR Portal-v2 breadcrumb/CmdK hint --}}
+                    <div class="flex-1 min-w-0">
+                        {{-- Legacy title block (hidden on portal-v2) --}}
+                        <div class="portal-v2-hidden">
+                            <h2 class="text-lg font-bold leading-tight truncate" style="color: var(--text-primary);">
+                                @yield('page-title', 'Portal Klien')
+                            </h2>
+                            <div class="hidden md:flex items-center gap-1.5 mt-0.5">
+                                @if($draftCount > 0)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                      style="background: var(--client-primary-light); color: var(--client-primary);">
+                                    <i class="fas fa-pen-to-square mr-1 text-[10px]"></i>Draft: {{ $draftCount }}
                                 </span>
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-emerald-50 text-emerald-700">
-                                    Sedang Diproses: {{ $submittedCount }}
+                                @endif
+                                @if($submittedCount > 0)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                      style="background: var(--status-in_progress-bg); color: var(--status-in_progress);">
+                                    <i class="fas fa-spinner mr-1 text-[10px]"></i>Proses: {{ $submittedCount }}
                                 </span>
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-amber-50 text-amber-700">
-                                    Dokumen Pending: {{ $pendingDocuments }}
+                                @endif
+                                @if($pendingDocuments > 0)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                      style="background: var(--status-paid-bg); color: var(--status-paid);">
+                                    <i class="fas fa-file-circle-exclamation mr-1 text-[10px]"></i>Dok Pending: {{ $pendingDocuments }}
                                 </span>
+                                @endif
                             </div>
                         </div>
-                        
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <div class="hidden lg:flex items-center bg-gray-50 px-3 py-2 rounded-lg text-sm text-gray-600">
-                                <i class="fas fa-calendar-day mr-2 text-gray-400"></i>
-                                <span>{{ now()->translatedFormat('l, d F Y') }}</span>
-                            </div>
-                            <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
-                                <button 
-                                    type="button"
-                                    aria-haspopup="true"
-                                    :aria-expanded="open"
-                                    title="Lihat notifikasi"
-                                    class="relative text-gray-600 hover:text-[#0a66c2] focus:outline-none"
-                                    @click="open = !open"
-                                >
-                                    <i class="fas fa-bell text-xl"></i>
-                                    @if($notificationCount > 0)
-                                    <span class="notification-badge absolute -top-1 -right-1 bg-red-500 text-white rounded-full font-semibold px-1.5">
-                                        {{ $notificationCount > 9 ? '9+' : $notificationCount }}
-                                    </span>
-                                    @endif
-                                </button>
-                                
-                                @include('client.components.notification-dropdown')
-                            </div>
-                        <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
-                                @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
-                                <img src="{{ asset('storage/' . $client->profile_picture) }}" 
-                                     alt="{{ $client->name }}" 
-                                     class="w-8 h-8 rounded-full object-cover">
-                                @else
-                                <div class="w-8 h-8 rounded-full bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center">
-                                    <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }}"></i>
-                                </div>
+
+                        {{-- Portal v2: Command Palette shortcut hint (desktop only) --}}
+                        @if($portalV2)
+                        <button
+                            x-data="{ isMac: /Mac|iPhone|iPad/.test(navigator.platform || '') }"
+                            @click="$dispatch('cmdk-open')"
+                            class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all duration-150 group"
+                            style="background: var(--surface-sunken); color: var(--text-tertiary); border: 1px solid var(--border-subtle);"
+                            onmouseover="this.style.borderColor='var(--client-primary-border)'; this.style.color='var(--text-secondary)'"
+                            onmouseout="this.style.borderColor='var(--border-subtle)'; this.style.color='var(--text-tertiary)'"
+                            title="Buka Command Palette"
+                        >
+                            <i class="fas fa-magnifying-glass text-xs"></i>
+                            <span>Cari atau tekan tindakan...</span>
+                            <span class="ml-2 flex items-center gap-0.5 text-[10px] font-mono"
+                                  style="color: var(--text-tertiary);">
+                                <kbd class="px-1.5 py-0.5 rounded" style="background: var(--surface-elevated); border: 1px solid var(--border-default);" x-text="isMac ? '⌘' : 'Ctrl'"></kbd>
+                                <kbd class="px-1.5 py-0.5 rounded" style="background: var(--surface-elevated); border: 1px solid var(--border-default);">K</kbd>
+                            </span>
+                        </button>
+                        @endif
+                    </div>
+
+                    {{-- Right: Actions --}}
+                    <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                        {{-- Date (desktop only) --}}
+                        <div class="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs"
+                             style="background: var(--surface-sunken); color: var(--text-tertiary);">
+                            <i class="fas fa-calendar-day" style="color: var(--text-tertiary);"></i>
+                            <span>{{ now()->translatedFormat('d F Y') }}</span>
+                        </div>
+
+                        {{-- Dark Mode Toggle --}}
+                        <button
+                            @click="$store.theme && $store.theme.toggle()"
+                            class="hidden lg:flex items-center justify-center w-9 h-9 rounded-lg transition-colors active:scale-95"
+                            style="color: var(--text-secondary);"
+                            onmouseover="this.style.background='var(--surface-sunken)'" onmouseout="this.style.background=''"
+                            :aria-label="$store.theme && $store.theme.current === 'dark' ? 'Switch ke Light Mode' : 'Switch ke Dark Mode'"
+                            title="Toggle Dark Mode"
+                        >
+                            <i :class="$store.theme && $store.theme.current === 'dark' ? 'fas fa-sun' : 'fas fa-moon'" class="text-sm"></i>
+                        </button>
+
+                        {{-- Notifications --}}
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                            <button
+                                type="button"
+                                aria-haspopup="true"
+                                :aria-expanded="open"
+                                title="Lihat notifikasi"
+                                class="relative flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
+                                style="color: var(--text-secondary);"
+                                onmouseover="this.style.background='var(--surface-sunken)'; this.style.color='var(--client-primary)'"
+                                onmouseout="this.style.background=''; this.style.color='var(--text-secondary)'"
+                                @click="open = !open"
+                            >
+                                <i class="fas fa-bell text-lg"></i>
+                                @if($notificationCount > 0)
+                                <span class="notification-badge absolute top-1 right-1 bg-red-500 text-white rounded-full font-semibold px-1">
+                                    {{ $notificationCount > 9 ? '9+' : $notificationCount }}
+                                </span>
                                 @endif
-                                <div class="hidden sm:block text-xs leading-tight">
-                                    <p class="font-semibold text-gray-700">{{ \Illuminate\Support\Str::limit($client->company_name ?? $client->name, 18) }}</p>
-                                    <p class="text-gray-400">
-                                        <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }} text-[10px] mr-1"></i>
-                                        {{ $client->client_type === 'company' ? 'Perusahaan' : 'Perorangan' }}
-                                    </p>
-                                </div>
+                            </button>
+
+                            @include('client.components.notification-dropdown')
+                        </div>
+
+                        {{-- Profile Pill --}}
+                        <div class="flex items-center gap-2 rounded-full px-3 py-1.5 cursor-default border"
+                             style="background: var(--surface-elevated); border-color: var(--border-subtle); box-shadow: var(--shadow-xs);">
+                            @if($client->profile_picture && Storage::disk('public')->exists($client->profile_picture))
+                            <img src="{{ asset('storage/' . $client->profile_picture) }}"
+                                 alt="{{ $client->name }}"
+                                 loading="lazy"
+                                 class="w-7 h-7 rounded-full object-cover flex-shrink-0">
+                            @else
+                            <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs"
+                                 style="background: var(--client-primary-light); color: var(--client-primary);">
+                                <i class="fas {{ $client->client_type === 'company' ? 'fa-building' : 'fa-user' }}"></i>
+                            </div>
+                            @endif
+                            <div class="hidden sm:block text-xs leading-tight max-w-[11rem] xl:max-w-[15rem]">
+                                <p class="font-semibold truncate" style="color: var(--text-primary);" title="{{ $client->company_name ?? $client->name }}">
+                                    {{ $client->company_name ?? $client->name }}
+                                </p>
+                                <p class="truncate" style="color: var(--text-tertiary);">
+                                    Akun Klien
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -918,24 +1007,27 @@
             </header>
 
             <!-- Content - LinkedIn Style Full Width -->
-            <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+            <main class="flex-1 overflow-y-auto" style="background: var(--surface-cool);">
                 
                 @if (session('success'))
-                    <div class="mx-4 sm:mx-6 mt-4 p-4 bg-green-100 dark:bg-green-900/30 border-l-4 border-green-500 text-green-700 dark:text-green-400 rounded animate-fade-in">
-                        <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+                    <div class="mx-4 sm:mx-6 mt-4 p-4 border-l-4 rounded animate-fade-in"
+                         style="background: color-mix(in oklab, var(--apple-green) 12%, var(--surface-elevated)); border-color: var(--apple-green); color: var(--text-primary);">
+                        <i class="fas fa-check-circle mr-2" style="color: var(--apple-green);"></i>{{ session('success') }}
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="mx-4 sm:mx-6 mt-4 p-4 bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-400 rounded animate-fade-in">
-                        <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
+                    <div class="mx-4 sm:mx-6 mt-4 p-4 border-l-4 rounded animate-fade-in"
+                         style="background: color-mix(in oklab, var(--apple-red) 10%, var(--surface-elevated)); border-color: var(--apple-red); color: var(--text-primary);">
+                        <i class="fas fa-exclamation-circle mr-2" style="color: var(--apple-red);"></i>{{ session('error') }}
                     </div>
                 @endif
 
                 @if ($errors->any())
-                    <div class="mx-4 sm:mx-6 mt-4 p-4 bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-400 rounded animate-fade-in">
-                        <p class="font-semibold mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>Terjadi Kesalahan:</p>
-                        <ul class="list-disc list-inside">
+                    <div class="mx-4 sm:mx-6 mt-4 p-4 border-l-4 rounded animate-fade-in"
+                         style="background: color-mix(in oklab, var(--apple-red) 10%, var(--surface-elevated)); border-color: var(--apple-red); color: var(--text-primary);">
+                        <p class="font-semibold mb-2"><i class="fas fa-exclamation-triangle mr-2" style="color: var(--apple-red);"></i>Terjadi Kesalahan:</p>
+                        <ul class="list-disc list-inside text-sm" style="color: var(--text-secondary);">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -947,54 +1039,86 @@
                 
             </main>
             
-            <!-- Mobile Bottom Navigation (LinkedIn/Instagram-style - 5 items with center action) -->
-            <nav id="bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-bottom transition-transform duration-300" aria-label="Navigasi utama">
+            <!-- Mobile Bottom Navigation v2 -->
+            <nav id="bottom-nav"
+                 class="lg:hidden fixed bottom-0 left-0 right-0 z-50 safe-area-bottom transition-transform duration-300 backdrop-blur-sm border-t"
+                 style="background: color-mix(in oklab, var(--surface-elevated) 96%, transparent); border-color: var(--border-subtle);"
+                 aria-label="Navigasi utama">
                 <div class="grid grid-cols-5 h-14">
-                    <!-- Home -->
-                    <a href="{{ route('client.dashboard') }}" 
-                       class="flex flex-col items-center justify-center gap-0.5 {{ request()->routeIs('client.dashboard') ? 'text-[#0a66c2]' : 'text-gray-600' }} hover:text-[#0a66c2] transition-colors">
-                        <i class="fas fa-house text-xl"></i>
-                        <span class="text-[9px] font-medium">Home</span>
+
+                    {{-- Home --}}
+                    @php $activeHome = request()->routeIs('client.dashboard'); @endphp
+                    <a href="{{ route('client.dashboard') }}"
+                       class="relative flex flex-col items-center justify-center gap-0.5 transition-colors"
+                       style="color: {{ $activeHome ? 'var(--client-primary)' : 'var(--text-tertiary)' }};">
+                        @if($activeHome)
+                        <span class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full" style="background: var(--client-primary);"></span>
+                        @endif
+                        <i class="fas fa-house text-[18px]" aria-hidden="true"></i>
+                        <span class="text-[9px] font-semibold">Home</span>
                     </a>
-                    
-                    <!-- Layanan/Katalog -->
-                    <a href="{{ route('client.services.index') }}" 
-                       class="flex flex-col items-center justify-center gap-0.5 {{ request()->routeIs('client.services.*') ? 'text-[#0a66c2]' : 'text-gray-600' }} hover:text-[#0a66c2] transition-colors">
-                        <i class="fas fa-layer-group text-xl"></i>
-                        <span class="text-[9px] font-medium">Layanan</span>
+
+                    {{-- Layanan --}}
+                    @php $activeSvc = request()->routeIs('client.services.*'); @endphp
+                    <a href="{{ route('client.services.index') }}"
+                       class="relative flex flex-col items-center justify-center gap-0.5 transition-colors"
+                       style="color: {{ $activeSvc ? 'var(--client-primary)' : 'var(--text-tertiary)' }};">
+                        @if($activeSvc)
+                        <span class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full" style="background: var(--client-primary);"></span>
+                        @endif
+                        <i class="fas fa-layer-group text-[18px]" aria-hidden="true"></i>
+                        <span class="text-[9px] font-semibold">Layanan</span>
                     </a>
-                    
-                    <!-- Ajukan (Center - Elevated FAB style) -->
+
+                    {{-- FAB: Ajukan Baru (center, elevated) --}}
                     <div class="flex items-center justify-center">
-                        <a href="{{ route('client.applications.create') }}" 
-                           class="flex items-center justify-center w-12 h-12 -mt-5 rounded-full bg-[#0a66c2] hover:bg-[#004182] text-white shadow-lg hover:shadow-xl transition-all active:scale-95">
-                            <i class="fas fa-plus text-xl"></i>
+                        <a href="{{ route('client.applications.create') }}"
+                           class="flex items-center justify-center w-12 h-12 -mt-5 rounded-full text-white active:scale-95 transition-all duration-150"
+                           aria-label="Ajukan permohonan baru"
+                           style="background: var(--client-primary); box-shadow: 0 4px 16px color-mix(in oklab, var(--client-primary) 45%, transparent);">
+                            <i class="fas fa-plus text-lg" aria-hidden="true"></i>
                         </a>
                     </div>
-                    
-                    <!-- Proyek -->
-                    <a href="{{ route('client.projects.index') }}" 
-                       class="flex flex-col items-center justify-center gap-0.5 relative {{ request()->routeIs('client.projects.*') ? 'text-[#0a66c2]' : 'text-gray-600' }} hover:text-[#0a66c2] transition-colors">
-                        <i class="fas fa-briefcase text-xl"></i>
-                        <span class="text-[9px] font-medium">Proyek</span>
+
+                    {{-- Proyek --}}
+                    @php $activeProj = request()->routeIs('client.projects.*'); @endphp
+                    <a href="{{ route('client.projects.index') }}"
+                       class="relative flex flex-col items-center justify-center gap-0.5 transition-colors"
+                       style="color: {{ $activeProj ? 'var(--client-primary)' : 'var(--text-tertiary)' }};">
+                        @if($activeProj)
+                        <span class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full" style="background: var(--client-primary);"></span>
+                        @endif
+                        <i class="fas fa-briefcase text-[18px]" aria-hidden="true"></i>
+                        <span class="text-[9px] font-semibold">Proyek</span>
                         @if($activeProjects > 0)
-                        <span class="absolute top-0.5 right-[28%] w-4 h-4 bg-green-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold">
-                            {{ $activeProjects > 9 ? '9' : $activeProjects }}
+                        <span class="absolute top-1 right-[18%] min-w-[14px] h-[14px] px-0.5 text-white text-[8px] font-bold rounded-full flex items-center justify-center"
+                              style="background: var(--apple-green);">
+                            {{ $activeProjects > 9 ? '9+' : $activeProjects }}
                         </span>
                         @endif
                     </a>
-                    
-                    <!-- Dokumen -->
-                    <a href="{{ route('client.documents.index') }}" 
-                       class="flex flex-col items-center justify-center gap-0.5 relative {{ request()->routeIs('client.documents.*') ? 'text-[#0a66c2]' : 'text-gray-600' }} hover:text-[#0a66c2] transition-colors">
-                        <i class="fas fa-folder text-xl"></i>
-                        <span class="text-[9px] font-medium">Dokumen</span>
-                        @if($pendingDocuments > 0)
-                        <span class="absolute top-0.5 right-[28%] w-4 h-4 bg-amber-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold">
-                            {{ $pendingDocuments > 9 ? '9' : $pendingDocuments }}
+
+                    {{-- Notifikasi (replaces Documents to give unread count visibility on mobile) --}}
+                    @php
+                        $activeNotif = request()->routeIs('client.notifications.*');
+                        $hasUnread   = $notificationCount > 0;
+                    @endphp
+                    <a href="{{ route('client.notifications.index') }}"
+                       class="relative flex flex-col items-center justify-center gap-0.5 transition-colors"
+                       style="color: {{ $activeNotif ? 'var(--client-primary)' : 'var(--text-tertiary)' }};">
+                        @if($activeNotif)
+                        <span class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full" style="background: var(--client-primary);"></span>
+                        @endif
+                        <i class="fas fa-bell text-[18px]" aria-hidden="true"></i>
+                        <span class="text-[9px] font-semibold">Notifikasi</span>
+                        @if($hasUnread)
+                        <span class="absolute top-1 right-[18%] min-w-[14px] h-[14px] px-0.5 text-white text-[8px] font-bold rounded-full flex items-center justify-center"
+                              style="background: var(--apple-red);">
+                            {{ $notificationCount > 9 ? '9+' : $notificationCount }}
                         </span>
                         @endif
                     </a>
+
                 </div>
             </nav>
         </div>
@@ -1444,5 +1568,16 @@
             transform: scale(0.95);
         }
     </style>
+
+    {{-- A11y: global aria-live region for toast/status announcements --}}
+    <div id="a11y-announcer" role="status" aria-live="polite" aria-atomic="true"
+         class="sr-only"></div>
+    <div id="a11y-alerter" role="alert" aria-live="assertive" aria-atomic="true"
+         class="sr-only"></div>
+
+    {{-- Portal v2: Command Palette (⌘K / Ctrl+K) --}}
+    @if($portalCmdk)
+        <x-ui.command-palette />
+    @endif
 </body>
 </html>

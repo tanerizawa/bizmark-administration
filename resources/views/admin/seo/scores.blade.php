@@ -8,7 +8,7 @@
             <p class="mt-1 text-sm" style="color: rgba(235,235,245,0.6);">Audit SEO otomatis per artikel (skor 0-100)</p>
         </div>
         <div class="flex gap-2">
-            <form action="{{ route('admin.seo.rescore-all') }}" method="POST" onsubmit="return confirm('Re-score semua artikel? Proses ini bisa memakan waktu.');">
+            <form action="{{ route('admin.seo.rescore-all') }}" method="POST" x-data @submit.prevent="if(confirm('Re-score semua artikel? Proses ini bisa memakan waktu.')) $el.submit()">
                 @csrf
                 <button type="submit" class="inline-flex items-center gap-1 px-3 py-2 rounded-apple text-sm font-medium transition" style="background: rgba(175,82,222,0.15); color: rgba(175,82,222,1); border: 1px solid rgba(175,82,222,0.3);">
                     🔄 Re-score All

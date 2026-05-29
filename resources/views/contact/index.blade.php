@@ -17,12 +17,12 @@
     : 'Hubungi Bizmark.ID untuk konsultasi OSS, AMDAL, UKL-UPL, PBG/SLF, dan perizinan industri.')
 
 @section('content')
-<section class="relative overflow-hidden pt-24 pb-14" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-24 pb-14 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide">
         <div class="max-w-3xl">
             <span class="section-badge mb-4">{{ $isEnglish ? 'Contact' : 'Kontak' }}</span>
             <h1 class="section-title mb-4">{{ $isEnglish ? 'Talk to our permit experts' : 'Konsultasi dengan tim ahli perizinan' }}</h1>
-            <p class="text-lg leading-relaxed mb-0" style="color:var(--text-secondary);">
+            <p class="text-lg leading-relaxed mb-0 text-gray-600">
                 {{ $isEnglish ? 'Tell us about your business. We will help map the permits you need and the most efficient path to compliance.' : 'Ceritakan jenis usaha Anda. Kami bantu memetakan izin yang dibutuhkan dan jalur kepatuhan yang paling efisien.' }}
             </p>
         </div>
@@ -34,39 +34,39 @@
         <div class="grid md:grid-cols-3 gap-6">
             <a href="tel:{{ $phoneHref }}" class="card hover-lift" aria-label="{{ $isEnglish ? 'Call us' : 'Telepon kami' }}">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(15,23,42,.06);">
-                        <i class="fas fa-phone" style="color:var(--color-primary);"></i>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: var(--accent-glow);">
+                        <i class="fas fa-phone" style="color: var(--accent);"></i>
                     </div>
                     <div class="min-w-0">
-                        <div class="text-sm font-semibold" style="color:var(--text-primary);">{{ $isEnglish ? 'Phone' : 'Telepon' }}</div>
-                        <div class="text-sm" style="color:var(--text-secondary);">{{ $hours }}</div>
-                        <div class="text-sm font-semibold mt-2" style="color:var(--text-primary);">{{ $phone }}</div>
+                        <div class="text-sm font-semibold text-gray-900">{{ $isEnglish ? 'Phone' : 'Telepon' }}</div>
+                        <div class="text-sm text-gray-600">{{ $hours }}</div>
+                        <div class="text-sm font-semibold mt-2 text-gray-900">{{ $phone }}</div>
                     </div>
                 </div>
             </a>
 
             <a href="mailto:{{ $email }}" class="card hover-lift" aria-label="{{ $isEnglish ? 'Email us' : 'Email kami' }}">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(14,165,233,.12);">
-                        <i class="fas fa-envelope" style="color:var(--color-accent);"></i>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: var(--accent-glow);">
+                        <i class="fas fa-envelope" style="color: var(--accent);"></i>
                     </div>
                     <div class="min-w-0">
-                        <div class="text-sm font-semibold" style="color:var(--text-primary);">Email</div>
-                        <div class="text-sm" style="color:var(--text-secondary);">{{ $isEnglish ? 'Reply within 1 business day' : 'Respon dalam 1 hari kerja' }}</div>
-                        <div class="text-sm font-semibold mt-2" style="color:var(--text-primary);">{{ $email }}</div>
+                        <div class="text-sm font-semibold text-gray-900">Email</div>
+                        <div class="text-sm text-gray-600">{{ $isEnglish ? 'Reply within 1 business day' : 'Respon dalam 1 hari kerja' }}</div>
+                        <div class="text-sm font-semibold mt-2 text-gray-900">{{ $email }}</div>
                     </div>
                 </div>
             </a>
 
             <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="card hover-lift" aria-label="WhatsApp">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(22,163,74,.12);">
-                        <i class="fab fa-whatsapp" style="color:var(--color-success);"></i>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: var(--accent-glow);">
+                        <i class="fab fa-whatsapp" style="color: var(--accent);"></i>
                     </div>
                     <div class="min-w-0">
-                        <div class="text-sm font-semibold" style="color:var(--text-primary);">WhatsApp</div>
-                        <div class="text-sm" style="color:var(--text-secondary);">{{ $isEnglish ? 'Fast response for quick questions' : 'Respon cepat untuk pertanyaan singkat' }}</div>
-                        <div class="text-sm font-semibold mt-2" style="color:var(--text-primary);">{{ $isEnglish ? 'Chat now' : 'Chat sekarang' }}</div>
+                        <div class="text-sm font-semibold text-gray-900">WhatsApp</div>
+                        <div class="text-sm text-gray-600">{{ $isEnglish ? 'Fast response for quick questions' : 'Respon cepat untuk pertanyaan singkat' }}</div>
+                        <div class="text-sm font-semibold mt-2 text-gray-900">{{ $isEnglish ? 'Chat now' : 'Chat sekarang' }}</div>
                     </div>
                 </div>
             </a>
@@ -79,13 +79,13 @@
         <div class="grid lg:grid-cols-12 gap-10 items-start">
             <div class="lg:col-span-5">
                 <h2 id="contact-form-heading" class="section-title mb-4">{{ $isEnglish ? 'Send a message' : 'Kirim pesan' }}</h2>
-                <p class="text-base leading-relaxed mb-8" style="color:var(--text-secondary);">
+                <p class="text-base leading-relaxed mb-8 text-gray-600">
                     {{ $isEnglish ? 'Fill out the form and we will get back to you with a recommended next step.' : 'Isi formulir berikut dan tim kami akan menghubungi Anda dengan rekomendasi langkah selanjutnya.' }}
                 </p>
 
                 <div class="card">
-                    <div class="text-sm font-semibold mb-2" style="color:var(--text-primary);">{{ $isEnglish ? 'Office base' : 'Basis kantor' }}</div>
-                    <div class="text-sm mb-0" style="color:var(--text-secondary);">
+                    <div class="text-sm font-semibold mb-2 text-gray-900">{{ $isEnglish ? 'Office base' : 'Basis kantor' }}</div>
+                    <div class="text-sm mb-0 text-gray-600">
                         {{ $isEnglish ? 'Karawang, West Java (remote-first consultations available)' : 'Karawang, Jawa Barat (konsultasi daring tersedia)' }}
                     </div>
                 </div>
@@ -93,10 +93,10 @@
 
             <div class="lg:col-span-7">
                 @if(session('success'))
-                    <div class="card mb-6" style="border-color:rgba(22,163,74,.35);box-shadow:var(--shadow-ring);">
+                    <div class="card mb-6" style="border: 1px solid rgba(var(--accent-rgb),.35); box-shadow: var(--shadow-ring);">
                         <div class="flex items-start gap-3">
-                            <i class="fas fa-check-circle mt-0.5" style="color:var(--color-success);"></i>
-                            <div class="text-sm" style="color:var(--text-secondary);">{{ session('success') }}</div>
+                            <i class="fas fa-check-circle mt-0.5" style="color: var(--accent);"></i>
+                            <div class="text-sm text-gray-600">{{ session('success') }}</div>
                         </div>
                     </div>
                 @endif
@@ -111,9 +111,9 @@
                 @endif
 
                 @if($errors->any())
-                    <div class="card mb-6" style="border-color:rgba(220,38,38,.35);">
-                        <div class="text-sm font-semibold mb-2" style="color:var(--text-primary);">{{ $isEnglish ? 'Please review the highlighted fields.' : 'Mohon periksa kembali input yang ditandai.' }}</div>
-                        <ul class="text-sm m-0 pl-5" style="color:var(--text-secondary);">
+                    <div class="card mb-6 border-red-500/35">
+                        <div class="text-sm font-semibold mb-2 text-gray-900">{{ $isEnglish ? 'Please review the highlighted fields.' : 'Mohon periksa kembali input yang ditandai.' }}</div>
+                        <ul class="text-sm m-0 pl-5 text-gray-600">
                             @foreach($errors->all() as $err)
                                 <li>{{ $err }}</li>
                             @endforeach
@@ -177,7 +177,7 @@
                         <button type="submit" class="btn btn-primary btn-lg w-full sm:w-auto">
                             <i class="fas fa-paper-plane"></i> {{ $isEnglish ? 'Send' : 'Kirim' }}
                         </button>
-                        <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-lg w-full sm:w-auto">
+                        <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg w-full sm:w-auto">
                             <i class="fab fa-whatsapp"></i> WhatsApp
                         </a>
                     </div>

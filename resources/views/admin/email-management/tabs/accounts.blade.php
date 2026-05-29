@@ -1,190 +1,165 @@
-<div class="space-y-4">
-    {{-- Header Section --}}
-    <div class="email-panel-header">
+<div style="display:flex;flex-direction:column;gap:16px">
+
+    {{-- Header --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
         <div>
-            <h2 class="text-base font-semibold text-white">Email Accounts</h2>
-            <p class="text-sm" style="color: rgba(235,235,245,0.6);">
-                Kelola akun email tim untuk sistem multi-user email management
-            </p>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Tim Email</p>
+            <h3 style="font-size:0.95rem;font-weight:700;color:var(--dark-text-primary);margin:3px 0 2px">Email Accounts</h3>
+            <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0">Kelola akun email tim untuk sistem multi-user email management</p>
         </div>
-        <a href="{{ route('admin.email-accounts.create') ?? '#' }}" class="btn-apple-primary-sm px-3 py-2">
-            <i class="fas fa-plus mr-2"></i>Add Account
+        <a href="{{ route('admin.email-accounts.create') }}"
+           style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:var(--apple-teal);color:#fff;font-size:0.82rem;font-weight:600;text-decoration:none">
+            <i class="fas fa-plus" style="font-size:0.75rem"></i>Add Account
         </a>
     </div>
 
-    {{-- Filters --}}
-    <form method="GET" action="{{ route('admin.email-management.index') }}" class="email-toolbar">
-        <input type="hidden" name="tab" value="accounts">
-        <div class="email-toolbar-grid">
-            <div class="email-filter">
-                <label for="account-search">Pencarian</label>
-                <input id="account-search" type="text" placeholder="Nama akun atau email..." name="search"
-                       class="input-apple w-full" value="{{ request('tab') === 'accounts' ? request('search') : '' }}">
+    {{-- Filter --}}
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:16px 20px">
+        <form method="GET" action="{{ route('admin.email-management.index') }}">
+            <input type="hidden" name="tab" value="accounts">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto auto;gap:10px;align-items:end">
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:4px">Pencarian</label>
+                    <input type="text" name="search" value="{{ request('tab')==='accounts' ? request('search') : '' }}" placeholder="Nama akun atau email..."
+                           style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-primary);border-radius:8px;padding:8px 12px;font-size:0.85rem;width:100%;outline:none"
+                           onfocus="this.style.borderColor='var(--apple-teal)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                </div>
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:4px">Tipe</label>
+                    <select name="type" style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-primary);border-radius:8px;padding:8px 12px;font-size:0.85rem;width:100%;outline:none">
+                        <option value="">Semua</option>
+                        <option value="shared"   {{ request('tab')==='accounts' && request('type')==='shared'   ? 'selected' : '' }}>Shared</option>
+                        <option value="personal" {{ request('tab')==='accounts' && request('type')==='personal' ? 'selected' : '' }}>Personal</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:4px">Departemen</label>
+                    <select name="department" style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-primary);border-radius:8px;padding:8px 12px;font-size:0.85rem;width:100%;outline:none">
+                        <option value="">Semua</option>
+                        @foreach(['general'=>'General','cs'=>'Customer Service','sales'=>'Sales','support'=>'Tech Support','finance'=>'Finance'] as $val => $lbl)
+                        <option value="{{ $val }}" {{ request('tab')==='accounts' && request('department')===$val ? 'selected' : '' }}>{{ $lbl }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:4px">Status</label>
+                    <select name="is_active" style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-primary);border-radius:8px;padding:8px 12px;font-size:0.85rem;width:100%;outline:none">
+                        <option value="">Semua</option>
+                        <option value="1" {{ request('tab')==='accounts' && request('is_active')==='1' ? 'selected' : '' }}>Aktif</option>
+                        <option value="0" {{ request('tab')==='accounts' && request('is_active')==='0' ? 'selected' : '' }}>Nonaktif</option>
+                    </select>
+                </div>
+                <button type="submit" style="padding:8px 20px;background:var(--apple-teal);color:#fff;border:none;border-radius:10px;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap"
+                        onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                    <i class="fas fa-search" style="margin-right:5px"></i>Filter
+                </button>
+                <a href="{{ route('admin.email-management.index', ['tab' => 'accounts']) }}"
+                   style="padding:8px 14px;border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-secondary);font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center"
+                   onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">Reset</a>
             </div>
-            <div class="email-filter">
-                <label for="account-type">Tipe</label>
-                <select id="account-type" name="type" class="input-apple w-full">
-                    <option value="">Semua Tipe</option>
-                    <option value="shared" {{ request('tab') === 'accounts' && request('type') == 'shared' ? 'selected' : '' }}>Shared</option>
-                    <option value="personal" {{ request('tab') === 'accounts' && request('type') == 'personal' ? 'selected' : '' }}>Personal</option>
-                </select>
-            </div>
-            <div class="email-filter">
-                <label for="account-department">Departemen</label>
-                <select id="account-department" name="department" class="input-apple w-full">
-                    <option value="">Semua Departemen</option>
-                    <option value="general" {{ request('tab') === 'accounts' && request('department') == 'general' ? 'selected' : '' }}>General</option>
-                    <option value="cs" {{ request('tab') === 'accounts' && request('department') == 'cs' ? 'selected' : '' }}>Customer Service</option>
-                    <option value="sales" {{ request('tab') === 'accounts' && request('department') == 'sales' ? 'selected' : '' }}>Sales</option>
-                    <option value="support" {{ request('tab') === 'accounts' && request('department') == 'support' ? 'selected' : '' }}>Technical Support</option>
-                    <option value="finance" {{ request('tab') === 'accounts' && request('department') == 'finance' ? 'selected' : '' }}>Finance</option>
-                </select>
-            </div>
-            <button type="submit" class="btn-apple-primary-sm px-4 py-2">
-                <i class="fas fa-filter mr-2"></i>Filter
-            </button>
-            <a href="{{ route('admin.email-management.index', ['tab' => 'accounts']) }}" class="btn-apple-sm px-4 py-2">
-                Reset
-            </a>
-        </div>
-    </form>
+        </form>
+    </div>
 
     {{-- Account List --}}
     @if(isset($accounts) && $accounts->count() > 0)
-        <div class="space-y-3">
+        <div style="display:flex;flex-direction:column;gap:10px">
             @foreach($accounts as $account)
-            <div class="card-elevated rounded-apple-lg p-4 hover:bg-opacity-80 transition-apple email-table-shell">
-                    <div class="flex flex-col md:flex-row md:items-center gap-4">
-                        {{-- Account Icon --}}
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg"
-                                 style="background: linear-gradient(135deg, {{ $account->type == 'shared' ? 'rgba(10,132,255,0.8), rgba(30,86,172,0.8)' : 'rgba(52,199,89,0.8), rgba(30,172,86,0.8)' }});">
-                                {{ strtoupper(substr($account->email, 0, 1)) }}
-                            </div>
-                        </div>
+            <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:16px 20px">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
 
-                        {{-- Account Info --}}
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <h3 class="text-base font-semibold text-white">
-                                    {{ $account->name }}
-                                </h3>
-                                
-                                {{-- Type Badge --}}
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: {{ $account->type == 'shared' ? 'var(--neuro-primary)' : 'var(--neuro-success)' }}; opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
-                                    {{ ucfirst($account->type) }}
-                                </span>
-
-                                {{-- Status Badge --}}
-                                @if($account->is_active)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--neuro-success); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
-                                        Active
-                                    </span>
-                                @else
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full" style="padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: var(--font-semibold); background: var(--neuro-error); opacity: var(--opacity-bg-strong); color: var(--text-dark-primary);">
-                                        Inactive
-                                    </span>
-                                @endif
-
-                                {{-- Department Badge --}}
-                                <span class="px-2 py-0.5 text-xs rounded-full" 
-                                      style="background: rgba(175,82,222,0.15); color: rgba(175,82,222,1);">
-                                    {{ $account->department_label }}
-                                </span>
-                            </div>
-
-                            <p class="text-sm mb-1" style="color: rgba(235,235,245,0.7);">
-                                <i class="fas fa-envelope mr-1"></i>{{ $account->email }}
-                            </p>
-
-                            @if($account->description)
-                                <p class="text-xs" style="color: rgba(235,235,245,0.5);">
-                                    {{ $account->description }}
-                                </p>
-                            @endif
-
-                            {{-- Assigned Users --}}
-                            @if($account->activeUsers && $account->activeUsers->count() > 0)
-                                <div class="flex items-center gap-2 mt-2">
-                                    <span class="text-xs" style="color: rgba(235,235,245,0.5);">Assigned to:</span>
-                                    <div class="flex -space-x-2">
-                                        @foreach($account->activeUsers->take(3) as $user)
-                                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold text-white border-2"
-                                                 style="background: linear-gradient(135deg, rgba(52,199,89,0.8), rgba(30,172,86,0.8)); border-color: var(--dark-elevated);"
-                                                 title="{{ $user->name }}">
-                                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                                            </div>
-                                        @endforeach
-                                        @if($account->activeUsers->count() > 3)
-                                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold border-2"
-                                                 style="background: rgba(255,255,255,0.1); border-color: var(--dark-elevated); color: rgba(235,235,245,0.7);">
-                                                +{{ $account->activeUsers->count() - 3 }}
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-
-                        {{-- Statistics --}}
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                            <div class="text-center">
-                                <p class="text-xs mb-1" style="color: rgba(235,235,245,0.5);">Received</p>
-                                <p class="text-base font-semibold text-white">{{ number_format($account->total_received ?? 0) }}</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-xs mb-1" style="color: rgba(235,235,245,0.5);">Sent</p>
-                                <p class="text-base font-semibold text-white">{{ number_format($account->total_sent ?? 0) }}</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-xs mb-1" style="color: rgba(235,235,245,0.5);">Unread</p>
-                                <p class="text-base font-semibold text-yellow-400">{{ number_format($account->getUnreadCount() ?? 0) }}</p>
-                            </div>
-                        </div>
-
-                        {{-- Actions --}}
-                        <div class="flex flex-shrink-0 items-center gap-2">
-                            <a href="{{ route('admin.email-accounts.edit', $account->id) ?? '#' }}" 
-                               class="btn-apple-sm text-sm px-3 py-1.5">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <a href="{{ route('admin.email-accounts.show', $account->id) ?? '#' }}" 
-                               class="btn-apple-primary-sm text-sm px-3 py-1.5">
-                                <i class="fas fa-eye"></i> View
-                            </a>
-                        </div>
+                    {{-- Avatar --}}
+                    <div style="width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;background:{{ $account->type === 'shared' ? 'linear-gradient(135deg,var(--apple-teal),var(--apple-blue))' : 'linear-gradient(135deg,var(--apple-green),var(--apple-teal))' }}">
+                        {{ strtoupper(substr($account->email, 0, 1)) }}
                     </div>
 
-                    {{-- Auto Reply Indicator --}}
-                    @if($account->auto_reply_enabled)
-                        <div class="mt-3 pt-3 border-t" style="border-color: rgba(235,235,245,0.1);">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-reply-all text-xs" style="color: rgba(90,200,250,1);"></i>
-                                <span class="text-xs" style="color: rgba(235,235,245,0.6);">
-                                    Auto-reply enabled
-                                </span>
+                    {{-- Info --}}
+                    <div style="flex:1;min-width:0">
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+                            <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">{{ $account->name }}</h3>
+                            <span style="padding:2px 8px;border-radius:20px;font-size:0.68rem;font-weight:600;background:{{ $account->type === 'shared' ? 'color-mix(in srgb,var(--apple-teal) 15%,transparent)' : 'color-mix(in srgb,var(--apple-green) 15%,transparent)' }};color:{{ $account->type === 'shared' ? 'var(--apple-teal)' : 'var(--apple-green)' }}">
+                                {{ ucfirst($account->type) }}
+                            </span>
+                            <span style="padding:2px 8px;border-radius:20px;font-size:0.68rem;font-weight:600;background:{{ $account->is_active ? 'color-mix(in srgb,var(--apple-green) 15%,transparent)' : 'color-mix(in srgb,var(--apple-red) 15%,transparent)' }};color:{{ $account->is_active ? 'var(--apple-green)' : 'var(--apple-red)' }}">
+                                {{ $account->is_active ? 'Active' : 'Inactive' }}
+                            </span>
+                            <span style="padding:2px 8px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,var(--apple-purple) 15%,transparent);color:var(--apple-purple)">
+                                {{ $account->department_label }}
+                            </span>
+                        </div>
+                        <p style="font-size:0.8rem;color:var(--dark-text-secondary);margin:0 0 2px">
+                            <i class="fas fa-envelope" style="font-size:0.7rem;margin-right:4px"></i>{{ $account->email }}
+                        </p>
+                        @if($account->description)
+                        <p style="font-size:0.75rem;color:var(--dark-text-secondary);opacity:.7;margin:0">{{ $account->description }}</p>
+                        @endif
+                        @if($account->activeUsers && $account->activeUsers->count() > 0)
+                        <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+                            <span style="font-size:0.7rem;color:var(--dark-text-secondary)">Assigned to:</span>
+                            <div style="display:flex;margin-left:-4px">
+                                @foreach($account->activeUsers->take(3) as $user)
+                                <div style="width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--apple-green),var(--apple-teal));border:2px solid var(--dark-bg-tertiary);margin-left:-4px" title="{{ $user->name }}">
+                                    {{ strtoupper(substr($user->name,0,1)) }}
+                                </div>
+                                @endforeach
+                                @if($account->activeUsers->count() > 3)
+                                <div style="width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:600;color:var(--dark-text-secondary);background:var(--dark-bg-secondary);border:2px solid var(--dark-bg-tertiary);margin-left:-4px">
+                                    +{{ $account->activeUsers->count()-3 }}
+                                </div>
+                                @endif
                             </div>
                         </div>
-                    @endif
+                        @endif
+                    </div>
+
+                    {{-- Stats --}}
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center;min-width:200px">
+                        @foreach([['Received','total_received','var(--dark-text-primary)'],['Sent','total_sent','var(--dark-text-primary)'],['Unread',null,'var(--apple-orange)']] as [$lbl,$field,$clr])
+                        <div>
+                            <p style="font-size:0.65rem;color:var(--dark-text-secondary);margin:0 0 2px">{{ $lbl }}</p>
+                            <p style="font-size:0.95rem;font-weight:700;color:{{ $clr }};margin:0">
+                                @if($lbl==='Unread'){{ number_format($account->getUnreadCount()??0) }}@else{{ number_format($account->$field??0) }}@endif
+                            </p>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Actions --}}
+                    <div style="display:flex;gap:8px;flex-shrink:0">
+                        <a href="{{ route('admin.email-accounts.edit', $account->id) }}"
+                           style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-secondary);font-size:0.78rem;font-weight:600;text-decoration:none"
+                           onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                            <i class="fas fa-edit" style="font-size:0.7rem"></i>Edit
+                        </a>
+                        <a href="{{ route('admin.email-accounts.show', $account->id) }}"
+                           style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;background:color-mix(in srgb,var(--apple-teal) 15%,transparent);border:1px solid color-mix(in srgb,var(--apple-teal) 30%,var(--dark-separator));color:var(--apple-teal);font-size:0.78rem;font-weight:600;text-decoration:none"
+                           onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+                            <i class="fas fa-eye" style="font-size:0.7rem"></i>View
+                        </a>
+                    </div>
                 </div>
+
+                @if($account->auto_reply_enabled)
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--dark-separator);display:flex;align-items:center;gap:6px">
+                    <i class="fas fa-reply-all" style="font-size:0.75rem;color:var(--apple-teal)"></i>
+                    <span style="font-size:0.72rem;color:var(--dark-text-secondary)">Auto-reply enabled</span>
+                </div>
+                @endif
+            </div>
             @endforeach
         </div>
-
-        {{-- Pagination --}}
-        @if(method_exists($accounts, 'hasPages') && $accounts->hasPages())
-            <div class="mt-6">
-                {{ $accounts->appends(request()->query())->links() }}
-            </div>
+        @if(method_exists($accounts,'hasPages') && $accounts->hasPages())
+        <div style="padding:4px 0">{{ $accounts->appends(request()->query())->links() }}</div>
         @endif
     @else
-        <div class="email-empty-state">
-            <i class="fas fa-at"></i>
-            <p class="text-base font-medium text-white mb-2">No Email Accounts Yet</p>
-            <p class="text-sm mb-4" style="color: rgba(235,235,245,0.6);">
-                Add email accounts to start managing team emails
-            </p>
-            <a href="{{ route('admin.email-accounts.create') ?? '#' }}" class="btn-apple-primary-sm px-4 py-2">
-                <i class="fas fa-plus mr-2"></i>Add Account
+        <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:48px;text-align:center">
+            <div style="width:48px;height:48px;border-radius:50%;background:color-mix(in srgb,var(--apple-teal) 15%,transparent);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+                <i class="fas fa-at" style="font-size:1.2rem;color:var(--apple-teal)"></i>
+            </div>
+            <p style="font-size:0.88rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 6px">Belum Ada Email Account</p>
+            <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0 0 16px">Tambah akun email untuk memulai manajemen email tim</p>
+            <a href="{{ route('admin.email-accounts.create') }}"
+               style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:10px;background:var(--apple-teal);color:#fff;font-size:0.82rem;font-weight:600;text-decoration:none">
+                <i class="fas fa-plus" style="font-size:0.75rem"></i>Add Account
             </a>
         </div>
     @endif

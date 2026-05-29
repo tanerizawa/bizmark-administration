@@ -1,169 +1,129 @@
-{{-- Payments Tab Content --}}
-<div class="space-y-5">
+{{-- Payments Tab --}}
+<div style="display:flex;flex-direction:column;gap:16px">
+
     {{-- Quick Stats --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div class="card-elevated rounded-apple-lg p-4 space-y-2">
-            <p class="text-xs uppercase tracking-widest text-dark-text-secondary">Total Pembayaran</p>
-            <p class="text-xl font-bold text-white">{{ $totalPayments }}</p>
-            <p class="text-xs text-dark-text-secondary">Semua transaksi</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        @php
+            $payStats = [
+                ['label'=>'Total Pembayaran', 'value'=>$totalPayments,   'sub'=>'Semua transaksi',         'color'=>'var(--dark-text-primary)'],
+                ['label'=>'Pending',          'value'=>$pendingPayments, 'sub'=>'Perlu verifikasi',        'color'=>$pendingPayments > 0 ? 'var(--apple-orange)' : 'var(--apple-green)'],
+                ['label'=>'Terverifikasi',    'value'=>$verifiedPayments,'sub'=>'Sudah disetujui',         'color'=>'var(--apple-green)'],
+                ['label'=>'Total Nilai',      'value'=>'Rp '.number_format($totalAmount/1000000,1).'M', 'sub'=>'Pendapatan terverifikasi', 'color'=>'var(--apple-blue)'],
+            ];
+        @endphp
+        @foreach($payStats as $s)
+        <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:12px;padding:14px 16px">
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ $s['color'] }};margin:0;opacity:.85">{{ $s['label'] }}</p>
+            <p style="font-size:1.5rem;font-weight:800;color:{{ $s['color'] }};margin:4px 0 2px;line-height:1">{{ $s['value'] }}</p>
+            <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0">{{ $s['sub'] }}</p>
         </div>
-        <div class="card-elevated rounded-apple-lg p-4 space-y-2">
-            <p class="text-xs uppercase tracking-widest text-apple-orange/90">Pending</p>
-            <p class="text-xl font-bold text-apple-orange">{{ $pendingPayments }}</p>
-            <p class="text-xs text-dark-text-secondary">Perlu verifikasi</p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-4 space-y-2">
-            <p class="text-xs uppercase tracking-widest text-apple-green/90">Terverifikasi</p>
-            <p class="text-xl font-bold text-apple-green">{{ $verifiedPayments }}</p>
-            <p class="text-xs text-dark-text-secondary">Sudah disetujui</p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-4 space-y-2">
-            <p class="text-xs uppercase tracking-widest text-apple-blue/90">Total Nilai</p>
-            <p class="text-2xl font-bold text-apple-blue">
-                Rp {{ number_format($totalAmount/1000000, 1) }}M
-            </p>
-            <p class="text-xs text-dark-text-secondary">Pendapatan terverifikasi</p>
-        </div>
+        @endforeach
     </div>
 
-    {{-- Search & Filter --}}
-    <div class="card-elevated rounded-apple-lg p-4">
-        <form method="GET" action="{{ route('admin.permits.index') }}" class="space-y-3" data-auto-submit>
+    {{-- Filter Form --}}
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:16px 20px">
+        <form method="GET" action="{{ route('admin.permits.index') }}">
             <input type="hidden" name="tab" value="payments">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end">
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Pencarian</label>
-                    <input type="text" name="search" value="{{ request('search') }}" 
-                           placeholder="Referensi/nomor permohonan..." 
-                           class="input-dark w-full px-3 py-2 rounded-apple text-sm">
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:4px">Pencarian</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Referensi / nomor permohonan..."
+                           style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-primary);border-radius:8px;padding:8px 12px;font-size:0.85rem;width:100%;outline:none"
+                           onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
                 </div>
-                
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Status</label>
-                    <select name="status" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:4px">Status</label>
+                    <select name="status" style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-primary);border-radius:8px;padding:8px 12px;font-size:0.85rem;width:100%;outline:none">
                         <option value="">Semua Status</option>
                         <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Sedang Diproses</option>
-                        <option value="verified" {{ request('status') == 'verified' ? 'selected' : '' }}>Terverifikasi</option>
-                        <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Gagal</option>
+                        <option value="verified"   {{ request('status') == 'verified'   ? 'selected' : '' }}>Terverifikasi</option>
+                        <option value="failed"     {{ request('status') == 'failed'     ? 'selected' : '' }}>Gagal</option>
                     </select>
                 </div>
-                
                 <div>
-                    <label class="block text-xs font-semibold mb-1.5 text-dark-text-secondary">Metode</label>
-                    <select name="payment_method" class="input-dark w-full px-3 py-2 rounded-apple text-sm">
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:4px">Metode</label>
+                    <select name="payment_method" style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-primary);border-radius:8px;padding:8px 12px;font-size:0.85rem;width:100%;outline:none">
                         <option value="">Semua Metode</option>
-                        <option value="manual" {{ request('payment_method') == 'manual' ? 'selected' : '' }}>Transfer Manual</option>
+                        <option value="manual"   {{ request('payment_method') == 'manual'   ? 'selected' : '' }}>Transfer Manual</option>
                         <option value="midtrans" {{ request('payment_method') == 'midtrans' ? 'selected' : '' }}>Midtrans</option>
                     </select>
                 </div>
-                
-                <div class="flex items-end gap-2">
-                    <button type="submit" class="btn-primary-sm flex-1">
-                        <i class="fas fa-filter"></i>
+                <div style="display:flex;gap:6px">
+                    <button type="submit" style="display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 16px;border-radius:8px;background:var(--apple-blue);color:#fff;font-size:0.82rem;font-weight:600;border:none;cursor:pointer">
+                        <i class="fas fa-filter" style="font-size:0.7rem"></i>Filter
                     </button>
-                    <a href="{{ route('admin.permits.index', ['tab' => 'payments']) }}" class="btn-secondary-sm flex-1">
-                        <i class="fas fa-times"></i>
+                    <a href="{{ route('admin.permits.index', ['tab' => 'payments']) }}" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-secondary);text-decoration:none">
+                        <i class="fas fa-times" style="font-size:0.75rem"></i>
                     </a>
                 </div>
             </div>
         </form>
     </div>
 
-    {{-- Payments Table --}}
-    <div class="card-elevated rounded-apple-lg overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700 text-sm">
-                <thead class="bg-[rgba(28,28,30,0.45)]">
+    {{-- Table --}}
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+        <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse">
+                <thead style="background:var(--dark-bg-secondary)">
                     <tr>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Referensi</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Permohonan</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Klien</th>
-                        <th scope="col" class="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Jumlah</th>
-                        <th scope="col" class="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Status</th>
-                        <th scope="col" class="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Tanggal</th>
-                        <th scope="col" class="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-dark-text-secondary">Aksi</th>
+                        @foreach(['Referensi','Permohonan','Klien','Jumlah','Status','Tanggal','Aksi'] as $col)
+                        <th style="padding:10px 14px;font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);text-align:{{ in_array($col,['Jumlah','Status','Aksi']) ? ($col==='Jumlah'?'right':'center') : 'left' }};border-bottom:1px solid var(--dark-separator);white-space:nowrap">{{ $col }}</th>
+                        @endforeach
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
+                <tbody>
                     @forelse($payments as $payment)
-                        <tr class="hover-lift transition-apple">
-                            <td class="px-4 py-2.5">
-                                <div class="text-sm font-semibold text-dark-text-primary">{{ $payment->payment_reference }}</div>
-                                <div class="text-xs text-dark-text-secondary mt-1">
-                                    {{ ucfirst($payment->payment_method) }}
-                                </div>
-                            </td>
-                            <td class="px-4 py-2.5">
+                    @php
+                        $pColor = match($payment->status) { 'processing' => 'var(--apple-orange)', 'verified' => 'var(--apple-green)', default => 'var(--apple-red)' };
+                        $pIcon  = match($payment->status) { 'processing' => 'fa-clock', 'verified' => 'fa-check-circle', default => 'fa-times-circle' };
+                        $pLabel = match($payment->status) { 'processing' => 'Proses', 'verified' => 'Verified', default => 'Gagal' };
+                    @endphp
+                    <tr style="border-bottom:1px solid var(--dark-separator)" onmouseover="this.style.background='var(--dark-bg-secondary)'" onmouseout="this.style.background='transparent'">
+                        <td style="padding:12px 14px">
+                            <span style="font-size:0.82rem;font-weight:600;color:var(--dark-text-primary);display:block">{{ $payment->payment_reference }}</span>
+                            <span style="font-size:0.7rem;color:var(--dark-text-secondary);display:block;margin-top:2px">{{ ucfirst($payment->payment_method) }}</span>
+                        </td>
+                        <td style="padding:12px 14px">
+                            @if($payment->application)
+                            <span style="font-size:0.82rem;font-weight:500;color:var(--dark-text-primary);display:block">{{ $payment->application->application_number }}</span>
+                            <span style="font-size:0.7rem;color:var(--dark-text-secondary);display:block;margin-top:2px">{{ $payment->application->permitType->name ?? 'N/A' }}</span>
+                            @else
+                            <span style="font-size:0.78rem;color:var(--dark-text-secondary);opacity:.5">N/A</span>
+                            @endif
+                        </td>
+                        <td style="padding:12px 14px;font-size:0.82rem;color:var(--dark-text-secondary)">
+                            {{ $payment->application->client->company_name ?? $payment->application->client->name ?? 'N/A' }}
+                        </td>
+                        <td style="padding:12px 14px;text-align:right">
+                            <span style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary)">Rp {{ number_format($payment->amount,0,',','.') }}</span>
+                        </td>
+                        <td style="padding:12px 14px;text-align:center;white-space:nowrap">
+                            <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,{{ $pColor }} 15%,transparent);color:{{ $pColor }}">
+                                <i class="fas {{ $pIcon }}" style="font-size:0.6rem"></i>{{ $pLabel }}
+                            </span>
+                        </td>
+                        <td style="padding:12px 14px;font-size:0.82rem;color:var(--dark-text-secondary)">
+                            {{ $payment->payment_date ? optional($payment->payment_date)->locale('id')->isoFormat('D MMM Y') : '—' }}
+                        </td>
+                        <td style="padding:12px 14px;text-align:center;white-space:nowrap">
+                            <div style="display:flex;align-items:center;justify-content:center;gap:6px">
                                 @if($payment->application)
-                                    <div class="text-sm font-medium text-dark-text-primary">
-                                        {{ $payment->application->application_number }}
-                                    </div>
-                                    <div class="text-xs text-dark-text-secondary mt-1">
-                                        {{ $payment->application->permitType->name ?? 'N/A' }}
-                                    </div>
-                                @else
-                                    <span class="text-xs text-dark-text-tertiary">N/A</span>
+                                <a href="{{ route('admin.permit-applications.show', $payment->application->id) }}" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:color-mix(in srgb,var(--apple-teal) 15%,transparent);color:var(--apple-teal);text-decoration:none;border:1px solid color-mix(in srgb,var(--apple-teal) 30%,transparent)" title="Lihat Permohonan" onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1"><i class="fas fa-eye" style="font-size:0.7rem"></i></a>
                                 @endif
-                            </td>
-                            <td class="px-4 py-2.5 text-sm text-dark-text-primary">
-                                {{ $payment->application->client->company_name ?? $payment->application->client->name ?? 'N/A' }}
-                            </td>
-                            <td class="px-4 py-2.5 text-right">
-                                <div class="text-sm font-semibold text-white">
-                                    Rp {{ number_format($payment->amount, 0, ',', '.') }}
-                                </div>
-                            </td>
-                            <td class="px-4 py-2.5 text-center whitespace-nowrap">
-                                @if($payment->status == 'processing')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-orange/20 text-apple-orange">
-                                        <i class="fas fa-clock mr-1"></i>Proses
-                                    </span>
-                                @elseif($payment->status == 'verified')
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-green/20 text-apple-green">
-                                        <i class="fas fa-check-circle mr-1"></i>Verified
-                                    </span>
-                                @else
-                                    <span class="px-2 py-1 text-xs font-medium rounded-apple bg-apple-red/20 text-apple-red">
-                                        <i class="fas fa-times-circle mr-1"></i>Gagal
-                                    </span>
+                                @if($payment->payment_proof)
+                                <a href="{{ Storage::url($payment->payment_proof) }}" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:color-mix(in srgb,var(--apple-purple) 15%,transparent);color:var(--apple-purple);text-decoration:none;border:1px solid color-mix(in srgb,var(--apple-purple) 30%,transparent)" title="Bukti Bayar" onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1"><i class="fas fa-file-image" style="font-size:0.7rem"></i></a>
                                 @endif
-                            </td>
-                            <td class="px-4 py-2.5">
-                                <div class="text-sm text-dark-text-secondary">
-                                    {{ $payment->payment_date ? $payment->payment_date->locale('id')->isoFormat('D MMM Y') : 'N/A' }}
-                                </div>
-                            </td>
-                            <td class="px-4 py-2.5 text-center whitespace-nowrap">
-                                <div class="flex items-center justify-center space-x-1.5">
-                                    @if($payment->application)
-                                        <a href="{{ route('admin.permit-applications.show', $payment->application->id) }}"
-                                           class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple bg-apple-teal/20 text-apple-teal border border-apple-teal/30"
-                                           title="Lihat Permohonan">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    @endif
-                                    @if($payment->payment_proof)
-                                        <a href="{{ Storage::url($payment->payment_proof) }}" target="_blank"
-                                           class="inline-flex items-center px-2.5 py-1 rounded-apple text-xs font-semibold transition-apple bg-[rgba(175,82,222,0.2)] text-[#AF52DE] border border-[rgba(175,82,222,0.3)]"
-                                           title="Lihat Bukti">
-                                            <i class="fas fa-file-image"></i>
-                                        </a>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-16 text-center">
-                                <div class="flex flex-col items-center justify-center">
-                                    <i class="fas fa-money-check-alt text-4xl mb-6 text-dark-text-tertiary"></i>
-                                    <h3 class="text-base font-semibold mb-2 text-white">Belum Ada Pembayaran</h3>
-                                    <p class="mb-6 text-dark-text-secondary">
-                                        Transaksi pembayaran akan muncul di sini
-                                    </p>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="7" style="padding:48px;text-align:center">
+                            <i class="fas fa-money-check-alt" style="font-size:2rem;color:var(--dark-text-secondary);opacity:.4;display:block;margin-bottom:12px"></i>
+                            <p style="font-size:0.88rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 4px">Belum Ada Pembayaran</p>
+                            <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0">Transaksi pembayaran akan muncul di sini</p>
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -172,8 +132,9 @@
 
     {{-- Pagination --}}
     @if($payments->hasPages())
-        <div class="rounded-apple-lg px-4 py-3 bg-dark-bg-tertiary border border-white/20 shadow-soft">
-            {{ $payments->appends(['tab' => 'payments'])->links('pagination::tailwind') }}
-        </div>
+    <div style="padding:14px 20px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:12px">
+        <x-ui.pagination :paginator="$payments->appends(array_merge(request()->all(), ['tab'=>'payments']))" variant="full" :show-info="true" />
+    </div>
     @endif
+
 </div>

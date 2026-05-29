@@ -109,14 +109,13 @@
             <!-- Actions -->
             <div class="pt-2 flex flex-col gap-2">
                 @if($subscriber->status === 'active')
-                <form action="{{ route('admin.subscribers.update', $subscriber->id) }}" method="POST">
+                <form action="{{ route('admin.subscribers.update', $subscriber->id) }}" method="POST" x-data @submit.prevent="if(confirm('Nonaktifkan pelanggan ini?')) $el.submit()">
                     @csrf @method('PUT')
                     <input type="hidden" name="status" value="unsubscribed">
                     <input type="hidden" name="email" value="{{ $subscriber->email }}">
                     <button type="submit"
                         class="w-full px-4 py-2 rounded-apple-lg text-xs font-medium transition-colors"
-                        style="background: rgba(255,149,0,0.15); color: rgba(255,149,0,1);"
-                        onclick="return confirm('Nonaktifkan pelanggan ini?')">
+                        style="background: rgba(255,149,0,0.15); color: rgba(255,149,0,1);">
                         <i class="fas fa-user-slash mr-1"></i>Nonaktifkan
                     </button>
                 </form>
@@ -133,12 +132,11 @@
                 </form>
                 @endif
 
-                <form action="{{ route('admin.subscribers.destroy', $subscriber->id) }}" method="POST">
+                <form action="{{ route('admin.subscribers.destroy', $subscriber->id) }}" method="POST" x-data @submit.prevent="if(confirm('Hapus pelanggan ini secara permanen?')) $el.submit()">
                     @csrf @method('DELETE')
                     <button type="submit"
                         class="w-full px-4 py-2 rounded-apple-lg text-xs font-medium transition-colors"
-                        style="background: rgba(255,69,58,0.12); color: rgba(255,69,58,1);"
-                        onclick="return confirm('Hapus pelanggan ini secara permanen?')">
+                        style="background: rgba(255,69,58,0.12); color: rgba(255,69,58,1);">
                         <i class="fas fa-trash mr-1"></i>Hapus Pelanggan
                     </button>
                 </form>

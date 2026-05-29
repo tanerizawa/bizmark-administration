@@ -23,22 +23,12 @@ class FreeAIAnalysisService
     /**
      * ═══ TIERED MODEL CONFIGURATION ═══
      *
-     * FREE tier  (konsultasi-gratis, public landing page):
-     *   Cost-optimized models — good quality at minimal cost per request.
-     *   Primary: Gemini 2.5 Flash ($0.30/$2.50 per M tokens, 1M ctx, strong JSON reasoning)
-     *   Fallback: DeepSeek V3.2 ($0.25/$0.40 per M tokens, 164K ctx, ultra-cheap)
+     * Semua model dikonfigurasi melalui config/services.php dan .env
+     * Default: openrouter/free (gratis, tidak ada biaya per request)
      *
-     * PREMIUM tier (client portal, authenticated users):
-     *   Quality-optimized models — best reasoning accuracy for paying clients.
-     *   Primary: Claude 3.5 Sonnet (~$3/$15 per M tokens, 200K ctx, top-tier regulatory reasoning)
-     *   Fallback: Gemini 2.5 Flash ($0.30/$2.50 per M tokens, fallback still excellent)
-     *
-     * Pricing reference (OpenRouter, Feb 2026):
-     *   Model                          | Input/M  | Output/M | Context
-     *   google/gemini-2.5-flash         | $0.30    | $2.50    | 1,048,576
-     *   deepseek/deepseek-v3.2          | $0.25    | $0.40    |   163,840
-     *   anthropic/claude-3.5-sonnet     | $3.00    | $15.00   |   200,000
-     *   x-ai/grok-4-fast               | $0.20    | $0.50    | 2,000,000
+     * Environment variables:
+     *   OPENROUTER_FREE_PRIMARY_MODEL, OPENROUTER_FREE_FALLBACK_MODEL
+     *   OPENROUTER_PREMIUM_PRIMARY_MODEL, OPENROUTER_PREMIUM_FALLBACK_MODEL
      */
 
     // ── Tier configurations ──
@@ -52,7 +42,7 @@ class FreeAIAnalysisService
             'temperature' => 0.25,  // Slightly higher — cost models benefit from it
         ],
         self::TIER_PREMIUM => [
-            'max_tokens' => 4500,  // Higher token budget for richer detail
+            'max_tokens' => 6000,  // Increased for complete permit chain with prerequisites
             'temperature' => 0.15,  // Lower — premium models are more deterministic
         ],
     ];
@@ -66,15 +56,15 @@ class FreeAIAnalysisService
     {
         if ($tier === self::TIER_PREMIUM) {
             return [
-                'primary' => config('services.openrouter.premium_primary_model', 'anthropic/claude-3.5-sonnet'),
-                'fallback' => config('services.openrouter.premium_fallback_model', 'google/gemini-2.5-flash'),
+                'primary' => config('services.openrouter.premium_primary_model', 'openrouter/free'),
+                'fallback' => config('services.openrouter.premium_fallback_model', 'openrouter/free'),
             ];
         }
 
         // Free tier (default)
         return [
-            'primary' => config('services.openrouter.free_primary_model', 'google/gemini-2.5-flash'),
-            'fallback' => config('services.openrouter.free_fallback_model', 'deepseek/deepseek-v3.2'),
+            'primary' => config('services.openrouter.free_primary_model', 'openrouter/free'),
+            'fallback' => config('services.openrouter.free_fallback_model', 'openrouter/free'),
         ];
     }
 
@@ -467,20 +457,36 @@ TAHAP 1 — LEGALITAS DASAR (foundational):
 
 TAHAP 2 — TATA RUANG & LINGKUNGAN:
   4. KKPR/PKKPR (Kesesuaian Kegiatan Pemanfaatan Ruang) — jika butuh lahan/bangunan
-  5. Persetujuan Lingkungan: SPPL / UKL-UPL / AMDAL — sesuai tingkat risiko
-  6. Izin terkait lingkungan lanjutan: TPS-LB3, Izin Pengelolaan B3, dll.
+     → Jika lokasi belum memiliki RDTR: WAJIB Persetujuan KKPR via ATR/BPN (bukan hanya Konfirmasi)
+  5. Andalalin (Analisis Dampak Lalu Lintas) — wajib untuk bangunan komersial/industri/publik
+     yang bangkitkan/tarik perjalanan ≥ 100 kendaraan/jam atau luas > 500 m² (PP 96/2015 + Permenhub 75/2015)
+     → Diterbitkan oleh Dinas Perhubungan Daerah; prasyarat PBG untuk bangunan komersial besar
+  6. Persetujuan Lingkungan: SPPL / UKL-UPL / AMDAL — sesuai tingkat risiko
+  7. Persetujuan Teknis (Pertek) PPLH — untuk usaha dengan baku mutu air limbah/emisi (PP 22/2021)
+     → Wajib bagi usaha dengan kegiatan proses basah, pembakaran, atau produksi yang buang limbah cair/gas
+  8. Rintek LB3 (Rincian Teknis Penyimpanan LB3) — dokumen teknis wajib sebelum TPS-LB3 (PP 22/2021 Ps.285)
+     → Berlaku untuk usaha yang menghasilkan atau menangani Limbah B3
+  9. TPS-LB3 / Izin Pengelolaan Limbah B3 — setelah Rintek LB3
 
 TAHAP 3 — IZIN TEKNIS & BANGUNAN:
-  7. PBG (Persetujuan Bangunan Gedung) — jika ada bangunan baru/renovasi
-  8. SLF (Sertifikat Laik Fungsi) — setelah bangunan selesai sebelum operasional
+  10. Gambar Arsitektur / DED + Siteplan — dokumen teknis wajib sebelum PBG
+      → Bukan izin tapi prerequisite dokumen; disusun oleh arsitek berlisensi IAI
+  11. PBG (Persetujuan Bangunan Gedung) — jika ada bangunan baru/renovasi/perluasan (PP 16/2021)
+      → Prasyarat: KKPR/PKKPR, Persetujuan Lingkungan, Andalalin (jika wajib), Gambar Arsitektur
+  12. SLO Instalasi Listrik (Sertifikat Laik Operasi) — setelah bangunan selesai, sebelum SLF
+      → Diterbitkan oleh Lembaga Inspeksi Teknik (LIT) terakreditasi (Permen ESDM 12/2021)
+  13. SLF (Sertifikat Laik Fungsi) — setelah bangunan selesai dan SLO terbit, sebelum operasional
 
 TAHAP 4 — IZIN OPERASIONAL & STANDAR:
-  9. Sertifikat Standar / Izin Usaha — sesuai klasifikasi risiko KBLI
-  10. Izin operasional terkait (jika ada)
+  14. Sertifikat Standar / Izin Usaha — sesuai klasifikasi risiko KBLI
+  15. SMK3 / P2K3 (Sistem Manajemen K3) — wajib untuk perusahaan >100 karyawan atau risiko tinggi
+      → PP 50/2012 tentang SMK3; diterbitkan KEMNAKER; proses audit K3 internal + eksternal
+  16. Uji Lab / Sertifikasi SNI — wajib untuk produk pangan (MD/ML BPOM), industri (SNI wajib),
+      farmasi, kosmetik, alat kesehatan; sesuai NSPK K/L masing-masing
 
 TAHAP 5 — IZIN SEKTORAL KHUSUS:
-  11. Izin sektoral sesuai NSPK K/L (BPOM, Kemenkes, Kemen PUPR, dll.)
-  12. Izin daerah tambahan (jika ada regulasi lokal)
+  17. Izin sektoral sesuai NSPK K/L (BPOM, Kemenkes, Kemen PUPR, Kemenhub, dll.)
+  18. Izin daerah tambahan (Perda setempat, retribusi daerah, jika ada)
 
 ═══ INSTRUKSI ANALISIS ═══
 1. IDENTIFIKASI SEMUA IZIN — Jangan lewatkan izin pendukung, operasional, dan teknis
@@ -504,6 +510,7 @@ JSON Structure:
             "name": "Nama Izin Lengkap",
             "priority": "critical|high|medium",
             "category": "foundational|environmental|technical|operational|sectoral",
+            "phase": 1,
             "estimated_timeline": "X-Y hari kerja",
             "government_fee": {
                 "min": 0,
@@ -520,7 +527,8 @@ JSON Structure:
             "issuing_authority": "Instansi penerbit",
             "legal_basis": "Dasar hukum (UU/PP/Permen yang berlaku 2026)",
             "prerequisites": ["Nama izin yang HARUS dimiliki dulu — gunakan nama yang PERSIS SAMA"],
-            "triggers_next": ["Nama izin yang BISA diurus setelah ini selesai"]
+            "triggers_next": ["Nama izin yang BISA diurus setelah ini selesai"],
+            "documents_required": ["Dokumen spesifik yang wajib disiapkan untuk izin ini"]
         }
     ],
     "risk_classification": "rendah|menengah_rendah|menengah_tinggi|tinggi",
@@ -605,14 +613,15 @@ BIAYA GUIDELINES (per Februari 2026) — GUNAKAN DATA INI SEBAGAI ACUAN UTAMA:
 3. **Total = Biaya Pemerintah + Biaya Konsultan**
 
 CONTOH ALUR PERIZINAN 2026 (urutan wajib diikuti):
-- Real Estate (68111): NIB → NPWP → PKKPR → UKL-UPL/AMDAL → PBG → SLF → Sertifikat Standar (7+ izin)
-- Industri Limbah B3: NIB → NPWP → PKKPR → AMDAL → TPS-LB3 → Izin Pengelolaan B3 → PBG → SLF (8+ izin)
-- Restoran sederhana: NIB → NPWP → SPPL → Sertifikat Standar → PBG (5 izin)
+- Real Estate (68111): NIB → NPWP → PKKPR → Andalalin → UKL-UPL/AMDAL → Gambar Arsitektur → PBG → SLO → SLF → Sertifikat Standar (10+ izin)
+- Industri Limbah B3: NIB → NPWP → PKKPR → AMDAL → Pertek PPLH → Rintek LB3 → TPS-LB3 → Izin Pengelolaan B3 → Gambar Arsitektur → PBG → SLO → SLF → SMK3 (13+ izin)
+- Restoran (560100): NIB → NPWP → SPPL → Sertifikat Standar → Gambar Arsitektur → PBG → SLF (7 izin)
 - Perdagangan online: NIB → NPWP → Sertifikat Standar (3 izin)
-- Konstruksi: NIB → NPWP → SBU Konstruksi → PKKPR → UKL-UPL/AMDAL → PBG → SLF → Sertifikat Standar (8+ izin)
+- Konstruksi: NIB → NPWP → SBU Konstruksi → PKKPR → UKL-UPL/AMDAL → Andalalin → Gambar Arsitektur → PBG → SLO → SLF → SMK3 (11+ izin)
+- Pabrik/Industri menengah: NIB → NPWP → PKKPR → UKL-UPL → Pertek PPLH → Andalalin → Gambar Arsitektur → PBG → SLO → SLF → Sertifikat Standar → SMK3 → SNI/Uji Lab (13+ izin)
 
 RULES KETAT:
-1. Rekomendasikan 3-12 izin berdasarkan kompleksitas (3-5 untuk usaha sederhana, 6-12 untuk industri/konstruksi)
+1. Rekomendasikan 3-15 izin berdasarkan kompleksitas (3-5 untuk usaha sederhana/online, 7-15 untuk industri/konstruksi/real estate)
 2. Pisahkan biaya pemerintah dan biaya konsultan untuk SETIAP izin
 3. JANGAN rekomendasikan SIUP, TDP, IUI, IMB, HO, Izin Gangguan, Izin Lokasi lama
 4. NIB SELALU pertama, NPWP SELALU kedua
@@ -626,6 +635,11 @@ RULES KETAT:
 12. WAJIB isi prerequisites dan triggers_next (gunakan array kosong [] jika tidak ada)
 13. WAJIB isi risk_assessment dengan factors, mitigation, dan common_pitfalls
 14. WAJIB isi estimated_timeline dengan minimum_days, maximum_days, critical_path
+15. WAJIB isi phase (integer 1-5) sesuai tahap masing-masing izin
+16. WAJIB isi documents_required (array) untuk setiap izin — dokumen spesifik yang perlu disiapkan
+17. Andalalin WAJIB direkomendasikan untuk: bangunan komersial > 500m², restoran, hotel, pabrik, rumah sakit, pusat perbelanjaan
+18. SMK3 WAJIB untuk: perusahaan dengan >100 karyawan, atau sektor dengan risiko K3 tinggi (konstruksi, pertambangan, industri kimia, manufaktur)
+19. Rintek LB3 + TPS-LB3 WAJIB untuk: industri yang menghasilkan limbah B3 (oli bekas, bahan kimia, farmasi, cat, baterai, dll.)
 PROMPT;
     }
 

@@ -4,312 +4,314 @@
 @section('page-title', 'Manajemen Dokumen')
 
 @section('content')
-    {{-- Compact Hero Section --}}
-    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden mb-4">
-        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
-            <div class="w-32 h-32 bg-apple-green opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
-        </div>
-        <div class="relative space-y-3">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                <div class="space-y-1 max-w-3xl">
-                    <p class="admin-label-compact">Manajemen Dokumen</p>
-                    <h1 class="admin-hero-title">Arsip Digital Dokumen Perizinan</h1>
-                    <p class="admin-body text-dark-text-secondary">Simpan, kelola, dan akses semua dokumen perizinan secara terpusat dengan sistem keamanan terstruktur.</p>
-                </div>
-                <div>
-                    <a href="{{ route('documents.create') }}" class="admin-btn inline-flex items-center">
-                        <i class="fas fa-upload mr-1.5"></i>Upload Dokumen
-                    </a>
-                </div>
-            </div>
+<div style="display:flex;flex-direction:column;gap:16px">
 
-            {{-- Compact Stats Cards --}}
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                @php
-                    $totalDocs = $documents->total();
-                    $totalSize = $documents->sum('file_size');
-                    $perizinanCount = $documents->where('category', 'perizinan')->count();
-                    $confidentialCount = $documents->where('is_confidential', true)->count();
-                    $formattedSize = $totalSize >= 1073741824 ? 
-                        number_format($totalSize / 1073741824, 2) . ' GB' : 
-                        ($totalSize >= 1048576 ? 
-                            number_format($totalSize / 1048576, 2) . ' MB' : 
-                            number_format($totalSize / 1024, 2) . ' KB');
-                @endphp
-                <div class="admin-stat-card bg-apple-blue/12">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-blue/25">
-                            <i class="fas fa-file-alt text-xs text-apple-blue"></i>
-                        </div>
-                        <div>
-                            <p class="admin-stat text-white">{{ $totalDocs }}</p>
-                            <p class="admin-label-compact">Total Dokumen</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="admin-stat-card bg-apple-purple/12">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-purple/25">
-                            <i class="fas fa-hdd text-xs text-apple-purple"></i>
-                        </div>
-                        <div>
-                            <p class="admin-stat text-apple-purple">{{ $formattedSize }}</p>
-                            <p class="admin-label-compact">Total Ukuran</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="admin-stat-card bg-apple-orange/12">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-orange/25">
-                            <i class="fas fa-certificate text-xs text-apple-orange"></i>
-                        </div>
-                        <div>
-                            <p class="admin-stat text-apple-orange">{{ $perizinanCount }}</p>
-                            <p class="admin-label-compact">Perizinan</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="admin-stat-card bg-apple-red/12">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-red/25">
-                            <i class="fas fa-lock text-xs text-apple-red"></i>
-                        </div>
-                        <div>
-                            <p class="admin-stat text-apple-red">{{ $confidentialCount }}</p>
-                            <p class="admin-label-compact">Rahasia</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    {{-- KPI Cards --}}
+    @php
+    $totalDocs        = $documents->total();
+    $totalSize        = $documents->getCollection()->sum('file_size');
+    $perizinanCount   = $documents->getCollection()->whereIn('category', ['perizinan','sk'])->count();
+    $confidentialCount= $documents->getCollection()->where('is_confidential', true)->count();
+    $fmt = function($bytes) {
+        if ($bytes >= 1073741824) return number_format($bytes/1073741824,2).' GB';
+        if ($bytes >= 1048576)   return number_format($bytes/1048576,2).' MB';
+        return number_format($bytes/1024,2).' KB';
+    };
 
-    {{-- Compact Search and Filter --}}
-    <div class="card-elevated rounded-apple p-3 mb-3">
-        <form method="GET" action="{{ route('documents.index') }}" class="flex flex-wrap gap-2 items-end">
-            <div class="flex-1 min-w-[150px]">
-                <label class="admin-label-compact block">Cari</label>
-                <div class="relative">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Judul atau nama file..." 
-                           class="admin-input w-full pl-7 rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2 text-dark-text-tertiary text-[10px]"></i>
-                </div>
+    $statsData = [
+        ['label'=>'Total Dokumen',  'value'=>$totalDocs,                 'sub'=>'semua berkas',       'color'=>'var(--dark-text-primary)', 'bg'=>'transparent',          'icon'=>'fa-file-alt'],
+        ['label'=>'Total Ukuran',   'value'=>$fmt($totalSize),           'sub'=>'ruang penyimpanan',  'color'=>'var(--apple-purple)',      'bg'=>'var(--apple-purple)',   'icon'=>'fa-hdd'],
+        ['label'=>'Perizinan/SK',   'value'=>$perizinanCount,            'sub'=>'dokumen izin',       'color'=>'var(--apple-orange)',      'bg'=>'var(--apple-orange)',   'icon'=>'fa-certificate'],
+        ['label'=>'Rahasia',        'value'=>$confidentialCount,         'sub'=>'bersifat confidential','color'=>'var(--apple-red)',       'bg'=>'var(--apple-red)',      'icon'=>'fa-lock'],
+    ];
+    @endphp
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        @foreach($statsData as $s)
+        <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $s['bg'] }} 12%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,{{ $s['bg'] }} 25%,var(--dark-separator));border-radius:14px;padding:16px 18px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:10px;right:14px;font-size:1rem;opacity:.2;color:{{ $s['color'] }}">
+                <i class="fas {{ $s['icon'] }}"></i>
             </div>
-            <div class="w-28">
-                <label class="admin-label-compact block">Kategori</label>
-                <select name="category" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <option value="">Semua</option>
-                    @isset($categories)
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ ucfirst($cat) }}</option>
-                        @endforeach
-                    @endisset
-                </select>
-            </div>
-            <div class="w-28">
-                <label class="admin-label-compact block">Tipe</label>
-                <select name="document_type" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <option value="">Semua</option>
-                    @isset($documentTypes)
-                        @foreach($documentTypes as $type)
-                            <option value="{{ $type }}" {{ request('document_type') == $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
-                        @endforeach
-                    @endisset
-                </select>
-            </div>
-            <div class="w-36">
-                <label class="admin-label-compact block">Proyek</label>
-                <select name="project_id" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <option value="">Semua</option>
-                    @isset($projects)
-                        @foreach($projects as $project)
-                            <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>{{ $project->name }}</option>
-                        @endforeach
-                    @endisset
-                </select>
-            </div>
-        </form>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form[action="{{ route('documents.index') }}"]');
-            if (!form) return;
-            form.querySelectorAll('select[name]').forEach(el => el.addEventListener('change', () => form.submit()));
-            const searchInput = form.querySelector('input[name="search"]');
-            if (searchInput) searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); form.submit(); }});
-        });
-        </script>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ $s['color'] }};opacity:.8;margin:0">{{ $s['label'] }}</p>
+            <p style="font-size:2rem;font-weight:800;color:{{ $s['color'] }};margin:4px 0 2px;line-height:1">{{ $s['value'] }}</p>
+            <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0">{{ $s['sub'] }}</p>
+        </div>
+        @endforeach
     </div>
 
-    <!-- Documents Table -->
-    <div class="card-elevated rounded-apple-lg overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-                <thead class="bg-dark-bg-secondary">
-                    <tr>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Dokumen</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Kategori</th>
-                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tipe Berkas</th>
-                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Ukuran</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Proyek</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Info Unggahan</th>
-                        <th scope="col" class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Aksi</th>
+    {{-- Smart Search & Filter Toolbar --}}
+    @php
+        $activeFilters = collect([
+            'search'        => request('search'),
+            'category'      => request('category'),
+            'document_type' => request('document_type'),
+            'project_id'    => request('project_id'),
+        ])->filter()->count();
+    @endphp
+    <form method="GET" action="{{ route('documents.index') }}" id="docs-filter-form">
+        <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+
+            {{-- Search --}}
+            <div style="position:relative;flex:1;min-width:220px">
+                <i class="fas fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.72rem;color:var(--dark-text-tertiary);pointer-events:none;z-index:1"></i>
+                <input type="text" name="search" id="df-search" value="{{ request('search') }}"
+                       placeholder="Cari judul, nama file, deskripsi…"
+                       style="width:100%;padding:8px 36px 8px 34px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;line-height:1.4;outline:none;box-sizing:border-box;transition:border-color .18s"
+                       onfocus="this.style.borderColor='var(--apple-blue)'"
+                       onblur="this.style.borderColor='var(--dark-separator)'">
+                <button type="button" id="df-clear-search"
+                        style="display:{{ request('search') ? 'flex' : 'none' }};position:absolute;right:9px;top:50%;transform:translateY(-50%);width:18px;height:18px;align-items:center;justify-content:center;background:var(--dark-text-tertiary);border:none;border-radius:50%;cursor:pointer;padding:0;color:var(--dark-bg-primary);font-size:0.55rem"
+                        onclick="document.getElementById('df-search').value='';this.style.display='none';document.getElementById('docs-filter-form').submit()">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+
+            {{-- Separator --}}
+            <div style="width:1px;height:26px;background:var(--dark-separator);flex-shrink:0"></div>
+
+            {{-- Filter Pills --}}
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+
+                {{-- Kategori pill --}}
+                <div style="position:relative">
+                    <select name="category"
+                            style="padding:6px 28px 6px 10px;background:{{ request('category') ? 'color-mix(in srgb,var(--apple-orange) 18%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};border:1px solid {{ request('category') ? 'color-mix(in srgb,var(--apple-orange) 45%,var(--dark-separator))' : 'var(--dark-separator)' }};border-radius:20px;color:{{ request('category') ? 'var(--apple-orange)' : 'var(--dark-text-secondary)' }};font-size:0.75rem;font-weight:{{ request('category') ? '600' : '500' }};outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;white-space:nowrap;transition:all .18s">
+                        <option value="">Kategori</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat }}" {{ request('category')==$cat ? 'selected':'' }}>{{ ucfirst($cat) }}</option>
+                        @endforeach
+                    </select>
+                    <i class="fas fa-chevron-down" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:0.5rem;color:{{ request('category') ? 'var(--apple-orange)' : 'var(--dark-text-tertiary)' }};pointer-events:none"></i>
+                </div>
+
+                {{-- Tipe pill --}}
+                <div style="position:relative">
+                    <select name="document_type"
+                            style="padding:6px 28px 6px 10px;background:{{ request('document_type') ? 'color-mix(in srgb,var(--apple-teal) 18%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};border:1px solid {{ request('document_type') ? 'color-mix(in srgb,var(--apple-teal) 45%,var(--dark-separator))' : 'var(--dark-separator)' }};border-radius:20px;color:{{ request('document_type') ? 'var(--apple-teal)' : 'var(--dark-text-secondary)' }};font-size:0.75rem;font-weight:{{ request('document_type') ? '600' : '500' }};outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;white-space:nowrap;transition:all .18s">
+                        <option value="">Tipe</option>
+                        @foreach($documentTypes as $type)
+                            <option value="{{ $type }}" {{ request('document_type')==$type ? 'selected':'' }}>{{ ucfirst($type) }}</option>
+                        @endforeach
+                    </select>
+                    <i class="fas fa-chevron-down" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:0.5rem;color:{{ request('document_type') ? 'var(--apple-teal)' : 'var(--dark-text-tertiary)' }};pointer-events:none"></i>
+                </div>
+
+                {{-- Proyek pill --}}
+                <div style="position:relative">
+                    <select name="project_id"
+                            style="padding:6px 28px 6px 10px;background:{{ request('project_id') ? 'color-mix(in srgb,var(--apple-purple) 18%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};border:1px solid {{ request('project_id') ? 'color-mix(in srgb,var(--apple-purple) 45%,var(--dark-separator))' : 'var(--dark-separator)' }};border-radius:20px;color:{{ request('project_id') ? 'var(--apple-purple)' : 'var(--dark-text-secondary)' }};font-size:0.75rem;font-weight:{{ request('project_id') ? '600' : '500' }};outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;white-space:nowrap;transition:all .18s">
+                        <option value="">Proyek</option>
+                        @foreach($projects as $project)
+                            <option value="{{ $project->id }}" {{ request('project_id')==$project->id ? 'selected':'' }}>{{ $project->name }}</option>
+                        @endforeach
+                    </select>
+                    <i class="fas fa-chevron-down" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:0.5rem;color:{{ request('project_id') ? 'var(--apple-purple)' : 'var(--dark-text-tertiary)' }};pointer-events:none"></i>
+                </div>
+
+                {{-- Active filter badge + reset --}}
+                @if($activeFilters > 0)
+                <a href="{{ route('documents.index') }}"
+                   style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:color-mix(in srgb,var(--apple-red) 14%,var(--dark-bg-tertiary));border:1px solid color-mix(in srgb,var(--apple-red) 30%,var(--dark-separator));border-radius:20px;font-size:0.72rem;font-weight:600;color:var(--apple-red);text-decoration:none;white-space:nowrap;transition:opacity .18s"
+                   onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                    <i class="fas fa-xmark"></i>Reset
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--apple-red);color:#fff;border-radius:50%;font-size:0.6rem;font-weight:700">{{ $activeFilters }}</span>
+                </a>
+                @endif
+            </div>
+        </div>
+    </form>
+
+    {{-- Table Card --}}
+    <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:16px;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dark-separator)">
+            <div>
+                <p style="font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Data</p>
+                <h3 style="font-size:0.95rem;font-weight:700;color:var(--dark-text-primary);margin:3px 0 0">Daftar Dokumen</h3>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+                @php $isEmptyDocs = ($documents instanceof \Illuminate\Pagination\LengthAwarePaginator ? $documents->total() : $documents->count()) === 0; @endphp
+                <span style="font-size:0.75rem;color:var(--dark-text-secondary)">
+                    @if($documents instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        @if($documents->total() === 0)
+                            0 dokumen
+                        @else
+                            {{ $documents->firstItem() }}–{{ $documents->lastItem() }} dari {{ $documents->total() }}
+                        @endif
+                    @endif
+                </span>
+                @unless($isEmptyDocs)
+                <a href="{{ route('documents.create') }}"
+                   style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:0.78rem;font-weight:600;background:var(--apple-blue);color:#fff;border-radius:8px;text-decoration:none"
+                   onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                    <i class="fas fa-upload"></i>Upload Dokumen
+                </a>
+                @endunless
+            </div>
+        </div>
+
+        <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse">
+                <thead>
+                    <tr style="background:var(--dark-bg-tertiary)">
+                        <th style="padding:10px 16px;text-align:left;font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85)">Dokumen</th>
+                        <th style="padding:10px 16px;text-align:left;font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85)">Kategori</th>
+                        <th style="padding:10px 16px;text-align:center;font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85)">Tipe</th>
+                        <th style="padding:10px 16px;text-align:center;font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85)">Ukuran</th>
+                        <th style="padding:10px 16px;text-align:left;font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85)">Proyek</th>
+                        <th style="padding:10px 16px;text-align:left;font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85)">Diunggah</th>
+                        <th style="padding:10px 16px;text-align:right;font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(235,235,245,0.85)">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
-                    @forelse($documents as $document)
+                <tbody>
+                    @forelse($documents as $i => $document)
                         @php
-                            // File type icon configuration
-                            $extension = strtolower(pathinfo($document->file_name, PATHINFO_EXTENSION));
-                            $fileTypeConfig = [
-                                'pdf' => ['icon' => 'fa-file-pdf', 'bgCls' => 'bg-apple-red/15', 'iconCls' => 'text-apple-red'],
-                                'doc' => ['icon' => 'fa-file-word', 'bgCls' => 'bg-apple-blue/15', 'iconCls' => 'text-apple-blue'],
-                                'docx' => ['icon' => 'fa-file-word', 'bgCls' => 'bg-apple-blue/15', 'iconCls' => 'text-apple-blue'],
-                                'xls' => ['icon' => 'fa-file-excel', 'bgCls' => 'bg-apple-green/15', 'iconCls' => 'text-apple-green'],
-                                'xlsx' => ['icon' => 'fa-file-excel', 'bgCls' => 'bg-apple-green/15', 'iconCls' => 'text-apple-green'],
-                                'jpg' => ['icon' => 'fa-file-image', 'bgCls' => 'bg-apple-purple/15', 'iconCls' => 'text-apple-purple'],
-                                'jpeg' => ['icon' => 'fa-file-image', 'bgCls' => 'bg-apple-purple/15', 'iconCls' => 'text-apple-purple'],
-                                'png' => ['icon' => 'fa-file-image', 'bgCls' => 'bg-apple-purple/15', 'iconCls' => 'text-apple-purple'],
-                                'zip' => ['icon' => 'fa-file-archive', 'bgCls' => 'bg-apple-orange/15', 'iconCls' => 'text-apple-orange'],
-                                'rar' => ['icon' => 'fa-file-archive', 'bgCls' => 'bg-apple-orange/15', 'iconCls' => 'text-apple-orange'],
+                            $ext = strtolower(pathinfo($document->file_name, PATHINFO_EXTENSION));
+                            $ftMap = [
+                                'pdf'  => ['fa-file-pdf',     'var(--apple-red)'],
+                                'doc'  => ['fa-file-word',    'var(--apple-blue)'],
+                                'docx' => ['fa-file-word',    'var(--apple-blue)'],
+                                'xls'  => ['fa-file-excel',   'var(--apple-green)'],
+                                'xlsx' => ['fa-file-excel',   'var(--apple-green)'],
+                                'jpg'  => ['fa-file-image',   'var(--apple-purple)'],
+                                'jpeg' => ['fa-file-image',   'var(--apple-purple)'],
+                                'png'  => ['fa-file-image',   'var(--apple-purple)'],
+                                'zip'  => ['fa-file-archive', 'var(--apple-orange)'],
+                                'rar'  => ['fa-file-archive', 'var(--apple-orange)'],
                             ];
-                            $fileType = $fileTypeConfig[$extension] ?? ['icon' => 'fa-file-alt', 'bgCls' => 'bg-dark-text-tertiary/15', 'iconCls' => 'text-dark-text-tertiary'];
+                            [$ftIcon,$ftColor] = $ftMap[$ext] ?? ['fa-file-alt','var(--dark-text-tertiary)'];
 
-                            // Category configuration
-                            $categoryConfig = [
-                                'perizinan' => ['icon' => 'fa-file-contract', 'bgCls' => 'bg-apple-orange/15', 'iconCls' => 'text-apple-orange'],
-                                'kontrak' => ['icon' => 'fa-file-signature', 'bgCls' => 'bg-apple-purple/15', 'iconCls' => 'text-apple-purple'],
-                                'laporan' => ['icon' => 'fa-file-chart-line', 'bgCls' => 'bg-apple-green/15', 'iconCls' => 'text-apple-green'],
-                                'teknis' => ['icon' => 'fa-file-code', 'bgCls' => 'bg-apple-blue/15', 'iconCls' => 'text-apple-blue'],
+                            $catMap = [
+                                'perizinan' => ['fa-file-contract',  'var(--apple-orange)'],
+                                'sk'        => ['fa-certificate',    'var(--apple-orange)'],
+                                'kontrak'   => ['fa-file-signature', 'var(--apple-purple)'],
+                                'laporan'   => ['fa-chart-bar',      'var(--apple-green)'],
+                                'teknis'    => ['fa-file-code',      'var(--apple-blue)'],
+                                'proposal'  => ['fa-file-alt',       'var(--apple-teal)'],
+                                'surat'     => ['fa-envelope',       'var(--apple-indigo)'],
                             ];
-                            $category = $categoryConfig[$document->category] ?? ['icon' => 'fa-folder', 'bgCls' => 'bg-dark-text-tertiary/15', 'iconCls' => 'text-dark-text-tertiary'];
+                            [$catIcon,$catColor] = $catMap[$document->category] ?? ['fa-folder','var(--dark-text-secondary)'];
 
-                            // Format file size
-                            $fileSize = $document->file_size;
-                            $formattedFileSize = $fileSize >= 1048576 ? 
-                                number_format($fileSize / 1048576, 2) . ' MB' : 
-                                number_format($fileSize / 1024, 2) . ' KB';
+                            $fs = $document->file_size ?? 0;
+                            $fmtSize = $fs >= 1048576 ? number_format($fs/1048576,2).' MB' : number_format($fs/1024,2).' KB';
+                            $rowBg = $i % 2 === 1 ? 'rgba(255,255,255,0.02)' : 'transparent';
                         @endphp
+                        <tr style="border-top:1px solid var(--dark-separator);background:{{ $rowBg }};cursor:pointer;transition:background .15s"
+                            onmouseover="this.style.background='rgba(255,255,255,0.04)'"
+                            onmouseout="this.style.background='{{ $rowBg }}'"
+                            onclick="window.location='{{ route('documents.show', $document) }}'">
 
-                        <tr class="hover-lift transition-apple cursor-pointer" onclick="window.location='{{ route('documents.show', $document) }}'">
-                            <!-- Dokumen Info -->
-                            <td class="px-4 py-3">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 {{ $fileType['bgCls'] }}">
-                                        <i class="fas {{ $fileType['icon'] }} text-lg {{ $fileType['iconCls'] }}"></i>
+                            <td style="padding:12px 16px">
+                                <div style="display:flex;align-items:center;gap:10px">
+                                    <div style="width:38px;height:38px;border-radius:10px;background:color-mix(in srgb,{{ $ftColor }} 14%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                        <i class="fas {{ $ftIcon }}" style="font-size:1rem;color:{{ $ftColor }}"></i>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center">
-                                            <div class="font-semibold text-sm text-dark-text-primary truncate">
-                                                {{ $document->title }}
-                                            </div>
+                                    <div style="min-width:0">
+                                        <div style="display:flex;align-items:center;gap:6px">
+                                            <span style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">{{ $document->title }}</span>
                                             @if($document->is_confidential)
-                                                <i class="fas fa-lock text-xs ml-2 text-apple-red" title="Rahasia"></i>
+                                                <i class="fas fa-lock" style="font-size:0.65rem;color:var(--apple-red);flex-shrink:0" title="Rahasia"></i>
                                             @endif
-                                            @if($document->version > 1)
-                                                <span class="text-xs ml-2 px-2 py-0.5 rounded-full bg-apple-blue/15 text-apple-blue">
-                                                    v{{ $document->version }}
-                                                </span>
+                                            @if(($document->version ?? 1) > 1)
+                                                <span style="font-size:0.65rem;font-weight:600;padding:1px 6px;border-radius:20px;background:color-mix(in srgb,var(--apple-blue) 14%,transparent);color:var(--apple-blue);flex-shrink:0">v{{ $document->version }}</span>
                                             @endif
                                         </div>
-                                        <div class="text-xs text-dark-text-secondary mt-0.5 truncate">
-                                            {{ $document->file_name }}
-                                        </div>
-                                        @if($document->download_count > 0)
-                                            <div class="text-xs text-dark-text-secondary mt-0.5">
-                                                <i class="fas fa-download mr-1"></i>{{ $document->download_count }} unduhan
-                                            </div>
+                                        <span style="display:block;font-size:0.7rem;color:var(--dark-text-secondary);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px">{{ $document->file_name }}</span>
+                                        @if(($document->download_count ?? 0) > 0)
+                                            <span style="display:block;font-size:0.68rem;color:var(--dark-text-tertiary);margin-top:1px"><i class="fas fa-download" style="margin-right:3px"></i>{{ $document->download_count }} unduhan</span>
                                         @endif
                                     </div>
                                 </div>
                             </td>
 
-                            <!-- Kategori -->
-                            <td class="px-4 py-3 whitespace-nowrap">
+                            <td style="padding:12px 16px;white-space:nowrap">
                                 @if($document->category)
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $category['bgCls'] }} {{ $category['iconCls'] }}">
-                                        <i class="fas {{ $category['icon'] }} mr-1.5"></i>
-                                        {{ ucfirst($document->category) }}
+                                    <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;background:color-mix(in srgb,{{ $catColor }} 14%,transparent);color:{{ $catColor }}">
+                                        <i class="fas {{ $catIcon }}" style="font-size:0.65rem"></i>{{ ucfirst($document->category) }}
                                     </span>
                                 @else
-                                    <span class="text-sm text-dark-text-secondary">-</span>
+                                    <span style="font-size:0.8rem;color:var(--dark-text-secondary)">—</span>
                                 @endif
                             </td>
 
-                            <!-- Tipe File -->
-                            <td class="px-4 py-3 text-center whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $fileType['bgCls'] }} {{ $fileType['iconCls'] }}">
-                                    {{ strtoupper($extension) }}
-                                </span>
+                            <td style="padding:12px 16px;text-align:center;white-space:nowrap">
+                                <span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:0.68rem;font-weight:700;letter-spacing:.05em;background:color-mix(in srgb,{{ $ftColor }} 14%,transparent);color:{{ $ftColor }}">{{ strtoupper($ext) }}</span>
                             </td>
 
-                            <!-- Ukuran -->
-                            <td class="px-4 py-3 text-center whitespace-nowrap">
-                                <span class="text-sm text-dark-text-primary">{{ $formattedFileSize }}</span>
+                            <td style="padding:12px 16px;text-align:center;white-space:nowrap">
+                                <span style="font-size:0.8rem;color:var(--dark-text-primary)">{{ $fmtSize }}</span>
                             </td>
 
-                            <!-- Proyek -->
-                            <td class="px-4 py-3">
+                            <td style="padding:12px 16px">
                                 @if($document->project)
-                                    <a href="{{ route('projects.show', $document->project) }}" 
+                                    <a href="{{ route('projects.show', $document->project) }}"
                                        onclick="event.stopPropagation()"
-                                       class="text-sm hover:underline text-apple-blue">
-                                        {{ Str::limit($document->project->name, 30) }}
+                                       style="font-size:0.8rem;color:var(--apple-blue);text-decoration:none"
+                                       onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1">
+                                        {{ Str::limit($document->project->name, 28) }}
                                     </a>
                                 @else
-                                    <span class="text-sm text-dark-text-secondary">-</span>
+                                    <span style="font-size:0.8rem;color:var(--dark-text-secondary)">—</span>
                                 @endif
                             </td>
 
-                            <!-- Upload Info -->
-                            <td class="px-4 py-3">
-                                <div class="text-sm">
-                                    @if($document->uploader)
-                                        <div class="flex items-center mb-1">
-                                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold mr-2 bg-apple-blue/15 text-apple-blue">
-                                                {{ strtoupper(substr($document->uploader->name, 0, 1)) }}
-                                            </div>
-                                            <span class="text-dark-text-primary">{{ $document->uploader->name }}</span>
-                                        </div>
-                                    @endif
-                                    <div class="text-xs text-dark-text-secondary">
-                                        {{ $document->created_at->format('d M Y') }}
-                                        <span class="mx-1">•</span>
-                                        {{ $document->created_at->diffForHumans() }}
+                            <td style="padding:12px 16px">
+                                @if($document->uploader)
+                                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+                                        <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:color-mix(in srgb,var(--apple-blue) 15%,transparent);color:var(--apple-blue);font-size:0.6rem;font-weight:700;flex-shrink:0">{{ strtoupper(substr($document->uploader->name,0,1)) }}</span>
+                                        <span style="font-size:0.78rem;color:var(--dark-text-primary)">{{ $document->uploader->name }}</span>
                                     </div>
-                                </div>
+                                @endif
+                                <span style="font-size:0.7rem;color:var(--dark-text-secondary)">{{ $document->created_at->format('d M Y') }}</span>
+                                <span style="font-size:0.68rem;color:var(--dark-text-tertiary);display:block">{{ $document->created_at->diffForHumans() }}</span>
                             </td>
 
-                            <!-- Aksi -->
-                            <td class="px-4 py-3">
-                                <div class="flex items-center justify-center space-x-2" onclick="event.stopPropagation();">
-                                    <a href="{{ Storage::url($document->file_path) }}" 
-                                       download
-                                       class="p-2 rounded-apple transition-apple text-apple-green bg-apple-green/10 border border-apple-green/30 hover:bg-apple-green hover:text-white"
-                                       title="Unduh">
-                                        <i class="fas fa-download text-sm"></i>
+                            <td style="padding:12px 16px;text-align:right;white-space:nowrap" onclick="event.stopPropagation()">
+                                <div style="display:inline-flex;align-items:center;gap:6px">
+                                    <a href="{{ Storage::url($document->file_path) }}" download
+                                       style="display:inline-flex;align-items:center;padding:5px 10px;font-size:0.72rem;font-weight:600;color:var(--apple-green);text-decoration:none;background:color-mix(in srgb,var(--apple-green) 12%,transparent);border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-green) 25%,transparent)"
+                                       title="Unduh"
+                                       onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                                        <i class="fas fa-download"></i>
                                     </a>
-                                    <a href="{{ route('documents.show', $document) }}" 
-                                       class="p-2 rounded-apple transition-apple text-apple-blue bg-apple-blue/10 border border-apple-blue/30 hover:bg-apple-blue hover:text-white"
-                                       title="Lihat">
-                                        <i class="fas fa-eye text-sm"></i>
+                                    <a href="{{ route('documents.show', $document) }}"
+                                       style="display:inline-flex;align-items:center;padding:5px 10px;font-size:0.72rem;font-weight:600;color:var(--apple-blue);text-decoration:none;background:color-mix(in srgb,var(--apple-blue) 12%,transparent);border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-blue) 25%,transparent)"
+                                       title="Lihat"
+                                       onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                                        <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('documents.edit', $document) }}" 
-                                       class="p-2 rounded-apple transition-apple text-apple-orange bg-apple-orange/10 border border-apple-orange/30 hover:bg-apple-orange hover:text-white"
-                                       title="Ubah">
-                                        <i class="fas fa-edit text-sm"></i>
+                                    <a href="{{ route('documents.edit', $document) }}"
+                                       style="display:inline-flex;align-items:center;padding:5px 10px;font-size:0.72rem;font-weight:600;color:var(--apple-orange);text-decoration:none;background:color-mix(in srgb,var(--apple-orange) 12%,transparent);border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-orange) 25%,transparent)"
+                                       title="Ubah"
+                                       onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                                        <i class="fas fa-pencil"></i>
                                     </a>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-8 text-center">
-                                <div class="flex flex-col items-center justify-center text-dark-text-secondary">
-                                    <i class="fas fa-inbox text-4xl mb-3"></i>
-                                    <p class="text-sm font-medium">Tidak ada dokumen ditemukan</p>
-                                    <p class="text-xs mt-1">Coba ubah filter atau upload dokumen baru</p>
+                            <td colspan="7" style="padding:48px 20px;text-align:center">
+                                <div style="width:52px;height:52px;border-radius:14px;background:color-mix(in srgb,var(--dark-text-secondary) 10%,var(--dark-bg-tertiary));display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">
+                                    <i class="fas fa-folder-open" style="font-size:1.4rem;color:var(--dark-text-tertiary)"></i>
                                 </div>
+                                <p style="font-size:0.9rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 6px">
+                                    @if($activeFilters > 0) Tidak Ada Hasil @else Belum Ada Dokumen @endif
+                                </p>
+                                <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0 0 18px">
+                                    @if($activeFilters > 0) Coba ubah atau reset filter pencarian @else Upload dokumen pertama untuk memulai @endif
+                                </p>
+                                @if($activeFilters > 0)
+                                <a href="{{ route('documents.index') }}"
+                                   style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;font-size:0.78rem;font-weight:600;background:var(--dark-bg-tertiary);color:var(--dark-text-primary);border:1px solid var(--dark-separator);border-radius:8px;text-decoration:none"
+                                   onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                                    <i class="fas fa-xmark"></i>Reset Filter
+                                </a>
+                                @else
+                                <a href="{{ route('documents.create') }}"
+                                   style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;font-size:0.8rem;font-weight:600;background:var(--apple-blue);color:#fff;border-radius:8px;text-decoration:none"
+                                   onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                                    <i class="fas fa-upload"></i>Upload Dokumen
+                                </a>
+                                @endif
                             </td>
                         </tr>
                     @endforelse
@@ -317,11 +319,34 @@
             </table>
         </div>
 
-        <!-- Pagination -->
-        @if($documents->hasPages())
-            <div class="px-4 py-3 border-t border-white/10 bg-dark-bg-secondary">
-                {{ $documents->links() }}
+        @if($documents instanceof \Illuminate\Pagination\LengthAwarePaginator && $documents->hasPages())
+            <div style="padding:14px 20px;border-top:1px solid var(--dark-separator)">
+                <x-ui.pagination :paginator="$documents->appends(request()->all())" variant="full" :show-info="true" />
             </div>
         @endif
     </div>
+
+</div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('docs-filter-form');
+    if (!form) return;
+
+    // Auto-submit on select change
+    form.querySelectorAll('select').forEach(el => el.addEventListener('change', () => form.submit()));
+
+    // Submit on Enter, show/hide clear button
+    const searchInput = form.querySelector('#df-search');
+    const clearBtn    = form.querySelector('#df-clear-search');
+    if (searchInput) {
+        searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); form.submit(); } });
+        searchInput.addEventListener('input', () => {
+            if (clearBtn) clearBtn.style.display = searchInput.value ? 'flex' : 'none';
+        });
+    }
+});
+</script>
+@endpush

@@ -1,4 +1,5 @@
 # Dokumentasi Teknis Bizmark.ID
+> **Last Updated:** 2026-05-03 | Stack: Laravel 11 · Tailwind CSS v4 · Alpine.js v3.15.1 · FA v7.1.0 · Chart.js v4.4
 
 Indeks ringkas untuk navigasi dokumen refactor, sprint, dan panduan operasional.
 

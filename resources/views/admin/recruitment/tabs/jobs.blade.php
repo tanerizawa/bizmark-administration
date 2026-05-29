@@ -1,170 +1,162 @@
 @php
     $statusMeta = [
-        'open' => ['label' => 'Aktif', 'bg' => 'rgba(52,199,89,0.15)', 'text' => 'rgba(52,199,89,1)'],
-        'draft' => ['label' => 'Draft', 'bg' => 'rgba(255,214,10,0.15)', 'text' => 'rgba(255,214,10,1)'],
-        'closed' => ['label' => 'Ditutup', 'bg' => 'rgba(255,69,58,0.15)', 'text' => 'rgba(255,69,58,1)'],
+        'open'   => ['label' => 'Aktif',    'color' => 'var(--apple-green)'],
+        'draft'  => ['label' => 'Draft',    'color' => 'var(--apple-yellow)'],
+        'closed' => ['label' => 'Ditutup',  'color' => 'var(--apple-red)'],
     ];
-    
     $employmentOptions = $jobs->pluck('employment_type')->filter()->unique()->values();
-    $locationOptions = $jobs->pluck('location')->filter()->unique()->values();
+    $locationOptions   = $jobs->pluck('location')->filter()->unique()->values();
 @endphp
 
-{{-- Stats --}}
-<section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-    <div class="card-elevated rounded-apple-lg p-4">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(52,199,89,0.9);">Lowongan Aktif</p>
-        <p class="text-xl font-bold text-white">{{ number_format($activeCount ?? 0) }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Sedang tayang untuk publik</p>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-4">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(255,214,10,0.9);">Draft</p>
-        <p class="text-xl font-bold text-white">{{ number_format($draftCount ?? 0) }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Belum dipublikasikan</p>
-    </div>
-    <div class="card-elevated rounded-apple-lg p-4">
-        <p class="text-xs uppercase tracking-widest" style="color: rgba(255,69,58,0.9);">Ditutup</p>
-        <p class="text-xl font-bold text-white">{{ number_format($closedCount ?? 0) }}</p>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">Lowongan selesai</p>
-    </div>
-</section>
+<div style="display:flex;flex-direction:column;gap:16px">
 
-{{-- Filters --}}
-<section class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-4 mb-5">
-    <div class="flex items-center justify-between flex-wrap gap-3">
-        <div>
-            <p class="text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.5);">Filter</p>
-            <h2 class="text-sm font-semibold text-white">Susun Daftar Lowongan</h2>
+    {{-- Stats Strip --}}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        @php $statsJ = [
+            ['label'=>'Lowongan Aktif', 'value'=>$activeCount ?? 0,  'sub'=>'Sedang tayang untuk publik',  'color'=>'var(--apple-green)',  'bg'=>'var(--apple-green)'],
+            ['label'=>'Draft',          'value'=>$draftCount ?? 0,   'sub'=>'Belum dipublikasikan',        'color'=>'var(--apple-yellow)', 'bg'=>'var(--apple-yellow)'],
+            ['label'=>'Ditutup',        'value'=>$closedCount ?? 0,  'sub'=>'Lowongan selesai',            'color'=>'var(--apple-red)',    'bg'=>'var(--apple-red)'],
+        ]; @endphp
+        @foreach($statsJ as $s)
+        <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $s['bg'] }} 12%,var(--dark-bg-tertiary)) 0%,var(--dark-bg-tertiary) 100%);border:1px solid color-mix(in srgb,{{ $s['bg'] }} 25%,var(--dark-separator));border-radius:14px;padding:16px 18px">
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ $s['color'] }};opacity:.85;margin:0">{{ $s['label'] }}</p>
+            <p style="font-size:1.8rem;font-weight:800;color:{{ $s['color'] }};margin:4px 0 2px;line-height:1">{{ $s['value'] }}</p>
+            <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0">{{ $s['sub'] }}</p>
         </div>
-        <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $jobs->total() }} hasil ditemukan</p>
+        @endforeach
     </div>
-    <form method="GET" action="{{ route('admin.recruitment.index') }}">
-        <input type="hidden" name="tab" value="jobs">
-        <div class="flex flex-col gap-3 md:flex-row md:items-end">
-            <div class="flex-1">
-                <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Pencarian</label>
-                <div class="flex">
-                    <span class="inline-flex items-center px-3 rounded-l-apple" style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-right: none; color: rgba(235,235,245,0.6);">
-                        <i class="fas fa-search"></i>
-                    </span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Judul, posisi, lokasi"
-                           class="w-full px-4 py-2.5 rounded-r-apple text-sm text-white placeholder-gray-500"
-                           style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35); border-left: none;">
+
+    {{-- Filter --}}
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:16px 20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div>
+                <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Pencarian & Filter</p>
+                <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:3px 0 0">Susun Daftar Lowongan</h3>
+            </div>
+            <span style="font-size:0.75rem;color:var(--dark-text-secondary)">{{ $jobs->total() }} hasil</span>
+        </div>
+        <form method="GET" action="{{ route('admin.recruitment.index') }}">
+            <input type="hidden" name="tab" value="jobs">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:flex-end">
+                <div style="position:relative">
+                    <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.75rem;pointer-events:none"></i>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Judul, posisi, lokasi..."
+                           style="width:100%;padding:9px 12px 9px 32px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box"
+                           onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                </div>
+                <div style="position:relative">
+                    <select name="status"
+                            style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none"
+                            onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                        <option value="">Semua Status</option>
+                        @foreach($jobStatuses ?? [] as $status)
+                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>{{ $statusMeta[$status]['label'] ?? ucfirst($status) }}</option>
+                        @endforeach
+                    </select>
+                    <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
+                </div>
+                <div style="position:relative">
+                    <select name="employment_type"
+                            style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none"
+                            onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                        <option value="">Semua Tipe</option>
+                        @foreach($employmentTypes ?? [] as $type)
+                        <option value="{{ $type }}" {{ request('employment_type') == $type ? 'selected' : '' }}>{{ ucfirst(str_replace('-',' ',$type)) }}</option>
+                        @endforeach
+                    </select>
+                    <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
+                </div>
+                <div style="display:flex;gap:6px">
+                    <button type="submit" style="padding:9px 18px;background:var(--apple-blue);color:#fff;border:none;border-radius:10px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:opacity .2s;white-space:nowrap" onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                        <i class="fas fa-search" style="margin-right:5px"></i>Filter
+                    </button>
+                    @if(request()->hasAny(['search','status','employment_type']))
+                    <a href="{{ route('admin.recruitment.index', ['tab' => 'jobs']) }}" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-secondary);text-decoration:none" title="Reset">
+                        <i class="fas fa-times" style="font-size:0.75rem"></i>
+                    </a>
+                    @endif
                 </div>
             </div>
-            <div class="flex-1">
-                <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Status</label>
-                <select name="status" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
-                        style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                    <option value="">Semua Status</option>
-                    @foreach($jobStatuses ?? [] as $status)
-                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                            {{ ucfirst($statusMeta[$status]['label'] ?? $status) }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="flex-1">
-                <label class="text-xs uppercase tracking-widest mb-2 block" style="color: rgba(235,235,245,0.6);">Tipe Kerja</label>
-                <select name="employment_type" class="w-full px-4 py-2.5 rounded-apple text-sm text-white"
-                        style="background: rgba(28,28,30,0.6); border: 1px solid rgba(84,84,88,0.35);">
-                    <option value="">Semua Tipe</option>
-                    @foreach($employmentTypes ?? [] as $type)
-                        <option value="{{ $type }}" {{ request('employment_type') == $type ? 'selected' : '' }}>
-                            {{ ucfirst(str_replace('-', ' ', $type)) }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="flex gap-3">
-                <button type="submit" class="btn-primary-sm">
-                    <i class="fas fa-search mr-2"></i>Terapkan
-                </button>
-                <a href="{{ route('admin.recruitment.index', ['tab' => 'jobs']) }}" class="btn-secondary-sm text-center">
-                    Reset
-                </a>
-            </div>
-        </div>
-    </form>
-</section>
+        </form>
+    </div>
 
-{{-- Job list --}}
-<section class="card-elevated rounded-apple-xl overflow-hidden">
-    @if($jobs->count() > 0)
-        <div class="overflow-x-auto">
-            <table class="min-w-full">
-                <thead style="background: rgba(28,28,30,0.45);">
+    {{-- Table --}}
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+        <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse">
+                <thead style="background:var(--dark-bg-secondary)">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Posisi</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Tipe</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Lokasi</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Status</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Deadline</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Pelamar</th>
-                        <th class="px-6 py-4 text-left text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Dibuat</th>
-                        <th class="px-6 py-4 text-right text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Aksi</th>
+                        @foreach(['Posisi','Tipe','Lokasi','Status','Deadline','Pelamar','Dibuat','Aksi'] as $col)
+                        <th style="padding:10px 14px;font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);text-align:{{ $col === 'Aksi' ? 'right' : 'left' }};border-bottom:1px solid var(--dark-separator);white-space:nowrap">{{ $col }}</th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($jobs as $job)
-                        @php
-                            $meta = $statusMeta[$job->status] ?? ['label' => ucfirst($job->status), 'bg' => 'rgba(255,255,255,0.15)', 'text' => '#FFFFFF'];
-                        @endphp
-                        <tr class="border-b border-white/5 hover:bg-white/5 transition">
-                            <td class="px-6 py-4">
-                                <p class="text-sm font-semibold text-white">{{ $job->title }}</p>
-                                <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $job->position ?? 'Posisi belum diisi' }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex px-3 py-1 text-xs rounded-apple" style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.9);">
-                                    {{ $job->employment_type ? ucfirst(str_replace('-', ' ', $job->employment_type)) : 'N/A' }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-sm" style="color:#FFFFFF;"><i class="fas fa-map-marker-alt mr-2" style="color: rgba(235,235,245,0.5);"></i>{{ $job->location ?? '-' }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-apple" style="background: {{ $meta['bg'] }}; color: {{ $meta['text'] }};">
-                                    {{ $meta['label'] }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ $job->deadline ? \Carbon\Carbon::parse($job->deadline)->format('d M Y') : 'Tidak ditentukan' }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-sm font-semibold text-white">{{ $job->applications_count ?? 0 }}</p>
-                                <p class="text-xs" style="color: rgba(235,235,245,0.55);">Pelamar</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <p class="text-sm" style="color: rgba(235,235,245,0.85);">{{ $job->created_at->format('d M Y') }}</p>
-                                <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $job->created_at->diffForHumans() }}</p>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('admin.jobs.show', $job->id) }}" class="btn-secondary-sm">
-                                        <i class="fas fa-eye mr-1"></i>Detail
-                                    </a>
-                                    <a href="{{ route('admin.jobs.edit', $job->id) }}" class="btn-primary-sm">
-                                        <i class="fas fa-edit mr-1"></i>Edit
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
+                    @forelse($jobs as $job)
+                    @php
+                        $meta = $statusMeta[$job->status] ?? ['label' => ucfirst($job->status), 'color' => 'var(--dark-text-secondary)'];
+                    @endphp
+                    <tr style="border-bottom:1px solid var(--dark-separator)" onmouseover="this.style.background='var(--dark-bg-secondary)'" onmouseout="this.style.background='transparent'">
+                        <td style="padding:12px 14px">
+                            <span style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);display:block">{{ $job->title }}</span>
+                            <span style="font-size:0.72rem;color:var(--dark-text-secondary)">{{ $job->position ?? 'Posisi belum diisi' }}</span>
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:500;background:color-mix(in srgb,var(--dark-text-secondary) 12%,transparent);color:var(--dark-text-secondary)">
+                                {{ $job->employment_type ? ucfirst(str_replace('-',' ',$job->employment_type)) : 'N/A' }}
+                            </span>
+                        </td>
+                        <td style="padding:12px 14px;font-size:0.82rem;color:var(--dark-text-secondary)">
+                            <i class="fas fa-map-marker-alt" style="margin-right:5px;opacity:.5"></i>{{ $job->location ?? '-' }}
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,{{ $meta['color'] }} 15%,transparent);color:{{ $meta['color'] }}">{{ $meta['label'] }}</span>
+                        </td>
+                        <td style="padding:12px 14px;font-size:0.82rem;color:var(--dark-text-secondary)">
+                            {{ $job->deadline ? \Carbon\Carbon::parse($job->deadline)->format('d M Y') : '—' }}
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);display:block">{{ $job->applications_count ?? 0 }}</span>
+                            <span style="font-size:0.68rem;color:var(--dark-text-secondary)">pelamar</span>
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span style="font-size:0.82rem;color:var(--dark-text-secondary);display:block">{{ $job->created_at->format('d M Y') }}</span>
+                            <span style="font-size:0.7rem;color:var(--dark-text-secondary);opacity:.6">{{ $job->created_at->diffForHumans() }}</span>
+                        </td>
+                        <td style="padding:12px 14px;text-align:right;white-space:nowrap">
+                            <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px">
+                                <a href="{{ route('admin.jobs.show', $job->id) }}"
+                                   style="display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:600;color:var(--apple-teal);background:color-mix(in srgb,var(--apple-teal) 12%,transparent);padding:5px 10px;border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-teal) 25%,transparent);text-decoration:none"
+                                   onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1">
+                                    <i class="fas fa-eye"></i>Detail
+                                </a>
+                                <a href="{{ route('admin.jobs.edit', $job->id) }}"
+                                   style="display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:600;color:var(--apple-orange);background:color-mix(in srgb,var(--apple-orange) 12%,transparent);padding:5px 10px;border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-orange) 25%,transparent);text-decoration:none"
+                                   onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1">
+                                    <i class="fas fa-edit"></i>Edit
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8" style="padding:48px;text-align:center">
+                            <i class="fas fa-briefcase" style="font-size:2rem;color:var(--dark-text-secondary);opacity:.4;display:block;margin-bottom:12px"></i>
+                            <p style="font-size:0.88rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 4px">Belum Ada Lowongan</p>
+                            <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0 0 14px">Lowongan yang sesuai filter tidak ditemukan</p>
+                            <a href="{{ route('admin.jobs.create') }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;background:var(--apple-blue);color:#fff;font-size:0.82rem;font-weight:600;text-decoration:none"><i class="fas fa-plus" style="font-size:0.7rem"></i>Tambah Lowongan Pertama</a>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
-        @if($jobs->hasPages())
-            <div class="px-6 py-4 border-t border-white/5">
-                {{ $jobs->links() }}
-            </div>
-        @endif
-    @else
-        <div class="text-center py-12 space-y-4">
-            <i class="fas fa-briefcase text-5xl" style="color: rgba(235,235,245,0.3);"></i>
-            <p class="text-sm" style="color: rgba(235,235,245,0.65);">Belum ada lowongan yang sesuai filter Anda.</p>
-            <a href="{{ route('admin.jobs.create') }}" class="btn-primary">
-                <i class="fas fa-plus mr-2"></i>Tambah Lowongan Pertama
-            </a>
+        @if($jobs instanceof \Illuminate\Pagination\LengthAwarePaginator && $jobs->hasPages())
+        <div style="padding:14px 20px;border-top:1px solid var(--dark-separator)">
+            <x-ui.pagination :paginator="$jobs->appends(array_merge(request()->all(), ['tab'=>'jobs']))" variant="full" :show-info="true" />
         </div>
-    @endif
-</section>
+        @endif
+    </div>
+
+</div>
+

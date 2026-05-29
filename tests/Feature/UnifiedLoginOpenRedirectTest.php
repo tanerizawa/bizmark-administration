@@ -38,7 +38,7 @@ class UnifiedLoginOpenRedirectTest extends TestCase
 
     public function test_accepts_same_host_url(): void
     {
-        $response = $this->get('/login?redirect=' . url('/dashboard'));
+        $response = $this->get('/login?redirect='.url('/dashboard'));
 
         // Should accept URL pointing to same host
         $response->assertStatus(200);

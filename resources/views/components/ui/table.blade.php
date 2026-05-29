@@ -11,6 +11,8 @@
     'showHeader' => true,
     'class' => '',
     'wrapperClass' => '',
+    'cellRenderers' => [],      // ['column_key' => fn($row) => 'rendered HTML', ...]
+    'footerRenderers' => [],    // ['footer-column_key' => fn($rows) => 'rendered HTML', ...]
 ])
 
 @php
@@ -27,25 +29,27 @@
         ],
     ];
 
-    $stripedClass = $striped ? 'even:bg-gray-50 dark:even:bg-gray-800/50' : '';
-    $hoverableClass = $hoverable ? 'hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors duration-150' : '';
+    $stripedClass = $striped ? 'striped-row' : '';
+    $hoverableClass = $hoverable ? 'hoverable-row' : '';
 @endphp
 
-<div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 {{ $wrapperClass }}">
+<div class="overflow-x-auto rounded-none {{ $wrapperClass }}">
     <table class="{{ $tableClasses }} {{ $class }}">
         @if($showHeader && count($columns) > 0)
-            <thead class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+            <thead class="bg-[var(--dark-bg-tertiary)] border-b border-[var(--dark-separator)]">
                 <tr>
                     @foreach($columns as $column)
                         <th
                             scope="col"
-                            class="{{ $variantClasses[$variant]['th'] }} text-{{ $column['align'] ?? 'left' }} {{ $column['class'] ?? '' }}"
+                            class="{{ $variantClasses[$variant]['th'] }} text-{{ $column['align'] ?? 'left' }} {{ $column['class'] ?? '' }} text-[var(--dark-text-secondary)] font-semibold tracking-[.06em]"
                         >
                             @if($sortable && ($column['sortable'] ?? true))
                                 <button
                                     type="button"
                                     @click="$dispatch('sort', { field: '{{ $column['key'] }}' })"
-                                    class="group inline-flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-150"
+                                    @mouseenter="$event.currentTarget.style.color='var(--dark-text-primary)'"
+                                    @mouseleave="$event.currentTarget.style.color='var(--dark-text-secondary)'"
+                                    class="inline-flex items-center gap-1 bg-transparent border-none cursor-pointer text-[var(--dark-text-secondary)] text-inherit font-inherit p-0"
                                 >
                                     <span>{{ $column['label'] }}</span>
                                     <span class="flex flex-col shrink-0">
@@ -58,7 +62,7 @@
                                     </span>
                                 </button>
                             @else
-                                <span class="text-gray-500 dark:text-gray-400">{{ $column['label'] }}</span>
+                                <span class="text-[var(--dark-text-secondary)]">{{ $column['label'] }}</span>
                             @endif
                         </th>
                     @endforeach
@@ -66,28 +70,35 @@
             </thead>
         @endif
 
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+        <tbody class="bg-transparent table-body-rows">
             @forelse($rows as $row)
                 <tr class="{{ $stripedClass }} {{ $hoverableClass }}">
                     @foreach($columns as $column)
                         <td class="{{ $variantClasses[$variant]['td'] }} text-{{ $column['align'] ?? 'left' }} {{ $column['cellClass'] ?? '' }}">
-                            {{-- Check for scoped slot: cell-{key} --}}
                             @php
-                                $cellSlotName = 'cell-' . $column['key'];
+                                $cellKey = $column['key'] ?? '';
                             @endphp
 
-                            @if(isset(${$cellSlotName}))
-                                {{ ${$cellSlotName}($row) }}
-                            @elseif(isset($column['slot']))
-                                {{ ${$column['slot']}($row) }}
+                            @if(isset($cellRenderers[$cellKey]) && is_callable($cellRenderers[$cellKey]))
+                                {!! $cellRenderers[$cellKey]($row) !!}
+                            @elseif(isset($column['render']) && is_callable($column['render']))
+                                {!! $column['render']($row) !!}
                             @elseif(isset($column['component']))
                                 <x-dynamic-component
                                     :component="$column['component']"
                                     :row="$row"
                                     :value="data_get($row, $column['key'])"
                                 />
+                            @elseif(isset($column['template']))
+                                @php
+                                    $templateContext = array_merge(
+                                        ['row' => $row],
+                                        $column['templateData'] ?? []
+                                    );
+                                @endphp
+                                {!! \Illuminate\Support\Facades\Blade::render($column['template'], $templateContext) !!}
                             @else
-                                <span class="text-sm text-gray-700 dark:text-gray-300">
+                                <span class="text-[0.85rem] text-[var(--dark-text-primary)]">
                                     {{ data_get($row, $column['key']) }}
                                 </span>
                             @endif
@@ -98,7 +109,7 @@
                 <tr>
                     <td
                         colspan="{{ count($columns) }}"
-                        class="px-4 py-12 text-center text-sm text-gray-500 dark:text-gray-400"
+                        class="py-12 px-4 text-center text-sm text-[var(--dark-text-secondary)]"
                     >
                         {{ $emptyMessage }}
                     </td>
@@ -107,14 +118,16 @@
         </tbody>
 
         @isset($tfoot)
-            <tfoot class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+            <tfoot class="bg-[var(--dark-bg-tertiary)] border-t border-[var(--dark-separator)]">
                 <tr>
                     @foreach($columns as $column)
                         <td class="{{ $variantClasses[$variant]['td'] }} text-{{ $column['align'] ?? 'left' }}">
                             @php
                                 $footerSlotName = 'footer-' . $column['key'];
                             @endphp
-                            @if(isset(${$footerSlotName}))
+                            @if(isset($footerRenderers[$footerSlotName]) && is_callable($footerRenderers[$footerSlotName]))
+                                {{ $footerRenderers[$footerSlotName]($rows) }}
+                            @elseif(isset(${$footerSlotName}))
                                 {{ ${$footerSlotName}($rows) }}
                             @endif
                         </td>
@@ -124,3 +137,11 @@
         @endisset
     </table>
 </div>
+@once
+<style>
+.table-body-rows tr { border-bottom: 1px solid var(--dark-separator); }
+.table-body-rows tr:last-child { border-bottom: none; }
+.table-body-rows tr.striped-row:nth-child(even) { background: color-mix(in srgb, var(--dark-bg-tertiary) 60%, transparent); }
+.table-body-rows tr.hoverable-row:hover { background: color-mix(in srgb, var(--apple-blue) 5%, var(--dark-bg-tertiary)); cursor: default; }
+</style>
+@endonce

@@ -173,6 +173,63 @@
         </div>
 
         {{-- Data table --}}
+        @php
+            $cellRenderers = [
+                'application_number' => function ($row) {
+                    return '<p class="text-sm font-semibold text-gray-900 dark:text-white">' . e($row->application_number) . '</p>'
+                         . '<p class="text-xs mt-0.5 text-gray-500 dark:text-gray-400">ID internal: ' . e($row->id) . '</p>';
+                },
+                'client' => function ($row) {
+                    if (! $row->client) {
+                        return '<p class="text-sm text-gray-400">-</p>';
+                    }
+                    $html = '<p class="text-sm font-semibold text-gray-900 dark:text-white">' . e($row->client->name) . '</p>'
+                          . '<p class="text-xs text-gray-500 dark:text-gray-400">' . e($row->client->email) . '</p>';
+                    if (! empty($row->client->company_type)) {
+                        $html .= '<p class="text-xs mt-0.5 text-gray-500 dark:text-gray-400">' . e(strtoupper($row->client->company_type)) . '</p>';
+                    }
+                    return $html;
+                },
+                'permit_type' => function ($row) {
+                    $name = $row->permitType->name ?? ($row->form_data['permit_package'] ?? 'Tidak ada data');
+                    $html = '<div class="text-sm font-medium text-gray-900 dark:text-white">' . e($name) . '</div>';
+                    if (isset($row->business_context['primary_kbli'])) {
+                        $html .= '<p class="text-xs mt-0.5 text-[var(--apple-purple)]/90">KBLI ' . e($row->business_context['primary_kbli']) . '</p>';
+                    }
+                    $html .= '<p class="text-xs mt-0.5 text-gray-500 dark:text-gray-400">Dokumen: ' . $row->documents->count() . ' file</p>';
+                    return $html;
+                },
+                'status' => function ($row) use ($badgeVariants) {
+                    $variant = $badgeVariants[$row->status] ?? 'neutral';
+                    $label = $row->status_label ?? ucfirst(str_replace('_', ' ', $row->status));
+                    $html = \Illuminate\Support\Facades\Blade::render(
+                        '<x-ui.badge :variant="$variant">{{ $label }}</x-ui.badge>',
+                        ['variant' => $variant, 'label' => $label]
+                    );
+                    if ($row->reviewedBy) {
+                        $html .= '<p class="text-xs mt-1 text-gray-500 dark:text-gray-400">PIC: ' . e($row->reviewedBy->name) . '</p>';
+                    }
+                    return $html;
+                },
+                'timeline' => function ($row) {
+                    return '<p class="text-xs text-gray-600 dark:text-gray-400">Dibuat: ' . e(optional($row->created_at)->format('d M Y')) . '</p>'
+                         . '<p class="text-xs text-gray-600 dark:text-gray-400">Submit: ' . e(optional($row->submitted_at)->format('d M Y') ?? '—') . '</p>'
+                         . '<p class="text-xs mt-1 text-gray-500 dark:text-gray-400">Update ' . e($row->updated_at->diffForHumans()) . '</p>';
+                },
+                'quotation' => function ($row) {
+                    if ($row->quotation) {
+                        return '<p class="text-sm font-semibold text-gray-900 dark:text-white">Rp ' . e(number_format($row->quotation->total_price, 0, ',', '.')) . '</p>'
+                             . '<p class="text-xs text-gray-500 dark:text-gray-400">' . e(ucfirst($row->quotation->status ?? 'draft')) . '</p>';
+                    }
+                    return '<p class="text-xs text-gray-500 dark:text-gray-400">Belum ada quotation</p>';
+                },
+                'actions' => function ($row) {
+                    $url = route('admin.permit-applications.show', $row->id);
+                    return '<a href="' . e($url) . '" class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-1 dark:focus:ring-offset-gray-900"><i class="fas fa-eye mr-2"></i>Detail</a>';
+                },
+            ];
+        @endphp
+
         <x-ui.table
             :columns="[
                 ['key' => 'application_number', 'label' => 'Aplikasi'],
@@ -184,97 +241,11 @@
                 ['key' => 'actions', 'label' => 'Aksi', 'align' => 'right'],
             ]"
             :rows="$applications"
+            :cellRenderers="$cellRenderers"
             :striped="true"
             :hoverable="true"
             empty-message="Tidak ada permohonan sesuai filter."
-        >
-            {{-- Application number --}}
-            <x-slot:cell-application_number="{ row }">
-                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $row->application_number }}</p>
-                <p class="text-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                    ID internal: {{ $row->id }}
-                </p>
-            </x-slot:cell-application_number>
-
-            {{-- Client --}}
-            <x-slot:cell-client="{ row }">
-                @if($row->client)
-                    <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $row->client->name }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $row->client->email }}</p>
-                    @if(!empty($row->client->company_type))
-                        <p class="text-xs mt-0.5 text-gray-500 dark:text-gray-400">{{ strtoupper($row->client->company_type) }}</p>
-                    @endif
-                @else
-                    <p class="text-sm text-gray-400">-</p>
-                @endif
-            </x-slot:cell-client>
-
-            {{-- Permit type --}}
-            <x-slot:cell-permit_type="{ row }">
-                <div class="text-sm font-medium text-gray-900 dark:text-white">
-                    {{ $row->permitType->name ?? ($row->form_data['permit_package'] ?? 'Tidak ada data') }}
-                </div>
-                @if(isset($row->business_context['primary_kbli']))
-                    <p class="text-xs mt-0.5 text-[var(--apple-purple)]/90">
-                        KBLI {{ $row->business_context['primary_kbli'] }}
-                    </p>
-                @endif
-                <p class="text-xs mt-0.5 text-gray-500 dark:text-gray-400">
-                    Dokumen: {{ $row->documents->count() }} file
-                </p>
-            </x-slot:cell-permit_type>
-
-            {{-- Status badge --}}
-            <x-slot:cell-status="{ row }">
-                @php $variant = $badgeVariants[$row->status] ?? 'neutral'; @endphp
-                <x-ui.badge :variant="$variant">
-                    {{ $row->status_label ?? ucfirst(str_replace('_',' ',$row->status)) }}
-                </x-ui.badge>
-                @if($row->reviewedBy)
-                    <p class="text-xs mt-1 text-gray-500 dark:text-gray-400">
-                        PIC: {{ $row->reviewedBy->name }}
-                    </p>
-                @endif
-            </x-slot:cell-status>
-
-            {{-- Timeline --}}
-            <x-slot:cell-timeline="{ row }">
-                <p class="text-xs text-gray-600 dark:text-gray-400">
-                    Dibuat: {{ optional($row->created_at)->format('d M Y') }}
-                </p>
-                <p class="text-xs text-gray-600 dark:text-gray-400">
-                    Submit: {{ optional($row->submitted_at)->format('d M Y') ?? '—' }}
-                </p>
-                <p class="text-xs mt-1 text-gray-500 dark:text-gray-400">
-                    Update {{ optional($row->updated_at)->diffForHumans() }}
-                </p>
-            </x-slot:cell-timeline>
-
-            {{-- Quotation --}}
-            <x-slot:cell-quotation="{ row }">
-                @if($row->quotation)
-                    <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                        Rp {{ number_format($row->quotation->total_price, 0, ',', '.') }}
-                    </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                        {{ ucfirst($row->quotation->status ?? 'draft') }}
-                    </p>
-                @else
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Belum ada quotation</p>
-                @endif
-            </x-slot:cell-quotation>
-
-            {{-- Actions --}}
-            <x-slot:cell-actions="{ row }">
-                <x-ui.button
-                    variant="outline"
-                    size="sm"
-                    :href="route('admin.permit-applications.show', $row->id)"
-                >
-                    <i class="fas fa-eye mr-2"></i>Detail
-                </x-ui.button>
-            </x-slot:cell-actions>
-        </x-ui.table>
+        />
 
         {{-- Pagination --}}
         @if($applications->hasPages())

@@ -195,7 +195,7 @@
                             @endif
                             @if($reconciliation->status === 'in_progress')
                                 <form action="{{ route('reconciliations.destroy', $reconciliation) }}" method="POST" class="inline"
-                                      onsubmit="return confirm('Yakin ingin menghapus rekonsiliasi ini?');">
+                                      x-data @submit.prevent="if(confirm('Yakin ingin menghapus rekonsiliasi ini?')) $el.submit()">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"

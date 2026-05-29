@@ -8,14 +8,14 @@
 return [
     // Meta & SEO
     'meta' => [
-        'title' => 'Bizmark.ID - Jasa Konsultan Perizinan LB3, AMDAL, UKL-UPL & Legalitas Usaha Karawang',
-        'description' => 'Konsultan perizinan terpercaya di Karawang & Jawa Barat. Layanan Limbah B3, AMDAL, UKL-UPL, OSS, PBG, SLF, izin lingkungan. Proses cepat, transparan, harga kompetitif.',
-        'keywords' => 'konsultan perizinan karawang, jasa perizinan lb3, pengurusan amdal, ukl upl, pbg, slf, izin lingkungan, legalitas usaha, konsultan lingkungan jawa barat',
+        'title' => 'Bizmark.ID – Platform Legal-Tech Perizinan & Kepatuhan Usaha Indonesia',
+        'description' => 'Bizmark.ID adalah platform legal-tech untuk perizinan usaha, kepatuhan lingkungan (LB3, AMDAL, UKL-UPL), dan legalitas usaha. AI Permit Checker, Client Portal, dan konsultan berpengalaman untuk UMKM hingga korporasi di seluruh Indonesia.',
+        'keywords' => 'platform perizinan usaha, konsultan perizinan indonesia, ai permit checker, lb3 amdal ukl-upl, oss rba, perizinan lingkungan, legalitas usaha, konsultan karawang jawa barat,',
         'og_title' => 'Bizmark.ID - Konsultan Perizinan & Bisnis Profesional',
         'og_description' => 'Layanan konsultan perizinan dan bisnis terpercaya di Indonesia. Cepat, transparan, profesional.',
     ],
 
-    'schema_description' => 'Konsultan perizinan lingkungan profesional untuk industri manufaktur',
+    'schema_description' => 'Platform legal-tech untuk perizinan usaha, kepatuhan lingkungan (LB3, AMDAL, UKL-UPL), dan legalitas usaha di Indonesia. Didukung AI. Ditangani para ahli.',
 
     // Navigation
     'nav' => [

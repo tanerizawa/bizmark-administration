@@ -1,521 +1,250 @@
 @extends('layouts.app')
 
-@section('title', 'Evaluate Test Session - ' . $session->jobApplication->full_name)
+@section('title', 'Evaluate Test - ' . $session->jobApplication->full_name)
 
 @section('content')
-<div class="recruitment-shell max-w-7xl mx-auto space-y-5">
-    {{-- Header --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-purple opacity-25 blur-3xl rounded-full absolute -top-14 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-2xl rounded-full absolute bottom-0 left-8"></div>
-        </div>
-        <div class="relative space-y-4">
-            <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">
-                <a href="{{ route('admin.recruitment.index') }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
-                    <i class="fas fa-arrow-left text-xs"></i> Rekrutmen
-                </a>
-                <span class="text-dark-text-tertiary">/</span>
-                <a href="{{ route('admin.recruitment.tests.index') }}" class="hover:text-white transition-apple">
-                    Test
-                </a>
-                <span class="text-dark-text-tertiary">/</span>
-                <a href="{{ route('admin.recruitment.tests.show', $session->testTemplate) }}" class="hover:text-white transition-apple">
-                    {{ $session->testTemplate->title }}
-                </a>
-                <span class="text-dark-text-tertiary">/</span>
-                <a href="{{ route('admin.recruitment.tests.sessions.results', $session) }}" class="hover:text-white transition-apple">
-                    Results
-                </a>
-                <span class="text-dark-text-tertiary">/</span>
-                <span>Evaluate</span>
-            </div>
-            
-            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                <div class="space-y-2.5">
-                    <h1 class="text-xl font-semibold text-white leading-tight">Manual Evaluation</h1>
-                    <p class="text-sm" style="color: rgba(235,235,245,0.7);">
-                        Score subjective questions for {{ $session->jobApplication->full_name }}
-                    </p>
-                    <div class="flex flex-wrap gap-2 mt-3">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(255,149,0,0.2); color: rgba(255,149,0,1);">
-                            <i class="fas fa-hourglass-half mr-1"></i>Pending Evaluation
-                        </span>
-                        @if($session->score !== null)
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);">
-                            <i class="fas fa-robot mr-1"></i>Partial Score: {{ number_format($session->score, 1) }}%
-                        </span>
-                        @endif
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('admin.recruitment.tests.sessions.results', $session) }}" class="btn-secondary">
-                        <i class="fas fa-arrow-left mr-2"></i>Back to Results
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+<div style="display:flex;flex-direction:column;gap:16px">
 
-    {{-- Success/Error Messages --}}
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+            <a href="{{ route('admin.recruitment.tests.sessions.results', $session) }}" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);text-decoration:none;margin-bottom:6px" onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                <i class="fas fa-arrow-left" style="font-size:0.65rem"></i>Hasil Tes
+            </a>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--apple-purple);margin:0 0 4px">Evaluasi Manual</p>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+                <h1 style="font-size:1.4rem;font-weight:800;color:var(--dark-text-primary);margin:0;line-height:1.2">{{ $session->jobApplication->full_name }}</h1>
+                <span style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,var(--apple-orange) 15%,transparent);color:var(--apple-orange)">Pending Evaluation</span>
+                @if($session->score !== null)
+                <span style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,var(--apple-blue) 15%,transparent);color:var(--apple-blue)">Auto-Score: {{ number_format($session->score, 1) }}%</span>
+                @endif
+            </div>
+            <p style="font-size:0.82rem;color:var(--dark-text-secondary);margin:0">{{ $session->testTemplate->title }}</p>
+        </div>
+    </div>
+
     @if(session('success'))
-        <div class="rounded-apple-lg p-4" style="background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.3);">
-            <div class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-lg" style="color: rgba(52,199,89,1);"></i>
-                <p class="text-white">{{ session('success') }}</p>
-            </div>
-        </div>
+    <div style="background:color-mix(in srgb,var(--apple-green) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-green) 30%,transparent);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px">
+        <i class="fas fa-check-circle" style="color:var(--apple-green)"></i>
+        <p style="font-size:0.85rem;font-weight:600;color:var(--apple-green);margin:0">{{ session('success') }}</p>
+    </div>
+    @endif
+    @if(session('error') || $errors->any())
+    <div style="background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 30%,transparent);border-radius:12px;padding:12px 16px">
+        <p style="font-size:0.85rem;font-weight:600;color:var(--apple-red);margin:0 0 4px"><i class="fas fa-exclamation-circle" style="margin-right:5px"></i>{{ session('error') ?? 'Validation Errors:' }}</p>
+        @if($errors->any())<ul style="margin:0;padding-left:16px">@foreach($errors->all() as $e)<li style="font-size:0.78rem;color:var(--apple-red);margin-bottom:2px">{{ $e }}</li>@endforeach</ul>@endif
+    </div>
     @endif
 
-    @if(session('error'))
-        <div class="rounded-apple-lg p-4" style="background: rgba(255,59,48,0.15); border: 1px solid rgba(255,59,48,0.3);">
-            <div class="flex items-center gap-3">
-                <i class="fas fa-exclamation-circle text-lg" style="color: rgba(255,59,48,1);"></i>
-                <p class="text-white">{{ session('error') }}</p>
-            </div>
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="rounded-apple-lg p-4" style="background: rgba(255,59,48,0.15); border: 1px solid rgba(255,59,48,0.3);">
-            <div class="flex items-start gap-3">
-                <i class="fas fa-exclamation-triangle text-lg" style="color: rgba(255,59,48,1);"></i>
-                <div>
-                    <p class="text-white font-semibold mb-2">Validation Errors:</p>
-                    <ul class="list-disc list-inside space-y-1">
-                        @foreach($errors->all() as $error)
-                            <li class="text-white text-sm">{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- Candidate Info --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <i class="fas fa-user" style="color: rgba(10,132,255,1);"></i>
-            Candidate Information
-        </h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {{-- Candidate Info + Stats --}}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        @foreach(['Kandidat'=>[$session->jobApplication->full_name,'fa-user','var(--apple-blue)'],'Posisi'=>[$session->jobApplication->jobVacancy->title ?? 'N/A','fa-briefcase','var(--apple-purple)'],'Selesai'=>[$session->completed_at ? $session->completed_at->format('d M Y') : 'N/A','fa-calendar','var(--apple-green)']] as $label=>[$val,$icon,$col])
+        <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $col }} 12%,var(--dark-bg-tertiary)) 0%,var(--dark-bg-tertiary) 100%);border:1px solid color-mix(in srgb,{{ $col }} 25%,var(--dark-separator));border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px">
+            <div style="width:38px;height:38px;border-radius:50%;background:color-mix(in srgb,{{ $col }} 18%,transparent);display:flex;align-items:center;justify-content:center;color:{{ $col }};flex-shrink:0"><i class="fas {{ $icon }}"></i></div>
             <div>
-                <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Full Name</p>
-                <p class="text-white font-medium mt-1">{{ $session->jobApplication->full_name }}</p>
-            </div>
-            <div>
-                <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Position Applied</p>
-                <p class="text-white font-medium mt-1">{{ $session->jobApplication->jobVacancy->title ?? 'N/A' }}</p>
-            </div>
-            <div>
-                <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Completed At</p>
-                <p class="text-white font-medium mt-1">{{ $session->completed_at ? $session->completed_at->format('d M Y, H:i') : 'N/A' }}</p>
+                <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:{{ $col }};margin:0 0 3px">{{ $label }}</p>
+                <p style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">{{ $val }}</p>
             </div>
         </div>
-    </section>
+        @endforeach
+    </div>
 
-    {{-- Document Editing Test - Files & Criteria --}}
-    @if($session->testTemplate->isDocumentEditingTest())
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <i class="fas fa-file-word" style="color: rgba(10,132,255,1);"></i>
-            Document Files
-        </h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {{-- Template File --}}
-            <div class="card-nested rounded-apple-lg p-4">
-                <div class="flex items-start gap-3">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(10,132,255,0.2);">
-                        <i class="fas fa-download text-xl" style="color: rgba(10,132,255,1);"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">Template File</p>
-                        <p class="text-white font-medium text-sm truncate mb-2">{{ basename($session->testTemplate->template_file_path) }}</p>
-                        @if($session->testTemplate->template_file_path && \Storage::disk('private')->exists($session->testTemplate->template_file_path))
-                            <a href="{{ route('admin.recruitment.tests.download-template', $session->testTemplate) }}" 
-                               class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-lg transition-apple" 
-                               style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,1);"
-                               target="_blank">
-                                <i class="fas fa-download"></i>
-                                Download Template
-                            </a>
-                        @else
-                            <p class="text-xs" style="color: rgba(255,69,58,1);">
-                                <i class="fas fa-exclamation-circle mr-1"></i>File not found
-                            </p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            {{-- Submitted File --}}
-            <div class="card-nested rounded-apple-lg p-4">
-                <div class="flex items-start gap-3">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(52,199,89,0.2);">
-                        <i class="fas fa-upload text-xl" style="color: rgba(52,199,89,1);"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs uppercase tracking-widest mb-1" style="color: rgba(235,235,245,0.6);">Submitted File</p>
-                        @if($session->submitted_file_path)
-                            <p class="text-white font-medium text-sm truncate mb-1">{{ basename($session->submitted_file_path) }}</p>
-                            <p class="text-xs mb-2" style="color: rgba(235,235,245,0.5);">
-                                Submitted: {{ $session->submitted_at ? $session->submitted_at->format('d M Y, H:i') : 'N/A' }}
-                            </p>
-                            @if(\Storage::disk('private')->exists($session->submitted_file_path))
-                                <a href="{{ route('admin.recruitment.tests.sessions.download-submission', $session) }}" 
-                                   class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-lg transition-apple" 
-                                   style="background: rgba(52,199,89,0.15); color: rgba(52,199,89,1);"
-                                   target="_blank">
-                                    <i class="fas fa-download"></i>
-                                    Download Submission
-                                </a>
-                            @else
-                                <p class="text-xs" style="color: rgba(255,69,58,1);">
-                                    <i class="fas fa-exclamation-circle mr-1"></i>File not found
-                                </p>
-                            @endif
-                        @else
-                            <p class="text-white font-medium mb-1">No submission yet</p>
-                            <p class="text-xs" style="color: rgba(235,235,245,0.5);">Candidate has not uploaded their work</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    @endif
-
-    {{-- Test Summary --}}
     @if($session->score !== null)
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-        <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <i class="fas fa-chart-line" style="color: rgba(52,199,89,1);"></i>
-            Auto-Grading Summary
-        </h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="card-nested rounded-apple-lg p-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: rgba(10,132,255,0.2);">
-                        <i class="fas fa-robot text-xl" style="color: rgba(10,132,255,1);"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Current Score</p>
-                        <p class="text-white font-semibold text-2xl">{{ number_format($session->score, 1) }}%</p>
-                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">From objective questions</p>
-                    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        @foreach([['Current Score','var(--apple-blue)','fa-robot',number_format($session->score,1).'%','Dari pertanyaan objektif'],['Perlu Evaluasi','var(--apple-orange)','fa-tasks',count($subjectiveQuestions),'Perlu penilaian manual'],['Passing Score','var(--apple-purple)','fa-graduation-cap',$session->testTemplate->passing_score.'%','Nilai lulus']] as [$l,$col,$ico,$v,$s])
+        <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:16px 18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <p style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:{{ $col }};margin:0">{{ $l }}</p>
+                <i class="fas {{ $ico }}" style="color:color-mix(in srgb,{{ $col }} 50%,transparent);font-size:0.9rem"></i>
+            </div>
+            <p style="font-size:1.5rem;font-weight:800;color:var(--dark-text-primary);margin:0 0 3px">{{ $v }}</p>
+            <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0">{{ $s }}</p>
+        </div>
+        @endforeach
+    </div>
+    @endif
+
+    {{-- Document Files (if document editing test) --}}
+    @if($session->testTemplate->isDocumentEditingTest())
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 14px"><i class="fas fa-file-word" style="color:var(--apple-blue);margin-right:7px"></i>Dokumen Submission</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="padding:14px;background:var(--dark-bg-secondary);border-radius:10px;border:1px solid var(--dark-separator);display:flex;align-items:center;gap:10px">
+                <div style="width:40px;height:40px;border-radius:9px;background:color-mix(in srgb,var(--apple-blue) 18%,transparent);display:flex;align-items:center;justify-content:center;color:var(--apple-blue);flex-shrink:0"><i class="fas fa-download"></i></div>
+                <div style="flex:1;min-width:0">
+                    <p style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Template File</p>
+                    <p style="font-size:0.8rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ basename($session->testTemplate->template_file_path) }}</p>
+                    @if($session->testTemplate->template_file_path && \Storage::disk('private')->exists($session->testTemplate->template_file_path))
+                    <a href="{{ route('admin.recruitment.tests.download-template', $session->testTemplate) }}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:600;color:var(--apple-blue);background:color-mix(in srgb,var(--apple-blue) 12%,transparent);padding:4px 9px;border-radius:6px;border:1px solid color-mix(in srgb,var(--apple-blue) 25%,transparent);text-decoration:none"><i class="fas fa-download" style="font-size:0.6rem"></i>Download</a>
+                    @else
+                    <span style="font-size:0.7rem;color:var(--apple-red)"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>File not found</span>
+                    @endif
                 </div>
             </div>
-            
-            <div class="card-nested rounded-apple-lg p-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: rgba(255,149,0,0.2);">
-                        <i class="fas fa-tasks text-xl" style="color: rgba(255,149,0,1);"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Pending Questions</p>
-                        <p class="text-white font-semibold text-2xl">{{ count($subjectiveQuestions) }}</p>
-                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">Need manual scoring</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card-nested rounded-apple-lg p-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: rgba(191,90,242,0.2);">
-                        <i class="fas fa-graduation-cap text-xl" style="color: rgba(191,90,242,1);"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.6);">Passing Score</p>
-                        <p class="text-white font-semibold text-2xl">{{ $session->testTemplate->passing_score }}%</p>
-                        <p class="text-xs" style="color: rgba(235,235,245,0.5);">Required to pass</p>
-                    </div>
+            <div style="padding:14px;background:var(--dark-bg-secondary);border-radius:10px;border:1px solid var(--dark-separator);display:flex;align-items:center;gap:10px">
+                <div style="width:40px;height:40px;border-radius:9px;background:color-mix(in srgb,var(--apple-green) 18%,transparent);display:flex;align-items:center;justify-content:center;color:var(--apple-green);flex-shrink:0"><i class="fas fa-upload"></i></div>
+                <div style="flex:1;min-width:0">
+                    <p style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Submitted File</p>
+                    @if($session->submitted_file_path)
+                    <p style="font-size:0.8rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ basename($session->submitted_file_path) }}</p>
+                    <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0 0 6px">{{ $session->submitted_at?->format('d M Y, H:i') }}</p>
+                    @if(\Storage::disk('private')->exists($session->submitted_file_path))
+                    <a href="{{ route('admin.recruitment.tests.sessions.download-submission', $session) }}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:600;color:var(--apple-green);background:color-mix(in srgb,var(--apple-green) 12%,transparent);padding:4px 9px;border-radius:6px;border:1px solid color-mix(in srgb,var(--apple-green) 25%,transparent);text-decoration:none"><i class="fas fa-download" style="font-size:0.6rem"></i>Download</a>
+                    @else
+                    <span style="font-size:0.7rem;color:var(--apple-red)"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>File not found</span>
+                    @endif
+                    @else
+                    <p style="font-size:0.8rem;color:var(--dark-text-secondary);margin:0 0 3px">Belum ada submission</p>
+                    <p style="font-size:0.7rem;color:var(--dark-text-tertiary);margin:0">Kandidat belum upload</p>
+                    @endif
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @endif
 
     {{-- Evaluation Form --}}
-    <form action="{{ $session->testTemplate->isDocumentEditingTest() 
-        ? route('admin.recruitment.tests.sessions.submit-evaluation', $session) 
+    <form action="{{ $session->testTemplate->isDocumentEditingTest()
+        ? route('admin.recruitment.tests.sessions.submit-evaluation', $session)
         : route('admin.recruitment.tests.sessions.submit-evaluation-manual', $session) }}" method="POST">
         @csrf
-        
-        {{-- Document Editing Criteria Evaluation --}}
+
+        {{-- Document Editing Criteria --}}
         @if($session->testTemplate->isDocumentEditingTest() && $session->testTemplate->evaluation_criteria)
-        <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-            <h2 class="text-sm font-semibold text-white mb-5 flex items-center gap-2">
-                <i class="fas fa-clipboard-check" style="color: rgba(255,149,0,1);"></i>
-                Evaluation Criteria
-            </h2>
-
-            <div class="space-y-6">
-                @php
-                    $groupedCriteria = collect($session->testTemplate->evaluation_criteria['criteria'])->groupBy('category');
-                @endphp
-                
-                @foreach($groupedCriteria as $category => $criteria)
-                    <div class="card-nested rounded-apple-lg p-5">
-                        <h3 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
-                            <i class="fas fa-folder-open text-sm" style="color: rgba(10,132,255,1);"></i>
-                            {{ $category }}
-                        </h3>
-                        
-                        <div class="space-y-4">
-                            @foreach($criteria as $index => $criterion)
-                                @php
-                                    $globalIndex = collect($session->testTemplate->evaluation_criteria['criteria'])->search($criterion);
-                                @endphp
-                                
-                                <div class="p-4 rounded-lg" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
-                                    <div class="flex items-start justify-between gap-4 mb-3">
-                                        <div class="flex-1">
-                                            <p class="text-white font-medium mb-1">{{ $criterion['description'] }}</p>
-                                            <div class="flex items-center gap-2 text-xs flex-wrap">
-                                                <span class="px-2 py-0.5 rounded-full" style="background: rgba(191,90,242,0.2); color: rgba(191,90,242,1);">
-                                                    <i class="fas fa-tag mr-1"></i>{{ $criterion['type'] }}
-                                                </span>
-                                                <span class="px-2 py-0.5 rounded-full" style="background: rgba(52,199,89,0.2); color: rgba(52,199,89,1);">
-                                                    Max: {{ $criterion['points'] }} points
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {{-- Score Input --}}
-                                        <div>
-                                            <label class="block mb-2">
-                                                <span class="text-sm font-medium text-white">Score <span class="text-red-500">*</span></span>
-                                            </label>
-                                            <input type="hidden" name="criteria_scores[{{ $globalIndex }}][criteria_id]" value="{{ $globalIndex }}">
-                                            <div class="flex items-center gap-3">
-                                                <input 
-                                                    type="number" 
-                                                    name="criteria_scores[{{ $globalIndex }}][score]" 
-                                                    min="0" 
-                                                    max="{{ $criterion['points'] }}" 
-                                                    step="0.5"
-                                                    class="form-control flex-1 bg-dark-secondary border-dark-border text-white focus:border-apple-blue focus:ring-apple-blue"
-                                                    placeholder="0"
-                                                    required
-                                                >
-                                                <span class="text-sm whitespace-nowrap" style="color: rgba(235,235,245,0.6);">/ {{ $criterion['points'] }}</span>
-                                            </div>
-                                            @error('criteria_scores.' . $globalIndex . '.score')
-                                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                        
-                                        {{-- Notes Input --}}
-                                        <div>
-                                            <label class="block mb-2">
-                                                <span class="text-sm font-medium text-white">Notes (Optional)</span>
-                                            </label>
-                                            <textarea 
-                                                name="criteria_scores[{{ $globalIndex }}][notes]" 
-                                                rows="2" 
-                                                class="form-control w-full bg-dark-secondary border-dark-border text-white focus:border-apple-blue focus:ring-apple-blue text-sm"
-                                                placeholder="Add specific feedback for this criterion..."
-                                            ></textarea>
-                                        </div>
-                                    </div>
+        @php $groupedCriteria = collect($session->testTemplate->evaluation_criteria['criteria'])->groupBy('category'); @endphp
+        <div style="display:flex;flex-direction:column;gap:12px">
+            @foreach($groupedCriteria as $category => $criteriaGroup)
+            <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                <div style="padding:14px 18px;border-bottom:1px solid var(--dark-separator);display:flex;align-items:center;gap:8px">
+                    <i class="fas fa-folder-open" style="color:var(--apple-blue);font-size:0.85rem"></i>
+                    <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">{{ $category }}</h3>
+                </div>
+                <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+                    @foreach($criteriaGroup as $criterion)
+                    @php $globalIndex = collect($session->testTemplate->evaluation_criteria['criteria'])->search($criterion); @endphp
+                    <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;padding:14px">
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px">
+                            <div>
+                                <p style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 6px">{{ $criterion['description'] }}</p>
+                                <div style="display:flex;gap:6px">
+                                    <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:600;background:color-mix(in srgb,var(--apple-purple) 15%,transparent);color:var(--apple-purple)">{{ $criterion['type'] }}</span>
+                                    <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:600;background:color-mix(in srgb,var(--apple-green) 15%,transparent);color:var(--apple-green)">Max: {{ $criterion['points'] }} pts</span>
                                 </div>
-                            @endforeach
+                            </div>
+                        </div>
+                        <input type="hidden" name="criteria_scores[{{ $globalIndex }}][criteria_id]" value="{{ $globalIndex }}">
+                        <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px">
+                            <div>
+                                <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Score (0–{{ $criterion['points'] }}) *</label>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <input type="number" name="criteria_scores[{{ $globalIndex }}][score]" min="0" max="{{ $criterion['points'] }}" step="0.5" required placeholder="0"
+                                           style="width:80px;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none"
+                                           onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                    <span style="font-size:0.8rem;color:var(--dark-text-secondary)">/ {{ $criterion['points'] }}</span>
+                                </div>
+                                @error('criteria_scores.'.$globalIndex.'.score')<p style="color:var(--apple-red);font-size:0.72rem;margin:4px 0 0">{{ $message }}</p>@enderror
+                            </div>
+                            <div>
+                                <label style="display:block;font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Catatan (opsional)</label>
+                                <textarea name="criteria_scores[{{ $globalIndex }}][notes]" rows="2" placeholder="Feedback spesifik..." style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.8rem;outline:none;resize:vertical;box-sizing:border-box" onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'"></textarea>
+                            </div>
                         </div>
                     </div>
-                @endforeach
-                
-                {{-- Total Points Info --}}
-                <div class="card-nested rounded-apple-lg p-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-semibold text-white mb-1">Total Points Available</p>
-                            <p class="text-xs" style="color: rgba(235,235,245,0.5);">
-                                Sum of all evaluation criteria
-                            </p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xl font-bold" style="color: rgba(10,132,255,1);">
-                                {{ $session->testTemplate->evaluation_criteria['total_points'] ?? 100 }}
-                            </p>
-                            <p class="text-xs" style="color: rgba(235,235,245,0.6);">points</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        @else
-        {{-- Regular Question Evaluation --}}
-        <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-            <h2 class="text-sm font-semibold text-white mb-5 flex items-center gap-2">
-                <i class="fas fa-clipboard-list" style="color: rgba(255,149,0,1);"></i>
-                Subjective Questions to Evaluate
-            </h2>
-
-            @if(count($subjectiveQuestions) === 0)
-                <div class="text-center py-12">
-                    <i class="fas fa-check-circle text-5xl mb-3" style="color: rgba(52,199,89,0.5);"></i>
-                    <p class="text-dark-text-secondary">No subjective questions found. Test is fully auto-graded.</p>
-                </div>
-            @else
-                <div class="space-y-6">
-                    @foreach($subjectiveQuestions as $index => $item)
-                        @php
-                            $question = $item['question'];
-                            $answer = $item['answer'];
-                            $answerValue = $answer ? ($answer->answer_data['answer_value'] ?? null) : null;
-                            $maxPoints = $question['points'] ?? 10;
-                        @endphp
-                        
-                        <div class="card-nested rounded-apple-lg p-5 space-y-4">
-                            {{-- Question Header --}}
-                            <div class="flex items-start gap-3">
-                                <span class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold" 
-                                      style="background: rgba(255,149,0,0.2); color: rgba(255,149,0,1);">
-                                    Q{{ $index + 1 }}
-                                </span>
-                                <div class="flex-1">
-                                    <p class="text-white font-medium text-lg mb-2">{{ $question['question_text'] ?? 'No question text' }}</p>
-                                    <div class="flex items-center gap-2 text-xs flex-wrap">
-                                        <span class="px-2 py-0.5 rounded-full" style="background: rgba(191,90,242,0.2); color: rgba(191,90,242,1);">
-                                            {{ ucfirst(str_replace('-', ' ', $question['question_type'] ?? 'N/A')) }}
-                                        </span>
-                                        <span class="px-2 py-0.5 rounded-full" style="background: rgba(52,199,89,0.2); color: rgba(52,199,89,1);">
-                                            Max: {{ $maxPoints }} points
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Candidate Answer --}}
-                            <div class="pl-13">
-                                <p class="text-xs uppercase tracking-widest mb-2" style="color: rgba(235,235,245,0.6);">Candidate's Answer:</p>
-                                
-                                @if($answer && $answerValue)
-                                    @if($question['question_type'] === 'essay')
-                                        <div class="p-4 rounded-lg" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
-                                            <p class="text-sm" style="color: rgba(235,235,245,0.8); white-space: pre-wrap;">{{ $answerValue }}</p>
-                                        </div>
-                                    @elseif($question['question_type'] === 'rating' || $question['question_type'] === 'rating-scale')
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex gap-1">
-                                                @for($i = 1; $i <= ($question['max_rating'] ?? 5); $i++)
-                                                    <i class="fas fa-star {{ $i <= $answerValue ? 'text-yellow-400' : 'text-gray-600' }} text-xl"></i>
-                                                @endfor
-                                            </div>
-                                            <span class="text-white font-semibold text-lg">{{ $answerValue }} / {{ $question['max_rating'] ?? 5 }}</span>
-                                        </div>
-                                        @if(isset($question['options']) && is_array($question['options']) && isset($question['options'][$answerValue - 1]))
-                                            <p class="text-xs mt-2" style="color: rgba(235,235,245,0.6);">{{ $question['options'][$answerValue - 1] }}</p>
-                                        @endif
-                                    @else
-                                        <div class="p-4 rounded-lg" style="background: rgba(255,255,255,0.05);">
-                                            <p class="text-sm" style="color: rgba(235,235,245,0.8);">{{ $answerValue }}</p>
-                                        </div>
-                                    @endif
-                                @else
-                                    <p class="text-sm italic" style="color: rgba(235,235,245,0.4);">No answer provided</p>
-                                @endif
-                            </div>
-
-                            {{-- Score Input --}}
-                            <div class="pl-13">
-                                <label class="block mb-2">
-                                    <span class="text-sm font-medium text-white">Score (0 - {{ $maxPoints }} points) <span class="text-red-500">*</span></span>
-                                </label>
-                                <div class="flex items-center gap-4">
-                                    <input 
-                                        type="number" 
-                                        name="manual_scores[{{ $index }}]" 
-                                        min="0" 
-                                        max="{{ $maxPoints }}" 
-                                        step="0.5"
-                                        class="form-control w-32 bg-dark-secondary border-dark-border text-white focus:border-apple-blue focus:ring-apple-blue"
-                                        placeholder="0"
-                                        required
-                                    >
-                                    <span class="text-sm" style="color: rgba(235,235,245,0.6);">out of {{ $maxPoints }} points</span>
-                                </div>
-                                @error('manual_scores.' . $index)
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
                     @endforeach
                 </div>
+            </div>
+            @endforeach
+            <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+                <div>
+                    <p style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 2px">Total Poin Tersedia</p>
+                    <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0">Jumlah semua kriteria</p>
+                </div>
+                <p style="font-size:1.5rem;font-weight:800;color:var(--apple-blue);margin:0">{{ $session->testTemplate->evaluation_criteria['total_points'] ?? 100 }} <span style="font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary)">pts</span></p>
+            </div>
+        </div>
+        @else
+        {{-- Subjective Questions --}}
+        <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+            <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 16px"><i class="fas fa-clipboard-list" style="color:var(--apple-orange);margin-right:7px"></i>Pertanyaan Subjektif</h3>
+            @if(count($subjectiveQuestions) === 0)
+            <div style="text-align:center;padding:30px;color:var(--dark-text-secondary)">
+                <i class="fas fa-check-circle" style="font-size:2rem;display:block;margin-bottom:8px;color:var(--apple-green);opacity:.6"></i>
+                <p style="font-size:0.85rem;margin:0">Tidak ada pertanyaan subjektif. Tes di-grade otomatis sepenuhnya.</p>
+            </div>
+            @else
+            <div style="display:flex;flex-direction:column;gap:14px">
+                @foreach($subjectiveQuestions as $index => $item)
+                @php
+                    $question = $item['question'];
+                    $answer = $item['answer'];
+                    $answerValue = $answer ? ($answer->answer_data['answer_value'] ?? null) : null;
+                    $maxPoints = $question['points'] ?? 10;
+                @endphp
+                <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:12px;padding:16px">
+                    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+                        <span style="width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;background:color-mix(in srgb,var(--apple-orange) 18%,transparent);color:var(--apple-orange)">Q{{ $index + 1 }}</span>
+                        <div style="flex:1">
+                            <p style="font-size:0.88rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 6px">{{ $question['question_text'] ?? 'No question text' }}</p>
+                            <div style="display:flex;gap:6px">
+                                <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:600;background:color-mix(in srgb,var(--apple-purple) 15%,transparent);color:var(--apple-purple)">{{ ucfirst(str_replace('-',' ',$question['question_type'] ?? 'N/A')) }}</span>
+                                <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:600;background:color-mix(in srgb,var(--apple-green) 15%,transparent);color:var(--apple-green)">Max: {{ $maxPoints }} pts</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:12px;padding:12px;background:var(--dark-bg-tertiary);border-radius:9px;border-left:3px solid var(--apple-blue)">
+                        <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dark-text-secondary);margin:0 0 5px">Jawaban Kandidat</p>
+                        @if($answer && $answerValue)
+                            @if($question['question_type'] === 'essay')
+                            <p style="font-size:0.83rem;color:var(--dark-text-primary);white-space:pre-wrap;margin:0">{{ $answerValue }}</p>
+                            @elseif(in_array($question['question_type'], ['rating','rating-scale']))
+                            <div style="display:flex;align-items:center;gap:8px">
+                                <div style="color:#fbbf24">@for($s=1;$s<=($question['max_rating'] ?? 5);$s++)<i class="fas fa-star" style="font-size:0.85rem{{ $s > $answerValue ? ';opacity:.3' : '' }}"></i>@endfor</div>
+                                <span style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary)">{{ $answerValue }} / {{ $question['max_rating'] ?? 5 }}</span>
+                            </div>
+                            @else
+                            <p style="font-size:0.83rem;color:var(--dark-text-primary);margin:0">{{ $answerValue }}</p>
+                            @endif
+                        @else
+                        <p style="font-size:0.78rem;color:var(--dark-text-tertiary);font-style:italic;margin:0">Tidak ada jawaban</p>
+                        @endif
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <label style="font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);white-space:nowrap">Score (0–{{ $maxPoints }}) <span style="color:var(--apple-red)">*</span></label>
+                        <input type="number" name="manual_scores[{{ $index }}]" min="0" max="{{ $maxPoints }}" step="0.5" required placeholder="0"
+                               style="width:80px;padding:8px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none"
+                               onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                        <span style="font-size:0.8rem;color:var(--dark-text-secondary)">dari {{ $maxPoints }} poin</span>
+                        @error('manual_scores.'.$index)<span style="color:var(--apple-red);font-size:0.72rem">{{ $message }}</span>@enderror
+                    </div>
+                </div>
+                @endforeach
+            </div>
             @endif
-        </section>
+        </div>
         @endif
 
         {{-- Evaluator Notes --}}
-        <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-            <h2 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-                <i class="fas fa-comment-dots" style="color: rgba(191,90,242,1);"></i>
-                Evaluator Notes (Optional)
-            </h2>
-            
-            <div>
-                <label class="block mb-2">
-                    <span class="text-sm font-medium text-white">Overall feedback or comments</span>
-                </label>
-                <textarea 
-                    name="evaluator_notes" 
-                    rows="5" 
-                    class="form-control w-full bg-dark-secondary border-dark-border text-white focus:border-apple-blue focus:ring-apple-blue"
-                    placeholder="Add any overall comments about the candidate's performance..."
-                >{{ old('evaluator_notes') }}</textarea>
-                @error('evaluator_notes')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-        </section>
+        <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+            <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 12px"><i class="fas fa-comment-dots" style="color:var(--apple-purple);margin-right:7px"></i>Catatan Evaluator (opsional)</h3>
+            <textarea name="evaluator_notes" rows="5" placeholder="Tambahkan komentar umum tentang performa kandidat..."
+                      style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.83rem;outline:none;resize:vertical;box-sizing:border-box"
+                      onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">{{ old('evaluator_notes') }}</textarea>
+        </div>
 
-        {{-- Submit Button --}}
+        {{-- Submit --}}
         @if(($session->testTemplate->isDocumentEditingTest() && $session->testTemplate->evaluation_criteria) || count($subjectiveQuestions) > 0)
-        <section class="card-elevated rounded-apple-xl p-5 md:p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-white font-semibold mb-1">Ready to submit evaluation?</p>
-                    <p class="text-sm" style="color: rgba(235,235,245,0.6);">
-                        @if($session->testTemplate->isDocumentEditingTest())
-                            Final score will be calculated based on the evaluation criteria.
-                        @else
-                            Final score will be calculated by combining auto-graded and manual scores.
-                        @endif
-                    </p>
-                </div>
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-check mr-2"></i>Submit Evaluation
-                </button>
+        <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+                <p style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 3px">Siap submit evaluasi?</p>
+                <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:0">Skor final akan dihitung setelah submit.</p>
             </div>
-        </section>
+            <button type="submit"
+                    style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--apple-blue);color:#fff;border:none;border-radius:11px;font-size:0.88rem;font-weight:700;cursor:pointer"
+                    onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                <i class="fas fa-check"></i>Submit Evaluasi
+            </button>
+        </div>
         @endif
     </form>
 </div>
-
-<style>
-.form-control {
-    display: block;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    border-radius: 0.5rem;
-    border: 1px solid;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(10, 132, 255, 0.25);
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    opacity: 1;
-}
-</style>
 @endsection

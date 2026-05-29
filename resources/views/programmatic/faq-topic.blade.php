@@ -43,13 +43,13 @@ $breadcrumbSchema = [
     $waHref = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . rawurlencode($waText);
 @endphp
 
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-28 pb-16 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide">
         <a href="{{ route('faq.index') }}" class="link-primary text-sm inline-flex items-center mb-5"><i class="fas fa-arrow-left mr-2"></i>Kembali ke FAQ</a>
         <div class="max-w-4xl">
-            <span class="section-badge mb-4">FAQ</span>
-            <h1 class="section-title mb-4">FAQ: {{ $topic['title'] }}</h1>
-            <p class="section-description" style="margin-left:0;">{{ $topic['description'] }}</p>
+            <span class="eyebrow mb-4">FAQ</span>
+            <h1 class="display-lg mb-4">FAQ: {{ $topic['title'] }}</h1>
+            <p class="text-lg leading-relaxed text-gray-600" style="margin-left:0;">{{ $topic['description'] }}</p>
         </div>
     </div>
 </section>
@@ -76,40 +76,40 @@ $breadcrumbSchema = [
                 @endforeach
             </div>
         @else
-            <div class="card text-center">
-                <h2 class="text-lg font-bold mb-2" style="color:var(--text-primary);">Belum ada FAQ untuk topik ini</h2>
-                <p class="mb-0" style="color:var(--text-secondary);">Hubungi kami untuk bertanya langsung.</p>
+            <div class="premium-card text-center">
+                <h2 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">Belum ada FAQ untuk topik ini</h2>
+                <p class="mb-0 text-gray-600">Hubungi kami untuk bertanya langsung.</p>
             </div>
         @endif
     </div>
 </section>
 
-<section class="section-sm" style="background:var(--surface-secondary);">
+<section class="section-sm section-premium">
     <div class="container-wide">
-        <h2 class="section-title mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Topik FAQ Lainnya</h2>
+        <h2 class="display-lg mb-6" style="font-size:clamp(1.35rem,2.4vw,1.8rem);">Topik FAQ Lainnya</h2>
         <div class="grid sm:grid-cols-3 gap-6">
             @foreach($otherTopics as $slug => $other)
-                <a href="{{ url('/faq/' . $other['slug']) }}" class="card">
+                <a href="{{ url('/faq/' . $other['slug']) }}" class="premium-card">
                     <div class="flex items-center gap-3 mb-2">
-                        <span class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(14,165,233,.12);color:var(--color-accent);">
+                        <span class="w-10 h-10 rounded-xl flex items-center justify-center bg-sky-500/10 text-amber-600">
                             <i class="fas {{ $other['icon'] ?? 'fa-circle-question' }}"></i>
                         </span>
-                        <h3 class="text-base font-bold mb-0" style="color:var(--text-primary);">{{ $other['title'] }}</h3>
+                        <h3 class="text-base font-bold mb-0 text-gray-900 dark:text-white">{{ $other['title'] }}</h3>
                     </div>
-                    <p class="text-sm mb-0" style="color:var(--text-secondary);">{{ Str::limit($other['description'], 96) }}</p>
+                    <p class="text-sm mb-0 text-gray-600">{{ Str::limit($other['description'], 96) }}</p>
                 </a>
             @endforeach
         </div>
     </div>
 </section>
 
-<section class="section-sm" style="background:var(--surface-dark);">
+<section class="section-sm section-premium">
     <div class="container-wide text-center">
-        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Punya Pertanyaan Lain?</h2>
-        <p class="mb-7" style="color:rgba(255,255,255,.74);">Konsultasi gratis dengan tim ahli kami.</p>
+        <h2 class="text-gray-900 mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Punya Pertanyaan Lain?</h2>
+        <p class="mb-7 text-gray-600">Konsultasi gratis dengan tim ahli kami.</p>
         <div class="flex flex-wrap justify-center gap-3">
-            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-success"><i class="fab fa-whatsapp"></i> Tanya via WhatsApp</a>
-            <a href="{{ route('contact.index') }}" class="btn btn-secondary"><i class="fas fa-envelope"></i> Hubungi Tim</a>
+            <a href="{{ $waHref }}" target="_blank" rel="noopener" class="btn btn-gold"><i class="fab fa-whatsapp"></i> Tanya via WhatsApp</a>
+            <a href="{{ route('contact.index') }}" class="btn btn-ghost"><i class="fas fa-envelope"></i> Hubungi Tim</a>
         </div>
     </div>
 </section>

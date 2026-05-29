@@ -3,13 +3,13 @@
     $whatsapp = $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855';
 @endphp
 
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-28 pb-16 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide text-center">
         <span class="section-badge mb-4">Karir</span>
         <h1 class="section-title mb-4">Bergabung dengan Tim Bizmark.ID</h1>
         <p class="section-description mx-auto mb-8">Berkembang bersama tim profesional di industri perizinan, compliance, dan solusi digital.</p>
         <div class="flex flex-wrap justify-center gap-3">
-            <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="btn btn-success"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fab fa-whatsapp"></i> WhatsApp</a>
             <a href="{{ route('contact.index') }}" class="btn btn-outline-primary"><i class="fas fa-envelope"></i> Kontak</a>
         </div>
     </div>
@@ -18,10 +18,10 @@
 <section class="section">
     <div class="container-wide">
         @if(session('success'))
-            <div class="card mb-6" style="border-color:rgba(22,163,74,.35);box-shadow:var(--shadow-ring);">
+            <div class="card mb-6 border-amber-500/35" style="box-shadow:var(--shadow-ring);">
                 <div class="flex items-start gap-3">
-                    <i class="fas fa-check-circle mt-0.5" style="color:var(--color-success);"></i>
-                    <div class="text-sm" style="color:var(--text-secondary);">{{ session('success') }}</div>
+                    <i class="fas fa-check-circle mt-0.5 text-amber-500"></i>
+                    <div class="text-sm text-gray-600">{{ session('success') }}</div>
                 </div>
             </div>
         @endif
@@ -36,14 +36,14 @@
         @endif
 
         <div class="mb-8">
-            <h2 class="text-2xl font-bold mb-2" style="color:var(--text-primary);">Lowongan Tersedia</h2>
-            <p class="mb-0" style="color:var(--text-secondary);">Temukan posisi yang sesuai dengan keahlian dan minat Anda.</p>
+            <h2 class="text-2xl font-bold mb-2 text-gray-900">Lowongan Tersedia</h2>
+            <p class="mb-0 text-gray-600">Temukan posisi yang sesuai dengan keahlian dan minat Anda.</p>
         </div>
 
         @if($vacancies->count() === 0)
             <div class="card text-center">
-                <h3 class="text-xl font-bold mb-2" style="color:var(--text-primary);">Belum Ada Lowongan</h3>
-                <p class="mb-6" style="color:var(--text-secondary);">Saat ini belum ada posisi yang dibuka. Silakan cek kembali nanti.</p>
+                <h3 class="text-xl font-bold mb-2 text-gray-900">Belum Ada Lowongan</h3>
+                <p class="mb-6 text-gray-600">Saat ini belum ada posisi yang dibuka. Silakan cek kembali nanti.</p>
                 <a href="{{ route('landing.id') }}" class="btn btn-primary"><i class="fas fa-home"></i> Kembali ke Beranda</a>
             </div>
         @else
@@ -55,18 +55,18 @@
                                 {{ ucfirst(str_replace('-', ' ', $vacancy->employment_type)) }}
                             </span>
                             @if($vacancy->deadline)
-                                <span class="text-xs" style="color:var(--text-tertiary);"><i class="far fa-clock mr-1"></i>{{ $vacancy->deadline->diffForHumans() }}</span>
+                                <span class="text-xs text-gray-400"><i class="far fa-clock mr-1"></i>{{ $vacancy->deadline->diffForHumans() }}</span>
                             @endif
                         </div>
 
-                        <h3 class="text-lg font-bold mb-2" style="color:var(--text-primary);">{{ $vacancy->title }}</h3>
-                        <div class="text-sm mb-4" style="color:var(--text-secondary);">
-                            <div class="mb-1"><i class="fas fa-map-marker-alt mr-2" style="color:var(--text-tertiary);"></i>{{ $vacancy->location }}</div>
-                            <div><i class="fas fa-wallet mr-2" style="color:var(--text-tertiary);"></i>{{ $vacancy->salary_range }}</div>
+                        <h3 class="text-lg font-bold mb-2 text-gray-900">{{ $vacancy->title }}</h3>
+                        <div class="text-sm mb-4 text-gray-600">
+                            <div class="mb-1"><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>{{ $vacancy->location }}</div>
+                            <div><i class="fas fa-wallet mr-2 text-gray-400"></i>{{ $vacancy->salary_range }}</div>
                         </div>
 
-                        <div class="mt-auto pt-4 border-t flex items-center justify-between" style="border-color:var(--border-light);">
-                            <span class="text-xs" style="color:var(--text-tertiary);"><i class="fas fa-users mr-1"></i>{{ $vacancy->applications_count }} pelamar</span>
+                        <div class="mt-auto pt-4 border-t border-gray-200 flex items-center justify-between">
+                            <span class="text-xs text-gray-400"><i class="fas fa-users mr-1"></i>{{ $vacancy->applications_count }} pelamar</span>
                             <a href="{{ route('career.show', $vacancy->slug) }}" class="link-primary text-sm inline-flex items-center">Lihat Detail <i class="fas fa-arrow-right ml-2"></i></a>
                         </div>
                     </article>

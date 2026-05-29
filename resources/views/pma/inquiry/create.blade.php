@@ -1,340 +1,335 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Inquiry - Bizmark.ID</title>
-    <meta name="description" content="Request a free consultation for your investment in Indonesia. Get personalized guidance from our expert team.">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
-</head>
-<body class="font-sans antialiased bg-gray-50">
+@extends('landing.layout')
 
-<!-- Navbar -->
-<nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <a href="{{ route('landing.en') }}" class="text-xl font-bold text-blue-900">
-                <i class="fas fa-certificate text-blue-600 mr-2"></i>Bizmark.ID
-            </a>
-            <div class="flex items-center gap-4">
-                <x-locale-switcher />
-                <a href="{{ route('landing.en') }}" class="text-sm text-gray-600 hover:text-blue-600 transition">
-                    <i class="fas fa-arrow-left mr-2"></i>Back to Home
-                </a>
-            </div>
+@php
+    $locale = $locale ?? app()->getLocale();
+    $isEn = true; // PMA inquiry is English-only by product decision
+    $pageTitle = 'Investment Inquiry — Bizmark.ID';
+    $pageDescription = 'Request a free consultation for your foreign investment in Indonesia. Get personalized guidance from our PMA-specialist team within 24 hours.';
+
+    $metrics = config('landing_metrics');
+    $expYears = data_get($metrics, 'experience.years', 12);
+    $clientsActive = data_get($metrics, 'stats.clients_active_label', '138+');
+
+    // Recent anonymized PMA inquiries (range agregat, no PII) — Decision #2 default
+    $recentPma = [
+        ['country' => 'Singapore',   'sector' => 'Manufacturing',     'amount' => '$250K–$500K', 'when' => '2 days ago'],
+        ['country' => 'Japan',       'sector' => 'Logistics & Trade', 'amount' => '$500K–$1M',   'when' => '4 days ago'],
+        ['country' => 'South Korea', 'sector' => 'Renewable Energy',  'amount' => '$1M+',        'when' => '1 week ago'],
+        ['country' => 'Australia',   'sector' => 'F&B / Retail',      'amount' => '$100K–$250K', 'when' => '1 week ago'],
+    ];
+@endphp
+
+@section('title', $pageTitle)
+@section('meta_description', $pageDescription)
+
+@section('content')
+
+{{-- HERO --}}
+<section class="section-v2-sm bg-[var(--bg-raised)] border-b border-gray-200">
+    <div class="container-wide">
+        <div class="max-w-4xl">
+            <span class="eyebrow mb-4">PMA Inquiry · Free Consultation</span>
+            <h1 class="display-xl mt-2 mb-5">
+                Investment inquiry — get a tailored PMA roadmap.
+            </h1>
+            <p class="text-lg leading-relaxed max-w-2xl text-gray-600">
+                Share your investment plan in 3 short steps. Our PMA-specialist team responds within
+                <strong style="color: var(--accent-text);">24 business hours</strong> with a clear permit roadmap, timeline, and cost estimate.
+            </p>
         </div>
     </div>
-</nav>
+</section>
 
-<!-- Main Content -->
-<div class="min-h-screen py-12">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto">
-            
-            <!-- Header -->
-            <div class="text-center mb-12">
-                <div class="inline-block px-4 py-2 bg-blue-100 text-blue-900 rounded-full text-sm font-semibold mb-4">
-                    <i class="fas fa-handshake mr-2"></i>Free Consultation
-                </div>
-                <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Investment Inquiry Form</h1>
-                <p class="text-xl text-gray-600">
-                    Share your investment plans and receive a personalized consultation within 24 hours
-                </p>
-            </div>
+{{-- FORM + SIDE PROOF --}}
+<section class="section-v2">
+    <div class="container-wide">
+        <div class="grid lg:grid-cols-12 gap-8 items-start">
 
-            <!-- Progress Indicator -->
-            <div x-data="{ step: 1 }" class="mb-12">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex-1 text-center">
-                        <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm transition-colors"
-                             :class="step >= 1 ? 'bg-blue-900 text-white' : 'bg-gray-200 text-gray-500'">1</div>
-                        <div class="text-xs mt-2 font-medium" :class="step >= 1 ? 'text-blue-900' : 'text-gray-500'">Contact</div>
-                    </div>
-                    <div class="flex-1 h-1 mx-2" :class="step >= 2 ? 'bg-blue-900' : 'bg-gray-200'"></div>
-                    <div class="flex-1 text-center">
-                        <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm transition-colors"
-                             :class="step >= 2 ? 'bg-blue-900 text-white' : 'bg-gray-200 text-gray-500'">2</div>
-                        <div class="text-xs mt-2 font-medium" :class="step >= 2 ? 'text-blue-900' : 'text-gray-500'">Investment</div>
-                    </div>
-                    <div class="flex-1 h-1 mx-2" :class="step >= 3 ? 'bg-blue-900' : 'bg-gray-200'"></div>
-                    <div class="flex-1 text-center">
-                        <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm transition-colors"
-                             :class="step >= 3 ? 'bg-blue-900 text-white' : 'bg-gray-200 text-gray-500'">3</div>
-                        <div class="text-xs mt-2 font-medium" :class="step >= 3 ? 'text-blue-900' : 'text-gray-500'">Services</div>
-                    </div>
-                    <div class="flex-1 h-1 mx-2" :class="step >= 4 ? 'bg-blue-900' : 'bg-gray-200'"></div>
-                    <div class="flex-1 text-center">
-                        <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm transition-colors"
-                             :class="step >= 4 ? 'bg-blue-900 text-white' : 'bg-gray-200 text-gray-500'">4</div>
-                        <div class="text-xs mt-2 font-medium" :class="step >= 4 ? 'text-blue-900' : 'text-gray-500'">Details</div>
-                    </div>
-                </div>
-            </div>
+            {{-- Form column --}}
+            <div class="lg:col-span-8 order-2 lg:order-1">
+                <form id="pmaInquiryForm"
+                      x-data="pmaInquiryForm()"
+                      @submit.prevent="submitForm"
+                      class="premium-card">
 
-            <!-- Form -->
-            <form id="pmaInquiryForm" 
-                  x-data="pmaInquiryForm()" 
-                  @submit.prevent="submitForm"
-                  class="bg-white rounded-2xl shadow-lg p-8">
-                
-                <!-- Step 1: Contact Information -->
-                <div x-show="step === 1" x-cloak class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
-                            <input type="text" name="full_name" x-model="formData.full_name" required
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    {{-- 3-step progress indicator --}}
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-gray-700">
+                                Step <span x-text="step" style="color: var(--accent-text);"></span> of 3
+                            </span>
+                            <span class="text-sm font-bold" style="color: var(--accent-text);" x-text="Math.round((step / 3) * 100) + '%'"></span>
                         </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
-                            <input type="email" name="email" x-model="formData.email" required
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div class="flex items-center gap-2">
+                            <template x-for="n in 3" :key="n">
+                                <div class="flex-1 h-1.5 rounded-full transition-colors"
+                                     :style="step >= n ? 'background: var(--accent);' : 'background: rgba(0,0,0,.08);'"></div>
+                            </template>
                         </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
-                            <input type="tel" name="phone" x-model="formData.phone" required placeholder="+1 234 567 8900"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Country *</label>
-                            <select name="country" x-model="formData.country" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="">Select your country</option>
-                                @foreach($countries as $country)
-                                <option value="{{ $country }}">{{ $country }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Company Name *</label>
-                            <input type="text" name="company_name" x-model="formData.company_name" required
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Position/Title</label>
-                            <input type="text" name="position" x-model="formData.position"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div class="flex items-center justify-between mt-3 text-xs font-medium text-gray-500">
+                            <span :class="step === 1 ? 'font-bold' : ''" :style="step === 1 ? 'color: var(--accent-text);' : ''">1. About you</span>
+                            <span :class="step === 2 ? 'font-bold' : ''" :style="step === 2 ? 'color: var(--accent-text);' : ''">2. Investment plan</span>
+                            <span :class="step === 3 ? 'font-bold' : ''" :style="step === 3 ? 'color: var(--accent-text);' : ''">3. Project details</span>
                         </div>
                     </div>
-                    
-                    <div class="flex justify-end pt-4">
-                        <button type="button" @click="step = 2"
-                                class="px-8 py-3 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition">
-                            Next: Investment Details <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Step 2: Investment Information -->
-                <div x-show="step === 2" x-cloak class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Investment Information</h2>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
+                    {{-- STEP 1 — About you --}}
+                    <div x-show="step === 1" x-cloak class="space-y-5">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Investment Sector *</label>
-                            <select name="investment_sector" x-model="formData.investment_sector" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="">Select sector</option>
-                                @foreach($investmentSectors as $sector)
-                                <option value="{{ $sector }}">{{ $sector }}</option>
-                                @endforeach
-                            </select>
+                            <h2 class="font-display font-bold text-2xl mb-1">About you</h2>
+                            <p class="text-sm text-gray-600">Who should we contact, and where are you based?</p>
                         </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Investment Amount (USD) *</label>
-                            <select name="investment_amount_usd" x-model="formData.investment_amount_usd" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="">Select range</option>
-                                <option value="Under $50,000">Under $50,000</option>
-                                <option value="$50,000 - $100,000">$50,000 - $100,000</option>
-                                <option value="$100,000 - $250,000">$100,000 - $250,000</option>
-                                <option value="$250,000 - $500,000">$250,000 - $500,000</option>
-                                <option value="$500,000 - $1,000,000">$500,000 - $1,000,000</option>
-                                <option value="Over $1,000,000">Over $1,000,000</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Investment Timeline *</label>
-                            <select name="investment_timeline" x-model="formData.investment_timeline" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="">Select timeline</option>
-                                <option value="1-3 months">1-3 months (Urgent)</option>
-                                <option value="3-6 months">3-6 months</option>
-                                <option value="6-12 months">6-12 months</option>
-                                <option value="Over 12 months">Over 12 months</option>
-                                <option value="Just exploring">Just exploring options</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Preferred Business Location *</label>
-                            <input type="text" name="business_location" x-model="formData.business_location" required
-                                   placeholder="e.g., Jakarta, Bali, Surabaya"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-between pt-4">
-                        <button type="button" @click="step = 1"
-                                class="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">
-                            <i class="fas fa-arrow-left mr-2"></i> Previous
-                        </button>
-                        <button type="button" @click="step = 3"
-                                class="px-8 py-3 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition">
-                            Next: Services <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Step 3: Services Needed -->
-                <div x-show="step === 3" x-cloak class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Services Needed</h2>
-                    
-                    <p class="text-gray-600 mb-4">Select all services you're interested in:</p>
-                    
-                    <div class="grid md:grid-cols-2 gap-4">
-                        @foreach($services as $slug => $service)
-                        <label class="flex items-start gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 cursor-pointer transition">
-                            <input type="checkbox" name="services_needed[]" value="{{ $slug }}"
-                                   x-model="formData.services_needed"
-                                   class="mt-1 w-5 h-5 text-blue-900 border-gray-300 rounded focus:ring-blue-500">
-                            <div class="flex-1">
-                                <div class="font-semibold text-gray-900">{{ $service['title'] }}</div>
-                                <div class="text-sm text-gray-600">{{ Str::limit($service['short_description'], 60) }}</div>
+                        <div class="grid md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Full name *</label>
+                                <input type="text" x-model="formData.full_name" required autocomplete="name"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
                             </div>
-                        </label>
-                        @endforeach
-                    </div>
-                    
-                    <div class="flex justify-between pt-4">
-                        <button type="button" @click="step = 2"
-                                class="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">
-                            <i class="fas fa-arrow-left mr-2"></i> Previous
-                        </button>
-                        <button type="button" @click="step = 4"
-                                class="px-8 py-3 bg-blue-900 text-white rounded-lg font-semibold hover:bg-blue-800 transition">
-                            Next: Final Details <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
-                </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email *</label>
+                                <input type="email" x-model="formData.email" required autocomplete="email"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Phone (with country code) *</label>
+                                <input type="tel" x-model="formData.phone" required placeholder="+1 234 567 8900" autocomplete="tel"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Country of origin *</label>
+                                <select x-model="formData.country" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm bg-white">
+                                    <option value="">Select your country</option>
+                                    @foreach($countries as $country)
+                                        <option value="{{ $country }}">{{ $country }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Company name *</label>
+                                <input type="text" x-model="formData.company_name" required autocomplete="organization"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Your role</label>
+                                <input type="text" x-model="formData.position" placeholder="e.g., Director, Founder" autocomplete="organization-title"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+                            </div>
+                        </div>
 
-                <!-- Step 4: Additional Details -->
-                <div x-show="step === 4" x-cloak class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Additional Details</h2>
-                    
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Project Description *</label>
-                        <textarea name="project_description" x-model="formData.project_description" required rows="6"
-                                  placeholder="Please describe your investment project, business model, and objectives..."
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                        <div class="text-sm text-gray-500 mt-1">Minimum 50 characters</div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Specific Questions or Concerns</label>
-                        <textarea name="specific_questions" x-model="formData.specific_questions" rows="4"
-                                  placeholder="Any specific questions about regulations, permits, or processes?"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Preferred Contact Method *</label>
-                            <select name="preferred_contact_method" x-model="formData.preferred_contact_method" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="email">Email</option>
-                                <option value="whatsapp">WhatsApp</option>
-                                <option value="phone">Phone Call</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Best Time to Contact</label>
-                            <input type="text" name="preferred_contact_time" x-model="formData.preferred_contact_time"
-                                   placeholder="e.g., Weekdays 9-5 EST"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div class="flex justify-end pt-2">
+                            <button type="button" @click="next()" class="btn btn-gold">
+                                <span>Continue</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <label class="flex items-start gap-3 cursor-pointer">
-                            <input type="checkbox" name="privacy_consent" x-model="formData.privacy_consent" required
-                                   class="mt-1 w-5 h-5 text-blue-900 border-gray-300 rounded focus:ring-blue-500">
+
+                    {{-- STEP 2 — Investment plan + services --}}
+                    <div x-show="step === 2" x-cloak class="space-y-5">
+                        <div>
+                            <h2 class="font-display font-bold text-2xl mb-1">Investment plan</h2>
+                            <p class="text-sm text-gray-600">Tell us the shape of your investment and which services you'll need.</p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Sector *</label>
+                                <select x-model="formData.investment_sector" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm bg-white">
+                                    <option value="">Select sector</option>
+                                    @foreach($investmentSectors as $sector)
+                                        <option value="{{ $sector }}">{{ $sector }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Investment amount (USD) *</label>
+                                <select x-model="formData.investment_amount_usd" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm bg-white">
+                                    <option value="">Select range</option>
+                                    <option value="Under $50,000">Under $50,000</option>
+                                    <option value="$50,000 - $100,000">$50,000 – $100,000</option>
+                                    <option value="$100,000 - $250,000">$100,000 – $250,000</option>
+                                    <option value="$250,000 - $500,000">$250,000 – $500,000</option>
+                                    <option value="$500,000 - $1,000,000">$500,000 – $1,000,000</option>
+                                    <option value="Over $1,000,000">Over $1,000,000</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Timeline *</label>
+                                <select x-model="formData.investment_timeline" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm bg-white">
+                                    <option value="">Select timeline</option>
+                                    <option value="1-3 months">1–3 months (urgent)</option>
+                                    <option value="3-6 months">3–6 months</option>
+                                    <option value="6-12 months">6–12 months</option>
+                                    <option value="Over 12 months">Over 12 months</option>
+                                    <option value="Just exploring">Just exploring options</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Preferred location *</label>
+                                <input type="text" x-model="formData.business_location" required
+                                       placeholder="e.g., Jakarta, Bali, Surabaya"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Services you're interested in</label>
+                            <p class="text-xs text-gray-500 mb-3">Optional — pick any that apply. We'll recommend the rest.</p>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                @foreach($services as $slug => $service)
+                                    <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer transition hover:border-amber-300">
+                                        <input type="checkbox" value="{{ $slug }}"
+                                               x-model="formData.services_needed"
+                                               class="mt-0.5 w-4 h-4 border-gray-300 rounded">
+                                        <div class="flex-1">
+                                            <div class="font-semibold text-sm text-gray-900">{{ $service['title'] }}</div>
+                                            <div class="text-xs text-gray-600 mt-0.5">{{ Str::limit($service['short_description'], 70) }}</div>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between pt-2">
+                            <button type="button" @click="prev()" class="btn btn-ghost">
+                                <i class="fas fa-arrow-left text-xs"></i>
+                                <span>Back</span>
+                            </button>
+                            <button type="button" @click="next()" class="btn btn-gold">
+                                <span>Continue</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- STEP 3 — Project details + submit --}}
+                    <div x-show="step === 3" x-cloak class="space-y-5">
+                        <div>
+                            <h2 class="font-display font-bold text-2xl mb-1">Project details</h2>
+                            <p class="text-sm text-gray-600">A short description so our consultant can prepare for the call.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Project description *</label>
+                            <textarea x-model="formData.project_description" required rows="5"
+                                      placeholder="Briefly describe your investment project, business model, and main goals…"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"></textarea>
+                            <div class="text-xs text-gray-500 mt-1">Minimum 50 characters</div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Specific questions (optional)</label>
+                            <textarea x-model="formData.specific_questions" rows="3"
+                                      placeholder="Anything specific about regulations, KBLI, permits, or process?"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"></textarea>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Preferred contact *</label>
+                                <select x-model="formData.preferred_contact_method" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm bg-white">
+                                    <option value="email">Email</option>
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="phone">Phone Call</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Best time to contact</label>
+                                <input type="text" x-model="formData.preferred_contact_time"
+                                       placeholder="e.g., Weekdays 9–5 SGT"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+                            </div>
+                        </div>
+
+                        <label class="flex items-start gap-3 p-4 rounded-lg cursor-pointer" style="background: var(--accent-glow); border: 1px solid rgba(var(--accent-rgb), .2);">
+                            <input type="checkbox" x-model="formData.privacy_consent" required
+                                   class="mt-0.5 w-4 h-4 border-gray-300 rounded">
                             <span class="text-sm text-gray-700">
-                                I agree to the <a href="#" class="text-blue-900 underline">Privacy Policy</a> and consent to be contacted by Bizmark.ID regarding my investment inquiry. *
+                                I agree to the <a href="#" class="underline" style="color: var(--accent-text);">Privacy Policy</a> and consent to be contacted by Bizmark.ID regarding this inquiry. *
                             </span>
                         </label>
-                    </div>
-                    
-                    <!-- Submit Button -->
-                    <div class="flex justify-between pt-4">
-                        <button type="button" @click="step = 3"
-                                class="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">
-                            <i class="fas fa-arrow-left mr-2"></i> Previous
-                        </button>
-                        <button type="submit" :disabled="loading"
-                                class="px-8 py-4 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span x-show="!loading">
-                                <i class="fas fa-paper-plane mr-2"></i> Submit Inquiry
-                            </span>
-                            <span x-show="loading">
-                                <i class="fas fa-spinner fa-spin mr-2"></i> Submitting...
-                            </span>
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Error Messages -->
-                <div x-show="errorMessage" x-cloak class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p class="text-red-700" x-text="errorMessage"></p>
-                </div>
-            </form>
+                        <div class="flex justify-between pt-2">
+                            <button type="button" @click="prev()" class="btn btn-ghost">
+                                <i class="fas fa-arrow-left text-xs"></i>
+                                <span>Back</span>
+                            </button>
+                            <button type="submit" :disabled="loading" class="btn btn-gold">
+                                <span x-show="!loading"><i class="fas fa-paper-plane text-xs"></i> Submit inquiry</span>
+                                <span x-show="loading"><i class="fas fa-spinner fa-spin text-xs"></i> Submitting…</span>
+                            </button>
+                        </div>
+                    </div>
 
-            <!-- Benefits Section -->
-            <div class="grid md:grid-cols-3 gap-6 mt-12">
-                <div class="text-center p-6 bg-white rounded-xl shadow-sm">
-                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-900 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-clock text-xl"></i>
+                    {{-- Error banner --}}
+                    <div x-show="errorMessage" x-cloak class="mt-5 p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <p class="text-sm text-red-700" x-text="errorMessage"></p>
                     </div>
-                    <h3 class="font-bold text-gray-900 mb-2">24-Hour Response</h3>
-                    <p class="text-sm text-gray-600">Get expert feedback within one business day</p>
-                </div>
-                
-                <div class="text-center p-6 bg-white rounded-xl shadow-sm">
-                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-900 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-gift text-xl"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900 mb-2">Free Consultation</h3>
-                    <p class="text-sm text-gray-600">No obligation, personalized guidance</p>
-                </div>
-                
-                <div class="text-center p-6 bg-white rounded-xl shadow-sm">
-                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-900 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-shield-alt text-xl"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900 mb-2">Confidential</h3>
-                    <p class="text-sm text-gray-600">Your information is secure and private</p>
-                </div>
+                </form>
             </div>
+
+            {{-- Side proof column --}}
+            <aside class="lg:col-span-4 order-1 lg:order-2 lg:sticky lg:top-24 space-y-5">
+                {{-- Recent inquiries --}}
+                <div class="premium-card">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-[11px] font-bold uppercase tracking-[.15em] text-emerald-700">Live</span>
+                    </div>
+                    <h3 class="font-display font-bold text-lg mb-1">Recent PMA inquiries handled</h3>
+                    <p class="text-xs text-gray-500 mb-4">Aggregated range, country/sector only — no PII.</p>
+                    <ul class="space-y-3">
+                        @foreach($recentPma as $r)
+                            <li class="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
+                                <span class="inline-flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0 text-sm font-bold" style="background: var(--accent-glow); color: var(--accent-text);">
+                                    {{ substr($r['country'], 0, 2) }}
+                                </span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-semibold text-gray-900">{{ $r['country'] }} · {{ $r['sector'] }}</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">{{ $r['amount'] }} · {{ $r['when'] }}</div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                {{-- Why this consultation --}}
+                <div class="premium-card">
+                    <h3 class="font-display font-bold text-lg mb-3">Why this inquiry?</h3>
+                    <ul class="space-y-2.5 text-sm text-gray-700">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fas fa-check-circle mt-0.5 flex-shrink-0" style="color: var(--accent-text);"></i>
+                            <span><strong>24-hour response</strong> from a PMA specialist</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fas fa-check-circle mt-0.5 flex-shrink-0" style="color: var(--accent-text);"></i>
+                            <span><strong>Tailored permit roadmap</strong> — KBLI, OSS-RBA, BKPM, sector permits</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fas fa-check-circle mt-0.5 flex-shrink-0" style="color: var(--accent-text);"></i>
+                            <span><strong>Cost &amp; timeline estimate</strong> upfront — no surprises</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fas fa-check-circle mt-0.5 flex-shrink-0" style="color: var(--accent-text);"></i>
+                            <span><strong>Confidential</strong> — your data is encrypted and never shared</span>
+                        </li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500">
+                        <i class="fas fa-award mr-1" style="color: var(--accent);"></i>
+                        <strong>{{ $expYears }}+ years</strong> · <strong>{{ $clientsActive }} clients</strong> · ISO 9001:2015
+                    </div>
+                </div>
+            </aside>
+
         </div>
     </div>
-</div>
+</section>
 
 <script>
 function pmaInquiryForm() {
@@ -360,11 +355,31 @@ function pmaInquiryForm() {
             preferred_contact_time: '',
             privacy_consent: false,
         },
-        
+        next() {
+            if (this.step === 1) {
+                if (!this.formData.full_name || !this.formData.email || !this.formData.phone || !this.formData.country || !this.formData.company_name) {
+                    this.errorMessage = 'Please fill in all required fields.';
+                    return;
+                }
+            }
+            if (this.step === 2) {
+                if (!this.formData.investment_sector || !this.formData.investment_amount_usd || !this.formData.investment_timeline || !this.formData.business_location) {
+                    this.errorMessage = 'Please complete the investment plan fields.';
+                    return;
+                }
+            }
+            this.errorMessage = '';
+            if (this.step < 3) this.step++;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        prev() {
+            this.errorMessage = '';
+            if (this.step > 1) this.step--;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
         async submitForm() {
             this.loading = true;
             this.errorMessage = '';
-            
             try {
                 const response = await fetch('{{ route("pma.inquiry.store") }}', {
                     method: 'POST',
@@ -375,15 +390,13 @@ function pmaInquiryForm() {
                     },
                     body: JSON.stringify(this.formData)
                 });
-                
                 const data = await response.json();
-                
                 if (data.success) {
                     window.location.href = data.redirect_url;
                 } else {
                     this.errorMessage = data.message || 'An error occurred. Please try again.';
                 }
-            } catch (error) {
+            } catch (e) {
                 this.errorMessage = 'Network error. Please check your connection and try again.';
             } finally {
                 this.loading = false;
@@ -393,5 +406,4 @@ function pmaInquiryForm() {
 }
 </script>
 
-</body>
-</html>
+@endsection

@@ -72,7 +72,7 @@ class AutoPostConfig extends Model
             'posts_per_day' => 3,
             'post_times' => ['08:00', '13:00', '19:00'],
             'timezone' => 'Asia/Jakarta',
-            'ai_model' => 'anthropic/claude-sonnet-4',
+            'ai_model' => config('services.openrouter.default_model', 'openrouter/free'),
             'min_word_count' => 800,
             'max_word_count' => 1500,
             'min_reading_time' => 4,

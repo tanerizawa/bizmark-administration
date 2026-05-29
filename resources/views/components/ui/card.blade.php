@@ -5,12 +5,12 @@
 ])
 
 @php
-    $baseClasses = 'bg-white dark:bg-gray-800';
+    $baseClasses = 'rounded-2xl';
 
     $variantClasses = [
-        'elevated' => 'rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100 dark:border-gray-700',
-        'bordered' => 'rounded-2xl border-2 border-gray-200 dark:border-gray-700',
-        'flat' => 'rounded-2xl bg-gray-50 dark:bg-gray-800/50',
+        'elevated' => 'bg-[var(--dark-bg-tertiary)] shadow-sm hover:shadow-md transition-shadow duration-200 border border-[var(--dark-separator)]',
+        'bordered' => 'bg-[var(--dark-bg-secondary)] border-2 border-[var(--dark-separator)]',
+        'flat' => 'bg-[var(--dark-bg-secondary)] border border-[var(--dark-separator)]',
     ];
 
     $paddingClasses = [

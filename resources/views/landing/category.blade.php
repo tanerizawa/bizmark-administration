@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $categoryLabel }} - Bizmark.ID</title>
     
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @vite(['resources/css/landing.css', 'resources/css/landing-theme.css', 'resources/js/app.js'])
     
     <style>
         :root {
@@ -97,7 +96,7 @@
                 @foreach($articles as $article)
                 <div class="article-card">
                     @if($article->featured_image)
-                    <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-48 object-cover">
+                    <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" loading="lazy" decoding="async" class="w-full h-48 object-cover">
                     @else
                     <div class="w-full h-48 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
                         <i class="fas fa-newspaper text-white text-4xl"></i>
@@ -112,7 +111,7 @@
                         </div>
                         
                         <h3 class="text-xl font-bold mb-3 line-clamp-2">
-                            <a href="{{ route('blog.article', $article->slug) }}" class="hover:text-blue-400 transition">
+                            <a href="{{ route('blog.article.id', $article->slug) }}" class="hover:text-blue-400 transition">
                                 {{ $article->title }}
                             </a>
                         </h3>

@@ -36,6 +36,9 @@ class Client extends Authenticatable implements MustVerifyEmail
         'client_type',
         'status',
         'notes',
+        'notif_email',
+        'notif_whatsapp',
+        'notif_push',
     ];
 
     protected $hidden = [

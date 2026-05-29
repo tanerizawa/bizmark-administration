@@ -16,6 +16,20 @@ Schedule::command('interviews:send-reminders')
     ->withoutOverlapping();
 
 // ========================================
+// P1 — Regulatory Compliance Monitor
+// ========================================
+Schedule::command('permits:check-expiry')
+    ->dailyAt('08:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping()
+    ->onSuccess(function () {
+        Log::info('✅ Permit expiry check completed');
+    })
+    ->onFailure(function () {
+        Log::error('❌ Permit expiry check failed');
+    });
+
+// ========================================
 // Auto-Post Article Scheduler
 // ========================================
 
@@ -437,4 +451,47 @@ Schedule::command('rag:sync-regulations')
     })
     ->onFailure(function () {
         Log::error('❌ RAG regulation sync failed');
+    });
+
+// ─── P5: KBLI SEMANTIC SEARCH — Re-index new/unembedded KBLIs ───
+// Daily Sunday 03:00 — hanya proses KBLI yang belum ter-embed
+Schedule::command('kbli:index-embeddings')
+    ->weekly()
+    ->sundays()
+    ->at('03:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping()
+    ->onSuccess(function () {
+        Log::info('✅ KBLI embedding indexing completed');
+    })
+    ->onFailure(function () {
+        Log::error('❌ KBLI embedding indexing failed');
+    });
+
+// ─── P4: OSS-RBA STATUS TRACKER — Daily status check ───
+// Daily 09:00 WIB — cek status semua permit yang belum dicek hari ini
+Schedule::command('oss:check-status')
+    ->dailyAt('09:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping()
+    ->onSuccess(function () {
+        Log::info('✅ OSS permit status check completed');
+    })
+    ->onFailure(function () {
+        Log::error('❌ OSS permit status check failed');
+    });
+
+// ─── P7: AI REGULATORY CHANGE DETECTOR — Weekly crawl ───
+// Weekly Monday 07:00 WIB — crawl JDIH + OSS sources, AI analyze, notify clients
+Schedule::command('regulatory:crawl')
+    ->weekly()
+    ->mondays()
+    ->at('07:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping()
+    ->onSuccess(function () {
+        Log::info('✅ Regulatory change crawl completed');
+    })
+    ->onFailure(function () {
+        Log::error('❌ Regulatory change crawl failed');
     });

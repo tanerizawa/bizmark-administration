@@ -107,7 +107,7 @@
         <h3 class="text-sm font-semibold text-white">
             <i class="fas fa-file-invoice mr-2 text-apple-blue-dark"></i>Daftar Invoice
         </h3>
-        <button onclick="openInvoiceModal()" 
+        <button @click="openInvoiceModal()"
                 class="btn-primary-sm bg-apple-blue/90 text-white">
             <i class="fas fa-plus mr-1"></i>Tambah Invoice
         </button>
@@ -164,7 +164,7 @@
                     <td class="py-1.5 px-2 text-center">
                         <div class="flex items-center justify-center space-x-2">
                             @if($invoice->status !== 'paid' && $invoice->status !== 'cancelled')
-                            <button onclick="openPaymentModal({{ $invoice->id }}, '{{ $invoice->invoice_number }}', {{ $invoice->remaining_amount }})" 
+                            <button @click="openPaymentModal({{ $invoice->id }}, '{{ $invoice->invoice_number }}', {{ $invoice->remaining_amount }})"
                                     class="text-xs hover:opacity-75 text-apple-green" title="Catat Pembayaran">
                                 <i class="fas fa-dollar-sign"></i>
                             </button>
@@ -173,12 +173,12 @@
                                class="text-xs hover:opacity-75 text-apple-orange" title="Download PDF">
                                 <i class="fas fa-file-pdf"></i>
                             </a>
-                            <button onclick="viewInvoice({{ $invoice->id }})" 
+                            <button @click="viewInvoice({{ $invoice->id }})"
                                     class="text-xs hover:opacity-75 text-apple-blue" title="Lihat Detail">
                                 <i class="fas fa-eye"></i>
                             </button>
                             @if($invoice->status === 'draft' || $invoice->status === 'cancelled')
-                            <button onclick="deleteInvoice({{ $invoice->id }})" 
+                            <button @click="deleteInvoice({{ $invoice->id }})"
                                     class="text-xs hover:opacity-75 text-apple-red" title="Hapus Invoice">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -195,7 +195,7 @@
         <i class="fas fa-file-invoice text-3xl mb-2 text-dark-text-tertiary/50"></i>
         <p class="text-sm mb-1 text-dark-text-secondary">Belum ada invoice</p>
         <p class="text-xs mb-3 text-dark-text-tertiary/50">Buat invoice pertama untuk melacak pembayaran</p>
-        <button onclick="openInvoiceModal()" 
+        <button @click="openInvoiceModal()"
                 class="text-xs px-4 py-2 rounded-lg font-medium transition-colors bg-apple-blue/90 text-white">
             <i class="fas fa-plus mr-1"></i>Buat Invoice Pertama
         </button>
@@ -216,7 +216,7 @@
             </span>
             @endif
         </div>
-        <button onclick="openDirectIncomeModal()" 
+        <button @click="openDirectIncomeModal()"
                 class="btn-primary-sm bg-apple-green/90 text-white border-transparent">
             <i class="fas fa-plus mr-1"></i>Tambah Pemasukan
         </button>
@@ -294,11 +294,11 @@
                     </td>
                     <td class="py-1.5 px-2 text-center">
                         <div class="flex items-center justify-center space-x-2">
-                            <button onclick="editDirectIncome({{ $income->id }})" 
+                            <button @click="editDirectIncome({{ $income->id }})"
                                     class="text-xs hover:opacity-75 text-apple-blue" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button onclick="deleteDirectIncome({{ $income->id }})" 
+                            <button @click="deleteDirectIncome({{ $income->id }})"
                                     class="text-xs hover:opacity-75 text-apple-red" title="Hapus">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -314,7 +314,7 @@
         <i class="fas fa-hand-holding-usd text-3xl mb-2 text-apple-green/30"></i>
         <p class="text-sm mb-1 text-dark-text-secondary">Belum ada pemasukan langsung</p>
         <p class="text-xs mb-3 text-dark-text-tertiary/50">Catat pemasukan yang tidak terkait dengan invoice</p>
-        <button onclick="openDirectIncomeModal()" 
+        <button @click="openDirectIncomeModal()"
                 class="text-xs px-4 py-2 rounded-lg font-medium transition-colors bg-apple-green/90 text-white">
             <i class="fas fa-plus mr-1"></i>Tambah Pemasukan Pertama
         </button>
@@ -328,7 +328,7 @@
         <h3 class="text-sm font-semibold text-white">
             <i class="fas fa-receipt mr-2 text-apple-blue-dark"></i>Pengeluaran & Kasbon
         </h3>
-        <button onclick="openExpenseModal()" 
+        <button @click="openExpenseModal()"
                 class="text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors bg-apple-red/90 text-white">
             <i class="fas fa-plus mr-1"></i>Tambah
         </button>
@@ -354,15 +354,18 @@
     @if($countAll > 0)
     <!-- Compact Filter Tabs -->
     <div class="flex gap-2 mb-2 overflow-x-auto">
-        <button onclick="filterExpenses('all')" 
+        <button @click="filterExpenses('all')"
+                data-filter-type="all"
                 class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap bg-white/5 border border-white/10 text-dark-text-primary/90">
             <i class="fas fa-list mr-1.5 text-dark-text-tertiary/50"></i>Semua ({{ $countAll }})
         </button>
-        <button onclick="filterExpenses('kasbon')" 
+        <button @click="filterExpenses('kasbon')"
+                data-filter-type="kasbon"
                 class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap bg-[rgba(255,204,0,0.15)] border-[rgba(255,204,0,0.3)] text-[rgba(255,204,0,1)]">
             <i class="fas fa-money-bill-wave mr-1.5 text-[rgba(255,204,0,0.6)]"></i>Kasbon/Piutang Internal ({{ $countKasbon }})
         </button>
-        <button onclick="filterExpenses('regular')" 
+        <button @click="filterExpenses('regular')"
+                data-filter-type="regular"
                 class="filter-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap bg-apple-blue/15 border-apple-blue/30 text-apple-blue">
             <i class="fas fa-file-invoice mr-1.5 text-apple-blue/60"></i>Pengeluaran Operasional ({{ $countRegular }})
         </button>
@@ -455,19 +458,19 @@
                     <td class="py-1.5 px-2 text-center">
                         <div class="flex justify-center space-x-1">
                             @if($expense->is_receivable && $expense->receivable_status != 'paid')
-                            <button onclick="recordReceivablePayment({{ $expense->id }}, {{ $remaining }})" 
+                            <button @click="recordReceivablePayment({{ $expense->id }}, {{ $remaining }})"
                                     class="text-xs px-2 py-1 rounded hover:opacity-75 bg-apple-green/20 text-apple-green"
                                     title="Catat Pembayaran">
                                 <i class="fas fa-money-bill"></i>
                             </button>
                             @endif
                             @if($expense && $expense->id)
-                            <button onclick="editExpense({{ $expense->id }})" 
+                            <button @click="editExpense({{ $expense->id }})"
                                     class="text-xs px-2 py-1 rounded hover:opacity-75 bg-apple-blue/20 text-apple-blue"
                                     title="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button onclick="deleteExpense({{ $expense->id }})" 
+                            <button @click="deleteExpense({{ $expense->id }})"
                                     class="text-xs px-2 py-1 rounded hover:opacity-75 bg-apple-red/20 text-apple-red"
                                     title="Hapus">
                                 <i class="fas fa-trash"></i>
@@ -631,7 +634,7 @@ function filterExpenses(type) {
     
     // Update active state on tabs
     tabs.forEach(tab => {
-        const tabType = tab.getAttribute('onclick').match(/filterExpenses\('(\w+)'\)/)[1];
+        const tabType = tab.dataset.filterType;
         if (tabType === type) {
             // Active state
             tab.style.opacity = '1';

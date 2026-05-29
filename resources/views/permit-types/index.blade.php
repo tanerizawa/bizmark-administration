@@ -258,7 +258,7 @@
                                         <a href="{{ route('permit-types.edit', $permit) }}" class="btn-primary-sm">
                                             <i class="fas fa-edit mr-1"></i>Edit
                                         </a>
-                                        <form action="{{ route('permit-types.destroy', $permit) }}" method="POST" onsubmit="return confirm('Hapus jenis izin ini?');">
+                                        <form action="{{ route('permit-types.destroy', $permit) }}" method="POST" x-data @submit.prevent="if(confirm('Hapus jenis izin ini?')) $el.submit()">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9); border: 1px solid rgba(255,59,48,0.3);">

@@ -197,7 +197,7 @@
                         @if($draft->status !== 'approved')
                         <!-- Delete button (only non-approved) -->
                         <form action="{{ route('ai.drafts.destroy', [$project, $draft]) }}" method="POST" class="inline"
-                              onsubmit="return confirm('Hapus draft: {{ $draft->title }}?')">
+                              x-data @submit.prevent="if(confirm('Hapus draft: {{ $draft->title }}?')) $el.submit()">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="px-4 py-2 rounded-lg font-medium transition-colors"

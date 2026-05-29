@@ -140,7 +140,7 @@ class TopicGenerationService
         ];
 
         $response = $this->openRouter->chat($messages, [
-            'model' => $config->ai_model ?? 'anthropic/claude-3.5-sonnet',
+            'model' => $config->ai_model ?? config('services.openrouter.default_model', 'openrouter/free'),
             'temperature' => 0.85,
             'max_tokens' => 3000,
         ]);

@@ -1,10 +1,11 @@
-# Livewire + Blade Component Integration Patterns
+# Livewire + Blade Integration Patterns
+> **Last Updated:** 2026-05-03 | Laravel 11 · Livewire v3/v4 · Alpine.js v3.15.1
 
-## PENTING: Livewire v4 digunakan untuk stateful interaktivitas admin panel.
+---
 
-## Blade Components dengan Livewire Directives
+## Wire Directives dengan Blade Components
 
-Semua `x-ui.*` komponen mendukung Livewire `wire:*` directives secara native karena menggunakan `$attributes->merge()`:
+Semua `x-ui.*` components mendukung `wire:*` directives karena menggunakan `$attributes->merge()`:
 
 ```blade
 {{-- ✅ WAJIB --}}
@@ -12,304 +13,239 @@ Semua `x-ui.*` komponen mendukung Livewire `wire:*` directives secara native kar
     Simpan
 </x-ui.button>
 
-{{-- ❌ DILARANG --}}
-<button wire:click="save">Simpan</button>
+{{-- Atau langsung jika tidak pakai Blade component --}}
+<button wire:click="save"
+        wire:loading.attr="disabled"
+        style="background:var(--apple-blue);color:#fff;padding:8px 20px;border-radius:10px;border:none">
+    Simpan
+</button>
 ```
 
-### Loading State dengan Livewire + Alpine
+---
 
+## Loading State
+
+### `wire:loading` (classic approach)
 ```blade
-{{-- ✅ WAJIB -- Gunakan Alpine.js untuk loading state --}}
-<x-ui.button
-    wire:click="save"
-    wire:loading.attr="disabled"
-    :loading="$saving ?? false"
-    loadingText="Menyimpan..."
->
-    Simpan
-</x-ui.button>
+<button wire:click="save" style="background:var(--apple-blue);color:#fff;...">
+    <span wire:loading.remove>Simpan</span>
+    <span wire:loading style="display:none;align-items:center;gap:6px">
+        <svg style="animation:spin 1s linear infinite;width:14px;height:14px" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity=".25"/>
+            <path fill="currentColor" opacity=".75" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z"/>
+        </svg>
+        Menyimpan...
+    </span>
+</button>
+```
 
-{{-- Atau dengan Alpine x-data --}}
+### Alpine.js loading state (lebih fleksibel)
+```blade
 <div x-data="{ saving: false }">
-    <x-ui.button
-        @click="saving = true; $wire.save().then(() => saving = false)"
-        :loading="saving"
-    >
-        Simpan
-    </x-ui.button>
+    <button @click="saving = true; $wire.save().then(() => saving = false)"
+            :disabled="saving"
+            :style="saving ? 'opacity:.6;cursor:wait' : ''"
+            style="background:var(--apple-blue);color:#fff;padding:8px 20px;border-radius:10px;border:none">
+        <span x-show="!saving">Simpan</span>
+        <span x-cloak x-show="saving" style="display:flex;align-items:center;gap:6px">
+            Menyimpan...
+        </span>
+    </button>
 </div>
 ```
 
-## Form Components dengan Livewire Binding
+---
 
-### `wire:model` pada form components
+## `$wire` Magic di Alpine
 
-```blade
-{{-- ✅ WAJIB -- Gunakan wire:model dengan x-ui.input --}}
-<x-ui.input
-    name="email"
-    label="Email"
-    wire:model="email"
-    :error="$errors->first('email')"
-/>
-
-<x-ui.select
-    name="category"
-    label="Kategori"
-    wire:model="category"
-    :options="$categories"
-/>
-
-<x-ui.checkbox
-    name="agree"
-    label="Saya setuju dengan syarat & ketentuan"
-    wire:model="agree"
-/>
-
-<x-ui.toggle
-    name="is_active"
-    label="Aktif"
-    wire:model="isActive"
-/>
+### Akses properti Livewire
+```html
+<span x-text="$wire.title"></span>
+<span x-text="$wire.items.length + ' item'"></span>
 ```
 
-### File Upload dengan Livewire
-
-```blade
-{{-- ✅ WAJIB -- Gunakan wire:model untuk file upload --}}
-<x-ui.file-upload
-    name="document"
-    label="Upload Dokumen"
-    wire:model="document"
-    accept=".pdf,.jpg,.png"
-    :maxSize="2048"
-/>
-
-{{-- Dengan temporary preview --}}
-@if ($document)
-    <p class="text-sm text-gray-500 mt-1">
-        File: {{ $document->getClientOriginalName() }}
-    </p>
-@endif
+### Panggil method Livewire
+```html
+<button @click="$wire.save()">Simpan</button>
+<button @click="$wire.delete(item.id).then(() => showToast('Dihapus'))">Hapus</button>
 ```
 
-## Toast Notification dengan Livewire
-
-```blade
-{{-- ✅ WAJIB -- Dispatch toast dari Livewire component --}}
-<button wire:click="save" @click="$dispatch('toast', {
-    message: 'Data berhasil disimpan',
-    type: 'success'
-})">
-    Simpan
-</button>
-
-{{-- Atau via Alpine --}}
-<button x-data @click="
-    $wire.save()
-        .then(() => $dispatch('toast', { message: 'Sukses!', type: 'success' }))
-        .catch(() => $dispatch('toast', { message: 'Gagal!', type: 'error' }));
-">
-    Simpan
-</button>
+### Set properti Livewire dari Alpine
+```html
+<button @click="$wire.status = 'active'">Aktifkan</button>
 ```
 
-## Modal dengan Livewire
+---
+
+## `$wire.entangle()` — Two-way Binding Alpine ↔ Livewire
 
 ```blade
-{{-- ✅ WAJIB -- Gunakan x-ui.modal dengan Livewire actions --}}
-<x-ui.modal
-    title="Konfirmasi Hapus"
-    submitLabel="Ya, Hapus"
->
-    <x-slot:trigger>
-        <x-ui.button variant="danger" size="sm">
-            Hapus
-        </x-ui.button>
-    </x-slot:trigger>
+<div x-data="{ isOpen: $wire.entangle('isOpen') }"
+     x-show="isOpen"
+     x-transition
+     x-cloak
+     @keydown.escape.window="$wire.close()">
 
-    <p>Apakah Anda yakin ingin menghapus data ini?</p>
+    {{-- Backdrop --}}
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,.7)" @click="$wire.close()"></div>
 
-    <x-slot:footer>
-        <x-ui.button variant="ghost" @click="open = false">
-            Batal
-        </x-ui.button>
-        <x-ui.button
-            variant="danger"
-            wire:click="delete"
-            @click="open = false"
-            loadingText="Menghapus..."
-        >
-            Ya, Hapus
-        </x-ui.button>
-    </x-slot:footer>
-</x-ui.modal>
+    {{-- Dialog --}}
+    <div role="dialog" aria-modal="true"
+         style="position:relative;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:18px;padding:24px">
+        <h2 x-text="$wire.title" style="color:var(--dark-text-primary)"></h2>
+        <button @click="$wire.confirm()">Konfirmasi</button>
+        <button @click="$wire.close()">Batal</button>
+    </div>
+</div>
 ```
 
-## Data Table dengan Livewire
+---
 
-Untuk tabel dengan Livewire pagination + search:
+## `$dispatch` Toast dari Livewire
+
+### Di Livewire component (PHP)
+```php
+// Method di Livewire component
+public function save()
+{
+    // ... save logic
+    $this->dispatch('toast', message: 'Data berhasil disimpan!', type: 'success');
+}
+
+public function delete($id)
+{
+    // ... delete logic
+    $this->dispatch('toast', message: 'Data dihapus.', type: 'error');
+}
+```
+
+### Di Alpine listener (di layout)
+```html
+<div x-data="{ toasts: [] }"
+     @toast.window="
+         toasts.push({ ...$event.detail, id: Date.now() });
+         setTimeout(() => toasts.shift(), 3500)
+     "
+     style="position:fixed;bottom:1rem;right:1rem;z-index:9999;display:flex;flex-direction:column;gap:8px">
+    <template x-for="t in toasts" :key="t.id">
+        <div x-transition
+             :style="`background:${t.type==='success'?'var(--apple-green)':t.type==='error'?'var(--apple-red)':'var(--dark-bg-tertiary)'};color:#fff;padding:12px 20px;border-radius:10px;min-width:200px`">
+            <i :class="`fas fa-${t.type==='success'?'check':'exclamation'}-circle`" style="margin-right:8px"></i>
+            <span x-text="t.message"></span>
+        </div>
+    </template>
+</div>
+```
+
+---
+
+## Form dengan Livewire
 
 ```blade
+<form wire:submit.prevent="submit">
+    {{-- Input dengan wire:model --}}
+    <div style="margin-bottom:12px">
+        <label style="font-size:.8rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:4px">
+            Nama
+        </label>
+        <input type="text" wire:model="form.name" class="input-apple"
+               placeholder="Masukkan nama...">
+        @error('form.name')
+            <span style="font-size:.75rem;color:var(--apple-red)">{{ $message }}</span>
+        @enderror
+    </div>
+
+    {{-- Submit button --}}
+    <button type="submit"
+            wire:loading.attr="disabled"
+            style="background:var(--apple-blue);color:#fff;padding:9px 24px;border-radius:10px;border:none;font-weight:600;cursor:pointer">
+        <span wire:loading.remove>Simpan</span>
+        <span wire:loading>Menyimpan...</span>
+    </button>
+</form>
+```
+
+---
+
+## Table dengan Livewire
+
+```blade
+{{-- Livewire table dengan search + filter --}}
 <div>
-    {{-- Search input --}}
-    <x-ui.input
-        name="search"
-        placeholder="Cari data..."
-        wire:model.live.debounce.300ms="search"
-        leadingIcon="fa-solid fa-search"
-    />
+    {{-- Search header --}}
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+        <input type="text" wire:model.live.debounce.400ms="search"
+               class="input-apple" style="flex:1" placeholder="Cari...">
+        <select wire:model.live="perPage" style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);color:var(--dark-text-primary);border-radius:8px;padding:8px 12px">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+    </div>
 
     {{-- Table --}}
-    <x-ui.table
-        :columns="[
-            ['key' => 'name', 'label' => 'Nama', 'sortable' => true],
-            ['key' => 'email', 'label' => 'Email'],
-            ['key' => 'status', 'label' => 'Status'],
-            ['key' => 'actions', 'label' => 'Aksi'],
-        ]"
-        :rows="$users"
-        :striped="true"
-        :hoverable="true"
-    >
-        <x-slot:cell-status="{ row }">
-            <x-ui.badge
-                :variant="$row->status === 'active' ? 'success' : 'warning'"
-            >
-                {{ $row->status }}
-            </x-ui.badge>
-        </x-slot:cell-status>
-
-        <x-slot:cell-actions="{ row }">
-            <x-ui.button size="sm" variant="outline"
-                         wire:click="edit({{ $row->id }})">
-                Edit
-            </x-ui.button>
-        </x-slot:cell-actions>
-    </x-ui.table>
+    <div wire:loading.class="opacity-50" style="transition:opacity .2s">
+        <table style="width:100%;border-collapse:collapse">
+            <thead style="background:var(--dark-bg-tertiary)">
+                <tr>
+                    <th style="padding:10px 16px;text-align:left;font-size:.75rem;color:var(--dark-text-secondary)">Nama</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($items as $item)
+                <tr style="border-top:1px solid var(--dark-separator)">
+                    <td style="padding:12px 16px;color:var(--dark-text-primary)">{{ $item->name }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 
     {{-- Pagination --}}
-    <x-ui.pagination :paginator="$users" variant="full" :showInfo="true" />
+    <div style="padding:12px 0">
+        {{ $items->links() }}
+    </div>
 </div>
 ```
 
-## Actions dengan Alpine + $wire
+---
 
-### Confirm dialog sebelum action
+## `wire:model` Modifiers
 
-```blade
-<button x-data @click="
-    if (confirm('Yakin ingin menghapus?')) {
-        $wire.delete({{ $item->id }})
-            .then(() => $dispatch('toast', { message: 'Terhapus!', type: 'success' }));
-    }
-">
-    Hapus
-</button>
-```
+| Modifier | Kapan Digunakan |
+|----------|----------------|
+| `wire:model` | Default (lazy: update saat blur) |
+| `wire:model.live` | Reactive real-time update |
+| `wire:model.live.debounce.400ms` | Search input (debounced) |
+| `wire:model.blur` | Update saat focus keluar |
 
-### Batch actions
+---
+
+## Lazy Loading Livewire
 
 ```blade
-<div x-data="{ selectedIds: [] }">
-    {{-- Checkbox untuk select all --}}
-    <x-ui.checkbox
-        name="select_all"
-        label="Pilih Semua"
-        @change="selectedIds = $event.target.checked ? {{ json_encode($items->pluck('id')) }} : []"
-    />
-
-    <x-ui.button
-        variant="danger"
-        @click="if (selectedIds.length) {
-            $wire.batchDelete(selectedIds)
-                .then(() => $dispatch('toast', { message: selectedIds.length + ' data dihapus', type: 'success' }));
-        }"
-        :disabled="selectedIds.length === 0"
-    >
-        Hapus Terpilih ({{ count($selected) }})
-    </x-ui.button>
+{{-- Placeholder saat loading --}}
+<div wire:init="loadData">
+    <div wire:loading style="color:var(--dark-text-secondary);padding:20px;text-align:center">
+        <svg style="animation:spin 1s linear infinite;width:20px;height:20px;display:inline-block">...</svg>
+        Memuat data...
+    </div>
+    <div wire:loading.remove>
+        {{-- konten --}}
+    </div>
 </div>
 ```
 
-## Tab Navigation dengan Livewire
+---
+
+## Polling
 
 ```blade
-{{-- ✅ WAJIB -- Untuk Livewire tab switching, gunakan wire:click --}}
-<x-ui.tabs
-    :tabs="[
-        ['id' => 'overview', 'label' => 'Overview'],
-        ['id' => 'details', 'label' => 'Details'],
-        ['id' => 'history', 'label' => 'History', 'badge' => 5],
-    ]"
-    defaultTab="overview"
-    :activeTab="$activeTab"
->
-    @php $tabs = ['overview', 'details', 'history']; @endphp
-    @foreach($tabs as $tab)
-        <x-slot:tab-{{ $tab }}>
-            <div wire:key="{{ $tab }}">
-                {{-- Konten per tab dengan Livewire loading --}}
-                @switch($tab)
-                    @case('overview')
-                        @include('admin.permits.tabs.overview')
-                        @break
-                    @case('details')
-                        @include('admin.permits.tabs.details')
-                        @break
-                    @case('history')
-                        @include('admin.permits.tabs.history')
-                        @break
-                @endswitch
-            </div>
-        </x-slot:tab-{{ $tab }}>
-    @endforeach
-</x-ui.tabs>
+{{-- Update setiap 5 detik --}}
+<div wire:poll.5s>
+    <span>Total antrian: {{ $queueCount }}</span>
+</div>
 
-{{-- Di Livewire component --}}
-<script>
-    // Trigger tab change
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('tabChanged', (tab) => {
-            Alpine.store('tabs', { activeTab: tab });
-        });
-    });
-</script>
+{{-- Hanya poll saat visible (lebih efisien) --}}
+<div wire:poll.visible.10s>
 ```
-
-## Accessibility dengan Livewire
-
-| Directive | Accessibility Purpose |
-|-----------|---------------------|
-| `wire:loading.attr="disabled"` | Disable button during submission |
-| `wire:loading.class="opacity-50"` | Visual loading indicator |
-| `wire:target="save"` | Scope loading state to specific action |
-| `wire:loading.remove` | Hide element during loading |
-| `wire:loading.add` | Show element during loading |
-| `aria-busy="true"` via `wire:loading` | Screen reader loading announcement |
-
-```blade
-<x-ui.button
-    wire:click="save"
-    wire:loading.attr="disabled"
-    wire:target="save"
-    aria-busy="false"
-    wire:loading.attr="aria-busy"
-    wire:target="save"
-    wire:loading.remove
->
-    Simpan
-</x-ui.button>
-```
-
-## Checklist Penggunaan
-
-| Check | Keterangan |
-|-------|-----------|
-| [ ] | Gunakan `x-ui.*` components + `wire:*`, bukan HTML element langsung |
-| [ ] | `wire:loading.attr="disabled"` untuk semua submit buttons |
-| [ ] | Dispatch `toast` event setelah setiap operasi sukses/gagal |
-| [ ] | File upload selalu pakai `wire:model` dengan `x-ui.file-upload` |
-| [ ] | Tabel dengan pagination/search selalu pakai `x-ui.table` + `x-ui.pagination` |
-| [ ] | Modal dengan konfirmasi selalu pakai `x-ui.modal` |
-| [ ] | Loading state indikator untuk semua operasi async |

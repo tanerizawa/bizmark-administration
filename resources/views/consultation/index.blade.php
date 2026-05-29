@@ -46,15 +46,15 @@
         <div class="container-wide py-12 md:py-16">
             <div class="max-w-4xl mx-auto text-center">
                 <!-- Badge -->
-                <span class="section-badge mb-4">
+                <span class="eyebrow mb-4 inline-flex items-center gap-2" style="color: var(--tools);">
                     <i class="fas fa-calculator"></i>
                     AI-Powered Estimation
                 </span>
                 
-                <h1 class="section-title mb-4" style="font-size: clamp(2rem, 4vw, 3rem);">
+                <h1 class="display-lg mb-4" style="font-size: clamp(2rem, 4vw, 3rem);">
                     Estimasi Biaya Perizinan
                 </h1>
-                <p class="section-description mx-auto mb-8">
+                <p class="text-lg leading-relaxed max-w-2xl mx-auto mb-8" style="color: var(--text-secondary);">
                     Dapatkan estimasi biaya perizinan usaha Anda dengan AI analysis.<br>
                     Proses cepat, transparan, dan akurat berdasarkan jenis usaha dan kompleksitas perizinan.
                 </p>
@@ -845,6 +845,43 @@
             </div>
         </div>
     </div>
+
+    {{-- Next Step Cross-Link Panel: AI estimator → with-team or other tools --}}
+    <section class="section-sm" style="background: var(--bg-raised); border-top: 1px solid var(--border-subtle);">
+        <div class="container-wide">
+            <div class="text-center mb-8 max-w-2xl mx-auto">
+                <span class="eyebrow" style="color: var(--text-muted);">Langkah Berikutnya</span>
+                <h2 class="display-md mt-2 mb-3">Setelah dapat estimasi, lanjutkan ke…</h2>
+                <p style="color: var(--text-secondary);">Gunakan tools lain atau langsung didampingi tim ahli kami.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                <a href="{{ route('calculator.index') }}" class="premium-card hover:no-underline" style="border-color: rgba(var(--tools-rgb),.2); background: var(--tools-glow);">
+                    <div class="editorial-icon-badge is-tools is-circle mb-3" style="width:2.5rem;height:2.5rem;">
+                        <i class="fas fa-calculator" aria-hidden="true"></i>
+                    </div>
+                    <div class="text-[10px] font-bold uppercase tracking-[.14em] mb-2" style="color: var(--tools);">Tools · Gratis</div>
+                    <h3 class="font-bold text-base mb-1" style="color: var(--text-primary);">Kalkulator Lanjutan</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Hitung biaya per item dengan parameter detail.</p>
+                </a>
+                <a href="{{ route('polygon.shp.index') }}" class="premium-card hover:no-underline" style="border-color: rgba(var(--tools-rgb),.2); background: var(--tools-glow);">
+                    <div class="editorial-icon-badge is-tools is-circle mb-3" style="width:2.5rem;height:2.5rem;">
+                        <i class="fas fa-draw-polygon" aria-hidden="true"></i>
+                    </div>
+                    <div class="text-[10px] font-bold uppercase tracking-[.14em] mb-2" style="color: var(--tools);">Tools · Gratis</div>
+                    <h3 class="font-bold text-base mb-1" style="color: var(--text-primary);">SHP Polygon Maker</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Buat shapefile lokasi untuk dokumen perizinan.</p>
+                </a>
+                <a href="{{ route('services.index.id') }}" class="premium-card hover:no-underline" style="border-color: rgba(var(--accent-rgb),.2); background: var(--accent-glow);">
+                    <div class="editorial-icon-badge is-circle mb-3" style="width:2.5rem;height:2.5rem;">
+                        <i class="fas fa-handshake" aria-hidden="true"></i>
+                    </div>
+                    <div class="text-[10px] font-bold uppercase tracking-[.14em] mb-2" style="color: var(--accent-text);">Didampingi tim</div>
+                    <h3 class="font-bold text-base mb-1" style="color: var(--text-primary);">Lihat Layanan</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Tim ahli mendampingi proses end-to-end.</p>
+                </a>
+            </div>
+        </div>
+    </section>
 </div>
 
 @push('scripts')

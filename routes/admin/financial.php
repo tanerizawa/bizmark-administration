@@ -6,12 +6,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('cash-accounts', [App\Modules\Finansial\Controllers\CashAccountController::class, 'index'])
     ->middleware('permission:finances.view')
     ->name('cash-accounts.index');
-Route::get('cash-accounts/{cash_account}', [App\Modules\Finansial\Controllers\CashAccountController::class, 'show'])
-    ->middleware('permission:finances.view')
-    ->name('cash-accounts.show');
 Route::get('cash-accounts/create', [App\Modules\Finansial\Controllers\CashAccountController::class, 'create'])
     ->middleware('permission:finances.manage_accounts')
     ->name('cash-accounts.create');
+Route::get('cash-accounts/{cash_account}', [App\Modules\Finansial\Controllers\CashAccountController::class, 'show'])
+    ->middleware('permission:finances.view')
+    ->name('cash-accounts.show');
 
 Route::middleware(['permission:finances.manage_payments', '2fa'])->group(function () {
     Route::post('projects/{project}/payments', [App\Modules\Proyek\Controllers\Public\ProjectPaymentController::class, 'store'])->name('projects.payments.store');
@@ -44,12 +44,13 @@ Route::middleware(['permission:finances.manage_accounts', '2fa'])->group(functio
 });
 
 // Bank Reconciliation Routes
-Route::resource('reconciliations', App\Modules\Finansial\Controllers\BankReconciliationController::class)
-    ->only(['index', 'show'])
-    ->middleware('permission:finances.view');
+// IMPORTANT: except(['index','show']) must be first so /create is registered before /{reconciliation}
 Route::resource('reconciliations', App\Modules\Finansial\Controllers\BankReconciliationController::class)
     ->except(['index', 'show'])
     ->middleware(['permission:finances.manage_accounts', '2fa']);
+Route::resource('reconciliations', App\Modules\Finansial\Controllers\BankReconciliationController::class)
+    ->only(['index', 'show'])
+    ->middleware('permission:finances.view');
 Route::get('reconciliations/{reconciliation}/match', [App\Modules\Finansial\Controllers\BankReconciliationController::class, 'match'])
     ->middleware(['permission:finances.manage_accounts', '2fa'])
     ->name('reconciliations.match');

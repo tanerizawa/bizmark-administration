@@ -1,249 +1,327 @@
-# Alpine.js Interaction Patterns
+# Alpine.js v3 — Interaction Patterns
+> **Last Updated:** 2026-05-03 | Alpine.js v3.15.1 + @alpinejs/collapse v3.15.1 (via npm/Vite, bukan CDN)
 
-## PENTING: Alpine.js adalah satu-satunya framework JavaScript yang diizinkan untuk interaktivitas frontend.
+---
 
-## Zero Inline JS Event Handlers
+## Setup & Loading
+
+Alpine.js diload via Vite (npm), bukan CDN:
+
+```js
+// resources/js/app.js
+import Alpine from 'alpinejs';
+import Collapse from '@alpinejs/collapse';
+
+Alpine.plugin(Collapse);
+window.Alpine = Alpine;
+Alpine.start();
+```
+
+---
+
+## Prinsip: Alpine.js untuk Interaktivitas, Bukan Styling
+
+Alpine.js WAJIB digunakan untuk logika interaktif. `onclick`/`onsubmit`/`onchange` inline **DILARANG** kecuali untuk hover sederhana (lihat bagian hover).
 
 ### ❌ DILARANG
 ```html
-<div onmouseover="showMenu()" onmouseout="hideMenu()">
-<button onclick="confirm('Yakin?')">
-<select onchange="location.href=this.value">
+<button onclick="doSomething()">
 <form onsubmit="return validate()">
+<select onchange="location.href=this.value">
 ```
 
 ### ✅ WAJIB — Gunakan Alpine.js directives
 ```html
-<div x-data="{ open: false }"
-     @mouseenter="open = true"
-     @mouseleave="open = false">
-
-<button @click="if(confirm('Yakin?')) $wire.delete()">
-
-<select x-data @change="window.location.href = $event.target.value">
-
+<button @click="doSomething()">
 <form @submit.prevent="validate()">
+<select x-data @change="window.location.href = $event.target.value">
 ```
 
-## Alpine.js Data Patterns
-
-### Component-scoped data dengan `x-data`
-```blade
-{{-- Setiap interactive component butuh x-data sendiri --}}
-<div x-data="{ count: 0, message: '' }">
-    <button @click="count++">Count: <span x-text="count"></span></button>
-</div>
+### ✅ EXCEPTION — Hover sederhana diizinkan inline
+```html
+{{-- onmouseover/onmouseout untuk opacity/color hover DIIZINKAN --}}
+<button onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+<a onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
 ```
 
-### Gunakan `$dispatch` untuk komunikasi antar komponen
-```blade
-{{-- Trigger --}}
-<button @click="$dispatch('toast', { message: 'Saved!', type: 'success' })">
-    Save
-</button>
+---
 
-{{-- Listener (biasanya di layout) --}}
-<div x-data @toast.window="showToast($event.detail)">
+## Core Directives
+
+### `x-data` — State Component
+```html
+<div x-data="{ open: false, count: 0, message: '' }">
+
+{{-- Gunakan Alpine.data() untuk reusable components --}}
+<div x-data="myComponent">
 ```
 
-### Gunakan `x-ref` untuk DOM access
-```blade
+### `x-show` + `x-transition` — Show/Hide Animasi
+```html
+<div x-show="open" x-transition>...</div>
+<div x-show="open" x-transition.duration.300ms>...</div>
+
+{{-- Enter/leave terpisah --}}
+<div x-show="open"
+     x-transition:enter.duration.200ms
+     x-transition:leave.duration.150ms>
+```
+
+### `x-cloak` — Cegah FOUC
+```css
+/* CSS ini WAJIB ada sebelum Alpine load */
+[x-cloak] { display: none !important; }
+```
+```html
+<div x-cloak x-show="open" x-transition>...</div>
+```
+
+### `x-model` — Two-way Binding
+```html
+<input type="text" x-model="search" placeholder="Cari...">
+<select x-model="status">
+<textarea x-model="content"></textarea>
+```
+
+### `x-text` dan `x-html`
+```html
+<span x-text="count"></span>
+<div x-html="htmlContent"></div>
+```
+
+### `x-bind` / `:` — Attribute Binding
+```html
+<button :disabled="loading" :class="active ? 'active-class' : ''">
+{{-- Style binding dengan CSS vars --}}
+<div :style="selected ? 'color:var(--apple-blue)' : 'color:var(--dark-text-secondary)'">
+```
+
+### `x-ref` — DOM Reference
+```html
 <input x-ref="searchInput" type="text">
 <button @click="$refs.searchInput.focus()">Focus</button>
 ```
 
-## Common Alpine.js Patterns
+### `x-init` — Initialization
+```html
+<div x-init="fetchData()" x-data="{ items: [] }">
+<div x-init="$nextTick(() => { /* setelah DOM render */ })">
+```
+
+---
+
+## Magic Properties
+
+### `$el` — Current Element
+```html
+<button @click="$el.textContent = 'Clicked!'">Click</button>
+```
+
+### `$refs` — DOM Reference
+```html
+<div x-data>
+    <input x-ref="email">
+    <button @click="$refs.email.focus()">Focus Email</button>
+</div>
+```
+
+### `$nextTick` — After DOM Update
+```html
+<div x-data="{ title: 'Hello' }">
+    <button @click="title = 'World!'; $nextTick(() => console.log($el.textContent))">
+        Update
+    </button>
+</div>
+```
+
+### `$dispatch` — Custom Events
+```html
+{{-- Trigger event --}}
+<button @click="$dispatch('toast', { message: 'Disimpan!', type: 'success' })">Simpan</button>
+
+{{-- Listener (di layout) --}}
+<div x-data @toast.window="showToast($event.detail)">
+```
+
+### `$watch` — Reactive Watch
+```html
+<div x-data="{ value: '' }" x-init="$watch('value', val => console.log(val))">
+```
+
+### `$store` — Global Store Access
+```html
+<div x-data>
+    <span x-text="$store.user.name"></span>
+    <button @click="$store.cart.add(item)">Add to Cart</button>
+</div>
+```
+
+---
+
+## Alpine.store — Global State
+
+```js
+// Di app.js atau blade @push('scripts')
+document.addEventListener('alpine:init', () => {
+    Alpine.store('notifications', {
+        items: [],
+        add(msg) { this.items.push(msg) },
+        remove(i) { this.items.splice(i, 1) }
+    })
+})
+```
+
+---
+
+## Alpine.data — Reusable Components
+
+```js
+document.addEventListener('alpine:init', () => {
+    Alpine.data('dropdown', () => ({
+        open: false,
+        trigger: {
+            ['@click']() { this.open = !this.open }
+        },
+        dialogue: {
+            ['x-show']() { return this.open }
+        }
+    }))
+})
+```
+
+```html
+<div x-data="dropdown">
+    <button x-bind="trigger">Open</button>
+    <div x-bind="dialogue" @click.outside="open = false">Content</div>
+</div>
+```
+
+---
+
+## Common Patterns
 
 ### Toggle / Dropdown
-```blade
-<div x-data="{ open: false }" @keydown.escape="open = false">
-    <button @click="open = !open"
-            :aria-expanded="open"
-            aria-haspopup="true">
-        Menu
-    </button>
-    <div x-show="open"
-         @click.outside="open = false"
-         x-transition
-         role="menu">
+```html
+<div x-data="{ open: false }" @keydown.escape.window="open = false">
+    <button @click="open = !open" :aria-expanded="open">Menu</button>
+    <div x-cloak x-show="open" @click.outside="open = false" x-transition role="menu">
         {{ $slot }}
     </div>
 </div>
 ```
 
 ### Modal
-```blade
-<div x-data="{ open: false }"
-     x-id="['modal-title']"
-     @keydown.escape.window="open = false">
-    
-    <button @click="open = true">Open Modal</button>
-    
-    <template x-teleport="body">
-        <div x-show="open" class="fixed inset-0 z-50" style="display: none;">
-            <div x-show="open"
-                 x-transition.opacity
-                 class="fixed inset-0 bg-black/50"
-                 @click="open = false">
-            </div>
-            <div x-show="open"
-                 x-transition
-                 class="fixed inset-0 flex items-center justify-center p-4"
-                 @click.outside="open = false"
-                 :aria-labelledby="$id('modal-title')"
-                 role="dialog"
-                 aria-modal="true">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-lg w-full">
-                    <h2 :id="$id('modal-title')">Modal Title</h2>
-                    {{ $slot }}
-                </div>
-            </div>
+```html
+<div x-data="{ open: false }" @keydown.escape.window="open = false">
+    <button @click="open = true">Buka Modal</button>
+
+    <div x-cloak x-show="open" x-transition style="position:fixed;inset:0;z-index:50">
+        {{-- Backdrop --}}
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,.7)" @click="open = false"></div>
+
+        {{-- Dialog --}}
+        <div role="dialog" aria-modal="true"
+             style="position:relative;z-index:1;background:var(--dark-bg-secondary);border-radius:18px;padding:24px;max-width:500px;margin:auto;margin-top:10vh">
+            <h2 id="modal-title" style="color:var(--dark-text-primary)">Judul Modal</h2>
+            {{ $slot }}
+            <button @click="open = false">Tutup</button>
         </div>
-    </template>
+    </div>
 </div>
 ```
 
 ### Tabs
-```blade
-<div x-data="{ activeTab: 'overview' }">
-    <nav role="tablist">
-        <button @click="activeTab = 'overview'"
-                :class="{ 'active': activeTab === 'overview' }"
-                role="tab"
-                :aria-selected="activeTab === 'overview'">
-            Overview
+```html
+<div x-data="{ active: 'tab1' }">
+    <div style="display:flex;border-bottom:1px solid var(--dark-separator)">
+        <button @click="active = 'tab1'"
+                :style="active === 'tab1' ? 'border-bottom:2px solid var(--apple-blue);color:var(--apple-blue)' : 'color:var(--dark-text-secondary)'">
+            Tab 1
         </button>
-        <button @click="activeTab = 'details'"
-                :class="{ 'active': activeTab === 'details' }"
-                role="tab"
-                :aria-selected="activeTab === 'details'">
-            Details
+        <button @click="active = 'tab2'"
+                :style="active === 'tab2' ? 'border-bottom:2px solid var(--apple-blue);color:var(--apple-blue)' : 'color:var(--dark-text-secondary)'">
+            Tab 2
         </button>
-    </nav>
-    
-    <div x-show="activeTab === 'overview'" role="tabpanel">
-        {{ $tabOverview }}
     </div>
-    <div x-show="activeTab === 'details'" role="tabpanel">
-        {{ $tabDetails }}
+    <div x-show="active === 'tab1'">Konten Tab 1</div>
+    <div x-show="active === 'tab2'">Konten Tab 2</div>
+</div>
+```
+
+### Accordion (pakai @alpinejs/collapse)
+```html
+<div x-data="{ open: false }">
+    <button @click="open = !open" style="width:100%;display:flex;justify-content:space-between">
+        <span>Judul Accordion</span>
+        <i class="fas" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+    </button>
+    {{-- x-collapse dari @alpinejs/collapse: animasi height smooth --}}
+    <div x-show="open" x-collapse>
+        <div style="padding:12px 0">Konten accordion</div>
     </div>
 </div>
 ```
 
 ### Toast Notification
-```blade
-{{-- Layout-level component --}}
+```html
+{{-- Di layout --}}
 <div x-data="{ toasts: [] }"
-     @toast.window="toasts.push({...$event.detail, id: Date.now()})"
-     class="fixed top-4 right-4 z-50 space-y-2">
-    
+     @toast.window="toasts.push($event.detail); setTimeout(() => toasts.shift(), 3000)"
+     style="position:fixed;bottom:1rem;right:1rem;z-index:9999;display:flex;flex-direction:column;gap:8px">
     <template x-for="toast in toasts" :key="toast.id">
-        <div x-show="toast.show"
-             x-init="setTimeout(() => toasts.splice(toasts.indexOf(toast), 1), toast.duration || 3000)"
-             x-transition
-             :class="{
-                 'bg-green-500': toast.type === 'success',
-                 'bg-red-500': toast.type === 'error',
-                 'bg-blue-500': toast.type === 'info',
-             }"
-             class="rounded-xl px-6 py-3 text-white shadow-lg">
+        <div x-transition
+             :style="`background:${toast.type === 'success' ? 'var(--apple-green)' : toast.type === 'error' ? 'var(--apple-red)' : 'var(--dark-bg-tertiary)'};color:#fff;padding:12px 16px;border-radius:10px`">
             <span x-text="toast.message"></span>
-            <button @click="toasts.splice(toasts.indexOf(toast), 1)" class="ml-3">
-                &times;
-            </button>
         </div>
     </template>
 </div>
+
+{{-- Trigger dari mana saja --}}
+<button @click="$dispatch('toast', { message: 'Berhasil!', type: 'success', id: Date.now() })">
 ```
 
 ### Loading State
-```blade
+```html
 <div x-data="{ loading: false }">
-    <button @click="loading = true; $wire.save().then(() => loading = false)"
+    <button @click="loading = true; doAction().then(() => loading = false)"
             :disabled="loading"
-            class="relative">
-        <span x-show="!loading">Save</span>
-        <span x-show="loading" class="flex items-center gap-2">
-            <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            :style="loading ? 'opacity:.6;cursor:wait' : ''"
+            style="background:var(--apple-blue);color:#fff;padding:8px 20px;border-radius:10px;border:none">
+        <span x-show="!loading">Simpan</span>
+        <span x-show="loading" x-cloak style="display:flex;align-items:center;gap:6px">
+            <svg style="animation:spin 1s linear infinite;width:14px;height:14px" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity=".25"/>
+                <path fill="currentColor" opacity=".75" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z"/>
             </svg>
-            Saving...
+            Menyimpan...
         </span>
     </button>
 </div>
 ```
 
-### Form dengan Validation
-```blade
-<form x-data="{ 
-        form: { email: '', password: '' },
-        errors: {},
-        submit() {
-            this.errors = {};
-            if (!this.form.email) this.errors.email = 'Email wajib diisi';
-            if (!this.form.password) this.errors.password = 'Password wajib diisi';
-            if (Object.keys(this.errors).length === 0) {
-                // submit
-            }
-        }
-     }"
-     @submit.prevent="submit()">
-    
-    <x-ui.input name="email" x-model="form.email" label="Email" />
-    <template x-if="errors.email">
-        <p class="text-red-500 text-sm" x-text="errors.email"></p>
-    </template>
-    
-    <x-ui.input name="password" type="password" x-model="form.password" label="Password" />
-    <template x-if="errors.password">
-        <p class="text-red-500 text-sm" x-text="errors.password"></p>
-    </template>
-    
-    <button type="submit" class="bg-blue-500 text-white rounded-xl px-6 py-3">
-        Login
+### Confirm Delete
+```html
+<form action="{{ route('...destroy', $id) }}" method="POST"
+      x-data @submit.prevent="if(confirm('Yakin ingin menghapus?')) $el.submit()">
+    @csrf
+    @method('DELETE')
+    <button type="submit" style="background:none;border:none;color:var(--apple-red);cursor:pointer">
+        <i class="fas fa-trash"></i>
     </button>
 </form>
 ```
 
-## Accessibility with Alpine.js
+---
 
-| Directive | Accessibility Purpose |
-|-----------|---------------------|
-| `:aria-expanded` | Indicate expand/collapse state |
-| `:aria-selected` | Indicate selected tab/item |
-| `:aria-labelledby` | Associate label with element |
-| `:aria-hidden` | Hide decorative elements |
-| `role="dialog"` | Modal/alert semantics |
-| `role="tablist"` | Tab container |
-| `role="tab"` | Individual tab |
-| `role="tabpanel"` | Tab content panel |
-| `role="menu"` | Dropdown menu |
-| `role="menuitem"` | Dropdown item |
-| `@keydown.escape` | Close modal/dropdown on Escape |
-| `@keydown.arrow-down` | Navigate dropdown items |
-| `@click.outside` | Close on outside click |
+## Accessibility dengan Alpine
 
-## Pines UI Integration
-
-Pines UI components boleh digunakan dengan ketentuan:
-
-1. **Copy-paste** source code Pines UI ke Blade component
-2. **Sesuaikan styling** dengan design tokens (ganti warna hardcoded)
-3. **Bungkus** dalam Blade component dengan slot system
-4. **Test** di semua browser support
-
-```blade
-{{-- Contoh: Pines UI Dropdown dibungkus dalam Blade component --}}
-<div x-data="{ open: false, activeDescendant: null }"
-     @keydown.escape="open = false"
-     @keydown.down.prevent="..."
-     @keydown.up.prevent="..."
-     role="menu"
-     {{ $attributes }}>
-    {{ $trigger }}
-    <div x-show="open" @click.outside="open = false" x-transition>
-        {{ $slot }}
-    </div>
-</div>
-```
+| Directive | Tujuan |
+|-----------|--------|
+| `:aria-expanded` | Indikasi buka/tutup dropdown |
+| `:aria-selected` | Indikasi tab aktif |
+| `role="dialog"` | Semantik modal |
+| `role="menu"` | Semantik dropdown |
+| `role="tab"` + `role="tabpanel"` | Semantik tab |
+| `@keydown.escape` | Tutup modal/dropdown |
+| `@click.outside` | Tutup saat klik di luar |
+| `aria-label` | Label tombol icon-only |

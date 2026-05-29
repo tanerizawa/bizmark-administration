@@ -174,4 +174,98 @@ class ClientPortalDashboardTest extends TestCase
             ])
             ->assertNotFound();
     }
+
+    public function test_dashboard_shows_investment_metrics(): void
+    {
+        // contract_value = 50000000 → investDisplay should be "Rp 50Jt"
+        $this->actingAs($this->client, 'client')
+            ->get(route('client.dashboard'))
+            ->assertOk()
+            ->assertSee('Total Investasi')
+            ->assertSee('Rp 50Jt');
+    }
+
+    public function test_dashboard_shows_active_projects_count(): void
+    {
+        $this->actingAs($this->client, 'client')
+            ->get(route('client.dashboard'))
+            ->assertOk()
+            ->assertSee('1') // 1 active project (status 'Dalam Proses', not 'Selesai')
+            ->assertSee('Proyek Aktif');
+    }
+
+    public function test_project_show_shows_permit_information(): void
+    {
+        $permitType = PermitType::factory()->create([
+            'name' => 'AMDAL',
+        ]);
+        $permitApplication = PermitApplication::factory()->create([
+            'client_id' => $this->client->id,
+            'permit_type_id' => $permitType->id,
+        ]);
+
+        // Link project to permit application via projects.permit_application_id
+        $this->project->permit_application_id = $permitApplication->id;
+        $this->project->save();
+
+        $this->actingAs($this->client, 'client')
+            ->get(route('client.projects.show', $this->project->id))
+            ->assertOk()
+            ->assertSee('AMDAL')
+            ->assertSee('Permohonan Izin');
+    }
+
+    public function test_project_show_shows_contract_value(): void
+    {
+        $this->actingAs($this->client, 'client')
+            ->get(route('client.projects.show', $this->project->id))
+            ->assertOk()
+            ->assertSee('Nilai Kontrak')
+            ->assertSee('Rp 50.000.000');
+    }
+
+    public function test_client_can_download_own_document(): void
+    {
+        Storage::fake('private');
+
+        $file = UploadedFile::fake()->create('izin_amdal.pdf', 512, 'application/pdf');
+        $path = $file->store('documents', 'private');
+
+        $document = Document::create([
+            'project_id' => $this->project->id,
+            'title' => 'Izin AMDAL',
+            'file_name' => 'izin_amdal.pdf',
+            'file_path' => $path,
+            'category' => 'perizinan',
+        ]);
+
+        $this->actingAs($this->client, 'client')
+            ->get(route('client.documents.download', $document->id))
+            ->assertSuccessful();
+    }
+
+    public function test_client_cannot_download_another_clients_document(): void
+    {
+        Storage::fake('private');
+
+        $otherProject = Project::factory()->create([
+            'client_id' => $this->otherClient->id,
+            'status_id' => $this->status->id,
+        ]);
+
+        $file = UploadedFile::fake()->create('test.pdf', 100, 'application/pdf');
+        $path = $file->store('documents', 'private');
+
+        $document = Document::create([
+            'project_id' => $otherProject->id,
+            'title' => 'Dokumen Rahasia',
+            'file_name' => 'test.pdf',
+            'file_path' => $path,
+            'category' => 'perizinan',
+        ]);
+
+        $this->actingAs($this->client, 'client')
+            ->get(route('client.documents.download', $document->id))
+            ->assertForbidden();
+    }
 }

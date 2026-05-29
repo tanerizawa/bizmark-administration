@@ -174,7 +174,7 @@ PROMPT;
         ];
 
         $response = $this->ai->chat($messages, [
-            'model' => 'google/gemini-2.5-flash',
+            'model' => config('services.openrouter.default_model', 'openrouter/free'),
             'temperature' => 0.4,
             'max_tokens' => 1500,
         ]);

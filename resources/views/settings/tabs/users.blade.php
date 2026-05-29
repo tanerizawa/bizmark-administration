@@ -164,7 +164,7 @@
                                     </button>
                                 </form>
                                 <form action="{{ route('settings.users.delete', $user) }}" method="POST" class="inline"
-                                      onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                      x-data @submit.prevent="if(confirm('Are you sure you want to delete this user?')) $el.submit()">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 

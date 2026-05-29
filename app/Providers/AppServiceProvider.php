@@ -6,6 +6,7 @@ use App\View\Composers\NavigationComposer;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         File::ensureDirectoryExists((string) config('view.compiled'));
+
+        // Asset prefetching for faster page navigations
+        Vite::prefetch(concurrency: 3);
 
         // Force HTTPS in production
         if (app()->environment('production')) {

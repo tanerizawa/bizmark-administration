@@ -30,6 +30,7 @@ class KbliService
                     'code' => $kbli->code,
                     'description' => $kbli->description,
                     'sector' => $kbli->sector,
+                    'activities' => $kbli->activities ?: $kbli->category,
                     'notes' => $kbli->notes,
                 ];
             })->toArray();

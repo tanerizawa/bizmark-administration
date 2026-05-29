@@ -351,6 +351,23 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
+                        const activateWaitingWorker = () => {
+                            if (registration.waiting) {
+                                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                            }
+                        };
+
+                        registration.update().catch(() => {});
+                        activateWaitingWorker();
+
+                        registration.addEventListener('updatefound', () => {
+                            const worker = registration.installing;
+                            if (!worker) return;
+                            worker.addEventListener('statechange', () => {
+                                if (worker.state === 'installed') activateWaitingWorker();
+                            });
+                        });
+
                         console.log('✅ Service Worker registered:', registration.scope);
                     })
                     .catch(error => {

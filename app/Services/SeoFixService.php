@@ -260,7 +260,7 @@ class SeoFixService
             return null;
         }
 
-        $model = config('services.openrouter.free_primary_model', 'google/gemini-2.5-flash');
+        $model = config('services.openrouter.default_model', 'openrouter/free');
 
         $systemPrompt = <<<'PROMPT'
 Kamu adalah SEO expert Indonesia khusus untuk website konsultan perizinan bisnis "Bizmark" (bizmark.id).
@@ -382,7 +382,7 @@ PROMPT;
             return null;
         }
 
-        $model = config('services.openrouter.free_primary_model', 'google/gemini-2.5-flash');
+        $model = config('services.openrouter.default_model', 'openrouter/free');
         $content = $article->content ?? '';
         $isMarkdown = $this->isMarkdownContent($content);
         $format = $isMarkdown ? 'Markdown' : 'HTML';

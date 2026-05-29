@@ -29,3 +29,16 @@ Route::middleware('permission:projects.view')->group(function () {
     Route::delete('projects/{project}/permits/documents/{document}', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'deleteDocument'])->name('permits.documents.delete');
     Route::post('permits/documents/{document}/delete', [App\Modules\Perizinan\Controllers\Public\PermitController::class, 'deleteDocumentPost'])->name('permits.documents.delete-post');
 });
+
+// P1 — Compliance Monitor (Admin overview)
+Route::middleware('permission:projects.view')->group(function () {
+    Route::get('compliance-monitor', [App\Http\Controllers\Admin\ComplianceMonitorController::class, 'index'])->name('compliance.index');
+    Route::post('compliance-monitor', [App\Http\Controllers\Admin\ComplianceMonitorController::class, 'store'])->name('compliance.store');
+    Route::put('compliance-monitor/{monitor}', [App\Http\Controllers\Admin\ComplianceMonitorController::class, 'update'])->name('compliance.update');
+    Route::delete('compliance-monitor/{monitor}', [App\Http\Controllers\Admin\ComplianceMonitorController::class, 'destroy'])->name('compliance.destroy');
+
+    // P7 — Regulatory Change Detector
+    Route::get('regulatory-changes', [App\Http\Controllers\Admin\RegulatoryChangesController::class, 'index'])->name('regulatory-changes.index');
+    Route::post('regulatory-changes/crawl', [App\Http\Controllers\Admin\RegulatoryChangesController::class, 'triggerCrawl'])->name('regulatory-changes.crawl');
+    Route::delete('regulatory-changes/{change}', [App\Http\Controllers\Admin\RegulatoryChangesController::class, 'destroy'])->name('regulatory-changes.destroy');
+});

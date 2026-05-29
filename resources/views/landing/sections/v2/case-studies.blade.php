@@ -40,14 +40,18 @@
 {{-- ────────────────────────────────────────────────
      CASE STUDIES — 3 testimonials editorial
 ──────────────────────────────────────────────── --}}
-<section class="section-v2 section-ink" aria-labelledby="testimonials-heading">
+<section class="section-v2 section-premium" aria-labelledby="testimonials-heading">
     <div class="container-wide">
-        <div class="max-w-3xl mb-8">
-            <span class="eyebrow mb-4">{{ $isEn ? 'Client Stories' : 'Testimoni Klien' }}</span>
-            <h2 id="testimonials-heading" class="display-lg mt-2 mb-4">
+        <div class="max-w-2xl mb-5">
+            <div class="chapter-mark">
+                <span class="chapter-mark__num">05</span>
+                <span class="chapter-mark__rule"></span>
+                <span>{{ $isEn ? 'Client Stories' : 'Testimoni Klien' }}</span>
+            </div>
+            <h2 id="testimonials-heading" class="display-md mb-2">
                 {{ $isEn ? 'Trusted by industry leaders.' : 'Dipercaya berbagai industri.' }}
             </h2>
-            <p class="text-lg leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
                 {{ $isEn
                     ? 'Real results from manufacturers, logistics operators, and foreign-invested companies we have served across Indonesia.'
                     : 'Hasil nyata dari klien kami di bidang manufaktur, logistik, dan perusahaan PMA di seluruh Indonesia.' }}
@@ -64,34 +68,40 @@
                     $displayCompany = trim(implode(' · ', array_filter([$position, $company])));
                     $icon = is_array($t) ? ($t['icon'] ?? 'fa-building') : 'fa-building';
                 @endphp
-                <figure class="quote-card flex flex-col h-full">
-                    <span aria-hidden="true" class="absolute top-4 right-5 font-display text-5xl leading-none"
-                          class="text-gray-500 opacity-40">&ldquo;</span>
+                <figure class="quote-card flex flex-col h-full" data-aos="fade-up" data-aos-delay="{{ $loop->index * 120 }}">
+                    <span aria-hidden="true" class="absolute top-4 right-5 font-display text-5xl leading-none text-gray-200 opacity-70 pointer-events-none select-none">&ldquo;</span>
 
-                    <div class="flex items-center gap-1 mb-4" aria-label="5 of 5 stars">
-                        @for($i = 0; $i < 5; $i++)
-                            <i class="fas fa-star text-xs text-amber-400"></i>
-                        @endfor
+                    {{-- Header: stars + verified badge --}}
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div class="flex items-center gap-1" aria-label="5 of 5 stars">
+                            @for($i = 0; $i < 5; $i++)
+                                <i class="fas fa-star text-xs text-amber-400"></i>
+                            @endfor
+                        </div>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-green-50 text-green-700 border border-green-200">
+                            <i class="fas fa-check-circle text-[9px]"></i>
+                            {{ $isEn ? 'Verified Client' : 'Klien Terverifikasi' }}
+                        </span>
                     </div>
 
-                    <blockquote class="text-sm leading-relaxed font-normal italic flex-1 mb-6 text-gray-400">
+                    <blockquote class="text-sm leading-relaxed font-normal italic flex-1 mb-4 text-gray-600">
                         {{ $quote }}
                     </blockquote>
 
-                    <figcaption class="flex items-center gap-3 pt-5 mt-5">
+                    <figcaption class="flex items-center gap-3 pt-5 mt-5 border-t border-gray-200">
                         <span class="editorial-icon-badge is-circle flex-shrink-0" style="width: 2.75rem; height: 2.75rem;">
                             <i class="fas {{ $icon }} icon-md" aria-hidden="true"></i>
                         </span>
-                        <div>
-                            <div class="text-sm font-semibold text-gray-100">{{ $name }}</div>
-                            <div class="text-xs text-gray-400">{{ $displayCompany ?: $company }}</div>
+                        <div class="min-w-0">
+                            <div class="text-sm font-semibold text-gray-900">{{ $name }}</div>
+                            <div class="text-xs text-gray-500 truncate">{{ $displayCompany ?: $company }}</div>
                         </div>
                     </figcaption>
                 </figure>
             @endforeach
         </div>
 
-        <p class="text-center text-xs mt-8 text-gray-500">
+        <p class="text-center text-xs mt-8 text-gray-400">
             {{ $isEn
                 ? '* Detailed case studies are available under NDA — contact our team to schedule a confidential briefing.'
                 : '* Studi kasus lengkap tersedia melalui NDA — hubungi tim kami untuk mengatur sesi tinjauan bersama.' }}

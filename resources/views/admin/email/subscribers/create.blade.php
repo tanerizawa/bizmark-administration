@@ -1,153 +1,101 @@
 @extends('layouts.app')
-
 @section('title', 'Tambah Pelanggan Newsletter')
 @section('page-title', 'Tambah Pelanggan')
-
 @section('content')
-{{-- Hero --}}
-<section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden mb-6">
-    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div class="w-72 h-72 bg-apple-blue opacity-30 blur-3xl rounded-full absolute -top-16 -right-10"></div>
-        <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-10"></div>
-    </div>
-    <div class="relative flex items-center gap-4">
-        <a href="{{ route('admin.subscribers.index') }}" style="color: rgba(235,235,245,0.6);" class="hover:text-white transition-colors">
-            <i class="fas fa-arrow-left text-lg"></i>
-        </a>
+<div style="display:flex;flex-direction:column;gap:16px;max-width:720px">
+
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
         <div>
-            <p class="text-xs uppercase tracking-[0.4em]" style="color: rgba(235,235,245,0.5);">Manajemen Audiens</p>
-            <h1 class="text-xl font-bold text-white">Tambah Pelanggan Baru</h1>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Manajemen Audiens</p>
+            <h1 style="font-size:1.2rem;font-weight:700;color:var(--dark-text-primary);margin:4px 0 2px">Tambah Pelanggan Baru</h1>
         </div>
-    </div>
-</section>
-
-@if(session('error'))
-    <div class="rounded-apple-lg px-4 py-3 flex items-center gap-3 mb-5" style="background: rgba(255,69,58,0.12); border: 1px solid rgba(255,69,58,0.3); color: rgba(255,69,58,1);">
-        <i class="fas fa-exclamation-circle"></i>
-        <span class="text-sm">{{ session('error') }}</span>
-    </div>
-@endif
-
-<form action="{{ route('admin.subscribers.store') }}" method="POST">
-    @csrf
-
-    <div class="card-elevated rounded-apple-xl p-5 md:p-6 space-y-5">
-
-        <!-- Email -->
-        <div>
-            <label class="block text-sm font-medium mb-1.5" style="color: rgba(235,235,245,0.7);">
-                Email <span style="color: rgba(255,69,58,1);">*</span>
-            </label>
-            <input
-                type="email"
-                name="email"
-                value="{{ old('email') }}"
-                required
-                placeholder="pelanggan@email.com"
-                class="w-full px-4 py-2.5 rounded-apple-lg text-sm"
-                style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(235,235,245,0.9);"
-            >
-            @error('email')
-                <p class="text-xs mt-1.5" style="color: rgba(255,69,58,1);">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <!-- Name -->
-        <div>
-            <label class="block text-sm font-medium mb-1.5" style="color: rgba(235,235,245,0.7);">
-                Nama
-            </label>
-            <input
-                type="text"
-                name="name"
-                value="{{ old('name') }}"
-                placeholder="Nama lengkap"
-                class="w-full px-4 py-2.5 rounded-apple-lg text-sm"
-                style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(235,235,245,0.9);"
-            >
-            @error('name')
-                <p class="text-xs mt-1.5" style="color: rgba(255,69,58,1);">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <!-- Phone -->
-        <div>
-            <label class="block text-sm font-medium mb-1.5" style="color: rgba(235,235,245,0.7);">
-                Nomor HP
-            </label>
-            <input
-                type="text"
-                name="phone"
-                value="{{ old('phone') }}"
-                placeholder="08xx-xxxx-xxxx"
-                class="w-full px-4 py-2.5 rounded-apple-lg text-sm"
-                style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(235,235,245,0.9);"
-            >
-            @error('phone')
-                <p class="text-xs mt-1.5" style="color: rgba(255,69,58,1);">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <!-- Status -->
-        <div>
-            <label class="block text-sm font-medium mb-1.5" style="color: rgba(235,235,245,0.7);">
-                Status <span style="color: rgba(255,69,58,1);">*</span>
-            </label>
-            <select
-                name="status"
-                required
-                class="w-full px-4 py-2.5 rounded-apple-lg text-sm"
-                style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(235,235,245,0.9);"
-            >
-                <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }} style="background:#1c1c1e;">Aktif</option>
-                <option value="unsubscribed" {{ old('status') === 'unsubscribed' ? 'selected' : '' }} style="background:#1c1c1e;">Berhenti Berlangganan</option>
-                <option value="bounced" {{ old('status') === 'bounced' ? 'selected' : '' }} style="background:#1c1c1e;">Email Gagal</option>
-            </select>
-            @error('status')
-                <p class="text-xs mt-1.5" style="color: rgba(255,69,58,1);">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <!-- Tags -->
-        <div>
-            <label class="block text-sm font-medium mb-1.5" style="color: rgba(235,235,245,0.7);">
-                Tags <span class="text-xs" style="color: rgba(235,235,245,0.4);">(pisahkan dengan koma)</span>
-            </label>
-            <input
-                type="text"
-                name="tags_input"
-                value="{{ old('tags_input') }}"
-                placeholder="newsletter, promo, pelanggan-baru"
-                class="w-full px-4 py-2.5 rounded-apple-lg text-sm"
-                style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(235,235,245,0.9);"
-            >
-            @error('tags')
-                <p class="text-xs mt-1.5" style="color: rgba(255,69,58,1);">{{ $message }}</p>
-            @enderror
-        </div>
-
-    </div>
-
-    <!-- Actions -->
-    <div class="flex gap-3 mt-5">
-        <button
-            type="submit"
-            class="flex-1 px-6 py-3 rounded-apple-lg text-sm font-semibold transition-colors"
-            style="background: rgba(10,132,255,1); color: #FFFFFF;"
-            onmouseover="this.style.background='rgba(10,132,255,0.85)'"
-            onmouseout="this.style.background='rgba(10,132,255,1)'"
-        >
-            <i class="fas fa-user-plus mr-2"></i>Simpan Pelanggan
-        </button>
-        <a
-            href="{{ route('admin.subscribers.index') }}"
-            class="px-6 py-3 rounded-apple-lg text-sm font-semibold transition-colors"
-            style="background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.7);"
-            onmouseover="this.style.background='rgba(255,255,255,0.12)'"
-            onmouseout="this.style.background='rgba(255,255,255,0.08)'"
-        >
-            Batal
+        <a href="{{ route('admin.subscribers.index') }}"
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-secondary);font-size:0.8rem;font-weight:600;text-decoration:none"
+           onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+            <i class="fas fa-arrow-left" style="font-size:0.75rem"></i>Kembali
         </a>
     </div>
-</form>
+
+    @if(session('error'))
+    <div style="display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 30%,transparent);border-radius:10px;padding:12px 16px;color:var(--apple-red)">
+        <i class="fas fa-exclamation-circle" style="flex-shrink:0"></i>
+        <span style="font-size:0.85rem">{{ session('error') }}</span>
+    </div>
+    @endif
+
+    <form action="{{ route('admin.subscribers.store') }}" method="POST">
+        @csrf
+
+        <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+
+            {{-- Email --}}
+            <div>
+                <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                    Email <span style="color:var(--apple-red)">*</span>
+                </label>
+                <input type="email" name="email" value="{{ old('email') }}" required placeholder="pelanggan@email.com"
+                       style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                       onfocus="this.style.borderColor='var(--apple-purple)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                @error('email')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- Name --}}
+            <div>
+                <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Nama</label>
+                <input type="text" name="name" value="{{ old('name') }}" placeholder="Nama lengkap"
+                       style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                       onfocus="this.style.borderColor='var(--apple-purple)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                @error('name')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- Phone --}}
+            <div>
+                <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Nomor HP</label>
+                <input type="text" name="phone" value="{{ old('phone') }}" placeholder="08xx-xxxx-xxxx"
+                       style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                       onfocus="this.style.borderColor='var(--apple-purple)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                @error('phone')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- Status --}}
+            <div>
+                <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                    Status <span style="color:var(--apple-red)">*</span>
+                </label>
+                <select name="status" required
+                        style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none"
+                        onfocus="this.style.borderColor='var(--apple-purple)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                    <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }} style="background:#1c1c1e">Aktif</option>
+                    <option value="unsubscribed" {{ old('status') === 'unsubscribed' ? 'selected' : '' }} style="background:#1c1c1e">Berhenti Berlangganan</option>
+                    <option value="bounced" {{ old('status') === 'bounced' ? 'selected' : '' }} style="background:#1c1c1e">Email Gagal</option>
+                </select>
+                @error('status')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- Tags --}}
+            <div>
+                <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                    Tags <span style="font-size:0.65rem;font-weight:400;opacity:.6">(pisahkan dengan koma)</span>
+                </label>
+                <input type="text" name="tags_input" value="{{ old('tags_input') }}" placeholder="newsletter, promo, pelanggan-baru"
+                       style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                       onfocus="this.style.borderColor='var(--apple-purple)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                @error('tags')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+            </div>
+        </div>
+
+        {{-- Actions --}}
+        <div style="display:flex;gap:10px;margin-top:14px">
+            <button type="submit"
+                    style="flex:1;padding:10px 18px;background:var(--apple-purple);color:#fff;border:none;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer"
+                    onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                <i class="fas fa-user-plus" style="margin-right:6px"></i>Simpan Pelanggan
+            </button>
+            <a href="{{ route('admin.subscribers.index') }}"
+               style="padding:10px 18px;border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-secondary);font-size:0.85rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center"
+               onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">Batal</a>
+        </div>
+    </form>
+</div>
 @endsection

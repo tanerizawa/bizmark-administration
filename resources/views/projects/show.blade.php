@@ -156,7 +156,34 @@
     };
 @endphp
 
-<div class="project-shell max-w-7xl mx-auto space-y-4 md:space-y-5">
+<div class="project-shell max-w-7xl mx-auto space-y-4 md:space-y-5"
+     x-data="{
+         activeTab: 'overview',
+         paymentModalOpen: false,
+         expenseModalOpen: false,
+         receivableEnabled: false,
+         init() {
+             const hash = window.location.hash.substring(1);
+             const validTabs = ['overview', 'financial', 'permits', 'tasks', 'documents'];
+             if (hash && validTabs.includes(hash)) {
+                 this.activeTab = hash;
+                 return;
+             }
+             const params = new URLSearchParams(window.location.search);
+             const tab = params.get('tab');
+             if (tab && validTabs.includes(tab)) {
+                 this.activeTab = tab;
+             }
+         }
+     }"
+     x-init="$watch('activeTab', value => {
+         history.replaceState(null, null, '#' + value);
+         if (value === 'permits' && typeof window.initializePermitsSortable === 'function') {
+             setTimeout(() => window.initializePermitsSortable(), 100);
+         } else if (value === 'tasks' && typeof window.initializeTasksSortable === 'function') {
+             setTimeout(() => window.initializeTasksSortable(), 100);
+         }
+     })">
     <section class="page-card relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none hidden md:block" aria-hidden="true">
             <div class="w-56 h-56 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-4"></div>
@@ -203,7 +230,7 @@
                         <a href="{{ route('projects.edit', $project) }}" class="btn-primary-sm flex-1">
                             <i class="fas fa-edit mr-2"></i>Edit
                         </a>
-                        <form action="{{ route('projects.destroy', $project) }}" method="POST" class="flex-1" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?')">
+                        <form action="{{ route('projects.destroy', $project) }}" method="POST" class="flex-1" x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin menghapus proyek ini?')) $el.submit()">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-secondary-sm w-full bg-apple-red/15 text-apple-red border-apple-red/40">
@@ -379,32 +406,36 @@
             <!-- Tab Navigation -->
             <div class="page-card p-2" role="tablist">
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" class="tab-button active flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple" 
-                            onclick="switchTab('overview')" id="tab-overview">
+                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple"
+                            :class="{ 'active': activeTab === 'overview' }"
+                            @click="activeTab = 'overview'">
                         <i class="fas fa-info-circle mr-2"></i>Overview
                     </button>
-                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple" 
-                            onclick="switchTab('permits')" id="tab-permits">
+                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple"
+                            :class="{ 'active': activeTab === 'permits' }"
+                            @click="activeTab = 'permits'">
                         <i class="fas fa-certificate mr-2"></i>Izin & Prasyarat
                     </button>
-                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple" 
-                            onclick="switchTab('tasks')" id="tab-tasks">
+                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple"
+                            :class="{ 'active': activeTab === 'tasks' }"
+                            @click="activeTab = 'tasks'">
                         <i class="fas fa-tasks mr-2"></i>Tugas
-                    </button>       
-                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple" 
-                            onclick="switchTab('documents')" id="tab-documents">
+                    </button>
+                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple"
+                            :class="{ 'active': activeTab === 'documents' }"
+                            @click="activeTab = 'documents'">
                         <i class="fas fa-file-alt mr-2"></i>Dokumen
-                    </button>             
-                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple" 
-                            onclick="switchTab('financial')" id="tab-financial">
+                    </button>
+                    <button type="button" class="tab-button flex-1 px-3 py-2 rounded-apple text-sm font-semibold transition-apple"
+                            :class="{ 'active': activeTab === 'financial' }"
+                            @click="activeTab = 'financial'">
                         <i class="fas fa-file-invoice-dollar mr-2"></i>Financial
                     </button>
-
                 </div>
             </div>
 
             <!-- Tab Content: Overview -->
-            <div id="content-overview" class="tab-content space-y-3">
+            <div x-show="activeTab === 'overview'" x-transition:enter.duration.200ms class="space-y-3">
             <!-- Project Overview -->
             <div class="page-card space-y-3">
                 <div class="flex items-start justify-between">
@@ -678,7 +709,7 @@
                     <h3 class="card-title text-white flex items-center">
                         <i class="fas fa-wallet mr-2 text-apple-blue-dark"></i>Ringkasan Keuangan
                     </h3>
-                    <button onclick="switchTab('financial')" class="text-xs px-2.5 py-1 rounded-md transition-colors bg-apple-blue/15 text-apple-blue">
+                    <button @click="activeTab = 'financial'" class="text-xs px-2.5 py-1 rounded-md transition-colors bg-apple-blue/15 text-apple-blue">
                         <i class="fas fa-arrow-right mr-1"></i>Lihat Detail
                     </button>
                 </div>
@@ -730,28 +761,28 @@
             <!-- End of Overview Tab Content -->
 
             <!-- Tab Content: Financial (Sprint 6) -->
-            <div id="content-financial" class="tab-content hidden">
+            <div x-show="activeTab === 'financial'" x-transition:enter.duration.200ms>
                 <div class="space-y-6 min-w-0" data-scope="financial-tab">
                     @include('projects.partials.financial-tab')
                 </div>
             </div>
 
             <!-- Tab Content: Permits -->
-            <div id="content-permits" class="tab-content hidden">
+            <div x-show="activeTab === 'permits'" x-transition:enter.duration.200ms>
                 <div class="space-y-6 min-w-0" data-scope="permits-tab">
                     @include('projects.partials.permits-tab')
                 </div>
             </div>
 
             <!-- Tab Content: Tasks -->
-            <div id="content-tasks" class="tab-content hidden">
+            <div x-show="activeTab === 'tasks'" x-transition:enter.duration.200ms>
                 <div class="space-y-6 min-w-0" data-scope="tasks-tab">
                     @include('projects.partials.tasks-tab')
                 </div>
             </div>
 
             <!-- Tab Content: Documents -->
-            <div id="content-documents" class="tab-content hidden">
+            <div x-show="activeTab === 'documents'" x-transition:enter.duration.200ms>
                 <div class="space-y-6 min-w-0" data-scope="documents-tab">
                     <div class="page-card space-y-3">
                         <div class="flex items-center justify-between">
@@ -1039,13 +1070,13 @@
 </div>
 
 <!-- Payment Modal -->
-<div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="closePaymentModal()">
-    <div class="card-elevated rounded-apple-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation();">
+<div x-show="paymentModalOpen" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click="paymentModalOpen = false">
+    <div class="card-elevated rounded-apple-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" @click.stop>
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-xl font-bold text-white">
                 <i class="fas fa-money-bill-wave mr-2 text-apple-blue-dark"></i>Tambah Pembayaran
             </h3>
-            <button onclick="closePaymentModal()" type="button"
+            <button @click="paymentModalOpen = false" type="button"
                     class="text-2xl hover:opacity-75 transition-opacity text-dark-text-secondary">×</button>
         </div>
 
@@ -1057,7 +1088,9 @@
                         <i class="fas fa-file-invoice mr-1 text-apple-blue"></i>
                         Invoice (Opsional)
                     </label>
-                    <select name="invoice_id" id="payment_invoice_id" class="input-dark w-full px-4 py-2 rounded-lg" onchange="updatePaymentAmount()">
+                    <select name="invoice_id" id="payment_invoice_id" class="input-dark w-full px-4 py-2 rounded-lg"
+                            x-ref="invoiceSelect"
+                            @change="$refs.amountInput.value = $refs.invoiceSelect.options[$refs.invoiceSelect.selectedIndex]?.dataset?.remaining || ''">
                         <option value="">Tidak terkait invoice (pembayaran umum)</option>
                         @foreach($project->invoices()->whereIn('status', ['sent', 'partial', 'overdue'])->get() as $inv)
                         <option value="{{ $inv->id }}" data-remaining="{{ $inv->remaining_amount }}">
@@ -1078,7 +1111,7 @@
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-dark-text-primary/80">Jumlah (Rp) *</label>
-                    <input type="number" name="amount" id="payment_amount" required min="0" step="0.01"
+                    <input type="number" name="amount" id="payment_amount" x-ref="amountInput" required min="0" step="0.01"
                            class="input-dark w-full px-4 py-2 rounded-lg" placeholder="0">
                 </div>
 
@@ -1134,7 +1167,7 @@
             </div>
 
             <div class="flex justify-end space-x-2 mt-6">
-                <button type="button" onclick="closePaymentModal()"
+                <button type="button" @click="paymentModalOpen = false"
                         class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-80 bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Batal
                 </button>
@@ -1147,17 +1180,17 @@
 </div>
 
 <!-- Expense Modal -->
-<div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="closeExpenseModal()">
-    <div class="card-elevated rounded-apple-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation();">
+<div x-show="expenseModalOpen" x-cloak class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click="expenseModalOpen = false">
+    <div class="card-elevated rounded-apple-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" @click.stop>
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-xl font-bold text-white">
                 <i class="fas fa-shopping-cart mr-2 text-apple-blue-dark"></i>Tambah Pengeluaran
             </h3>
-            <button onclick="closeExpenseModal()" type="button"
+            <button @click="expenseModalOpen = false" type="button"
                     class="text-2xl hover:opacity-75 transition-opacity text-dark-text-secondary">×</button>
         </div>
 
-        <form id="expenseForm" action="{{ route('projects.financial-expenses.store', $project) }}" method="POST" enctype="multipart/form-data" onsubmit="return handleExpenseSubmit(event)">
+        <form id="expenseForm" action="{{ route('projects.financial-expenses.store', $project) }}" method="POST" enctype="multipart/form-data" x-data @submit.prevent="handleExpenseSubmit($event)">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
@@ -1258,7 +1291,7 @@
 
                 <div class="md:col-span-2">
                     <label class="flex items-center space-x-2">
-                        <input type="checkbox" name="is_receivable" value="1" class="rounded bg-[rgba(58,58,60,0.8)]" onchange="toggleReceivableFields()">
+                        <input type="checkbox" name="is_receivable" value="1" class="rounded bg-[rgba(58,58,60,0.8)]" x-model="receivableEnabled">
                         <span class="text-sm text-dark-text-primary/80">Kasbon/Piutang Internal (perlu dikembalikan oleh karyawan/pihak internal)</span>
                     </label>
                     <p class="text-xs mt-1 text-dark-text-tertiary">
@@ -1266,7 +1299,7 @@
                     </p>
                 </div>
 
-                <div id="receivableFields" class="md:col-span-2 hidden">
+                <div x-show="receivableEnabled" x-cloak class="md:col-span-2">
                     <div class="p-4 rounded-lg bg-[rgba(255,204,0,0.1)] border border-[rgba(255,204,0,0.3)]">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
@@ -1299,7 +1332,7 @@
             </div>
 
             <div class="flex justify-end space-x-2 mt-6">
-                <button type="button" onclick="closeExpenseModal()"
+                <button type="button" @click="expenseModalOpen = false"
                         class="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-80 bg-[rgba(58,58,60,0.8)] text-dark-text-primary/80">
                     Batal
                 </button>
@@ -1312,62 +1345,6 @@
 </div>
 
 <script>
-function switchTab(tabName) {
-    if (window.location.hash !== '#' + tabName) {
-        history.replaceState(null, null, '#' + tabName);
-    }
-    
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-    });
-    
-    document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    const tabContent = document.getElementById('content-' + tabName);
-    if (tabContent) {
-        tabContent.classList.remove('hidden');
-    }
-    
-    const activeBtn = document.getElementById('tab-' + tabName);
-    if (activeBtn) {
-        activeBtn.classList.add('active');
-    }
-    
-    if (tabName === 'permits' && typeof window.initializePermitsSortable === 'function') {
-        setTimeout(() => window.initializePermitsSortable(), 100);
-    } else if (tabName === 'tasks' && typeof window.initializeTasksSortable === 'function') {
-        setTimeout(() => window.initializeTasksSortable(), 100);
-    }
-}
-
-// Check URL parameter on page load to switch to correct tab
-document.addEventListener('DOMContentLoaded', function() {
-    // Check for URL hash first (for staying in tab after reload)
-    const hash = window.location.hash.substring(1); // Remove the # symbol
-    if (hash) {
-        const validTabs = ['overview', 'financial', 'permits', 'tasks', 'documents'];
-        if (validTabs.includes(hash)) {
-            switchTab(hash);
-            return;
-        }
-    }
-    
-    // Then check for URL query parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab');
-    
-    if (tab) {
-        // Valid tab names
-        const validTabs = ['overview', 'financial', 'permits', 'tasks', 'documents'];
-        
-        if (validTabs.includes(tab)) {
-            switchTab(tab);
-        }
-    }
-});
-
 // ===== GLOBAL PERMITS TAB FUNCTIONS =====
 // These functions need to be globally accessible for permits tab
 function showTemplateModal() {
@@ -1482,23 +1459,6 @@ function deletePermit(permitId) {
     
     document.body.appendChild(form);
     form.submit();
-}
-
-// Payment Modal: Auto-fill amount when invoice selected
-function updatePaymentAmount() {
-    const invoiceSelect = document.getElementById('payment_invoice_id');
-    const amountInput = document.getElementById('payment_amount');
-    
-    if (invoiceSelect && amountInput) {
-        const selectedOption = invoiceSelect.options[invoiceSelect.selectedIndex];
-        const remaining = selectedOption.getAttribute('data-remaining');
-        
-        if (remaining && parseFloat(remaining) > 0) {
-            amountInput.value = remaining;
-        } else {
-            amountInput.value = '';
-        }
-    }
 }
 </script>
 

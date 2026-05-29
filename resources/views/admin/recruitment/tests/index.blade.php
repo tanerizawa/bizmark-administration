@@ -1,193 +1,174 @@
 @extends('layouts.app')
 
-@section('title', 'Test Management')
+@section('title', 'Template & Sesi Tes')
 
 @section('content')
-<div class="recruitment-shell max-w-7xl mx-auto space-y-5">
-    {{-- Header --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-25 blur-3xl rounded-full absolute -top-14 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-8"></div>
+<div style="display:flex;flex-direction:column;gap:16px">
+
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+            <a href="{{ route('admin.recruitment.index') }}" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);text-decoration:none;margin-bottom:6px" onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                <i class="fas fa-arrow-left" style="font-size:0.65rem"></i>Rekrutmen
+            </a>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--apple-orange);margin:0 0 4px">Manajemen Talenta</p>
+            <h1 style="font-size:1.4rem;font-weight:800;color:var(--dark-text-primary);margin:0 0 4px;line-height:1.2">Template & Sesi Tes</h1>
+            <p style="font-size:0.82rem;color:var(--dark-text-secondary);margin:0">Kelola template penilaian dan pantau sesi tes kandidat</p>
         </div>
-        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div class="space-y-2.5">
-                <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em] text-dark-text-secondary">
-                    <a href="{{ route('admin.recruitment.index') }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
-                        <i class="fas fa-arrow-left text-xs"></i> Rekrutmen
-                    </a>
-                    <span class="text-dark-text-tertiary">/</span>
-                    <span>Test</span>
-                </div>
-                <h1 class="text-xl font-semibold text-white leading-tight">Template & Sesi Tes</h1>
-                <p class="text-sm text-dark-text-primary/70">
-                    Kelola template penilaian dan pantau sesi tes kandidat.
-                </p>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.recruitment.tests.create') }}" class="btn-primary">
-                    <i class="fas fa-plus mr-2"></i>Buat Template Tes
-                </a>
-            </div>
-        </div>
-    </section>
+        <a href="{{ route('admin.recruitment.tests.create') }}"
+           style="display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--apple-blue);color:#fff;border:none;border-radius:11px;font-size:0.85rem;font-weight:700;text-decoration:none;transition:opacity .2s;align-self:flex-end"
+           onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+            <i class="fas fa-plus" style="font-size:0.75rem"></i>Buat Template Tes
+        </a>
+    </div>
 
     {{-- Stats --}}
-    <section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest text-[var(--neuro-primary)] opacity-80">Total Template</p>
-            <p class="text-lg font-bold text-white">{{ $stats['total_templates'] }}</p>
-            <p class="text-xs text-dark-text-secondary/70">Seluruh template tersedia</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        @php $testStats = [
+            ['label'=>'Total Template',  'value'=>$stats['total_templates'],  'sub'=>'Seluruh template',      'color'=>'var(--apple-blue)'],
+            ['label'=>'Template Aktif',  'value'=>$stats['active_templates'], 'sub'=>'Dapat ditugaskan',      'color'=>'var(--apple-green)'],
+            ['label'=>'Sesi Aktif',      'value'=>$stats['active_sessions'],  'sub'=>'Kandidat sedang tes',   'color'=>'var(--apple-orange)'],
+            ['label'=>'Selesai Hari Ini','value'=>$stats['completed_today'],  'sub'=>'Tes selesai',           'color'=>'var(--apple-teal)'],
+        ]; @endphp
+        @foreach($testStats as $s)
+        <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $s['color'] }} 12%,var(--dark-bg-tertiary)) 0%,var(--dark-bg-tertiary) 100%);border:1px solid color-mix(in srgb,{{ $s['color'] }} 25%,var(--dark-separator));border-radius:14px;padding:16px 18px">
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ $s['color'] }};opacity:.85;margin:0">{{ $s['label'] }}</p>
+            <p style="font-size:1.8rem;font-weight:800;color:{{ $s['color'] }};margin:4px 0 2px;line-height:1">{{ $s['value'] }}</p>
+            <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0">{{ $s['sub'] }}</p>
         </div>
-        <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest text-[var(--neuro-success)] opacity-80">Template Aktif</p>
-            <p class="text-lg font-bold text-white">{{ $stats['active_templates'] }}</p>
-            <p class="text-xs text-dark-text-secondary/70">Dapat ditugaskan</p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest text-[var(--neuro-warning)] opacity-80">Sesi Aktif</p>
-            <p class="text-lg font-bold text-white">{{ $stats['active_sessions'] }}</p>
-            <p class="text-xs text-dark-text-secondary/70">Kandidat sedang tes</p>
-        </div>
-        <div class="card-elevated rounded-apple-lg p-3.5 space-y-1">
-            <p class="text-xs uppercase tracking-widest text-[var(--neuro-accent)] opacity-80">Selesai Hari Ini</p>
-            <p class="text-lg font-bold text-white">{{ $stats['completed_today'] }}</p>
-            <p class="text-xs text-dark-text-secondary/70">Tes selesai</p>
-        </div>
-    </section>
+        @endforeach
+    </div>
 
-    {{-- Filters --}}
-    <section class="card-elevated rounded-apple-xl p-4 space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-3">
+    {{-- Filter --}}
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:16px 20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
             <div>
-                <p class="text-xs uppercase tracking-[0.3em] text-dark-text-tertiary">Filter</p>
-                <h3 class="text-base font-semibold text-white">Susun Template</h3>
+                <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Pencarian & Filter</p>
+                <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">Susun Template</h3>
             </div>
-            <p class="text-xs text-dark-text-secondary/70">{{ $templates->total() }} template ditemukan</p>
+            <span style="font-size:0.75rem;color:var(--dark-text-secondary)">{{ $templates->total() }} template</span>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="space-y-1">
-                <label class="text-xs uppercase tracking-widest text-dark-text-tertiary">Pencarian</label>
-                <input type="text" id="searchTest" placeholder="Judul, tipe, deskripsi"
-                       class="w-full px-3 py-2 rounded-apple text-sm text-white placeholder-gray-500 bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px">
+            <div style="position:relative">
+                <i class="fas fa-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.75rem;pointer-events:none"></i>
+                <input type="text" id="searchTest" placeholder="Judul, tipe, deskripsi..."
+                       style="width:100%;padding:9px 12px 9px 32px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;box-sizing:border-box"
+                       onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
             </div>
-            <div class="space-y-1">
-                <label class="text-xs uppercase tracking-widest text-dark-text-tertiary">Tipe Tes</label>
-                <select id="filterType" class="w-full px-3 py-2 rounded-apple text-sm text-white bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]">
+            <div style="position:relative">
+                <select id="filterType"
+                        style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none"
+                        onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
                     <option value="">Semua Tipe</option>
-                    <option value="psychology">Psychology</option>
-                    <option value="psychometric">Psychometric</option>
-                    <option value="technical">Technical</option>
-                    <option value="aptitude">Aptitude</option>
-                    <option value="personality">Personality</option>
+                    @foreach(['psychology','psychometric','technical','aptitude','personality','document_editing'] as $type)
+                    <option value="{{ $type }}">{{ ucfirst(str_replace('_',' ',$type)) }}</option>
+                    @endforeach
                 </select>
+                <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
             </div>
-            <div class="space-y-1">
-                <label class="text-xs uppercase tracking-widest text-dark-text-tertiary">Status</label>
-                <select id="filterStatus" class="w-full px-3 py-2 rounded-apple text-sm text-white bg-[rgba(28,28,30,0.6)] border border-[rgba(84,84,88,0.35)]">
+            <div style="position:relative">
+                <select id="filterStatus"
+                        style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none"
+                        onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
                     <option value="">Semua Status</option>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                 </select>
+                <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
             </div>
         </div>
-    </section>
+    </div>
 
     {{-- Templates Table --}}
-    <section class="card-elevated rounded-apple-xl overflow-hidden">
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
         @if($templates->count())
-            <div class="overflow-x-auto">
-                <table class="min-w-full">
-                    <thead class="bg-[rgba(28,28,30,0.45)]">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Template</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Tipe</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Pertanyaan</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Durasi</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Sesi</th>
-                            <th class="px-6 py-4 text-left text-xs uppercase tracking-widest text-dark-text-secondary">Status</th>
-                            <th class="px-6 py-4 text-right text-xs uppercase tracking-widest text-dark-text-secondary">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($templates as $template)
-                            @php
-                                $typeColors = [
-                                    'psychology' => 'rgba(10,132,255,0.2)',
-                                    'psychometric' => 'rgba(255,214,10,0.2)',
-                                    'technical' => 'rgba(255,69,58,0.2)',
-                                    'aptitude' => 'rgba(52,199,89,0.2)',
-                                    'personality' => 'rgba(191,90,242,0.2)',
-                                ];
-                            @endphp
-                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-apple-purple to-apple-blue flex items-center justify-center text-white font-semibold">
-                                            {{ strtoupper(substr($template->title, 0, 1)) }}
-                                        </div>
-                                        <div class="min-w-0">
-                                            <p class="text-sm font-semibold text-white">{{ $template->title }}</p>
-                                            <p class="text-xs text-dark-text-secondary">Dibuat {{ $template->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: {{ $typeColors[$template->test_type] ?? 'rgba(255,255,255,0.1)' }};">
-                                        {{ ucfirst($template->test_type) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-white">
-                                    {{ $template->total_questions }} pertanyaan
-                                </td>
-                                <td class="px-6 py-4 text-sm text-white">
-                                    {{ $template->duration_minutes }} menit
-                                </td>
-                                <td class="px-6 py-4 text-sm text-white">
-                                    {{ $template->test_sessions_count }} sesi
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="px-3 py-1 rounded-full text-xs font-semibold" style="background: {{ $template->is_active ? 'rgba(52,199,89,0.2)' : 'rgba(142,142,147,0.2)' }};">
-                                        {{ $template->is_active ? 'Active' : 'Inactive' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex justify-end gap-2">
-                                        <a href="{{ route('admin.recruitment.tests.show', $template) }}" class="btn-secondary-sm">
-                                            <i class="fas fa-eye mr-1"></i>Detail
-                                        </a>
-                                        <a href="{{ route('admin.recruitment.tests.edit', $template) }}" class="btn-primary-sm">
-                                            <i class="fas fa-edit mr-1"></i>Edit
-                                        </a>
-                                        <form action="{{ route('admin.recruitment.tests.destroy', $template) }}" method="POST" onsubmit="return confirm('Hapus template ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn-secondary-sm bg-apple-red/15 text-apple-red border-apple-red/40">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+        <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse" id="templatesTable">
+                <thead style="background:var(--dark-bg-secondary)">
+                    <tr>
+                        @foreach(['Template','Tipe','Pertanyaan','Durasi','Sesi','Status','Aksi'] as $col)
+                        <th style="padding:10px 14px;font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);text-align:{{ $col === 'Aksi' ? 'right' : 'left' }};border-bottom:1px solid var(--dark-separator);white-space:nowrap">{{ $col }}</th>
                         @endforeach
-                    </tbody>
-                </table>
-            </div>
-            @if($templates->hasPages())
-                <div class="px-6 py-4 border-t border-white/5">
-                    {{ $templates->links() }}
-                </div>
-            @endif
-        @else
-            <div class="text-center py-12 space-y-3 text-dark-text-primary/70">
-                <i class="fas fa-clipboard-list text-4xl"></i>
-                <p class="text-sm">Belum ada template tes.</p>
-                <a href="{{ route('admin.recruitment.tests.create') }}" class="btn-primary-sm">
-                    <i class="fas fa-plus mr-2"></i>Buat Template Pertama
-                </a>
-            </div>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($templates as $template)
+                    @php
+                        $typeColors = ['psychology'=>'var(--apple-blue)','psychometric'=>'var(--apple-yellow)','technical'=>'var(--apple-red)','aptitude'=>'var(--apple-green)','personality'=>'var(--apple-purple)','document_editing'=>'var(--apple-teal)'];
+                        $tc = $typeColors[$template->test_type] ?? 'var(--dark-text-secondary)';
+                    @endphp
+                    <tr class="test-row" style="border-bottom:1px solid var(--dark-separator)" onmouseover="this.style.background='var(--dark-bg-secondary)'" onmouseout="this.style.background='transparent'">
+                        <td style="padding:12px 14px">
+                            <div style="display:flex;align-items:center;gap:10px">
+                                <div style="width:38px;height:38px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700;background:linear-gradient(135deg,color-mix(in srgb,var(--apple-purple) 60%,var(--apple-blue)),var(--apple-blue));color:#fff">
+                                    {{ strtoupper(substr($template->title, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <span class="test-title" style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);display:block">{{ $template->title }}</span>
+                                    <span style="font-size:0.7rem;color:var(--dark-text-secondary)">Dibuat {{ $template->created_at->diffForHumans() }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span class="test-type" style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,{{ $tc }} 15%,transparent);color:{{ $tc }}">{{ ucfirst(str_replace('_',' ',$template->test_type)) }}</span>
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span style="font-size:0.85rem;color:var(--dark-text-primary)">{{ $template->total_questions }} pertanyaan</span>
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span style="font-size:0.85rem;color:var(--dark-text-primary)">{{ $template->duration_minutes }} menit</span>
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span style="font-size:0.85rem;color:var(--dark-text-primary)">{{ $template->test_sessions_count }} sesi</span>
+                        </td>
+                        <td style="padding:12px 14px">
+                            <span class="test-status" style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,{{ $template->is_active ? 'var(--apple-green)' : 'var(--dark-text-secondary)' }} 15%,transparent);color:{{ $template->is_active ? 'var(--apple-green)' : 'var(--dark-text-secondary)' }}">{{ $template->is_active ? 'Active' : 'Inactive' }}</span>
+                        </td>
+                        <td style="padding:12px 14px;text-align:right">
+                            <div style="display:flex;justify-content:flex-end;gap:6px">
+                                <a href="{{ route('admin.recruitment.tests.show', $template) }}"
+                                   style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--apple-teal);background:color-mix(in srgb,var(--apple-teal) 12%,transparent);padding:4px 9px;border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-teal) 25%,transparent);text-decoration:none"
+                                   onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1">
+                                    <i class="fas fa-eye"></i>Detail
+                                </a>
+                                <a href="{{ route('admin.recruitment.tests.edit', $template) }}"
+                                   style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--apple-orange);background:color-mix(in srgb,var(--apple-orange) 12%,transparent);padding:4px 9px;border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-orange) 25%,transparent);text-decoration:none"
+                                   onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1">
+                                    <i class="fas fa-edit"></i>Edit
+                                </a>
+                                <form action="{{ route('admin.recruitment.tests.destroy', $template) }}" method="POST" onsubmit="return confirm('Hapus template ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit"
+                                            style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--apple-red);background:color-mix(in srgb,var(--apple-red) 12%,transparent);padding:4px 9px;border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);cursor:pointer"
+                                            onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @if($templates->hasPages())
+        <div style="padding:14px 20px;border-top:1px solid var(--dark-separator)">
+            <x-ui.pagination :paginator="$templates->appends(request()->all())" variant="full" :show-info="true" />
+        </div>
         @endif
-    </section>
+        @else
+        <div style="padding:48px;text-align:center">
+            <i class="fas fa-clipboard-list" style="font-size:2rem;color:var(--dark-text-secondary);opacity:.4;display:block;margin-bottom:12px"></i>
+            <p style="font-size:0.88rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 4px">Belum Ada Template</p>
+            <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0 0 16px">Buat template tes pertama untuk mulai menilai kandidat</p>
+            <a href="{{ route('admin.recruitment.tests.create') }}"
+               style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--apple-blue);color:#fff;border:none;border-radius:10px;font-size:0.82rem;font-weight:600;text-decoration:none">
+                <i class="fas fa-plus"></i>Buat Template Pertama
+            </a>
+        </div>
+        @endif
+    </div>
+
 </div>
 @endsection
 
@@ -195,23 +176,22 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchTest');
-    const filterType = document.getElementById('filterType');
-    const filterStatus = document.getElementById('filterStatus');
-    const rows = document.querySelectorAll('tbody tr');
+    const filterType  = document.getElementById('filterType');
+    const filterStatus= document.getElementById('filterStatus');
+    const rows = document.querySelectorAll('.test-row');
 
     function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const typeFilter = filterType.value;
-        const statusFilter = filterStatus.value;
-
+        const search = searchInput.value.toLowerCase();
+        const type   = filterType.value.toLowerCase();
+        const status = filterStatus.value.toLowerCase();
         rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            const matchesSearch = text.includes(searchTerm);
-            const typeCell = row.querySelector('td:nth-child(2) span');
-            const statusCell = row.querySelector('td:nth-child(6) span');
-            const matchesType = !typeFilter || (typeCell && typeCell.textContent.toLowerCase().includes(typeFilter));
-            const matchesStatus = !statusFilter || (statusCell && statusCell.textContent.toLowerCase().includes(statusFilter));
-            row.style.display = (matchesSearch && matchesType && matchesStatus) ? '' : 'none';
+            const title  = row.querySelector('.test-title')?.textContent.toLowerCase() ?? '';
+            const typeEl = row.querySelector('.test-type')?.textContent.toLowerCase() ?? '';
+            const statusEl = row.querySelector('.test-status')?.textContent.toLowerCase() ?? '';
+            const matchSearch = !search || title.includes(search) || typeEl.includes(search);
+            const matchType   = !type   || typeEl.includes(type);
+            const matchStatus = !status || statusEl.includes(status);
+            row.style.display = (matchSearch && matchType && matchStatus) ? '' : 'none';
         });
     }
 

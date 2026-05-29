@@ -71,7 +71,7 @@
                                 <span class="px-2 py-0.5 text-xs rounded-apple" style="background: {{ $category->is_active ? 'rgba(0, 122, 255, 0.15)' : 'rgba(142, 142, 147, 0.2)' }}; color: {{ $category->is_active ? 'rgba(0, 122, 255, 1)' : 'rgba(142, 142, 147, 0.9)' }};">
                                     {{ $category->is_active ? 'Active' : 'Inactive' }}
                                 </span>
-                                <form method="POST" action="{{ route('settings.financial.expense-categories.delete', $category) }}" onsubmit="return confirm('Hapus kategori {{ $category->name }}?');">
+                                <form method="POST" action="{{ route('settings.financial.expense-categories.delete', $category) }}" x-data @submit.prevent="if(confirm('Hapus kategori {{ $category->name }}?')) $el.submit()">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-2 py-1 rounded-apple text-xs" style="background: rgba(255, 59, 48, 0.15); color: rgba(255, 59, 48, 1);" {{ $category->is_default ? 'disabled' : '' }}>
@@ -184,7 +184,7 @@
                                 <span class="px-2 py-0.5 text-xs rounded-apple" style="background: {{ $method->is_active ? 'rgba(0, 122, 255, 0.15)' : 'rgba(142, 142, 147, 0.2)' }}; color: {{ $method->is_active ? 'rgba(0, 122, 255, 1)' : 'rgba(142, 142, 147, 0.9)' }};">
                                     {{ $method->is_active ? 'Active' : 'Inactive' }}
                                 </span>
-                                <form method="POST" action="{{ route('settings.financial.payment-methods.delete', $method) }}" onsubmit="return confirm('Hapus metode {{ $method->name }}?');">
+                                <form method="POST" action="{{ route('settings.financial.payment-methods.delete', $method) }}" x-data @submit.prevent="if(confirm('Hapus metode {{ $method->name }}?')) $el.submit()">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-2 py-1 rounded-apple text-xs" style="background: rgba(255, 59, 48, 0.15); color: rgba(255, 59, 48, 1);" {{ $method->is_default ? 'disabled' : '' }}>
@@ -296,7 +296,7 @@
                                 <span class="px-2 py-0.5 text-xs rounded-apple" style="background: {{ $rate->is_active ? 'rgba(0, 122, 255, 0.15)' : 'rgba(142, 142, 147, 0.2)' }}; color: {{ $rate->is_active ? 'rgba(0, 122, 255, 1)' : 'rgba(142, 142, 147, 0.9)' }};">
                                     {{ $rate->is_active ? 'Active' : 'Inactive' }}
                                 </span>
-                                <form method="POST" action="{{ route('settings.financial.tax-rates.delete', $rate) }}" onsubmit="return confirm('Hapus tarif {{ $rate->name }}?');">
+                                <form method="POST" action="{{ route('settings.financial.tax-rates.delete', $rate) }}" x-data @submit.prevent="if(confirm('Hapus tarif {{ $rate->name }}?')) $el.submit()">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-2 py-1 rounded-apple text-xs" style="background: rgba(255, 59, 48, 0.15); color: rgba(255, 59, 48, 1);" {{ $rate->is_default ? 'disabled' : '' }}>

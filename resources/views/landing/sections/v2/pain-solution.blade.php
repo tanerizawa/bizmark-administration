@@ -31,8 +31,8 @@
                 ? 'Months go by with no clear update on your permit status.'
                 : 'Berbulan-bulan berlalu tanpa ada kejelasan mengenai perkembangan izin Anda.',
             'solve' => $isEn
-                ? 'Weekly SLA reports and field follow-through. 96% on-time permit delivery rate.'
-                : 'Laporan perkembangan setiap minggu disertai tindak lanjut lapangan. 96% izin selesai tepat waktu.',
+                ? 'Weekly SLA reports and field follow-through, with milestone alerts the moment a permit advances.'
+                : 'Laporan perkembangan setiap minggu disertai tindak lanjut lapangan, lengkap dengan notifikasi setiap kali izin maju ke tahap berikutnya.',
             'cta'  => $isEn ? 'See how our SLA works' : 'Pelajari cara kerja SLA kami',
             'href' => $isEn ? route('process.en') : route('process.id'),
             'icon' => 'fa-clock',
@@ -45,9 +45,13 @@
 ──────────────────────────────────────────────── --}}
 <section class="section-v2 section-premium" aria-labelledby="pain-heading">
     <div class="container-wide">
-        <div class="max-w-3xl mb-8" data-aos="fade-up">
-            <span class="eyebrow mb-4">{{ $isEn ? 'Common Problems' : 'Masalah Umum' }}</span>
-            <h2 id="pain-heading" class="display-lg mt-2 mb-4 text-gray-100">
+        <div class="max-w-2xl mb-5" data-aos="fade-up">
+            <div class="chapter-mark">
+                <span class="chapter-mark__num">01</span>
+                <span class="chapter-mark__rule"></span>
+                <span>{{ $isEn ? 'Common Problems' : 'Masalah Umum' }}</span>
+            </div>
+            <h2 id="pain-heading" class="display-md mb-0">
                 {{ $isEn ? 'We remove the roadblocks slowing you down.' : 'Kami atasi hambatan yang memperlambat usaha Anda.' }}
             </h2>
         </div>
@@ -62,17 +66,17 @@
                         </span>
                         <span>{{ $isEn ? 'Problem' : 'Masalah' }}</span>
                     </div>
-                    <p class="font-semibold text-base leading-snug mb-6 text-gray-100">
+                    <p class="font-semibold text-base leading-snug mb-6 text-gray-900">
                         {{ $it['pain'] }}
                     </p>
 
                     {{-- Divider arrow --}}
                     <div class="flex items-center gap-3 mb-6" aria-hidden="true">
-                        <span class="flex-1 h-px bg-white/10"></span>
-                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/15 text-blue-500">
+                        <span class="flex-1 h-px bg-gray-200"></span>
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/15 text-amber-600">
                             <i class="fas fa-arrow-down text-xs"></i>
                         </span>
-                        <span class="flex-1 h-px bg-white/10"></span>
+                        <span class="flex-1 h-px bg-gray-200"></span>
                     </div>
 
                     {{-- Bizmark solution --}}
@@ -82,12 +86,12 @@
                         </span>
                         <span>Bizmark</span>
                     </div>
-                    <p class="text-sm leading-relaxed flex-1 text-gray-400">
+                    <p class="text-sm leading-relaxed flex-1 text-gray-600">
                         {{ $it['solve'] }}
                     </p>
 
                     <a href="{{ $it['href'] }}"
-                       class="mt-5 inline-flex items-center gap-2 text-sm font-semibold group/cta text-blue-400 no-underline">
+                       class="mt-5 inline-flex items-center gap-2 text-sm font-semibold group/cta text-amber-600 no-underline">
                         <i class="fas {{ $it['icon'] }} text-xs" aria-hidden="true"></i>
                         <span>{{ $it['cta'] }}</span>
                         <i class="fas fa-arrow-right text-xs transition-transform group-hover/cta:translate-x-1" aria-hidden="true"></i>

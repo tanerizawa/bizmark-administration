@@ -63,7 +63,7 @@
             "@@type": "ListItem",
             "position": 3,
             "name": "{{ $article->category->name }}",
-            "item": "{{ route('blog.category', $article->category->slug) }}"
+            "item": "{{ route('blog.category.id', $article->category->slug) }}"
         },
         @endif
         {
@@ -193,14 +193,14 @@
             <span>/</span>
             <a href="{{ route('blog.index.id') }}" class="hover:text-primary transition">Artikel</a>
             <span>/</span>
-            <a href="{{ route('blog.category', $article->category) }}" class="hover:text-primary transition">
+            <a href="{{ route('blog.category.id', $article->category) }}" class="hover:text-primary transition">
                 {{ $article->category_label }}
             </a>
         </nav>
 
         <!-- Category -->
         <div class="flex flex-wrap items-center gap-3 mb-5">
-            <a href="{{ route('blog.category', $article->category) }}"
+            <a href="{{ route('blog.category.id', $article->category) }}"
                class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-semibold text-primary bg-primary/10 rounded-full">
                 <i class="fas fa-folder-open text-xs"></i>
                 {{ $article->category_label }}
@@ -252,6 +252,7 @@
         <div class="container max-w-4xl">
             <img src="{{ Storage::url($article->featured_image) }}"
                  alt="{{ $article->title }}"
+                 fetchpriority="high" decoding="async"
                  class="w-full rounded-3xl shadow-[0_30px_70px_-60px_rgba(15,23,42,0.6)] object-cover">
         </div>
     </section>
@@ -270,7 +271,7 @@
                     <h4 class="text-lg font-semibold text-slate-900 mb-4">Tag:</h4>
                     <div class="flex flex-wrap gap-3">
                         @foreach($article->tags as $tag)
-                            <a href="{{ route('blog.tag', $tag) }}"
+                            <a href="{{ route('blog.tag.id', $tag) }}"
                                class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold hover:bg-primary/15 transition">
                                 #{{ $tag }}
                             </a>
@@ -319,6 +320,7 @@
                         @if($related->featured_image)
                             <img src="{{ Storage::url($related->featured_image) }}"
                                  alt="{{ $related->title }}"
+                                 loading="lazy" decoding="async"
                                  class="w-full h-48 object-cover">
                         @else
                             <div class="w-full h-48 bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center">
@@ -337,7 +339,7 @@
                             </div>
 
                             <h4 class="text-lg font-bold text-slate-900 mb-3 line-clamp-2">
-                                <a href="{{ route('blog.article', $related->slug) }}"
+                                <a href="{{ route('blog.article.id', $related->slug) }}"
                                    class="hover:text-primary transition">
                                     {{ $related->title }}
                                 </a>
@@ -347,7 +349,7 @@
                                 {{ $related->excerpt }}
                             </p>
 
-                            <a href="{{ route('blog.article', $related->slug) }}"
+                            <a href="{{ route('blog.article.id', $related->slug) }}"
                                class="inline-flex items-center gap-2 text-primary font-semibold text-sm hover:gap-3 transition">
                                 Baca selengkapnya <i class="fas fa-arrow-right text-xs"></i>
                             </a>

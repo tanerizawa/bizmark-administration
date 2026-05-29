@@ -27,7 +27,8 @@
             . '</div></body></html>';
     }
 @endphp
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="max-w-5xl mx-auto space-y-6"
+     x-data="{ starred: {{ $email->is_starred ? 'true' : 'false' }}, activeView: '{{ $email->body_html ? 'html' : 'text' }}', dropdownOpen: false }">
     {{-- Actions --}}
     <div class="flex flex-wrap items-center justify-between gap-3">
         <a href="{{ route('admin.inbox.index', ['category' => request('category', 'inbox')]) }}"
@@ -36,24 +37,39 @@
         </a>
         <div class="flex flex-wrap items-center gap-2">
             <button type="button"
-                    onclick="toggleStar({{ $email->id }}, this)"
-                    data-star-button="{{ $email->is_starred ? 'true' : 'false' }}"
-                    class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold transition-apple {{ $email->is_starred ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40' : 'bg-white/5 text-white/80 border border-white/10' }}">
-                <i class="fas fa-star mr-2 {{ $email->is_starred ? 'text-yellow-400' : 'text-white/60' }}" data-star-icon></i>
-                <span data-star-label>{{ $email->is_starred ? 'Starred' : 'Star' }}</span>
+                    @click="
+                        fetch('/admin/inbox/{{ $email->id }}/star', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => { if (data.success) starred = !starred; })
+                        .catch(console.error);
+                    "
+                    :class="starred ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40' : 'bg-white/5 text-white/80 border border-white/10'"
+                    class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold transition-apple">
+                <i class="fas fa-star mr-2" :class="starred ? 'text-yellow-400' : 'text-white/60'"></i>
+                <span x-text="starred ? 'Starred' : 'Star'"></span>
             </button>
             <a href="{{ route('admin.inbox.reply', $email->id) }}"
                class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold text-white bg-apple-blue transition-apple">
                 <i class="fas fa-reply mr-2"></i>Balas
             </a>
-            <div class="relative" data-dropdown>
+            <div x-data @click.outside="dropdownOpen = false" class="relative">
                 <button type="button"
-                        class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold text-white/80 bg-white/10 border border-white/15 hover:bg-white/15 transition-apple"
-                        data-dropdown-trigger>
+                        @click="dropdownOpen = !dropdownOpen"
+                        class="inline-flex items-center px-4 py-2 rounded-apple text-xs font-semibold text-white/80 bg-white/10 border border-white/15 hover:bg-white/15 transition-apple">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
-                <div class="hidden absolute right-0 mt-2 w-48 card-elevated rounded-apple-lg py-2 z-20" data-dropdown-menu>
-                    <button type="button" onclick="window.print()"
+                <div x-show="dropdownOpen"
+                     @click.outside="dropdownOpen = false"
+                     x-cloak
+                     class="absolute right-0 mt-2 w-48 card-elevated rounded-apple-lg py-2 z-20">
+                    <button type="button" @click="window.print()"
                             class="w-full px-4 py-2 text-left text-xs font-semibold text-white/70 hover:bg-white/5 transition-colors">
                         <i class="fas fa-print mr-2"></i>Cetak
                     </button>
@@ -66,7 +82,7 @@
                     </form>
                     <hr class="border-white/10 my-1">
                     @if($email->category === 'trash')
-                        <form action="{{ route('admin.inbox.delete', $email->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus email ini secara PERMANEN? Tindakan ini tidak dapat dibatalkan!');">
+                        <form action="{{ route('admin.inbox.delete', $email->id) }}" method="POST" x-data @submit.prevent="if(confirm('Yakin ingin menghapus email ini secara PERMANEN? Tindakan ini tidak dapat dibatalkan!')) $el.submit()">
                             @csrf
                             @method('DELETE')
                             <button type="submit"
@@ -75,7 +91,7 @@
                             </button>
                         </form>
                     @else
-                        <form action="{{ route('admin.inbox.trash', $email->id) }}" method="POST" onsubmit="return confirm('Pindahkan email ini ke trash?');">
+                        <form action="{{ route('admin.inbox.trash', $email->id) }}" method="POST" x-data @submit.prevent="if(confirm('Pindahkan email ini ke trash?')) $el.submit()">
                             @csrf
                             <button type="submit"
                                     class="w-full px-4 py-2 text-left text-xs font-semibold text-red-400 hover:bg-white/5 transition-colors">
@@ -161,29 +177,41 @@
             {{-- Toggle view buttons --}}
             @if($email->body_html && $email->body_text)
                 <div class="flex gap-2 mb-4">
-                    <button type="button" onclick="showHtmlView()" id="btnHtml" class="px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white">
+                    <button type="button" @click="activeView = 'html'"
+                            :class="activeView === 'html' ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70'"
+                            class="px-4 py-2 text-xs font-semibold rounded-apple">
                         <i class="fas fa-code mr-2"></i>HTML View
                     </button>
-                    <button type="button" onclick="showTextView()" id="btnText" class="px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70">
+                    <button type="button" @click="activeView = 'text'"
+                            :class="activeView === 'text' ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70'"
+                            class="px-4 py-2 text-xs font-semibold rounded-apple">
                         <i class="fas fa-align-left mr-2"></i>Text View
                     </button>
-                    <button type="button" onclick="showRawView()" id="btnRaw" class="px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70">
+                    <button type="button" @click="activeView = 'raw'"
+                            :class="activeView === 'raw' ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70'"
+                            class="px-4 py-2 text-xs font-semibold rounded-apple">
                         <i class="fas fa-file-code mr-2"></i>Raw View
                     </button>
                 </div>
             @elseif($email->body_html || $email->body_text)
                 <div class="flex gap-2 mb-4">
                     @if($email->body_html)
-                        <button type="button" onclick="showHtmlView()" id="btnHtml" class="px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white">
+                        <button type="button" @click="activeView = 'html'"
+                                :class="activeView === 'html' ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70'"
+                                class="px-4 py-2 text-xs font-semibold rounded-apple">
                             <i class="fas fa-code mr-2"></i>HTML View
                         </button>
                     @endif
                     @if($email->body_text)
-                        <button type="button" onclick="showTextView()" id="btnText" class="px-4 py-2 text-xs font-semibold rounded-apple {{ !$email->body_html ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70' }}">
+                        <button type="button" @click="activeView = 'text'"
+                                :class="activeView === 'text' ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70'"
+                                class="px-4 py-2 text-xs font-semibold rounded-apple {{ !$email->body_html ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70' }}">
                             <i class="fas fa-align-left mr-2"></i>Text View
                         </button>
                     @endif
-                    <button type="button" onclick="showRawView()" id="btnRaw" class="px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70">
+                    <button type="button" @click="activeView = 'raw'"
+                            :class="activeView === 'raw' ? 'bg-apple-blue text-white' : 'bg-white/10 text-white/70'"
+                            class="px-4 py-2 text-xs font-semibold rounded-apple">
                         <i class="fas fa-file-code mr-2"></i>Raw View (Debug)
                     </button>
                 </div>
@@ -191,7 +219,8 @@
 
             {{-- HTML View --}}
             @if($email->body_html)
-                <div id="htmlView" class="rounded-apple-xl overflow-hidden email-html-shell">
+                <div x-show="activeView === 'html'" x-transition.opacity.duration.150ms
+                     class="rounded-apple-xl overflow-hidden email-html-shell">
                     <div class="email-html-meta">
                         <span class="email-html-badge">
                             <i class="fas fa-envelope-open-text mr-2"></i>Rendered HTML Email
@@ -213,13 +242,15 @@
 
             {{-- Text View --}}
             @if($email->body_text)
-                <div id="textView" class="rounded-apple-xl p-6" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); {{ $email->body_html ? 'display: none;' : '' }}">
+                <div x-show="activeView === 'text'" x-transition.opacity.duration.150ms
+                     class="rounded-apple-xl p-6" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);">
                     <div class="text-sm text-white" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; white-space: pre-wrap;">{{ $email->clean_body_text }}</div>
                 </div>
             @endif
 
             {{-- Raw View (for debugging) --}}
-            <div id="rawView" class="rounded-apple-xl p-6" style="background: rgba(28,28,30,1); border: 1px solid rgba(255,255,255,0.06); display: none; max-height: 600px; overflow: auto;">
+            <div x-show="activeView === 'raw'" x-transition.opacity.duration.150ms
+                 class="rounded-apple-xl p-6" style="background: rgba(28,28,30,1); border: 1px solid rgba(255,255,255,0.06); max-height: 600px; overflow: auto;">
                 <div class="mb-3">
                     <span class="px-3 py-1 text-xs font-semibold rounded-full" style="background: rgba(255,149,0,0.2); color: rgba(255,149,0,1);">
                         <i class="fas fa-exclamation-triangle mr-1"></i>Debug View - Raw MIME Content
@@ -228,33 +259,6 @@
                 <pre class="text-xs text-white/70" style="font-family: 'Courier New', monospace; line-height: 1.4; white-space: pre-wrap; word-break: break-all;">{{ $email->raw_body }}</pre>
             </div>
         </div>
-
-        <script>
-        function showHtmlView() {
-            document.getElementById('htmlView').style.display = 'block';
-            if (document.getElementById('textView')) document.getElementById('textView').style.display = 'none';
-            if (document.getElementById('rawView')) document.getElementById('rawView').style.display = 'none';
-            document.getElementById('btnHtml').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white';
-            if (document.getElementById('btnText')) document.getElementById('btnText').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
-            if (document.getElementById('btnRaw')) document.getElementById('btnRaw').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
-        }
-        function showTextView() {
-            if (document.getElementById('htmlView')) document.getElementById('htmlView').style.display = 'none';
-            document.getElementById('textView').style.display = 'block';
-            if (document.getElementById('rawView')) document.getElementById('rawView').style.display = 'none';
-            if (document.getElementById('btnHtml')) document.getElementById('btnHtml').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
-            document.getElementById('btnText').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white';
-            if (document.getElementById('btnRaw')) document.getElementById('btnRaw').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
-        }
-        function showRawView() {
-            if (document.getElementById('htmlView')) document.getElementById('htmlView').style.display = 'none';
-            if (document.getElementById('textView')) document.getElementById('textView').style.display = 'none';
-            document.getElementById('rawView').style.display = 'block';
-            if (document.getElementById('btnHtml')) document.getElementById('btnHtml').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
-            if (document.getElementById('btnText')) document.getElementById('btnText').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-white/10 text-white/70';
-            document.getElementById('btnRaw').className = 'px-4 py-2 text-xs font-semibold rounded-apple bg-apple-blue text-white';
-        }
-        </script>
 
         {{-- Attachments --}}
         @if($email->attachments && count($email->attachments) > 0)
@@ -419,55 +423,5 @@ if (emailFrame && emailPayloadNode) {
     }
 }
 
-function toggleStar(emailId, button) {
-    fetch(`/admin/inbox/${emailId}/star`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const isStarred = button.getAttribute('data-star-button') === 'true';
-            const nextState = !isStarred;
-            button.setAttribute('data-star-button', nextState ? 'true' : 'false');
-
-            button.classList.add('border');
-            button.classList.toggle('bg-yellow-500/20', nextState);
-            button.classList.toggle('text-yellow-400', nextState);
-            button.classList.toggle('border-yellow-500/40', nextState);
-            button.classList.toggle('border-white/10', !nextState);
-            button.classList.toggle('bg-white/5', !nextState);
-            button.classList.toggle('text-white/80', !nextState);
-
-            const icon = button.querySelector('[data-star-icon]');
-            const label = button.querySelector('[data-star-label]');
-            if (icon) {
-                icon.classList.toggle('text-yellow-400', nextState);
-                icon.classList.toggle('text-white/60', !nextState);
-            }
-            if (label) {
-                label.textContent = nextState ? 'Starred' : 'Star';
-            }
-        }
-    })
-    .catch(console.error);
-}
-
-document.querySelectorAll('[data-dropdown]').forEach(wrapper => {
-    const trigger = wrapper.querySelector('[data-dropdown-trigger]');
-    const menu = wrapper.querySelector('[data-dropdown-menu]');
-    trigger.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-    });
-    document.addEventListener('click', (event) => {
-        if (!wrapper.contains(event.target)) {
-            menu.classList.add('hidden');
-        }
-    });
-});
 </script>
 @endsection

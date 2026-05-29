@@ -54,7 +54,7 @@
                 </button>
                 @if(!$role->is_system)
                     <form action="{{ route('settings.roles.delete', $role) }}" method="POST" class="flex-1"
-                          onsubmit="return confirm('Are you sure? This cannot be undone.');">
+                          x-data @submit.prevent="if(confirm('Are you sure? This cannot be undone.')) $el.submit()">
                         @csrf
                         @method('DELETE')
                         <button type="submit" 

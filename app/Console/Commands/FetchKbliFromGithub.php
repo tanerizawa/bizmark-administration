@@ -56,9 +56,9 @@ class FetchKbliFromGithub extends Command
         $url = $this->option('url') ?: self::DEFAULT_GITHUB_URL;
 
         if (empty($url)) {
-            $this->error("❌ URL is required!");
-            $this->info("   Usage: php artisan kbli:fetch-github --url=https://example.com/kbli.json");
-            $this->info("   Or set default URL in the command constant.");
+            $this->error('❌ URL is required!');
+            $this->info('   Usage: php artisan kbli:fetch-github --url=https://example.com/kbli.json');
+            $this->info('   Or set default URL in the command constant.');
 
             return self::FAILURE;
         }
@@ -67,15 +67,15 @@ class FetchKbliFromGithub extends Command
         $isSync = $this->option('sync');
 
         if ($isSync && $isFresh) {
-            $this->warn("⚠️  --sync dan --fresh tidak bisa digunakan bersamaan. Menggunakan --sync.");
+            $this->warn('⚠️  --sync dan --fresh tidak bisa digunakan bersamaan. Menggunakan --sync.');
             $isFresh = false;
         }
 
-        $this->info("🔄 Fetching KBLI data from GitHub...");
+        $this->info('🔄 Fetching KBLI data from GitHub...');
         $this->info("   URL: {$url}");
 
         if ($isDryRun) {
-            $this->warn("   Mode: DRY RUN (tidak akan menyimpan ke database)");
+            $this->warn('   Mode: DRY RUN (tidak akan menyimpan ke database)');
         }
 
         try {
@@ -95,20 +95,20 @@ class FetchKbliFromGithub extends Command
             $data = $response->json();
 
             if (empty($data) || ! is_array($data)) {
-                $this->error("❌ Invalid JSON data or empty response");
+                $this->error('❌ Invalid JSON data or empty response');
 
                 return self::FAILURE;
             }
 
-            $this->info("✅ Successfully fetched " . count($data) . " KBLI entries");
+            $this->info('✅ Successfully fetched '.count($data).' KBLI entries');
 
             // Proses data
             $processed = $this->processKbliData($data, $isDryRun, $isFresh, $isSync);
 
             // Summary
             $this->newLine();
-            $this->info("📊 Summary:");
-            $this->info("   - Total fetched: " . count($data));
+            $this->info('📊 Summary:');
+            $this->info('   - Total fetched: '.count($data));
             $this->info("   - Successfully processed: {$processed['success']}");
             if ($processed['updated'] > 0) {
                 $this->info("   - Updated (sync): {$processed['updated']}");
@@ -117,18 +117,18 @@ class FetchKbliFromGithub extends Command
                 $this->info("   - Created: {$processed['created']}");
             }
             $this->info("   - Skipped/Failed: {$processed['failed']}");
-            $this->info("   - Database total: " . Kbli::count());
+            $this->info('   - Database total: '.Kbli::count());
 
             if ($isDryRun) {
                 $this->warn("\n⚠️  This was a dry run. No data was saved to database.");
-                $this->info("   Run without --dry-run to save data.");
+                $this->info('   Run without --dry-run to save data.');
             }
 
             return self::SUCCESS;
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             $this->error("❌ Connection failed: {$e->getMessage()}");
-            $this->warn("   Tips: Periksa koneksi internet atau coba URL alternatif");
+            $this->warn('   Tips: Periksa koneksi internet atau coba URL alternatif');
 
             return self::FAILURE;
 
@@ -155,13 +155,13 @@ class FetchKbliFromGithub extends Command
         $created = 0;
 
         if ($isFresh && ! $isDryRun) {
-            $this->warn("🗑️  Clearing existing KBLI data...");
+            $this->warn('🗑️  Clearing existing KBLI data...');
             Kbli::query()->delete();
-            $this->info("   Existing data cleared.");
+            $this->info('   Existing data cleared.');
         }
 
         if ($isSync && ! $isDryRun) {
-            $this->info("🔄 Sync mode: Updating existing records, preserving custom data...");
+            $this->info('🔄 Sync mode: Updating existing records, preserving custom data...');
         }
 
         $bar = $this->output->createProgressBar(count($data));
@@ -180,6 +180,7 @@ class FetchKbliFromGithub extends Command
                 if (empty($code) || empty($description)) {
                     $failed++;
                     $bar->advance();
+
                     continue;
                 }
 

@@ -104,3 +104,9 @@ resources/data/*.json
 .permfix*
 *__permfix*
 *__permbackup*
+*.backup.*
+.env.local.backup*
+.env.*.backup*
+.env.pre-rotate*
+.env.failed-*
+.env.sqlite.backup*

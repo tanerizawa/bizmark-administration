@@ -3,12 +3,18 @@
 use Illuminate\Support\Facades\Route;
 
 // Article Management Routes
+// NOTE: create/store MUST be registered before show to prevent the wildcard
+// {article} route from capturing "create" as an article slug (Laravel matches
+// routes in registration order when literal vs parameter segments conflict).
 Route::resource('articles', App\Http\Controllers\ArticleController::class)
-    ->only(['index', 'show'])
+    ->only(['index'])
     ->middleware('permission:content.view_articles');
 Route::resource('articles', App\Http\Controllers\ArticleController::class)
     ->only(['create', 'store'])
     ->middleware('permission:content.create_articles');
+Route::resource('articles', App\Http\Controllers\ArticleController::class)
+    ->only(['show'])
+    ->middleware('permission:content.view_articles');
 Route::resource('articles', App\Http\Controllers\ArticleController::class)
     ->only(['edit', 'update'])
     ->middleware('permission:content.edit_articles');
@@ -55,4 +61,27 @@ Route::prefix('auto-post')->name('auto-post.')->middleware('permission:content.m
     Route::get('analytics', fn () => redirect()->route('auto-post.index', ['tab' => 'analytics']))->name('analytics');
     Route::get('logs', [App\Http\Controllers\Admin\AutoPostLogController::class, 'index'])->name('logs.index');
     Route::get('logs/recent', [App\Http\Controllers\Admin\AutoPostLogController::class, 'recent'])->name('logs.recent');
+});
+
+// ── Service Data Management ──────────────────────────────────────────────────
+// Routes for managing services_data.json via admin panel.
+// NOTE: Literal paths (create, sub) must come BEFORE wildcard {slug} routes.
+Route::prefix('services')->name('admin.services.')->middleware('permission:content.manage')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\ServiceDataController::class, 'index'])->name('index');
+    Route::get('/create', [App\Http\Controllers\Admin\ServiceDataController::class, 'create'])->name('create');
+    Route::post('/ai-generate', [App\Http\Controllers\Admin\ServiceDataController::class, 'aiGenerate'])->name('ai-generate');
+    Route::post('/', [App\Http\Controllers\Admin\ServiceDataController::class, 'store'])->name('store');
+    Route::get('/{slug}/edit', [App\Http\Controllers\Admin\ServiceDataController::class, 'edit'])->name('edit');
+    Route::put('/{slug}', [App\Http\Controllers\Admin\ServiceDataController::class, 'update'])->name('update');
+    Route::delete('/{slug}', [App\Http\Controllers\Admin\ServiceDataController::class, 'destroy'])->name('destroy');
+
+    // Sub-services
+    Route::prefix('/{slug}/sub')->name('sub.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ServiceDataController::class, 'subIndex'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\ServiceDataController::class, 'subCreate'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\ServiceDataController::class, 'subStore'])->name('store');
+        Route::get('/{subSlug}/edit', [App\Http\Controllers\Admin\ServiceDataController::class, 'subEdit'])->name('edit');
+        Route::put('/{subSlug}', [App\Http\Controllers\Admin\ServiceDataController::class, 'subUpdate'])->name('update');
+        Route::delete('/{subSlug}', [App\Http\Controllers\Admin\ServiceDataController::class, 'subDestroy'])->name('destroy');
+    });
 });

@@ -1,43 +1,30 @@
 @php
     $locale = $locale ?? app()->getLocale();
     $isEn = $locale === 'en';
-    $clients = config('landing.clients', []);
-    $featuredClients = collect($clients)->take(8);
+    $metrics = config('landing_metrics');
+    $experienceLabel = data_get($metrics, 'stats.experience_label', '12+ Tahun');
 @endphp
 
 {{-- ────────────────────────────────────────────────
-     TRUST STRIP — Client logos + certifications
-     Early social proof (Cialdini principle)
+     TRUST STRIP — Capability indicators only
+     Audit Mei 2026: hapus klaim yang tidak dapat diverifikasi
+     (ISO, % SLA). Hanya kapabilitas faktual.
 ──────────────────────────────────────────────── --}}
-<section class="section-v2-sm border-y bg-[var(--bg-raised)] border-white/10"
-         aria-label="{{ $isEn ? 'Trusted by' : 'Dipercaya oleh' }}">
+<section class="section-v2-sm border-y bg-[var(--bg-raised)] border-gray-200"
+         aria-label="{{ $isEn ? 'Capabilities' : 'Kapabilitas' }}">
     <div class="container-wide">
-        <div class="text-center mb-6">
-            <span class="eyebrow">{{ $isEn ? 'Trusted By' : 'Dipercaya Oleh' }}</span>
-        </div>
-
-        @if($featuredClients->count() > 0)
-        <div class="logo-row mb-8">
-            @foreach($featuredClients as $clientName)
-                <div class="logo-mono" title="{{ $clientName }}">
-                    <span>{{ \Illuminate\Support\Str::limit($clientName, 24) }}</span>
-                </div>
-            @endforeach
-        </div>
-        @endif
-
-        <div class="flex flex-wrap items-center justify-center gap-3">
+        <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
             <span class="cert-badge">
-                <i class="fas fa-certificate"></i>
-                ISO 9001:2015
+                <i class="fas fa-clock"></i>
+                {{ $isEn ? $experienceLabel . ' experience' : $experienceLabel . ' pengalaman' }}
             </span>
             <span class="cert-badge">
-                <i class="fas fa-shield-halved"></i>
-                {{ $isEn ? 'OSS-RBA Partner' : 'Mitra OSS-RBA' }}
+                <i class="fas fa-calendar-check"></i>
+                {{ $isEn ? 'Operating since 2014' : 'Beroperasi sejak 2014' }}
             </span>
             <span class="cert-badge">
                 <i class="fas fa-globe"></i>
-                {{ $isEn ? 'Bilingual ID / EN' : 'Bilingual ID / EN' }}
+                Bilingual ID / EN
             </span>
             <span class="cert-badge">
                 <i class="fas fa-map-marked-alt"></i>

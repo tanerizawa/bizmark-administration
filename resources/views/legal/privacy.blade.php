@@ -11,7 +11,7 @@
     $phoneHref = 'tel:' . preg_replace('/\s+/', '', $phoneRaw);
 @endphp
 
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-28 pb-16 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide">
         <div class="max-w-4xl">
             <span class="section-badge mb-4">Legal</span>
@@ -156,12 +156,12 @@
     </div>
 </section>
 
-<section class="section-sm" style="background:var(--surface-dark);">
+<section class="section-sm section-premium">
     <div class="container-wide text-center">
-        <h2 class="text-white mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Ada Pertanyaan tentang Privasi?</h2>
-        <p class="mb-7" style="color:rgba(255,255,255,.74);">Tim kami siap membantu menjawab pertanyaan Anda tentang bagaimana kami melindungi data Anda.</p>
+        <h2 class="text-gray-900 mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:750;">Ada Pertanyaan tentang Privasi?</h2>
+        <p class="mb-7 text-gray-600">Tim kami siap membantu menjawab pertanyaan Anda tentang bagaimana kami melindungi data Anda.</p>
         <div class="flex flex-wrap justify-center gap-3">
-            <a href="mailto:{{ $supportEmail }}" class="btn btn-secondary"><i class="fas fa-envelope"></i> Kirim Email</a>
+            <a href="mailto:{{ $supportEmail }}" class="btn btn-primary"><i class="fas fa-envelope"></i> Kirim Email</a>
             <a href="{{ route('landing.id') }}" class="btn btn-ghost"><i class="fas fa-home"></i> Kembali ke Beranda</a>
         </div>
     </div>

@@ -2,53 +2,16 @@
 
 @section('title', 'Pipeline Detail - ' . $application->full_name)
 
-@push('styles')
-<style>
-    .avatar-circle-xl {
-        width: 88px;
-        height: 88px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 36px;
-        background: linear-gradient(135deg, var(--neuro-primary), var(--neuro-accent));
-        opacity: var(--opacity-bg-light);
-        color: var(--neuro-primary);
-        border: 2px solid var(--neuro-primary);
-        opacity: var(--opacity-border-light);
-    }
-
-    .timeline-item {
-        position: relative;
-    }
-
-    .timeline-item:not(:last-child)::before {
-        content: '';
-        position: absolute;
-        left: 20px;
-        top: 50px;
-        bottom: -20px;
-        width: 2px;
-        background: var(--dark-separator);
-        opacity: var(--opacity-border-medium);
-    }
-
-    .stage-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-    }
-</style>
-@endpush
-
 @section('content')
-<div class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+@php
+    $sc = match($application->status) {
+        'hired' => 'var(--apple-green)',
+        'rejected' => 'var(--apple-red)',
+        default => 'var(--apple-blue)',
+    };
+@endphp
+<div style="display:flex;flex-direction:column;gap:16px">
+
     {{-- Breadcrumb --}}
     @if($application->jobVacancy)
         <x-breadcrumb :items="[
@@ -64,455 +27,336 @@
         ]" />
     @endif
 
-    {{-- Header --}}
-    <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
         <div>
-            <nav class="text-xs mb-2 flex items-center gap-2" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-medium);">
-                <a href="{{ route('admin.recruitment.index') }}" class="hover:text-apple-blue transition-colors">Rekrutmen</a>
-                <i class="fas fa-chevron-right text-[10px]"></i>
-                <a href="{{ route('admin.recruitment.pipeline.index') }}" class="hover:text-apple-blue transition-colors">Pipeline</a>
-                <i class="fas fa-chevron-right text-[10px]"></i>
-                <span style="color: var(--text-dark-primary); opacity: var(--opacity-text-strong);">Detail Kandidat</span>
-            </nav>
-            <h1 class="text-2xl md:text-xl font-bold text-white mb-1">{{ $application->full_name }}</h1>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--apple-purple);margin:0 0 4px">Pipeline Rekrutmen</p>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+                <h1 style="font-size:1.4rem;font-weight:800;color:var(--dark-text-primary);margin:0;line-height:1.2">{{ $application->full_name }}</h1>
+                <span style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,{{ $sc }} 15%,transparent);color:{{ $sc }}">{{ ucfirst($application->status) }}</span>
+            </div>
             @if($application->jobVacancy)
-                <p class="text-sm" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">
-                    <i class="fas fa-briefcase mr-2"></i>{{ $application->jobVacancy->title }}
-                </p>
-            @else
-                <p class="text-sm text-amber-400">
-                    <i class="fas fa-exclamation-triangle mr-2"></i>Job Vacancy data not found
-                </p>
+                <p style="font-size:0.82rem;color:var(--dark-text-secondary);margin:0"><i class="fas fa-briefcase" style="font-size:0.72rem;margin-right:5px"></i>{{ $application->jobVacancy->title }}</p>
             @endif
         </div>
-        <div class="flex gap-2">
-            <a href="{{ route('admin.recruitment.pipeline.index') }}" class="btn-secondary">
-                <i class="fas fa-arrow-left mr-2"></i>Kembali ke Pipeline
-            </a>
-        </div>
-    </section>
+        <a href="{{ route('admin.recruitment.pipeline.index') }}"
+           style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:0.8rem;font-weight:600;color:var(--dark-text-secondary);background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;text-decoration:none"
+           onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+            <i class="fas fa-arrow-left" style="font-size:0.7rem"></i>Pipeline
+        </a>
+    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {{-- Left Column: Candidate Info --}}
-        <div class="space-y-6">
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:flex-start">
+
+        {{-- Left --}}
+        <div style="display:flex;flex-direction:column;gap:14px">
+
             {{-- Candidate Card --}}
-            <section class="card-elevated rounded-apple-xl p-6 text-center">
-                <div class="avatar-circle-xl mx-auto mb-4">
+            <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px;text-align:center">
+                <div style="width:72px;height:72px;border-radius:50%;background:color-mix(in srgb,var(--apple-purple) 20%,var(--dark-bg-secondary));border:2px solid color-mix(in srgb,var(--apple-purple) 40%,var(--dark-separator));display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:var(--apple-purple);margin:0 auto 14px">
                     {{ strtoupper(substr($application->full_name, 0, 2)) }}
                 </div>
-                <h3 class="text-xl font-bold text-white mb-1">{{ $application->full_name }}</h3>
-                <p class="text-sm mb-3" style="color: var(--text-dark-secondary); opacity: var(--opacity-text-strong);">{{ $application->email }}</p>
-                
-                <div class="flex justify-center gap-2 mb-4">
-                    @php
-                        $statusColors = [
-                            'hired' => 'rgba(52,199,89,0.2)',
-                            'rejected' => 'rgba(255,59,48,0.2)',
-                            'pending' => 'rgba(10,132,255,0.2)',
-                        ];
-                        $statusColor = $statusColors[$application->status] ?? 'rgba(142,142,147,0.25)';
-                    @endphp
-                    <span class="px-3 py-1.5 rounded-full text-xs font-semibold" style="background: {{ $statusColor }};">
-                        {{ ucfirst($application->status) }}
-                    </span>
-                </div>
-
-                <div class="border-t pt-4 mt-4" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p class="text-xs mb-1" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Tanggal Melamar</p>
-                            <p class="font-semibold text-white">{{ $application->created_at->format('d M Y') }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs mb-1" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Telepon</p>
-                            <p class="font-semibold text-white">{{ $application->phone ?? '-' }}</p>
-                        </div>
+                <h3 style="font-size:1rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 4px">{{ $application->full_name }}</h3>
+                <p style="font-size:0.8rem;color:var(--dark-text-secondary);margin:0 0 12px">{{ $application->email }}</p>
+                <span style="display:inline-flex;padding:3px 12px;border-radius:20px;font-size:0.72rem;font-weight:600;background:color-mix(in srgb,{{ $sc }} 15%,transparent);color:{{ $sc }}">{{ ucfirst($application->status) }}</span>
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--dark-separator);display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left">
+                    <div>
+                        <p style="font-size:0.68rem;font-weight:700;color:var(--dark-text-secondary);text-transform:uppercase;margin:0 0 3px">Melamar</p>
+                        <p style="font-size:0.8rem;font-weight:600;color:var(--dark-text-primary);margin:0">{{ $application->created_at->format('d M Y') }}</p>
+                    </div>
+                    <div>
+                        <p style="font-size:0.68rem;font-weight:700;color:var(--dark-text-secondary);text-transform:uppercase;margin:0 0 3px">Telepon</p>
+                        <p style="font-size:0.8rem;font-weight:600;color:var(--dark-text-primary);margin:0">{{ $application->phone ?? '-' }}</p>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            {{-- Pipeline Progress --}}
-            <section class="card-elevated rounded-apple-xl overflow-hidden">
-                <div class="px-4 py-3 border-b" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium);">
-                    <p class="text-xs uppercase tracking-[0.25em]" style="color: var(--text-dark-tertiary); opacity: var(--opacity-text-light);">Progress</p>
-                    <h3 class="text-base font-semibold text-white">Tahap Rekrutmen</h3>
+            {{-- Pipeline Stages --}}
+            <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                <div style="padding:14px 18px;border-bottom:1px solid var(--dark-separator)">
+                    <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 2px">Progress</p>
+                    <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Tahap Rekrutmen</h3>
                 </div>
-                <div class="p-4">
+                <div style="padding:16px 18px">
                     @if($application->recruitmentStages->count() > 0)
-                        <div class="space-y-4">
-                            @foreach($application->recruitmentStages->sortBy('stage_order') as $stage)
-                                <div class="border rounded-apple-lg p-4" style="border-color: var(--dark-separator); opacity: var(--opacity-border-medium); background: var(--light-separator); opacity: var(--opacity-bg-light);">
-                                    <div class="flex items-start gap-3 mb-3">
-                                        <div class="stage-icon flex-shrink-0
-                                            @if($stage->status == 'passed')
-                                                bg-apple-green\/20 text-apple-green
-                                            @elseif($stage->status == 'in-progress')
-                                                bg-apple-blue\/20 text-apple-blue
-                                            @elseif($stage->status == 'failed')
-                                                bg-apple-red\/20 text-apple-red
-                                            @else
-                                                bg-white bg-opacity-10 text-gray-400
-                                            @endif">
-                                            <i class="fas 
-                                                @if($stage->status == 'passed') fa-check
-                                                @elseif($stage->status == 'in-progress') fa-play
-                                                @elseif($stage->status == 'failed') fa-times
-                                                @else fa-circle
-                                                @endif"></i>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="font-semibold text-white mb-1">{{ ucfirst($stage->stage_name) }}</p>
-                                            @if($stage->started_at || $stage->completed_at)
-                                                <p class="text-xs mb-2" style="color: rgba(235,235,245,0.55);">
-                                                    @if($stage->started_at)
-                                                        Dimulai: {{ $stage->started_at->format('d M Y') }}
-                                                    @endif
-                                                    @if($stage->completed_at)
-                                                        <br>Selesai: {{ $stage->completed_at->format('d M Y') }}
-                                                    @endif
-                                                </p>
-                                            @endif
-                                            @php
-                                                $badgeColors = [
-                                                    'passed' => 'rgba(52,199,89,0.2)',
-                                                    'in-progress' => 'rgba(10,132,255,0.2)',
-                                                    'failed' => 'rgba(255,59,48,0.2)',
-                                                    'pending' => 'rgba(255,214,10,0.2)',
-                                                    'skipped' => 'rgba(142,142,147,0.25)',
-                                                ];
-                                                $badgeColor = $badgeColors[$stage->status] ?? 'rgba(142,142,147,0.25)';
-                                            @endphp
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: {{ $badgeColor }};">
-                                                {{ ucfirst($stage->status) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    {{-- Stage Shortcuts --}}
-                                    <div class="flex flex-wrap gap-2 mt-3 pt-3" style="border-top: 1px solid rgba(58,58,60,0.6);">
-                                        @php
-                                            $stageLinks = [
-                                                'screening' => [
-                                                    'icon' => 'fa-file-download',
-                                                    'label' => 'Download CV/Resume',
-                                                    'route' => route('admin.applications.download-cv', $application->id),
-                                                    'color' => 'rgba(255,214,10,1)',
-                                                    'download' => true,
-                                                ],
-                                                'testing' => [
-                                                    'icon' => 'fa-clipboard-check',
-                                                    'label' => 'Kelola Test',
-                                                    'route' => route('admin.recruitment.tests.index'),
-                                                    'color' => 'rgba(10,132,255,1)',
-                                                ],
-                                                'interview' => [
-                                                    'icon' => 'fa-calendar-alt',
-                                                    'label' => 'Jadwal Interview',
-                                                    'route' => route('admin.recruitment.interviews.create', ['application_id' => $application->id]),
-                                                    'color' => 'rgba(175,82,222,1)',
-                                                ],
-                                                'offer' => [
-                                                    'icon' => 'fa-envelope',
-                                                    'label' => 'Kirim Offer',
-                                                    'route' => '#', // Bisa diganti dengan route kirim email offer
-                                                    'color' => 'rgba(52,199,89,1)',
-                                                ],
-                                            ];
-                                            
-                                            $stageLink = $stageLinks[$stage->stage_name] ?? null;
-                                        @endphp
-                                        
-                                        @if($stageLink)
-                                            <a href="{{ $stageLink['route'] }}" 
-                                               class="btn-secondary-sm" 
-                                               style="background: rgba(255,255,255,0.05); color: {{ $stageLink['color'] }}; border-color: rgba(255,255,255,0.1);"
-                                               @if($stageLink['route'] === '#') onclick="this.innerHTML='<i class=\'fas fa-clock mr-1\'></i>Segera Hadir'; this.style.opacity='0.5'; this.style.pointerEvents='none'; return false;" @endif
-                                               @if(isset($stageLink['download']) && $stageLink['download']) target="_blank" @endif>
-                                                <i class="fas {{ $stageLink['icon'] }} mr-1"></i>{{ $stageLink['label'] }}
-                                            </a>
-                                            
-                                            {{-- Additional Portfolio Download for Screening Stage --}}
-                                            @if($stage->stage_name === 'screening' && $application->portfolio_path)
-                                                <a href="{{ route('admin.applications.download-portfolio', $application->id) }}" 
-                                                   class="btn-secondary-sm" 
-                                                   style="background: rgba(255,255,255,0.05); color: rgba(255,214,10,1); border-color: rgba(255,255,255,0.1);"
-                                                   target="_blank">
-                                                    <i class="fas fa-folder mr-1"></i>Download Portfolio
-                                                </a>
-                                            @endif
-                                        @endif
-                                        
-                                        {{-- Status Action Buttons --}}
-                                        @if($stage->status === 'pending' || $stage->status === 'in-progress')
-                                            @if($stage->status === 'pending')
-                                                <form action="{{ route('admin.recruitment.pipeline.stages.update', $stage->id) }}" method="POST" class="inline-block">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="status" value="in-progress">
-                                                    <button type="submit" class="btn-secondary-sm" style="background: rgba(10,132,255,0.15); color: rgba(10,132,255,1); border-color: rgba(10,132,255,0.4);">
-                                                        <i class="fas fa-play mr-1"></i>Mulai
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            
-                                            @if($stage->status === 'in-progress')
-                                                <form action="{{ route('admin.recruitment.pipeline.stages.update', $stage->id) }}" method="POST" class="inline-block">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="status" value="passed">
-                                                    <button type="submit" class="btn-secondary-sm" style="background: rgba(52,199,89,0.15); color: rgba(52,199,89,1); border-color: rgba(52,199,89,0.4);">
-                                                        <i class="fas fa-check mr-1"></i>Lulus
-                                                    </button>
-                                                </form>
-                                                
-                                                <form action="{{ route('admin.recruitment.pipeline.stages.update', $stage->id) }}" method="POST" class="inline-block">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="status" value="failed">
-                                                    <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,1); border-color: rgba(255,59,48,0.4);">
-                                                        <i class="fas fa-times mr-1"></i>Gagal
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            
-                                            <form action="{{ route('admin.recruitment.pipeline.stages.update', $stage->id) }}" method="POST" class="inline-block">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="skipped">
-                                                <button type="submit" class="btn-secondary-sm" style="background: rgba(142,142,147,0.15); color: rgba(142,142,147,1); border-color: rgba(142,142,147,0.4);">
-                                                    <i class="fas fa-forward mr-1"></i>Skip
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px">
+                        @foreach($application->recruitmentStages->sortBy('stage_order') as $stage)
+                        @php
+                            $stageColor = match($stage->status) {
+                                'passed' => 'var(--apple-green)',
+                                'in-progress' => 'var(--apple-blue)',
+                                'failed' => 'var(--apple-red)',
+                                'pending' => 'var(--apple-yellow)',
+                                default => 'var(--dark-text-tertiary)',
+                            };
+                            $stageIcon = match($stage->status) {
+                                'passed' => 'fa-check',
+                                'in-progress' => 'fa-play',
+                                'failed' => 'fa-times',
+                                default => 'fa-circle',
+                            };
+                            $stageLinks = [
+                                'screening' => ['fa-file-download','Download CV', route('admin.applications.download-cv', $application->id), true],
+                                'testing' => ['fa-clipboard-check','Kelola Test', route('admin.recruitment.tests.index'), false],
+                                'interview' => ['fa-calendar-alt','Jadwalkan Interview', route('admin.recruitment.interviews.create', ['application_id'=>$application->id]), false],
+                            ];
+                            $sl = $stageLinks[$stage->stage_name] ?? null;
+                        @endphp
+                        <div style="border:1px solid var(--dark-separator);border-radius:10px;padding:12px 14px;background:var(--dark-bg-secondary)">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,{{ $stageColor }} 18%,transparent);color:{{ $stageColor }};font-size:0.75rem">
+                                    <i class="fas {{ $stageIcon }}"></i>
                                 </div>
-                            @endforeach
+                                <div style="flex:1;min-width:0">
+                                    <p style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 2px">{{ ucfirst($stage->stage_name) }}</p>
+                                    @if($stage->started_at || $stage->completed_at)
+                                    <p style="font-size:0.68rem;color:var(--dark-text-secondary);margin:0">
+                                        @if($stage->started_at)Mulai: {{ $stage->started_at->format('d M Y') }}@endif
+                                        @if($stage->completed_at) · Selesai: {{ $stage->completed_at->format('d M Y') }}@endif
+                                    </p>
+                                    @endif
+                                </div>
+                                <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.65rem;font-weight:600;background:color-mix(in srgb,{{ $stageColor }} 15%,transparent);color:{{ $stageColor }}">{{ ucfirst($stage->status) }}</span>
+                            </div>
+                            <div style="display:flex;flex-wrap:wrap;gap:6px">
+                                @if($sl)
+                                <a href="{{ $sl[2] }}" @if($sl[3]) target="_blank" @endif style="display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:600;color:var(--apple-yellow);background:color-mix(in srgb,var(--apple-yellow) 12%,transparent);padding:4px 8px;border-radius:6px;border:1px solid color-mix(in srgb,var(--apple-yellow) 25%,transparent);text-decoration:none">
+                                    <i class="fas {{ $sl[0] }}" style="font-size:0.6rem"></i>{{ $sl[1] }}
+                                </a>
+                                @if($stage->stage_name === 'screening' && $application->portfolio_path)
+                                <a href="{{ route('admin.applications.download-portfolio', $application->id) }}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:600;color:var(--apple-yellow);background:color-mix(in srgb,var(--apple-yellow) 12%,transparent);padding:4px 8px;border-radius:6px;border:1px solid color-mix(in srgb,var(--apple-yellow) 25%,transparent);text-decoration:none">
+                                    <i class="fas fa-folder" style="font-size:0.6rem"></i>Portfolio
+                                </a>
+                                @endif
+                                @endif
+                                @if($stage->status === 'pending')
+                                <form action="{{ route('admin.recruitment.pipeline.stages.update', $stage->id) }}" method="POST" class="inline-block">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="status" value="in-progress">
+                                    <button type="submit" style="display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:600;color:var(--apple-blue);background:color-mix(in srgb,var(--apple-blue) 12%,transparent);padding:4px 8px;border-radius:6px;border:1px solid color-mix(in srgb,var(--apple-blue) 25%,transparent);cursor:pointer">
+                                        <i class="fas fa-play" style="font-size:0.6rem"></i>Mulai
+                                    </button>
+                                </form>
+                                @endif
+                                @if($stage->status === 'in-progress')
+                                <form action="{{ route('admin.recruitment.pipeline.stages.update', $stage->id) }}" method="POST" class="inline-block">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="status" value="passed">
+                                    <button type="submit" style="display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:600;color:var(--apple-green);background:color-mix(in srgb,var(--apple-green) 12%,transparent);padding:4px 8px;border-radius:6px;border:1px solid color-mix(in srgb,var(--apple-green) 25%,transparent);cursor:pointer">
+                                        <i class="fas fa-check" style="font-size:0.6rem"></i>Lulus
+                                    </button>
+                                </form>
+                                <form action="{{ route('admin.recruitment.pipeline.stages.update', $stage->id) }}" method="POST" class="inline-block">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="status" value="failed">
+                                    <button type="submit" style="display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:600;color:var(--apple-red);background:color-mix(in srgb,var(--apple-red) 12%,transparent);padding:4px 8px;border-radius:6px;border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);cursor:pointer">
+                                        <i class="fas fa-times" style="font-size:0.6rem"></i>Gagal
+                                    </button>
+                                </form>
+                                @endif
+                                @if($stage->status === 'pending' || $stage->status === 'in-progress')
+                                <form action="{{ route('admin.recruitment.pipeline.stages.update', $stage->id) }}" method="POST" class="inline-block">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="status" value="skipped">
+                                    <button type="submit" style="display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);background:color-mix(in srgb,var(--dark-text-secondary) 12%,transparent);padding:4px 8px;border-radius:6px;border:1px solid var(--dark-separator);cursor:pointer">
+                                        <i class="fas fa-forward" style="font-size:0.6rem"></i>Skip
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
                         </div>
+                        @endforeach
+                    </div>
                     @else
-                        <div class="text-center py-6" style="color: rgba(235,235,245,0.6);">
-                            <i class="fas fa-inbox text-2xl mb-3"></i>
-                            <p class="text-sm mb-3">Belum ada tahap rekrutmen</p>
-                            <form action="{{ route('admin.recruitment.pipeline.initialize', $application) }}" method="POST" class="inline-block">
-                                @csrf
-                                <input type="hidden" name="stages[0][stage_name]" value="screening">
-                                <input type="hidden" name="stages[0][stage_order]" value="1">
-                                <input type="hidden" name="stages[1][stage_name]" value="testing">
-                                <input type="hidden" name="stages[1][stage_order]" value="2">
-                                <input type="hidden" name="stages[2][stage_name]" value="interview">
-                                <input type="hidden" name="stages[2][stage_order]" value="3">
-                                <input type="hidden" name="stages[3][stage_name]" value="offer">
-                                <input type="hidden" name="stages[3][stage_order]" value="4">
-                                <button type="submit" class="btn-primary-sm">
-                                    <i class="fas fa-play-circle mr-2"></i>Inisialisasi Tahap
-                                </button>
-                            </form>
-                            <p class="text-xs mt-2" style="color: rgba(235,235,245,0.5);">
-                                Membuat 4 tahap: Screening → Testing → Interview → Offer
-                            </p>
-                        </div>
+                    <div style="text-align:center;padding:20px 0">
+                        <p style="font-size:0.85rem;color:var(--dark-text-secondary);margin:0 0 12px">Belum ada tahap rekrutmen</p>
+                        <form action="{{ route('admin.recruitment.pipeline.initialize', $application) }}" method="POST" style="display:inline-block">
+                            @csrf
+                            <input type="hidden" name="stages[0][stage_name]" value="screening">
+                            <input type="hidden" name="stages[0][stage_order]" value="1">
+                            <input type="hidden" name="stages[1][stage_name]" value="testing">
+                            <input type="hidden" name="stages[1][stage_order]" value="2">
+                            <input type="hidden" name="stages[2][stage_name]" value="interview">
+                            <input type="hidden" name="stages[2][stage_order]" value="3">
+                            <input type="hidden" name="stages[3][stage_name]" value="offer">
+                            <input type="hidden" name="stages[3][stage_order]" value="4">
+                            <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--apple-blue);color:#fff;border:none;border-radius:9px;font-size:0.82rem;font-weight:700;cursor:pointer">
+                                <i class="fas fa-play-circle"></i>Inisialisasi Tahap
+                            </button>
+                        </form>
+                        <p style="font-size:0.72rem;color:var(--dark-text-tertiary);margin:8px 0 0">Screening → Testing → Interview → Offer</p>
+                    </div>
                     @endif
                 </div>
-            </section>
+            </div>
         </div>
 
-        {{-- Right Column: Timeline & Details --}}
-        <div class="lg:col-span-2 space-y-6">
+        {{-- Right: Timeline + Interview + Test --}}
+        <div style="display:flex;flex-direction:column;gap:14px">
+
             {{-- Timeline --}}
-            <section class="card-elevated rounded-apple-xl overflow-hidden">
-                <div class="px-4 py-3 border-b" style="border-color: rgba(58,58,60,0.6);">
-                    <p class="text-xs uppercase tracking-[0.25em]" style="color: rgba(235,235,245,0.55);">Aktivitas</p>
-                    <h3 class="text-base font-semibold text-white">Timeline Kandidat</h3>
+            <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                <div style="padding:14px 18px;border-bottom:1px solid var(--dark-separator)">
+                    <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 2px">Aktivitas</p>
+                    <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Timeline Kandidat</h3>
                 </div>
-                <div class="p-6">
+                <div style="padding:16px 18px">
                     @if(isset($timeline) && count($timeline) > 0)
-                        <div class="space-y-6">
-                            @foreach($timeline as $item)
-                                <div class="timeline-item">
-                                    <div class="flex gap-4">
-                                        <div class="flex-shrink-0">
-                                            @php
-                                                $iconColors = [
-                                                    'primary' => 'rgba(10,132,255,0.2)',
-                                                    'success' => 'rgba(52,199,89,0.2)',
-                                                    'danger' => 'rgba(255,59,48,0.2)',
-                                                    'warning' => 'rgba(255,214,10,0.2)',
-                                                    'info' => 'rgba(90,200,250,0.2)',
-                                                    'secondary' => 'rgba(142,142,147,0.25)',
-                                                ];
-                                                $iconColor = $iconColors[$item['color'] ?? 'secondary'] ?? 'rgba(142,142,147,0.25)';
-                                            @endphp
-                                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: {{ $iconColor }};">
-                                                <i class="fas fa-{{ $item['icon'] ?? 'circle' }} text-sm"></i>
-                                            </div>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex justify-between items-start gap-4 mb-1">
-                                                <h4 class="font-semibold text-white">{{ $item['title'] }}</h4>
-                                                <span class="text-xs flex-shrink-0" style="color: rgba(235,235,245,0.55);">{{ $item['timestamp'] }}</span>
-                                            </div>
-                                            @if($item['description'])
-                                                <p class="text-sm mb-2" style="color: rgba(235,235,245,0.7);">{{ $item['description'] }}</p>
-                                            @endif
-                                            @if(isset($item['score']))
-                                                <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: rgba(10,132,255,0.2);">
-                                                    Skor: {{ $item['score'] }}{{ is_numeric($item['score']) ? '%' : '' }}
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
+                    <div style="display:flex;flex-direction:column;gap:16px">
+                        @foreach($timeline as $item)
+                        @php
+                            $tc = match($item['color'] ?? 'secondary') {
+                                'primary' => 'var(--apple-blue)',
+                                'success' => 'var(--apple-green)',
+                                'danger' => 'var(--apple-red)',
+                                'warning' => 'var(--apple-yellow)',
+                                'info' => 'var(--apple-teal)',
+                                default => 'var(--dark-text-tertiary)',
+                            };
+                        @endphp
+                        <div style="display:flex;gap:12px">
+                            <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,{{ $tc }} 18%,transparent);color:{{ $tc }};font-size:0.78rem">
+                                <i class="fas fa-{{ $item['icon'] ?? 'circle' }}"></i>
+                            </div>
+                            <div style="flex:1;min-width:0;padding-top:4px">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:3px">
+                                    <h4 style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0">{{ $item['title'] }}</h4>
+                                    <span style="font-size:0.68rem;color:var(--dark-text-tertiary);flex-shrink:0">{{ $item['timestamp'] }}</span>
                                 </div>
-                            @endforeach
+                                @if($item['description'])
+                                <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0 0 4px">{{ $item['description'] }}</p>
+                                @endif
+                                @if(isset($item['score']))
+                                <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,var(--apple-blue) 15%,transparent);color:var(--apple-blue)">Skor: {{ $item['score'] }}{{ is_numeric($item['score']) ? '%' : '' }}</span>
+                                @endif
+                            </div>
                         </div>
+                        @endforeach
+                    </div>
                     @else
-                        <div class="text-center py-8" style="color: rgba(235,235,245,0.6);">
-                            <i class="fas fa-clock text-4xl mb-3"></i>
-                            <p class="text-sm">Belum ada aktivitas</p>
-                        </div>
+                    <div style="text-align:center;padding:30px 0;color:var(--dark-text-secondary)">
+                        <i class="fas fa-clock" style="font-size:2rem;display:block;margin-bottom:8px;opacity:.5"></i>
+                        <p style="font-size:0.85rem;margin:0">Belum ada aktivitas</p>
+                    </div>
                     @endif
                 </div>
-            </section>
+            </div>
 
             {{-- Interviews --}}
             @if($application->interviewSchedules->count() > 0)
-                <section class="card-elevated rounded-apple-xl overflow-hidden">
-                    <div class="px-4 py-3 border-b flex justify-between items-center" style="border-color: rgba(58,58,60,0.6);">
-                        <div>
-                            <p class="text-xs uppercase tracking-[0.25em]" style="color: rgba(235,235,245,0.55);">Jadwal</p>
-                            <h3 class="text-base font-semibold text-white">Interview</h3>
-                        </div>
-                        <a href="{{ route('admin.recruitment.interviews.create', ['application_id' => $application->id]) }}" class="btn-primary-sm">
-                            <i class="fas fa-plus mr-1"></i>Jadwalkan
-                        </a>
+            <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                <div style="padding:14px 18px;border-bottom:1px solid var(--dark-separator);display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 2px">Jadwal</p>
+                        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Interview</h3>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead class="bg-dark-bg-secondary border-b" style="border-color: rgba(58,58,60,0.6); color: rgba(235,235,245,0.55);">
-                                <tr class="text-left text-xs uppercase tracking-wider">
-                                    <th class="px-4 py-2">Tanggal</th>
-                                    <th class="px-4 py-2">Tipe</th>
-                                    <th class="px-4 py-2">Durasi</th>
-                                    <th class="px-4 py-2">Status</th>
-                                    <th class="px-4 py-2 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y" style="border-color: rgba(58,58,60,0.6); color: rgba(235,235,245,0.9);">
-                                @foreach($application->interviewSchedules as $interview)
-                                    <tr class="hover:bg-white/5 transition-colors">
-                                        <td class="px-4 py-3">
-                                            <p class="text-sm">{{ $interview->scheduled_at->format('d M Y') }}</p>
-                                            <p class="text-xs" style="color: rgba(235,235,245,0.55);">{{ $interview->scheduled_at->format('H:i') }}</p>
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: rgba(90,200,250,0.2);">
-                                                {{ $interview->getMeetingTypeLabel() }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3">{{ $interview->duration_minutes }} menit</td>
-                                        <td class="px-4 py-3">
-                                            @php
-                                                $statusColors = [
-                                                    'completed' => 'rgba(52,199,89,0.2)',
-                                                    'scheduled' => 'rgba(255,214,10,0.2)',
-                                                ];
-                                                $statusColor = $statusColors[$interview->status] ?? 'rgba(142,142,147,0.25)';
-                                            @endphp
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: {{ $statusColor }};">
-                                                {{ ucfirst($interview->status) }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-right">
-                                            <a href="{{ route('admin.recruitment.interviews.show', $interview) }}" class="btn-secondary-sm">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
+                    <a href="{{ route('admin.recruitment.interviews.create', ['application_id' => $application->id]) }}"
+                       style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--apple-blue);background:color-mix(in srgb,var(--apple-blue) 12%,transparent);padding:5px 10px;border-radius:7px;border:1px solid color-mix(in srgb,var(--apple-blue) 25%,transparent);text-decoration:none">
+                        <i class="fas fa-plus" style="font-size:0.6rem"></i>Jadwalkan
+                    </a>
+                </div>
+                <div style="overflow-x:auto">
+                    <table style="min-width:100%;border-collapse:collapse">
+                        <thead>
+                            <tr style="background:var(--dark-bg-secondary)">
+                                @foreach(['Tanggal','Tipe','Durasi','Status',''] as $h)
+                                <th style="padding:8px 14px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dark-text-secondary);text-align:{{ $loop->last ? 'right' : 'left' }};white-space:nowrap">{{ $h }}</th>
                                 @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($application->interviewSchedules as $interview)
+                            @php
+                                $ic = match($interview->status) {
+                                    'completed' => 'var(--apple-green)',
+                                    'scheduled' => 'var(--apple-yellow)',
+                                    default => 'var(--dark-text-tertiary)',
+                                };
+                            @endphp
+                            <tr style="border-top:1px solid var(--dark-separator)">
+                                <td style="padding:10px 14px">
+                                    <p style="font-size:0.82rem;color:var(--dark-text-primary);margin:0 0 1px;font-weight:500">{{ $interview->scheduled_at->format('d M Y') }}</p>
+                                    <p style="font-size:0.7rem;color:var(--dark-text-secondary);margin:0">{{ $interview->scheduled_at->format('H:i') }}</p>
+                                </td>
+                                <td style="padding:10px 14px">
+                                    <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,var(--apple-teal) 15%,transparent);color:var(--apple-teal)">{{ $interview->getMeetingTypeLabel() }}</span>
+                                </td>
+                                <td style="padding:10px 14px;font-size:0.82rem;color:var(--dark-text-primary)">{{ $interview->duration_minutes }} mnt</td>
+                                <td style="padding:10px 14px">
+                                    <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,{{ $ic }} 15%,transparent);color:{{ $ic }}">{{ ucfirst($interview->status) }}</span>
+                                </td>
+                                <td style="padding:10px 14px;text-align:right">
+                                    <a href="{{ route('admin.recruitment.interviews.show', $interview) }}" style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:600;color:var(--dark-text-secondary);background:var(--dark-bg-secondary);padding:4px 9px;border-radius:6px;border:1px solid var(--dark-separator);text-decoration:none" onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                                        <i class="fas fa-eye" style="font-size:0.65rem"></i>Detail
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             @endif
 
             {{-- Test Sessions --}}
             @if($application->testSessions->count() > 0)
-                <section class="card-elevated rounded-apple-xl overflow-hidden">
-                    <div class="px-4 py-3 border-b" style="border-color: rgba(58,58,60,0.6);">
-                        <p class="text-xs uppercase tracking-[0.25em]" style="color: rgba(235,235,245,0.55);">Hasil Tes</p>
-                        <h3 class="text-base font-semibold text-white">Sesi Tes</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead class="bg-dark-bg-secondary border-b" style="border-color: rgba(58,58,60,0.6); color: rgba(235,235,245,0.55);">
-                                <tr class="text-left text-xs uppercase tracking-wider">
-                                    <th class="px-4 py-2">Nama Tes</th>
-                                    <th class="px-4 py-2">Status</th>
-                                    <th class="px-4 py-2">Skor</th>
-                                    <th class="px-4 py-2">Selesai</th>
-                                    <th class="px-4 py-2 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y" style="border-color: rgba(58,58,60,0.6); color: rgba(235,235,245,0.9);">
-                                @foreach($application->testSessions as $session)
-                                    <tr class="hover:bg-white/5 transition-colors">
-                                        <td class="px-4 py-3">
-                                            <p class="font-medium">{{ $session->testTemplate->title ?? 'N/A' }}</p>
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            @php
-                                                $statusColors = [
-                                                    'completed' => 'rgba(52,199,89,0.2)',
-                                                    'in-progress' => 'rgba(255,214,10,0.2)',
-                                                ];
-                                                $statusColor = $statusColors[$session->status] ?? 'rgba(142,142,147,0.25)';
-                                            @endphp
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background: {{ $statusColor }};">
-                                                {{ ucfirst($session->status) }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            @if($session->final_score)
-                                                <span class="font-bold text-apple-blue">{{ $session->final_score }}%</span>
-                                            @else
-                                                <span style="color: rgba(235,235,245,0.55);">-</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            @if($session->completed_at)
-                                                {{ $session->completed_at->format('d M Y') }}
-                                            @else
-                                                <span style="color: rgba(235,235,245,0.55);">-</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-4 py-3 text-right">
-                                            @if($session->status == 'completed')
-                                                <a href="{{ route('admin.recruitment.tests.sessions.results', $session) }}" 
-                                                   class="btn-secondary-sm"
-                                                   title="Lihat Hasil">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            @elseif(($session->status == 'in-progress' || $session->status == 'pending') && $session->session_token)
-                                                <a href="{{ route('candidate.test.show', $session->session_token) }}" 
-                                                   class="btn-primary-sm"
-                                                   target="_blank"
-                                                   title="Buka Link Tes">
-                                                    <i class="fas fa-external-link-alt"></i>
-                                                </a>
-                                            @elseif(($session->status == 'in-progress' || $session->status == 'pending') && !$session->session_token)
-                                                <button class="btn-secondary-sm opacity-50 cursor-not-allowed"
-                                                        disabled
-                                                        title="Token tidak tersedia">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                </button>
-                                            @else
-                                                <span class="text-xs" style="color: rgba(235,235,245,0.55);">-</span>
-                                            @endif
-                                        </td>
-                                    </tr>
+            <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                <div style="padding:14px 18px;border-bottom:1px solid var(--dark-separator)">
+                    <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 2px">Hasil Tes</p>
+                    <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Sesi Tes</h3>
+                </div>
+                <div style="overflow-x:auto">
+                    <table style="min-width:100%;border-collapse:collapse">
+                        <thead>
+                            <tr style="background:var(--dark-bg-secondary)">
+                                @foreach(['Nama Tes','Status','Skor','Selesai',''] as $h)
+                                <th style="padding:8px 14px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dark-text-secondary);text-align:{{ $loop->last ? 'right' : 'left' }};white-space:nowrap">{{ $h }}</th>
                                 @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($application->testSessions as $session)
+                            @php
+                                $tc2 = match($session->status) {
+                                    'completed' => 'var(--apple-green)',
+                                    'in-progress' => 'var(--apple-yellow)',
+                                    default => 'var(--dark-text-tertiary)',
+                                };
+                            @endphp
+                            <tr style="border-top:1px solid var(--dark-separator)">
+                                <td style="padding:10px 14px;font-size:0.82rem;font-weight:500;color:var(--dark-text-primary)">{{ $session->testTemplate->title ?? 'N/A' }}</td>
+                                <td style="padding:10px 14px">
+                                    <span style="display:inline-flex;padding:2px 8px;border-radius:12px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,{{ $tc2 }} 15%,transparent);color:{{ $tc2 }}">{{ ucfirst($session->status) }}</span>
+                                </td>
+                                <td style="padding:10px 14px">
+                                    @if($session->final_score)
+                                        <span style="font-size:0.88rem;font-weight:700;color:var(--apple-blue)">{{ $session->final_score }}%</span>
+                                    @else
+                                        <span style="color:var(--dark-text-tertiary)">-</span>
+                                    @endif
+                                </td>
+                                <td style="padding:10px 14px;font-size:0.8rem;color:var(--dark-text-secondary)">
+                                    {{ $session->completed_at ? $session->completed_at->format('d M Y') : '-' }}
+                                </td>
+                                <td style="padding:10px 14px;text-align:right">
+                                    @if($session->status == 'completed')
+                                        <a href="{{ route('admin.recruitment.tests.sessions.results', $session) }}" style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:600;color:var(--dark-text-secondary);background:var(--dark-bg-secondary);padding:4px 9px;border-radius:6px;border:1px solid var(--dark-separator);text-decoration:none" onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                                            <i class="fas fa-eye" style="font-size:0.65rem"></i>Hasil
+                                        </a>
+                                    @elseif(($session->status == 'in-progress' || $session->status == 'pending') && $session->session_token)
+                                        <a href="{{ route('candidate.test.show', $session->session_token) }}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:600;color:var(--apple-blue);background:color-mix(in srgb,var(--apple-blue) 12%,transparent);padding:4px 9px;border-radius:6px;border:1px solid color-mix(in srgb,var(--apple-blue) 25%,transparent);text-decoration:none">
+                                            <i class="fas fa-external-link-alt" style="font-size:0.65rem"></i>Buka
+                                        </a>
+                                    @else
+                                        <span style="font-size:0.75rem;color:var(--dark-text-tertiary)">-</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             @endif
         </div>
     </div>

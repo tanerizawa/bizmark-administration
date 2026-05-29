@@ -43,10 +43,10 @@
                     Edit
                 </a>
                 @if($institution->projects->count() === 0)
-                    <form action="{{ route('institutions.destroy', $institution) }}" 
-                          method="POST" 
+                    <form action="{{ route('institutions.destroy', $institution) }}"
+                          method="POST"
                           class="inline"
-                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus institusi ini?')">
+                          x-data @submit.prevent="if(confirm('Apakah Anda yakin ingin menghapus institusi ini?')) $el.submit()">
                         @csrf
                         @method('DELETE')
                         <button type="submit" 

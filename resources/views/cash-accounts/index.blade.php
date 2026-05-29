@@ -1,472 +1,322 @@
 @extends('layouts.app')
-
 @section('title', 'Keuangan')
 @section('page-title', 'Manajemen Keuangan')
-
 @section('content')
-<div class="cash-shell space-y-3">
-    {{-- Compact Hero Section --}}
-    <section class="card-elevated rounded-apple-lg admin-hero relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-48 h-48 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
-            <div class="w-32 h-32 bg-apple-green opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
-        </div>
-        <div class="relative space-y-3">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                <div class="space-y-1 max-w-3xl">
-                    <p class="admin-label-compact">Kendali Keuangan Terintegrasi</p>
-                    <h1 class="admin-hero-title">Kendali Kas & Rekening Terpadu</h1>
-                    <p class="admin-body text-dark-text-secondary">Pantau arus kas, piutang, dan tren finansial secara ringkas dalam satu panel.</p>
+<div style="display:flex;flex-direction:column;gap:16px">
+
+    {{-- Header --}}
+    <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:18px;padding:20px 24px;position:relative;overflow:hidden">
+        <div style="position:absolute;width:240px;height:240px;border-radius:50%;top:-70px;right:-40px;background:color-mix(in srgb,var(--apple-blue) 14%,transparent);filter:blur(60px);pointer-events:none"></div>
+        <div style="position:absolute;width:160px;height:160px;border-radius:50%;bottom:-30px;left:30px;background:color-mix(in srgb,var(--apple-green) 12%,transparent);filter:blur(50px);pointer-events:none"></div>
+        <div style="position:relative">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px">
+                <div>
+                    <p style="font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 4px">Kendali Keuangan Terintegrasi</p>
+                    <h1 style="font-size:1.25rem;font-weight:800;color:var(--dark-text-primary);margin:0 0 6px">Kendali Kas & Rekening Terpadu</h1>
+                    <p style="font-size:0.82rem;color:var(--dark-text-secondary);margin:0">Pantau arus kas, piutang, dan tren finansial dalam satu panel.</p>
                 </div>
-                <div class="space-y-1.5 text-xs text-dark-text-secondary">
-                    <p><i class="fas fa-sync-alt mr-1.5"></i>Sync: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
-                    <p><i class="fas fa-shield-alt mr-1.5"></i>Akses Tim Keuangan</p>
-                    <div class="flex gap-2 flex-wrap">
-                        <a href="{{ route('cash-accounts.create') }}" class="admin-btn">
-                            <i class="fas fa-plus mr-1.5"></i>Tambah Akun
+                <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+                    <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:0"><i class="fas fa-sync-alt" style="margin-right:5px"></i>Sync: {{ now()->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
+                    <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:0"><i class="fas fa-shield-alt" style="margin-right:5px"></i>Akses Tim Keuangan</p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <a href="{{ route('cash-accounts.create') }}"
+                           style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:var(--apple-blue);color:#fff;font-size:0.82rem;font-weight:600;text-decoration:none"
+                           onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                            <i class="fas fa-plus" style="font-size:0.75rem"></i>Tambah Akun
                         </a>
-                        <button onclick="showPeriodFilter()" class="admin-btn bg-white/10">
-                            <i class="fas fa-calendar-alt mr-1.5"></i>Filter
+                        <button onclick="openPeriodModal()"
+                                style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid var(--dark-separator);color:var(--dark-text-secondary);font-size:0.82rem;font-weight:600;background:rgba(255,255,255,.06);cursor:pointer"
+                                onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                            <i class="fas fa-calendar-alt" style="font-size:0.75rem"></i>Filter
                         </button>
                     </div>
                 </div>
             </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="admin-stat-card bg-apple-blue/12">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-blue/25">
-                            <i class="fas fa-wallet text-xs text-apple-blue"></i>
-                        </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+                <div style="background:linear-gradient(135deg,color-mix(in srgb,var(--apple-blue) 14%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,var(--apple-blue) 28%,var(--dark-separator));border-radius:14px;padding:14px 16px">
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div style="width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,var(--apple-blue) 22%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-wallet" style="color:var(--apple-blue);font-size:0.85rem"></i></div>
                         <div>
-                            <p class="admin-stat text-white">Rp {{ number_format($financialSummary['liquid_assets'] / 1000000, 1) }}M</p>
-                            <p class="admin-label-compact">Aset Likuid</p>
+                            <p style="font-size:1rem;font-weight:800;color:var(--dark-text-primary);margin:0">Rp {{ number_format($financialSummary['liquid_assets'] / 1000000, 1) }}M</p>
+                            <p style="font-size:0.65rem;color:var(--dark-text-secondary);margin:2px 0 0;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Aset Likuid</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card bg-apple-orange/12">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-orange/25">
-                            <i class="fas fa-file-invoice text-xs text-apple-orange"></i>
-                        </div>
+                <div style="background:linear-gradient(135deg,color-mix(in srgb,var(--apple-orange) 14%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,var(--apple-orange) 28%,var(--dark-separator));border-radius:14px;padding:14px 16px">
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div style="width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,var(--apple-orange) 22%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-file-invoice" style="color:var(--apple-orange);font-size:0.85rem"></i></div>
                         <div>
-                            <p class="admin-stat text-white">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</p>
-                            <p class="admin-label-compact">Piutang</p>
+                            <p style="font-size:1rem;font-weight:800;color:var(--dark-text-primary);margin:0">Rp {{ number_format($financialSummary['total_receivables'] / 1000000, 1) }}M</p>
+                            <p style="font-size:0.65rem;color:var(--dark-text-secondary);margin:2px 0 0;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Piutang</p>
                         </div>
                     </div>
                 </div>
-                <div class="admin-stat-card bg-apple-green/12">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-apple-green/25">
-                            <i class="fas fa-arrow-down text-xs text-apple-green"></i>
-                        </div>
+                <div style="background:linear-gradient(135deg,color-mix(in srgb,var(--apple-green) 14%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,var(--apple-green) 28%,var(--dark-separator));border-radius:14px;padding:14px 16px">
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div style="width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,var(--apple-green) 22%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-arrow-down" style="color:var(--apple-green);font-size:0.85rem"></i></div>
                         <div>
-                            <p class="admin-stat text-apple-green">Rp {{ number_format($financialSummary['cash_inflow_this_month'] / 1000000, 1) }}M</p>
-                            <p class="admin-label-compact">Kas Masuk</p>
+                            <p style="font-size:1rem;font-weight:800;color:var(--apple-green);margin:0">Rp {{ number_format($financialSummary['cash_inflow_this_month'] / 1000000, 1) }}M</p>
+                            <p style="font-size:0.65rem;color:var(--dark-text-secondary);margin:2px 0 0;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Kas Masuk</p>
                         </div>
                     </div>
                 </div>
                 @php $isPositive = $financialSummary['net_cash_flow'] >= 0; @endphp
-                <div class="admin-stat-card {{ $isPositive ? 'bg-apple-green/12' : 'bg-apple-red/12' }}">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center {{ $isPositive ? 'bg-apple-green/25' : 'bg-apple-red/25' }}">
-                            <i class="fas fa-chart-line text-xs {{ $isPositive ? 'text-apple-green' : 'text-apple-red' }}"></i>
-                        </div>
+                <div style="background:linear-gradient(135deg,color-mix(in srgb,{{ $isPositive ? 'var(--apple-green)' : 'var(--apple-red)' }} 14%,var(--dark-bg-secondary)) 0%,var(--dark-bg-secondary) 100%);border:1px solid color-mix(in srgb,{{ $isPositive ? 'var(--apple-green)' : 'var(--apple-red)' }} 28%,var(--dark-separator));border-radius:14px;padding:14px 16px">
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div style="width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,{{ $isPositive ? 'var(--apple-green)' : 'var(--apple-red)' }} 22%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-chart-line" style="color:{{ $isPositive ? 'var(--apple-green)' : 'var(--apple-red)' }};font-size:0.85rem"></i></div>
                         <div>
-                            <p class="admin-stat text-white">{{ $isPositive ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</p>
-                            <p class="admin-label-compact">Arus Bersih</p>
+                            <p style="font-size:1rem;font-weight:800;color:var(--dark-text-primary);margin:0">{{ $isPositive ? '+' : '' }}Rp {{ number_format($financialSummary['net_cash_flow'] / 1000000, 1) }}M</p>
+                            <p style="font-size:0.65rem;color:var(--dark-text-secondary);margin:2px 0 0;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Arus Bersih</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    {{-- Alerts --}}
     @if(session('success'))
-        <div class="flex items-center gap-2 bg-apple-green/10 border border-apple-green/20 text-apple-green rounded-xl px-4 py-3 mb-3">
-            <i class="fas fa-check-circle"></i>
-            <span class="admin-body">{{ session('success') }}</span>
-        </div>
+    <div style="display:flex;align-items:center;gap:10px;border-radius:10px;padding:10px 16px;background:color-mix(in srgb,var(--apple-green) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-green) 25%,transparent);color:var(--apple-green)">
+        <i class="fas fa-check-circle" style="flex-shrink:0"></i><span style="font-size:0.85rem">{{ session('success') }}</span>
+    </div>
     @endif
-
     @if(session('error'))
-        <div class="flex items-center gap-2 bg-apple-red/10 border border-apple-red/20 text-apple-red rounded-xl px-4 py-3 mb-3">
-            <i class="fas fa-exclamation-circle"></i>
-            <span class="admin-body">{{ session('error') }}</span>
-        </div>
+    <div style="display:flex;align-items:center;gap:10px;border-radius:10px;padding:10px 16px;background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 25%,transparent);color:var(--apple-red)">
+        <i class="fas fa-exclamation-circle" style="flex-shrink:0"></i><span style="font-size:0.85rem">{{ session('error') }}</span>
+    </div>
     @endif
 
-    {{-- Period Filter & Insights --}}
-    <section class="space-y-2">
-        <div class="flex items-center justify-between flex-wrap gap-2">
+    {{-- Insight Cards --}}
+    <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
             <div>
-                <p class="admin-label-compact">Periode Aktif</p>
-                <h2 class="admin-section text-white">{{ $startDate->isoFormat('D MMM Y') }} - {{ $endDate->isoFormat('D MMM Y') }}</h2>
-                <p class="admin-body text-dark-text-secondary">
-                    @php $daysDiff = $startDate->diffInDays($endDate) + 1; @endphp
-                    {{ $daysDiff }} hari • {{ count($recentTransactions) }} transaksi
-                </p>
+                <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 2px">Periode Aktif</p>
+                <h2 style="font-size:0.96rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 2px">{{ $startDate->isoFormat('D MMM Y') }} – {{ $endDate->isoFormat('D MMM Y') }}</h2>
+                @php $daysDiff = $startDate->diffInDays($endDate) + 1; @endphp
+                <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0">{{ $daysDiff }} hari • {{ count($recentTransactions) }} transaksi</p>
             </div>
-            <button onclick="showPeriodFilter()" class="admin-btn bg-white/10">
-                <i class="fas fa-calendar-alt mr-1.5"></i>Ubah
+            <button onclick="openPeriodModal()"
+                    style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:9px;border:1px solid var(--dark-separator);color:var(--dark-text-secondary);font-size:0.8rem;font-weight:600;background:rgba(255,255,255,.04);cursor:pointer"
+                    onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                <i class="fas fa-calendar-alt" style="font-size:0.72rem"></i>Ubah Periode
             </button>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
-            <div class="card-elevated rounded-apple-lg p-3 space-y-2">
-                <div class="flex items-center justify-between">
-                    <h3 class="admin-section text-white">Kas Keluar</h3>
-                    <span class="admin-label-compact px-2 py-0.5 rounded bg-apple-red/15 text-apple-red/90">Expense</span>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                    <h3 style="font-size:0.85rem;font-weight:700;color:var(--dark-text-primary);margin:0">Kas Keluar</h3>
+                    <span style="padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:700;background:color-mix(in srgb,var(--apple-red) 15%,transparent);color:var(--apple-red)">Expense</span>
                 </div>
-                <p class="admin-stat text-white">Rp {{ number_format($financialSummary['cash_outflow_this_month'] / 1000000, 1) }}M</p>
-                <p class="admin-body text-dark-text-secondary">Pengeluaran periode berjalan</p>
+                <p style="font-size:1.1rem;font-weight:800;color:var(--dark-text-primary);margin:0">Rp {{ number_format($financialSummary['cash_outflow_this_month'] / 1000000, 1) }}M</p>
+                <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:0">Pengeluaran periode berjalan</p>
             </div>
-
             @php $isPositiveTrend = $financialSummary['is_positive_trend'] ?? false; @endphp
-            <div class="card-elevated rounded-apple-lg p-3 space-y-2">
-                <div class="flex items-center justify-between">
-                    <h3 class="admin-section text-white">Arus Kas Bersih</h3>
-                    <span class="admin-label-compact px-2 py-0.5 rounded {{ $isPositiveTrend ? 'bg-apple-green/15 text-apple-green/90' : 'bg-apple-red/15 text-apple-red/90' }}">
-                        {{ $isPositiveTrend ? 'Positif' : 'Negatif' }}
-                    </span>
+            <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                    <h3 style="font-size:0.85rem;font-weight:700;color:var(--dark-text-primary);margin:0">Arus Kas Bersih</h3>
+                    <span style="padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:700;background:color-mix(in srgb,{{ $isPositiveTrend ? 'var(--apple-green)' : 'var(--apple-red)' }} 15%,transparent);color:{{ $isPositiveTrend ? 'var(--apple-green)' : 'var(--apple-red)' }}">{{ $isPositiveTrend ? 'Positif' : 'Negatif' }}</span>
                 </div>
-                <p class="admin-stat text-white">{{ $isPositiveTrend ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
-                <p class="admin-body text-dark-text-secondary">vs bulan lalu</p>
+                <p style="font-size:1.1rem;font-weight:800;color:var(--dark-text-primary);margin:0">{{ $isPositiveTrend ? '+' : '' }}{{ $financialSummary['cash_flow_trend'] }}%</p>
+                <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:0">vs bulan lalu</p>
             </div>
-
-            <div class="card-elevated rounded-apple-lg p-3 space-y-2">
-                <div class="flex items-center justify-between">
-                    <h3 class="admin-section text-white">Rekening Aktif</h3>
-                    <span class="admin-label-compact px-2 py-0.5 rounded bg-apple-blue/15 text-apple-blue/90">Live</span>
+            <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                    <h3 style="font-size:0.85rem;font-weight:700;color:var(--dark-text-primary);margin:0">Rekening Aktif</h3>
+                    <span style="padding:2px 8px;border-radius:8px;font-size:0.68rem;font-weight:700;background:color-mix(in srgb,var(--apple-blue) 15%,transparent);color:var(--apple-blue)">Live</span>
                 </div>
-                <p class="admin-stat text-white">{{ $accounts->count() }}</p>
-                <p class="admin-body text-dark-text-secondary">Rekening dan kas</p>
+                <p style="font-size:1.1rem;font-weight:800;color:var(--dark-text-primary);margin:0">{{ $accounts->count() }}</p>
+                <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:0">Rekening dan kas</p>
             </div>
         </div>
-    </section>
+    </div>
 
-    {{-- Tab Navigation --}}
-    <section class="card-elevated rounded-apple-xl overflow-hidden">
-        <div class="border-b border-dark-separator">
-            <div class="flex space-x-1 p-2 overflow-x-auto" role="tablist">
-                <button onclick="switchTab('cash-flow')" id="tab-cash-flow" 
-                        class="tab-button active text-sm transition-apple whitespace-nowrap">
-                    <i class="fas fa-chart-line mr-2"></i>Laporan Arus Kas
-                </button>
-                <button onclick="switchTab('accounts')" id="tab-accounts"
-                        class="tab-button text-sm transition-apple whitespace-nowrap">
-                    <i class="fas fa-university mr-2"></i>Rekening dan Kas
-                </button>
-                <button onclick="switchTab('general')" id="tab-general"
-                        class="tab-button text-sm transition-apple whitespace-nowrap">
-                    <i class="fas fa-briefcase mr-2"></i>Keuangan Umum
-                    @php
-                        $generalCount = ($generalTransactions['income']->count() + $generalTransactions['expenses']->count());
-                    @endphp
-                    @if($generalCount > 0)
-                        <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500 text-white">
-                            {{ $generalCount }}
-                        </span>
+    {{-- Tab Container --}}
+    <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:16px;overflow:hidden">
+        <div style="border-bottom:1px solid var(--dark-separator);padding:8px 8px 0;overflow-x:auto;overflow-y:hidden;white-space:nowrap">
+            <div style="display:inline-flex;gap:4px;padding-bottom:8px">
+                @php
+                    $tabs = [
+                        ['id'=>'cash-flow','icon'=>'fa-chart-line','label'=>'Laporan Arus Kas'],
+                        ['id'=>'accounts','icon'=>'fa-university','label'=>'Rekening dan Kas'],
+                        ['id'=>'general','icon'=>'fa-briefcase','label'=>'Keuangan Umum'],
+                        ['id'=>'reconciliations','icon'=>'fa-balance-scale','label'=>'Rekonsiliasi Bank'],
+                        ['id'=>'transactions','icon'=>'fa-project-diagram','label'=>'Transaksi Proyek'],
+                    ];
+                    $activeTab = request('tab', 'cash-flow');
+                @endphp
+                @foreach($tabs as $tab)
+                <button onclick="switchCashTab('{{ $tab['id'] }}')" id="tabBtn-{{ $tab['id'] }}"
+                        style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;font-size:0.82rem;font-weight:600;border:1px solid {{ $activeTab === $tab['id'] ? 'color-mix(in srgb,var(--apple-blue) 30%,transparent)' : 'transparent' }};cursor:pointer;white-space:nowrap;background:{{ $activeTab === $tab['id'] ? 'color-mix(in srgb,var(--apple-blue) 15%,transparent)' : 'transparent' }};color:{{ $activeTab === $tab['id'] ? 'var(--dark-text-primary)' : 'var(--dark-text-secondary)' }}">
+                    <i class="fas {{ $tab['icon'] }}" style="font-size:0.78rem"></i>{{ $tab['label'] }}
+                    @if($tab['id'] === 'general')
+                        @php $generalCount = ($generalTransactions['income']->count() + $generalTransactions['expenses']->count()); @endphp
+                        @if($generalCount > 0)
+                        <span style="display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border-radius:9px;font-size:0.68rem;font-weight:700;background:var(--apple-blue);color:#fff">{{ $generalCount }}</span>
+                        @endif
+                    @elseif($tab['id'] === 'reconciliations')
+                        @if(isset($pendingReconciliations) && $pendingReconciliations > 0)
+                        <span style="display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border-radius:9px;font-size:0.68rem;font-weight:700;background:var(--apple-orange);color:#fff">{{ $pendingReconciliations }}</span>
+                        @endif
                     @endif
                 </button>
-                <button onclick="switchTab('reconciliations')" id="tab-reconciliations"
-                        class="tab-button text-sm transition-apple whitespace-nowrap">
-                    <i class="fas fa-balance-scale mr-2"></i>Rekonsiliasi Bank
-                    @if(isset($pendingReconciliations) && $pendingReconciliations > 0)
-                        <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-orange-500 text-white">
-                            {{ $pendingReconciliations }}
-                        </span>
-                    @endif
-                </button>
-                <button onclick="switchTab('transactions')" id="tab-transactions"
-                        class="tab-button text-sm transition-apple whitespace-nowrap">
-                    <i class="fas fa-project-diagram mr-2"></i>Transaksi Proyek
-                </button>
+                @endforeach
             </div>
         </div>
-
-        <div class="p-5">
-            <!-- Tab 1: Cash Flow Statement -->
-            <div id="content-cash-flow" class="tab-content">
+        <div style="padding:20px">
+            <div id="tabContent-cash-flow" style="display:{{ $activeTab === 'cash-flow' ? 'block' : 'none' }}">
                 @include('cash-accounts.tabs.cash-flow', ['cashFlowStatement' => $cashFlowStatement])
             </div>
-
-            <!-- Tab 2: Accounts List -->
-            <div id="content-accounts" class="tab-content hidden">
+            <div id="tabContent-accounts" style="display:{{ $activeTab === 'accounts' ? 'block' : 'none' }}">
                 @include('cash-accounts.tabs.accounts', ['accounts' => $accounts])
             </div>
-
-            <!-- Tab 3: General Transactions (NEW) -->
-            <div id="content-general" class="tab-content hidden">
+            <div id="tabContent-general" style="display:{{ $activeTab === 'general' ? 'block' : 'none' }}">
                 @include('cash-accounts.tabs.general-transactions', ['generalTransactions' => $generalTransactions])
             </div>
-
-            <!-- Tab 4: Bank Reconciliations -->
-            <div id="content-reconciliations" class="tab-content hidden">
+            <div id="tabContent-reconciliations" style="display:{{ $activeTab === 'reconciliations' ? 'block' : 'none' }}">
                 @include('cash-accounts.tabs.reconciliations')
             </div>
-
-            <!-- Tab 5: Project Transactions Timeline (renamed) -->
-            <div id="content-transactions" class="tab-content hidden">
+            <div id="tabContent-transactions" style="display:{{ $activeTab === 'transactions' ? 'block' : 'none' }}">
                 @include('cash-accounts.tabs.transactions', ['recentTransactions' => $recentTransactions])
             </div>
         </div>
-    </section>
-
-{{-- Period Filter Modal --}}
-<div id="periodModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="card-elevated rounded-apple-xl max-w-3xl w-full p-4 space-y-4 bg-dark-bg-elevated">
-        <div class="flex items-center justify-between">
-            <div>
-                <h3 class="text-base font-semibold text-white">Filter Periode Laporan</h3>
-                <p class="text-sm mt-1 text-dark-text-secondary">Pilih rentang waktu untuk analisis finansial</p>
-            </div>
-            <button onclick="closePeriodModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-apple">
-                <i class="fas fa-times text-dark-text-secondary"></i>
-            </button>
-        </div>
-
-        <form method="GET" action="{{ route('cash-accounts.index') }}" id="periodFilterForm" class="space-y-4">
-            <!-- Filter Type Selector -->
-            <div class="grid grid-cols-4 gap-2">
-                <button type="button" onclick="setFilterType('month')" 
-                        class="filter-type-btn {{ $filterType == 'month' ? 'active' : '' }}" data-type="month">
-                    <i class="fas fa-calendar mr-2"></i>Bulan
-                </button>
-                <button type="button" onclick="setFilterType('quarter')" 
-                        class="filter-type-btn {{ $filterType == 'quarter' ? 'active' : '' }}" data-type="quarter">
-                    <i class="fas fa-calendar-week mr-2"></i>Kuartal
-                </button>
-                <button type="button" onclick="setFilterType('year')" 
-                        class="filter-type-btn {{ $filterType == 'year' ? 'active' : '' }}" data-type="year">
-                    <i class="fas fa-calendar-alt mr-2"></i>Tahun
-                </button>
-                <button type="button" onclick="setFilterType('custom')" 
-                        class="filter-type-btn {{ $filterType == 'custom' ? 'active' : '' }}" data-type="custom">
-                    <i class="fas fa-sliders-h mr-2"></i>Custom
-                </button>
-            </div>
-
-            <input type="hidden" name="filter_type" id="filter_type" value="{{ $filterType }}">
-
-            <!-- Month Filter -->
-            <div id="monthFilter" class="space-y-3 {{ $filterType != 'month' ? 'hidden' : '' }}">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-sm font-medium text-white mb-2 block">Bulan</label>
-                        <select name="month" class="w-full">
-                            @for($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}" {{ $selectedMonth == $m ? 'selected' : '' }}>
-                                    {{ \Carbon\Carbon::create(null, $m, 1)->isoFormat('MMMM') }}
-                                </option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-white mb-2 block">Tahun</label>
-                        <select name="year" class="w-full">
-                            @for($y = 2020; $y <= date('Y'); $y++)
-                                <option value="{{ $y }}" {{ $selectedYear == $y ? 'selected' : '' }}>{{ $y }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quarter Filter -->
-            <div id="quarterFilter" class="space-y-3 {{ $filterType != 'quarter' ? 'hidden' : '' }}">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-sm font-medium text-white mb-2 block">Kuartal</label>
-                        <select name="quarter" class="w-full">
-                            <option value="1" {{ (request('quarter') ?? ceil($selectedMonth / 3)) == 1 ? 'selected' : '' }}>Q1 (Jan-Mar)</option>
-                            <option value="2" {{ (request('quarter') ?? ceil($selectedMonth / 3)) == 2 ? 'selected' : '' }}>Q2 (Apr-Jun)</option>
-                            <option value="3" {{ (request('quarter') ?? ceil($selectedMonth / 3)) == 3 ? 'selected' : '' }}>Q3 (Jul-Sep)</option>
-                            <option value="4" {{ (request('quarter') ?? ceil($selectedMonth / 3)) == 4 ? 'selected' : '' }}>Q4 (Okt-Des)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-white mb-2 block">Tahun</label>
-                        <select name="year" class="w-full">
-                            @for($y = 2020; $y <= date('Y'); $y++)
-                                <option value="{{ $y }}" {{ $selectedYear == $y ? 'selected' : '' }}>{{ $y }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Year Filter -->
-            <div id="yearFilter" class="space-y-3 {{ $filterType != 'year' ? 'hidden' : '' }}">
-                <div>
-                    <label class="text-sm font-medium text-white mb-2 block">Tahun</label>
-                    <select name="year" class="w-full">
-                        @for($y = 2020; $y <= date('Y'); $y++)
-                            <option value="{{ $y }}" {{ $selectedYear == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endfor
-                    </select>
-                </div>
-            </div>
-
-            <!-- Custom Date Range -->
-            <div id="customFilter" class="space-y-3 {{ $filterType != 'custom' ? 'hidden' : '' }}">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-sm font-medium text-white mb-2 block">Tanggal Mulai</label>
-                        <input type="date" name="start_date" value="{{ request('start_date', $startDate->format('Y-m-d')) }}" class="w-full">
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-white mb-2 block">Tanggal Akhir</label>
-                        <input type="date" name="end_date" value="{{ request('end_date', $endDate->format('Y-m-d')) }}" class="w-full">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Shortcuts -->
-            @if(count($availablePeriods) > 0)
-            <div class="pt-4 border-t border-dark-separator">
-                <p class="text-xs font-semibold text-white mb-2">Shortcut Periode:</p>
-                <div class="flex flex-wrap gap-2">
-                    @foreach(array_slice($availablePeriods, 0, 6) as $period)
-                        <a href="{{ route('cash-accounts.index', ['filter_type' => 'month', 'month' => $period['month'], 'year' => $period['year']]) }}"
-                           class="text-xs px-3 py-1.5 rounded-apple transition-apple bg-apple-blue/10 text-apple-blue/90 border border-apple-blue/20">
-                            {{ \Carbon\Carbon::create($period['year'], $period['month'], 1)->locale('id')->isoFormat('MMM YYYY') }}
-                        </a>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            <div class="flex items-center gap-3 pt-2">
-                <button type="submit" class="btn-primary flex-1">
-                    <i class="fas fa-filter mr-2"></i>Terapkan Filter
-                </button>
-                <button type="button" onclick="closePeriodModal()" class="btn-secondary-sm">
-                    Batal
-                </button>
-            </div>
-        </form>
     </div>
 </div>
+
+{{-- Period Filter Modal --}}
+<div id="periodModal" style="display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.75)">
+    <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:18px;width:100%;max-width:640px;box-shadow:0 24px 60px rgba(0,0,0,.6)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dark-separator)">
+            <div>
+                <h3 style="font-size:0.95rem;font-weight:700;color:var(--dark-text-primary);margin:0">Filter Periode Laporan</h3>
+                <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:3px 0 0">Pilih rentang waktu untuk analisis finansial</p>
+            </div>
+            <button onclick="closePeriodModal()" style="width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.06);color:var(--dark-text-secondary);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center">&times;</button>
+        </div>
+        <div style="padding:20px">
+            <form method="GET" action="{{ route('cash-accounts.index') }}" id="periodFilterForm" style="display:flex;flex-direction:column;gap:14px">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+                    @foreach(['month'=>['fa-calendar','Bulan'],'quarter'=>['fa-calendar-week','Kuartal'],'year'=>['fa-calendar-alt','Tahun'],'custom'=>['fa-sliders-h','Custom']] as $ftype => $fmeta)
+                    <button type="button" id="ftBtn-{{ $ftype }}" onclick="setPeriodFilterType('{{ $ftype }}')"
+                            style="padding:8px 10px;border-radius:9px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1px solid {{ request('filter_type', 'month') === $ftype ? 'var(--apple-blue)' : 'var(--dark-separator)' }};background:{{ request('filter_type', 'month') === $ftype ? 'color-mix(in srgb,var(--apple-blue) 15%,transparent)' : 'var(--dark-bg-tertiary)' }};color:{{ request('filter_type', 'month') === $ftype ? 'var(--dark-text-primary)' : 'var(--dark-text-secondary)' }}">
+                        <i class="fas {{ $fmeta[0] }}" style="margin-right:5px"></i>{{ $fmeta[1] }}
+                    </button>
+                    @endforeach
+                </div>
+                <input type="hidden" name="filter_type" id="periodFilterTypeInput" value="{{ request('filter_type', 'month') }}">
+
+                <div id="pfSection-month" style="display:{{ request('filter_type', 'month') === 'month' ? 'block' : 'none' }}">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                        <div>
+                            <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Bulan</label>
+                            <select name="month" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none">
+                                @for($m = 1; $m <= 12; $m++)
+                                    <option value="{{ $m }}" {{ $selectedMonth == $m ? 'selected' : '' }}>{{ \Carbon\Carbon::create(null, $m, 1)->isoFormat('MMMM') }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Tahun</label>
+                            <select name="year" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none">
+                                @for($y = 2020; $y <= date('Y'); $y++)<option value="{{ $y }}" {{ $selectedYear == $y ? 'selected' : '' }}>{{ $y }}</option>@endfor
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="pfSection-quarter" style="display:{{ request('filter_type') === 'quarter' ? 'block' : 'none' }}">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                        <div>
+                            <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Kuartal</label>
+                            <select name="quarter" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none">
+                                <option value="1" {{ (request('quarter') ?? ceil($selectedMonth / 3)) == 1 ? 'selected' : '' }}>Q1 (Jan-Mar)</option>
+                                <option value="2" {{ (request('quarter') ?? ceil($selectedMonth / 3)) == 2 ? 'selected' : '' }}>Q2 (Apr-Jun)</option>
+                                <option value="3" {{ (request('quarter') ?? ceil($selectedMonth / 3)) == 3 ? 'selected' : '' }}>Q3 (Jul-Sep)</option>
+                                <option value="4" {{ (request('quarter') ?? ceil($selectedMonth / 3)) == 4 ? 'selected' : '' }}>Q4 (Okt-Des)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Tahun</label>
+                            <select name="year" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none">
+                                @for($y = 2020; $y <= date('Y'); $y++)<option value="{{ $y }}" {{ $selectedYear == $y ? 'selected' : '' }}>{{ $y }}</option>@endfor
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="pfSection-year" style="display:{{ request('filter_type') === 'year' ? 'block' : 'none' }}">
+                    <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Tahun</label>
+                    <select name="year" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none">
+                        @for($y = 2020; $y <= date('Y'); $y++)<option value="{{ $y }}" {{ $selectedYear == $y ? 'selected' : '' }}>{{ $y }}</option>@endfor
+                    </select>
+                </div>
+                <div id="pfSection-custom" style="display:{{ request('filter_type') === 'custom' ? 'block' : 'none' }}">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                        <div>
+                            <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Tanggal Mulai</label>
+                            <input type="date" name="start_date" value="{{ request('start_date', $startDate->format('Y-m-d')) }}" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box">
+                        </div>
+                        <div>
+                            <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Tanggal Akhir</label>
+                            <input type="date" name="end_date" value="{{ request('end_date', $endDate->format('Y-m-d')) }}" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box">
+                        </div>
+                    </div>
+                </div>
+
+                @if(count($availablePeriods) > 0)
+                <div style="padding-top:12px;border-top:1px solid var(--dark-separator)">
+                    <p style="font-size:0.72rem;font-weight:700;color:var(--dark-text-secondary);margin:0 0 8px;text-transform:uppercase;letter-spacing:.08em">Shortcut Periode</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px">
+                        @foreach(array_slice($availablePeriods, 0, 6) as $period)
+                        <a href="{{ route('cash-accounts.index', ['filter_type' => 'month', 'month' => $period['month'], 'year' => $period['year']]) }}"
+                           style="font-size:0.75rem;padding:5px 12px;border-radius:8px;background:color-mix(in srgb,var(--apple-blue) 10%,transparent);color:var(--apple-blue);border:1px solid color-mix(in srgb,var(--apple-blue) 20%,transparent);text-decoration:none"
+                           onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+                            {{ \Carbon\Carbon::create($period['year'], $period['month'], 1)->locale('id')->isoFormat('MMM YYYY') }}
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <div style="display:flex;align-items:center;gap:10px;padding-top:6px">
+                    <button type="submit" style="flex:1;padding:9px 16px;border:none;border-radius:10px;background:var(--apple-blue);color:#fff;font-size:0.85rem;font-weight:600;cursor:pointer" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        <i class="fas fa-filter" style="margin-right:7px"></i>Terapkan Filter
+                    </button>
+                    <button type="button" onclick="closePeriodModal()" style="padding:9px 16px;border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-secondary);font-size:0.85rem;font-weight:600;background:none;cursor:pointer">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<style>
-.cash-shell {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    letter-spacing: -0.01em;
-}
-
-.cash-shell .tab-button {
-    color: rgba(235, 235, 245, 0.6);
-    background-color: transparent;
-    padding: 0.55rem 0.85rem;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    font-weight: 600;
-    min-height: 42px;
-}
-
-.cash-shell .tab-button:hover {
-    color: rgba(235, 235, 245, 0.9);
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.cash-shell .tab-button.active {
-    color: #FFFFFF;
-    background-color: rgba(0, 122, 255, 0.15);
-    border: 1px solid rgba(0, 122, 255, 0.3);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-}
-
-.cash-shell .tab-content {
-    animation: fadeIn 0.25s ease-in;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.cash-shell .filter-type-btn {
-    padding: 0.7rem 0.95rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background-color: var(--dark-bg-tertiary);
-    border: 1px solid var(--dark-separator);
-    color: rgba(235, 235, 245, 0.7);
-}
-
-.cash-shell .filter-type-btn:hover {
-    background-color: var(--dark-bg-secondary);
-    border-color: var(--apple-blue);
-    color: rgba(235, 235, 245, 0.9);
-}
-
-.cash-shell .filter-type-btn.active {
-    background-color: rgba(0, 122, 255, 0.15);
-    border-color: var(--apple-blue);
-    color: #FFFFFF;
-}
-</style>
-
+@push('scripts')
 <script>
-function switchTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
+function switchCashTab(tab) {
+    ['cash-flow','accounts','general','reconciliations','transactions'].forEach(function(t) {
+        document.getElementById('tabContent-' + t).style.display = 'none';
+        var btn = document.getElementById('tabBtn-' + t);
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--dark-text-secondary)';
+        btn.style.borderColor = 'transparent';
     });
-    
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active');
+    document.getElementById('tabContent-' + tab).style.display = 'block';
+    var b = document.getElementById('tabBtn-' + tab);
+    b.style.background = 'color-mix(in srgb,var(--apple-blue) 15%,transparent)';
+    b.style.color = 'var(--dark-text-primary)';
+    b.style.borderColor = 'color-mix(in srgb,var(--apple-blue) 30%,transparent)';
+}
+function openPeriodModal() { document.getElementById('periodModal').style.display = 'flex'; }
+function closePeriodModal() { document.getElementById('periodModal').style.display = 'none'; }
+function setPeriodFilterType(type) {
+    ['month','quarter','year','custom'].forEach(function(t) {
+        var btn = document.getElementById('ftBtn-' + t);
+        var sec = document.getElementById('pfSection-' + t);
+        var active = t === type;
+        btn.style.background = active ? 'color-mix(in srgb,var(--apple-blue) 15%,transparent)' : 'var(--dark-bg-tertiary)';
+        btn.style.borderColor = active ? 'var(--apple-blue)' : 'var(--dark-separator)';
+        btn.style.color = active ? 'var(--dark-text-primary)' : 'var(--dark-text-secondary)';
+        if (sec) sec.style.display = active ? 'block' : 'none';
     });
-    
-    document.getElementById('content-' + tabName).classList.remove('hidden');
-    document.getElementById('tab-' + tabName).classList.add('active');
+    document.getElementById('periodFilterTypeInput').value = type;
 }
-
-function showPeriodFilter() {
-    document.getElementById('periodModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function closePeriodModal() {
-    document.getElementById('periodModal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
-
-function setFilterType(type) {
-    document.getElementById('filter_type').value = type;
-    
-    // Hide all filter sections
-    document.getElementById('monthFilter').classList.add('hidden');
-    document.getElementById('quarterFilter').classList.add('hidden');
-    document.getElementById('yearFilter').classList.add('hidden');
-    document.getElementById('customFilter').classList.add('hidden');
-    
-    // Remove active class from all buttons
-    document.querySelectorAll('.filter-type-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // Show selected filter section
-    document.getElementById(type + 'Filter').classList.remove('hidden');
-    
-    // Add active class to selected button
-    document.querySelector(`[data-type="${type}"]`).classList.add('active');
-}
-
-// Close modals on escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closePeriodModal();
-    }
-});
-
-// Close modals on backdrop click
-document.getElementById('periodModal').addEventListener('click', function(e) {
-    if (e.target === this) closePeriodModal();
-});
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePeriodModal(); });
+document.getElementById('periodModal').addEventListener('click', function(e) { if (e.target === this) closePeriodModal(); });
 </script>
+@endpush
 @endsection

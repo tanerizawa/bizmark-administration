@@ -35,11 +35,11 @@ Route::middleware('permission:projects.view')->group(function () {
 // Previously each resource was defined 3-4 times with different middleware, making it
 // hard to maintain and easy to misorder. Now uses explicit routes in groups.
 
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\InstitutionController;
+use App\Modules\Proyek\Controllers\Public\DocumentController;
 use App\Modules\Proyek\Controllers\Public\ProjectController;
 use App\Modules\Proyek\Controllers\Public\TaskController;
-use App\Modules\Proyek\Controllers\Public\DocumentController;
-use App\Http\Controllers\InstitutionController;
-use App\Http\Controllers\ClientController;
 
 // Project Management Routes
 Route::name('projects.')->prefix('projects')->whereNumber('project')->group(function () {
@@ -79,6 +79,9 @@ Route::name('documents.')->prefix('documents')->whereNumber('document')->group(f
     Route::put('{document}', [DocumentController::class, 'update'])->name('update')->middleware('permission:documents.upload');
     Route::delete('{document}', [DocumentController::class, 'destroy'])->name('destroy')->middleware('permission:documents.delete');
     Route::get('{document}/download', [DocumentController::class, 'download'])->name('download')->middleware('permission:documents.view');
+    // P6 — toggle visibility ke client vault
+    Route::patch('{document}/toggle-vault', [App\Http\Controllers\Admin\DocumentVaultAdminController::class, 'toggleVisibility'])->name('toggle-vault')->middleware('permission:documents.upload');
+    Route::patch('{document}/vault-meta', [App\Http\Controllers\Admin\DocumentVaultAdminController::class, 'updateMeta'])->name('vault-meta')->middleware('permission:documents.upload');
 });
 Route::get('api/tasks-by-project', [DocumentController::class, 'getTasksByProject'])
     ->middleware('permission:documents.view')

@@ -10,6 +10,7 @@ use App\Services\KbliPermitCacheService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
@@ -31,6 +32,8 @@ class ServiceController extends Controller
      */
     public function index(Request $request)
     {
+        $searchTerm = trim((string) ($request->get('q') ?: $request->get('search')));
+
         // Get sectors with KBLI counts for filtering/UI
         $sectors = Kbli::select('sector')
             ->selectRaw('COUNT(*) as total_kbli')
@@ -40,19 +43,77 @@ class ServiceController extends Controller
             ->where('sector', '!=', '')
             ->groupBy('sector')
             ->orderBy('sector')
-            ->get();
+            ->get()
+            ->map(function ($sector) {
+                return (object) [
+                    'name' => $sector->sector,
+                    'slug' => Str::slug($sector->sector),
+                    'kbli_count' => (int) $sector->total_kbli,
+                ];
+            })
+            ->values();
 
         // Get popular KBLI (most used in recommendations)
-        $popularKbli = Kbli::select('kbli.code', 'kbli.description', 'kbli.sector')
+        $popularKbli = Kbli::select('kbli.code', 'kbli.description', 'kbli.sector', 'kbli.activities', 'kbli.category')
             ->leftJoin('kbli_permit_recommendations', 'kbli.code', '=', 'kbli_permit_recommendations.kbli_code')
             ->whereRaw('LENGTH(kbli.code) = 5')
             ->where('kbli.is_active', true)
+            ->whereNotNull('kbli.description')
+            ->where('kbli.description', '!=', '')
             ->selectRaw('COALESCE(SUM(kbli_permit_recommendations.cache_hits), 0) as cache_hits')
-            ->groupBy('kbli.code', 'kbli.description', 'kbli.sector')
+            ->groupBy('kbli.code', 'kbli.description', 'kbli.sector', 'kbli.activities', 'kbli.category')
             ->orderByDesc('cache_hits')
             ->orderBy('kbli.code')
             ->limit(8)
             ->get();
+
+        $catalogQuery = Kbli::query()
+            ->select('code', 'description', 'sector', 'activities', 'category', 'usage_count')
+            ->whereRaw('LENGTH(code) = 5')
+            ->where('is_active', true)
+            ->whereNotNull('description')
+            ->where('description', '!=', '');
+
+        if ($searchTerm !== '') {
+            $catalogQuery->where(function ($query) use ($searchTerm) {
+                $query->where('code', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%")
+                    ->orWhere('activities', 'like', "%{$searchTerm}%")
+                    ->orWhere('category', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if ($request->expectsJson() || $request->boolean('live')) {
+            $results = (clone $catalogQuery)
+                ->orderByDesc('usage_count')
+                ->orderBy('description')
+                ->limit(24)
+                ->get()
+                ->map(function (Kbli $kbli) {
+                    return [
+                        'code' => $kbli->code,
+                        'description' => $kbli->description,
+                        'sector' => $kbli->sector,
+                        'teaser' => $kbli->activities ?: $kbli->category,
+                        'url' => route('client.services.context', $kbli->code),
+                    ];
+                })
+                ->values();
+
+            return response()->json([
+                'data' => $results,
+                'meta' => [
+                    'total' => (clone $catalogQuery)->count(),
+                    'query' => $searchTerm,
+                ],
+            ]);
+        }
+
+        $catalogKbli = $catalogQuery
+            ->orderByDesc('usage_count')
+            ->orderBy('description')
+            ->paginate(18)
+            ->withQueryString();
 
         // Get total active 5-digit KBLI count
         $totalKbli = Kbli::where('is_active', true)
@@ -62,7 +123,14 @@ class ServiceController extends Controller
         // Get total sectors count
         $totalSectors = $sectors->count();
 
-        return view('client.services.index', compact('sectors', 'popularKbli', 'totalKbli', 'totalSectors'));
+        return view('client.services.index', compact(
+            'sectors',
+            'popularKbli',
+            'totalKbli',
+            'totalSectors',
+            'catalogKbli',
+            'searchTerm'
+        ));
     }
 
     /**

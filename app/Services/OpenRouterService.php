@@ -10,15 +10,18 @@ class OpenRouterService
 {
     protected string $apiKey;
 
-    protected string $baseUrl = 'https://openrouter.ai/api/v1';
+    protected string $baseUrl;
 
-    protected string $primaryModel = 'anthropic/claude-sonnet-4';
+    protected string $primaryModel;
 
-    protected string $fallbackModel = 'google/gemini-2.5-flash';
+    protected string $fallbackModel;
 
     public function __construct()
     {
         $this->apiKey = config('services.openrouter.api_key');
+        $this->baseUrl = config('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
+        $this->primaryModel = config('services.openrouter.default_model', 'openrouter/free');
+        $this->fallbackModel = config('services.openrouter.free_fallback_model', 'openrouter/free');
     }
 
     /**
@@ -192,12 +195,16 @@ class OpenRouterService
             return null;
         }
 
+        // Cost mapping untuk model populer - openrouter/free tidak dikenakan biaya
         $costs = [
             'anthropic/claude-3.5-sonnet' => ['input' => 3.0, 'output' => 15.0],
             'google/gemini-pro-1.5' => ['input' => 1.25, 'output' => 5.0],
+            'google/gemini-2.5-flash' => ['input' => 0.3, 'output' => 2.5],
+            'deepseek/deepseek-v3.2' => ['input' => 0.25, 'output' => 0.4],
+            'openrouter/free' => ['input' => 0.0, 'output' => 0.0],
         ];
 
-        $modelCost = $costs[$model] ?? ['input' => 1.0, 'output' => 1.0];
+        $modelCost = $costs[$model] ?? ['input' => 0.0, 'output' => 0.0];
         $inputCost = ($usage['prompt_tokens'] ?? 0) * $modelCost['input'] / 1000000;
         $outputCost = ($usage['completion_tokens'] ?? 0) * $modelCost['output'] / 1000000;
 
@@ -217,8 +224,8 @@ class OpenRouterService
      * Paraphrase a document template using project context.
      * Used by ParaphraseDocumentJob to generate personalized document drafts.
      *
-     * @param string $templateText The extracted text from the document template
-     * @param array $context Project context data (client info, permit details, etc.)
+     * @param  string  $templateText  The extracted text from the document template
+     * @param  array  $context  Project context data (client info, permit details, etc.)
      * @return array{success: bool, full_text: string, chunks: array|null, total_input_tokens: int, total_output_tokens: int, cost: float|null, chunks_count: int, model: string|null, error: string|null}
      */
     public function paraphraseDocument(string $templateText, array $context): array
@@ -226,20 +233,20 @@ class OpenRouterService
         $contextSummary = $context['summary'] ?? json_encode($context);
 
         $systemPrompt = 'You are a professional document drafter for Indonesian business permits and licensing. '
-            . 'Your task is to paraphrase and personalize the given document template using the provided project context. '
-            . 'Rules: '
-            . '1. Maintain all legal language and terminology precisely. '
-            . '2. Replace placeholder fields (e.g., [Nama Perusahaan], [Alamat]) with actual data from context. '
-            . '3. Keep the same document structure and section ordering. '
-            . '4. Do not add or remove clauses unless the context explicitly requires it. '
-            . '5. Output in the same language as the template (Indonesian, unless specified otherwise). '
-            . '6. Return the response as a JSON object with keys: "full_text" (the complete paraphrased document), '
-            . '"chunks" (array of section chunks if the document has clear sections, otherwise null), '
-            . 'and "word_count" (approximate word count of the output).';
+            .'Your task is to paraphrase and personalize the given document template using the provided project context. '
+            .'Rules: '
+            .'1. Maintain all legal language and terminology precisely. '
+            .'2. Replace placeholder fields (e.g., [Nama Perusahaan], [Alamat]) with actual data from context. '
+            .'3. Keep the same document structure and section ordering. '
+            .'4. Do not add or remove clauses unless the context explicitly requires it. '
+            .'5. Output in the same language as the template (Indonesian, unless specified otherwise). '
+            .'6. Return the response as a JSON object with keys: "full_text" (the complete paraphrased document), '
+            .'"chunks" (array of section chunks if the document has clear sections, otherwise null), '
+            .'and "word_count" (approximate word count of the output).';
 
         $userMessage = "Document Template:\n```\n{$templateText}\n```\n\n"
-            . "Project Context:\n```json\n{$contextSummary}\n```\n\n"
-            . 'Please paraphrase this document using the project context. Return JSON only.';
+            ."Project Context:\n```json\n{$contextSummary}\n```\n\n"
+            .'Please paraphrase this document using the project context. Return JSON only.';
 
         $result = $this->chat([
             ['role' => 'system', 'content' => $systemPrompt],
@@ -249,7 +256,7 @@ class OpenRouterService
             'max_tokens' => 8192,
         ]);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return [
                 'success' => false,
                 'full_text' => '',
@@ -314,16 +321,24 @@ class OpenRouterService
 
         foreach ($modelsToTry as $currentModel) {
             try {
-                $response = Http::withHeaders([
-                    'Authorization' => 'Bearer '.$this->apiKey,
-                    'HTTP-Referer' => config('app.url'),
-                    'X-Title' => config('app.name'),
-                ])->timeout(120)->post("{$this->baseUrl}/chat/completions", [
+                $payload = [
                     'model' => $currentModel,
                     'messages' => $messages,
                     'temperature' => $temperature,
                     'max_tokens' => $maxTokens,
-                ]);
+                ];
+
+                // When caller requires strict JSON output, instruct the API directly.
+                // This prevents the model from wrapping the response in markdown fences.
+                if (isset($options['response_format'])) {
+                    $payload['response_format'] = $options['response_format'];
+                }
+
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer '.$this->apiKey,
+                    'HTTP-Referer' => config('app.url'),
+                    'X-Title' => config('app.name'),
+                ])->timeout(120)->post("{$this->baseUrl}/chat/completions", $payload);
 
                 if ($response->successful()) {
                     $data = $response->json();
@@ -377,5 +392,53 @@ class OpenRouterService
         }
 
         return $lastResult ?? ['success' => false, 'error' => 'All models failed'];
+    }
+
+    /**
+     * Robustly extract a JSON object from an AI response string.
+     *
+     * Handles the common case where models wrap JSON in markdown code fences,
+     * prepend explanatory prose, or include trailing commas.
+     *
+     * Strategy order (fastest/most common first):
+     *   1. Direct parse
+     *   2. Strip all markdown code-fence markers
+     *   3. Extract first {...} block
+     *   4. Fix trailing commas then retry
+     *
+     * Returns the decoded array on success, or null on complete failure.
+     */
+    public static function extractJson(string $raw): ?array
+    {
+        // 1. Direct parse
+        $decoded = json_decode(trim($raw), true);
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        // 2. Strip all markdown code-fence markers (```json ... ``` or ``` ... ```)
+        $stripped = preg_replace('/```(?:json)?\s*/i', '', $raw) ?? $raw;
+        $stripped = trim($stripped);
+        $decoded = json_decode($stripped, true);
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        // 3. Extract first {...} ... last } block
+        if (preg_match('/\{[\s\S]*\}/s', $raw, $matches)) {
+            $decoded = json_decode($matches[0], true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+
+            // 4. Fix trailing commas then retry
+            $fixed = preg_replace('/,\s*([}\]])/s', '$1', $matches[0]) ?? $matches[0];
+            $decoded = json_decode($fixed, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return null;
     }
 }

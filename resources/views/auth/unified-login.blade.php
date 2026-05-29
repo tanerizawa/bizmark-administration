@@ -10,18 +10,21 @@
     <link rel="icon" type="image/png" href="{{ asset('images/pavicon.png') }}">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         :root {
             --brand-ink: #0f172a;
-            --brand-primary: #0b63c7;
-            --brand-primary-dark: #0a4b93;
-            --brand-secondary: #17a3b8;
+            --brand-primary: #b8860b;
+            --brand-primary-dark: #8b6508;
+            --brand-secondary: #0f172a;
             --brand-success: #10b981;
             --brand-danger: #ef4444;
-            --surface-strong: rgba(255, 255, 255, 0.95);
-            --border-soft: rgba(148, 163, 184, 0.28);
+            --surface-strong: rgba(255, 255, 255, 0.96);
+            --border-soft: rgba(184, 134, 11, 0.22);
             --text-muted: #475569;
             --text-soft: #64748b;
         }
@@ -32,11 +35,16 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        h1.auth-title {
+            font-family: 'Fraunces', Georgia, serif;
+            letter-spacing: -0.02em;
+        }
+
         body {
             background:
-                radial-gradient(circle at top left, rgba(23, 163, 184, 0.16), transparent 28%),
-                radial-gradient(circle at bottom right, rgba(11, 99, 199, 0.12), transparent 24%),
-                linear-gradient(145deg, #eff6ff 0%, #dbeafe 46%, #f8fafc 100%);
+                radial-gradient(circle at top left, rgba(184, 134, 11, 0.14), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.08), transparent 26%),
+                linear-gradient(145deg, #faf8f3 0%, #f5efe2 48%, #ffffff 100%);
             min-height: 100vh;
             color: var(--brand-ink);
         }
@@ -71,29 +79,29 @@
         .form-input:focus {
             border-color: var(--brand-primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.15);
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.18);
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
             transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
+            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.28);
         }
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(10, 102, 194, 0.35);
+            box-shadow: 0 8px 18px rgba(184, 134, 11, 0.34);
         }
 
         .btn-outline {
-            border: 1.5px solid rgba(11, 99, 199, 0.24);
+            border: 1.5px solid rgba(184, 134, 11, 0.28);
             color: var(--brand-primary);
-            background: rgba(11, 99, 199, 0.04);
+            background: rgba(184, 134, 11, 0.05);
             transition: all 0.25s ease;
         }
 
         .btn-outline:hover {
-            background: rgba(11, 99, 199, 0.09);
+            background: rgba(184, 134, 11, 0.1);
         }
 
         .back-link {
@@ -114,7 +122,7 @@
         .logo-badge {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, rgba(11, 99, 199, 0.12) 0%, rgba(23, 163, 184, 0.16) 100%);
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.14) 0%, rgba(15, 23, 42, 0.08) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -210,7 +218,7 @@
                     <i class="fas fa-certificate text-2xl" style="color: var(--brand-primary);"></i>
                 </div>
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] mb-1" style="color: var(--brand-primary);">Portal Klien</p>
-                <h1 class="text-2xl font-bold mb-1 text-gray-900">Masuk</h1>
+                <h1 class="auth-title text-2xl font-bold mb-1 text-gray-900">Masuk</h1>
                 <p class="text-sm" style="color: var(--text-muted);">Pantau layanan dan dokumen Anda.</p>
             </div>
 

@@ -9,7 +9,7 @@
     $targetUrl = $isEnglish ? route('privacy.policy.en') : route('privacy.policy.id');
 @endphp
 
-<section class="relative overflow-hidden pt-28 pb-16" style="background:linear-gradient(135deg,var(--surface-warm) 0%, var(--surface-cool) 100%);">
+<section class="relative overflow-hidden pt-28 pb-16" style="background: var(--bg-raised); border-bottom: 1px solid var(--border-subtle);">
     <div class="container-wide">
         <span class="section-badge mb-4">Legal</span>
         <h1 class="section-title mb-4">{{ $isEnglish ? 'Privacy Policy' : 'Kebijakan Privasi' }}</h1>

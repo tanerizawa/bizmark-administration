@@ -38,10 +38,10 @@ class PermitManagementController extends Controller
         $dashboardData = $this->getDashboardData();
         $tabData = match ($activeTab) {
             'applications' => $this->getApplicationsData($request, $activeTab),
-            'types'        => $this->getTypesData($request, $activeTab),
-            'kbli'         => $this->getKbliData($request, $activeTab),
-            'payments'     => $this->getPaymentsData($request, $activeTab),
-            default        => [],
+            'types' => $this->getTypesData($request, $activeTab),
+            'kbli' => $this->getKbliData($request, $activeTab),
+            'payments' => $this->getPaymentsData($request, $activeTab),
+            default => [],
         };
 
         return view('admin.permits.index', array_merge(
@@ -360,6 +360,7 @@ class PermitManagementController extends Controller
         // FIX (BUG-06): Cap variants to prevent SQL query bloat from 3N OR conditions
         $variants = array_unique($variants);
         $MAX_VARIANTS = 15;
+
         return count($variants) > $MAX_VARIANTS
             ? array_slice($variants, 0, $MAX_VARIANTS)
             : $variants;

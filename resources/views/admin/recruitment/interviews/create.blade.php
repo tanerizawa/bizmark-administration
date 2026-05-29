@@ -1,280 +1,217 @@
 @extends('layouts.app')
 
+@section('title', 'Jadwalkan Interview')
+
 @section('content')
-<div class="recruitment-shell max-w-6xl mx-auto space-y-5">
-    {{-- Header --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-60 h-60 bg-apple-blue opacity-20 blur-3xl rounded-full absolute -top-10 -right-6"></div>
-            <div class="w-44 h-44 bg-apple-green opacity-15 blur-2xl rounded-full absolute bottom-0 left-6"></div>
-        </div>
-        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div class="space-y-2">
-                <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">
-                    <a href="{{ route('admin.recruitment.interviews.index') }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
-                        <i class="fas fa-arrow-left text-xs"></i> Interviews
-                    </a>
-                    <span class="text-dark-text-tertiary">/</span>
-                    <span>Jadwal Baru</span>
-                </div>
-                <h1 class="text-xl md:text-xl font-semibold text-white leading-tight">Jadwalkan Interview</h1>
-                <p class="text-sm" style="color: rgba(235,235,245,0.7);">
-                    Atur jadwal, format, dan tim pewawancara dalam satu langkah.
-                </p>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.recruitment.interviews.index') }}" class="btn-secondary-sm">
-                    <i class="fas fa-list mr-2"></i>Daftar Interview
-                </a>
-            </div>
-        </div>
-    </section>
+<div style="display:flex;flex-direction:column;gap:16px">
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div class="lg:col-span-2 lg:order-1 space-y-4">
-            <div class="card-elevated rounded-apple-xl p-4 space-y-4">
-                <div>
-                    <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Formulir</p>
-                    <h3 class="text-base font-semibold text-white">Detail Interview</h3>
-                </div>
-                <form action="{{ route('admin.recruitment.interviews.store') }}" method="POST" class="space-y-3">
-                    @csrf
-
-                        <!-- Application Selection -->
-                        <div class="space-y-1">
-                            <label for="job_application_id" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Kandidat *</label>
-                            @if($application)
-                                <input type="hidden" name="job_application_id" value="{{ $application->id }}">
-                                <div class="card-elevated rounded-apple-lg p-3 space-y-1" style="background: rgba(10,132,255,0.08); border-color: rgba(10,132,255,0.2);">
-                                    <p class="text-sm font-semibold text-white">{{ $application->full_name }}</p>
-                                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Posisi: {{ $application?->jobVacancy?->title ?? 'Position Deleted' }}</p>
-                                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Email: {{ $application->email }}</p>
-                                </div>
-                            @else
-                                <select name="job_application_id" id="job_application_id" 
-                                        class="w-full @error('job_application_id') is-invalid @enderror" required>
-                                    <option value="">Pilih kandidat</option>
-                                    @php
-                                        $applications = App\Models\JobApplication::with('jobVacancy')
-                                            ->whereIn('status', ['reviewed', 'shortlisted', 'interview-scheduled'])
-                                            ->orderBy('created_at', 'desc')
-                                            ->get();
-                                    @endphp
-                                    @foreach($applications as $app)
-                                        <option value="{{ $app->id }}" {{ old('job_application_id') == $app->id ? 'selected' : '' }}>
-                                            {{ $app->full_name }} - {{ $app?->jobVacancy?->title ?? 'Position Deleted' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('job_application_id')
-                                    <div class="text-xs text-apple-red">{{ $message }}</div>
-                                @enderror
-                            @endif
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div class="md:col-span-2 space-y-1">
-                                <label for="scheduled_at" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Tanggal & Waktu *</label>
-                                @php
-                                    $defaultDate = old('scheduled_at');
-                                    if (!$defaultDate && request('date')) {
-                                        // Convert ISO 8601 to datetime-local format
-                                        try {
-                                            $dateObj = new \DateTime(request('date'));
-                                            $defaultDate = $dateObj->format('Y-m-d\TH:i');
-                                        } catch (\Exception $e) {
-                                            $defaultDate = '';
-                                        }
-                                    }
-                                @endphp
-                                <input type="datetime-local" 
-                                       name="scheduled_at" 
-                                       id="scheduled_at" 
-                                       class="w-full @error('scheduled_at') is-invalid @enderror"
-                                       value="{{ $defaultDate }}"
-                                       min="{{ now()->format('Y-m-d\TH:i') }}"
-                                       required>
-                                @error('scheduled_at')
-                                    <div class="text-xs text-apple-red">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="space-y-1">
-                                <label for="duration_minutes" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Durasi (menit) *</label>
-                                <select name="duration_minutes" id="duration_minutes" 
-                                        class="w-full @error('duration_minutes') is-invalid @enderror" required>
-                                    <option value="30">30 minutes</option>
-                                    <option value="45" selected>45 minutes</option>
-                                    <option value="60">60 minutes</option>
-                                    <option value="90">90 minutes</option>
-                                    <option value="120">2 hours</option>
-                                </select>
-                                @error('duration_minutes')
-                                    <div class="text-xs text-apple-red">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div class="space-y-1">
-                                <label for="interview_type" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Tipe Interview *</label>
-                                <select name="interview_type" id="interview_type" 
-                                        class="w-full @error('interview_type') is-invalid @enderror" required>
-                                    <option value="preliminary" {{ old('interview_type') == 'preliminary' ? 'selected' : '' }}>Preliminary</option>
-                                    <option value="technical" {{ old('interview_type') == 'technical' ? 'selected' : '' }}>Technical</option>
-                                    <option value="hr" {{ old('interview_type') == 'hr' ? 'selected' : '' }}>HR</option>
-                                    <option value="final" {{ old('interview_type') == 'final' ? 'selected' : '' }}>Final</option>
-                                </select>
-                                @error('interview_type')
-                                    <div class="text-xs text-apple-red">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="space-y-1">
-                                <label for="meeting_type" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Format Meeting *</label>
-                                <select name="meeting_type" id="meeting_type" 
-                                        class="w-full @error('meeting_type') is-invalid @enderror" required>
-                                    <option value="video-call" {{ old('meeting_type') == 'video-call' ? 'selected' : '' }} selected>Video Conference</option>
-                                    <option value="phone" {{ old('meeting_type') == 'phone' ? 'selected' : '' }}>Phone Call</option>
-                                    <option value="in-person" {{ old('meeting_type') == 'in-person' ? 'selected' : '' }}>In-Person</option>
-                                </select>
-                                @error('meeting_type')
-                                    <div class="text-xs text-apple-red">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="space-y-1" id="location-field" style="display: none;">
-                            <label for="location" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Lokasi</label>
-                            <input type="text" 
-                                   name="location" 
-                                   id="location" 
-                                   class="w-full @error('location') is-invalid @enderror"
-                                   placeholder="Alamat kantor atau ruang meeting"
-                                   value="{{ old('location') }}">
-                            @error('location')
-                                <div class="text-xs text-apple-red">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="space-y-1" id="meeting-link-field">
-                            <label for="meeting_link" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Meeting Link</label>
-                            <input type="url" 
-                                   name="meeting_link" 
-                                   id="meeting_link" 
-                                   class="w-full @error('meeting_link') is-invalid @enderror"
-                                   placeholder="Kosongkan untuk auto-generate Jitsi"
-                                   value="{{ old('meeting_link') }}">
-                            <p class="text-xs" style="color: rgba(235,235,245,0.6);">
-                                Kosongkan untuk auto-generate Jitsi atau tempel link Zoom/Google Meet.
-                            </p>
-                            @error('meeting_link')
-                                <div class="text-xs text-apple-red">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="space-y-1">
-                            <label for="interviewer_ids" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Interviewer *</label>
-                            <select name="interviewer_ids[]" id="interviewer_ids" 
-                                    class="w-full @error('interviewer_ids') is-invalid @enderror" 
-                                    multiple required style="height: 150px;">
-                                @foreach($interviewers as $interviewer)
-                                    <option value="{{ $interviewer->id }}">
-                                        {{ $interviewer->name }} ({{ $interviewer->email }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            <p class="text-xs" style="color: rgba(235,235,245,0.6);">Gunakan Ctrl/Cmd untuk memilih beberapa.</p>
-                            @error('interviewer_ids')
-                                <div class="text-xs text-apple-red">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="space-y-1">
-                            <label for="notes" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Catatan Internal</label>
-                            <textarea name="notes" 
-                                      id="notes" 
-                                      rows="3" 
-                                      class="w-full @error('notes') is-invalid @enderror"
-                                      placeholder="Catatan persiapan, fokus penilaian, dll.">{{ old('notes') }}</textarea>
-                            @error('notes')
-                                <div class="text-xs text-apple-red">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 pt-2">
-                            <button type="submit" class="btn-primary-sm">
-                                <i class="fas fa-check mr-2"></i>Jadwalkan
-                            </button>
-                            <a href="{{ route('admin.recruitment.interviews.index') }}" class="btn-secondary-sm">Batal</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="lg:col-span-1 lg:order-2 space-y-4">
-            <div class="card-elevated rounded-apple-xl p-4 space-y-3">
-                <h3 class="text-base font-semibold text-white">Tips Penjadwalan</h3>
-                <ul class="list-disc list-inside text-sm space-y-1" style="color: rgba(235,235,245,0.72);">
-                    <li>Jadwalkan minimal 24 jam sebelumnya.</li>
-                    <li>Pastikan ketersediaan pewawancara.</li>
-                    <li>Video: Jitsi akan dibuat otomatis.</li>
-                    <li>Pilih beberapa pewawancara (Ctrl/Cmd).</li>
-                    <li>Tambahkan catatan fokus penilaian.</li>
-                    <li>Notifikasi email dikirim ke kandidat.</li>
-                </ul>
-            </div>
-
-            <div class="card-elevated rounded-apple-xl p-4 space-y-3">
-                <h3 class="text-base font-semibold text-white">Jenis Interview</h3>
-                <dl class="space-y-2 text-sm" style="color: rgba(235,235,245,0.75);">
-                    <div>
-                        <dt><i class="fas fa-clipboard-list text-apple-blue mr-2"></i>Preliminary</dt>
-                        <dd class="ml-5 text-xs" style="color: rgba(235,235,245,0.6);">Screening awal kandidat.</dd>
-                    </div>
-                    <div>
-                        <dt><i class="fas fa-code text-apple-green mr-2"></i>Technical</dt>
-                        <dd class="ml-5 text-xs" style="color: rgba(235,235,245,0.6);">Tes kemampuan teknis.</dd>
-                    </div>
-                    <div>
-                        <dt><i class="fas fa-user-tie text-apple-purple mr-2"></i>HR</dt>
-                        <dd class="ml-5 text-xs" style="color: rgba(235,235,245,0.6);">Interview dengan HR.</dd>
-                    </div>
-                    <div>
-                        <dt><i class="fas fa-users text-apple-orange mr-2"></i>Final</dt>
-                        <dd class="ml-5 text-xs" style="color: rgba(235,235,245,0.6);">Interview akhir dengan pimpinan.</dd>
-                    </div>
-                </dl>
-            </div>
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+            <a href="{{ route('admin.recruitment.interviews.index') }}" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);text-decoration:none;margin-bottom:6px" onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                <i class="fas fa-arrow-left" style="font-size:0.65rem"></i>Interviews
+            </a>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--apple-purple);margin:0 0 4px">Manajemen Talenta</p>
+            <h1 style="font-size:1.4rem;font-weight:800;color:var(--dark-text-primary);margin:0 0 4px;line-height:1.2">Jadwalkan Interview</h1>
+            <p style="font-size:0.82rem;color:var(--dark-text-secondary);margin:0">Atur jadwal, format, dan tim pewawancara dalam satu langkah</p>
         </div>
     </div>
+
+    <form action="{{ route('admin.recruitment.interviews.store') }}" method="POST" onsubmit="handleSubmit(this)">
+        @csrf
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:flex-start">
+
+            {{-- Left --}}
+            <div style="display:flex;flex-direction:column;gap:16px">
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+                    <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--dark-separator)">
+                        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Formulir</p>
+                        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Detail Interview</h3>
+                    </div>
+
+                    {{-- Kandidat --}}
+                    <div style="margin-bottom:14px">
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Kandidat <span style="color:var(--apple-red)">*</span></label>
+                        @if($application)
+                            <input type="hidden" name="job_application_id" value="{{ $application->id }}">
+                            <div style="padding:12px 14px;background:color-mix(in srgb,var(--apple-blue) 8%,var(--dark-bg-secondary));border:1px solid color-mix(in srgb,var(--apple-blue) 20%,var(--dark-separator));border-radius:10px">
+                                <p style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 2px">{{ $application->full_name }}</p>
+                                <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0">{{ $application?->jobVacancy?->title ?? 'Position Deleted' }} · {{ $application->email }}</p>
+                            </div>
+                        @else
+                            @php
+                                $applications = App\Models\JobApplication::with('jobVacancy')
+                                    ->whereIn('status', ['reviewed', 'shortlisted', 'interview-scheduled'])
+                                    ->orderBy('created_at', 'desc')->get();
+                            @endphp
+                            <div style="position:relative">
+                                <select name="job_application_id" required
+                                        style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none;box-sizing:border-box"
+                                        onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                    <option value="">Pilih kandidat...</option>
+                                    @foreach($applications as $app)
+                                    <option value="{{ $app->id }}" {{ old('job_application_id') == $app->id ? 'selected' : '' }}>{{ $app->full_name }} — {{ $app?->jobVacancy?->title ?? 'Deleted' }}</option>
+                                    @endforeach
+                                </select>
+                                <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
+                            </div>
+                            @error('job_application_id')<p style="color:var(--apple-red);font-size:0.72rem;margin:4px 0 0">{{ $message }}</p>@enderror
+                        @endif
+                    </div>
+
+                    {{-- Tanggal & Durasi --}}
+                    <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:14px">
+                        <div>
+                            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Tanggal & Waktu <span style="color:var(--apple-red)">*</span></label>
+                            @php
+                                $defaultDate = old('scheduled_at');
+                                if (!$defaultDate && request('date')) {
+                                    try { $defaultDate = (new \DateTime(request('date')))->format('Y-m-d\TH:i'); } catch (\Exception $e) {}
+                                }
+                            @endphp
+                            <input type="datetime-local" name="scheduled_at" value="{{ $defaultDate }}" required min="{{ now()->format('Y-m-d\TH:i') }}"
+                                   style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box;color-scheme:dark"
+                                   onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                            @error('scheduled_at')<p style="color:var(--apple-red);font-size:0.72rem;margin:4px 0 0">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Durasi <span style="color:var(--apple-red)">*</span></label>
+                            <div style="position:relative">
+                                <select name="duration_minutes" required
+                                        style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none;box-sizing:border-box"
+                                        onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                    @foreach([30=>'30 menit',45=>'45 menit',60=>'60 menit',90=>'90 menit',120=>'2 jam'] as $val=>$lbl)
+                                    <option value="{{ $val }}" {{ old('duration_minutes', 45) == $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                                    @endforeach
+                                </select>
+                                <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tipe & Format --}}
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+                        <div>
+                            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Tipe Interview <span style="color:var(--apple-red)">*</span></label>
+                            <div style="position:relative">
+                                <select name="interview_type" required
+                                        style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none;box-sizing:border-box"
+                                        onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                    @foreach(['preliminary'=>'Preliminary','technical'=>'Technical','hr'=>'HR','final'=>'Final'] as $val=>$lbl)
+                                    <option value="{{ $val }}" {{ old('interview_type') == $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                                    @endforeach
+                                </select>
+                                <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Format Meeting <span style="color:var(--apple-red)">*</span></label>
+                            <div style="position:relative">
+                                <select name="meeting_type" id="meeting_type" required
+                                        style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;appearance:none;box-sizing:border-box"
+                                        onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                                    @foreach(['video-call'=>'Video Conference','phone'=>'Phone Call','in-person'=>'In-Person'] as $val=>$lbl)
+                                    <option value="{{ $val }}" {{ old('meeting_type', 'video-call') == $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                                    @endforeach
+                                </select>
+                                <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--dark-text-secondary);font-size:0.65rem;pointer-events:none"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Lokasi --}}
+                    <div id="location-field" style="display:none;margin-bottom:14px">
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Lokasi</label>
+                        <input type="text" name="location" value="{{ old('location') }}" placeholder="Alamat kantor atau ruang meeting"
+                               style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                               onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                    </div>
+
+                    {{-- Meeting Link --}}
+                    <div id="meeting-link-field" style="margin-bottom:14px">
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Meeting Link</label>
+                        <input type="url" name="meeting_link" value="{{ old('meeting_link') }}" placeholder="Kosongkan untuk auto-generate Jitsi"
+                               style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                               onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                        <p style="font-size:0.7rem;color:var(--dark-text-secondary);margin:4px 0 0">Kosongkan untuk auto-generate Jitsi, atau tempel link Zoom/Google Meet.</p>
+                    </div>
+
+                    {{-- Interviewer --}}
+                    <div style="margin-bottom:14px">
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Interviewer <span style="color:var(--apple-red)">*</span></label>
+                        <select name="interviewer_ids[]" multiple required
+                                style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;height:130px;box-sizing:border-box"
+                                onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                            @foreach($interviewers as $interviewer)
+                            <option value="{{ $interviewer->id }}">{{ $interviewer->name }} ({{ $interviewer->email }})</option>
+                            @endforeach
+                        </select>
+                        <p style="font-size:0.7rem;color:var(--dark-text-secondary);margin:4px 0 0">Gunakan Ctrl/Cmd untuk memilih beberapa.</p>
+                        @error('interviewer_ids')<p style="color:var(--apple-red);font-size:0.72rem;margin:4px 0 0">{{ $message }}</p>@enderror
+                    </div>
+
+                    {{-- Catatan --}}
+                    <div>
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:6px">Catatan Internal</label>
+                        <textarea name="notes" rows="3" placeholder="Catatan persiapan, fokus penilaian, dll."
+                                  style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.83rem;outline:none;resize:vertical;box-sizing:border-box"
+                                  onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">{{ old('notes') }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Sidebar --}}
+            <div style="position:sticky;top:16px;display:flex;flex-direction:column;gap:14px">
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+                    <button type="submit" id="submit-btn"
+                            style="width:100%;padding:11px 20px;background:var(--apple-blue);color:#fff;border:none;border-radius:11px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"
+                            onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                        <i class="fas fa-calendar-check" id="submit-icon"></i>
+                        <span id="submit-label">Jadwalkan Interview</span>
+                    </button>
+                    <a href="{{ route('admin.recruitment.interviews.index') }}"
+                       style="display:flex;align-items:center;justify-content:center;padding:10px 20px;color:var(--dark-text-secondary);border:1px solid var(--dark-separator);border-radius:11px;font-size:0.85rem;font-weight:600;text-decoration:none"
+                       onmouseover="this.style.color='var(--dark-text-primary)';this.style.borderColor='var(--dark-text-secondary)'" onmouseout="this.style.color='var(--dark-text-secondary)';this.style.borderColor='var(--dark-separator)'">Batal</a>
+                </div>
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 20px">
+                    <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 12px">Tips Penjadwalan</h3>
+                    <ul style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:5px">
+                        @foreach(['Jadwalkan minimal 24 jam sebelumnya','Pastikan ketersediaan pewawancara','Video: Jitsi auto-generate','Ctrl/Cmd untuk multi-pilih pewawancara','Notifikasi email dikirim ke kandidat'] as $tip)
+                        <li style="font-size:0.78rem;color:var(--dark-text-secondary)">{{ $tip }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 20px">
+                    <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 12px">Jenis Interview</h3>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        @foreach([['fa-clipboard-list','var(--apple-blue)','Preliminary','Screening awal kandidat'],['fa-code','var(--apple-green)','Technical','Tes kemampuan teknis'],['fa-user-tie','var(--apple-purple)','HR','Interview dengan HR'],['fa-users','var(--apple-orange)','Final','Interview akhir pimpinan']] as $t)
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <i class="fas {{ $t[0] }}" style="color:{{ $t[1] }};margin-top:2px;width:14px;text-align:center;flex-shrink:0"></i>
+                            <div><p style="font-size:0.8rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 1px">{{ $t[2] }}</p><p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0">{{ $t[3] }}</p></div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const meetingTypeSelect = document.getElementById('meeting_type');
-    const locationField = document.getElementById('location-field');
-    const meetingLinkField = document.getElementById('meeting-link-field');
-    
-    function updateFields() {
-        const type = meetingTypeSelect.value;
-        
-        if (type === 'in-person') {
-            locationField.style.display = 'block';
-            meetingLinkField.style.display = 'none';
-        } else if (type === 'video-call') {
-            locationField.style.display = 'none';
-            meetingLinkField.style.display = 'block';
-        } else if (type === 'phone') {
-            locationField.style.display = 'none';
-            meetingLinkField.style.display = 'none';
-        }
-    }
-    
-    meetingTypeSelect.addEventListener('change', updateFields);
-    updateFields(); // Initial state
+    const mt = document.getElementById('meeting_type');
+    const lf = document.getElementById('location-field');
+    const mf = document.getElementById('meeting-link-field');
+    function upd() { lf.style.display = mt.value === 'in-person' ? '' : 'none'; mf.style.display = mt.value === 'phone' ? 'none' : ''; }
+    mt.addEventListener('change', upd); upd();
 });
+function handleSubmit() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true; btn.style.opacity = '0.6'; btn.style.cursor = 'not-allowed';
+    document.getElementById('submit-icon').className = 'fas fa-spinner fa-spin';
+    document.getElementById('submit-label').textContent = 'Menyimpan...';
+}
 </script>
 @endpush
 @endsection

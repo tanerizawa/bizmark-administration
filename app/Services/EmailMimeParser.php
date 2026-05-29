@@ -389,8 +389,12 @@ class EmailMimeParser
         return $preview;
     }
 
-    protected function normalizePreviewLine(string $line): string
+    protected function normalizePreviewLine(?string $line): string
     {
+        if ($line === null) {
+            return '';
+        }
+
         $line = html_entity_decode($line, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $line = preg_replace('/\[cid:[^\]]+\]/i', ' ', $line);
         $line = preg_replace('/https?:\/\/\S+/i', ' ', $line);

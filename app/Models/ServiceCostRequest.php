@@ -32,6 +32,7 @@ class ServiceCostRequest extends Model
         'service_category',
         'services_requested',
         'project_description',
+        'ai_letter_body',
         'project_location',
         'estimated_budget',
         'timeline_expectation',

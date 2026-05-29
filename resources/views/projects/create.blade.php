@@ -1,453 +1,294 @@
 @extends('layouts.app')
 
+@section('title', 'Tambah Proyek')
+@section('page-title', 'Tambah Proyek Baru')
+
 @section('content')
-<div class="py-6">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-white mb-2">Tambah Proyek Baru</h1>
-                    <p class="text-gray-400">Buat proyek perizinan baru dengan detail lengkap</p>
-                </div>
-                <a href="{{ route('projects.index') }}" 
-                   class="px-4 py-2 bg-gray-700 text-white rounded-apple hover:bg-gray-600 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    Kembali
-                </a>
+<div style="display:flex;flex-direction:column;gap:16px">
+
+    {{-- Error Alert --}}
+    @if($errors->any())
+        <div style="background:color-mix(in srgb,var(--apple-red) 10%,var(--dark-bg-secondary));border:1px solid color-mix(in srgb,var(--apple-red) 30%,var(--dark-separator));border-radius:14px;padding:16px 20px;display:flex;align-items:flex-start;gap:12px">
+            <i class="fas fa-exclamation-triangle" style="color:var(--apple-red);font-size:1rem;margin-top:2px;flex-shrink:0"></i>
+            <div>
+                <p style="font-size:0.85rem;font-weight:700;color:var(--apple-red);margin:0 0 6px">Terdapat {{ $errors->count() }} kesalahan pada form</p>
+                <ul style="margin:0;padding-left:16px">
+                    @foreach($errors->all() as $error)
+                        <li style="font-size:0.8rem;color:var(--dark-text-secondary);margin-bottom:3px">{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         </div>
+    @endif
 
-        <!-- Error Alert -->
-        @if ($errors->any())
-            <div class="mb-6 card-elevated rounded-apple-lg overflow-hidden border-l-4 border-apple-red">
-                <div class="p-4 flex items-start gap-3">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-exclamation-triangle text-apple-red text-xl"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-white mb-2">Terdapat {{ $errors->count() }} kesalahan pada form:</h3>
-                        <ul class="list-disc list-inside space-y-1 text-sm text-gray-300">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-gray-400 hover:text-white transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
+    <form action="{{ route('projects.store') }}" method="POST" id="create-project-form">
+        @csrf
+
+        {{-- Section 1 --}}
+        <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:16px;overflow:hidden;margin-bottom:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dark-separator)">
+                <div>
+                    <p style="font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Form</p>
+                    <h3 style="font-size:0.95rem;font-weight:700;color:var(--dark-text-primary);margin:3px 0 0">Informasi Proyek</h3>
                 </div>
+                <span style="font-size:0.72rem;color:var(--dark-text-secondary)"><span style="color:var(--apple-red)">*</span> wajib diisi</span>
             </div>
-        @endif
+            <div style="padding:20px;display:flex;flex-direction:column;gap:18px">
 
-        <!-- Success Alert (if any) -->
-        @if (session('success'))
-            <div class="mb-6 card-elevated rounded-apple-lg overflow-hidden border-l-4 border-apple-green">
-                <div class="p-4 flex items-start gap-3">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-check-circle text-apple-green text-xl"></i>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                    <div>
+                        <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                            Nama Proyek <span style="color:var(--apple-red)">*</span>
+                        </label>
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                               placeholder="Contoh: Perizinan AMDAL PT. XYZ"
+                               style="width:100%;padding:9px 14px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box;transition:border-color .2s"
+                               onfocus="this.style.borderColor='var(--apple-blue)'"
+                               onblur="this.style.borderColor='var(--dark-separator)'">
+                        @error('name')
+                            <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
+                        @enderror
                     </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-white">{{ session('success') }}</h3>
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-gray-400 hover:text-white transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-        @endif
-
-        <!-- Form -->
-        <form action="{{ route('projects.store') }}" method="POST" class="space-y-6">
-            @csrf
-
-            <!-- Basic Information -->
-            <div class="card-elevated rounded-apple-lg overflow-hidden">
-                <div class="px-6 py-5 border-b border-white/10">
-                    <h3 class="text-lg font-semibold text-white">Informasi Proyek</h3>
-                    <p class="text-sm mt-1 text-gray-400">Detail proyek, klien, dan status</p>
-                </div>
-
-                <div class="p-6 space-y-6">
-                    <!-- Project Name & Client Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Project Name -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium mb-2 text-gray-300">
-                                Nama Proyek <span class="text-apple-red-dark">*</span>
-                            </label>
-                            <input type="text" 
-                                   name="name" 
-                                   id="name" 
-                                   value="{{ old('name') }}"
-                                   required
-                                   class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all"
-                                   placeholder="Contoh: Perizinan AMDAL PT. XYZ">
-                            @error('name')
-                                <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Client -->
-                        <div>
-                            <label for="client_id" class="block text-sm font-medium mb-2 text-gray-300">
-                                Klien <span class="text-apple-red-dark">*</span>
-                            </label>
-                            <select name="client_id" 
-                                    id="client_id" 
-                                    required
-                                    class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all">
+                    <div>
+                        <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                            Klien <span style="color:var(--apple-red)">*</span>
+                        </label>
+                        <div style="position:relative">
+                            <select name="client_id" id="client_id" required
+                                    style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;box-sizing:border-box;transition:border-color .2s"
+                                    onfocus="this.style.borderColor='var(--apple-blue)'"
+                                    onblur="this.style.borderColor='var(--dark-separator)'">
                                 <option value="">Pilih Klien</option>
                                 @foreach($clients as $client)
                                     <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
-                                        {{ $client->company_name ?? $client->name }}
-                                        @if($client->company_name && $client->name != $client->company_name)
-                                            ({{ $client->name }})
-                                        @endif
+                                        {{ $client->company_name ?? $client->name }}{{ ($client->company_name && $client->name != $client->company_name) ? ' ('.$client->name.')' : '' }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('client_id')
-                                <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
-                            @enderror
-                            <p class="mt-1.5 text-xs text-gray-400 flex items-center">
-                                <i class="fas fa-info-circle mr-1.5"></i>
-                                Belum ada di list? 
-                                <a href="{{ route('clients.create') }}" target="_blank" class="text-apple-blue hover:text-apple-blue-dark ml-1">
-                                    Tambah Klien Baru
-                                </a>
-                            </p>
+                            <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:0.6rem;color:var(--dark-text-tertiary);pointer-events:none"></i>
                         </div>
+                        @error('client_id')
+                            <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
+                        @else
+                            <p style="font-size:0.7rem;color:var(--dark-text-secondary);margin:5px 0 0">
+                                <i class="fas fa-info-circle" style="margin-right:4px;color:var(--apple-blue)"></i>
+                                Belum ada?
+                                <a href="{{ route('clients.create') }}" target="_blank"
+                                   style="color:var(--apple-blue);text-decoration:none"
+                                   onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1">Tambah Klien Baru</a>
+                            </p>
+                        @enderror
                     </div>
+                </div>
 
-                    <!-- Status and Institution -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="status_id" class="block text-sm font-medium mb-2 text-gray-300">
-                                Status Awal <span class="text-apple-red-dark">*</span>
-                            </label>
-                            <select name="status_id" 
-                                    id="status_id" 
-                                    required
-                                    class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                    <div>
+                        <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                            Status Awal <span style="color:var(--apple-red)">*</span>
+                        </label>
+                        <div style="position:relative">
+                            <select name="status_id" id="status_id" required
+                                    style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;box-sizing:border-box;transition:border-color .2s"
+                                    onfocus="this.style.borderColor='var(--apple-blue)'"
+                                    onblur="this.style.borderColor='var(--dark-separator)'">
                                 <option value="">Pilih Status</option>
                                 @foreach($statuses as $status)
-                                    <option value="{{ $status->id }}" {{ old('status_id') == $status->id ? 'selected' : '' }}>
-                                        {{ $status->name }}
-                                    </option>
+                                    <option value="{{ $status->id }}" {{ old('status_id') == $status->id ? 'selected' : '' }}>{{ $status->name }}</option>
                                 @endforeach
                             </select>
-                            @error('status_id')
-                                <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
-                            @enderror
+                            <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:0.6rem;color:var(--dark-text-tertiary);pointer-events:none"></i>
                         </div>
-
-                        <div>
-                            <label for="institution_id" class="block text-sm font-medium mb-2 text-gray-300">
-                                Institusi Terkait
-                            </label>
-                            <select name="institution_id" 
-                                    id="institution_id" 
-                                    class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all">
+                        @error('status_id')
+                            <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                            Institusi Terkait
+                        </label>
+                        <div style="position:relative">
+                            <select name="institution_id" id="institution_id"
+                                    style="width:100%;padding:9px 32px 9px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;box-sizing:border-box;transition:border-color .2s"
+                                    onfocus="this.style.borderColor='var(--apple-blue)'"
+                                    onblur="this.style.borderColor='var(--dark-separator)'">
                                 <option value="">Pilih Institusi</option>
                                 @foreach($institutions as $institution)
-                                    <option value="{{ $institution->id }}" {{ old('institution_id') == $institution->id ? 'selected' : '' }}>
-                                        {{ $institution->name }}
-                                    </option>
+                                    <option value="{{ $institution->id }}" {{ old('institution_id') == $institution->id ? 'selected' : '' }}>{{ $institution->name }}</option>
                                 @endforeach
                             </select>
-                            @error('institution_id')
-                                <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
-                            @enderror
+                            <i class="fas fa-chevron-down" style="position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:0.6rem;color:var(--dark-text-tertiary);pointer-events:none"></i>
                         </div>
-                    </div>
-
-                    <!-- Description -->
-                    <div>
-                        <label for="description" class="block text-sm font-medium mb-2 text-gray-300">
-                            Deskripsi Proyek
-                        </label>
-                        <textarea name="description" 
-                                  id="description" 
-                                  rows="4"
-                                  class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all resize-none"
-                                  placeholder="Jelaskan detail proyek perizinan ini...">{{ old('description') }}</textarea>
-                        @error('description')
-                            <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
+                        @error('institution_id')
+                            <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
-            </div>
 
-            <!-- Project Configuration -->
-            <div class="card-elevated rounded-apple-lg overflow-hidden">
-                <div class="px-6 py-5 border-b border-white/10">
-                    <h3 class="text-lg font-semibold text-white">Konfigurasi Proyek</h3>
-                    <p class="text-sm mt-1 text-gray-400">Timeline, budget, dan pengaturan proyek</p>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                        Deskripsi Proyek
+                    </label>
+                    <textarea name="description" id="description" rows="4"
+                              placeholder="Jelaskan detail proyek perizinan ini..."
+                              style="width:100%;padding:9px 14px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;resize:vertical;box-sizing:border-box;transition:border-color .2s;font-family:inherit"
+                              onfocus="this.style.borderColor='var(--apple-blue)'"
+                              onblur="this.style.borderColor='var(--dark-separator)'">{{ old('description') }}</textarea>
+                    @error('description')
+                        <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <div class="p-6 space-y-6">
-                    <!-- Dates -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="start_date" class="block text-sm font-medium mb-2 text-gray-300">
-                                Tanggal Mulai
-                            </label>
-                            <input type="date" 
-                                   name="start_date" 
-                                   id="start_date" 
-                                   value="{{ old('start_date') }}"
-                                   class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all">
-                            @error('start_date')
-                                <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
-                            @enderror
-                        </div>
+            </div>
+        </div>
 
-                        <div>
-                            <label for="deadline" class="block text-sm font-medium mb-2 text-gray-300">
-                                Target Selesai
-                            </label>
-                            <input type="date" 
-                                   name="deadline" 
-                                   id="deadline" 
-                                   value="{{ old('deadline') }}"
-                                   class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all">
-                            @error('deadline')
-                                <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
+        {{-- Section 2 --}}
+        <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:16px;overflow:hidden;margin-bottom:16px">
+            <div style="padding:16px 20px;border-bottom:1px solid var(--dark-separator)">
+                <p style="font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Form</p>
+                <h3 style="font-size:0.95rem;font-weight:700;color:var(--dark-text-primary);margin:3px 0 0">Konfigurasi Proyek</h3>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:18px">
 
-                    <!-- Budget -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
                     <div>
-                        <label for="budget" class="block text-sm font-medium mb-2 text-gray-300">
-                            Budget (Rp)
+                        <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                            Tanggal Mulai
                         </label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">Rp</span>
-                            <input type="number" 
-                                   name="budget" 
-                                   id="budget" 
-                                   value="{{ old('budget') }}"
-                                   step="1000"
-                                   class="w-full pl-12 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all"
-                                   placeholder="0">
-                        </div>
-                        @error('budget')
-                            <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
+                        <input type="date" name="start_date" id="start_date" value="{{ old('start_date') }}"
+                               style="width:100%;padding:9px 14px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box;transition:border-color .2s;color-scheme:dark"
+                               onfocus="this.style.borderColor='var(--apple-blue)'"
+                               onblur="this.style.borderColor='var(--dark-separator)'">
+                        @error('start_date')
+                            <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
                         @enderror
                     </div>
-
-                    <!-- Priority -->
                     <div>
-                        <label class="block text-sm font-medium mb-3 text-gray-300">
-                            Prioritas Proyek
+                        <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                            Target Selesai (Deadline)
                         </label>
-                        <div class="flex gap-4">
-                            <label class="flex items-center cursor-pointer group">
-                                <input type="radio" 
-                                       name="priority" 
-                                       value="low" 
-                                       {{ old('priority') == 'low' ? 'checked' : '' }}
-                                       class="w-4 h-4 text-apple-blue border-gray-700 focus:ring-apple-blue focus:ring-offset-gray-900">
-                                <span class="ml-2 text-sm text-gray-300 group-hover:text-white transition-colors">Rendah</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer group">
-                                <input type="radio" 
-                                       name="priority" 
-                                       value="medium" 
-                                       {{ old('priority', 'medium') == 'medium' ? 'checked' : '' }}
-                                       class="w-4 h-4 text-apple-blue border-gray-700 focus:ring-apple-blue focus:ring-offset-gray-900">
-                                <span class="ml-2 text-sm text-gray-300 group-hover:text-white transition-colors">Sedang</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer group">
-                                <input type="radio" 
-                                       name="priority" 
-                                       value="high" 
-                                       {{ old('priority') == 'high' ? 'checked' : '' }}
-                                       class="w-4 h-4 text-apple-blue border-gray-700 focus:ring-apple-blue focus:ring-offset-gray-900">
-                                <span class="ml-2 text-sm text-gray-300 group-hover:text-white transition-colors">Tinggi</span>
-                            </label>
-                        </div>
-                        @error('priority')
-                            <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Notes -->
-                    <div>
-                        <label for="notes" class="block text-sm font-medium mb-2 text-gray-300">
-                            Catatan Tambahan
-                        </label>
-                        <textarea name="notes" 
-                                  id="notes" 
-                                  rows="3"
-                                  class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-apple text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent transition-all resize-none"
-                                  placeholder="Catatan internal atau informasi penting lainnya...">{{ old('notes') }}</textarea>
-                        @error('notes')
-                            <p class="mt-1 text-sm text-apple-red-dark">{{ $message }}</p>
+                        <input type="date" name="deadline" id="deadline" value="{{ old('deadline') }}"
+                               style="width:100%;padding:9px 14px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box;transition:border-color .2s;color-scheme:dark"
+                               onfocus="this.style.borderColor='var(--apple-blue)'"
+                               onblur="this.style.borderColor='var(--dark-separator)'">
+                        @error('deadline')
+                            <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="flex items-center justify-end gap-3 pt-4">
-                <a href="{{ route('projects.index') }}" 
-                   class="px-6 py-2.5 bg-gray-700 text-white rounded-apple hover:bg-gray-600 transition-all duration-200 font-medium">
-                    Batal
-                </a>
-                <button type="submit" 
-                        class="px-6 py-2.5 bg-apple-blue text-white rounded-apple hover:bg-apple-blue-dark transition-all duration-200 font-medium shadow-lg hover:shadow-xl flex items-center gap-2"
-                        id="submitBtn">
-                    <i class="fas fa-plus"></i>
-                    <span>Buat Proyek</span>
-                </button>
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                        Budget (Rp)
+                    </label>
+                    <div style="position:relative">
+                        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.8rem;color:var(--dark-text-secondary);pointer-events:none;font-weight:600">Rp</span>
+                        <input type="number" name="budget" id="budget" value="{{ old('budget') }}" step="1000" min="0"
+                               placeholder="0"
+                               style="width:100%;padding:9px 14px 9px 38px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box;transition:border-color .2s"
+                               onfocus="this.style.borderColor='var(--apple-blue)'"
+                               onblur="this.style.borderColor='var(--dark-separator)'">
+                    </div>
+                    @error('budget')
+                        <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:10px">
+                        Prioritas Proyek
+                    </label>
+                    @php
+                    $priorities = [
+                        'low'    => ['label' => 'Rendah',  'color' => 'var(--apple-teal)',   'icon' => 'fa-arrow-down'],
+                        'medium' => ['label' => 'Sedang',  'color' => 'var(--apple-orange)', 'icon' => 'fa-minus'],
+                        'high'   => ['label' => 'Tinggi',  'color' => 'var(--apple-red)',    'icon' => 'fa-arrow-up'],
+                    ];
+                    $selectedPriority = old('priority', 'medium');
+                    @endphp
+                    <div style="display:flex;gap:10px">
+                        @foreach($priorities as $val => $p)
+                            @php $isSelected = $selectedPriority === $val; @endphp
+                            <label style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid {{ $isSelected ? 'color-mix(in srgb,'.$p['color'].' 50%,var(--dark-separator))' : 'var(--dark-separator)' }};background:{{ $isSelected ? 'color-mix(in srgb,'.$p['color'].' 12%,var(--dark-bg-tertiary))' : 'var(--dark-bg-tertiary)' }};transition:all .15s"
+                                   id="priority-label-{{ $val }}" onclick="setPriority('{{ $val }}')">
+                                <input type="radio" name="priority" value="{{ $val }}"
+                                       {{ $isSelected ? 'checked' : '' }}
+                                       style="display:none">
+                                <i class="fas {{ $p['icon'] }}" style="font-size:0.7rem;color:{{ $isSelected ? $p['color'] : 'var(--dark-text-secondary)' }}" id="priority-icon-{{ $val }}"></i>
+                                <span style="font-size:0.8rem;font-weight:600;color:{{ $isSelected ? $p['color'] : 'var(--dark-text-secondary)' }}" id="priority-text-{{ $val }}">{{ $p['label'] }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('priority')
+                        <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label style="display:block;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);margin-bottom:6px">
+                        Catatan Tambahan
+                    </label>
+                    <textarea name="notes" id="notes" rows="3"
+                              placeholder="Catatan internal atau informasi penting lainnya..."
+                              style="width:100%;padding:9px 14px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;resize:vertical;box-sizing:border-box;transition:border-color .2s;font-family:inherit"
+                              onfocus="this.style.borderColor='var(--apple-blue)'"
+                              onblur="this.style.borderColor='var(--dark-separator)'">{{ old('notes') }}</textarea>
+                    @error('notes')
+                        <p style="font-size:0.72rem;color:var(--apple-red);margin:5px 0 0"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>{{ $message }}</p>
+                    @enderror
+                </div>
+
             </div>
-        </form>
-    </div>
+        </div>
+
+        {{-- Actions --}}
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px">
+            <a href="{{ route('projects.index') }}"
+               style="display:inline-flex;align-items:center;gap:6px;padding:9px 20px;font-size:0.8rem;font-weight:600;color:var(--dark-text-secondary);background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:10px;text-decoration:none"
+               onmouseover="this.style.color='var(--dark-text-primary)';this.style.borderColor='var(--dark-text-secondary)'"
+               onmouseout="this.style.color='var(--dark-text-secondary)';this.style.borderColor='var(--dark-separator)'">
+                <i class="fas fa-times"></i>Batal
+            </a>
+            <button type="submit" id="submitBtn"
+                    style="display:inline-flex;align-items:center;gap:6px;padding:9px 24px;font-size:0.8rem;font-weight:700;background:var(--apple-blue);color:#fff;border:none;border-radius:10px;cursor:pointer"
+                    onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                <i class="fas fa-plus"></i>Buat Proyek
+            </button>
+        </div>
+
+    </form>
+
 </div>
+@endsection
 
+@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    // Form validation on submit
-    form.addEventListener('submit', function(e) {
-        const requiredFields = form.querySelectorAll('[required]');
-        let isValid = true;
-        let firstInvalidField = null;
-        
-        // Clear previous error highlights
-        requiredFields.forEach(field => {
-            field.classList.remove('border-red-500', 'border-2');
-        });
-        
-        // Validate required fields
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('border-red-500', 'border-2');
-                
-                if (!firstInvalidField) {
-                    firstInvalidField = field;
-                }
-            }
-        });
-        
-        if (!isValid) {
-            e.preventDefault();
-            
-            // Show error notification
-            showNotification('error', 'Mohon lengkapi semua field yang bertanda * (wajib diisi)');
-            
-            // Scroll to first invalid field
-            if (firstInvalidField) {
-                firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstInvalidField.focus();
-            }
-            
-            return false;
-        }
-        
-        // Disable submit button to prevent double submission
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Menyimpan...</span>';
+const _priorityCfg = {
+    low:    { color: 'var(--apple-teal)',   bg: 'color-mix(in srgb,var(--apple-teal) 12%,var(--dark-bg-tertiary))',    border: 'color-mix(in srgb,var(--apple-teal) 50%,var(--dark-separator))' },
+    medium: { color: 'var(--apple-orange)', bg: 'color-mix(in srgb,var(--apple-orange) 12%,var(--dark-bg-tertiary))', border: 'color-mix(in srgb,var(--apple-orange) 50%,var(--dark-separator))' },
+    high:   { color: 'var(--apple-red)',    bg: 'color-mix(in srgb,var(--apple-red) 12%,var(--dark-bg-tertiary))',    border: 'color-mix(in srgb,var(--apple-red) 50%,var(--dark-separator))' },
+};
+
+function setPriority(val) {
+    const radio = document.querySelector('input[name="priority"][value="' + val + '"]');
+    if (radio) radio.checked = true;
+    Object.keys(_priorityCfg).forEach(k => {
+        const label = document.getElementById('priority-label-' + k);
+        const icon  = document.getElementById('priority-icon-' + k);
+        const text  = document.getElementById('priority-text-' + k);
+        const cfg   = _priorityCfg[k];
+        const active = k === val;
+        label.style.background  = active ? cfg.bg     : 'var(--dark-bg-tertiary)';
+        label.style.borderColor = active ? cfg.border : 'var(--dark-separator)';
+        icon.style.color        = active ? cfg.color  : 'var(--dark-text-secondary)';
+        text.style.color        = active ? cfg.color  : 'var(--dark-text-secondary)';
     });
-    
-    // Remove error highlight on input
-    form.querySelectorAll('input, select, textarea').forEach(field => {
-        field.addEventListener('input', function() {
-            this.classList.remove('border-red-500', 'border-2');
-        });
-    });
-    
-    // Notification function
-    function showNotification(type, message) {
-        const colors = {
-            error: { bg: 'rgba(255, 59, 48, 0.1)', border: '#FF3B30', icon: 'exclamation-circle' },
-            success: { bg: 'rgba(52, 199, 89, 0.1)', border: '#34C759', icon: 'check-circle' },
-            warning: { bg: 'rgba(255, 149, 0, 0.1)', border: '#FF9500', icon: 'exclamation-triangle' }
-        };
-        
-        const color = colors[type] || colors.error;
-        
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 z-50 max-w-md animate-slide-in';
-        notification.style.cssText = `
-            background-color: ${color.bg};
-            border-left: 4px solid ${color.border};
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        `;
-        notification.innerHTML = `
-            <div class="card-elevated rounded-apple-lg p-4 flex items-start gap-3 shadow-2xl">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-${color.icon}" style="color: ${color.border}; font-size: 1.25rem;"></i>
-                </div>
-                <div class="flex-1">
-                    <p class="text-white font-medium">${message}</p>
-                </div>
-                <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-gray-400 hover:text-white transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => notification.remove(), 300);
-        }, 5000);
-    }
-    
-    // Auto-hide alerts after page load
-    document.querySelectorAll('.alert-auto-hide').forEach(alert => {
-        setTimeout(() => {
-            alert.style.opacity = '0';
-            alert.style.transform = 'translateY(-20px)';
-            setTimeout(() => alert.remove(), 300);
-        }, 5000);
-    });
+}
+
+document.getElementById('create-project-form').addEventListener('submit', function() {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    btn.style.opacity = '.7';
 });
 </script>
-
-<style>
-@keyframes slide-in {
-    from {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.animate-slide-in {
-    animation: slide-in 0.3s ease-out;
-}
-
-/* Enhanced focus state for required fields */
-input[required]:focus,
-select[required]:focus,
-textarea[required]:focus {
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2) !important;
-}
-
-/* Invalid field animation */
-.border-red-500 {
-    animation: shake 0.5s ease-in-out;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-</style>
-@endsection
+@endpush

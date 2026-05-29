@@ -1,135 +1,114 @@
-{{-- Bank Reconciliations Tab Content --}}
-<div class="space-y-5">
-    {{-- Header with Actions --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div style="display:flex;flex-direction:column;gap:16px">
+    {{-- Header --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:26px;height:26px;border-radius:8px;background:color-mix(in srgb,var(--apple-teal) 18%,transparent);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-balance-scale" style="color:var(--apple-teal);font-size:0.72rem"></i></span>
+            <div>
+                <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">Rekonsiliasi Bank</h3>
+                <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:2px 0 0">Pencocokan saldo buku dengan laporan bank</p>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+            @if(isset($pendingReconciliations) && $pendingReconciliations > 0)
+            <span style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;background:color-mix(in srgb,var(--apple-orange) 15%,transparent);color:var(--apple-orange)">
+                <i class="fas fa-clock" style="margin-right:4px"></i>{{ $pendingReconciliations }} Pending
+            </span>
+            @endif
+            <a href="{{ route('reconciliations.create') }}"
+               style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:var(--apple-teal);color:#fff;font-size:0.82rem;font-weight:600;text-decoration:none"
+               onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                <i class="fas fa-plus" style="font-size:0.72rem"></i>Rekonsiliasi Baru
+            </a>
+        </div>
+    </div>
+
+    {{-- Filter Form --}}
+    <form method="GET" style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:12px;padding:16px">
         <div>
-            <h3 class="text-xl font-semibold text-white">Rekonsiliasi Bank</h3>
-            <p class="text-sm text-dark-text-secondary">
-                Kelola dan pantau rekonsiliasi transaksi bank
-            </p>
+            <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Akun Rekening</label>
+            <select name="account_id" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none" onfocus="this.style.borderColor='var(--apple-teal)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                <option value="">Semua Akun</option>
+                @if(isset($accounts))
+                @foreach($accounts as $account)
+                <option value="{{ $account->id }}" {{ request('account_id') == $account->id ? 'selected' : '' }}>{{ $account->account_name }}</option>
+                @endforeach
+                @endif
+            </select>
         </div>
-        <a href="{{ route('reconciliations.create') }}"
-           class="admin-btn admin-btn-sm rounded bg-apple-green/25">
-            <i class="fas fa-plus mr-1.5"></i>Rekonsiliasi Baru
-        </a>
-    </div>
-
-    {{-- Filters --}}
-    <div class="card-elevated rounded-apple p-3">
-        <form method="GET" action="{{ route('cash-accounts.index') }}" class="flex flex-wrap gap-3 items-end">
-            <input type="hidden" name="tab" value="reconciliations">
-            <div class="flex-1 min-w-[150px]">
-                <label class="admin-label-compact block mb-1">Akun</label>
-                <select name="recon_account" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <option value="">Semua Akun</option>
-                    @foreach($accounts ?? [] as $acc)
-                        <option value="{{ $acc->id }}" {{ request('recon_account') == $acc->id ? 'selected' : '' }}>
-                            {{ $acc->account_name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="w-32">
-                <label class="admin-label-compact block mb-1">Status</label>
-                <select name="recon_status" class="admin-input admin-select w-full rounded bg-dark-bg-secondary border border-dark-separator text-white">
-                    <option value="">Semua</option>
-                    <option value="pending" {{ request('recon_status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="completed" {{ request('recon_status') == 'completed' ? 'selected' : '' }}>Selesai</option>
-                    <option value="discrepancy" {{ request('recon_status') == 'discrepancy' ? 'selected' : '' }}>Selisih</option>
-                </select>
-            </div>
-            <button type="submit" class="admin-btn admin-btn-sm rounded bg-apple-blue/25">
-                <i class="fas fa-filter"></i>
+        <div>
+            <label style="font-size:0.72rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">Status</label>
+            <select name="status" style="width:100%;padding:8px 12px;background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none" onfocus="this.style.borderColor='var(--apple-teal)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                <option value="">Semua Status</option>
+                <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="reconciled" {{ request('status') == 'reconciled' ? 'selected' : '' }}>Selesai</option>
+            </select>
+        </div>
+        <div style="display:flex;gap:8px">
+            <button type="submit" style="padding:8px 16px;border:none;border-radius:9px;background:var(--apple-teal);color:#fff;font-size:0.82rem;font-weight:600;cursor:pointer" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                <i class="fas fa-filter" style="margin-right:5px"></i>Filter
             </button>
-        </form>
-    </div>
+        </div>
+    </form>
 
-    {{-- Reconciliations Table --}}
-    @if(isset($reconciliations) && $reconciliations->count() > 0)
-    <div class="card-elevated rounded-apple-lg overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-                <thead class="bg-dark-bg-secondary">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Tanggal</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Akun</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Saldo Buku</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Saldo Bank</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Selisih</th>
-                        <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Status</th>
-                        <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-dark-text-secondary">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-700 bg-dark-bg-secondary">
-                    @foreach($reconciliations as $recon)
-                    <tr class="hover:bg-dark-bg-tertiary transition-apple">
-                        <td class="px-4 py-3">
-                            <div class="space-y-0.5">
-                                <p class="text-sm font-medium text-white">{{ $recon->reconciliation_date->format('d M Y') }}</p>
-                                <p class="text-xs text-dark-text-tertiary">{{ $recon->reconciliation_date->diffForHumans() }}</p>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <p class="text-sm text-white">{{ $recon->cashAccount->account_name ?? '-' }}</p>
-                            <p class="text-xs text-dark-text-secondary">{{ $recon->cashAccount->bank_name ?? '' }}</p>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <span class="text-sm font-mono text-white">Rp {{ number_format($recon->book_balance ?? 0, 0, ',', '.') }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <span class="text-sm font-mono text-white">Rp {{ number_format($recon->bank_balance ?? 0, 0, ',', '.') }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            @php
-                                $diff = ($recon->bank_balance ?? 0) - ($recon->book_balance ?? 0);
-                            @endphp
-                            <span class="text-sm font-mono {{ $diff != 0 ? 'text-apple-red' : 'text-apple-green' }}">
-                                Rp {{ number_format(abs($diff), 0, ',', '.') }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            @php
-                                $statusClasses = [
-                                    'pending' => 'bg-apple-orange/15 text-apple-orange',
-                                    'completed' => 'bg-apple-green/15 text-apple-green',
-                                    'discrepancy' => 'bg-apple-red/15 text-apple-red',
-                                ];
-                            @endphp
-                            <span class="px-2 py-1 text-xs font-medium rounded-apple {{ $statusClasses[$recon->status] ?? $statusClasses['pending'] }}">
-                                {{ ucfirst($recon->status) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <a href="{{ route('reconciliations.show', $recon) }}"
-                               class="inline-flex items-center px-2 py-1 rounded text-xs bg-apple-blue/15 text-apple-blue">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                        </td>
-                    </tr>
+    {{-- Table --}}
+    @if(isset($reconciliations) && count($reconciliations) > 0)
+    <div style="overflow-x:auto;border-radius:12px;border:1px solid var(--dark-separator)">
+        <table style="width:100%;border-collapse:collapse">
+            <thead style="background:var(--dark-bg-tertiary)">
+                <tr>
+                    @foreach(['Akun','Periode','Saldo Buku','Saldo Bank','Selisih','Status','Aksi'] as $h)
+                    <th style="padding:10px 14px;font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);text-align:left;border-bottom:1px solid var(--dark-separator);white-space:nowrap">{{ $h }}</th>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        
-        @if($reconciliations->hasPages())
-        <div class="px-4 py-3 bg-dark-bg-tertiary border-t border-dark-separator">
-            {{ $reconciliations->appends(['tab' => 'reconciliations'])->links() }}
-        </div>
-        @endif
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($reconciliations as $recon)
+                @php
+                    $diff = ($recon->bank_balance ?? 0) - ($recon->book_balance ?? 0);
+                    $statusMap = ['draft' => ['Draft', 'var(--dark-text-secondary)'], 'pending' => ['Pending', 'var(--apple-orange)'], 'reconciled' => ['Selesai', 'var(--apple-green)']];
+                    $statusInfo = $statusMap[$recon->status ?? ''] ?? ['Unknown', 'var(--dark-text-secondary)'];
+                @endphp
+                <tr style="border-bottom:1px solid var(--dark-separator)" onmouseover="this.style.background='var(--dark-bg-tertiary)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding:12px 14px">
+                        <p style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0">{{ $recon->cashAccount->account_name ?? '–' }}</p>
+                        @if($recon->cashAccount && $recon->cashAccount->bank_name)
+                        <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:2px 0 0">{{ $recon->cashAccount->bank_name }}</p>
+                        @endif
+                    </td>
+                    <td style="padding:12px 14px;font-size:0.82rem;color:var(--dark-text-primary);white-space:nowrap">
+                        {{ \Carbon\Carbon::parse($recon->period_start)->format('d M') }} – {{ \Carbon\Carbon::parse($recon->period_end)->format('d M Y') }}
+                    </td>
+                    <td style="padding:12px 14px;font-size:0.82rem;color:var(--dark-text-primary);text-align:right;white-space:nowrap">Rp {{ number_format($recon->book_balance ?? 0, 0, ',', '.') }}</td>
+                    <td style="padding:12px 14px;font-size:0.82rem;color:var(--dark-text-primary);text-align:right;white-space:nowrap">Rp {{ number_format($recon->bank_balance ?? 0, 0, ',', '.') }}</td>
+                    <td style="padding:12px 14px;font-size:0.82rem;text-align:right;white-space:nowrap;font-weight:700;color:{{ $diff == 0 ? 'var(--apple-green)' : 'var(--apple-red)' }}">
+                        {{ $diff >= 0 ? '+' : '' }}Rp {{ number_format($diff, 0, ',', '.') }}
+                    </td>
+                    <td style="padding:12px 14px">
+                        <span style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;background:color-mix(in srgb,{{ $statusInfo[1] }} 15%,transparent);color:{{ $statusInfo[1] }}">{{ $statusInfo[0] }}</span>
+                    </td>
+                    <td style="padding:12px 14px">
+                        <a href="{{ route('reconciliations.show', $recon) }}"
+                           style="width:28px;height:28px;border-radius:7px;background:color-mix(in srgb,var(--apple-blue) 14%,transparent);color:var(--apple-blue);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:0.75rem;border:1px solid color-mix(in srgb,var(--apple-blue) 22%,transparent)"
+                           onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'" title="Lihat Detail">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
     @else
-    {{-- Empty State --}}
-    <div class="card-elevated rounded-apple-lg p-8 text-center">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-apple-blue/15">
-            <i class="fas fa-balance-scale text-2xl text-apple-blue"></i>
+    <div style="text-align:center;padding:48px 20px">
+        <div style="width:52px;height:52px;border-radius:50%;background:color-mix(in srgb,var(--apple-teal) 12%,transparent);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+            <i class="fas fa-balance-scale" style="color:var(--apple-teal);font-size:1.2rem"></i>
         </div>
-        <h3 class="text-lg font-semibold text-white mb-2">Belum Ada Rekonsiliasi</h3>
-        <p class="text-sm text-dark-text-secondary mb-4">
-            Mulai rekonsiliasi untuk memastikan catatan buku sesuai dengan mutasi bank.
-        </p>
+        <p style="font-size:0.92rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 4px">Belum Ada Rekonsiliasi</p>
+        <p style="font-size:0.8rem;color:var(--dark-text-secondary);margin:0 0 12px">Buat rekonsiliasi bank untuk mencocokkan saldo buku dengan laporan bank</p>
         <a href="{{ route('reconciliations.create') }}"
-           class="admin-btn rounded px-4 py-2 bg-apple-green/25">
-            <i class="fas fa-plus mr-1.5"></i>Rekonsiliasi Pertama
+           style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:10px;background:var(--apple-teal);color:#fff;font-size:0.82rem;font-weight:600;text-decoration:none">
+            <i class="fas fa-plus" style="font-size:0.72rem"></i>Rekonsiliasi Pertama
         </a>
     </div>
     @endif

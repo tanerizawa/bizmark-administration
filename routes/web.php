@@ -45,6 +45,7 @@ Route::middleware('locale:id')->group(function () {
     Route::get('/layanan/kota/{citySlug}', [ProgrammaticSeoController::class, 'cityIndex'])->name('programmatic.city.id');
     Route::get('/layanan/perbandingan', [ServiceComparisonController::class, 'index'])->name('comparison.index');
     Route::get('/layanan/perbandingan/{comparisonSlug}', [ServiceComparisonController::class, 'show'])->name('comparison.show');
+    Route::get('/layanan/kategori/{categorySlug}', [ServiceController::class, 'showCategory'])->name('services.category.id');
     Route::get('/layanan/{slug}', [ServiceController::class, 'show'])->name('services.show.id');
     Route::get('/layanan/{serviceSlug}/sub/{subSlug}', [ServiceController::class, 'showSub'])->name('services.sub.id');
     Route::get('/layanan/{serviceSlug}/{citySlug}', [ProgrammaticSeoController::class, 'serviceLocation'])->name('programmatic.service-location.id');
@@ -74,6 +75,14 @@ Route::middleware('locale:id')->group(function () {
     Route::get('/tentang', function () {
         return view('landing.pages.about', ['locale' => 'id']);
     })->name('about.id');
+
+    Route::get('/harga', function () {
+        return view('landing.pages.pricing', ['locale' => 'id']);
+    })->name('pricing.id');
+
+    Route::get('/status', function () {
+        return view('landing.pages.status', ['locale' => 'id']);
+    })->name('status.id');
 });
 
 // English/PMA Landing Page (Explicit) - Responsive (No Mobile Redirect)
@@ -84,6 +93,7 @@ Route::prefix('en')->middleware('locale:en')->group(function () {
         return app(PublicArticleController::class)->landing($request);
     })->name('landing.en');
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index.en');
+    Route::get('/services/category/{categorySlug}', [ServiceController::class, 'showCategory'])->name('services.category.en');
     Route::get('/services/{slug}', [ServiceController::class, 'show'])->name('services.show.en');
     Route::get('/services/{serviceSlug}/sub/{subSlug}', [ServiceController::class, 'showSub'])->name('services.sub.en');
     Route::get('/blog', [PublicArticleController::class, 'index'])->name('blog.index.en');
@@ -115,6 +125,14 @@ Route::prefix('en')->middleware('locale:en')->group(function () {
     Route::get('/about', function () {
         return view('landing.pages.about', ['locale' => 'en']);
     })->name('about.en');
+
+    Route::get('/pricing', function () {
+        return view('landing.pages.pricing', ['locale' => 'en']);
+    })->name('pricing.en');
+
+    Route::get('/status', function () {
+        return view('landing.pages.status', ['locale' => 'en']);
+    })->name('status.en');
 });
 
 // Redirect old /id URLs to root for backward compatibility
@@ -165,12 +183,23 @@ Route::prefix('konsultasi-gratis')->group(function () {
     Route::get('/api/status/{inquiryNumber}', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'show'])
         ->name('landing.service-inquiry.show');
     Route::post('/api/check-rate-limit', [App\Http\Controllers\Landing\ServiceInquiryController::class, 'checkRateLimit'])
+        ->middleware('throttle:30,1') // rate limit check endpoint itself
         ->name('landing.service-inquiry.check-rate-limit');
 });
 
 // Permit Calculator Tool (Public)
 Route::get('/kalkulator-perizinan', [App\Http\Controllers\CalculatorController::class, 'index'])->name('calculator.index');
-Route::post('/kalkulator-perizinan/calculate', [App\Http\Controllers\CalculatorController::class, 'calculate'])->name('calculator.calculate');
+Route::post('/kalkulator-perizinan/calculate', [App\Http\Controllers\CalculatorController::class, 'calculate'])
+    ->middleware('throttle:20,1') // 20 calculations per minute per IP
+    ->name('calculator.calculate');
+
+// Document Checklist AI Generator (Public)
+Route::prefix('checklist-dokumen')->name('checklist.')->group(function () {
+    Route::get('/', [App\Http\Controllers\ChecklistGeneratorController::class, 'index'])->name('index');
+    Route::post('/generate', [App\Http\Controllers\ChecklistGeneratorController::class, 'generate'])->name('generate')->middleware('throttle:10,1');
+    Route::get('/hasil/{checklist}', [App\Http\Controllers\ChecklistGeneratorController::class, 'result'])->name('result');
+    Route::get('/download/{checklist}', [App\Http\Controllers\ChecklistGeneratorController::class, 'download'])->name('download');
+});
 
 // Polygon SHP Maker Tool (Public)
 Route::get('/polygon-shp-maker', [App\Modules\Perizinan\Controllers\Public\PolygonToolController::class, 'index'])->name('polygon.shp.index');
@@ -198,7 +227,7 @@ Route::post('/api/set-screen-width', function (\Illuminate\Http\Request $request
     }
 
     return response()->json(['success' => true, 'width' => session('screen_width')]);
-})->name('api.screen-width');
+})->middleware('throttle:60,1')->name('api.screen-width');
 
 // ========================================
 // UNIFIED LOGIN SYSTEM
@@ -207,7 +236,8 @@ Route::post('/api/set-screen-width', function (\Illuminate\Http\Request $request
 // Main login portal for all users
 Route::get('/login', [App\Http\Controllers\Auth\UnifiedLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\UnifiedLoginController::class, 'login'])
-    ->middleware('throttle:5,1'); // 5 attempts per minute
+    ->middleware('throttle:5,1') // 5 attempts per minute
+    ->name('login.post');
 Route::post('/logout', [App\Http\Controllers\Auth\UnifiedLoginController::class, 'logout'])->name('logout');
 
 // Admin-only direct login (hidden path, configurable via ADMIN_SECRET_PATH env)
@@ -255,11 +285,13 @@ Route::prefix('client')->name('client.')->group(function () {
 
         // Keep legacy POST for backwards compatibility (will be deprecated)
         Route::post('/login', [App\Http\Controllers\Auth\ClientAuthController::class, 'login'])
-            ->middleware('throttle:5,1'); // Max 5 attempts per minute
+            ->middleware('throttle:5,1')
+            ->name('login'); // client.login
 
         Route::get('/register', [App\Http\Controllers\Auth\ClientAuthController::class, 'showRegistrationForm'])->name('register');
         Route::post('/register', [App\Http\Controllers\Auth\ClientAuthController::class, 'register'])
-            ->middleware('throttle:10,1'); // Max 10 registrations per minute
+            ->middleware('throttle:10,1')
+            ->name('register.store'); // client.register.store
 
         Route::get('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'showForgotPasswordForm'])->name('password.request');
         Route::post('/forgot-password', [App\Http\Controllers\Auth\ClientAuthController::class, 'sendResetLinkEmail'])
@@ -329,6 +361,11 @@ Route::prefix('client')->name('client.')->group(function () {
         // Profile Routes
         Route::get('/profile', [App\Http\Controllers\Client\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/notifications', [App\Http\Controllers\Client\ProfileController::class, 'updateNotifications'])->name('profile.notifications');
+        Route::put('/profile/password', [App\Http\Controllers\Client\ProfileController::class, 'updatePassword'])->name('profile.password');
+        Route::get('/profile/two-factor/enable', [App\Http\Controllers\Client\ProfileController::class, 'twoFactorEnable'])->name('profile.two-factor.enable');
+        Route::delete('/profile/two-factor', [App\Http\Controllers\Client\ProfileController::class, 'twoFactorDisable'])->name('profile.two-factor.disable');
+        Route::delete('/profile', [App\Http\Controllers\Client\ProfileController::class, 'destroy'])->name('profile.destroy');
 
         // Email Verification Routes
         Route::get('/verify-email', [App\Http\Controllers\Auth\ClientAuthController::class, 'showVerifyEmailNotice'])
@@ -363,7 +400,7 @@ Route::prefix('webhook/email')->name('webhook.email.')->group(function () {
 });
 
 // AI Settings Management Routes
-Route::middleware(['auth', 'permission:ai.manage_settings', '2fa'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'permission:ai.manage_settings'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('ai-settings', [App\Http\Controllers\Admin\AISettingsController::class, 'index'])
         ->name('ai-settings.index');
     Route::get('ai-settings/recent-changes', [App\Http\Controllers\Admin\AISettingsController::class, 'recentChanges'])
@@ -485,6 +522,39 @@ Route::prefix('client')->name('client.')->middleware(['auth:client'])->group(fun
         ->name('applications.revisions.approve');
     Route::post('applications/{applicationId}/revisions/{revisionId}/reject', [App\Modules\Proyek\Controllers\Client\RevisionController::class, 'reject'])
         ->name('applications.revisions.reject');
+
+    // P1 — Compliance Monitor
+    Route::get('compliance-monitor', [App\Http\Controllers\Client\ComplianceMonitorController::class, 'index'])
+        ->name('compliance.index');
+    Route::get('compliance-monitor/export', [App\Http\Controllers\Client\ComplianceMonitorController::class, 'export'])
+        ->name('compliance-monitor.export');
+
+    // P6 — Document Vault
+    Route::get('vault', [App\Http\Controllers\Client\DocumentVaultController::class, 'index'])->name('vault.index');
+    Route::get('vault/{document}/download', [App\Http\Controllers\Client\DocumentVaultController::class, 'download'])->name('vault.download');
+    Route::post('vault/bulk-download', [App\Http\Controllers\Client\DocumentVaultController::class, 'bulkDownload'])->name('vault.bulk-download');
+
+    // P4 — OSS-RBA Status Tracker
+    Route::get('oss-tracker', [App\Http\Controllers\Client\OssTrackerController::class, 'index'])->name('oss-tracker.index');
+    Route::post('oss-tracker/credential', [App\Http\Controllers\Client\OssTrackerController::class, 'storeCredential'])->name('oss-tracker.store-credential');
+    Route::post('oss-tracker/{status}/refresh', [App\Http\Controllers\Client\OssTrackerController::class, 'refreshStatus'])->name('oss-tracker.refresh');
+
+    // P8 — B2B API Key Management
+    Route::get('api-keys', [App\Http\Controllers\Client\ApiKeyController::class, 'index'])->name('api-keys.index');
+    Route::post('api-keys', [App\Http\Controllers\Client\ApiKeyController::class, 'store'])->name('api-keys.store');
+    Route::patch('api-keys/{apiKey}/toggle', [App\Http\Controllers\Client\ApiKeyController::class, 'toggleActive'])->name('api-keys.toggle');
+    Route::delete('api-keys/{apiKey}', [App\Http\Controllers\Client\ApiKeyController::class, 'destroy'])->name('api-keys.destroy');
+
+    // Command Palette Live Search
+    Route::get('search', [App\Http\Controllers\Client\SearchController::class, 'index'])->name('search');
+
+    // P10 — Compliance Report Generator
+    Route::get('compliance-reports', [App\Http\Controllers\Client\ComplianceReportController::class, 'index'])->name('compliance-reports.index');
+    Route::get('compliance-reports/create', [App\Http\Controllers\Client\ComplianceReportController::class, 'create'])->name('compliance-reports.create');
+    Route::post('compliance-reports', [App\Http\Controllers\Client\ComplianceReportController::class, 'store'])->name('compliance-reports.store');
+    Route::get('compliance-reports/{report}/download', [App\Http\Controllers\Client\ComplianceReportController::class, 'download'])->name('compliance-reports.download');
+    Route::post('compliance-reports/{report}/email', [App\Http\Controllers\Client\ComplianceReportController::class, 'sendEmail'])->name('compliance-reports.email');
+    Route::get('compliance-reports/template-params/{template}', [App\Http\Controllers\Client\ComplianceReportController::class, 'templateParameters'])->name('compliance-reports.template-params');
 });
 
 // Client: Push Notifications API (Phase 2)
@@ -514,6 +584,10 @@ Route::prefix('api/kbli')->group(function () {
     Route::get('/search', [App\Modules\Perizinan\Controllers\Api\KbliController::class, 'search'])->name('api.kbli.search');
     Route::get('/{code}', [App\Modules\Perizinan\Controllers\Api\KbliController::class, 'show'])->name('api.kbli.show');
 });
+
+// P9 — Permit Timeline Simulator (public tool)
+Route::get('/simulasi-timeline', [App\Http\Controllers\TimelineSimulatorController::class, 'index'])->name('timeline-simulator.index');
+Route::post('/simulasi-timeline/hitung', [App\Http\Controllers\TimelineSimulatorController::class, 'simulate'])->name('timeline-simulator.simulate');
 
 // ============================================================================
 // RECRUITMENT SYSTEM ROUTES

@@ -81,7 +81,7 @@ PROMPT;
             ['role' => 'system', 'content' => 'Kamu adalah social media specialist Indonesia. Output valid JSON only.'],
             ['role' => 'user', 'content' => $prompt],
         ], [
-            'model' => 'google/gemini-2.5-flash',
+            'model' => config('services.openrouter.default_model', 'openrouter/free'),
             'temperature' => 0.7,
             'max_tokens' => 2000,
         ]);

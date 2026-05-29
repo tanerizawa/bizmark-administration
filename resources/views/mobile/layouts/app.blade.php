@@ -722,17 +722,23 @@
             navigator.serviceWorker.register('/sw-mobile.js')
                 .then(registration => {
                     console.log('✅ Mobile Service Worker registered:', registration.scope);
-                    
-                    // Check for updates
+
+                    const activateWaitingWorker = () => {
+                        if (registration.waiting) {
+                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        }
+                    };
+
+                    registration.update().catch(() => {});
+                    activateWaitingWorker();
+
                     registration.addEventListener('updatefound', () => {
                         const newWorker = registration.installing;
+                        if (!newWorker) return;
+
                         newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                // New version available
-                                if (confirm('Ada versi baru tersedia. Refresh sekarang?')) {
-                                    newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                    window.location.reload();
-                                }
+                            if (newWorker.state === 'installed') {
+                                activateWaitingWorker();
                             }
                         });
                     });

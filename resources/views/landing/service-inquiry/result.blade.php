@@ -15,54 +15,12 @@
     <meta property="og:site_name" content="Bizmark.ID">
     <meta property="og:locale" content="id_ID">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts preconnect (font loaded via Vite landing.css) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                fontFamily: {
-                    sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
-                },
-                colors: {
-                    primary: {
-                        50: '#EFF6FF',
-                        100: '#DBEAFE',
-                        200: '#BFDBFE',
-                        300: '#93C5FD',
-                        400: '#60A5FA',
-                        500: '#0A66C2',
-                        600: '#004182',
-                        700: '#003161',
-                        800: '#002445',
-                        900: '#001A33',
-                    },
-                    accent: {
-                        400: '#FB923C',
-                        500: '#F97316',
-                        600: '#EA580C',
-                    }
-                },
-                boxShadow: {
-                    'soft': '0 2px 15px rgba(0, 0, 0, 0.05)',
-                    'soft-lg': '0 10px 40px rgba(0, 0, 0, 0.08)',
-                    'soft-xl': '0 20px 50px rgba(0, 0, 0, 0.12)',
-                }
-            }
-        }
-    }
-    </script>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh2JtHeS4ZL8SaJIs54IVqVdPXgeSrxlL1YgM7GkL4Z3+5eZ5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Vite: Tailwind CSS + Font Awesome + Alpine.js (from npm, not CDN) -->
+    @vite(['resources/css/landing.css', 'resources/js/app.js'])
 
     <style>
         [x-cloak] { display: none !important; }
@@ -113,18 +71,18 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <a href="{{ $landingUrl }}" class="text-xl font-bold text-gray-900">
-                        <i class="fas fa-certificate mr-2 text-primary-500"></i>Bizmark.ID
+                        <i class="fas fa-certificate mr-2 text-blue-600"></i>Bizmark.ID
                     </a>
                     <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
-                        <a href="{{ $landingUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.home') }}</a>
-                        <a href="{{ $landingUrl }}#services" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.services') }}</a>
-                        <a href="{{ $landingUrl }}#process" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.process') }}</a>
-                        <a href="{{ $landingUrl }}#about" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.about') }}</a>
-                        <a href="{{ $blogUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition">{{ __('landing.nav.blog') }}</a>
+                        <a href="{{ $landingUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">{{ __('landing.nav.home') }}</a>
+                        <a href="{{ $landingUrl }}#services" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">{{ __('landing.nav.services') }}</a>
+                        <a href="{{ $landingUrl }}#process" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">{{ __('landing.nav.process') }}</a>
+                        <a href="{{ $landingUrl }}#about" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">{{ __('landing.nav.about') }}</a>
+                        <a href="{{ $blogUrl }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">{{ __('landing.nav.blog') }}</a>
                         <!-- Locale Switcher (Alpine.js) -->
                         <div class="relative inline-block text-left" @click.outside="localeOpen = false">
                             <button type="button" @click="localeOpen = !localeOpen"
-                                    class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border transition-colors text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500"
+                                    class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border transition-colors text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-600"
                                     :aria-expanded="localeOpen"
                                     aria-haspopup="true"
                                     aria-label="{{ $currentLocale === 'id' ? 'Ganti bahasa' : 'Change language' }}">
@@ -138,24 +96,24 @@
                                  class="absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white border border-gray-200 rounded-lg shadow-lg ring-1 ring-black/5"
                                  role="menu">
                                 <div class="py-1">
-                                    <a href="{{ route('locale.set', 'id') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === 'id' ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}" role="menuitem">
+                                    <a href="{{ route('locale.set', 'id') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === 'id' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}" role="menuitem">
                                         <span class="text-lg">🇮🇩</span><span>Bahasa Indonesia</span>
-                                        @if($currentLocale === 'id')<i class="fas fa-check ml-auto text-primary-500 text-xs"></i>@endif
+                                        @if($currentLocale === 'id')<i class="fas fa-check ml-auto text-blue-600 text-xs"></i>@endif
                                     </a>
-                                    <a href="{{ route('locale.set', 'en') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === 'en' ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}" role="menuitem">
+                                    <a href="{{ route('locale.set', 'en') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === 'en' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}" role="menuitem">
                                         <span class="text-lg">🇬🇧</span><span>English</span>
-                                        @if($currentLocale === 'en')<i class="fas fa-check ml-auto text-primary-500 text-xs"></i>@endif
+                                        @if($currentLocale === 'en')<i class="fas fa-check ml-auto text-blue-600 text-xs"></i>@endif
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <a href="{{ $landingUrl }}#contact" class="ml-2 inline-flex items-center px-4 py-2 bg-primary-500 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(10,102,194,0.25)]">
+                        <a href="{{ $landingUrl }}#contact" class="ml-2 inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(10,102,194,0.25)]">
                             {{ __('landing.nav.get_started') }}
                         </a>
                     </div>
                     <!-- Mobile hamburger -->
                     <button @click="mobileOpen = !mobileOpen"
-                            class="md:hidden p-2.5 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-primary-500 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
+                            class="md:hidden p-2.5 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-blue-600 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
                             :aria-expanded="mobileOpen"
                             aria-label="{{ $currentLocale === 'id' ? 'Buka menu navigasi' : 'Open navigation menu' }}">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -186,7 +144,7 @@
              aria-label="{{ $currentLocale === 'id' ? 'Menu navigasi' : 'Navigation menu' }}"
              aria-modal="true">
             <div class="flex items-center justify-between p-4 border-b border-gray-100">
-                <span class="text-lg font-bold text-gray-900"><i class="fas fa-certificate mr-2 text-primary-500"></i>Menu</span>
+                <span class="text-lg font-bold text-gray-900"><i class="fas fa-certificate mr-2 text-blue-600"></i>Menu</span>
                 <button @click="mobileOpen = false"
                         class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
                         aria-label="{{ $currentLocale === 'id' ? 'Tutup menu' : 'Close menu' }}">
@@ -195,26 +153,26 @@
             </div>
             <div class="flex flex-col h-[calc(100%-65px)] overflow-y-auto">
                 <div class="p-4 space-y-1 flex-1">
-                    <a href="{{ $landingUrl }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-home w-5 text-center text-gray-400"></i>{{ __('landing.nav.home') }}</a>
-                    <a href="{{ $landingUrl }}#services" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-briefcase w-5 text-center text-gray-400"></i>{{ __('landing.nav.services') }}</a>
-                    <a href="{{ $landingUrl }}#process" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-tasks w-5 text-center text-gray-400"></i>{{ __('landing.nav.process') }}</a>
-                    <a href="{{ $landingUrl }}#about" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-info-circle w-5 text-center text-gray-400"></i>{{ __('landing.nav.about') }}</a>
-                    <a href="{{ $blogUrl }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition min-h-[44px]"><i class="fas fa-newspaper w-5 text-center text-gray-400"></i>{{ __('landing.nav.blog') }}</a>
-                    <a href="{{ route('landing.service-inquiry.create') }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-primary-500 bg-primary-50 rounded-lg min-h-[44px]"><i class="fas fa-robot w-5 text-center"></i>Analisis AI</a>
+                    <a href="{{ $landingUrl }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition min-h-[44px]"><i class="fas fa-home w-5 text-center text-gray-400"></i>{{ __('landing.nav.home') }}</a>
+                    <a href="{{ $landingUrl }}#services" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition min-h-[44px]"><i class="fas fa-briefcase w-5 text-center text-gray-400"></i>{{ __('landing.nav.services') }}</a>
+                    <a href="{{ $landingUrl }}#process" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition min-h-[44px]"><i class="fas fa-tasks w-5 text-center text-gray-400"></i>{{ __('landing.nav.process') }}</a>
+                    <a href="{{ $landingUrl }}#about" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition min-h-[44px]"><i class="fas fa-info-circle w-5 text-center text-gray-400"></i>{{ __('landing.nav.about') }}</a>
+                    <a href="{{ $blogUrl }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition min-h-[44px]"><i class="fas fa-newspaper w-5 text-center text-gray-400"></i>{{ __('landing.nav.blog') }}</a>
+                    <a href="{{ route('landing.service-inquiry.create') }}" @click="mobileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg min-h-[44px]"><i class="fas fa-robot w-5 text-center"></i>Analisis AI</a>
                 </div>
                 <div class="px-4 py-3 border-t border-gray-100">
                     <p class="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-3">{{ __('landing.footer.language') }}</p>
                     <div class="flex gap-2">
-                        <a href="{{ route('locale.set', 'id') }}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition min-h-[44px] {{ $currentLocale === 'id' ? 'bg-primary-50 font-semibold text-primary-600' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}">
+                        <a href="{{ route('locale.set', 'id') }}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition min-h-[44px] {{ $currentLocale === 'id' ? 'bg-blue-50 font-semibold text-blue-700' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}">
                             <span>🇮🇩</span><span class="text-sm">Indonesia</span>
                         </a>
-                        <a href="{{ route('locale.set', 'en') }}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition min-h-[44px] {{ $currentLocale === 'en' ? 'bg-primary-50 font-semibold text-primary-600' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}">
+                        <a href="{{ route('locale.set', 'en') }}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition min-h-[44px] {{ $currentLocale === 'en' ? 'bg-blue-50 font-semibold text-blue-700' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}">
                             <span>🇬🇧</span><span class="text-sm">English</span>
                         </a>
                     </div>
                 </div>
                 <div class="p-4 border-t border-gray-100">
-                    <a href="{{ $landingUrl }}#contact" @click="mobileOpen = false" class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary-500 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition min-h-[44px]"><i class="fas fa-paper-plane"></i>{{ __('landing.nav.get_started') }}</a>
+                    <a href="{{ $landingUrl }}#contact" @click="mobileOpen = false" class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition min-h-[44px]"><i class="fas fa-paper-plane"></i>{{ __('landing.nav.get_started') }}</a>
                 </div>
             </div>
         </div>
@@ -222,18 +180,18 @@
 
     <!-- Hero Header -->
     <section class="pt-24 pb-8 sm:pt-28 sm:pb-10 bg-gradient-to-b from-[#FDFBF8] via-[#FDFBF8] to-[#F5F3F8] bg-mesh relative overflow-hidden">
-        <div class="absolute -top-16 -right-16 w-64 h-64 bg-primary-100/30 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-accent-400/10 rounded-full blur-3xl"></div>
+        <div class="absolute -top-16 -right-16 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-orange-400/10 rounded-full blur-3xl"></div>
 
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="max-w-5xl mx-auto text-center animate-[fadeIn_0.6s_ease_forwards]">
                 <!-- Breadcrumb -->
                 <nav class="flex items-center justify-center gap-2 text-sm text-gray-400 mb-5" aria-label="Breadcrumb">
-                    <a href="{{ route('landing.id') }}" class="hover:text-primary-500 transition">Beranda</a>
+                    <a href="{{ route('landing.id') }}" class="hover:text-blue-600 transition">Beranda</a>
                     <i class="fas fa-chevron-right text-[10px]"></i>
-                    <a href="{{ route('landing.service-inquiry.create') }}" class="hover:text-primary-500 transition">Analisis Perizinan</a>
+                    <a href="{{ route('landing.service-inquiry.create') }}" class="hover:text-blue-600 transition">Analisis Perizinan</a>
                     <i class="fas fa-chevron-right text-[10px]"></i>
-                    <span class="text-primary-500 font-medium">Hasil</span>
+                    <span class="text-blue-600 font-medium">Hasil</span>
                 </nav>
 
                 @php
@@ -248,7 +206,7 @@
                         <i class="fas fa-check-circle"></i> Analisis Selesai
                     </div>
                 @elseif($isStillProcessing)
-                    <div class="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 text-primary-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
+                    <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
                         <i class="fas fa-spinner fa-spin"></i> Sedang Diproses
                     </div>
                 @elseif($hasError)
@@ -270,7 +228,7 @@
 
                 @if($hasAnalysis)
                 <div class="mt-4 no-print">
-                    <button @click="window.print()" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-primary-500 transition px-3 py-1.5 rounded-lg hover:bg-primary-50">
+                    <button @click="window.print()" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-blue-600 transition px-3 py-1.5 rounded-lg hover:bg-blue-50">
                         <i class="fas fa-print"></i> Cetak Hasil
                     </button>
                 </div>
@@ -322,9 +280,9 @@
         {{-- Processing State --}}
         @if($isStillProcessing)
         <div class="max-w-2xl mx-auto text-center" x-data="{ dots: '.' }" x-init="setInterval(() => dots = dots.length >= 3 ? '.' : dots + '.', 600)">
-            <div class="bg-white rounded-2xl shadow-soft-lg border border-gray-100 p-8 sm:p-12 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 sm:p-12 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
                 <div id="poll-spinner" class="w-16 h-16 mx-auto mb-6 relative">
-                    <svg class="animate-spin w-full h-full text-primary-500" viewBox="0 0 24 24" fill="none">
+                    <svg class="animate-spin w-full h-full text-blue-600" viewBox="0 0 24 24" fill="none">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -392,14 +350,14 @@
         @elseif($hasError)
         {{-- Error State --}}
         <div class="max-w-2xl mx-auto text-center">
-            <div class="bg-white rounded-2xl shadow-soft-lg border border-red-100 p-8 sm:p-12 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+            <div class="bg-white rounded-2xl shadow-lg border border-red-100 p-8 sm:p-12 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
                 <div class="w-16 h-16 mx-auto mb-6 bg-red-50 rounded-full flex items-center justify-center">
                     <i class="fas fa-exclamation-triangle text-2xl text-red-400"></i>
                 </div>
                 <h2 class="text-xl font-bold text-gray-900 mb-2">Analisis Gagal Diproses</h2>
                 <p class="text-gray-500 mb-6">Maaf, terjadi kendala saat menganalisis data Anda. Tim kami akan menghubungi Anda melalui email <strong class="text-gray-700">{{ $inquiry->email }}</strong> dengan hasil analisis manual.</p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="{{ route('landing.service-inquiry.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(10,102,194,0.25)]">
+                    <a href="{{ route('landing.service-inquiry.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(10,102,194,0.25)]">
                         <i class="fas fa-redo"></i> Coba Lagi
                     </a>
                     <a href="{{ $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855' }}?text={{ rawurlencode('Halo, analisis saya gagal. Nomor inquiry: ' . $inquiry->inquiry_number) }}"
@@ -416,7 +374,7 @@
         <div class="max-w-5xl mx-auto space-y-5">
 
             <!-- Summary Card -->
-            <div class="rounded-2xl shadow-soft-lg p-5 sm:p-6 text-white animate-[fadeIn_0.6s_ease_forwards] [animation-delay:100ms] bg-gradient-to-r from-[#0A66C2] to-[#004182]">
+            <div class="rounded-2xl shadow-lg p-5 sm:p-6 text-white animate-[fadeIn_0.6s_ease_forwards] [animation-delay:100ms] bg-gradient-to-r from-[#0A66C2] to-[#004182]">
                 <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
                     <i class="fas fa-chart-bar"></i> Ringkasan Analisis
                 </h2>
@@ -479,12 +437,12 @@
 
             {{-- KBLI Suggestion --}}
             @if($kbliSuggestion && !empty($kbliSuggestion['code']))
-            <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:200ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:200ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
                 <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <i class="fas fa-tag text-primary-500"></i> Kode KBLI yang Disarankan
+                    <i class="fas fa-tag text-blue-600"></i> Kode KBLI yang Disarankan
                 </h2>
-                <div class="bg-primary-50 border border-primary-100 rounded-xl p-4 flex items-center gap-4">
-                    <div class="text-2xl font-mono font-bold text-primary-500">{{ $kbliSuggestion['code'] }}</div>
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center gap-4">
+                    <div class="text-2xl font-mono font-bold text-blue-600">{{ $kbliSuggestion['code'] }}</div>
                     <div class="flex-1">
                         <div class="font-semibold text-gray-900 text-sm">{{ $kbliSuggestion['description'] ?? '' }}</div>
                         @if(!empty($kbliSuggestion['confidence']))
@@ -526,20 +484,20 @@
             @endphp
 
             @if($hasFlow && count($permits) > 1)
-            <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:300ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:300ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
                 <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <i class="fas fa-project-diagram text-primary-500"></i> Alur Pengurusan Izin
+                    <i class="fas fa-project-diagram text-blue-600"></i> Alur Pengurusan Izin
                 </h2>
                 <p class="text-xs text-gray-500 mb-4">Urutan yang direkomendasikan berdasarkan dependensi antar izin.</p>
                 <div class="relative">
-                    <div class="absolute left-4 top-4 bottom-4 w-0.5 bg-primary-100 hidden sm:block"></div>
+                    <div class="absolute left-4 top-4 bottom-4 w-0.5 bg-blue-100 hidden sm:block"></div>
                     <div class="space-y-3">
                         @foreach($permits as $fIdx => $fp)
                             <div class="flex items-start gap-3 relative">
                                 <div class="relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
                                     @if(($fp['priority'] ?? '') === 'critical') bg-red-500 text-white
                                     @elseif(($fp['priority'] ?? '') === 'high') bg-orange-500 text-white
-                                    @else bg-primary-500 text-white
+                                    @else bg-blue-600 text-white
                                     @endif">
                                     {{ $fIdx + 1 }}
                                 </div>
@@ -558,7 +516,7 @@
                                             <span class="text-gray-400"><i class="fas fa-arrow-left mr-0.5"></i>Butuh: {{ implode(', ', array_map(fn($p) => is_string($p) ? $p : '', $fp['prerequisites'])) }}</span>
                                         @endif
                                         @if(!empty($fp['triggers_next']))
-                                            <span class="text-primary-400"><i class="fas fa-arrow-right mr-0.5"></i>Membuka: {{ implode(', ', array_map(fn($p) => is_string($p) ? $p : '', $fp['triggers_next'])) }}</span>
+                                            <span class="text-blue-400"><i class="fas fa-arrow-right mr-0.5"></i>Membuka: {{ implode(', ', array_map(fn($p) => is_string($p) ? $p : '', $fp['triggers_next'])) }}</span>
                                         @endif
                                     </div>
                                 </div>
@@ -573,9 +531,9 @@
             @endif
 
             <!-- Recommended Permits -->
-            <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:400ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:400ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
                 <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <i class="fas fa-clipboard-check text-primary-500"></i> Izin yang Direkomendasikan
+                    <i class="fas fa-clipboard-check text-blue-600"></i> Izin yang Direkomendasikan
                     @if(count($permits) > 0)
                     <span class="text-xs font-normal text-gray-400 ml-1">({{ count($permits) }} izin)</span>
                     @endif
@@ -587,7 +545,7 @@
                             <div class="border-l-4
                                 @if(($permit['priority'] ?? '') === 'critical') border-red-500 bg-red-50/60
                                 @elseif(($permit['priority'] ?? '') === 'high') border-orange-500 bg-orange-50/60
-                                @else border-primary-500 bg-primary-50/40
+                                @else border-blue-600 bg-blue-50/40
                                 @endif
                                 rounded-xl p-4">
                                 <div class="flex items-start justify-between gap-4">
@@ -597,7 +555,7 @@
                                             <span class="px-2 py-0.5 text-xs font-semibold rounded-full
                                                 @if(($permit['priority'] ?? '') === 'critical') bg-red-500 text-white
                                                 @elseif(($permit['priority'] ?? '') === 'high') bg-orange-500 text-white
-                                                @else bg-primary-500 text-white
+                                                @else bg-blue-600 text-white
                                                 @endif">
                                                 {{ strtoupper($permit['priority'] ?? 'medium') }}
                                             </span>
@@ -618,7 +576,7 @@
                                                 <span>{{ $permit['estimated_timeline'] ?? '-' }}</span>
                                             </div>
                                             @if(isset($permit['government_fee']))
-                                            <div class="flex items-center gap-1.5 text-primary-500" title="Biaya Pemerintah">
+                                            <div class="flex items-center gap-1.5 text-blue-600" title="Biaya Pemerintah">
                                                 <i class="fas fa-building"></i>
                                                 <span>Gov: {{ $formatRange($permit['government_fee']['min'] ?? 0, $permit['government_fee']['max'] ?? 0) }}</span>
                                             </div>
@@ -674,7 +632,7 @@
 
             <!-- Risk Factors -->
             @if(count($riskFactors) > 0)
-            <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:500ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:500ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
                 <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
                     <i class="fas fa-exclamation-triangle text-amber-500"></i> Faktor Risiko & Perhatian
                 </h2>
@@ -691,14 +649,14 @@
 
             <!-- Required Documents -->
             @if(count($requiredDocuments) > 0)
-            <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:600ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:600ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
                 <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <i class="fas fa-file-alt text-primary-500"></i> Dokumen yang Perlu Disiapkan
+                    <i class="fas fa-file-alt text-blue-600"></i> Dokumen yang Perlu Disiapkan
                 </h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     @foreach($requiredDocuments as $index => $doc)
                         <div class="flex items-start gap-2.5 bg-gray-50 rounded-lg px-3 py-2">
-                            <span class="flex-shrink-0 w-5 h-5 rounded bg-primary-100 text-primary-500 flex items-center justify-center text-xs font-bold mt-0.5">{{ $index + 1 }}</span>
+                            <span class="flex-shrink-0 w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold mt-0.5">{{ $index + 1 }}</span>
                             <span class="text-gray-700 text-sm">{{ $doc }}</span>
                         </div>
                     @endforeach
@@ -708,14 +666,14 @@
 
             <!-- Next Steps -->
             @if(count($nextSteps) > 0)
-            <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:700ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:700ms] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
                 <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <i class="fas fa-arrow-right text-primary-500"></i> Langkah Selanjutnya
+                    <i class="fas fa-arrow-right text-blue-600"></i> Langkah Selanjutnya
                 </h2>
                 <ol class="space-y-2">
                     @foreach($nextSteps as $index => $step)
                         <li class="flex items-start gap-2.5">
-                            <span class="flex-shrink-0 w-5 h-5 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs font-bold mt-0.5">{{ $index + 1 }}</span>
+                            <span class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold mt-0.5">{{ $index + 1 }}</span>
                             <span class="text-gray-700 text-sm leading-relaxed">{{ $step }}</span>
                         </li>
                     @endforeach
@@ -743,7 +701,7 @@
             @endif
 
             <!-- CTA Section -->
-            <div class="rounded-2xl shadow-soft-lg p-6 sm:p-8 text-white text-center animate-[fadeIn_0.6s_ease_forwards] [animation-delay:900ms] no-print relative overflow-hidden bg-gradient-to-r from-[#0A66C2] to-[#004182]">
+            <div class="rounded-2xl shadow-lg p-6 sm:p-8 text-white text-center animate-[fadeIn_0.6s_ease_forwards] [animation-delay:900ms] no-print relative overflow-hidden bg-gradient-to-r from-[#0A66C2] to-[#004182]">
                 <div class="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
                 <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-white/5 rounded-full blur-lg"></div>
                 <div class="relative z-10">
@@ -757,7 +715,7 @@
                     </p>
                     <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
                         <a href="{{ route('client.register') }}"
-                           class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-600 font-bold rounded-xl hover:bg-primary-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
                             <i class="fas fa-check-circle"></i> Daftar Portal Lengkap
                         </a>
                         <a href="{{ $contact['whatsapp_link'] ?? 'https://wa.me/6283879602855' }}?text={{ rawurlencode('Halo, saya tertarik dengan hasil analisis ' . $inquiry->inquiry_number) }}"
@@ -775,7 +733,7 @@
             <!-- Recommendation Box -->
             <div class="bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:1000ms] no-print">
                 <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <i class="fas fa-thumbs-up text-primary-500"></i>
+                    <i class="fas fa-thumbs-up text-blue-600"></i>
                     Rekomendasi Selanjutnya
                 </h3>
 
@@ -797,15 +755,15 @@
                     </div>
 
                     <!-- Recommendation 2: Start process -->
-                    <div class="p-4 rounded-xl bg-primary-50 border border-primary-100">
+                    <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
                         <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-primary-500 text-white flex items-center justify-center flex-shrink-0">
+                            <div class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-rocket"></i>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-sm text-gray-900 mb-1">Mulai Proses Perizinan</h4>
                                 <p class="text-xs text-gray-500 mb-3">Daftar ke portal klien untuk memulai pengurusan izin dengan pendampingan konsultan bersertifikat.</p>
-                                <a href="{{ route('client.register') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary-600 hover:text-primary-700">
+                                <a href="{{ route('client.register') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:text-blue-800">
                                     Daftar Sekarang <i class="fas fa-arrow-right text-xs"></i>
                                 </a>
                             </div>
@@ -817,13 +775,13 @@
             <!-- Social Proof -->
             <div class="text-center py-4 animate-[fadeIn_0.6s_ease_forwards] [animation-delay:1100ms] no-print">
                 <p class="text-xs text-gray-500 mb-3">
-                    <i class="fas fa-users text-primary-400"></i>
+                    <i class="fas fa-users text-blue-400"></i>
                     <strong class="text-gray-600">{{ Cache::remember('inquiry_total_count', 3600, fn() => App\Models\ServiceInquiry::count()) }}</strong> perusahaan telah menggunakan fitur analisis AI kami
                 </p>
                 <div class="flex items-center justify-center gap-6 text-xs text-gray-400">
-                    <span class="flex items-center gap-1.5"><i class="fas fa-gift text-primary-400"></i> Gratis</span>
-                    <span class="flex items-center gap-1.5"><i class="fas fa-lock text-primary-400"></i> Data Aman</span>
-                    <span class="flex items-center gap-1.5"><i class="fas fa-bolt text-primary-400"></i> Hasil Cepat</span>
+                    <span class="flex items-center gap-1.5"><i class="fas fa-gift text-blue-400"></i> Gratis</span>
+                    <span class="flex items-center gap-1.5"><i class="fas fa-lock text-blue-400"></i> Data Aman</span>
+                    <span class="flex items-center gap-1.5"><i class="fas fa-bolt text-blue-400"></i> Hasil Cepat</span>
                 </div>
             </div>
 
@@ -851,12 +809,12 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div>
-                    <div class="text-xl font-bold text-white mb-4"><i class="fas fa-certificate mr-2 text-primary-400"></i>Bizmark.ID</div>
+                    <div class="text-xl font-bold text-white mb-4"><i class="fas fa-certificate mr-2 text-blue-400"></i>Bizmark.ID</div>
                     <p class="text-sm text-gray-300">{{ __('landing.footer.tagline') }}</p>
                     <div class="mt-4 flex gap-4">
-                        <a href="https://www.linkedin.com/company/bizmark-id" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-primary-400 transition" aria-label="LinkedIn"><i class="fab fa-linkedin text-2xl"></i></a>
-                        <a href="https://www.facebook.com/bizmark.id" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-primary-400 transition" aria-label="Facebook"><i class="fab fa-facebook text-2xl"></i></a>
-                        <a href="https://www.instagram.com/bizmark.id" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-primary-400 transition" aria-label="Instagram"><i class="fab fa-instagram text-2xl"></i></a>
+                        <a href="https://www.linkedin.com/company/bizmark-id" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-400 transition" aria-label="LinkedIn"><i class="fab fa-linkedin text-2xl"></i></a>
+                        <a href="https://www.facebook.com/bizmark.id" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-400 transition" aria-label="Facebook"><i class="fab fa-facebook text-2xl"></i></a>
+                        <a href="https://www.instagram.com/bizmark.id" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-400 transition" aria-label="Instagram"><i class="fab fa-instagram text-2xl"></i></a>
                     </div>
                 </div>
                 <div>
@@ -894,8 +852,8 @@
                     </ul>
                     <h4 class="text-white font-semibold mb-4 mt-6">{{ __('landing.footer.language') }}</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('locale.set', 'id') }}" class="hover:text-white transition {{ app()->getLocale() == 'id' ? 'font-semibold text-primary-400' : 'text-gray-300' }}">🇮🇩 Indonesia</a></li>
-                        <li><a href="{{ route('locale.set', 'en') }}" class="hover:text-white transition {{ app()->getLocale() == 'en' ? 'font-semibold text-primary-400' : 'text-gray-300' }}">🇬🇧 English</a></li>
+                        <li><a href="{{ route('locale.set', 'id') }}" class="hover:text-white transition {{ app()->getLocale() == 'id' ? 'font-semibold text-blue-400' : 'text-gray-300' }}">🇮🇩 Indonesia</a></li>
+                        <li><a href="{{ route('locale.set', 'en') }}" class="hover:text-white transition {{ app()->getLocale() == 'en' ? 'font-semibold text-blue-400' : 'text-gray-300' }}">🇬🇧 English</a></li>
                     </ul>
                 </div>
             </div>

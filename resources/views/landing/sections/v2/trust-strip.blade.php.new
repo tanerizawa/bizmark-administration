@@ -1,0 +1,35 @@
+@php
+    $locale = $locale ?? app()->getLocale();
+    $isEn = $locale === 'en';
+    $metrics = config('landing_metrics');
+    $experienceLabel = data_get($metrics, 'stats.experience_label', '12+ Tahun');
+@endphp
+
+{{-- ────────────────────────────────────────────────
+     TRUST STRIP — Capability indicators only
+     Audit Mei 2026: hapus klaim yang tidak dapat diverifikasi
+     (ISO, % SLA, NDA-as-claim). Hanya kapabilitas faktual.
+──────────────────────────────────────────────── --}}
+<section class="section-v2-sm border-y bg-[var(--bg-raised)] border-gray-200"
+         aria-label="{{ $isEn ? 'Capabilities' : 'Kapabilitas' }}">
+    <div class="container-wide">
+        <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+            <span class="cert-badge">
+                <i class="fas fa-clock"></i>
+                {{ $isEn ? $experienceLabel . ' experience' : $experienceLabel . ' pengalaman' }}
+            </span>
+            <span class="cert-badge">
+                <i class="fas fa-calendar-check"></i>
+                {{ $isEn ? 'Operating since 2014' : 'Beroperasi sejak 2014' }}
+            </span>
+            <span class="cert-badge">
+                <i class="fas fa-globe"></i>
+                Bilingual ID / EN
+            </span>
+            <span class="cert-badge">
+                <i class="fas fa-map-marked-alt"></i>
+                {{ $isEn ? 'Nationwide coverage' : 'Cakupan se-Indonesia' }}
+            </span>
+        </div>
+    </div>
+</section>

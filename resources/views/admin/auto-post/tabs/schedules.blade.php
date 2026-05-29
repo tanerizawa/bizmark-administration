@@ -103,7 +103,7 @@
 </form>
 
 {{-- Bulk Actions --}}
-<form method="POST" action="{{ route('auto-post.schedules.bulk-action') }}" class="mb-6 flex flex-col md:flex-row md:items-center gap-3">
+<form method="POST" action="{{ route('auto-post.schedules.bulk-action') }}" class="mb-6 flex flex-col md:flex-row md:items-center gap-3" x-data>
     @csrf
     <input type="hidden" name="scope" value="filtered">
     <input type="hidden" name="schedule_status" value="{{ request('schedule_status') }}">
@@ -113,13 +113,13 @@
 
     <div class="text-xs" style="color: rgba(235,235,245,0.6);">Aksi cepat untuk data terfilter:</div>
     <div class="flex flex-wrap items-center gap-2">
-        <button type="submit" name="action" value="process_pending" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-medium bg-apple-blue text-white hover:bg-blue-700 transition-apple" onclick="return confirm('Proses semua jadwal pending pada hasil filter saat ini?')">
+        <button type="submit" name="action" value="process_pending" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-medium bg-apple-blue text-white hover:bg-blue-700 transition-apple" @click.prevent="if(confirm('Proses semua jadwal pending pada hasil filter saat ini?')) $el.closest('form').submit()">
             <i class="fas fa-play mr-1.5"></i>Proses Pending
         </button>
-        <button type="submit" name="action" value="retry_failed" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-medium" style="background: rgba(255,159,10,0.16); color: rgba(255,159,10,1); border: 1px solid rgba(255,159,10,0.2);" onclick="return confirm('Retry semua jadwal failed pada hasil filter saat ini?')">
+        <button type="submit" name="action" value="retry_failed" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-medium" style="background: rgba(255,159,10,0.16); color: rgba(255,159,10,1); border: 1px solid rgba(255,159,10,0.2);" @click.prevent="if(confirm('Retry semua jadwal failed pada hasil filter saat ini?')) $el.closest('form').submit()">
             <i class="fas fa-rotate-right mr-1.5"></i>Retry Failed
         </button>
-        <button type="submit" name="action" value="cancel_pending" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-medium" style="background: rgba(255,69,58,0.14); color: rgba(255,69,58,1); border: 1px solid rgba(255,69,58,0.18);" onclick="return confirm('Batalkan semua jadwal pending pada hasil filter saat ini?')">
+        <button type="submit" name="action" value="cancel_pending" class="inline-flex items-center px-3 py-2 rounded-apple text-xs font-medium" style="background: rgba(255,69,58,0.14); color: rgba(255,69,58,1); border: 1px solid rgba(255,69,58,0.18);" @click.prevent="if(confirm('Batalkan semua jadwal pending pada hasil filter saat ini?')) $el.closest('form').submit()">
             <i class="fas fa-ban mr-1.5"></i>Batalkan Pending
         </button>
     </div>
@@ -190,13 +190,13 @@
                             <td class="px-4 py-3 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     @if($schedule->status === 'pending')
-                                        <form action="{{ route('auto-post.schedules.process-now', $schedule) }}" method="POST" class="inline" onsubmit="return confirm('Proses jadwal ini sekarang?')">
+                                        <form action="{{ route('auto-post.schedules.process-now', $schedule) }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Proses jadwal ini sekarang?')) $el.submit()">
                                             @csrf
                                             <button type="submit" class="p-2 rounded-apple text-dark-text-secondary hover:text-apple-blue hover:bg-apple-blue/10 transition-colors" title="Process now">
                                                 <i class="fas fa-play"></i>
                                             </button>
                                         </form>
-                                        <form action="{{ route('auto-post.schedules.destroy', $schedule) }}" method="POST" class="inline" onsubmit="return confirm('Batalkan jadwal ini?')">
+                                        <form action="{{ route('auto-post.schedules.destroy', $schedule) }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Batalkan jadwal ini?')) $el.submit()">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-2 rounded-apple text-dark-text-secondary hover:text-apple-red hover:bg-apple-red/10 transition-colors">
@@ -205,7 +205,7 @@
                                         </form>
                                     @endif
                                     @if($schedule->status === 'failed')
-                                        <form action="{{ route('auto-post.schedules.retry', $schedule) }}" method="POST" class="inline" onsubmit="return confirm('Retry jadwal failed ini?')">
+                                        <form action="{{ route('auto-post.schedules.retry', $schedule) }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Retry jadwal failed ini?')) $el.submit()">
                                             @csrf
                                             <button type="submit" class="p-2 rounded-apple text-dark-text-secondary hover:text-apple-blue hover:bg-apple-blue/10 transition-colors" title="Retry">
                                                 <i class="fas fa-rotate-right"></i>

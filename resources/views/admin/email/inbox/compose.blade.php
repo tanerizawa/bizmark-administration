@@ -1,130 +1,146 @@
 @extends('layouts.app')
-
 @section('title', 'Compose Email')
-
 @section('content')
-<div class="px-4 py-6 max-w-4xl mx-auto">
+<div style="display:flex;flex-direction:column;gap:16px;max-width:860px">
 
-    {{-- Header --}}
-    <div class="flex items-start justify-between mb-6">
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
         <div>
-            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-                <i class="fas fa-edit text-blue-400"></i>Compose Email
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Inbox</p>
+            <h1 style="font-size:1.2rem;font-weight:700;color:var(--dark-text-primary);margin:4px 0 2px;display:flex;align-items:center;gap:8px">
+                <i class="fas fa-edit" style="color:var(--apple-blue);font-size:1rem"></i>Compose Email
             </h1>
-            <p class="text-gray-400 mt-1">Kirim email baru</p>
+            <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0">Kirim email baru</p>
         </div>
         <a href="{{ route('admin.inbox.index') }}"
-           class="inline-flex items-center px-4 py-2 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">
-            <i class="fas fa-arrow-left mr-2"></i>Back to Inbox
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-secondary);font-size:0.8rem;font-weight:600;text-decoration:none"
+           onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+            <i class="fas fa-arrow-left" style="font-size:0.75rem"></i>Back to Inbox
         </a>
     </div>
 
     @if(session('success'))
-    <div class="flex items-center gap-3 bg-green-500/10 border border-green-500/30 text-green-400 rounded-xl px-4 py-3 mb-5">
-        <i class="fas fa-check-circle flex-shrink-0"></i><span>{{ session('success') }}</span>
+    <div style="display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--apple-green) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-green) 30%,transparent);border-radius:10px;padding:12px 16px;color:var(--apple-green)">
+        <i class="fas fa-check-circle" style="flex-shrink:0"></i><span style="font-size:0.85rem">{{ session('success') }}</span>
     </div>
     @endif
     @if(session('error'))
-    <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-5">
-        <i class="fas fa-exclamation-circle flex-shrink-0"></i><span>{{ session('error') }}</span>
+    <div style="display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 30%,transparent);border-radius:10px;padding:12px 16px;color:var(--apple-red)">
+        <i class="fas fa-exclamation-circle" style="flex-shrink:0"></i><span style="font-size:0.85rem">{{ session('error') }}</span>
     </div>
     @endif
 
     {{-- Compose Form --}}
-    <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow mb-4">
-        <div class="p-6">
-            <form action="{{ route('admin.inbox.send') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="space-y-4">
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+        <form action="{{ route('admin.inbox.send') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div style="display:flex;flex-direction:column;gap:16px">
 
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">
-                            <i class="fas fa-at mr-2 text-gray-400"></i>From Account
-                        </label>
-                        <select name="from_account_id" id="from_account_id"
-                                class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 @error('from_account_id') border-red-500 @enderror">
-                            <option value="">Default ({{ config('mail.from.address') }})</option>
-                            @foreach(($fromAccounts ?? collect()) as $account)
-                            <option value="{{ $account->id }}" {{ old('from_account_id') == $account->id ? 'selected' : '' }}>
-                                {{ $account->name }} ({{ $account->email }})
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('from_account_id')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
-                        <p class="text-xs text-gray-500 mt-1"><i class="fas fa-info-circle mr-1"></i>Pilih akun pengirim untuk korespondensi klien.</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">
-                            <i class="fas fa-envelope mr-2 text-gray-400"></i>To <span class="text-red-400">*</span>
-                        </label>
-                        <input type="email" name="to_email" id="to_email" value="{{ old('to_email') }}"
-                               placeholder="recipient@example.com" required
-                               class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 @error('to_email') border-red-500 @enderror">
-                        @error('to_email')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">
-                            <i class="fas fa-tag mr-2 text-gray-400"></i>Subject <span class="text-red-400">*</span>
-                        </label>
-                        <input type="text" name="subject" id="subject" value="{{ old('subject') }}"
-                               placeholder="Email subject" required
-                               class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 @error('subject') border-red-500 @enderror">
-                        @error('subject')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">
-                            <i class="fas fa-align-left mr-2 text-gray-400"></i>Message <span class="text-red-400">*</span>
-                        </label>
-                        <textarea name="body_html" id="body_html" rows="15" required
-                                  placeholder="Write your message here..."
-                                  class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono @error('body_html') border-red-500 @enderror">{{ old('body_html') }}</textarea>
-                        @error('body_html')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
-                        <p class="text-xs text-gray-500 mt-1"><i class="fas fa-info-circle mr-1"></i>You can use HTML formatting if needed</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-white mb-1">
-                            <i class="fas fa-paperclip mr-2 text-gray-400"></i>Attachments
-                        </label>
-                        <input type="file" name="attachments[]" id="attachments" multiple
-                               class="w-full text-sm text-gray-300 file:bg-gray-700 file:border-0 file:rounded file:px-3 file:py-1" />
-                        <p class="text-xs text-gray-500 mt-1">Optional. Max 10MB per file.</p>
-                    </div>
-
-                    <div class="flex items-center justify-between pt-2">
-                        <div class="flex gap-2">
-                            <button type="submit"
-                                    class="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
-                                <i class="fas fa-paper-plane mr-2"></i>Send Email
-                            </button>
-                            <button type="button" id="generateAiBtn"
-                                    class="inline-flex items-center px-4 py-2.5 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">
-                                <i class="fas fa-robot mr-2"></i>Generate with AI
-                            </button>
-                            <button type="button" id="saveDraftBtn" onclick="saveDraft()"
-                                    class="inline-flex items-center px-4 py-2.5 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">
-                                <i class="fas fa-save mr-2"></i>Save Draft
-                            </button>
-                        </div>
-                        <a href="{{ route('admin.inbox.index') }}"
-                           class="inline-flex items-center px-4 py-2.5 border border-gray-600 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition">
-                            <i class="fas fa-times mr-2"></i>Cancel
-                        </a>
-                    </div>
+                {{-- From Account --}}
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                        <i class="fas fa-at" style="margin-right:4px"></i>From Account
+                    </label>
+                    <select name="from_account_id" id="from_account_id"
+                            style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none"
+                            onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                        <option value="">Default ({{ config('mail.from.address') }})</option>
+                        @foreach(($fromAccounts ?? collect()) as $account)
+                        <option value="{{ $account->id }}" {{ old('from_account_id') == $account->id ? 'selected' : '' }}>
+                            {{ $account->name }} ({{ $account->email }})
+                        </option>
+                        @endforeach
+                    </select>
+                    @error('from_account_id')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+                    <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:4px 0 0;opacity:.7">
+                        <i class="fas fa-info-circle" style="margin-right:3px"></i>Pilih akun pengirim untuk korespondensi klien.
+                    </p>
                 </div>
-            </form>
-        </div>
+
+                {{-- To --}}
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                        <i class="fas fa-envelope" style="margin-right:4px"></i>To <span style="color:var(--apple-red)">*</span>
+                    </label>
+                    <input type="email" name="to_email" id="to_email" value="{{ old('to_email') }}"
+                           placeholder="recipient@example.com" required
+                           style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                           onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                    @error('to_email')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- Subject --}}
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                        <i class="fas fa-tag" style="margin-right:4px"></i>Subject <span style="color:var(--apple-red)">*</span>
+                    </label>
+                    <input type="text" name="subject" id="subject" value="{{ old('subject') }}"
+                           placeholder="Email subject" required
+                           style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                           onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                    @error('subject')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- Message --}}
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                        <i class="fas fa-align-left" style="margin-right:4px"></i>Message <span style="color:var(--apple-red)">*</span>
+                    </label>
+                    <textarea name="body_html" id="body_html" rows="15" required
+                              placeholder="Write your message here..."
+                              style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;font-family:'Courier New',Consolas,monospace;line-height:1.6;resize:vertical;box-sizing:border-box"
+                              onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">{{ old('body_html') }}</textarea>
+                    @error('body_html')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+                    <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:4px 0 0;opacity:.7">
+                        <i class="fas fa-info-circle" style="margin-right:3px"></i>You can use HTML formatting if needed
+                    </p>
+                </div>
+
+                {{-- Attachments --}}
+                <div>
+                    <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                        <i class="fas fa-paperclip" style="margin-right:4px"></i>Attachments
+                    </label>
+                    <input type="file" name="attachments[]" id="attachments" multiple
+                           style="font-size:0.82rem;color:var(--dark-text-secondary)" />
+                    <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:4px 0 0;opacity:.7">Optional. Max 10MB per file.</p>
+                </div>
+
+                {{-- Actions --}}
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:6px;border-top:1px solid var(--dark-separator)">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <button type="submit"
+                                style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--apple-blue);color:#fff;border:none;border-radius:9px;font-size:0.82rem;font-weight:600;cursor:pointer"
+                                onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                            <i class="fas fa-paper-plane"></i>Send Email
+                        </button>
+                        <button type="button" id="generateAiBtn"
+                                style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-secondary);background:none;font-size:0.82rem;font-weight:600;cursor:pointer"
+                                onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                            <i class="fas fa-robot"></i>Generate with AI
+                        </button>
+                        <button type="button" id="saveDraftBtn" onclick="saveDraft()"
+                                style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-secondary);background:none;font-size:0.82rem;font-weight:600;cursor:pointer"
+                                onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                            <i class="fas fa-save"></i>Save Draft
+                        </button>
+                    </div>
+                    <a href="{{ route('admin.inbox.index') }}"
+                       style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-secondary);font-size:0.82rem;font-weight:600;text-decoration:none"
+                       onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                        <i class="fas fa-times"></i>Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
 
     {{-- Quick Tips --}}
-    <div class="bg-gray-800 border border-gray-700 rounded-xl p-5">
-        <h6 class="text-white font-medium flex items-center gap-2 mb-3">
-            <i class="fas fa-lightbulb text-yellow-400"></i>Email Tips
+    <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 22px">
+        <h6 style="font-size:0.82rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 10px;display:flex;align-items:center;gap:6px">
+            <i class="fas fa-lightbulb" style="color:var(--apple-yellow)"></i>Email Tips
         </h6>
-        <ul class="text-gray-400 text-sm space-y-1 pl-4 list-disc">
+        <ul style="color:var(--dark-text-secondary);font-size:0.8rem;margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px">
             <li>Pastikan email penerima valid dan aktif</li>
             <li>Tulis subject yang jelas dan deskriptif</li>
             <li>Gunakan format HTML untuk tampilan yang lebih menarik</li>
@@ -133,6 +149,7 @@
     </div>
 </div>
 
+@push('scripts')
 <script>
 function saveDraft() {
     const btn = document.getElementById('saveDraftBtn');
@@ -143,7 +160,7 @@ function saveDraft() {
         saved_at: new Date().toISOString()
     }));
     const orig = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check mr-2"></i>Draft tersimpan';
+    btn.innerHTML = '<i class="fas fa-check" style="margin-right:6px"></i>Draft tersimpan';
     btn.disabled = true;
     setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2000);
 }
@@ -164,20 +181,17 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.removeItem('email_draft');
 @endif
 
-// Generate with AI
 document.addEventListener('DOMContentLoaded', function () {
     const btn = document.getElementById('generateAiBtn');
     if (!btn) return;
     btn.addEventListener('click', async function () {
         btn.disabled = true;
         const orig = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menghasilkan...';
-
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px"></i>Menghasilkan...';
         const payload = new FormData();
         payload.append('to_email', document.getElementById('to_email').value || '');
         payload.append('subject', document.getElementById('subject').value || '');
         payload.append('body_html', document.getElementById('body_html').value || '');
-
         try {
             const res = await fetch('{{ route('admin.inbox.generate') }}', {
                 method: 'POST',
@@ -195,10 +209,10 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (e) {
             alert('Gagal menghubungi layanan AI.');
         }
-
         btn.innerHTML = orig;
         btn.disabled = false;
     });
 });
 </script>
+@endpush
 @endsection

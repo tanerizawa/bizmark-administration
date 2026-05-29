@@ -6,326 +6,238 @@
 @php
     $application = $interview->jobApplication;
     $vacancy = $application->jobVacancy;
-    $statusText = ucfirst($interview->status);
-    $statusStyle = $interview->status === 'completed'
-        ? 'background: rgba(52,199,89,0.2); color: rgba(52,199,89,1);'
-        : 'background: rgba(10,132,255,0.2); color: rgba(10,132,255,1);';
+    $sc = $interview->status === 'completed' ? 'var(--apple-green)' : 'var(--apple-blue)';
 @endphp
+<div style="display:flex;flex-direction:column;gap:16px">
 
-<div class="recruitment-shell max-w-6xl mx-auto space-y-5">
-    {{-- Header --}}
-    <section class="card-elevated rounded-apple-xl p-5 md:p-6 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div class="w-72 h-72 bg-apple-blue opacity-25 blur-3xl rounded-full absolute -top-14 -right-10"></div>
-            <div class="w-48 h-48 bg-apple-green opacity-20 blur-2xl rounded-full absolute bottom-0 left-8"></div>
-        </div>
-        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div class="space-y-2.5">
-                <div class="flex items-center gap-2 text-xs uppercase tracking-[0.35em]" style="color: rgba(235,235,245,0.6);">
-                    <a href="{{ route('admin.recruitment.pipeline.index', ['vacancy_id' => $vacancy->id]) }}" class="inline-flex items-center gap-2 hover:text-white transition-apple">
-                        <i class="fas fa-arrow-left text-xs"></i> Pipeline
-                    </a>
-                    <span class="text-dark-text-tertiary">/</span>
-                    <span>Feedback</span>
-                </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <h1 class="text-xl md:text-xl font-semibold text-white leading-tight">{{ $application->full_name }}</h1>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full" style="{{ $statusStyle }}">
-                        {{ $statusText }}
-                    </span>
-                </div>
-                <p class="text-sm" style="color: rgba(235,235,245,0.7);">
-                    {{ $vacancy->title }} · {{ $vacancy->location }} · {{ $interview->scheduled_at->format('d M Y, H:i') }} WIB
-                </p>
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+            <a href="{{ route('admin.recruitment.interviews.show', $interview) }}" style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600;color:var(--dark-text-secondary);text-decoration:none;margin-bottom:6px" onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                <i class="fas fa-arrow-left" style="font-size:0.65rem"></i>Detail Interview
+            </a>
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--apple-purple);margin:0 0 4px">Manajemen Talenta</p>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+                <h1 style="font-size:1.4rem;font-weight:800;color:var(--dark-text-primary);margin:0;line-height:1.2">{{ $application->full_name }}</h1>
+                <span style="display:inline-flex;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;background:color-mix(in srgb,{{ $sc }} 15%,transparent);color:{{ $sc }}">{{ ucfirst($interview->status) }}</span>
             </div>
-            <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.recruitment.interviews.show', $interview) }}" class="btn-secondary-sm">
-                    <i class="fas fa-calendar mr-2"></i>Detail Interview
-                </a>
-                <a href="{{ route('admin.jobs.applications.show', [$vacancy, $application]) }}" class="btn-secondary-sm">
-                    <i class="fas fa-file-alt mr-2"></i>Lihat Lamaran
-                </a>
-            </div>
+            <p style="font-size:0.82rem;color:var(--dark-text-secondary);margin:0">{{ $vacancy?->title }} · {{ $interview->scheduled_at->format('d M Y, H:i') }} WIB</p>
         </div>
-    </section>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-end">
+            <a href="{{ route('admin.recruitment.interviews.show', $interview) }}"
+               style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:0.8rem;font-weight:600;color:var(--dark-text-secondary);background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:9px;text-decoration:none"
+               onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                <i class="fas fa-calendar" style="font-size:0.7rem"></i>Detail Interview
+            </a>
+        </div>
+    </div>
 
-    <form action="{{ route('admin.recruitment.interviews.feedback.store', $interview) }}" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <form action="{{ route('admin.recruitment.interviews.feedback.store', $interview) }}" method="POST">
         @csrf
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:flex-start">
 
-        <div class="lg:col-span-2 space-y-4">
-            {{-- Interview Info --}}
-            <div class="card-elevated rounded-apple-xl p-4 space-y-3">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Rincian Interview</p>
-                        <h3 class="text-base font-semibold text-white">Ringkasan Jadwal</h3>
+            {{-- Left --}}
+            <div style="display:flex;flex-direction:column;gap:16px">
+
+                {{-- Interview Summary --}}
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+                    <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--dark-separator)">
+                        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Rincian Interview</p>
+                        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Ringkasan Jadwal</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+                        @foreach([
+                            ['Tanggal',$interview->scheduled_at->format('d M Y'),$interview->scheduled_at->format('H:i').' WIB'],
+                            ['Tipe Interview',ucfirst($interview->interview_type),ucfirst(str_replace('-',' ',$interview->meeting_type))],
+                            ['Durasi',$interview->duration_minutes.' menit',''],
+                            ['Status',ucfirst($interview->status),''],
+                        ] as $col)
+                        <div>
+                            <p style="font-size:0.68rem;font-weight:700;color:var(--dark-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:0 0 3px">{{ $col[0] }}</p>
+                            <p style="font-size:0.88rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 1px">{{ $col[1] }}</p>
+                            @if($col[2])<p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0">{{ $col[2] }}</p>@endif
+                        </div>
+                        @endforeach
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm" style="color: rgba(235,235,245,0.85);">
-                    <div class="space-y-1">
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Tanggal</p>
-                        <p class="font-semibold">{{ $interview->scheduled_at->format('d M Y') }}</p>
-                        <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $interview->scheduled_at->format('H:i') }} WIB</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Tipe Interview</p>
-                        <p class="font-semibold">{{ ucfirst($interview->interview_type) }}</p>
-                        <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ ucfirst(str_replace('-', ' ', $interview->meeting_type)) }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Durasi</p>
-                        <p class="font-semibold">{{ $interview->duration_minutes }} menit</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Status</p>
-                        <span class="px-2 py-1 rounded-full text-xs font-semibold inline-block" style="{{ $statusStyle }}">
-                            {{ $statusText }}
-                        </span>
-                    </div>
-                </div>
-            </div>
 
-            {{-- Ratings --}}
-            <div class="card-elevated rounded-apple-xl p-4 space-y-5">
-                <div>
-                    <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Penilaian</p>
-                    <h3 class="text-base font-semibold text-white">Skor Interview</h3>
-                </div>
-
+                {{-- Rating Sections --}}
                 @php
-                    $ratingLabels = [
-                        1 => 'Sangat Kurang',
-                        2 => 'Kurang',
-                        3 => 'Cukup',
-                        4 => 'Baik',
-                        5 => 'Sangat Baik',
+                    $ratingLabels = [1=>'Sangat Kurang',2=>'Kurang',3=>'Cukup',4=>'Baik',5=>'Sangat Baik'];
+                    $ratingFields = [
+                        ['communication_rating','Komunikasi','Kejelasan, bahasa profesional, mendengarkan'],
+                        ['technical_rating','Pengetahuan Teknis','Kompetensi teknis dan problem solving'],
+                        ['teamwork_rating','Kolaborasi','Kerja tim, kooperatif, interpersonal'],
+                        ['culture_fit_rating','Kesesuaian Budaya','Nilai, gaya kerja, adaptasi'],
+                        ['overall_rating','Penilaian Akhir','Impresi keseluruhan kandidat'],
                     ];
                 @endphp
-
-                @foreach([
-                    ['field' => 'communication_rating', 'label' => '1. Komunikasi', 'helper' => 'Kejelasan, bahasa profesional, mendengarkan.'],
-                    ['field' => 'technical_rating', 'label' => '2. Pengetahuan Teknis', 'helper' => 'Kompetensi teknis dan problem solving.'],
-                    ['field' => 'teamwork_rating', 'label' => '3. Kolaborasi', 'helper' => 'Kerja tim, kooperatif, interpersonal.'],
-                    ['field' => 'culture_fit_rating', 'label' => '4. Kesesuaian Budaya', 'helper' => 'Kesesuaian nilai, gaya kerja, adaptasi.'],
-                    ['field' => 'overall_rating', 'label' => '5. Penilaian Akhir', 'helper' => 'Impresi keseluruhan kandidat.'],
-                ] as $rating)
-                    <div class="space-y-2">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <label class="text-sm font-semibold text-white">{{ $rating['label'] }} <span class="text-apple-red">*</span></label>
-                                <p class="text-xs" style="color: rgba(235,235,245,0.65);">{{ $rating['helper'] }}</p>
-                            </div>
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+                    <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--dark-separator)">
+                        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Penilaian</p>
+                        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Skor Interview</h3>
+                    </div>
+                    @foreach($ratingFields as [$field, $label, $helper])
+                    <div style="margin-bottom:20px">
+                        <div style="margin-bottom:8px">
+                            <p style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 2px">{{ $label }} <span style="color:var(--apple-red)">*</span></p>
+                            <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0">{{ $helper }}</p>
                         </div>
-                        <div class="rating-group">
-                            @foreach($ratingLabels as $value => $text)
-                                <input type="radio" name="{{ $rating['field'] }}" id="{{ $rating['field'] }}_{{ $value }}" value="{{ $value }}" class="rating-input" {{ old($rating['field']) == $value ? 'checked' : '' }} required>
-                                <label for="{{ $rating['field'] }}_{{ $value }}" class="rating-pill">
-                                    <span class="rating-stars">
-                                        @for($s=1; $s <= $value; $s++)
-                                            <i class="fas fa-star"></i>
-                                        @endfor
+                        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
+                            @foreach($ratingLabels as $val=>$text)
+                            <label style="cursor:pointer">
+                                <input type="radio" name="{{ $field }}" value="{{ $val }}" class="rating-input" {{ old($field) == $val ? 'checked' : '' }} required style="display:none">
+                                <div class="rating-pill" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 6px;border-radius:10px;border:1px solid var(--dark-separator);background:var(--dark-bg-secondary);text-align:center;transition:all .15s">
+                                    <span style="color:#fbbf24;font-size:0.78rem;display:block;margin-bottom:3px">
+                                        @for($s=1;$s<=$val;$s++)<i class="fas fa-star" style="font-size:0.65rem"></i>@endfor
                                     </span>
-                                    <span class="rating-text">{{ $text }}</span>
-                                </label>
+                                    <span style="font-size:0.65rem;color:var(--dark-text-secondary);line-height:1.2">{{ $text }}</span>
+                                </div>
+                            </label>
                             @endforeach
                         </div>
-                        @error($rating['field'])
-                            <div class="text-xs text-apple-red">{{ $message }}</div>
-                        @enderror
+                        @error($field)<p style="color:var(--apple-red);font-size:0.72rem;margin:4px 0 0">{{ $message }}</p>@enderror
                     </div>
-                @endforeach
-            </div>
-
-            {{-- Comments --}}
-            <div class="card-elevated rounded-apple-xl p-4 space-y-4">
-                <div>
-                    <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Umpan Balik</p>
-                    <h3 class="text-base font-semibold text-white">Catatan Detail</h3>
-                </div>
-                <div class="space-y-3 text-sm" style="color: rgba(235,235,245,0.85);">
-                    <div class="space-y-1">
-                        <label for="strengths" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Kekuatan</label>
-                        <textarea name="strengths" id="strengths" class="w-full" rows="3" placeholder="Hal yang menonjol, kekuatan utama.">{{ old('strengths') }}</textarea>
-                        @error('strengths')
-                            <div class="text-xs text-apple-red">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="space-y-1">
-                        <label for="weaknesses" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Area Perbaikan</label>
-                        <textarea name="weaknesses" id="weaknesses" class="w-full" rows="3" placeholder="Area yang perlu ditingkatkan.">{{ old('weaknesses') }}</textarea>
-                        @error('weaknesses')
-                            <div class="text-xs text-apple-red">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="space-y-1">
-                        <label for="additional_notes" class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Catatan Tambahan</label>
-                        <textarea name="additional_notes" id="additional_notes" class="w-full" rows="3" placeholder="Observasi lain, red flag, atau poin penting.">{{ old('additional_notes') }}</textarea>
-                        @error('additional_notes')
-                            <div class="text-xs text-apple-red">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-            {{-- Recommendation --}}
-            <div class="card-elevated rounded-apple-xl p-4 space-y-3">
-                <div>
-                    <p class="text-xs uppercase tracking-[0.3em]" style="color: rgba(235,235,245,0.5);">Rekomendasi</p>
-                    <h3 class="text-base font-semibold text-white">Keputusan Hiring</h3>
-                    <p class="text-xs" style="color: rgba(235,235,245,0.65);">Pilih rekomendasi akhir berdasarkan penilaian.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
-                    @foreach([
-                        ['value' => 'highly-recommended', 'label' => 'Highly Recommended'],
-                        ['value' => 'recommended', 'label' => 'Recommended'],
-                        ['value' => 'neutral', 'label' => 'Neutral'],
-                        ['value' => 'not-recommended', 'label' => 'Not Recommended'],
-                    ] as $rec)
-                        <label class="recommend-pill">
-                            <input type="radio" name="recommendation" value="{{ $rec['value'] }}" class="hidden" {{ old('recommendation') == $rec['value'] ? 'checked' : '' }} required>
-                            <span class="font-semibold text-sm">{{ $rec['label'] }}</span>
-                        </label>
                     @endforeach
                 </div>
-                @error('recommendation')
-                    <div class="text-xs text-apple-red">{{ $message }}</div>
-                @enderror
-            </div>
 
-            <div class="flex flex-wrap gap-2 justify-end">
-                <a href="{{ route('admin.recruitment.interviews.show', $interview) }}" class="btn-secondary-sm">
-                    <i class="fas fa-times mr-2"></i>Batal
-                </a>
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-check mr-2"></i>Kirim Feedback
-                </button>
-            </div>
-        </div>
+                {{-- Comments --}}
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+                    <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--dark-separator)">
+                        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Umpan Balik</p>
+                        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Catatan Detail</h3>
+                    </div>
+                    @foreach([['strengths','Kekuatan','Hal yang menonjol, kekuatan utama'],['weaknesses','Area Perbaikan','Area yang perlu ditingkatkan'],['additional_notes','Catatan Tambahan','Observasi lain, red flag, atau poin penting']] as [$fname,$flabel,$fhint])
+                    <div style="margin-bottom:14px">
+                        <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--dark-text-primary);margin-bottom:4px">{{ $flabel }}</label>
+                        <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0 0 6px">{{ $fhint }}</p>
+                        <textarea name="{{ $fname }}" rows="3" placeholder="{{ $fhint }}..."
+                                  style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-primary);font-size:0.83rem;outline:none;resize:vertical;box-sizing:border-box"
+                                  onfocus="this.style.borderColor='var(--apple-blue)'" onblur="this.style.borderColor='var(--dark-separator)'">{{ old($fname) }}</textarea>
+                        @error($fname)<p style="color:var(--apple-red);font-size:0.72rem;margin:4px 0 0">{{ $message }}</p>@enderror
+                    </div>
+                    @endforeach
+                </div>
 
-        {{-- Sidebar --}}
-        <div class="space-y-4">
-            <div class="card-elevated rounded-apple-xl p-4 space-y-3">
-                <h3 class="text-base font-semibold text-white">Detail Kandidat</h3>
-                <div class="space-y-2 text-sm" style="color: rgba(235,235,245,0.8);">
-                    <div class="flex justify-between">
-                        <span>Nama</span>
-                        <span class="font-semibold text-white">{{ $application->full_name }}</span>
+                {{-- Recommendation --}}
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:22px 24px">
+                    <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--dark-separator)">
+                        <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0 0 3px">Rekomendasi</p>
+                        <h3 style="font-size:0.9rem;font-weight:700;color:var(--dark-text-primary);margin:0">Keputusan Hiring</h3>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Posisi</span>
-                        <span class="font-semibold text-white">{{ $vacancy->title }}</span>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+                        @foreach(['highly-recommended'=>['Highly Recommended','var(--apple-green)'],'recommended'=>['Recommended','var(--apple-blue)'],'neutral'=>['Neutral','var(--apple-orange)'],'not-recommended'=>['Not Recommended','var(--apple-red)']] as $val=>[$rlabel,$rcolor])
+                        <label style="cursor:pointer">
+                            <input type="radio" name="recommendation" value="{{ $val }}" class="rec-input" {{ old('recommendation') == $val ? 'checked' : '' }} required style="display:none">
+                            <div class="rec-pill" data-color="{{ $rcolor }}" style="padding:12px 10px;border-radius:10px;border:1px solid var(--dark-separator);background:var(--dark-bg-secondary);text-align:center;font-size:0.78rem;font-weight:600;color:var(--dark-text-secondary);transition:all .15s">
+                                {{ $rlabel }}
+                            </div>
+                        </label>
+                        @endforeach
                     </div>
-                    <div class="flex justify-between">
-                        <span>Lokasi</span>
-                        <span>{{ $vacancy->location }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Tahap Terakhir</span>
-                        <span>{{ ucfirst($application->status) }}</span>
-                    </div>
+                    @error('recommendation')<p style="color:var(--apple-red);font-size:0.72rem;margin:6px 0 0">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- Submit --}}
+                <div style="display:flex;justify-content:flex-end;gap:10px">
+                    <a href="{{ route('admin.recruitment.interviews.show', $interview) }}"
+                       style="display:inline-flex;align-items:center;padding:10px 20px;color:var(--dark-text-secondary);border:1px solid var(--dark-separator);border-radius:11px;font-size:0.85rem;font-weight:600;text-decoration:none"
+                       onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">Batal</a>
+                    <button type="submit"
+                            style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--apple-blue);color:#fff;border:none;border-radius:11px;font-size:0.88rem;font-weight:700;cursor:pointer"
+                            onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=1">
+                        <i class="fas fa-check"></i>Kirim Feedback
+                    </button>
                 </div>
             </div>
 
-            <div class="card-elevated rounded-apple-xl p-4 space-y-3">
-                <h3 class="text-base font-semibold text-white">Agenda Interview</h3>
-                <div class="space-y-2 text-sm" style="color: rgba(235,235,245,0.8);">
-                    <div class="flex justify-between">
-                        <span>Tanggal</span>
-                        <span>{{ $interview->scheduled_at->format('d M Y') }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Waktu</span>
-                        <span>{{ $interview->scheduled_at->format('H:i') }} WIB</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Tipe</span>
-                        <span>{{ ucfirst($interview->interview_type) }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Meeting</span>
-                        <span>{{ ucfirst(str_replace('-', ' ', $interview->meeting_type)) }}</span>
-                    </div>
-                    @if($interview->meeting_link)
-                        <div class="pt-2 border-t" style="border-color: rgba(58,58,60,0.6);">
-                            <p class="text-xs uppercase tracking-widest" style="color: rgba(235,235,245,0.55);">Link</p>
-                            <a href="{{ $interview->meeting_link }}" target="_blank" class="text-apple-blue text-xs hover:underline break-words">
-                                {{ $interview->meeting_link }}
-                            </a>
+            {{-- Sidebar --}}
+            <div style="position:sticky;top:16px;display:flex;flex-direction:column;gap:14px">
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 20px">
+                    <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 12px">Detail Kandidat</h3>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        @foreach(['Nama'=>$application->full_name,'Posisi'=>$vacancy?->title,'Lokasi'=>$vacancy?->location,'Tahap'=>ucfirst($application->status)] as $k=>$v)
+                        <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--dark-bg-secondary);border-radius:8px">
+                            <span style="font-size:0.75rem;color:var(--dark-text-secondary)">{{ $k }}</span>
+                            <span style="font-size:0.78rem;font-weight:600;color:var(--dark-text-primary)">{{ $v }}</span>
                         </div>
-                    @endif
+                        @endforeach
+                    </div>
+                </div>
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:18px 20px">
+                    <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0 0 12px">Agenda Interview</h3>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        @foreach(['Tanggal'=>$interview->scheduled_at->format('d M Y'),'Waktu'=>$interview->scheduled_at->format('H:i').' WIB','Tipe'=>ucfirst($interview->interview_type),'Meeting'=>ucfirst(str_replace('-',' ',$interview->meeting_type))] as $k=>$v)
+                        <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--dark-bg-secondary);border-radius:8px">
+                            <span style="font-size:0.75rem;color:var(--dark-text-secondary)">{{ $k }}</span>
+                            <span style="font-size:0.78rem;font-weight:600;color:var(--dark-text-primary)">{{ $v }}</span>
+                        </div>
+                        @endforeach
+                        @if($interview->meeting_link)
+                        <div style="padding:7px 10px;background:var(--dark-bg-secondary);border-radius:8px;border-top:1px solid var(--dark-separator)">
+                            <p style="font-size:0.68rem;font-weight:700;color:var(--dark-text-secondary);text-transform:uppercase;margin:0 0 3px">Link</p>
+                            <a href="{{ $interview->meeting_link }}" target="_blank" style="font-size:0.72rem;color:var(--apple-blue);text-decoration:none;word-break:break-all">{{ $interview->meeting_link }}</a>
+                        </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </form>
 </div>
-@endsection
 
 @push('styles')
 <style>
-.recruitment-shell .rating-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0.5rem;
+.rating-input:checked + .rating-pill {
+    background: color-mix(in srgb, var(--apple-blue) 18%, transparent) !important;
+    border-color: color-mix(in srgb, var(--apple-blue) 40%, transparent) !important;
 }
-.recruitment-shell .rating-input {
-    display: none;
-}
-.recruitment-shell .rating-pill {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.03);
-    color: rgba(235,235,245,0.85);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-}
-.recruitment-shell .rating-pill:hover {
-    background: rgba(255,255,255,0.06);
-}
-.recruitment-shell .rating-input:checked + .rating-pill {
-    background: rgba(0,122,255,0.2);
-    border-color: rgba(0,122,255,0.4);
-    color: #fff;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-}
-.recruitment-shell .rating-stars {
-    color: #fbbf24;
-    font-size: 0.9rem;
-}
-.recruitment-shell .rating-text {
-    font-size: 0.75rem;
-    margin-top: 0.35rem;
-}
-.recruitment-shell .recommend-pill {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.85rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.03);
-    color: rgba(235,235,245,0.85);
-    cursor: pointer;
-    gap: 0.4rem;
-    transition: all 0.2s ease;
-}
-.recruitment-shell .recommend-pill:hover {
-    background: rgba(255,255,255,0.06);
-}
-.recruitment-shell .recommend-pill input[type=radio] {
-    display: none;
-}
-.recruitment-shell .recommend-pill input[type=radio]:checked + span,
-.recruitment-shell .recommend-pill:has(input[type=radio]:checked) {
-    background: rgba(0,122,255,0.2);
-    border-color: rgba(0,122,255,0.4);
-    color: #fff;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+.rating-input:checked + .rating-pill span:last-child { color: #fff !important; }
+.rec-input:checked + .rec-pill {
+    border-color: var(--active-color, var(--apple-blue));
+    background: color-mix(in srgb, var(--active-color, var(--apple-blue)) 18%, transparent);
+    color: var(--active-color, var(--apple-blue)) !important;
 }
 </style>
 @endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rating pill active state
+    document.querySelectorAll('.rating-input').forEach(function(inp) {
+        inp.addEventListener('change', function() {
+            const name = this.name;
+            document.querySelectorAll('input[name="'+name+'"]').forEach(function(r) {
+                const pill = r.nextElementSibling;
+                pill.style.background = r.checked ? 'color-mix(in srgb,var(--apple-blue) 18%,transparent)' : 'var(--dark-bg-secondary)';
+                pill.style.borderColor = r.checked ? 'color-mix(in srgb,var(--apple-blue) 40%,transparent)' : 'var(--dark-separator)';
+                pill.querySelector('span:last-child').style.color = r.checked ? '#fff' : 'var(--dark-text-secondary)';
+            });
+        });
+    });
+    // Recommendation pill
+    document.querySelectorAll('.rec-input').forEach(function(inp) {
+        inp.addEventListener('change', function() {
+            document.querySelectorAll('.rec-input').forEach(function(r) {
+                const pill = r.nextElementSibling;
+                const col = pill.dataset.color;
+                if (r.checked) {
+                    pill.style.background = 'color-mix(in srgb,'+col+' 18%,transparent)';
+                    pill.style.borderColor = 'color-mix(in srgb,'+col+' 40%,transparent)';
+                    pill.style.color = col;
+                } else {
+                    pill.style.background = 'var(--dark-bg-secondary)';
+                    pill.style.borderColor = 'var(--dark-separator)';
+                    pill.style.color = 'var(--dark-text-secondary)';
+                }
+            });
+        });
+    });
+    // Restore on page load (validation errors)
+    document.querySelectorAll('.rating-input:checked').forEach(function(inp) { inp.dispatchEvent(new Event('change')); });
+    document.querySelectorAll('.rec-input:checked').forEach(function(inp) { inp.dispatchEvent(new Event('change')); });
+});
+</script>
+@endpush
+@endsection

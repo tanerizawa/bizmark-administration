@@ -242,7 +242,7 @@ class AutoPostPipelineTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
-        Queue::assertPushed(GenerateAutoPostArticle::class, function ($job) use ($schedule) {
+        Queue::assertPushed(GenerateAutoPostArticle::class, function ($job) {
             return $job->queue === 'default';
         });
     }

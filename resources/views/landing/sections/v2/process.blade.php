@@ -27,6 +27,7 @@
                 ? 'Weekly SLA progress reports, dedicated project manager, and field follow-through.'
                 : 'Laporan kemajuan SLA mingguan, manajer proyek khusus, dan tindak lanjut langsung di lapangan.',
             'duration' => $isEn ? 'Varies' : 'Variatif',
+            'portal_badge' => true,
         ],
         [
             'num' => '04',
@@ -45,12 +46,16 @@
 ──────────────────────────────────────────────── --}}
 <section class="section-v2" aria-labelledby="process-heading" id="process">
     <div class="container-wide">
-        <div class="max-w-3xl mb-8">
-            <span class="eyebrow mb-4">{{ $isEn ? 'How We Work' : 'Cara Kerja Kami' }}</span>
-            <h2 id="process-heading" class="display-lg mt-2 mb-4 text-gray-100">
+        <div class="max-w-2xl mb-5">
+            <div class="chapter-mark">
+                <span class="chapter-mark__num">04</span>
+                <span class="chapter-mark__rule"></span>
+                <span>{{ $isEn ? 'How We Work' : 'Cara Kerja Kami' }}</span>
+            </div>
+            <h2 id="process-heading" class="display-md mb-2">
                 {{ $isEn ? 'A process built for clarity and accountability.' : 'Proses yang mengutamakan kejelasan dan akuntabilitas.' }}
             </h2>
-            <p class="text-lg leading-relaxed text-gray-400">
+            <p class="text-sm leading-relaxed text-gray-600">
                 {{ $isEn
                     ? 'Four clear steps. One accountable team. SLA-backed results at every stage.'
                     : 'Empat langkah yang jelas. Satu tim yang bertanggung jawab. Hasil terukur dengan SLA di setiap tahap.' }}
@@ -63,7 +68,7 @@
                     {{-- Connector line (desktop only, hidden on last) --}}
                     @if(!$loop->last)
                         <div aria-hidden="true" class="hidden lg:block absolute top-6 left-full w-full h-[2px] -translate-x-2 z-0"
-                             style="background: repeating-linear-gradient(90deg, rgba(255,255,255,.08) 0 6px, transparent 6px 12px);"></div>
+                             style="background: repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 6px, transparent 6px 12px);"></div>
                     @endif
 
                     <div class="premium-card timeline-step-card relative z-10">
@@ -72,8 +77,16 @@
                             <span class="timeline-step-pill">{{ $step['duration'] }}</span>
                         </div>
 
-                        <h3 class="font-display font-bold text-xl mb-2 text-gray-100">{{ $step['title'] }}</h3>
-                        <p class="text-sm leading-relaxed flex-1 text-gray-400">{{ $step['desc'] }}</p>
+                        <h3 class="font-display font-bold text-xl mb-2 text-gray-900">{{ $step['title'] }}</h3>
+                        <p class="text-sm leading-relaxed flex-1 text-gray-600">{{ $step['desc'] }}</p>
+                        @if(!empty($step['portal_badge']))
+                            <div class="mt-3">
+                                <span class="live-indicator">
+                                    <span class="live-dot" aria-hidden="true"></span>
+                                    <span class="text-xs font-bold text-green-700">{{ $isEn ? 'Tracked via Client Portal' : 'Terpantau via Portal Klien' }}</span>
+                                </span>
+                            </div>
+                        @endif
                     </div>
                 </li>
             @endforeach

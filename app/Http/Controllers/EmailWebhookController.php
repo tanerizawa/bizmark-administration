@@ -364,12 +364,13 @@ class EmailWebhookController extends Controller
         $secret = (string) config('email_webhook.secret', '');
         $requireSignature = (bool) config('email_webhook.require_signature', app()->environment('production'));
 
-        if (! $requireSignature && $secret === '') {
+        // If signature is not required, allow the request (IP filter already passed above).
+        if (! $requireSignature) {
             return true;
         }
 
+        // Signature is required but no secret configured — deny.
         if ($secret === '') {
-            // In production, missing secret means webhook should not be trusted.
             return false;
         }
 

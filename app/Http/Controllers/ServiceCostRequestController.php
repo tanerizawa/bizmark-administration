@@ -324,6 +324,7 @@ class ServiceCostRequestController extends Controller
             'service_category' => 'required|string|max:50',
             'services_requested' => 'required',
             'project_description' => 'nullable|string|max:2000',
+            'ai_letter_body' => 'nullable|string|max:10000',
             'project_location' => 'nullable|string|max:255',
             'estimated_budget' => 'nullable|numeric|min:0',
             'timeline_expectation' => 'nullable|string|max:100',

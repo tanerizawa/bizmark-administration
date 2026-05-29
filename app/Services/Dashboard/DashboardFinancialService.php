@@ -38,8 +38,15 @@ class DashboardFinancialService
             $monthlyBurnRate = $monthsWithExpenses > 0 ? $totalExpenses / $monthsWithExpenses : 0;
 
             if ($monthlyBurnRate > 0) {
-                $runway = min($currentBalance / $monthlyBurnRate, 99);
+                // Normal case: divide current balance by monthly burn rate
+                $runway = $currentBalance > 0
+                    ? min($currentBalance / $monthlyBurnRate, 99)
+                    : 0;
+            } elseif ($currentBalance <= 0) {
+                // No burn rate AND no cash balance → 0 runway
+                $runway = 0;
             } else {
+                // Has cash but zero expenses → effectively infinite runway (capped at 99)
                 $runway = 99;
             }
 

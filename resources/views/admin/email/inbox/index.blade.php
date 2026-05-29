@@ -111,7 +111,7 @@
         <div class="flex items-center gap-3">
             <p class="text-xs" style="color: rgba(235,235,245,0.6);">{{ $emails->total() }} email ditemukan</p>
             @if($category === 'trash' && $emails->total() > 0)
-                <form method="POST" action="{{ route('admin.inbox.empty-trash') }}" onsubmit="return confirm('Yakin ingin menghapus semua email di sampah secara permanen?')">
+                <form method="POST" action="{{ route('admin.inbox.empty-trash') }}" x-data @submit.prevent="if(confirm('Yakin ingin menghapus semua email di sampah secara permanen?')) $el.submit()">
                     @csrf
                     <button type="submit" class="text-xs px-3 py-1.5 rounded-apple font-semibold" style="background: rgba(255,59,48,0.15); color: rgba(255,59,48,1); border: 1px solid rgba(255,59,48,0.3);">
                         <i class="fas fa-trash mr-1"></i>Kosongkan Sampah
@@ -203,12 +203,14 @@
 
                     $previewText = $email->preview ?: 'Tidak ada ringkasan isi email.';
                 @endphp
-                <div class="email-item px-6 py-4 hover:bg-white/5 transition-colors {{ !$email->is_read ? 'bg-white/5' : '' }}"
-                     onclick="window.location='{{ route('admin.inbox.show', $email) }}'">
+                <div x-data="{ starred: {{ $email->is_starred ? 'true' : 'false' }} }"
+                     @click="window.location='{{ route('admin.inbox.show', $email) }}'"
+                     class="email-item px-6 py-4 hover:bg-white/5 transition-colors {{ !$email->is_read ? 'bg-white/5' : '' }}">
                     <div class="flex items-start gap-4">
                         <button type="button"
-                                onclick="event.stopPropagation(); toggleStar({{ $email->id }}, this)"
-                                class="mt-1 star-button {{ $email->is_starred ? 'active' : '' }}">
+                                @click.stop="fetch('/admin/inbox/{{ $email->id }}/star', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' } }).then(r => r.json()).then(d => { if (d.success) starred = !starred; }).catch(console.error)"
+                                :class="starred ? 'active' : ''"
+                                class="mt-1 star-button">
                             <i class="fas fa-star"></i>
                         </button>
                         <div class="flex-shrink-0">
@@ -251,10 +253,10 @@
                                         @endif
                                     </span>
                                     @if($category === 'trash')
-                                        <form action="{{ route('admin.inbox.delete', $email->id) }}" 
-                                              method="POST" 
-                                              onclick="event.stopPropagation();"
-                                              onsubmit="event.stopPropagation(); return confirm('Yakin ingin menghapus email ini secara PERMANEN?');">
+                                        <form action="{{ route('admin.inbox.delete', $email->id) }}"
+                                              method="POST"
+                                              @click.stop
+                                              @submit.prevent="if(confirm('Yakin ingin menghapus email ini secara PERMANEN?')) $el.submit()">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-400 hover:text-red-300 transition-colors">
@@ -380,23 +382,4 @@
 }
 </style>
 
-<script>
-function toggleStar(emailId, button) {
-    fetch(`/admin/inbox/${emailId}/star`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            button.classList.toggle('active');
-        }
-    })
-    .catch(console.error);
-}
-</script>
 @endsection

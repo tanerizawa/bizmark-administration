@@ -95,7 +95,7 @@
        class="inline-flex items-center px-4 py-2.5 bg-apple-blue text-white rounded-apple text-sm font-medium hover:bg-blue-700 transition-apple">
         <i class="fas fa-plus mr-2"></i>Tambah Topic
     </a>
-        <form method="POST" action="{{ route('auto-post.topics.bulk-action') }}" onsubmit="return confirm('Normalisasi & lengkapi topic sesuai filter saat ini?');">
+        <form method="POST" action="{{ route('auto-post.topics.bulk-action') }}" x-data @submit.prevent="if(confirm('Normalisasi & lengkapi topic sesuai filter saat ini?')) $el.submit()">
             @csrf
             <input type="hidden" name="action" value="normalize_ecosystem">
             <input type="hidden" name="scope" value="filtered">
@@ -205,7 +205,7 @@
                                        class="p-2 rounded-apple text-dark-text-secondary hover:text-white hover:bg-white/10 transition-colors">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('auto-post.topics.destroy', $topic) }}" method="POST" class="inline" onsubmit="return confirm('Hapus topic ini?')">
+                                    <form action="{{ route('auto-post.topics.destroy', $topic) }}" method="POST" class="inline" x-data @submit.prevent="if(confirm('Hapus topic ini?')) $el.submit()">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-2 rounded-apple text-dark-text-secondary hover:text-apple-red hover:bg-apple-red/10 transition-colors">

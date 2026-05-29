@@ -5,6 +5,7 @@
     $processUrl = $locale === 'en' ? route('process.en') : route('process.id');
     $aboutUrl = $locale === 'en' ? route('about.en') : route('about.id');
     $blogUrl = $locale === 'en' ? route('blog.index.en') : route('blog.index.id');
+    $aiCheckerUrl = route('landing.service-inquiry.create');
     $landingMetrics = config('landing_metrics');
     $contact = $landingMetrics['contact'] ?? [];
     $phoneNumber = $contact['phone'] ?? '+62 838 7960 2855';
@@ -53,6 +54,49 @@
                     <i class="fas fa-home w-6 inline-block text-white/70" aria-hidden="true"></i>
                     <span class="ml-1">{{ __('landing.nav.home') }}</span>
                 </a>
+
+                {{-- TOOLS — promoted ke atas, emerald accent untuk signal platform-first --}}
+                <div class="px-4 pt-3 pb-1 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full" style="background: var(--tools);" aria-hidden="true"></span>
+                    <p class="text-white/70 text-[11px] uppercase tracking-wider font-bold">
+                        {{ $locale === 'en' ? 'Free Tools' : 'Alat Gratis' }}
+                    </p>
+                    <span class="text-white/40 text-[10px]">·</span>
+                    <span class="text-white/40 text-[10px]">{{ $locale === 'en' ? 'No login' : 'Tanpa daftar' }}</span>
+                </div>
+                <a href="{{ route('permohonan.index') }}"
+                   class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px] border"
+                   style="background: rgba(52,211,153,.08); border-color: rgba(52,211,153,.22);"
+                   @click="open = false">
+                    <i class="fas fa-file-invoice-dollar w-6 inline-block" style="color: var(--tools-soft);" aria-hidden="true"></i>
+                    <span class="ml-1 font-semibold">{{ $locale === 'en' ? 'Permit Application' : 'Layanan Permohonan Izin' }}</span>
+                </a>
+                <a href="{{ route('consultation.index') }}"
+                   class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
+                   @click="open = false">
+                    <i class="fas fa-brain w-6 inline-block" style="color: var(--tools-soft);" aria-hidden="true"></i>
+                    <span class="ml-1">{{ $locale === 'en' ? 'Cost Estimator' : 'Estimasi Biaya' }}</span>
+                </a>
+                <a href="{{ route('polygon.shp.index') }}"
+                   class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
+                   @click="open = false">
+                    <i class="fas fa-draw-polygon w-6 inline-block" style="color: var(--tools-soft);" aria-hidden="true"></i>
+                    <span class="ml-1">Polygon SHP Maker</span>
+                </a>
+                <a href="{{ route('calculator.index') }}"
+                   class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
+                   @click="open = false">
+                    <i class="fas fa-calculator w-6 inline-block" style="color: var(--tools-soft);" aria-hidden="true"></i>
+                    <span class="ml-1">{{ $locale === 'en' ? 'Cost Calculator' : 'Kalkulator Biaya' }}</span>
+                </a>
+
+                {{-- SERVICES + PROCESS --}}
+                <div class="px-4 pt-4 pb-1 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full" style="background: var(--accent-soft);" aria-hidden="true"></span>
+                    <p class="text-white/70 text-[11px] uppercase tracking-wider font-bold">
+                        {{ $locale === 'en' ? 'With Our Team' : 'Didampingi Ahli' }}
+                    </p>
+                </div>
                 <a href="{{ $servicesUrl }}"
                    class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
                    @click="open = false">
@@ -65,46 +109,27 @@
                     <i class="fas fa-tasks w-6 inline-block text-white/70" aria-hidden="true"></i>
                     <span class="ml-1">{{ __('landing.nav.process') }}</span>
                 </a>
-                <a href="{{ $aboutUrl }}"
+                <a href="{{ $locale === 'en' ? route('pricing.en') : route('pricing.id') }}"
                    class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
                    @click="open = false">
-                    <i class="fas fa-info-circle w-6 inline-block text-white/70" aria-hidden="true"></i>
-                    <span class="ml-1">{{ __('landing.nav.about') }}</span>
+                    <i class="fas fa-tag w-6 inline-block text-white/70" aria-hidden="true"></i>
+                    <span class="ml-1">{{ $locale === 'en' ? 'Pricing' : 'Harga' }}</span>
                 </a>
+                {{-- RESOURCES --}}
+                <div class="px-4 pt-4 pb-1">
+                    <p class="text-white/70 text-[11px] uppercase tracking-wider font-bold">{{ $locale === 'en' ? 'Resources' : 'Sumber Daya' }}</p>
+                </div>
                 <a href="{{ $blogUrl }}"
                    class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
                    @click="open = false">
                     <i class="fas fa-newspaper w-6 inline-block text-white/70" aria-hidden="true"></i>
                     <span class="ml-1">{{ __('landing.nav.blog') }}</span>
                 </a>
-
-                <div class="border-t border-white/15 my-2"></div>
-                <a href="{{ route('permohonan.index') }}"
-                   class="text-white transition px-4 py-3.5 rounded-lg flex items-center min-h-[44px] border bg-blue-500/15 border-blue-500/30"
-                   @click="open = false">
-                    <i class="fas fa-file-invoice-dollar w-6 inline-block text-blue-300" aria-hidden="true"></i>
-                    <span class="ml-1 font-semibold">Permohonan</span>
-                </a>
-
-                <div class="border-t border-white/15 my-2"></div>
-                <p class="px-4 py-1 text-white/50 text-xs uppercase tracking-wider font-semibold">{{ $locale === 'en' ? 'Tools' : 'Alat Bantu' }}</p>
-                <a href="{{ route('polygon.shp.index') }}"
+                <a href="{{ $aboutUrl }}"
                    class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
                    @click="open = false">
-                    <i class="fas fa-draw-polygon w-6 inline-block text-blue-300" aria-hidden="true"></i>
-                    <span class="ml-1">Polygon SHP Maker</span>
-                </a>
-                <a href="{{ route('calculator.index') }}"
-                   class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
-                   @click="open = false">
-                    <i class="fas fa-calculator w-6 inline-block text-blue-300" aria-hidden="true"></i>
-                    <span class="ml-1">{{ $locale === 'en' ? 'Permit Cost Calculator' : 'Kalkulator Perizinan' }}</span>
-                </a>
-                <a href="{{ route('consultation.index') }}"
-                   class="text-white transition px-4 py-3.5 rounded-lg hover:bg-white/10 active:bg-white/20 flex items-center min-h-[44px]"
-                   @click="open = false">
-                    <i class="fas fa-comments-dollar w-6 inline-block text-blue-300" aria-hidden="true"></i>
-                    <span class="ml-1">{{ $locale === 'en' ? 'Cost Estimator' : 'Estimasi Biaya' }}</span>
+                    <i class="fas fa-info-circle w-6 inline-block text-white/70" aria-hidden="true"></i>
+                    <span class="ml-1">{{ __('landing.nav.about') }}</span>
                 </a>
 
                 <div class="border-t border-white/15 my-4"></div>
@@ -126,9 +151,10 @@
 
                 @if(auth('client')->check())
                     <a href="{{ route('client.dashboard') }}"
-                       class="mx-4 mt-4 block text-center px-6 py-3.5 rounded-lg font-bold transition min-h-[44px] active:scale-[0.98] text-white bg-blue-500"
+                       class="mx-4 mt-4 block text-center px-6 py-3.5 rounded-lg font-bold transition min-h-[44px] active:scale-[0.98] text-white"
+                       style="background: var(--accent); box-shadow: 0 4px 14px rgba(var(--accent-rgb),.4);"
                        @click="open = false">
-                        <i class="fas fa-user-circle mr-1"></i> {{ auth('client')->user()->name }}
+                        <i class="fas fa-gauge-high mr-1"></i> {{ auth('client')->user()->name }}
                     </a>
                     <form method="POST" action="{{ route('client.logout') }}" class="mx-4 mt-2">
                         @csrf
@@ -138,15 +164,17 @@
                     </form>
                 @elseif(auth('web')->check())
                     <a href="/dashboard"
-                       class="mx-4 mt-4 block text-center px-6 py-3.5 rounded-lg font-bold transition min-h-[44px] active:scale-[0.98] text-white bg-blue-500"
+                       class="mx-4 mt-4 block text-center px-6 py-3.5 rounded-lg font-bold transition min-h-[44px] active:scale-[0.98] text-white"
+                       style="background: var(--accent); box-shadow: 0 4px 14px rgba(var(--accent-rgb),.4);"
                        @click="open = false">
                         <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
                     </a>
                 @else
                     <a href="/login"
-                       class="mx-4 mt-4 block text-center px-6 py-3.5 rounded-lg font-bold transition min-h-[44px] active:scale-[0.98] text-white bg-blue-500"
+                       class="mx-4 mt-4 block text-center px-6 py-3.5 rounded-lg font-bold transition min-h-[44px] active:scale-[0.98] text-white"
+                       style="background: var(--accent); box-shadow: 0 4px 14px rgba(var(--accent-rgb),.4);"
                        @click="open = false">
-                        <i class="fas fa-sign-in-alt mr-1"></i> {{ $locale === 'id' ? 'Login / Daftar' : 'Login / Sign Up' }}
+                        <i class="fas fa-user-lock mr-1"></i> {{ $locale === 'id' ? 'Masuk ke Portal' : 'Sign In' }}
                     </a>
                 @endif
             </nav>

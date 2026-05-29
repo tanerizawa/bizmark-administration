@@ -52,7 +52,7 @@ class GenerateServiceCostQuoteJob implements ShouldQueue
             $serviceLabels[] = $servicesByCategory[$categoryKey][$serviceKey] ?? $serviceKey;
         }
 
-        $systemPrompt = "Anda adalah konsultan legal bisnis Indonesia senior. Tugas Anda membuat konten penawaran jasa yang profesional, formal, sopan, jelas, dan siap kirim. Jangan gunakan placeholder seperti [Nama], [Perusahaan], atau teks dummy apa pun. Penutup WAJIB menggunakan penanda pengirim 'Tim Konsultan' dan email kontak info@bizmark.id.\n\nOutput WAJIB JSON valid dengan struktur:\n{\n  \"offer_text\": \"isi penawaran formal untuk customer (plain text)\",\n  \"email_subject\": \"subjek email formal\",\n  \"email_body\": \"isi email formal lengkap (plain text)\",\n  \"email_html_body\": \"isi email HTML formal dengan <p>, <strong>, <em>, <ul>, <li>, <table>, <tr>, <td>\"\n}";
+        $systemPrompt = "Anda adalah konsultan legal bisnis Indonesia senior. Tugas Anda membuat konten penawaran jasa yang profesional, formal, sopan, jelas, dan siap kirim. Jangan gunakan placeholder seperti [Nama], [Perusahaan], atau teks dummy apa pun. Penutup WAJIB menggunakan penanda pengirim 'Tim Konsultan' dan email kontak info@bizmark.id.\n\nOUTPUT WAJIB: kembalikan HANYA JSON object murni sesuai struktur berikut. JANGAN gunakan markdown code fence (```), JANGAN tambahkan teks atau penjelasan apapun sebelum maupun sesudah JSON.\n{\n  \"offer_text\": \"isi penawaran formal untuk customer (plain text)\",\n  \"email_subject\": \"subjek email formal\",\n  \"email_body\": \"isi email formal lengkap (plain text)\",\n  \"email_html_body\": \"isi email HTML formal dengan <p>, <strong>, <em>, <ul>, <li>, <table>, <tr>, <td>\"\n}";
 
         $userPrompt = "Buatkan konten penawaran resmi untuk data berikut:\n".
             "- Nomor Permohonan: {$serviceRequest->request_number}\n".
@@ -74,7 +74,7 @@ class GenerateServiceCostQuoteJob implements ShouldQueue
             "5. Jangan gunakan placeholder.\n".
             "6. Penutup wajib: Tim Konsultan (info@bizmark.id).\n".
             "7. Field email_html_body wajib berisi HTML bersih.\n".
-            '8. Kembalikan JSON valid saja sesuai format.';
+            '8. Kembalikan JSON object murni saja, tanpa markdown, tanpa teks tambahan.';
 
         $aiResponse = $openRouter->chat([
             ['role' => 'system', 'content' => $systemPrompt],
@@ -83,6 +83,7 @@ class GenerateServiceCostQuoteJob implements ShouldQueue
             'model' => config('services.openrouter.free_primary_model', 'google/gemini-2.5-flash'),
             'temperature' => 0.35,
             'max_tokens' => 1800,
+            'response_format' => ['type' => 'json_object'],
         ]);
 
         if (! ($aiResponse['success'] ?? false)) {
@@ -96,17 +97,14 @@ class GenerateServiceCostQuoteJob implements ShouldQueue
         }
 
         $content = trim((string) ($aiResponse['content'] ?? ''));
-        $content = preg_replace('/^```json\s*/i', '', $content);
-        $content = preg_replace('/```$/', '', $content);
-        $decoded = json_decode(trim($content), true);
 
-        if (! is_array($decoded) && preg_match('/\{[\s\S]*\}/', $content, $matches)) {
-            $decoded = json_decode($matches[0], true);
-        }
+        // Multi-strategy JSON extraction — centralised in OpenRouterService
+        $decoded = OpenRouterService::extractJson($content);
 
         if (! is_array($decoded)) {
             Log::warning('GenerateServiceCostQuoteJob: AI returned non-JSON', [
                 'request_number' => $this->requestNumber,
+                'content_preview' => substr($content, 0, 300),
             ]);
             $this->fail(new \RuntimeException('AI returned invalid JSON'));
 
@@ -146,7 +144,70 @@ class GenerateServiceCostQuoteJob implements ShouldQueue
             'error' => $exception->getMessage(),
         ]);
 
-        ServiceCostRequest::where('request_number', $this->requestNumber)
-            ->update(['ai_quote_status' => 'failed']);
+        $serviceRequest = ServiceCostRequest::where('request_number', $this->requestNumber)->first();
+        if ($serviceRequest) {
+            // Save a deterministic fallback so the admin can still send the quote email
+            $fallback = $this->buildFallbackContent($serviceRequest);
+            $serviceRequest->update([
+                'ai_quote_status' => 'failed',
+                'status' => 'quoted',
+                'quoted_price' => $this->validated['quoted_price'],
+                'quoted_timeline' => $this->validated['quoted_timeline'] ?? null,
+                'quote_details' => $fallback,
+                'quoted_at' => now(),
+                'reviewed_by' => $this->reviewedBy,
+                'reviewed_at' => now(),
+            ]);
+        }
+    }
+
+    /**
+     * Build a deterministic (non-AI) fallback quote so the record is never left
+     * in a broken state when the AI job permanently fails.
+     */
+    private function buildFallbackContent(ServiceCostRequest $serviceRequest): array
+    {
+        $timeline = ($this->validated['quoted_timeline'] ?? '') !== ''
+            ? $this->validated['quoted_timeline']
+            : 'Sesuai kesepakatan';
+        $quotePrice = 'Rp '.number_format((float) $this->validated['quoted_price'], 0, ',', '.');
+        $name = $serviceRequest->display_name ?? 'Bapak/Ibu';
+        $reqNum = $serviceRequest->request_number;
+
+        $offerText = "Menindaklanjuti permohonan {$reqNum}, bersama ini kami sampaikan penawaran jasa secara resmi sebesar {$quotePrice} dengan estimasi pelaksanaan {$timeline}.\n\n".
+            "Penawaran ini disusun berdasarkan informasi kebutuhan yang telah Bapak/Ibu sampaikan. Jika diperlukan penyesuaian ruang lingkup layanan, rincian biaya dan timeline dapat kami revisi melalui konfirmasi lanjutan.\n\n".
+            'Kami siap mendampingi proses hingga tahap implementasi. Mohon konfirmasi persetujuan agar tim kami dapat menindaklanjuti tahap berikutnya.';
+
+        $emailSubject = "Penawaran Jasa - {$reqNum} - Bizmark.ID";
+        $emailBody = "Yth. {$name},\n\n".
+            "Terima kasih atas permohonan yang telah disampaikan kepada Bizmark.ID. Berdasarkan kebutuhan yang Bapak/Ibu ajukan, kami menyampaikan penawaran jasa sebagai berikut:\n\n".
+            "- Nomor Permohonan: {$reqNum}\n".
+            "- Nilai Penawaran: {$quotePrice}\n".
+            "- Estimasi Timeline: {$timeline}\n\n".
+            "Apabila Bapak/Ibu berkenan, kami siap melanjutkan ke tahap berikutnya. Silakan membalas email ini untuk konfirmasi atau kebutuhan penyesuaian.\n\n".
+            "Hormat kami,\nTim Konsultan\ninfo@bizmark.id";
+
+        $paragraphs = array_filter(explode("\n\n", trim($emailBody)));
+        $htmlParagraphs = array_map(
+            fn ($p) => '<p style="margin:0 0 12px 0;line-height:1.75;color:#1f2937;font-size:14px;">'.nl2br(e(trim($p))).'</p>',
+            $paragraphs
+        );
+        $summaryTable = '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:10px 0 16px 0;border-collapse:collapse;border:1px solid #dbe2ef;">'
+            .'<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;">Nomor Permohonan</td><td style="padding:10px 12px;background:#fff;color:#0f172a;font-size:12px;font-weight:600;text-align:right;">'.e($reqNum).'</td></tr>'
+            .'<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;border-top:1px solid #e2e8f0;">Nilai Penawaran</td><td style="padding:10px 12px;background:#fff;color:#0f172a;font-size:12px;font-weight:700;text-align:right;border-top:1px solid #e2e8f0;">'.$quotePrice.'</td></tr>'
+            .'<tr><td style="padding:10px 12px;background:#f8fafc;color:#475569;font-size:12px;border-top:1px solid #e2e8f0;">Estimasi Timeline</td><td style="padding:10px 12px;background:#fff;color:#0f172a;font-size:12px;font-weight:600;text-align:right;border-top:1px solid #e2e8f0;">'.e($timeline).'</td></tr>'
+            .'</table>';
+        $emailHtmlBody = $summaryTable.implode('', $htmlParagraphs);
+
+        return [
+            'generated_by_ai' => false,
+            'ai_model' => null,
+            'generated_at' => now()->toDateTimeString(),
+            'fallback_reason' => 'AI returned invalid JSON after retries',
+            'offer_text' => $offerText,
+            'email_subject' => $emailSubject,
+            'email_body' => $emailBody,
+            'email_html_body' => $emailHtmlBody,
+        ];
     }
 }

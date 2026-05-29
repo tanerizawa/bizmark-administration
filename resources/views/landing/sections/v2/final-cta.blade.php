@@ -9,41 +9,48 @@
 {{-- ────────────────────────────────────────────────
      FINAL CTA — editorial closing block
 ──────────────────────────────────────────────── --}}
-<section class="section-v2-sm section-ink" aria-labelledby="final-cta-heading">
-    <div class="container-wide">
-        <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
-            <span class="blue-rule mx-auto mb-6"></span>
-            <h2 id="final-cta-heading" class="display-xl mb-6">
+<section class="section-v2-sm section-premium relative overflow-hidden final-cta-section" aria-labelledby="final-cta-heading">
+    {{-- Decorative background pattern --}}
+    <div class="absolute inset-0 pointer-events-none final-cta-pattern" aria-hidden="true">
+        <img src="{{ asset('images/illustrations/cta-pattern.svg') }}"
+             alt=""
+             loading="lazy"
+             class="final-cta-pattern-image select-none"
+             draggable="false">
+    </div>
+    <div class="container-wide relative">
+        <div class="final-cta-shell max-w-5xl mx-auto text-center" data-aos="fade-up">
+            <span class="blue-rule mx-auto mb-4"></span>
+            <h2 id="final-cta-heading" class="display-xl mb-5">
                 {{ $isEn
                     ? 'Ready to move your permits forward?'
                     : 'Siap mengurus perizinan usaha Anda?' }}
             </h2>
-            <p class="text-lg leading-relaxed max-w-2xl mx-auto mb-8 text-gray-400">
+            <p class="final-cta-copy text-lg leading-relaxed max-w-2xl mx-auto mb-6 text-gray-600">
                 {{ $isEn
-                    ? 'Start with a free AI permit check — or speak directly with our consultant team. No commitment required.'
-                    : 'Mulai dengan cek kebutuhan izin AI secara gratis — atau langsung bicara dengan konsultan kami. Tidak ada tekanan, tidak ada kewajiban apa pun.' }}
+                    ? 'Run a free AI permit check in under a minute — or connect with our specialist team for a tailored assessment. No strings attached.'
+                    : 'Jalankan cek perizinan AI secara gratis dalam hitungan detik — atau terhubung langsung dengan tim spesialis kami untuk asesmen yang lebih mendalam. Tanpa syarat apa pun.' }}
             </p>
 
-            <div class="flex flex-wrap items-center justify-center gap-3">
-                <a href="{{ $primaryCtaRoute }}" class="btn btn-primary btn-lg"
+            <div class="final-cta-actions">
+                <a href="{{ $primaryCtaRoute }}" class="btn btn-gold btn-lg"
                    @click="if(window.trackEvent) trackEvent('CTA','click','final_cta_primary')">
                     <i class="fas fa-robot" aria-hidden="true"></i>
                     <span>{{ $isEn ? 'Start Free Permit Check' : 'Cek Perizinan AI — Gratis' }}</span>
                 </a>
                 <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer"
-                   class="btn btn-ghost-on-dark btn-lg"
+                   class="btn btn-ghost btn-lg"
                    @click="if(window.trackEvent) trackEvent('CTA','click','final_cta_whatsapp')">
                     <i class="fab fa-whatsapp" aria-hidden="true"></i>
                     <span>{{ $isEn ? 'Chat on WhatsApp' : 'Hubungi via WhatsApp' }}</span>
                 </a>
             </div>
 
-            <p class="text-xs mt-6 text-gray-500">
-                <i class="fas fa-shield-halved mr-1.5 text-blue-400"></i>
-                {{ $isEn
-                    ? 'ISO 9001:2015 · NDA available · 96% on-time delivery · Bilingual EN/ID'
-                    : 'ISO 9001:2015 · NDA tersedia · 96% tepat waktu · Bilingual EN/ID' }}
-            </p>
+            <div class="final-cta-meta" aria-label="{{ $isEn ? 'Capabilities' : 'Kapabilitas' }}">
+                <span><i class="fas fa-clock" aria-hidden="true"></i> {{ $isEn ? 'Operating since 2014' : 'Beroperasi sejak 2014' }}</span>
+                <span><i class="fas fa-globe" aria-hidden="true"></i> Bilingual ID / EN</span>
+                <span><i class="fas fa-map-marked-alt" aria-hidden="true"></i> {{ $isEn ? 'Nationwide coverage' : 'Cakupan se-Indonesia' }}</span>
+            </div>
         </div>
     </div>
 </section>

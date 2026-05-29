@@ -21,10 +21,10 @@
             </div>
 
             <div class="flex space-x-2">
-                <form action="{{ route('permit-templates.destroy', $permitTemplate) }}" 
-                      method="POST" 
+                <form action="{{ route('permit-templates.destroy', $permitTemplate) }}"
+                      method="POST"
                       class="inline"
-                      onsubmit="return confirm('Yakin ingin menghapus template ini?')">
+                      x-data @submit.prevent="if(confirm('Yakin ingin menghapus template ini?')) $el.submit()">
                     @csrf
                     @method('DELETE')
                     <button type="submit" 

@@ -111,7 +111,7 @@ class ServiceCostRequestController extends Controller
         $validated = $request->validate([
             'quoted_price' => 'required|numeric|min:0',
             'quoted_timeline' => 'nullable|string|max:255',
-            'quote_notes' => 'nullable|string|max:2000',
+            'quote_notes' => 'nullable|string|max:10000',
             'generate_ai_content' => 'nullable|boolean',
         ]);
 
@@ -165,7 +165,7 @@ class ServiceCostRequestController extends Controller
     public function regenerateQuoteContent(Request $request, string $requestNumber)
     {
         $validated = $request->validate([
-            'regen_notes' => 'nullable|string|max:2000',
+            'regen_notes' => 'nullable|string|max:10000',
         ]);
 
         $serviceRequest = ServiceCostRequest::where('request_number', $requestNumber)->firstOrFail();
@@ -343,6 +343,24 @@ class ServiceCostRequestController extends Controller
 
             Mail::to($serviceRequest->email)->send($mailable);
 
+            // Save a copy to the sent box so it appears in email management
+            \App\Models\EmailInbox::create([
+                'message_id' => 'quote-'.strtolower($serviceRequest->request_number).'-'.time().'@bizmark.id',
+                'email_account_id' => 1,
+                'from_email' => 'info@bizmark.id',
+                'from_name' => 'Tim Konsultan',
+                'to_email' => $serviceRequest->email,
+                'subject' => $subject,
+                'body_text' => $body,
+                'body_html' => $htmlBody,
+                'category' => 'sent',
+                'is_read' => true,
+                'received_at' => now(),
+                'status' => 'resolved',
+                'labels' => ['penawaran', 'service-cost-request'],
+                'tags' => [$serviceRequest->request_number],
+            ]);
+
             $timestamp = now()->format('d M Y H:i');
             $author = Auth::user()->name ?? 'Admin';
             $note = "[{$timestamp} - {$author}]\nEmail penawaran telah dikirim ke {$serviceRequest->email} melalui info@bizmark.id";
@@ -382,7 +400,7 @@ class ServiceCostRequestController extends Controller
                 $serviceLabels[] = $servicesByCategory[$categoryKey][$serviceKey] ?? $serviceKey;
             }
 
-            $systemPrompt = "Anda adalah konsultan legal bisnis Indonesia senior. Tugas Anda membuat konten penawaran jasa yang profesional, formal, sopan, jelas, dan siap kirim. Jangan gunakan placeholder seperti [Nama], [Perusahaan], atau teks dummy apa pun. Penutup WAJIB menggunakan penanda pengirim 'Tim Konsultan' dan email kontak info@bizmark.id.\n\nOutput WAJIB JSON valid dengan struktur:\n{\n  \"offer_text\": \"isi penawaran formal untuk customer (plain text)\",\n  \"email_subject\": \"subjek email formal\",\n  \"email_body\": \"isi email formal lengkap (plain text)\",\n  \"email_html_body\": \"isi email HTML formal dengan <p>, <strong>, <em>, <ul>, <li>, <table>, <tr>, <td>\"\n}";
+            $systemPrompt = "Anda adalah konsultan legal bisnis Indonesia senior. Tugas Anda membuat konten penawaran jasa yang profesional, formal, sopan, jelas, dan siap kirim. Jangan gunakan placeholder seperti [Nama], [Perusahaan], atau teks dummy apa pun. Penutup WAJIB menggunakan penanda pengirim 'Tim Konsultan' dan email kontak info@bizmark.id.\n\nOUTPUT WAJIB: kembalikan HANYA JSON object murni sesuai struktur berikut. JANGAN gunakan markdown code fence (```), JANGAN tambahkan teks atau penjelasan apapun sebelum maupun sesudah JSON.\n{\n  \"offer_text\": \"isi penawaran formal untuk customer (plain text)\",\n  \"email_subject\": \"subjek email formal\",\n  \"email_body\": \"isi email formal lengkap (plain text)\",\n  \"email_html_body\": \"isi email HTML formal dengan <p>, <strong>, <em>, <ul>, <li>, <table>, <tr>, <td>\"\n}";
 
             $userPrompt = "Buatkan konten penawaran resmi untuk data berikut:\n".
                 "- Nomor Permohonan: {$serviceRequest->request_number}\n".
@@ -404,7 +422,7 @@ class ServiceCostRequestController extends Controller
                 "5. Jangan gunakan placeholder.\n".
                 "6. Penutup wajib: Tim Konsultan (info@bizmark.id).\n".
                 "7. Field email_html_body wajib berisi HTML bersih dengan kombinasi bold/italic dan tabel ringkas penawaran.\n".
-                '8. Kembalikan JSON valid saja sesuai format.';
+                '8. Kembalikan JSON object murni saja, tanpa markdown, tanpa teks tambahan.';
 
             $aiResponse = $this->openRouterService->chat([
                 ['role' => 'system', 'content' => $systemPrompt],
@@ -413,6 +431,7 @@ class ServiceCostRequestController extends Controller
                 'model' => config('services.openrouter.free_primary_model', 'google/gemini-2.5-flash'),
                 'temperature' => 0.35,
                 'max_tokens' => 1800,
+                'response_format' => ['type' => 'json_object'],
             ]);
 
             if (! ($aiResponse['success'] ?? false)) {
@@ -425,15 +444,16 @@ class ServiceCostRequestController extends Controller
             }
 
             $content = trim((string) ($aiResponse['content'] ?? ''));
-            $content = preg_replace('/^```json\s*/i', '', $content);
-            $content = preg_replace('/```$/', '', $content);
-            $decoded = json_decode(trim($content), true);
 
-            if (! is_array($decoded) && preg_match('/\{[\s\S]*\}/', $content, $matches)) {
-                $decoded = json_decode($matches[0], true);
-            }
+            // Delegate to the single shared extractor in OpenRouterService
+            $decoded = \App\Services\OpenRouterService::extractJson($content);
 
             if (! is_array($decoded)) {
+                Log::warning('AI quote generation: could not parse JSON response', [
+                    'request_number' => $serviceRequest->request_number,
+                    'content_preview' => substr($content, 0, 500),
+                ]);
+
                 return null;
             }
 

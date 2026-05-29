@@ -78,6 +78,15 @@ class DashboardController extends Controller
             })
             ->count();
 
+        $profileChecks = collect([
+            filled($client->email),
+            filled($client->phone),
+            $client->client_type !== 'company' || filled($client->company_name),
+            $client->client_type !== 'company' || filled($client->pic_position),
+        ]);
+        $profileCompletion = (int) round(($profileChecks->filter()->count() / max(1, $profileChecks->count())) * 100);
+        $profileComplete = $profileChecks->every(fn ($check) => $check === true);
+
         // Get submitted projects count (projects in process)
         $submittedCount = $projects->filter(function ($project) {
             return $project->status && in_array($project->status->name, ['Dalam Proses', 'Sedang Diproses']);
@@ -94,7 +103,9 @@ class DashboardController extends Controller
             'pendingDocuments',
             'submittedCount',
             'totalDocuments',
-            'uploadedDocuments'
+            'uploadedDocuments',
+            'profileCompletion',
+            'profileComplete'
         ));
     }
 }

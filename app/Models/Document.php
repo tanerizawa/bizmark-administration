@@ -36,6 +36,12 @@ class Document extends Model
         'notes',
         'download_count',
         'last_accessed_at',
+        // Vault columns (P6)
+        'client_visible',
+        'document_issued_at',
+        'document_expires_at',
+        'document_number',
+        'vault_category',
     ];
 
     protected $casts = [
@@ -44,6 +50,9 @@ class Document extends Model
         'approval_date' => 'date',
         'is_latest_version' => 'boolean',
         'is_confidential' => 'boolean',
+        'client_visible' => 'boolean',
+        'document_issued_at' => 'date',
+        'document_expires_at' => 'date',
         'access_permissions' => 'array',
         'last_accessed_at' => 'datetime',
     ];

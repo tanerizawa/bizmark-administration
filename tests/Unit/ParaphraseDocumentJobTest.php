@@ -3,8 +3,6 @@
 namespace Tests\Unit;
 
 use App\Jobs\ParaphraseDocumentJob;
-use App\Models\AIProcessingLog;
-use App\Models\DocumentDraft;
 use App\Models\DocumentTemplate;
 use App\Models\Project;
 use App\Models\ProjectStatus;
@@ -21,8 +19,11 @@ class ParaphraseDocumentJobTest extends TestCase
     use RefreshDatabase;
 
     private Project $project;
+
     private DocumentTemplate $template;
+
     private User $user;
+
     private ProjectStatus $status;
 
     protected function setUp(): void

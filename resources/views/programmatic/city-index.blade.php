@@ -26,45 +26,40 @@ $waLink = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . raw
 <script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 
 {{-- Hero with editorial gradient --}}
-<section class="relative overflow-hidden" style="min-height: clamp(380px, 50vh, 520px);">
-    <div class="absolute inset-0 gradient-hero"></div>
-    <div class="absolute inset-0 opacity-[.07]">
-        <div class="absolute top-10 right-10 w-80 h-80 rounded-full blur-3xl" style="background: var(--color-accent);"></div>
-        <div class="absolute bottom-10 left-10 w-64 h-64 rounded-full blur-3xl" style="background: var(--color-secondary);"></div>
-    </div>
+<section class="relative overflow-hidden bg-[var(--bg-raised)] border-b border-gray-200" style="min-height: clamp(380px, 50vh, 520px);">
     <div class="container-wide relative z-10 flex flex-col justify-end h-full" style="min-height: clamp(380px, 50vh, 520px);">
         <div class="pb-10 pt-32 lg:pt-40 lg:pb-14 max-w-3xl">
             {{-- Breadcrumb --}}
             <nav class="mb-6">
-                <ol class="flex items-center gap-2 text-sm" style="color: rgba(255,255,255,.5);">
-                    <li><a href="/" class="hover:opacity-80 transition"><i class="fas fa-home text-xs"></i></a></li>
-                    <li><i class="fas fa-chevron-right text-[10px]" style="color: rgba(255,255,255,.3);"></i></li>
-                    <li><a href="{{ route('services.index.id') }}" class="hover:opacity-80 transition">Layanan</a></li>
-                    <li><i class="fas fa-chevron-right text-[10px]" style="color: rgba(255,255,255,.3);"></i></li>
-                    <li class="font-medium" style="color: rgba(255,255,255,.9);">{{ $city['name'] }}</li>
+                <ol class="flex items-center gap-2 text-sm text-gray-400">
+                    <li><a href="/" class="hover:text-gray-600 transition"><i class="fas fa-home text-xs"></i></a></li>
+                    <li><i class="fas fa-chevron-right text-[10px] text-gray-300"></i></li>
+                    <li><a href="{{ route('services.index.id') }}" class="hover:text-gray-600 transition text-gray-500">Layanan</a></li>
+                    <li><i class="fas fa-chevron-right text-[10px] text-gray-300"></i></li>
+                    <li class="font-medium text-gray-900">{{ $city['name'] }}</li>
                 </ol>
             </nav>
 
             {{-- Badge --}}
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm mb-6" style="background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);">
-                <i class="fas fa-map-marker-alt text-xs" style="color: var(--color-accent);"></i>
-                <span class="text-sm font-semibold" style="color: rgba(255,255,255,.9);">{{ $city['name'] }}, {{ $city['province'] }}</span>
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 border border-gray-200 mb-6">
+                <i class="fas fa-map-marker-alt text-xs text-amber-500"></i>
+                <span class="text-sm font-semibold text-gray-900">{{ $city['name'] }}, {{ $city['province'] }}</span>
             </div>
 
             {{-- Headline --}}
-            <h1 class="font-black leading-[1.1] mb-5" style="font-size: clamp(2rem,4.5vw,3.5rem); letter-spacing: -0.03em; color: #fff;">
+            <h1 class="font-black leading-[1.1] mb-5 text-gray-900" style="font-size: clamp(2rem,4.5vw,3.5rem); letter-spacing: -0.03em;">
                 Layanan Perizinan<br>Lingkungan di {{ $city['name'] }}
             </h1>
 
             {{-- Description --}}
-            <p class="text-lg leading-relaxed max-w-2xl mb-8 font-light" style="color: rgba(255,255,255,.65);">
+            <p class="text-lg leading-relaxed max-w-2xl mb-8 font-light text-gray-600">
                 {{ $city['description'] }}
             </p>
 
             {{-- CTA --}}
             <div class="flex flex-wrap gap-4 mb-10">
                 <a href="{{ $waLink }}" target="_blank" rel="noopener"
-                   class="btn btn-success btn-lg" style="background: var(--color-success); border-radius: var(--radius-full);">
+                   class="btn btn-gold btn-lg" style="border-radius: var(--radius-full);">
                     <i class="fab fa-whatsapp text-lg"></i>
                     <span>Konsultasi Gratis</span>
                 </a>
@@ -76,20 +71,20 @@ $waLink = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . raw
             </div>
 
             {{-- Stats --}}
-            <div class="flex items-center gap-8 text-sm" style="color: rgba(255,255,255,.7);">
+            <div class="flex items-center gap-8 text-sm text-gray-500">
                 <div>
-                    <span class="text-2xl font-black" style="color: #fff;">{{ $city['population'] ?? '-' }}</span>
-                    <br><span class="text-xs uppercase tracking-wider" style="color: rgba(255,255,255,.45);">Populasi</span>
+                    <span class="text-2xl font-black text-gray-900">{{ $city['population'] ?? '-' }}</span>
+                    <br><span class="text-xs uppercase tracking-wider text-gray-400">Populasi</span>
                 </div>
-                <div class="w-px h-8" style="background: rgba(255,255,255,.15);"></div>
+                <div class="w-px h-8 bg-gray-200"></div>
                 <div>
-                    <span class="text-2xl font-black" style="color: #fff;">{{ count($city['industrial_zones'] ?? []) }}</span>
-                    <br><span class="text-xs uppercase tracking-wider" style="color: rgba(255,255,255,.45);">Kawasan Industri</span>
+                    <span class="text-2xl font-black text-gray-900">{{ count($city['industrial_zones'] ?? []) }}</span>
+                    <br><span class="text-xs uppercase tracking-wider text-gray-400">Kawasan Industri</span>
                 </div>
-                <div class="w-px h-8" style="background: rgba(255,255,255,.15);"></div>
+                <div class="w-px h-8 bg-gray-200"></div>
                 <div>
                     <span class="text-2xl font-black" style="color: var(--color-secondary);">{{ count($services) }}</span>
-                    <br><span class="text-xs uppercase tracking-wider" style="color: rgba(255,255,255,.45);">Layanan</span>
+                    <br><span class="text-xs uppercase tracking-wider text-gray-400">Layanan</span>
                 </div>
             </div>
         </div>
@@ -101,12 +96,12 @@ $waLink = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . raw
 <section class="py-12 md:py-16" style="background: var(--surface-warm);">
     <div class="container-wide">
         <div class="max-w-3xl mx-auto text-center mb-10">
-            <div class="section-badge mx-auto">
+            <div class="eyebrow mx-auto">
                 <i class="fas fa-industry text-xs" style="color: var(--color-accent);"></i>
                 <span>Kawasan Industri</span>
             </div>
-            <h2 class="section-title" style="color: var(--text-primary);">Kawasan Industri di {{ $city['name'] }}</h2>
-            <p class="section-description" style="color: var(--text-secondary);">Kami melayani perusahaan di seluruh kawasan industri {{ $city['name'] }}, termasuk:</p>
+            <h2 class="display-lg" style="color: var(--text-primary);">Kawasan Industri di {{ $city['name'] }}</h2>
+            <p class="text-lg leading-relaxed text-gray-600" style="color: var(--text-secondary);">Kami melayani perusahaan di seluruh kawasan industri {{ $city['name'] }}, termasuk:</p>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             @foreach($city['industrial_zones'] ?? [] as $zone)
@@ -126,17 +121,17 @@ $waLink = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . raw
 <section class="py-12 md:py-16" id="layanan" style="background: var(--surface);">
     <div class="container-wide">
         <div class="max-w-3xl mx-auto text-center mb-10">
-            <div class="section-badge mx-auto">
+            <div class="eyebrow mx-auto">
                 <i class="fas fa-briefcase text-xs" style="color: var(--color-secondary);"></i>
                 <span>Layanan Profesional</span>
             </div>
-            <h2 class="section-title" style="color: var(--text-primary);">Layanan Kami di {{ $city['name'] }}</h2>
-            <p class="section-description" style="color: var(--text-secondary);">Solusi lengkap perizinan industri dan konsultasi lingkungan untuk perusahaan di {{ $city['name'] }}.</p>
+            <h2 class="display-lg" style="color: var(--text-primary);">Layanan Kami di {{ $city['name'] }}</h2>
+            <p class="text-lg leading-relaxed text-gray-600" style="color: var(--text-secondary);">Solusi lengkap perizinan industri dan konsultasi lingkungan untuk perusahaan di {{ $city['name'] }}.</p>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             @foreach($services as $slug => $svc)
             <a href="{{ url('/layanan/' . $slug . '/' . $citySlug) }}"
-               class="card block">
+               class="premium-card block">
                 <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition" style="background: {{ $svc['color'] ?? '#0ea5e9' }}12; color: {{ $svc['color'] ?? '#0ea5e9' }};">
                     <i class="fas {{ $svc['icon'] ?? 'fa-file-alt' }} text-lg"></i>
                 </div>
@@ -157,11 +152,11 @@ $waLink = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . raw
 <section class="py-12 md:py-16" style="background: var(--surface-cool);">
     <div class="container-wide">
         <div class="max-w-3xl mx-auto text-center mb-10">
-            <div class="section-badge mx-auto">
+            <div class="eyebrow mx-auto">
                 <i class="fas fa-gavel text-xs" style="color: var(--color-secondary);"></i>
                 <span>Regulasi</span>
             </div>
-            <h2 class="section-title" style="color: var(--text-primary);">Regulasi Utama di {{ $city['name'] }}</h2>
+            <h2 class="display-lg" style="color: var(--text-primary);">Regulasi Utama di {{ $city['name'] }}</h2>
         </div>
         <div class="max-w-4xl mx-auto">
             @if(is_array($city['key_regulations']))
@@ -188,11 +183,11 @@ $waLink = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . raw
 <section class="py-12 md:py-16" style="background: var(--surface);">
     <div class="container-wide">
         <div class="max-w-3xl mx-auto text-center mb-10">
-            <div class="section-badge mx-auto">
+            <div class="eyebrow mx-auto">
                 <i class="fas fa-map-marked-alt text-xs" style="color: var(--color-accent);"></i>
                 <span>Jangkauan Layanan</span>
             </div>
-            <h2 class="section-title" style="color: var(--text-primary);">Layanan Kami di Kota Lain</h2>
+            <h2 class="display-lg" style="color: var(--text-primary);">Layanan Kami di Kota Lain</h2>
         </div>
         <div class="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
             @foreach($otherCities as $cSlug => $c)
@@ -205,17 +200,54 @@ $waLink = $whatsapp . (str_contains($whatsapp, '?') ? '&' : '?') . 'text=' . raw
     </div>
 </section>
 
-{{-- CTA Bottom --}}
-<section class="relative py-16 md:py-20 overflow-hidden gradient-hero text-center">
-    <div class="absolute inset-0 opacity-[.07]">
-        <div class="absolute top-10 right-20 w-64 h-64 rounded-full blur-3xl" style="background: var(--color-accent);"></div>
-        <div class="absolute bottom-10 left-20 w-48 h-48 rounded-full blur-3xl" style="background: var(--color-secondary);"></div>
+{{-- Tools-contextual mini-section: free DIY tools (per city context) --}}
+<section class="section-v2-sm">
+    <div class="container-wide">
+        <div class="max-w-2xl mb-8">
+            <span class="eyebrow mb-3" style="background: rgba(16,185,129,.1); color: #047857;">
+                <i class="fas fa-tools text-xs"></i> Alat DIY Gratis
+            </span>
+            <h2 class="display-md mt-2 mb-3">Cek perizinan {{ $city['name'] }} sendiri (gratis)</h2>
+            <p class="text-base leading-relaxed text-gray-600">
+                Sebelum hubungi kami, coba dulu 3 alat AI gratis ini — tanpa daftar, tanpa biaya.
+            </p>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4">
+            <a href="{{ route('landing.service-inquiry.create') }}?city={{ urlencode($city['name']) }}" class="premium-card group transition-transform hover:-translate-y-0.5" style="border: 1px solid rgba(16,185,129,.2);">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: rgba(16,185,129,.12);">
+                    <i class="fas fa-robot text-xl" style="color: #059669;"></i>
+                </div>
+                <h3 class="font-display font-bold text-base mb-1.5">AI Permit Checker</h3>
+                <p class="text-sm text-gray-600 mb-3">Petakan izin yang dibutuhkan untuk usaha Anda di {{ $city['name'] }} dalam 30 detik.</p>
+                <span class="inline-flex items-center gap-1.5 text-sm font-semibold" style="color: #047857;">Coba gratis <i class="fas fa-arrow-right text-xs"></i></span>
+            </a>
+            <a href="{{ route('calculator.index') }}" class="premium-card group transition-transform hover:-translate-y-0.5" style="border: 1px solid rgba(16,185,129,.2);">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: rgba(16,185,129,.12);">
+                    <i class="fas fa-calculator text-xl" style="color: #059669;"></i>
+                </div>
+                <h3 class="font-display font-bold text-base mb-1.5">Cost Calculator</h3>
+                <p class="text-sm text-gray-600 mb-3">Estimasi biaya perizinan berdasarkan jenis usaha &amp; lokasi.</p>
+                <span class="inline-flex items-center gap-1.5 text-sm font-semibold" style="color: #047857;">Hitung biaya <i class="fas fa-arrow-right text-xs"></i></span>
+            </a>
+            <a href="{{ route('polygon.shp.index') }}" class="premium-card group transition-transform hover:-translate-y-0.5" style="border: 1px solid rgba(16,185,129,.2);">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: rgba(16,185,129,.12);">
+                    <i class="fas fa-draw-polygon text-xl" style="color: #059669;"></i>
+                </div>
+                <h3 class="font-display font-bold text-base mb-1.5">SHP Polygon Maker</h3>
+                <p class="text-sm text-gray-600 mb-3">Buat file SHP untuk peruntukan lahan / lampiran izin lingkungan.</p>
+                <span class="inline-flex items-center gap-1.5 text-sm font-semibold" style="color: #047857;">Buat polygon <i class="fas fa-arrow-right text-xs"></i></span>
+            </a>
+        </div>
     </div>
-    <div class="container-wide relative z-10 max-w-3xl mx-auto">
-        <h2 class="font-black mb-4" style="font-size: clamp(1.5rem,3vw,2.25rem); letter-spacing: -0.02em; color: #fff;">Butuh Bantuan Perizinan di {{ $city['name'] }}?</h2>
-        <p class="text-lg mb-8 font-light" style="color: rgba(255,255,255,.6);">Konsultasi gratis dengan tim ahli kami. Kami siap membantu kebutuhan perizinan perusahaan Anda.</p>
+</section>
+
+{{-- CTA Bottom --}}
+<section class="section-premium text-center">
+    <div class="container-wide max-w-3xl mx-auto">
+        <h2 class="font-black mb-4 text-gray-900" style="font-size: clamp(1.5rem,3vw,2.25rem); letter-spacing: -0.02em;">Butuh Bantuan Perizinan di {{ $city['name'] }}?</h2>
+        <p class="text-lg mb-8 font-light text-gray-600">Konsultasi gratis dengan tim ahli kami. Kami siap membantu kebutuhan perizinan perusahaan Anda.</p>
         <a href="{{ $waLink }}" target="_blank" rel="noopener"
-           class="btn btn-success btn-lg" style="background: var(--color-success); border-radius: var(--radius-full);">
+           class="btn btn-gold btn-lg" style="border-radius: var(--radius-full);">
             <i class="fab fa-whatsapp text-xl"></i> Hubungi Kami Sekarang
         </a>
     </div>

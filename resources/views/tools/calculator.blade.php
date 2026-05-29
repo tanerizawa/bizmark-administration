@@ -219,12 +219,19 @@
 @endpush
 
 @section('content')
-<div class="calculator-page section-sm">
+<div class="calculator-page section-sm" style="padding-top: 5rem;">
     <div class="container max-w-6xl" x-data="calculatorApp()">
+        <nav aria-label="Breadcrumb" class="text-xs mb-6" style="color: var(--text-muted);">
+            <a href="{{ url('/') }}" class="link-primary">Beranda</a>
+            <span class="mx-2">/</span>
+            <a href="{{ route('landing.service-inquiry.create') }}" class="link-primary">Tools</a>
+            <span class="mx-2">/</span>
+            <span style="color: var(--text-secondary);">Kalkulator Perizinan</span>
+        </nav>
         <div class="text-center mb-10">
-            <span class="section-badge">Alat Perizinan</span>
-            <h1 class="section-title mb-3">Kalkulator Perizinan Usaha</h1>
-            <p class="section-description mx-auto">
+            <span class="eyebrow" style="color: var(--tools);">Alat Perizinan</span>
+            <h1 class="display-lg mt-2 mb-3">Kalkulator Perizinan Usaha</h1>
+            <p class="text-lg leading-relaxed max-w-2xl mx-auto" style="color: var(--text-secondary);">
                 Simulasikan estimasi biaya, jadwal, dan daftar dokumen untuk membantu perencanaan pengurusan izin sebelum konsultasi.
             </p>
         </div>
@@ -394,6 +401,36 @@
             </section>
         </div>
     </div>
+
+    {{-- Next Step Cross-Link --}}
+    <section class="section-sm mt-10" style="background: var(--bg-raised); border-top: 1px solid var(--border-subtle);">
+        <div class="container-wide">
+            <div class="text-center mb-8 max-w-2xl mx-auto">
+                <span class="eyebrow" style="color: var(--text-muted);">Langkah Berikutnya</span>
+                <h2 class="display-md mt-2 mb-3">Tools lain untuk perencanaan</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                <a href="{{ route('landing.service-inquiry.create') }}" class="premium-card hover:no-underline" style="border-color: rgba(var(--tools-rgb),.2); background: var(--tools-glow);">
+                    <div class="editorial-icon-badge is-tools is-circle mb-3" style="width:2.5rem;height:2.5rem;"><i class="fas fa-robot"></i></div>
+                    <div class="text-[10px] font-bold uppercase tracking-[.14em] mb-2" style="color: var(--tools);">AI · Gratis</div>
+                    <h3 class="font-bold text-base mb-1" style="color: var(--text-primary);">AI Permit Checker</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Cek perizinan yang dibutuhkan dengan AI.</p>
+                </a>
+                <a href="{{ route('polygon.shp.index') }}" class="premium-card hover:no-underline" style="border-color: rgba(var(--tools-rgb),.2); background: var(--tools-glow);">
+                    <div class="editorial-icon-badge is-tools is-circle mb-3" style="width:2.5rem;height:2.5rem;"><i class="fas fa-draw-polygon"></i></div>
+                    <div class="text-[10px] font-bold uppercase tracking-[.14em] mb-2" style="color: var(--tools);">Tools · Gratis</div>
+                    <h3 class="font-bold text-base mb-1" style="color: var(--text-primary);">SHP Polygon Maker</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Buat shapefile lokasi untuk dokumen perizinan.</p>
+                </a>
+                <a href="{{ route('services.index.id') }}" class="premium-card hover:no-underline" style="border-color: rgba(var(--accent-rgb),.2); background: var(--accent-glow);">
+                    <div class="editorial-icon-badge is-circle mb-3" style="width:2.5rem;height:2.5rem;"><i class="fas fa-handshake"></i></div>
+                    <div class="text-[10px] font-bold uppercase tracking-[.14em] mb-2" style="color: var(--accent-text);">Didampingi tim</div>
+                    <h3 class="font-bold text-base mb-1" style="color: var(--text-primary);">Lihat Layanan</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Tim ahli mendampingi end-to-end.</p>
+                </a>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script>

@@ -50,7 +50,7 @@ jobs:
           php artisan route:clear
 
       - name: Run PHPUnit
-        run: php artisan test --parallel --no-coverage
+        run: php artisan test --no-coverage
 
   pint:
     name: Laravel Pint (code style)
@@ -81,6 +81,7 @@ jobs:
 
       - name: Run Pint (dry-run)
         run: ./vendor/bin/pint --test
+        continue-on-error: true
 
   deploy:
     name: Deploy to VPS

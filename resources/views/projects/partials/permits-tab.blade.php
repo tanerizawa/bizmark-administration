@@ -12,17 +12,17 @@
         
         @if($project->permits->count() === 0)
             <div class="flex gap-2">
-                <button onclick="event.stopPropagation(); showTemplateModal()" 
+                <button @click.stop="showTemplateModal()"
                         class="btn-secondary-sm bg-apple-orange/20 text-apple-orange border-transparent">
                     <i class="fas fa-layer-group mr-2"></i>Gunakan Template
                 </button>
-                <button onclick="event.stopPropagation(); showAddPermitModal()" 
+                <button @click.stop="showAddPermitModal()"
                         class="btn-primary-sm bg-apple-blue/90 text-white">
                     <i class="fas fa-plus mr-2"></i>Tambah Izin Manual
                 </button>
             </div>
         @else
-            <button onclick="event.stopPropagation(); showAddPermitModal()" 
+            <button @click.stop="showAddPermitModal()"
                     class="btn-secondary-sm bg-apple-blue/20 text-apple-blue">
                 <i class="fas fa-plus mr-2"></i>Tambah Izin
             </button>
@@ -203,24 +203,18 @@
                                         
                                         <!-- Actions -->
                                         <div class="flex gap-0.5">
-                                            <button onclick="event.stopPropagation(); showManageDependenciesModal({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors text-[rgba(175,82,222,1)]"
-                                                    onmouseover="this.style.background='rgba(175, 82, 222, 0.1)'"
-                                                    onmouseout="this.style.background='transparent'"
+                                            <button @click.stop="showManageDependenciesModal({{ $permit->id }})"
+                                                    class="p-1.5 rounded transition-colors text-[rgba(175,82,222,1)] hover:bg-[rgba(175,82,222,0.1)]"
                                                     title="Kelola Dependensi">
                                                 <i class="fas fa-project-diagram text-xs"></i>
                                             </button>
-                                            <button onclick="event.stopPropagation(); updatePermitStatus({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors text-apple-blue"
-                                                    onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
-                                                    onmouseout="this.style.background='transparent'"
+                                            <button @click.stop="updatePermitStatus({{ $permit->id }})"
+                                                    class="p-1.5 rounded transition-colors text-apple-blue hover:bg-[rgba(10,132,255,0.1)]"
                                                     title="Update Status">
                                                 <i class="fas fa-edit text-xs"></i>
                                             </button>
-                                            <button onclick="event.stopPropagation(); deletePermit({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors text-apple-red"
-                                                    onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
-                                                    onmouseout="this.style.background='transparent'"
+                                            <button @click.stop="deletePermit({{ $permit->id }})"
+                                                    class="p-1.5 rounded transition-colors text-apple-red hover:bg-[rgba(255,59,48,0.1)]"
                                                     title="Hapus Izin">
                                                 <i class="fas fa-trash text-xs"></i>
                                             </button>
@@ -337,7 +331,7 @@
                                                     @endif
                                                     {{ $dep->dependsOnPermit->permitType->name }}
                                                     ({{ $dep->can_proceed_without ? 'Opsional' : 'Wajib' }})
-                                                    <button onclick="removeDependency({{ $permit->id }}, {{ $dep->id }}, event)" 
+                                                    <button @click="removeDependency({{ $permit->id }}, {{ $dep->id }}, $event)"
                                                             class="ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
                                                             title="Hapus dependensi">
                                                         <i class="fas fa-times-circle"></i>
@@ -386,10 +380,8 @@
                                         <p class="text-xs font-semibold text-dark-text-secondary">
                                             <i class="fas fa-paperclip mr-1"></i>DOKUMEN ({{ $permit->documents->count() }})
                                         </p>
-                                        <button onclick="event.stopPropagation(); showUploadModal({{ $permit->id }})" 
-                                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all bg-apple-blue/20 text-apple-blue"
-                                                onmouseover="this.style.background='rgba(10, 132, 255, 0.3)'"
-                                                onmouseout="this.style.background='rgba(10, 132, 255, 0.2)'"
+                                        <button @click.stop="showUploadModal({{ $permit->id }})"
+                                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all bg-apple-blue/20 hover:bg-[rgba(10,132,255,0.3)] text-apple-blue"
                                                 title="Upload Dokumen">
                                             <i class="fas fa-upload mr-1"></i>Upload
                                         </button>
@@ -417,16 +409,12 @@
                                                     </div>
                                                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <a href="{{ route('permits.documents.download', ['project' => $project->id, 'document' => $doc->id]) }}" 
-                                                           class="p-2 rounded transition-colors text-apple-blue"
-                                                           onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
-                                                           onmouseout="this.style.background='transparent'"
+                                                           class="p-2 rounded transition-colors text-apple-blue hover:bg-[rgba(10,132,255,0.1)]"
                                                            title="Download">
                                                             <i class="fas fa-download"></i>
                                                         </a>
-                                                        <button onclick="event.stopPropagation(); deleteDocument({{ $doc->id }})" 
-                                                                class="p-2 rounded transition-colors text-apple-red"
-                                                                onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
-                                                                onmouseout="this.style.background='transparent'"
+                                                        <button @click.stop="deleteDocument({{ $doc->id }})"
+                                                                class="p-2 rounded transition-colors text-apple-red hover:bg-[rgba(255,59,48,0.1)]"
                                                                 title="Hapus">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
@@ -540,24 +528,18 @@
                                         
                                         <!-- Actions -->
                                         <div class="flex gap-0.5">
-                                            <button onclick="event.stopPropagation(); showManageDependenciesModal({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors text-[rgba(175,82,222,1)]"
-                                                    onmouseover="this.style.background='rgba(175, 82, 222, 0.1)'"
-                                                    onmouseout="this.style.background='transparent'"
+                                            <button @click.stop="showManageDependenciesModal({{ $permit->id }})"
+                                                    class="p-1.5 rounded transition-colors text-[rgba(175,82,222,1)] hover:bg-[rgba(175,82,222,0.1)]"
                                                     title="Kelola Dependensi">
                                                 <i class="fas fa-project-diagram text-xs"></i>
                                             </button>
-                                            <button onclick="event.stopPropagation(); updatePermitStatus({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors text-apple-blue"
-                                                    onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
-                                                    onmouseout="this.style.background='transparent'"
+                                            <button @click.stop="updatePermitStatus({{ $permit->id }})"
+                                                    class="p-1.5 rounded transition-colors text-apple-blue hover:bg-[rgba(10,132,255,0.1)]"
                                                     title="Update Status">
                                                 <i class="fas fa-edit text-xs"></i>
                                             </button>
-                                            <button onclick="event.stopPropagation(); deletePermit({{ $permit->id }})" 
-                                                    class="p-1.5 rounded transition-colors text-apple-red"
-                                                    onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
-                                                    onmouseout="this.style.background='transparent'"
+                                            <button @click.stop="deletePermit({{ $permit->id }})"
+                                                    class="p-1.5 rounded transition-colors text-apple-red hover:bg-[rgba(255,59,48,0.1)]"
                                                     title="Hapus Izin">
                                                 <i class="fas fa-trash text-xs"></i>
                                             </button>
@@ -674,7 +656,7 @@
                                                     @endif
                                                     {{ $dep->dependsOnPermit->permitType->name }}
                                                     ({{ $dep->can_proceed_without ? 'Opsional' : 'Wajib' }})
-                                                    <button onclick="removeDependency({{ $permit->id }}, {{ $dep->id }}, event)" 
+                                                    <button @click="removeDependency({{ $permit->id }}, {{ $dep->id }}, $event)"
                                                             class="ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
                                                             title="Hapus dependensi">
                                                         <i class="fas fa-times-circle"></i>
@@ -723,10 +705,8 @@
                                         <p class="text-xs font-semibold text-dark-text-secondary">
                                             <i class="fas fa-paperclip mr-1"></i>DOKUMEN ({{ $permit->documents->count() }})
                                         </p>
-                                        <button onclick="event.stopPropagation(); showUploadModal({{ $permit->id }})" 
-                                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all bg-apple-blue/20 text-apple-blue"
-                                                onmouseover="this.style.background='rgba(10, 132, 255, 0.3)'"
-                                                onmouseout="this.style.background='rgba(10, 132, 255, 0.2)'"
+                                        <button @click.stop="showUploadModal({{ $permit->id }})"
+                                                class="px-3 py-1 rounded-lg text-xs font-medium transition-all bg-apple-blue/20 hover:bg-[rgba(10,132,255,0.3)] text-apple-blue"
                                                 title="Upload Dokumen">
                                             <i class="fas fa-upload mr-1"></i>Upload
                                         </button>
@@ -754,16 +734,12 @@
                                                     </div>
                                                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <a href="{{ route('permits.documents.download', ['project' => $project->id, 'document' => $doc->id]) }}" 
-                                                           class="p-2 rounded transition-colors text-apple-blue"
-                                                           onmouseover="this.style.background='rgba(10, 132, 255, 0.1)'"
-                                                           onmouseout="this.style.background='transparent'"
+                                                           class="p-2 rounded transition-colors text-apple-blue hover:bg-[rgba(10,132,255,0.1)]"
                                                            title="Download">
                                                             <i class="fas fa-download"></i>
                                                         </a>
-                                                        <button onclick="event.stopPropagation(); deleteDocument({{ $doc->id }})" 
-                                                                class="p-2 rounded transition-colors text-apple-red"
-                                                                onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'"
-                                                                onmouseout="this.style.background='transparent'"
+                                                        <button @click.stop="deleteDocument({{ $doc->id }})"
+                                                                class="p-2 rounded transition-colors text-apple-red hover:bg-[rgba(255,59,48,0.1)]"
                                                                 title="Hapus">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
@@ -792,11 +768,11 @@
                 Tambahkan izin yang diperlukan untuk proyek ini
             </p>
             <div class="flex justify-center gap-4">
-                <button onclick="event.stopPropagation(); showTemplateModal()" 
+                <button @click.stop="showTemplateModal()"
                         class="px-6 py-3 rounded-lg font-medium transition-colors bg-apple-orange/20 text-apple-orange">
                     <i class="fas fa-layer-group mr-2"></i>Gunakan Template
                 </button>
-                <button onclick="event.stopPropagation(); showAddPermitModal()" 
+                <button @click.stop="showAddPermitModal()"
                         class="px-6 py-3 rounded-lg font-medium transition-colors bg-apple-blue/90 text-white">
                     <i class="fas fa-plus mr-2"></i>Tambah Izin Manual
                 </button>
@@ -811,7 +787,7 @@
         <div class="sticky top-0 bg-[#1e1e1e] border-b border-gray-700 px-6 py-4">
             <div class="flex items-center justify-between">
                 <h3 class="text-xl font-semibold text-white">Pilih Template Izin</h3>
-                <button onclick="event.stopPropagation(); closeTemplateModal()" class="text-gray-400 hover:text-white">
+                <button @click.stop="closeTemplateModal()" class="text-gray-400 hover:text-white">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
@@ -823,8 +799,8 @@
             <div class="space-y-4 mb-6">
                 @forelse($permitTemplates as $template)
                     <label class="block cursor-pointer">
-                        <input type="radio" name="template_id" value="{{ $template->id }}" required 
-                               class="hidden peer" onchange="selectTemplate({{ $template->id }})">
+                        <input type="radio" name="template_id" value="{{ $template->id }}" required
+                               class="hidden peer" @change="selectTemplate({{ $template->id }})">
                         <div class="border-2 border-gray-700 rounded-lg p-4 peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:border-gray-600 transition">
                             <div class="flex items-start justify-between mb-2">
                                 <div class="flex-1">
@@ -884,7 +860,7 @@
 
                 <!-- Action Buttons -->
                 <div class="flex gap-3">
-                    <button type="button" onclick="event.stopPropagation(); closeTemplateModal()" 
+                    <button type="button" @click.stop="closeTemplateModal()"
                             class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
                         Batal
                     </button>
@@ -904,7 +880,7 @@
         <div class="sticky top-0 bg-[#1e1e1e] border-b border-gray-700 px-6 py-4">
             <div class="flex items-center justify-between">
                 <h3 class="text-xl font-semibold text-white">Tambah Izin Baru</h3>
-                <button onclick="event.stopPropagation(); closeAddPermitModal()" class="text-gray-400 hover:text-white">
+                <button @click.stop="closeAddPermitModal()" class="text-gray-400 hover:text-white">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
@@ -953,7 +929,7 @@
 
             <!-- Action Buttons -->
             <div class="flex gap-3 mt-6">
-                <button type="button" onclick="event.stopPropagation(); closeAddPermitModal()" 
+                <button type="button" @click.stop="closeAddPermitModal()"
                         class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
                     Batal
                 </button>
@@ -972,7 +948,7 @@
         <div class="sticky top-0 bg-[#1e1e1e] border-b border-gray-700 px-6 py-4">
             <div class="flex items-center justify-between">
                 <h3 class="text-xl font-semibold text-white">Update Status Izin</h3>
-                <button onclick="event.stopPropagation(); closeUpdateStatusModal()" class="text-gray-400 hover:text-white">
+                <button @click.stop="closeUpdateStatusModal()" class="text-gray-400 hover:text-white">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
@@ -1022,7 +998,7 @@
                     </label>
                     <select name="status" id="new-status" required 
                             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-                            onchange="checkOverrideNeeded()">
+                            @change="checkOverrideNeeded()">
                         <option value="">-- Pilih Status --</option>
                         <option value="NOT_STARTED">Belum Dimulai</option>
                         <option value="IN_PROGRESS">Dalam Proses</option>
@@ -1072,7 +1048,7 @@
 
             <!-- Action Buttons -->
             <div class="flex gap-3 mt-6">
-                <button type="button" onclick="event.stopPropagation(); closeUpdateStatusModal()" 
+                <button type="button" @click.stop="closeUpdateStatusModal()"
                         class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
                     Batal
                 </button>
@@ -1093,9 +1069,7 @@
                 <h3 class="text-xl font-semibold text-white">
                     <i class="fas fa-upload mr-2"></i>Upload Dokumen
                 </h3>
-                <button onclick="closeUploadModal()" class="text-[rgba(142,142,147,1)] hover:text-white"
-                        onmouseover="this.style.color='rgba(255, 255, 255, 1)'"
-                        onmouseout="this.style.color='rgba(142, 142, 147, 1)'">
+                <button @click="closeUploadModal()" class="text-[rgba(142,142,147,1)] hover:text-white">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
@@ -1146,17 +1120,13 @@
             </div>
 
             <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-[rgba(58,58,60,1)]">
-                <button type="button" 
-                        onclick="closeUploadModal()"
-                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors bg-[rgba(58,58,60,1)] text-dark-text-primary/80"
-                        onmouseover="this.style.background='rgba(72, 72, 74, 1)'"
-                        onmouseout="this.style.background='rgba(58, 58, 60, 1)'">
+                <button type="button"
+                        @click="closeUploadModal()"
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors bg-[rgba(58,58,60,1)] hover:bg-[rgba(72,72,74,1)] text-dark-text-primary/80">
                     Batal
                 </button>
                 <button type="submit" 
-                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors bg-apple-blue text-white"
-                        onmouseover="this.style.background='rgba(0, 122, 255, 1)'"
-                        onmouseout="this.style.background='rgba(10, 132, 255, 1)'">
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors bg-apple-blue hover:bg-[rgba(0,122,255,1)] text-white">
                     <i class="fas fa-upload mr-2"></i>Upload
                 </button>
             </div>
@@ -1178,10 +1148,8 @@
                         0 Prasyarat
                     </span>
                 </div>
-                <button onclick="event.stopPropagation(); closeManageDependenciesModal()" 
-                        class="p-1.5 rounded-lg transition-colors text-dark-text-secondary"
-                        onmouseover="this.style.background='rgba(255, 59, 48, 0.1)'; this.style.color='rgba(255, 59, 48, 1)'"
-                        onmouseout="this.style.background='transparent'; this.style.color='rgba(235, 235, 245, 0.6)'">
+                <button @click.stop="closeManageDependenciesModal()"
+                        class="p-1.5 rounded-lg transition-colors text-dark-text-secondary hover:bg-[rgba(255,59,48,0.1)] hover:text-[rgba(255,59,48,1)]">
                     <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
@@ -1255,16 +1223,12 @@
 
             <!-- Action Buttons -->
             <div class="flex gap-2 mt-4">
-                <button type="button" onclick="event.stopPropagation(); closeManageDependenciesModal()" 
-                        class="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all bg-[rgba(142,142,147,0.3)] text-dark-text-primary/90"
-                        onmouseover="this.style.background='rgba(142, 142, 147, 0.4)'"
-                        onmouseout="this.style.background='rgba(142, 142, 147, 0.3)'">
+                <button type="button" @click.stop="closeManageDependenciesModal()"
+                        class="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all bg-[rgba(142,142,147,0.3)] hover:bg-[rgba(142,142,147,0.4)] text-dark-text-primary/90">
                     <i class="fas fa-times mr-1"></i>Tutup
                 </button>
                 <button type="submit" 
-                        class="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all bg-apple-blue text-white"
-                        onmouseover="this.style.background='rgba(10, 132, 255, 0.8)'"
-                        onmouseout="this.style.background='rgba(10, 132, 255, 1)'">
+                        class="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all bg-apple-blue hover:bg-[rgba(10,132,255,0.8)] text-white">
                     <i class="fas fa-plus mr-1"></i>Tambah Prasyarat
                 </button>
             </div>
@@ -1646,11 +1610,8 @@ function showManageDependenciesModalImpl(permitId) {
                         </div>
                     </div>
                 </div>
-                <button onclick="removeDependencyFromModal(${dep.id}, event)" 
-                        class="p-1.5 rounded transition-colors flex-shrink-0"
-                        style="color: rgba(255, 59, 48, 1);"
-                        onmouseover="this.style.background='rgba(255, 59, 48, 0.2)'"
-                        onmouseout="this.style.background='transparent'"
+                <button @click="removeDependencyFromModal(${dep.id}, $event)"
+                        class="p-1.5 rounded transition-colors flex-shrink-0 text-[rgba(255,59,48,1)] hover:bg-[rgba(255,59,48,0.2)]"
                         title="Hapus">
                     <i class="fas fa-trash text-xs"></i>
                 </button>

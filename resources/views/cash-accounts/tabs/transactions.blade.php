@@ -1,211 +1,109 @@
-{{-- Riwayat Transaksi Proyek (Project-Related Transactions Only) --}}
-<div>
-    <div class="mb-3">
-        <h3 class="text-base font-semibold text-white">
-            <i class="fas fa-project-diagram mr-2 text-dark-text-tertiary/40"></i>
-            Riwayat Transaksi Proyek
-        </h3>
-        <p class="text-xs mt-0.5 text-dark-text-tertiary/80">
-            Transaksi yang terkait dengan proyek dalam periode yang dipilih
-        </p>
+@php
+    $groupedTransactions = collect($recentTransactions)->groupBy('date');
+    $totalInflow = collect($recentTransactions)->where('type', 'income')->sum('amount');
+    $totalOutflow = collect($recentTransactions)->where('type', 'expense')->sum('amount');
+    $totalKasbon = collect($recentTransactions)->where('type', 'kasbon')->sum('amount');
+@endphp
+
+<div style="display:flex;flex-direction:column;gap:16px">
+    {{-- Header --}}
+    <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:26px;height:26px;border-radius:8px;background:color-mix(in srgb,var(--apple-purple) 18%,transparent);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-project-diagram" style="color:var(--apple-purple);font-size:0.72rem"></i></span>
+        <div>
+            <h3 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">Transaksi Proyek</h3>
+            <p style="font-size:0.75rem;color:var(--dark-text-secondary);margin:2px 0 0">Timeline transaksi terkait proyek dalam periode ini</p>
+        </div>
+    </div>
+
+    {{-- Summary Stats --}}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:9px;background:color-mix(in srgb,var(--apple-green) 16%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-arrow-down" style="color:var(--apple-green);font-size:0.82rem"></i></div>
+            <div>
+                <p style="font-size:0.65rem;color:var(--dark-text-secondary);margin:0 0 2px;text-transform:uppercase;letter-spacing:.06em">Kas Masuk</p>
+                <p style="font-size:0.95rem;font-weight:800;color:var(--apple-green);margin:0">Rp {{ number_format($totalInflow / 1000000, 1) }}M</p>
+            </div>
+        </div>
+        <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:9px;background:color-mix(in srgb,var(--apple-red) 16%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-arrow-up" style="color:var(--apple-red);font-size:0.82rem"></i></div>
+            <div>
+                <p style="font-size:0.65rem;color:var(--dark-text-secondary);margin:0 0 2px;text-transform:uppercase;letter-spacing:.06em">Kas Keluar</p>
+                <p style="font-size:0.95rem;font-weight:800;color:var(--apple-red);margin:0">Rp {{ number_format($totalOutflow / 1000000, 1) }}M</p>
+            </div>
+        </div>
+        <div style="background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:9px;background:color-mix(in srgb,var(--apple-orange) 16%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-hand-holding-usd" style="color:var(--apple-orange);font-size:0.82rem"></i></div>
+            <div>
+                <p style="font-size:0.65rem;color:var(--dark-text-secondary);margin:0 0 2px;text-transform:uppercase;letter-spacing:.06em">Kasbon</p>
+                <p style="font-size:0.95rem;font-weight:800;color:var(--apple-orange);margin:0">Rp {{ number_format($totalKasbon / 1000000, 1) }}M</p>
+            </div>
+        </div>
     </div>
 
     @if(count($recentTransactions) > 0)
-        <div class="space-y-2">
-            @php
-                $currentDate = null;
-                $typeStyles = [
-                    'inflow' => [
-                        'icon' => 'fa-arrow-down',
-                        'rowClass' => 'bg-apple-green/8 border-l-2 border-apple-green/20',
-                        'iconClass' => 'text-apple-green/80',
-                        'labelClass' => 'bg-apple-green/8 text-apple-green/80',
-                        'amountClass' => 'text-apple-green',
-                        'label' => 'Pemasukan'
-                    ],
-                    'outflow' => [
-                        'icon' => 'fa-arrow-up',
-                        'rowClass' => 'bg-apple-red/8 border-l-2 border-apple-red/20',
-                        'iconClass' => 'text-apple-red/80',
-                        'labelClass' => 'bg-apple-red/8 text-apple-red/80',
-                        'amountClass' => 'text-apple-red',
-                        'label' => 'Pengeluaran'
-                    ],
-                    'kasbon' => [
-                        'icon' => 'fa-hand-holding-usd',
-                        'rowClass' => 'bg-apple-orange/8 border-l-2 border-apple-orange/20',
-                        'iconClass' => 'text-apple-orange/80',
-                        'labelClass' => 'bg-apple-orange/8 text-apple-orange/80',
-                        'amountClass' => 'text-apple-orange',
-                        'label' => 'Kasbon'
-                    ]
-                ];
-                $style = $typeStyles[$transaction['type']];
-            @endphp
-            
-            @foreach($recentTransactions as $transaction)
+    <div style="display:flex;flex-direction:column;gap:14px">
+        @foreach($groupedTransactions as $date => $transactions)
+        <div>
+            {{-- Date divider --}}
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <span style="font-size:0.72rem;font-weight:700;color:var(--dark-text-secondary);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">{{ \Carbon\Carbon::parse($date)->locale('id')->isoFormat('dddd, D MMMM Y') }}</span>
+                <div style="flex:1;height:1px;background:var(--dark-separator)"></div>
+                <span style="font-size:0.7rem;font-weight:600;color:var(--dark-text-secondary);background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);padding:2px 8px;border-radius:8px;white-space:nowrap">{{ count($transactions) }}</span>
+            </div>
+            {{-- Transactions --}}
+            <div style="display:flex;flex-direction:column;gap:6px">
+                @foreach($transactions as $tx)
                 @php
-                    $transactionDate = \Carbon\Carbon::parse($transaction['date'])->format('Y-m-d');
-                    $showDateHeader = $currentDate !== $transactionDate;
-                    $currentDate = $transactionDate;
-                    $style = $typeStyles[$transaction['type']];
+                    $typeStyles = [
+                        'income' => ['var(--apple-green)', 'fa-arrow-circle-down', '+'],
+                        'expense' => ['var(--apple-red)', 'fa-arrow-circle-up', '-'],
+                        'kasbon' => ['var(--apple-orange)', 'fa-hand-holding-usd', ''],
+                        'kasbon_return' => ['var(--apple-blue)', 'fa-undo', '+'],
+                    ];
+                    $ts = $typeStyles[$tx['type']] ?? ['var(--dark-text-secondary)', 'fa-circle', ''];
                 @endphp
-                
-                @if($showDateHeader)
-                    <div class="flex items-center my-3">
-                        <div class="flex-grow h-px bg-white/[0.08]"></div>
-                        <span class="px-2.5 text-xs font-medium text-dark-text-tertiary/80">
-                            {{ \Carbon\Carbon::parse($transaction['date'])->isoFormat('dddd, D MMMM Y') }}
-                        </span>
-                        <div class="flex-grow h-px bg-white/[0.08]"></div>
-                    </div>
-                @endif
-                
-                <div class="p-2.5 rounded-apple transition-all duration-300 hover:translate-x-0.5 {{ $style['rowClass'] }}">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start flex-1">
-                            <div class="flex-shrink-0 h-7 w-7 flex items-center justify-center rounded-full bg-white/[0.08]">
-                                <i class="fas {{ $style['icon'] }} text-xs {{ $style['iconClass'] }}"></i>
-                            </div>
-                            
-                            <div class="ml-2.5 flex-1">
-                                <div class="flex items-center">
-                                    <span class="text-xs px-1.5 py-0.5 rounded font-medium {{ $style['labelClass'] }}">
-                                        {{ $style['label'] }}
-                                    </span>
-                                    <span class="ml-2 text-xs text-dark-text-tertiary/60">
-                                        {{ \Carbon\Carbon::parse($transaction['date'])->format('H:i') }}
-                                    </span>
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:10px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-left:3px solid {{ $ts[0] }}"
+                     onmouseover="this.style.background='var(--dark-bg-tertiary)'" onmouseout="this.style.background='var(--dark-bg-secondary)'">
+                    <div style="width:30px;height:30px;border-radius:8px;background:color-mix(in srgb,{{ $ts[0] }} 16%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas {{ $ts[1] }}" style="color:{{ $ts[0] }};font-size:0.8rem"></i></div>
+                    <div style="flex:1;min-width:0">
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+                            <div style="flex:1;min-width:0">
+                                <p style="font-size:0.85rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $tx['description'] }}</p>
+                                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                                    @if($tx['project_id'])
+                                    <a href="{{ url('/admin/projects/' . $tx['project_id']) }}"
+                                       style="font-size:0.72rem;color:var(--apple-blue);text-decoration:none;display:inline-flex;align-items:center;gap:3px"
+                                       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+                                        <i class="fas fa-folder" style="font-size:0.65rem"></i>{{ $tx['project_name'] }}
+                                    </a>
+                                    @endif
+                                    @if($tx['account_name'])
+                                    <span style="font-size:0.72rem;color:var(--dark-text-secondary)"><i class="fas fa-university" style="margin-right:3px"></i>{{ $tx['account_name'] }}</span>
+                                    @endif
                                 </div>
-                                
-                                <p class="mt-1 text-xs font-medium text-dark-text-primary/90">
-                                    {{ $transaction['description'] }}
-                                </p>
-                                
-                                @if(isset($transaction['project_name']) && $transaction['project_name'])
-                                    <div class="mt-1 flex items-center text-xs text-dark-text-tertiary/80">
-                                        <i class="fas fa-project-diagram text-xs mr-1 text-dark-text-tertiary/60"></i>
-                                        @if(isset($transaction['project_id']))
-                                            <a href="{{ route('projects.show', $transaction['project_id']) }}" 
-                                               class="hover:underline text-apple-blue/90">
-                                                {{ $transaction['project_name'] }}
-                                            </a>
-                                        @else
-                                            {{ $transaction['project_name'] }}
-                                        @endif
-                                    </div>
-                                @endif
-                                
-                                @if(isset($transaction['account_name']))
-                                    <div class="mt-0.5 flex items-center text-xs text-dark-text-tertiary/80">
-                                        <i class="fas fa-wallet text-xs mr-1 text-dark-text-tertiary/60"></i>
-                                        {{ $transaction['account_name'] }}
-                                    </div>
-                                @endif
-                                
-                                @if(isset($transaction['notes']) && $transaction['notes'])
-                                    <div class="mt-1.5 p-1.5 rounded bg-black/15">
-                                        <p class="text-xs text-dark-text-tertiary/90">
-                                            <i class="fas fa-sticky-note text-xs mr-1 text-dark-text-tertiary/60"></i>
-                                            {{ $transaction['notes'] }}
-                                        </p>
-                                    </div>
+                                @if($tx['notes'])<p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:3px 0 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $tx['notes'] }}</p>@endif
+                            </div>
+                            <div style="text-align:right;flex-shrink:0">
+                                <p style="font-size:0.92rem;font-weight:800;color:{{ $ts[0] }};margin:0 0 2px;white-space:nowrap">{{ $ts[2] }}Rp {{ number_format($tx['amount'], 0, ',', '.') }}</p>
+                                @if(isset($tx['balance_after']))
+                                <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0;white-space:nowrap">Saldo: Rp {{ number_format($tx['balance_after'], 0, ',', '.') }}</p>
                                 @endif
                             </div>
                         </div>
-                        
-                        <div class="ml-3 text-right flex-shrink-0">
-                            <div class="text-sm font-bold {{ $style['amountClass'] }}">
-                                {{ $transaction['type'] === 'inflow' ? '+' : '-' }}Rp {{ number_format($transaction['amount']) }}
-                            </div>
-                            @if(isset($transaction['balance_after']))
-                                <div class="text-xs mt-0.5 text-dark-text-tertiary/60">
-                                    Saldo: Rp {{ number_format($transaction['balance_after']) }}
-                                </div>
-                            @endif
-                        </div>
                     </div>
                 </div>
-            @endforeach
-        </div>
-        
-        <!-- Summary Stats -->
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="p-3 rounded-apple bg-apple-green/8">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs mb-0.5 text-dark-text-tertiary/80">Total Pemasukan</p>
-                        <p class="text-sm font-bold text-apple-green">
-                            @php
-                                $totalInflow = collect($recentTransactions)
-                                    ->where('type', 'inflow')
-                                    ->sum('amount');
-                            @endphp
-                            Rp {{ number_format($totalInflow) }}
-                        </p>
-                    </div>
-                    <div class="h-8 w-8 flex items-center justify-center rounded-full bg-apple-green/15">
-                        <i class="fas fa-arrow-down text-xs text-apple-green/80"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="p-3 rounded-apple bg-apple-red/8">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs mb-0.5 text-dark-text-tertiary/80">Total Pengeluaran</p>
-                        <p class="text-sm font-bold text-apple-red">
-                            @php
-                                $totalOutflow = collect($recentTransactions)
-                                    ->where('type', 'outflow')
-                                    ->sum('amount');
-                            @endphp
-                            Rp {{ number_format($totalOutflow) }}
-                        </p>
-                    </div>
-                    <div class="h-8 w-8 flex items-center justify-center rounded-full bg-apple-red/15">
-                        <i class="fas fa-arrow-up text-xs text-apple-red/80"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="p-3 rounded-apple bg-apple-orange/8">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs mb-0.5 text-dark-text-tertiary/80">Total Kasbon</p>
-                        <p class="text-sm font-bold text-apple-orange">
-                            @php
-                                $totalKasbon = collect($recentTransactions)
-                                    ->where('type', 'kasbon')
-                                    ->sum('amount');
-                            @endphp
-                            Rp {{ number_format($totalKasbon) }}
-                        </p>
-                    </div>
-                    <div class="h-8 w-8 flex items-center justify-center rounded-full bg-apple-orange/15">
-                        <i class="fas fa-hand-holding-usd text-xs text-apple-orange/80"></i>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
-        
-        <!-- View All Link -->
-        <div class="mt-3 text-center">
-            <p class="text-xs text-dark-text-tertiary/80">
-                Menampilkan {{ count($recentTransactions) }} transaksi terbaru dalam periode yang dipilih.
-            </p>
-        </div>
+        @endforeach
+    </div>
     @else
-        <div class="py-8 text-center">
-            <div class="flex flex-col items-center justify-center">
-                <i class="fas fa-receipt text-3xl mb-2 text-dark-text-tertiary/25"></i>
-                <p class="text-sm font-medium text-dark-text-tertiary/80">
-                    Belum ada transaksi
-                </p>
-                <p class="text-xs mt-0.5 text-dark-text-tertiary/60">
-                    Transaksi akan muncul di sini setelah Anda menambahkan pembayaran atau pengeluaran
-                </p>
-            </div>
+    <div style="text-align:center;padding:48px 20px">
+        <div style="width:52px;height:52px;border-radius:50%;background:color-mix(in srgb,var(--apple-purple) 12%,transparent);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+            <i class="fas fa-project-diagram" style="color:var(--apple-purple);font-size:1.2rem"></i>
         </div>
+        <p style="font-size:0.92rem;font-weight:600;color:var(--dark-text-primary);margin:0 0 4px">Belum Ada Transaksi Proyek</p>
+        <p style="font-size:0.8rem;color:var(--dark-text-secondary);margin:0">Tidak ada transaksi proyek dalam periode yang dipilih</p>
+    </div>
     @endif
 </div>

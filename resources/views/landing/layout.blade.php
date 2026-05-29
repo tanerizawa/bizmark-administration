@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth overflow-x-hidden">
 <script>
 // --- Dark/Light Mode Initialization ---
 // Must run synchronously before paint to prevent flash
@@ -22,6 +22,51 @@
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
 
+{{-- Persona detection (UTM + ?persona + cookie, 30-day TTL).
+     Sets <body data-persona="..."> as early as possible.
+     Personas: diy (DIY tools-first), team (consult), pma (foreign investor), default.
+     Sections can opt-in via [data-persona="..."] CSS or Alpine `$el.closest('body').dataset.persona`. --}}
+<script>
+(function () {
+    try {
+        var KEY = 'bizmark_persona';
+        var TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+        var url = new URL(window.location.href);
+        var qs = url.searchParams;
+        var fromQuery = qs.get('persona');
+        var utmCampaign = (qs.get('utm_campaign') || '').toLowerCase();
+        var utmMedium = (qs.get('utm_medium') || '').toLowerCase();
+        var utmSource = (qs.get('utm_source') || '').toLowerCase();
+        var allowed = ['diy', 'team', 'pma'];
+        var persona = '';
+
+        if (fromQuery && allowed.indexOf(fromQuery) !== -1) {
+            persona = fromQuery;
+        } else if (/pma|foreign|investor/.test(utmCampaign + ' ' + utmSource)) {
+            persona = 'pma';
+        } else if (/diy|self|tools/.test(utmCampaign + ' ' + utmMedium)) {
+            persona = 'diy';
+        } else if (/consult|team|enterprise/.test(utmCampaign + ' ' + utmMedium)) {
+            persona = 'team';
+        }
+
+        // Persist or read
+        var stored = null;
+        try { stored = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (_) {}
+        var now = Date.now();
+        if (persona) {
+            try { localStorage.setItem(KEY, JSON.stringify({ p: persona, t: now })); } catch (_) {}
+        } else if (stored && stored.p && (now - (stored.t || 0)) < TTL_MS && allowed.indexOf(stored.p) !== -1) {
+            persona = stored.p;
+        }
+
+        if (persona) {
+            document.body.setAttribute('data-persona', persona);
+        }
+    } catch (e) { /* fail silent — default rendering */ }
+})();
+</script>
+
 @php
     $landingMetrics = config('landing_metrics');
     $contact = $landingMetrics['contact'] ?? [];
@@ -43,10 +88,12 @@
     
     @include('landing.partials.footer')
     
-    <!-- Scroll-to-top button -->
+    {{-- Back-to-top FAB only. WhatsApp floating button removed:
+         live chat is handled via Tawk.to (in-platform), and contact
+         actions are surfaced contextually within sections. --}}
     <button type="button"
             id="backToTop"
-            class="fab fab-back-to-top"
+            class="fab-back-to-top"
             aria-label="{{ app()->getLocale() === 'id' ? 'Kembali ke atas' : 'Back to top' }}"
             x-data
             @click="window.scrollTo({top:0,behavior:'smooth'}); if(window.trackEvent) trackEvent('Navigation','scroll_to_top','fab');">
@@ -55,53 +102,19 @@
     
     @include('landing.partials.scripts')
     
-    {{-- AOS.js Scroll Animations --}}
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var aosConfig = {
-            duration: 800,
-            easing: 'ease-out-cubic',
-            once: true,
-            disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        };
-        if (typeof AOS !== 'undefined') {
-            AOS.init(aosConfig);
-        }
-        // Re-init on theme change (for light/dark mode transitions)
-        window.addEventListener('themeChanged', function() {
-            setTimeout(function() { if (typeof AOS !== 'undefined') AOS.refresh(); }, 300);
-        });
-    });
-    </script>
     @stack('scripts')
     
     {{-- ============================================================
-         Tawk.to Live Chat Widget — DISABLED (Placeholder Config)
-         ============================================================
-         This is the single highest-impact conversion improvement
-         available at zero code complexity (just configuration).
-
-         TO ENABLE:
-         1. Sign up / log in at https://dashboard.tawk.to
-         2. Create a new property or use existing one
-         3. Go to Admin → Widget Code and copy your property/widget ID
-         4. Replace YOUR_PROPERTY_ID / YOUR_WIDGET_ID below
-         5. Uncomment the <script> block
-         6. Run: php artisan view:clear && npm run build
-         7. Verify chat widget appears on landing pages
-
-         ALTERNATIVES (if Tawk.to is not desired):
-         - Tidio (tidio.com) — modern interface with AI chatbot
-         - Crisp (crisp.chat) — clean B2B-focused interface
-         - Both offer similar free tiers
+         Tawk.to Live Chat Widget — AKTIF
+         Config: config/services.php → tawk.property_id / tawk.widget_id
          ============================================================ --}}
-    <!--
+    @if(config('services.tawk.property_id') && config('services.tawk.widget_id'))
     <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
         var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
         s1.async=true;
-        s1.src='https://embed.tawk.to/YOUR_PROPERTY_ID/YOUR_WIDGET_ID';
+        s1.src='https://embed.tawk.to/{{ config('services.tawk.property_id') }}/{{ config('services.tawk.widget_id') }}';
         s1.charset='UTF-8';
         s1.setAttribute('crossorigin','*');
         s0.parentNode.insertBefore(s1,s0);
@@ -116,6 +129,6 @@
         };
     })();
     </script>
-    -->
+    @endif
 </body>
 </html>

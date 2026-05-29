@@ -1,87 +1,91 @@
 @extends('layouts.app')
-
 @section('title', 'Create Template')
-
 @section('content')
-<div class="px-4 py-6 max-w-7xl mx-auto" x-data="{ previewOpen: false }">
+<div style="display:flex;flex-direction:column;gap:16px">
 
-    {{-- Header --}}
-    <div class="flex items-start justify-between mb-6">
+    {{-- Page Header --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
         <div>
-            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-                <i class="fas fa-plus-circle text-blue-400"></i>Create Email Template
+            <p style="font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-text-secondary);margin:0">Email Design</p>
+            <h1 style="font-size:1.2rem;font-weight:700;color:var(--dark-text-primary);margin:4px 0 2px;display:flex;align-items:center;gap:8px">
+                <i class="fas fa-plus-circle" style="color:var(--apple-red);font-size:1rem"></i>Create Email Template
             </h1>
-            <p class="text-gray-400 mt-1">Create a new reusable email template</p>
+            <p style="font-size:0.78rem;color:var(--dark-text-secondary);margin:0">Create a new reusable email template</p>
         </div>
         <a href="{{ route('admin.templates.index') }}"
-           class="inline-flex items-center px-4 py-2 border border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 text-sm font-medium rounded-lg transition">
-            <i class="fas fa-arrow-left mr-2"></i>Back to Templates
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-secondary);font-size:0.8rem;font-weight:600;text-decoration:none"
+           onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+            <i class="fas fa-arrow-left" style="font-size:0.75rem"></i>Back to Templates
         </a>
     </div>
 
     @if(session('error'))
-    <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-6">
-        <i class="fas fa-exclamation-circle"></i><span>{{ session('error') }}</span>
+    <div style="display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--apple-red) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-red) 30%,transparent);border-radius:10px;padding:12px 16px;color:var(--apple-red)">
+        <i class="fas fa-exclamation-circle" style="flex-shrink:0"></i><span style="font-size:0.85rem">{{ session('error') }}</span>
     </div>
     @endif
 
     <form action="{{ route('admin.templates.store') }}" method="POST">
         @csrf
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start">
 
             {{-- Left: Content --}}
-            <div class="lg:col-span-2 space-y-5">
-                <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
-                    <div class="px-5 py-4 border-b border-gray-700">
-                        <h5 class="text-white font-semibold flex items-center gap-2">
-                            <i class="fas fa-info-circle text-gray-400"></i>Template Information
-                        </h5>
+            <div style="display:flex;flex-direction:column;gap:16px">
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                    <div style="padding:14px 18px;border-bottom:1px solid var(--dark-separator);display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-info-circle" style="color:var(--dark-text-secondary);font-size:0.8rem"></i>
+                        <h5 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">Template Information</h5>
                     </div>
-                    <div class="p-5 space-y-5">
+                    <div style="padding:18px;display:flex;flex-direction:column;gap:16px">
 
                         {{-- Name --}}
                         <div>
-                            <label for="name" class="block text-sm font-medium text-white mb-1">
-                                Template Name <span class="text-red-400">*</span>
+                            <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                                Template Name <span style="color:var(--apple-red)">*</span>
                             </label>
                             <input type="text" id="name" name="name" value="{{ old('name') }}"
                                    placeholder="e.g., Monthly Newsletter Template" required
-                                   class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @enderror">
-                            @error('name')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
+                                   style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                                   onfocus="this.style.borderColor='var(--apple-red)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                            @error('name')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
                         </div>
 
                         {{-- Subject --}}
                         <div>
-                            <label for="subject" class="block text-sm font-medium text-white mb-1">
-                                Default Subject <span class="text-red-400">*</span>
+                            <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                                Default Subject <span style="color:var(--apple-red)">*</span>
                             </label>
                             <input type="text" id="subject" name="subject" value="{{ old('subject') }}"
                                    placeholder="e.g., Newsletter Bulanan - @{{month}} @{{year}}" required
-                                   class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('subject') border-red-500 @enderror">
-                            @error('subject')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
-                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-info-circle mr-1"></i>Use variables like @{{month}}, @{{year}}, @{{name}} in subject</p>
+                                   style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none;box-sizing:border-box"
+                                   onfocus="this.style.borderColor='var(--apple-red)'" onblur="this.style.borderColor='var(--dark-separator)'">
+                            @error('subject')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+                            <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:4px 0 0;opacity:.7">
+                                <i class="fas fa-info-circle" style="margin-right:3px"></i>Use variables like @{{month}}, @{{year}}, @{{name}} in subject
+                            </p>
                         </div>
 
                         {{-- Category --}}
                         <div>
-                            <label for="category" class="block text-sm font-medium text-white mb-1">
-                                Category <span class="text-red-400">*</span>
+                            <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                                Category <span style="color:var(--apple-red)">*</span>
                             </label>
                             <select id="category" name="category" required
-                                    class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('category') border-red-500 @enderror">
+                                    style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.85rem;outline:none"
+                                    onfocus="this.style.borderColor='var(--apple-red)'" onblur="this.style.borderColor='var(--dark-separator)'">
                                 <option value="">-- Select Category --</option>
                                 <option value="newsletter" {{ old('category') === 'newsletter' ? 'selected' : '' }}>Newsletter</option>
                                 <option value="promotional" {{ old('category') === 'promotional' ? 'selected' : '' }}>Promotional</option>
                                 <option value="transactional" {{ old('category') === 'transactional' ? 'selected' : '' }}>Transactional</option>
                                 <option value="announcement" {{ old('category') === 'announcement' ? 'selected' : '' }}>Announcement</option>
                             </select>
-                            @error('category')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
+                            @error('category')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
                         </div>
 
                         {{-- HTML Content --}}
                         <div>
-                            <label for="content" class="block text-sm font-medium text-white mb-1">
-                                HTML Content <span class="text-red-400">*</span>
+                            <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                                HTML Content <span style="color:var(--apple-red)">*</span>
                             </label>
 @php
 $defaultEmailContent = '<html>
@@ -101,63 +105,65 @@ $defaultEmailContent = '<html>
 </html>';
 @endphp
                             <textarea id="content" name="content" rows="20" required
-                                      class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 @error('content') border-red-500 @enderror">{{ old('content', $defaultEmailContent) }}</textarea>
-                            @error('content')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
-                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-code mr-1"></i>Full HTML email template with inline CSS</p>
+                                      style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.8rem;outline:none;font-family:'Courier New',Consolas,monospace;line-height:1.6;resize:vertical;min-height:380px;box-sizing:border-box"
+                                      onfocus="this.style.borderColor='var(--apple-red)'" onblur="this.style.borderColor='var(--dark-separator)'">{{ old('content', $defaultEmailContent) }}</textarea>
+                            @error('content')<p style="font-size:0.72rem;color:var(--apple-red);margin:4px 0 0">{{ $message }}</p>@enderror
+                            <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:4px 0 0;opacity:.7">
+                                <i class="fas fa-code" style="margin-right:3px"></i>Full HTML email template with inline CSS
+                            </p>
                         </div>
 
                         {{-- Plain Content --}}
                         <div>
-                            <label for="plain_content" class="block text-sm font-medium text-white mb-1">
-                                Plain Text Version <span class="text-gray-400 font-normal">(Optional)</span>
+                            <label style="font-size:0.68rem;font-weight:600;color:var(--dark-text-secondary);display:block;margin-bottom:5px">
+                                Plain Text Version <span style="font-size:0.65rem;font-weight:400;opacity:.6">(Optional)</span>
                             </label>
                             <textarea id="plain_content" name="plain_content" rows="8"
-                                      class="w-full bg-gray-900 text-white border border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('plain_content') }}</textarea>
-                            <p class="text-xs text-gray-500 mt-1">Plain text fallback for email clients that don't support HTML</p>
+                                      style="width:100%;padding:9px 12px;background:var(--dark-bg-secondary);border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-primary);font-size:0.82rem;outline:none;resize:vertical;box-sizing:border-box"
+                                      onfocus="this.style.borderColor='var(--apple-red)'" onblur="this.style.borderColor='var(--dark-separator)'">{{ old('plain_content') }}</textarea>
+                            <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:4px 0 0;opacity:.7">Plain text fallback for email clients that don't support HTML</p>
                         </div>
 
-                        <button type="button" @click="previewOpen = true"
-                            class="inline-flex items-center px-4 py-2 border border-cyan-600 text-cyan-400 hover:bg-cyan-900/30 text-sm rounded-lg transition">
-                            <i class="fas fa-eye mr-2"></i>Preview Template
+                        <button type="button" onclick="openPreview()"
+                                style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid color-mix(in srgb,var(--apple-teal) 40%,var(--dark-separator));border-radius:9px;color:var(--apple-teal);background:color-mix(in srgb,var(--apple-teal) 10%,transparent);font-size:0.82rem;font-weight:600;cursor:pointer"
+                                onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+                            <i class="fas fa-eye"></i>Preview Template
                         </button>
                     </div>
                 </div>
             </div>
 
             {{-- Right: Settings + Actions --}}
-            <div class="space-y-5">
+            <div style="display:flex;flex-direction:column;gap:14px;position:sticky;top:16px">
 
                 {{-- Status --}}
-                <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
-                    <div class="px-5 py-4 border-b border-gray-700">
-                        <h5 class="text-white font-semibold flex items-center gap-2">
-                            <i class="fas fa-toggle-on text-gray-400"></i>Status
-                        </h5>
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                    <div style="padding:12px 16px;border-bottom:1px solid var(--dark-separator);display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-toggle-on" style="color:var(--dark-text-secondary);font-size:0.8rem"></i>
+                        <h5 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">Status</h5>
                     </div>
-                    <div class="p-5">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="is_active" name="is_active" value="1"
-                                   {{ old('is_active', true) ? 'checked' : '' }}
-                                   class="w-4 h-4 accent-blue-500">
-                            <span class="text-white text-sm">Active Template</span>
+                    <div style="padding:14px 16px">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                            <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
+                            <span style="font-size:0.85rem;color:var(--dark-text-primary)">Active Template</span>
                         </label>
-                        <p class="text-xs text-gray-500 mt-2">Only active templates can be used in campaigns</p>
+                        <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:6px 0 0;opacity:.7">Only active templates can be used in campaigns</p>
                     </div>
                 </div>
 
                 {{-- Variables --}}
-                <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
-                    <div class="px-5 py-4 border-b border-gray-700">
-                        <h5 class="text-white font-semibold flex items-center gap-2">
-                            <i class="fas fa-code text-gray-400"></i>Available Variables
-                        </h5>
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                    <div style="padding:12px 16px;border-bottom:1px solid var(--dark-separator);display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-code" style="color:var(--dark-text-secondary);font-size:0.8rem"></i>
+                        <h5 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">Available Variables</h5>
                     </div>
-                    <div class="p-5">
-                        <p class="text-xs text-gray-400 mb-3">Click to insert into template:</p>
-                        <div class="flex flex-wrap gap-2">
+                    <div style="padding:14px 16px">
+                        <p style="font-size:0.72rem;color:var(--dark-text-secondary);margin:0 0 8px">Click to insert into template:</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px">
                             @foreach(['name','email','phone','unsubscribe_url','month','year'] as $var)
                             <button type="button" onclick="insertVariable('{{ $var }}')"
-                                class="px-2.5 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs rounded cursor-pointer transition">
+                                    style="padding:3px 8px;background:color-mix(in srgb,var(--apple-teal) 12%,transparent);border:1px solid color-mix(in srgb,var(--apple-teal) 25%,var(--dark-separator));border-radius:6px;color:var(--apple-teal);font-size:0.72rem;font-family:'Courier New',monospace;cursor:pointer;font-weight:600"
+                                    onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
                                 @{{{{ '{{' . $var . '}}' }}}}
                             </button>
                             @endforeach
@@ -166,16 +172,16 @@ $defaultEmailContent = '<html>
                 </div>
 
                 {{-- Quick Insert --}}
-                <div class="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow">
-                    <div class="px-5 py-4 border-b border-gray-700">
-                        <h5 class="text-white font-semibold flex items-center gap-2">
-                            <i class="fas fa-magic text-gray-400"></i>Quick Insert
-                        </h5>
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;overflow:hidden">
+                    <div style="padding:12px 16px;border-bottom:1px solid var(--dark-separator);display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-magic" style="color:var(--dark-text-secondary);font-size:0.8rem"></i>
+                        <h5 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">Quick Insert</h5>
                     </div>
-                    <div class="p-5 space-y-2">
+                    <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
                         @foreach(['Header' => 'insertHeader', 'Button' => 'insertButton', 'Footer' => 'insertFooter', 'Unsubscribe' => 'insertUnsubscribe'] as $label => $fn)
                         <button type="button" onclick="{{ $fn }}()"
-                            class="w-full border border-gray-600 text-gray-300 hover:text-white hover:border-gray-500 py-2 rounded-lg text-sm transition">
+                                style="width:100%;padding:7px;border:1px solid var(--dark-separator);border-radius:9px;color:var(--dark-text-secondary);background:none;font-size:0.82rem;cursor:pointer;font-weight:600"
+                                onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
                             Insert {{ $label }}
                         </button>
                         @endforeach
@@ -183,35 +189,37 @@ $defaultEmailContent = '<html>
                 </div>
 
                 {{-- Actions --}}
-                <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 space-y-3">
+                <div style="background:var(--dark-bg-tertiary);border:1px solid var(--dark-separator);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px">
                     <button type="submit"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition text-sm">
-                        <i class="fas fa-save mr-2"></i>Create Template
+                            style="width:100%;padding:10px;background:var(--apple-red);color:#fff;border:none;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer"
+                            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        <i class="fas fa-save" style="margin-right:6px"></i>Create Template
                     </button>
                     <a href="{{ route('admin.templates.index') }}"
-                       class="block w-full text-center border border-gray-600 text-gray-300 hover:text-white font-medium py-2.5 rounded-xl transition text-sm">
-                        <i class="fas fa-times mr-2"></i>Cancel
+                       style="display:block;text-align:center;padding:10px;border:1px solid var(--dark-separator);border-radius:10px;color:var(--dark-text-secondary);font-size:0.85rem;font-weight:600;text-decoration:none"
+                       onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">
+                        <i class="fas fa-times" style="margin-right:6px"></i>Cancel
                     </a>
                 </div>
             </div>
         </div>
     </form>
 
-    {{-- Preview Modal --}}
-    <div x-show="previewOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
-         @keydown.escape.window="previewOpen = false">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
-             @click.outside="previewOpen = false">
-            <div class="flex items-center justify-between px-5 py-4 bg-gray-800 border-b border-gray-700">
-                <h5 class="text-white font-semibold flex items-center gap-2">
-                    <i class="fas fa-eye text-gray-400"></i>Template Preview
-                </h5>
-                <button @click="previewOpen = false" class="text-gray-400 hover:text-white text-xl">&times;</button>
+    {{-- Preview Modal (pure JS) --}}
+    <div id="previewModal" style="display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.7)">
+        <div style="position:relative;width:100%;max-width:900px;border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6);background:var(--dark-bg-secondary);border:1px solid var(--dark-separator)">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--dark-separator)">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <i class="fas fa-eye" style="color:var(--dark-text-secondary);font-size:0.8rem"></i>
+                    <h5 style="font-size:0.88rem;font-weight:700;color:var(--dark-text-primary);margin:0">Template Preview</h5>
+                </div>
+                <button onclick="closePreview()" style="background:none;border:none;color:var(--dark-text-secondary);font-size:1.2rem;cursor:pointer;padding:0;line-height:1"
+                        onmouseover="this.style.color='var(--dark-text-primary)'" onmouseout="this.style.color='var(--dark-text-secondary)'">&times;</button>
             </div>
-            <div class="bg-gray-100 px-5 py-3 border-b text-sm">
-                <strong>Subject:</strong> <span id="preview_subject"></span>
+            <div style="padding:12px 18px;border-bottom:1px solid var(--dark-separator);font-size:0.82rem;color:var(--dark-text-secondary)">
+                <strong style="color:var(--dark-text-primary)">Subject:</strong> <span id="preview_subject"></span>
             </div>
-            <div class="p-6 overflow-y-auto bg-white flex-1">
+            <div style="padding:0;max-height:70vh;overflow-y:auto;background:#fff">
                 <div id="preview_content"></div>
             </div>
         </div>
@@ -228,6 +236,47 @@ function insertVariable(varName) {
     textarea.value = textBefore + '{{' + varName + '}}' + textAfter;
     textarea.focus();
     textarea.selectionStart = textarea.selectionEnd = cursorPos + varName.length + 4;
+}
+
+function openPreview() {
+    const subject = document.getElementById('subject').value;
+    const content = document.getElementById('content').value;
+    let previewContent = content
+        .replace(/\{\{name\}\}/g, 'John Doe')
+        .replace(/\{\{email\}\}/g, 'john@example.com')
+        .replace(/\{\{phone\}\}/g, '6283879602855')
+        .replace(/\{\{month\}\}/g, 'November')
+        .replace(/\{\{year\}\}/g, '2025')
+        .replace(/\{\{unsubscribe_url\}\}/g, '#unsubscribe');
+    let previewSubject = subject
+        .replace(/\{\{name\}\}/g, 'John Doe')
+        .replace(/\{\{month\}\}/g, 'November')
+        .replace(/\{\{year\}\}/g, '2025');
+    document.getElementById('preview_subject').textContent = previewSubject || '(No subject)';
+    document.getElementById('preview_content').innerHTML = previewContent || '<p style="color:#999; padding:2rem; text-align:center">No content</p>';
+    const modal = document.getElementById('previewModal');
+    modal.style.display = 'flex';
+    document.addEventListener('keydown', handlePreviewEsc);
+}
+
+function closePreview() {
+    document.getElementById('previewModal').style.display = 'none';
+    document.removeEventListener('keydown', handlePreviewEsc);
+}
+
+function handlePreviewEsc(e) { if (e.key === 'Escape') closePreview(); }
+
+document.getElementById('previewModal').addEventListener('click', function(e) {
+    if (e.target === this) closePreview();
+});
+
+function insertAtCursor(text) {
+    const textarea = document.getElementById('content');
+    const cursorPos = textarea.selectionStart;
+    const textBefore = textarea.value.substring(0, cursorPos);
+    const textAfter = textarea.value.substring(cursorPos);
+    textarea.value = textBefore + text + textAfter;
+    textarea.focus();
 }
 
 function insertHeader() {
@@ -265,41 +314,6 @@ function insertUnsubscribe() {
     </p>
 </div>
 `);
-}
-
-function insertAtCursor(text) {
-    const textarea = document.getElementById('content');
-    const cursorPos = textarea.selectionStart;
-    const textBefore = textarea.value.substring(0, cursorPos);
-    const textAfter = textarea.value.substring(cursorPos);
-    textarea.value = textBefore + text + textAfter;
-    textarea.focus();
-}
-
-document.addEventListener('alpine:init', () => {
-    Alpine.effect(() => {
-        if (document.querySelector('[x-data]').__x && document.querySelector('[x-data]').__x.$data.previewOpen) {
-            updatePreview();
-        }
-    });
-});
-
-function updatePreview() {
-    const subject = document.getElementById('subject').value;
-    const content = document.getElementById('content').value;
-    let previewContent = content
-        .replace(/\{\{name\}\}/g, 'John Doe')
-        .replace(/\{\{email\}\}/g, 'john@example.com')
-        .replace(/\{\{phone\}\}/g, '6283879602855')
-        .replace(/\{\{month\}\}/g, 'November')
-        .replace(/\{\{year\}\}/g, '2025')
-        .replace(/\{\{unsubscribe_url\}\}/g, '#unsubscribe');
-    let previewSubject = subject
-        .replace(/\{\{name\}\}/g, 'John Doe')
-        .replace(/\{\{month\}\}/g, 'November')
-        .replace(/\{\{year\}\}/g, '2025');
-    document.getElementById('preview_subject').textContent = previewSubject || '(No subject)';
-    document.getElementById('preview_content').innerHTML = previewContent || '<p style="color:#999">No content</p>';
 }
 </script>
 @endverbatim

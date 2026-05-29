@@ -173,7 +173,7 @@
                                                 <i class="fas fa-edit mr-1"></i>Edit
                                             </a>
                                         @endif
-                                        <form action="{{ route('admin.campaigns.destroy', $campaign) }}" method="POST" onsubmit="return confirm('Hapus campaign ini?');">
+                                        <form action="{{ route('admin.campaigns.destroy', $campaign) }}" method="POST" x-data @submit.prevent="if(confirm('Hapus campaign ini?')) $el.submit()">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-secondary-sm" style="background: rgba(255,59,48,0.12); color: rgba(255,59,48,0.9); border: 1px solid rgba(255,59,48,0.3);">

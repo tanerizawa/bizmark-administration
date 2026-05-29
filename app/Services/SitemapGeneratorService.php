@@ -82,6 +82,10 @@ class SitemapGeneratorService
         $staticPages = [
             '/blog' => ['priority' => '0.9', 'changefreq' => 'daily', 'en' => '/en/blog'],
             '/layanan' => ['priority' => '0.9', 'changefreq' => 'weekly', 'en' => '/en/services'],
+            '/proses' => ['priority' => '0.8', 'changefreq' => 'monthly', 'en' => '/en/process'],
+            '/tentang' => ['priority' => '0.8', 'changefreq' => 'monthly', 'en' => '/en/about'],
+            '/harga' => ['priority' => '0.9', 'changefreq' => 'monthly', 'en' => '/en/pricing'],
+            '/status' => ['priority' => '0.5', 'changefreq' => 'daily', 'en' => '/en/status'],
             '/faq' => ['priority' => '0.7', 'changefreq' => 'weekly', 'en' => null],
             '/panduan' => ['priority' => '0.7', 'changefreq' => 'weekly', 'en' => null],
             '/contact' => ['priority' => '0.6', 'changefreq' => 'monthly', 'en' => null],
@@ -106,6 +110,10 @@ class SitemapGeneratorService
             '/en' => ['priority' => '0.9', 'changefreq' => 'daily'],
             '/en/blog' => ['priority' => '0.8', 'changefreq' => 'daily'],
             '/en/services' => ['priority' => '0.8', 'changefreq' => 'weekly'],
+            '/en/process' => ['priority' => '0.7', 'changefreq' => 'monthly'],
+            '/en/about' => ['priority' => '0.7', 'changefreq' => 'monthly'],
+            '/en/pricing' => ['priority' => '0.8', 'changefreq' => 'monthly'],
+            '/en/status' => ['priority' => '0.4', 'changefreq' => 'daily'],
         ];
 
         foreach ($enPages as $page => $meta) {

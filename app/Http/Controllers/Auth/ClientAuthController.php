@@ -41,6 +41,7 @@ class ClientAuthController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:clients,email,NULL,id,deleted_at,NULL'],
             'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'terms' => ['accepted'],
         ]);
 
         // Check if a soft-deleted client exists with this email — restore and update

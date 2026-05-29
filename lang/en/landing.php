@@ -8,14 +8,14 @@
 return [
     // Meta & SEO
     'meta' => [
-        'title' => 'Bizmark.ID - Business Consulting & Investment Services in Indonesia',
-        'description' => 'Your trusted partner for business establishment, investment permits, and regulatory compliance in Indonesia. We serve foreign investors and multinational companies.',
-        'keywords' => 'indonesia investment, business permit indonesia, pma establishment, company setup indonesia, foreign investment indonesia, bkpm permit, kitas work permit',
+        'title' => 'Bizmark.ID – Legal-Tech Platform for Business Permits & Compliance in Indonesia',
+        'description' => 'Bizmark.ID is an AI-powered legal-tech platform for business licensing, environmental compliance (AMDAL, UKL-UPL, B3 Waste), and regulatory affairs in Indonesia. Trusted by 150+ companies from SMEs to multinationals.',
+        'keywords' => 'business permit indonesia, legal tech indonesia, ai permit checker, environmental compliance indonesia, amdal ukl-upl, oss rba permit, pma establishment, indonesia regulatory affairs,',
         'og_title' => 'Bizmark.ID - Professional Business & Investment Services',
         'og_description' => 'Expert business consulting and permit services for foreign investors in Indonesia. Fast, transparent, professional.',
     ],
 
-    'schema_description' => 'Professional environmental permit consultant for manufacturing industry',
+    'schema_description' => 'AI-powered legal-tech platform for business permits, environmental compliance (AMDAL, UKL-UPL, B3 Waste), and regulatory affairs in Indonesia.',
 
     // Navigation
     'nav' => [

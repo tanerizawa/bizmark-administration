@@ -13,20 +13,20 @@ class BlogHelper
     public static function categoryLabels(bool $isEn = false): array
     {
         return [
-            'perizinan-lb3'       => $isEn ? 'B3 Waste Permits'     : 'Perizinan LB3',
-            'amdal'               => 'AMDAL',
-            'ukl-upl'             => 'UKL-UPL',
-            'oss-nib'             => 'OSS / NIB',
-            'izin-operasional'    => $isEn ? 'Operational Permits'  : 'Izin Operasional',
-            'pbg-slf'             => 'PBG / SLF',
-            'izin-k3'             => 'K3',
-            'konsultan-lingkungan'=> $isEn ? 'Environmental'        : 'Konsultan Lingkungan',
-            'monitoring-digital'  => $isEn ? 'Digital Monitoring'   : 'Monitoring Digital',
-            'regulation'          => $isEn ? 'Regulation'           : 'Regulasi',
-            'case-study'          => $isEn ? 'Case Study'           : 'Studi Kasus',
-            'news'                => $isEn ? 'News'                 : 'Berita',
-            'tips'                => 'Tips',
-            'general'             => $isEn ? 'General'              : 'Umum',
+            'perizinan-lb3' => $isEn ? 'B3 Waste Permits' : 'Perizinan LB3',
+            'amdal' => 'AMDAL',
+            'ukl-upl' => 'UKL-UPL',
+            'oss-nib' => 'OSS / NIB',
+            'izin-operasional' => $isEn ? 'Operational Permits' : 'Izin Operasional',
+            'pbg-slf' => 'PBG / SLF',
+            'izin-k3' => 'K3',
+            'konsultan-lingkungan' => $isEn ? 'Environmental' : 'Konsultan Lingkungan',
+            'monitoring-digital' => $isEn ? 'Digital Monitoring' : 'Monitoring Digital',
+            'regulation' => $isEn ? 'Regulation' : 'Regulasi',
+            'case-study' => $isEn ? 'Case Study' : 'Studi Kasus',
+            'news' => $isEn ? 'News' : 'Berita',
+            'tips' => 'Tips',
+            'general' => $isEn ? 'General' : 'Umum',
         ];
     }
 

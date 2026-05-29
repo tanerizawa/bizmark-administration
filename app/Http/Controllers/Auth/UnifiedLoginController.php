@@ -96,8 +96,18 @@ class UnifiedLoginController extends Controller
         if (Auth::guard('client')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
+            // Prevent clients from being redirected to admin paths
+            $intended = $request->session()->get('url.intended', '');
+            if ($intended && $this->isAdminPath($intended)) {
+                $request->session()->forget('url.intended');
+            }
+
+            $user = Auth::guard('client')->user();
+            $firstName = \Illuminate\Support\Str::of($user->name ?? '')->before(' ')->title();
+            $welcomeMsg = $firstName ? "Selamat datang kembali, {$firstName} 👋" : 'Selamat datang kembali!';
+
             return redirect()->intended(route('client.dashboard'))
-                ->with('success', 'Selamat datang di Portal Klien Bizmark.id!');
+                ->with('success', $welcomeMsg);
         }
 
         // Both authentication attempts failed
@@ -144,6 +154,16 @@ class UnifiedLoginController extends Controller
     protected function guard()
     {
         return Auth::guard();
+    }
+
+    /**
+     * Check if a path points to the admin panel.
+     */
+    protected function isAdminPath(string $path): bool
+    {
+        $localPath = parse_url($path, PHP_URL_PATH) ?? $path;
+
+        return Str::startsWith(ltrim($localPath, '/'), 'admin');
     }
 
     /**

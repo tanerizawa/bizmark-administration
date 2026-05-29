@@ -54,9 +54,9 @@ class NotificationController extends Controller
             ->byAdmin()
             ->unread()
             ->update([
-            'is_read' => true,
-            'read_at' => now(),
-        ]);
+                'is_read' => true,
+                'read_at' => now(),
+            ]);
 
         return back()->with('success', 'Semua notifikasi telah ditandai sebagai dibaca.');
     }

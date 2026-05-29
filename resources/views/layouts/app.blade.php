@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -203,6 +203,14 @@
                             <div class="nav-link-content">
                                 <i class="fas fa-newspaper"></i>
                                 <span>Artikel & Berita</span>
+                            </div>
+                        </a>
+
+                        <!-- Kelola Layanan -->
+                        <a href="{{ route('admin.services.index') }}" class="nav-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
+                            <div class="nav-link-content">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Kelola Layanan</span>
                             </div>
                         </a>
                         

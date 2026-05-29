@@ -33,7 +33,7 @@
 @endphp
 
 {{-- ── HERO ─────────────────────────────── --}}
-<section class="relative overflow-hidden pt-28 pb-16" style="background:var(--bg-raised);border-bottom:1px solid var(--border-subtle);">
+<section class="relative overflow-hidden pt-28 pb-16 bg-[var(--bg-raised)] border-b border-gray-200">
     <div class="container-wide">
         <div class="max-w-4xl">
             <a href="{{ route('services.index.en') }}" class="link-primary text-sm inline-flex items-center gap-2 mb-6">
@@ -51,18 +51,18 @@
             <p class="section-description mb-6" style="margin-left:0;">{{ $service['short_description'] }}</p>
             <div class="flex flex-wrap gap-2 mb-7">
                 @if(!empty($service['process_time']))
-                    <span class="text-xs px-2 py-1 rounded-full" style="background:var(--bg-overlay);border:1px solid var(--border-subtle);color:var(--text-secondary);">
+                    <span class="text-xs px-2 py-1 rounded-full bg-gray-100 border border-gray-200 text-gray-600">
                         <i class="fas fa-clock mr-1"></i>{{ $service['process_time'] }}
                     </span>
                 @endif
                 @if(!empty($service['price_range']))
-                    <span class="text-xs px-2 py-1 rounded-full" style="background:rgba(22,163,74,.1);color:var(--color-success);">
+                    <span class="text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-700">
                         <i class="fas fa-tag mr-1"></i>{{ $service['price_range'] }}
                     </span>
                 @endif
             </div>
             <div class="flex flex-wrap gap-3">
-                <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-success">
+                <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
                     <i class="fab fa-whatsapp"></i> WhatsApp Consultation
                 </a>
                 <a href="{{ route('contact.index') }}" class="btn btn-primary">
@@ -87,7 +87,7 @@
                     <span class="editorial-icon-badge flex-shrink-0 mt-0.5" style="width:2rem;height:2rem;border-radius:.5rem;">
                         <i class="fas fa-check icon-sm" aria-hidden="true"></i>
                     </span>
-                    <span class="text-sm leading-relaxed" style="color:var(--text-secondary);">{{ $feature }}</span>
+                    <span class="text-sm leading-relaxed text-gray-600">{{ $feature }}</span>
                 </div>
             @endforeach
         </div>
@@ -106,14 +106,14 @@
         <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
             @foreach($service['sub_services'] as $subSlug => $subService)
                 <article class="premium-card">
-                    <h3 class="text-base font-semibold mb-2" style="color:var(--text-primary);">{{ $subService['title'] }}</h3>
-                    <p class="text-sm mb-4 flex-1" style="color:var(--text-secondary);">{{ $subService['description'] ?? $subService['short_description'] ?? '' }}</p>
+                    <h3 class="text-base font-semibold mb-2 text-gray-900 dark:text-white">{{ $subService['title'] }}</h3>
+                    <p class="text-sm mb-4 flex-1 text-gray-600">{{ $subService['description'] ?? $subService['short_description'] ?? '' }}</p>
                     <div class="flex flex-wrap gap-2">
                         @if(!empty($subService['duration']))
-                            <span class="text-xs px-2 py-1 rounded-full" style="background:var(--bg-overlay);color:var(--text-secondary);border:1px solid var(--border-subtle);">{{ $subService['duration'] }}</span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600 border border-gray-200">{{ $subService['duration'] }}</span>
                         @endif
                         @if(!empty($subService['price']))
-                            <span class="text-xs px-2 py-1 rounded-full" style="background:rgba(22,163,74,.1);color:var(--color-success);">{{ $subService['price'] }}</span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-700">{{ $subService['price'] }}</span>
                         @endif
                     </div>
                 </article>
@@ -134,9 +134,9 @@
         </div>
         <div class="grid md:grid-cols-2 gap-3 max-w-4xl">
             @foreach($service['documents_required'] as $doc)
-                <div class="flex items-start gap-3 p-3 rounded-lg" style="background:var(--bg-raised);border:1px solid var(--border-subtle);">
-                    <i class="fas fa-file-alt mt-0.5 flex-shrink-0" style="color:var(--accent-soft);"></i>
-                    <span class="text-sm" style="color:var(--text-secondary);">{{ $doc }}</span>
+                <div class="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-raised)] border border-gray-200">
+                    <i class="fas fa-file-alt mt-0.5 flex-shrink-0 text-amber-600"></i>
+                    <span class="text-sm text-gray-600">{{ $doc }}</span>
                 </div>
             @endforeach
         </div>
@@ -150,15 +150,15 @@
         <div class="text-center mb-8 max-w-2xl mx-auto">
             <span class="eyebrow mb-3">Why Bizmark.ID?</span>
             <h2 class="display-md mt-2 mb-3">Without Bizmark vs. With Bizmark</h2>
-            <p style="color:var(--text-secondary);">See the real difference in process speed, outcomes, and risk exposure.</p>
+            <p class="text-gray-600">See the real difference in process speed, outcomes, and risk exposure.</p>
         </div>
         <div class="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
-            <div class="premium-card border" style="border-color:rgba(239,68,68,.2);background:rgba(239,68,68,.04);">
+            <div class="premium-card border border-red-200/30 bg-red-50/30">
                 <div class="flex items-center gap-2 mb-4">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:rgba(239,68,68,.12);">
-                        <i class="fas fa-times text-sm" style="color:#f87171;"></i>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-red-100/50">
+                        <i class="fas fa-times text-sm text-red-400"></i>
                     </div>
-                    <h3 class="font-bold text-base" style="color:#fca5a5;">Without Bizmark</h3>
+                    <h3 class="font-bold text-base text-red-400">Without Bizmark</h3>
                 </div>
                 <ul class="space-y-2.5">
                     @foreach([
@@ -167,19 +167,19 @@
                         ['fa-search', 'No status visibility — uncertain when permits will be issued.'],
                         ['fa-money-bill-wave', 'Error costs can reach IDR 50–200M if a wrong step is taken.'],
                     ] as [$ico, $txt])
-                    <li class="flex items-start gap-2.5 text-sm" style="color:var(--text-secondary);">
-                        <i class="fas {{ $ico }} mt-0.5 flex-shrink-0" style="color:#f87171;"></i>
+                    <li class="flex items-start gap-2.5 text-sm text-gray-600">
+                        <i class="fas {{ $ico }} mt-0.5 flex-shrink-0 text-red-400"></i>
                         <span>{{ $txt }}</span>
                     </li>
                     @endforeach
                 </ul>
             </div>
-            <div class="premium-card border" style="border-color:rgba(34,197,94,.2);background:rgba(34,197,94,.04);">
+            <div class="premium-card border border-amber-200/30 bg-amber-50/30">
                 <div class="flex items-center gap-2 mb-4">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:rgba(34,197,94,.12);">
-                        <i class="fas fa-check text-sm" style="color:#4ade80;"></i>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-amber-100/50">
+                        <i class="fas fa-check text-sm text-amber-500"></i>
                     </div>
-                    <h3 class="font-bold text-base" style="color:#86efac;">With Bizmark.ID</h3>
+                    <h3 class="font-bold text-base text-amber-700">With Bizmark.ID</h3>
                 </div>
                 <ul class="space-y-2.5">
                     @foreach([
@@ -188,14 +188,14 @@
                         ['fa-chart-line', 'Weekly SLA reports — you always know your permit status.'],
                         ['fa-hand-holding-usd', 'Staged payment: 50% upfront, 50% on permit issuance.'],
                     ] as [$ico, $txt])
-                    <li class="flex items-start gap-2.5 text-sm" style="color:var(--text-secondary);">
-                        <i class="fas {{ $ico }} mt-0.5 flex-shrink-0" style="color:#4ade80;"></i>
+                    <li class="flex items-start gap-2.5 text-sm text-gray-600">
+                        <i class="fas {{ $ico }} mt-0.5 flex-shrink-0 text-amber-500"></i>
                         <span>{{ $txt }}</span>
                     </li>
                     @endforeach
                 </ul>
-                <div class="mt-4 pt-4 border-t" style="border-color:rgba(34,197,94,.15);">
-                    <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-success w-full btn-sm">
+                <div class="mt-4 pt-4 border-t border-amber-200/20">
+                    <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary w-full btn-sm">
                         <i class="fab fa-whatsapp"></i> Start Free Consultation
                     </a>
                 </div>
@@ -230,21 +230,21 @@
 @endif
 
 {{-- ── FINAL CTA ─────────────────────────── --}}
-<section class="section-v2-sm section-ink">
+<section class="section-v2-sm">
     <div class="container-wide text-center">
         <span class="blue-rule mx-auto mb-5"></span>
         <h2 class="display-md mb-4">Ready to move your permits forward?</h2>
-        <p class="mb-7 max-w-xl mx-auto" style="color:var(--text-secondary);">Our team guides you from the first consultation through to permit issuance — on schedule, every time.</p>
+        <p class="mb-7 max-w-xl mx-auto text-gray-600">Our team guides you from the first consultation through to permit issuance — on schedule, every time.</p>
         <div class="flex flex-wrap justify-center gap-3">
-            <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-lg">
+            <a href="{{ $waHref }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
                 <i class="fab fa-whatsapp"></i> WhatsApp Consultation
             </a>
             <a href="{{ route('services.index.en') }}" class="btn btn-ghost btn-lg">
                 <i class="fas fa-layer-group"></i> Explore More Services
             </a>
         </div>
-        <p class="text-xs mt-5" style="color:var(--text-muted);">
-            <i class="fas fa-shield-halved mr-1.5" style="color:var(--accent-soft);"></i>
+        <p class="text-xs mt-5 text-gray-400">
+            <i class="fas fa-shield-halved mr-1.5 text-amber-400"></i>
             ISO 9001:2015 · NDA available · 96% on-time delivery · Bilingual EN/ID
         </p>
     </div>

@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Kbli;
 use App\Models\ConsultRequest;
+use App\Models\Kbli;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -112,7 +112,7 @@ class ConsultationFlowTest extends TestCase
         $this->assertEquals('auto_estimated', $consultRequest->estimate_status);
         $this->assertNotNull($consultRequest->auto_estimate);
         $this->assertArrayHasKey('cost_summary', $consultRequest->auto_estimate);
-        
+
         // Verify KBLI usage incremented
         $kbli->refresh();
         $this->assertEquals(1, $kbli->usage_count);
@@ -284,7 +284,7 @@ class ConsultationFlowTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-        
+
         $consultRequest = ConsultRequest::first();
         $this->assertNotNull($consultRequest);
     }
