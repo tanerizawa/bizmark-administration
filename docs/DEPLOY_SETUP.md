@@ -11,7 +11,7 @@ Tambahkan secrets berikut:
 | `VPS_HOST` | IP atau domain VPS | Contoh: `103.x.x.x` atau `vps.bizmark.id` |
 | `VPS_USER` | `bizmark` | User SSH di VPS |
 | `VPS_SSH_KEY` | Private key SSH | Lihat cara generate di bawah |
-| `VPS_PORT` | `22` | Port SSH (opsional, default 22) |
+| `VPS_PORT` | `2222` | Port SSH untuk VPS Bizmark (ubah jika berbeda) |
 
 ## Cara Generate SSH Key untuk Deploy
 
@@ -62,7 +62,7 @@ Setelah secrets terpasang, bisa trigger manual dari:
 
 ```bash
 # SSH ke VPS
-ssh bizmark@VPS_HOST
+ssh -i ~/.ssh/bizmark_deploy -p 2222 bizmark@VPS_HOST
 
 # Cek versi yang berjalan
 cd /home/bizmark/bizmark.id
